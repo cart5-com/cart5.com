@@ -1,0 +1,18 @@
+{
+  "name": "auth-hono",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "rm -rf ./dist && dotenv -e ../../.env.production -- bash -c 'node esbuild.cjs'",
+    "start": "PORT=5000 node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.7.1"
+  }
+}

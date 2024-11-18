@@ -1,6 +1,6 @@
 export GIT_HASH=$(git rev-parse HEAD || echo "$SOURCE_COMMIT")
 
-printenv
+# printenv
 
 echo "deploying to $CLOUDFLARE_PAGES_TEST_PROJECT_NAME"
 mkdir -p ./dist
