@@ -1,4 +1,4 @@
-export GIT_HASH=$(git rev-parse HEAD)
+export GIT_HASH=$(git rev-parse HEAD || echo "$SOURCE_COMMIT")
 
 printenv
 
