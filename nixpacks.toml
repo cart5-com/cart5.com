@@ -1,5 +1,7 @@
 # [phases.setup]
 # cmds = ['pnpm i']
+[phases.setup]
+cmds = ['npm i -g dotenv wrangler']
 
 [phases.install]
 cmds = ['pnpm i']
@@ -9,3 +11,6 @@ cmds = ['pnpm build']
 
 [start]
 cmd = 'pnpm start'
+
+[variables]
+NODE_ENV = 'production'

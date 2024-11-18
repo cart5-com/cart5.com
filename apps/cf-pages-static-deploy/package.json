@@ -1,7 +1,7 @@
 {
   "name": "cf-pages-static-deploy",
   "scripts": {
-    "build": "node ./node_modules/dotenv/lib/main.js -e ../../.env -- bash -c './deploy.sh'",
+    "build": "dotenv -e ../../.env -- bash -c './deploy.sh'",
     "start": "echo 'start and wait 1 day' && sleep 86400"
   },
   "keywords": [],
