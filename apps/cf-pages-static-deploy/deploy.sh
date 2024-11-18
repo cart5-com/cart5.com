@@ -1,4 +1,7 @@
-echo GIT_HASH=$(git rev-parse HEAD)
+export GIT_HASH=$(git rev-parse HEAD)
+
+printenv
+
 echo "deploying to $CLOUDFLARE_PAGES_TEST_PROJECT_NAME"
 mkdir -p ./dist
 touch ./dist/index.html
