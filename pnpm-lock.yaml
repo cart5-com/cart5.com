@@ -7,11 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-    devDependencies:
       prettier:
         specifier: ^3.2.5
         version: 3.3.3
@@ -23,7 +22,10 @@ importers:
         version: 5.5.4
 
   apps/cf-pages-static-deploy:
-    dependencies:
+    devDependencies:
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       wrangler:
         specifier: ^3.87.0
         version: 3.87.0
