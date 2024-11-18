@@ -1,0 +1,12 @@
+{
+  "name": "cf-pages-static-deploy",
+  "scripts": {
+    "build": "dotenv -e ../../.env -- bash -c './deploy.sh'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wrangler": "^3.87.0"
+  }
+}

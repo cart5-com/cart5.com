@@ -2,15 +2,15 @@
   "name": "cart5.com",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
+    "dev": "turbo dev --ui=stream",
+    "build": "turbo build --ui=stream",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.3.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "dotenv": "^16.4.5"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {
