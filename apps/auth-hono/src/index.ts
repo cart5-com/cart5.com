@@ -4,7 +4,7 @@ import { Hono } from 'hono'
 const app = new Hono()
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
+  return c.text(`Hello Hono! SAMPLE_ENV_VAR:${process.env.SAMPLE_ENV_VAR}`)
 })
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;

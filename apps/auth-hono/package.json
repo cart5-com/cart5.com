@@ -2,7 +2,7 @@
   "name": "auth-hono",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "dotenv -e ../../.env -- bash -c 'tsx watch src/index.ts'",
     "build": "rm -rf ./dist && dotenv -e ../../.env.production -- bash -c 'node esbuild.cjs'",
     "start": "PORT=5000 node dist/index.js"
   },
