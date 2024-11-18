@@ -6,9 +6,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "wrangler": "^3.87.0",
-    "dotenv": "^16.4.5"
-  }
+  "license": "ISC"
 }

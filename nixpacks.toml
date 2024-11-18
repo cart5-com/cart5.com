@@ -1,7 +1,8 @@
 # [phases.setup]
 # cmds = ['pnpm i']
-[phases.setup]
-cmds = ['npm i -g dotenv wrangler']
+
+# [phases.setup]
+# cmds = ['npm i -g dotenv-cli wrangler']
 
 [phases.install]
 cmds = ['pnpm i']
