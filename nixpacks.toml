@@ -2,7 +2,7 @@
 # cmds = ['pnpm i']
 
 # [phases.setup]
-# cmds = ['npm i -g dotenv-cli wrangler']
+# cmds = ['npm i -g dotenv-cli wrangler'] # not required, have them inside devDependencies / package.json
 
 [phases.install]
 cmds = ['pnpm i']
