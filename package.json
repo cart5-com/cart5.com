@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev --ui=stream",
-    "build": "turbo build",
+    "build": "turbo run build",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
