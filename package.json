@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "turbo dev --ui=stream",
     "build": "turbo run build",
+    "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
