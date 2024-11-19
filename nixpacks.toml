@@ -13,5 +13,6 @@
 # [start]
 # cmd = 'pnpm start'
 
-# [variables]
-# NODE_ENV = 'production'
+[variables]
+NODE_ENV = 'production'
+SAMPLE_NIXPACKS_VAR = 'nixpacks_value'
