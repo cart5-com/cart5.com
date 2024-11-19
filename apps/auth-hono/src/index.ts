@@ -6,12 +6,6 @@ const app = new Hono()
 app.get('/', (c) => {
   return c.text(`
     Hello Hono! SAMPLE_ENV_VAR:${process.env.SAMPLE_ENV_VAR}
-
-    PORT:${process.env.PORT}
-
-    NODE_ENV:${process.env.NODE_ENV}
-
-    SAMPLE_NIXPACKS_VAR:${process.env.SAMPLE_NIXPACKS_VAR}
 `)
 })
 

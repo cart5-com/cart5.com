@@ -1,7 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["SAMPLE_ENV_VAR", "NODE_ENV", "SAMPLE_NIXPACKS_VAR"],
+  "globalEnv": ["SAMPLE_ENV_VAR"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
