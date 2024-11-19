@@ -1,18 +1,25 @@
 {
-  "name": "auth-hono",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "node ./esbuild.cjs",
-    "start": "PORT=5000 node ./dist/index.js"
-  },
-  "dependencies": {
-    "@hono/node-server": "^1.13.7",
-    "hono": "^4.6.10"
-  },
-  "devDependencies": {
-    "@types/node": "^22.9.0",
-    "esbuild": "^0.24.0",
-    "tsx": "^4.7.1"
-  }
+	"name": "auth-hono",
+	"type": "module",
+	"scripts": {
+		"dev": "./start-db.sh && dotenv -e ../../.env -- bash -c 'tsx watch src/index.ts'",
+		"generate:sql": "drizzle-kit generate",
+		"build": "node ./esbuild.cjs",
+		"start": "PORT=5000 node ./dist/index.js"
+	},
+	"dependencies": {
+		"@hono/node-server": "^1.13.7",
+		"@libsql/client": "^0.14.0",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"drizzle-orm": "^0.36.3",
+		"hono": "^4.6.10",
+		"lib": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^22.9.0",
+		"drizzle-kit": "^0.28.1",
+		"esbuild": "^0.24.0",
+		"tsx": "^4.19.2"
+	}
 }

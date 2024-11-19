@@ -7,6 +7,7 @@
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
+turso-db
 
 # deps
 node_modules/
