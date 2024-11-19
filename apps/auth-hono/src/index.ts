@@ -22,4 +22,4 @@ serve({
 });
 
 // TODO: Uncomment this when you want to check migrations
-checkMigrations();
+// checkMigrations();
