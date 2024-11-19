@@ -13,5 +13,5 @@ cmds = ['pnpm build']
 [start]
 cmd = 'pnpm start'
 
-[variables]
-NODE_ENV = 'production'
+# [variables]
+# NODE_ENV = 'production'
