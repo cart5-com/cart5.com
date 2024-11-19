@@ -4,14 +4,14 @@
 # [phases.setup]
 # cmds = ['npm i -g dotenv-cli wrangler'] # not required, have them inside devDependencies / package.json
 
-[phases.install]
-cmds = ['pnpm i']
+# [phases.install]
+# cmds = ['pnpm i']
 
-[phases.build]
-cmds = ['pnpm build']
+# [phases.build]
+# cmds = ['pnpm build']
 
-[start]
-cmd = 'pnpm start'
+# [start]
+# cmd = 'pnpm start'
 
 # [variables]
 # NODE_ENV = 'production'
