@@ -5,8 +5,8 @@
 		"preinstall": "npx only-allow pnpm",
 		"dev": "turbo dev --ui=stream",
 		"postdev": "./scripts/kill-ports.sh",
-		"build": "turbo run build",
-		"start": "turbo run start",
+		"build": "turbo run build --env-mode=loose",
+		"start": "turbo run start --env-mode=loose",
 		"format": "prettier --write \"**/*.{ts,tsx,md,astro,vue}\""
 	},
 	"devDependencies": {
