@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "pnpm format && turbo dev --ui=stream",
-    "build": "turbo run build",
-    "start": "turbo run start",
+    "build": "turbo run build --env-mode=loose",
+    "start": "turbo run start --env-mode=loose",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue}\""
   },
   "devDependencies": {
