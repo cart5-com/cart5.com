@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "pnpm format && turbo dev --ui=stream",
-    "build": "turbo run build",
-    "start": "turbo run start",
+    "build": "dotenv -e ../../.env.production -- bash -c 'turbo run build'",
+    "start": "dotenv -e ../../.env.production -- bash -c 'turbo run start'",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue}\""
   },
   "devDependencies": {
