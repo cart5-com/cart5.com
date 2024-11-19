@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "dotenv -e ../../.env -- bash -c 'tsx watch src/index.ts'",
-    "build": "rm -rf ./dist && dotenv -e ../../.env.production -- bash -c 'node esbuild.cjs'",
-    "start": "dotenv -e ../../.env.production -- bash -c 'PORT=5000 node dist/index.js'"
+    "build": "printenv && rm -rf ./dist && dotenv -e ../../.env.production -- bash -c 'node ./esbuild.cjs'",
+    "start": "printenv && dotenv -e ../../.env.production -- bash -c 'PORT=5000 node ./dist/index.js'"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
