@@ -31,7 +31,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
     const sessionData: Session = {
         id: row.id,
         userId: row.userId,
-        expiresAt: new Date(row.expiresAt * 1000)
+        expiresAt: new Date(row.expiresAt)
     };
     const userData: User = {
         id: row.userId,
@@ -41,13 +41,15 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         picture: row.picture || undefined
     };
     if (Date.now() >= sessionData.expiresAt.getTime()) {
+        // if session expired, delete it
         await db.delete(session).where(eq(session.id, sessionId));
         return { session: null, user: null };
     }
-    if (Date.now() >= sessionData.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
-        sessionData.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+    if (Date.now() >= sessionData.expiresAt.getTime() - (60 * 60 * 24 * 15)) {
+        // if less than 15 days left, refresh for 30 days
+        sessionData.expiresAt = new Date(Date.now() + (60 * 60 * 24 * 30));
         await db.update(session).set({
-            expiresAt: Math.floor(sessionData.expiresAt.getTime() / 1000)
+            expiresAt: sessionData.expiresAt.getTime()
         }).where(eq(session.id, sessionId));
     }
     return { session: sessionData, user: userData };
@@ -94,12 +96,12 @@ export async function createSession(token: string, userId: string): Promise<Sess
     const sessionData: Session = {
         id: sessionId,
         userId,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30) // 30 days
+        expiresAt: new Date(Date.now() + (60 * 60 * 24 * 30)) // 30 days
     };
     await db.insert(session).values({
         id: sessionId,
         userId,
-        expiresAt: Math.floor(sessionData.expiresAt.getTime() / 1000)
+        expiresAt: sessionData.expiresAt.getTime()
     });
     return sessionData;
 }
