@@ -31,7 +31,7 @@ export const loginRoute = new Hono<honoTypes>()
                 path: "/",
                 secure: IS_PROD,
                 sameSite: "lax", // use lax to allow redirects, strict does not allow redirects
-                maxAge: 1
+                maxAge: 600
             });
             c.header("Set-Cookie", cookie);
 
