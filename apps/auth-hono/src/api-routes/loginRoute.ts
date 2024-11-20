@@ -21,10 +21,6 @@ export const loginRoute = new Hono<honoTypes>()
             const codeVerifier = generateCodeVerifier();
             const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
 
-            console.log("JWT_SECRET", getEnvironmentVariable("JWT_SECRET"));
-            console.log("ENCRYPTION_KEY", getEnvironmentVariable("ENCRYPTION_KEY"));
-            console.log("state", state);
-            console.log("codeVerifier", codeVerifier);
             const jwtString = await signJwtAndEncrypt({ state, codeVerifier },
                 getEnvironmentVariable("JWT_SECRET"),
                 getEnvironmentVariable("ENCRYPTION_KEY")
