@@ -3,7 +3,7 @@ import type { honoTypes } from '../index'
 import { deleteSessionTokenCookie, invalidateSession } from '../lib/session'
 
 export const userRoute = new Hono<honoTypes>()
-    .post(
+    .get(
         '/logout',
         async (c) => {
             const session = c.get('SESSION');
@@ -11,13 +11,11 @@ export const userRoute = new Hono<honoTypes>()
                 await invalidateSession(session.id);
                 deleteSessionTokenCookie(c);
             }
-            return c.json({
-                data: "success"
-            }, 200);
+            return c.redirect('/');
         }
     )
     .get(
-        '/me',
+        '/whoami',
         async (c) => {
             return c.json({
                 data: c.get('USER')

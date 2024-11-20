@@ -1,5 +1,5 @@
-// check environment variable
 import { getEnvironmentVariable } from "./getEnvironmentVariable";
+// check environment variable
 const key = getEnvironmentVariable("ENCRYPTION_KEY");
 
 const IV_LENGTH = 16; // Updated to 16 bytes

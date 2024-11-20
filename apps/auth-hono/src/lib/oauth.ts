@@ -6,7 +6,6 @@ const googleClientId = getEnvironmentVariable("GOOGLE_OAUTH_CLIENT_ID");
 const googleClientSecret = getEnvironmentVariable("GOOGLE_OAUTH_CLIENT_SECRET");
 const googleRedirectUri = getEnvironmentVariable("GOOGLE_OAUTH_REDIRECT_URI");
 
-// TODO: Update redirect URI
 export const google = new Google(
 	googleClientId,
 	googleClientSecret,

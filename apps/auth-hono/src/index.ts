@@ -29,7 +29,13 @@ app.get("/", (c) => {
 	<br>
 	NODE_ENV: ${process.env.NODE_ENV}
 	<br>
-	<a href="/api/login/google-signin">Google Signin</a>
+	${c.get("USER") ? `<pre>${JSON.stringify(c.get("USER"), null, 2)}</pre>
+		<br>
+		<a href="/api/user/whoami">whoami</a>
+		<br>
+		<a href="/api/user/logout">Logout</a>
+	` : `<a href="/api/login/google-signin">Google Signin</a>
+`}
 `);
 });
 
@@ -47,5 +53,4 @@ serve({
 	port
 });
 
-// TODO: Uncomment this when you want to check migrations
 checkMigrations();

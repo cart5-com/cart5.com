@@ -1,13 +1,25 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"ui": "tui",
-	"globalDependencies": [".env"],
-	"globalEnv": ["SAMPLE_ENV_VAR", "NODE_ENV"],
+	"globalDependencies": [
+		".env"
+	],
+	// "globalEnv": ["SAMPLE_ENV_VAR"],
+	"envMode": "loose", // allow to use machine vars while building and running
 	"tasks": {
 		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+			"dependsOn": [
+				"^build"
+			],
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				".env*"
+			],
+			"outputs": [
+				"dist/**",
+				".next/**",
+				"!.next/cache/**"
+			]
 		},
 		"dev": {
 			"cache": false,

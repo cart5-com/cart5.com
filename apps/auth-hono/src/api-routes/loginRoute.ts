@@ -6,10 +6,12 @@ import { getEnvironmentVariable, IS_PROD } from 'lib/utils/getEnvironmentVariabl
 import { serializeCookie } from 'lib/utils/cookie';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from 'lib/utils/jwt';
 import { GOOGLE_OAUTH_STATE_COOKIE_NAME } from '../consts';
-import { getCookie } from 'hono/cookie';
+import { deleteCookie, getCookie } from 'hono/cookie';
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
+import { createUser, getUserFromGoogleId } from '../lib/user';
+import { createSession, generateSessionToken, setSessionTokenCookie } from '../lib/session';
 
 export const loginRoute = new Hono<honoTypes>()
     .get(
@@ -19,18 +21,23 @@ export const loginRoute = new Hono<honoTypes>()
             const codeVerifier = generateCodeVerifier();
             const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
 
+            console.log("JWT_SECRET", getEnvironmentVariable("JWT_SECRET"));
+            console.log("ENCRYPTION_KEY", getEnvironmentVariable("ENCRYPTION_KEY"));
+            console.log("state", state);
+            console.log("codeVerifier", codeVerifier);
             const jwtString = await signJwtAndEncrypt({ state, codeVerifier },
                 getEnvironmentVariable("JWT_SECRET"),
                 getEnvironmentVariable("ENCRYPTION_KEY")
             );
 
-            c.header("Set-Cookie", serializeCookie(GOOGLE_OAUTH_STATE_COOKIE_NAME, jwtString, {
+            const cookie = serializeCookie(GOOGLE_OAUTH_STATE_COOKIE_NAME, jwtString, {
                 httpOnly: true,
                 path: "/",
                 secure: IS_PROD,
                 sameSite: "lax", // use lax to allow redirects, strict does not allow redirects
-                expires: new Date(Date.now() + (60 * 10))
-            }), { append: true });
+                maxAge: 1
+            });
+            c.header("Set-Cookie", cookie);
 
             return c.redirect(url.toString());
         }
@@ -43,6 +50,7 @@ export const loginRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const jwtString = getCookie(c, GOOGLE_OAUTH_STATE_COOKIE_NAME);
+            deleteCookie(c, GOOGLE_OAUTH_STATE_COOKIE_NAME);
             if (!jwtString) {
                 return new Response("Please restart the process.", {
                     status: 400
@@ -76,26 +84,25 @@ export const loginRoute = new Hono<honoTypes>()
                 });
             }
 
-            const claims = decodeIdToken(tokens.idToken());
+            const claims = decodeIdToken(tokens.idToken()) as { sub: string, name: string, picture: string, email: string };
+            const googleId = claims.sub;
+            const name = claims.name;
+            const picture = claims.picture;
+            const email = claims.email;
 
-            return c.text(JSON.stringify(claims));
-            // const googleId = claims.sub;
-            // const name = claimsParser.getString("name");
-            // const picture = claimsParser.getString("picture");
-            // const email = claimsParser.getString("email");
-
-            // const existingUser = getUserFromGoogleId(googleId);
-            // if (existingUser !== null) {
-            //     const sessionToken = generateSessionToken();
-            //     const session = createSession(sessionToken, existingUser.id);
-            //     setSessionTokenCookie(context, sessionToken, session.expiresAt);
-            //     return context.redirect("/login");
-            // }
-
-            // const user = createUser(googleId, email, name, picture);
-            // const sessionToken = generateSessionToken();
-            // const session = createSession(sessionToken, user.id);
-            // setSessionTokenCookie(context, sessionToken, session.expiresAt);
+            const existingUser = await getUserFromGoogleId(googleId);
+            if (existingUser !== null) {
+                const sessionToken = generateSessionToken();
+                const session = await createSession(sessionToken, existingUser.id);
+                setSessionTokenCookie(c, sessionToken, session.expiresAt);
+                return c.redirect("/");
+            } else {
+                const user = await createUser(googleId, email, name, picture);
+                const sessionToken = generateSessionToken();
+                const session = await createSession(sessionToken, user.id);
+                setSessionTokenCookie(c, sessionToken, session.expiresAt);
+                return c.redirect("/");
+            }
 
         }
     )

@@ -2,7 +2,7 @@
 	"name": "auth-hono",
 	"type": "module",
 	"scripts": {
-		"dev": "./start-local-db.sh && dotenv -e ../../.env -- bash -c 'tsx watch src/index.ts'",
+		"dev": "dotenv -e ../../.env -- bash -c './start-local-db.sh && tsx watch src/index.ts'",
 		"generate:sql": "drizzle-kit generate",
 		"build": "node ./esbuild.cjs",
 		"start": "PORT=5000 node ./dist/index.js"
