@@ -1,9 +1,14 @@
 # cart5.com monorepo
 
-# REQUIREMENTS
+## Requirements for local development
 
-(what I used to develop)
+What I used to develop:
 
-- node = 20.11
-- pnpm = 9.9.0
-- turso cli = 0.97.1 https://docs.turso.tech/cli/introduction
+- Node.js v20.11
+- pnpm v9.9.0
+
+## Cancelled Requirements
+
+Not needed for local development:
+
+- Turso CLI v0.97.1 ([docs](https://docs.turso.tech/cli/introduction))

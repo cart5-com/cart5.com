@@ -1,6 +1,6 @@
 # Hetzner Setup Checklist
 
-https://coolify.io/docs/knowledge-base/server/firewall
+[Coolify Firewall Documentation](https://coolify.io/docs/knowledge-base/server/firewall)
 
 ## Hetzner Firewall Settings
 
@@ -19,3 +19,7 @@ https://coolify.io/docs/knowledge-base/server/firewall
 
 - Enable IPv6 protection
 - Disable IPv6 auto-delete
+
+### Add an Internal Network
+
+Configure servers to use it - [Server Configuration Documentation](https://docs.hetzner.com/cloud/networks/server-configuration/)

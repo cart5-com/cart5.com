@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import type { honoTypes } from '../index'
-import { google } from "../lib/oauth";
+import { getGoogleOAuthHelper } from "../lib/googleOAuthHelper";
 import { generateCodeVerifier, generateState } from "arctic";
 import { getEnvironmentVariable, IS_PROD } from 'lib/utils/getEnvironmentVariable';
 import { serializeCookie } from 'lib/utils/cookie';
@@ -19,7 +19,8 @@ export const loginRoute = new Hono<honoTypes>()
         async (c) => {
             const state = generateState();
             const codeVerifier = generateCodeVerifier();
-            const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
+            const googleOAuthHelper = getGoogleOAuthHelper();
+            const url = googleOAuthHelper.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
 
             const jwtString = await signJwtAndEncrypt({ state, codeVerifier },
                 getEnvironmentVariable("JWT_SECRET"),
@@ -73,7 +74,8 @@ export const loginRoute = new Hono<honoTypes>()
 
             let tokens: OAuth2Tokens;
             try {
-                tokens = await google.validateAuthorizationCode(code, codeVerifier);
+                const googleOAuthHelper = getGoogleOAuthHelper();
+                tokens = await googleOAuthHelper.validateAuthorizationCode(code, codeVerifier);
             } catch (e) {
                 return new Response("Please restart the process.", {
                     status: 400

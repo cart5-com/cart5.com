@@ -2,16 +2,21 @@ import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { resolve, dirname } from "node:path";
 import { getEnvironmentVariable, IS_PROD } from "lib/utils/getEnvironmentVariable";
+import { localDbPath } from "../consts";
 
-const dbUrl = getEnvironmentVariable("TURSO_AUTH_DB_URL");
-const dbToken = getEnvironmentVariable("TURSO_AUTH_DB_TOKEN");
-
-const db = drizzle({
-    connection: {
-        url: dbUrl,
-        authToken: dbToken
-    }
-});
+let db: ReturnType<typeof drizzle>;
+if (IS_PROD) {
+    const dbUrl = getEnvironmentVariable("TURSO_AUTH_DB_URL");
+    const dbToken = getEnvironmentVariable("TURSO_AUTH_DB_TOKEN");
+    db = drizzle({
+        connection: {
+            url: dbUrl,
+            authToken: dbToken
+        }
+    });
+} else {
+    db = drizzle(localDbPath)
+}
 
 
 export const checkMigrations = async () => {

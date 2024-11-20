@@ -1,5 +1,6 @@
-mkdir -p turso-db && turso dev --port 8022 --db-file ./turso-db/turso-db.db & 
-echo "Started turso-db for apps/auth-hono"
+# disable this for now, we do not need for local development
+# mkdir -p turso-db && turso dev --port 8022 --db-file ./turso-db/turso-db.db & 
+# echo "Started turso-db for apps/auth-hono"
 
 
 drizzle-kit studio --port=7022 --config=./drizzle.config.ts &
