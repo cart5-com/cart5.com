@@ -34,7 +34,7 @@ app.get("/", (c) => {
 		<a href="/api/user/whoami">whoami</a>
 		<br>
 		<a href="/api/user/logout">Logout</a>
-	` : `<a href="/api/login/google-signin">Google Signin</a>
+	` : `<a href="/__p/api/login/google-signin">Google Signin</a>
 `}
 `);
 });
@@ -43,7 +43,7 @@ const routes = app.basePath('/api')
 	.route('/user', userRoute)
 	.route('/login', loginRoute)
 
-export type AppType = typeof routes;
+export type AuthAppType = typeof routes;
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 console.log(`Server is running on http://localhost:${port}`);

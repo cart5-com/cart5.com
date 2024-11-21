@@ -18,7 +18,8 @@ export const userRoute = new Hono<honoTypes>()
         '/whoami',
         async (c) => {
             return c.json({
-                data: c.get('USER')
+                data: c.get('USER'),
+                error: null
             }, 200);
         }
     )

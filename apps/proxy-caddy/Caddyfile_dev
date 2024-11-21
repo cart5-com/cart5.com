@@ -1,0 +1,13 @@
+https://auth.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	handle_path /__p/* {
+		reverse_proxy http://localhost:3000 {
+			# sample
+		}
+	}
+	handle_path /* {
+		reverse_proxy http://localhost:3001 {
+			# sample
+		}
+	}
+}

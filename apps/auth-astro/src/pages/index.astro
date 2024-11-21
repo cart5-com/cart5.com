@@ -1,0 +1,43 @@
+---
+
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/ico" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Astro</h1>
+		<div id="user-info"></div>
+		<script>
+			import { createAuthApiClient } from "lib/apiClients/authApiClient";
+			const authApiClient = createAuthApiClient(`${window.location.origin}/__p/`);
+			async function whoami() {
+				const { data, error } = await (await authApiClient.api.user.whoami.$get()).json();
+				window.user = data;
+				const userInfo = document.querySelector<HTMLDivElement>("#user-info");
+				if (userInfo) {
+					if (data) {
+						userInfo.innerHTML =
+							`<pre>${JSON.stringify(window.user?.email, null, 2)}</pre>` +
+							`<a 
+								href="${authApiClient.api.user.logout.$url().href}">
+									Signout
+							</a>`;
+					} else {
+						userInfo.innerHTML = `<a 
+								href="${authApiClient.api.login["google-signin"].$url().href}">
+									<img src="/google-mini.svg" width="40px" alt="Google Signin" />
+									Google Signin
+							</a>`;
+					}
+				}
+			}
+			whoami();
+		</script>
+	</body>
+</html>
