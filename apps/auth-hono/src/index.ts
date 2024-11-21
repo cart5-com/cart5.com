@@ -25,11 +25,7 @@ app.use(auth);
 
 app.get("/", (c) => {
 	return c.html(`
-    Hello Hono! SAMPLE_ENV_VAR:${process.env.SAMPLE_ENV_VAR}
-	<br>
-    VITE_HELLO:${process.env.VITE_HELLO}
-	<br>
-    PRIVATE_HELLO:${process.env.PRIVATE_HELLO}
+    Hello Hono!
 	<br>
 	NODE_ENV: ${process.env.NODE_ENV}
 	<br>
