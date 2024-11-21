@@ -4,7 +4,7 @@
     # Which nixpkgs channel to use.
     channel = "stable-24.05"; # or "unstable"
     # Use https: //search.nixos.org/packages to find packages
-    packages = [ pkgs.nodejs_20 pkgs.pnpm pkgs.xcaddy pkgs.turso-cli ];
+    packages = [ pkgs.nodejs_20 pkgs.pnpm pkgs.xcaddy pkgs.turso-cli pkgs.ansible ];
     # Sets environment variables in the workspace
     env = {};
     idx = {
