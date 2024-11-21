@@ -5,7 +5,7 @@
 		"dev": "dotenv -e ../../.env -- bash -c './start-local-db.sh && tsx watch src/index.ts'",
 		"generate:sql": "drizzle-kit generate",
 		"build": "node ./esbuild.cjs",
-		"start": "PORT=5001 node ./dist/index.js"
+		"start": "PORT=5000 node ./dist/index.js"
 	},
 	"dependencies": {
 		"@hono/node-server": "^1.13.7",
