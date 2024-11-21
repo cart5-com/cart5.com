@@ -8,8 +8,6 @@ console.log(import.meta.env.HELLO)
 console.log("import.meta.env.VITE_HELLO")
 console.log(import.meta.env.VITE_HELLO)
 
-
-
 console.log("import.meta.env.SAMPLE_ENV_VAR")
 console.log(import.meta.env.SAMPLE_ENV_VAR)
 
