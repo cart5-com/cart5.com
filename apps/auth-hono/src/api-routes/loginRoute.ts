@@ -22,7 +22,10 @@ export const loginRoute = new Hono<honoTypes>()
             const googleOAuthHelper = getGoogleOAuthHelper();
             const url = googleOAuthHelper.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
 
-            const jwtString = await signJwtAndEncrypt({ state, codeVerifier },
+            const jwtString = await signJwtAndEncrypt({
+                state, codeVerifier,
+                exp: Math.floor(Date.now() / 1000) + 600
+            },
                 getEnvironmentVariable("JWT_SECRET"),
                 getEnvironmentVariable("ENCRYPTION_KEY")
             );

@@ -6,7 +6,7 @@ import { getEnvironmentVariable } from "./getEnvironmentVariable";
 // check environment variable
 const key = getEnvironmentVariable("JWT_SECRET");
 
-export const signJWT = (payloadParam: object, JWT_SECRET: string) => {
+export const signJWT = (payloadParam: JWTPayload, JWT_SECRET: string) => {
     if (!payloadParam.hasOwnProperty("exp")) {
         const payload: JWTPayload = {
             ...payloadParam,
@@ -23,7 +23,7 @@ export const verifyJWT = <T>(token: string, JWT_SECRET: string): T => {
 };
 
 export const signJwtAndEncrypt = async (
-    payloadParam: object,
+    payloadParam: JWTPayload,
     JWT_SECRET: string,
     ENCRYPTION_KEY: string
 ): Promise<string> => {

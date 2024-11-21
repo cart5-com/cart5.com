@@ -5,6 +5,9 @@ const key = getEnvironmentVariable("ENCRYPTION_KEY");
 const IV_LENGTH = 16; // Updated to 16 bytes
 async function importKeyFromBase64(base64Key: string): Promise<CryptoKey> {
 	const rawKey = base64ToUint8Array(base64Key);
+	if (rawKey.length !== 32) {
+		throw new Error('Key must be exactly 32 bytes (256 bits)');
+	}
 	return await crypto.subtle.importKey(
 		'raw',
 		rawKey,
