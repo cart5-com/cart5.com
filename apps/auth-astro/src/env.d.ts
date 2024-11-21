@@ -1,5 +1,5 @@
 /// <reference path="../.astro/types.d.ts" />
 
 interface Window {
-    user: import("lib/apiClients/authApiClient").User | null;
+    user: import("lib/apiClients/authApiClient").User;
 }
