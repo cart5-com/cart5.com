@@ -4,12 +4,12 @@
     # Which nixpkgs channel to use.
     channel = "stable-24.05"; # or "unstable"
     # Use https: //search.nixos.org/packages to find packages
-    packages = [ pkgs.nodejs_20, pkgs.pnpm, pkgs.xcaddy, pkgs.turso-cli ];
+    packages = [ pkgs.nodejs_20 pkgs.pnpm pkgs.xcaddy pkgs.turso-cli ];
     # Sets environment variables in the workspace
     env = {};
     idx = {
         # Search for the extensions you want on https: //open-vsx.org/ and use "publisher.id"
-        extensions = ["astro-build.astro-vscode", "Vue.volar"];
+        extensions = ["astro-build.astro-vscode" "Vue.volar"];
         workspace = {
             # Runs when a workspace is first created with this `dev.nix` file
             onCreate = {
