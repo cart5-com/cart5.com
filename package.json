@@ -5,10 +5,8 @@
 		"preinstall": "npx only-allow pnpm",
 		"dev": "turbo dev --ui=stream",
 		"postdev": "./scripts/kill-ports.sh",
-		"__build": "printenv && sleep 2",
-		"__start": "printenv && sleep 120",
-		"build": "printenv && sleep 1 && turbo run build",
-		"start": "printenv && sleep 1 && turbo run start",
+		"build": "turbo run build",
+		"start": "turbo run start",
 		"preview": "dotenv -e ./.env.prod -- bash -c 'turbo run start --env-mode=loose'",
 		"format": "prettier --write \"**/*.{ts,tsx,md,astro,vue}\""
 	},
