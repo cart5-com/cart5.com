@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+
 import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 const app = new Hono()
 
@@ -43,11 +44,6 @@ generateKey:${generateKey('hello')}
 `)
 })
 
-export default app
-
-
-
-
 export const generateKey = (prefix = 'np', size = 24) => {
     return `${prefix}_${generateIdFromEntropySize(size)}`;
 }
@@ -56,3 +52,7 @@ export function generateIdFromEntropySize(size: number) {
     const buffer = crypto.getRandomValues(new Uint8Array(size));
     return encodeBase32LowerCaseNoPadding(buffer);
 }
+const port = import.meta.env.PORT ? parseInt(import.meta.env.PORT) : 4001;
+console.log(`Server is running on http://localhost:${port}`);
+
+export default app

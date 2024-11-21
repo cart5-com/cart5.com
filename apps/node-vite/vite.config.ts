@@ -5,7 +5,18 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
     plugins: [
-        build(),
+        build({
+            entry: ['src/index.ts',
+                // './src/index.tsx',
+                // './app/server.ts'
+            ],
+            output: 'index.js',
+            outputDir: './dist',
+            external: [],
+            minify: true,
+            emptyOutDir: false,
+            staticPaths: [],
+        }),
         devServer({
             adapter,
             entry: './src/index.ts'
