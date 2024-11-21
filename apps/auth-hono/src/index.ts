@@ -27,6 +27,10 @@ app.get("/", (c) => {
 	return c.html(`
     Hello Hono! SAMPLE_ENV_VAR:${process.env.SAMPLE_ENV_VAR}
 	<br>
+    VITE_HELLO:${process.env.VITE_HELLO}
+	<br>
+    PRIVATE_HELLO:${process.env.PRIVATE_HELLO}
+	<br>
 	NODE_ENV: ${process.env.NODE_ENV}
 	<br>
 	${c.get("USER") ? `<pre>${JSON.stringify(c.get("USER"), null, 2)}</pre>
