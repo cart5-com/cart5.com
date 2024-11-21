@@ -22,7 +22,7 @@ if (IS_PROD) {
 export const checkMigrations = async () => {
     console.log("Checking migrations...");
     const __dirname = dirname(new URL(import.meta.url).pathname);
-    const path = IS_PROD ? "../src/db/sql-gen" : "./sql-gen";
+    const path = IS_PROD ? "../src/db/generated-sql" : "./generated-sql";
     console.log("Migrations path:", path);
     await migrate(db, { migrationsFolder: resolve(__dirname, path) });
     console.log("Migrations checked");

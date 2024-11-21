@@ -7,7 +7,7 @@ if (IS_PROD) {
 	const url = getEnvironmentVariable("TURSO_AUTH_DB_URL");
 	const authToken = getEnvironmentVariable("TURSO_AUTH_DB_TOKEN");
 	config = defineConfig({
-		out: "./src/db/sql-gen",
+		out: "./src/db/generated-sql",
 		schema: "./src/db/schema.ts",
 		dialect: "turso",
 		dbCredentials: {
@@ -17,7 +17,7 @@ if (IS_PROD) {
 	});
 } else {
 	config = defineConfig({
-		out: "./src/db/sql-gen",
+		out: "./src/db/generated-sql",
 		schema: "./src/db/schema.ts",
 		dialect: "sqlite",
 		dbCredentials: { url: localDbPath }
