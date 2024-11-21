@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^22.9.0
-        version: 22.9.0
+        version: 22.9.1
       dotenv-cli:
         specifier: ^7.4.3
         version: 7.4.3
@@ -25,7 +25,7 @@ importers:
         version: 0.14.1
       prettier-plugin-tailwindcss:
         specifier: ^0.6.8
-        version: 0.6.8(prettier-plugin-astro@0.14.1)(prettier@3.3.3)
+        version: 0.6.9(prettier-plugin-astro@0.14.1)(prettier@3.3.3)
       prettier-plugin-vue:
         specifier: ^1.1.6
         version: 1.1.6
@@ -43,10 +43,10 @@ importers:
     dependencies:
       '@hono/node-server':
         specifier: ^1.13.7
-        version: 1.13.7(hono@4.6.10)
+        version: 1.13.7(hono@4.6.11)
       '@hono/zod-validator':
         specifier: ^0.4.1
-        version: 0.4.1(hono@4.6.10)(zod@3.23.8)
+        version: 0.4.1(hono@4.6.11)(zod@3.23.8)
       '@libsql/client':
         specifier: ^0.14.0
         version: 0.14.0
@@ -67,7 +67,7 @@ importers:
         version: 0.36.3(@libsql/client@0.14.0)
       hono:
         specifier: ^4.6.10
-        version: 4.6.10
+        version: 4.6.11
       lib:
         specifier: workspace:*
         version: link:../../packages/lib
@@ -77,7 +77,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^22.9.0
-        version: 22.9.0
+        version: 22.9.1
       drizzle-kit:
         specifier: ^0.28.1
         version: 0.28.1
@@ -104,7 +104,7 @@ importers:
         version: 1.1.0
       '@types/node':
         specifier: ^22.9.0
-        version: 22.9.0
+        version: 22.9.1
       dotenv-cli:
         specifier: ^7.4.3
         version: 7.4.3
@@ -113,7 +113,7 @@ importers:
         version: 4.6.11
       vite:
         specifier: ^5.2.12
-        version: 5.4.11(@types/node@22.9.0)
+        version: 5.4.11(@types/node@22.9.1)
 
   packages/lib:
     dependencies:
@@ -122,7 +122,7 @@ importers:
         version: 1.1.0
       hono:
         specifier: ^4.6.10
-        version: 4.6.10
+        version: 4.6.11
 
 packages:
 
@@ -916,6 +916,7 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.2':
     resolution: {integrity: sha512-KKIM7vI15/1P0U31/eL5kgkPktarXyoKRM9meP/vNDNixlU5GL+D8GLT5FCTMNhtM+BnDiUN7umakhl5XfOqzg==}
+    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
@@ -1051,8 +1052,8 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/node@22.9.0':
-    resolution: {integrity: sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ==}
+  '@types/node@22.9.1':
+    resolution: {integrity: sha512-p8Yy/8sw1caA8CdRIQBG5tiLHmxtQKObCijiAa9Ez+d4+PRffM4054xbju0msf+cvhJpnFEeNjxmVT/0ipktrg==}
 
   '@types/ws@8.5.13':
     resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
@@ -1419,10 +1420,6 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.6.10:
-    resolution: {integrity: sha512-IXXNfRAZEahFnWBhUUlqKEGF9upeE6hZoRZszvNkyAz/CYp+iVbxm3viMvStlagRJohjlBRGOQ7f4jfcV0XMGg==}
-    engines: {node: '>=16.9.0'}
-
   hono@4.6.11:
     resolution: {integrity: sha512-f0LwJQFKdUUrCUAVowxSvNCjyzI7ZLt8XWYU/EApyeq5FfOvHFarBaE5rjU9HTNFk4RI0FkdB2edb3p/7xZjzQ==}
     engines: {node: '>=16.9.0'}
@@ -1512,6 +1509,7 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   load-json-file@4.0.0:
@@ -1625,8 +1623,8 @@ packages:
     resolution: {integrity: sha512-RiBETaaP9veVstE4vUwSIcdATj6dKmXljouXc/DDNwBSPTp8FRkLGDSGFClKsAFeeg+13SB0Z1JZvbD76bigJw==}
     engines: {node: ^14.15.0 || >=16.0.0}
 
-  prettier-plugin-tailwindcss@0.6.8:
-    resolution: {integrity: sha512-dGu3kdm7SXPkiW4nzeWKCl3uoImdd5CTZEJGxyypEPL37Wj0HT2pLqjrvSei1nTeuQfO4PUfjeW5cTUNRLZ4sA==}
+  prettier-plugin-tailwindcss@0.6.9:
+    resolution: {integrity: sha512-r0i3uhaZAXYP0At5xGfJH876W3HHGHDp+LCRUJrs57PBeQ6mYHMwr25KH8NPX44F2yGTvdnH7OqCshlQx183Eg==}
     engines: {node: '>=14.21.3'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
@@ -2337,10 +2335,6 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  '@hono/node-server@1.13.7(hono@4.6.10)':
-    dependencies:
-      hono: 4.6.10
-
   '@hono/node-server@1.13.7(hono@4.6.11)':
     dependencies:
       hono: 4.6.11
@@ -2355,9 +2349,9 @@ snapshots:
       hono: 4.6.11
       minimatch: 9.0.5
 
-  '@hono/zod-validator@0.4.1(hono@4.6.10)(zod@3.23.8)':
+  '@hono/zod-validator@0.4.1(hono@4.6.11)(zod@3.23.8)':
     dependencies:
-      hono: 4.6.10
+      hono: 4.6.11
       zod: 3.23.8
 
   '@libsql/client@0.14.0':
@@ -2503,13 +2497,13 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/node@22.9.0':
+  '@types/node@22.9.1':
     dependencies:
       undici-types: 6.19.8
 
   '@types/ws@8.5.13':
     dependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
 
   ansi-styles@3.2.1:
     dependencies:
@@ -2967,8 +2961,6 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.6.10: {}
-
   hono@4.6.11: {}
 
   hosted-git-info@2.8.9: {}
@@ -3175,7 +3167,7 @@ snapshots:
       prettier: 3.3.3
       sass-formatter: 0.7.9
 
-  prettier-plugin-tailwindcss@0.6.8(prettier-plugin-astro@0.14.1)(prettier@3.3.3):
+  prettier-plugin-tailwindcss@0.6.9(prettier-plugin-astro@0.14.1)(prettier@3.3.3):
     dependencies:
       prettier: 3.3.3
     optionalDependencies:
@@ -3445,13 +3437,13 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  vite@5.4.11(@types/node@22.9.0):
+  vite@5.4.11(@types/node@22.9.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.49
       rollup: 4.27.3
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.9.1
       fsevents: 2.3.3
 
   wait-on@8.0.1:
