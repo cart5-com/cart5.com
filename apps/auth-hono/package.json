@@ -6,24 +6,25 @@
 		"dev:db:studio": "dotenv -e ../../.env -- sh ./start-local-db.sh",
 		"dev:hono": "dotenv -e ../../.env -- tsx watch src/index.ts",
 		"generate:sql": "drizzle-kit generate",
-		"build": "node ./esbuild.cjs",
-		"start": "node ./dist/index.js"
+		"build": "rm -rf ./dist && node ./esbuild.cjs",
+		"preview": "dotenv -e ../../.env.prod -- bash -c 'node ./dist/index.js'"
 	},
 	"dependencies": {
 		"@hono/node-server": "^1.13.7",
 		"@hono/zod-validator": "^0.4.1",
 		"@libsql/client": "^0.14.0",
+		"@libsql/darwin-arm64": "0.5.0-pre.2",
 		"@libsql/linux-x64-gnu": "0.5.0-pre.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"@types/node": "^22.9.0",
 		"arctic": "^2.2.2",
+		"drizzle-kit": "^0.28.1",
 		"drizzle-orm": "^0.36.3",
+		"esbuild": "^0.24.0",
 		"hono": "^4.6.10",
 		"lib": "workspace:*",
-		"zod": "^3.23.8",
-		"@types/node": "^22.9.0",
-		"drizzle-kit": "^0.28.1",
-		"esbuild": "^0.24.0",
-		"tsx": "^4.19.2"
+		"tsx": "^4.19.2",
+		"zod": "^3.23.8"
 	}
 }

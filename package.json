@@ -6,8 +6,7 @@
 		"dev": "turbo dev --ui=stream",
 		"postdev": "./scripts/kill-ports.sh",
 		"build": "turbo run build",
-		"start": "turbo run start",
-		"preview": "dotenv -e ./.env.prod -- bash -c 'turbo run start --env-mode=loose'",
+		"preview": "turbo run preview",
 		"format": "prettier --write \"**/*.{ts,tsx,md,astro,vue}\""
 	},
 	"dependencies": {

@@ -50,6 +50,9 @@ importers:
       '@libsql/client':
         specifier: ^0.14.0
         version: 0.14.0
+      '@libsql/darwin-arm64':
+        specifier: 0.5.0-pre.2
+        version: 0.5.0-pre.2
       '@libsql/linux-x64-gnu':
         specifier: 0.5.0-pre.2
         version: 0.5.0-pre.2
@@ -696,6 +699,11 @@ packages:
 
   '@libsql/darwin-arm64@0.4.7':
     resolution: {integrity: sha512-yOL742IfWUlUevnI5PdnIT4fryY3LYTdLm56bnY0wXBw7dhFcnjuA7jrH3oSVz2mjZTHujxoITgAE7V6Z+eAbg==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@libsql/darwin-arm64@0.5.0-pre.2':
+    resolution: {integrity: sha512-jLKZSKM+6f/3qH12MyUGaa/zq84myQWLqsRzGkEccpKX5+xY/mYP9t9LYwDF/V8ciPQ1SvfNikkdLNkqViYYAw==}
     cpu: [arm64]
     os: [darwin]
 
@@ -1950,6 +1958,8 @@ snapshots:
 
   '@libsql/darwin-arm64@0.4.7':
     optional: true
+
+  '@libsql/darwin-arm64@0.5.0-pre.2': {}
 
   '@libsql/darwin-x64@0.4.7':
     optional: true

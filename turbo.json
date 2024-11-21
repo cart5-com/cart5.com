@@ -5,7 +5,7 @@
 		".env"
 	],
 	// "globalEnv": ["SAMPLE_ENV_VAR"],
-	"envMode": "loose", // allow to use machine vars while building and running
+	// "envMode": "loose", // allow to use machine vars while building and running
 	"tasks": {
 		"build": {
 			"dependsOn": [
@@ -25,7 +25,7 @@
 			"cache": false,
 			"persistent": true
 		},
-		"start": {
+		"preview": {
 			"cache": false,
 			"persistent": true
 		}
