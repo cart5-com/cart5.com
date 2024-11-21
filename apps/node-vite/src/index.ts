@@ -2,9 +2,6 @@ import { Hono } from 'hono'
 import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 const app = new Hono()
 
-console.log("import.meta.env.HELLO")
-console.log(import.meta.env.HELLO)
-
 console.log("import.meta.env.VITE_HELLO")
 console.log(import.meta.env.VITE_HELLO)
 
