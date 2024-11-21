@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite --port=4001",
-		"build": "rm -rf dist && vite build",
+		"build": "rm -rf dist && PORT=4001 vite build",
 		"start": "PORT=4001 node dist/index.js"
 	},
 	"dependencies": {
