@@ -79,7 +79,7 @@ export function deleteSessionTokenCookie(c: Context): void {
         path: "/",
         secure: IS_PROD,
         sameSite: "strict",
-        expires: new Date(0)
+        maxAge: 0,
     }), { append: true });
 }
 
