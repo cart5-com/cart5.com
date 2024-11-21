@@ -13,7 +13,7 @@
         workspace = {
             # Runs when a workspace is first created with this `dev.nix` file
             onCreate = {
-                install = ''pnpm ci --prefer-offline --no-audit --no-progress --timing || pnpm i --no-audit --no-progress --timing'';
+                install = ''pnpm install'';
                 # Open editors for the following files by default, if they exist:
                 default.openFiles = [
                     # "apps/web-astro/src/pages/index.astro"
