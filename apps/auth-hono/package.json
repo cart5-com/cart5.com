@@ -18,9 +18,7 @@
 		"drizzle-orm": "^0.36.3",
 		"hono": "^4.6.10",
 		"lib": "workspace:*",
-		"zod": "^3.23.8"
-	},
-	"devDependencies": {
+		"zod": "^3.23.8",
 		"@types/node": "^22.9.0",
 		"drizzle-kit": "^0.28.1",
 		"esbuild": "^0.24.0",

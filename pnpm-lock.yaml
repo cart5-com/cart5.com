@@ -7,7 +7,7 @@ settings:
 importers:
 
   .:
-    devDependencies:
+    dependencies:
       '@types/node':
         specifier: ^22.9.0
         version: 22.9.0
@@ -56,34 +56,33 @@ importers:
       '@oslojs/encoding':
         specifier: ^1.1.0
         version: 1.1.0
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
       arctic:
         specifier: ^2.2.2
         version: 2.2.2
+      drizzle-kit:
+        specifier: ^0.28.1
+        version: 0.28.1
       drizzle-orm:
         specifier: ^0.36.3
         version: 0.36.3(@libsql/client@0.14.0)
+      esbuild:
+        specifier: ^0.24.0
+        version: 0.24.0
       hono:
         specifier: ^4.6.10
         version: 4.6.10
       lib:
         specifier: workspace:*
         version: link:../../packages/lib
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
-    devDependencies:
-      '@types/node':
-        specifier: ^22.9.0
-        version: 22.9.0
-      drizzle-kit:
-        specifier: ^0.28.1
-        version: 0.28.1
-      esbuild:
-        specifier: ^0.24.0
-        version: 0.24.0
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
 
   packages/lib:
     dependencies:
