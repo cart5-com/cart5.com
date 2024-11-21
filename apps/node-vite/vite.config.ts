@@ -11,6 +11,7 @@ export default defineConfig({
       entry: './src/index.ts'
     })
   ],
+  envDir: '../../',
   ssr: {
     external: [
       // '@libsql/client',
