@@ -14,6 +14,9 @@ import { createUser, getUserFromGoogleId } from '../lib/user';
 import { createSession, generateSessionToken, setSessionTokenCookie } from '../lib/session';
 
 export const loginRoute = new Hono<honoTypes>()
+    .get('/handle-redirect-login-btn', (c) => {
+        return c.text("handle-redirect-login-btn");
+    })
     .get(
         '/google-signin',
         async (c) => {
