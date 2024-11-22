@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "astro": "^4.16.13",
+    "astro": "^4.16.14",
     "lib": "workspace:*",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }

@@ -1,6 +1,5 @@
 import { serve, type HttpBindings } from '@hono/node-server'
 import { Hono } from "hono";
-import { checkMigrations } from "./db/drizzle.js";
 import { csrf } from "./middlewares/csrf";
 import type { Session } from './lib/session.js';
 import type { User } from './lib/user.js';
@@ -52,5 +51,3 @@ serve({
 	fetch: app.fetch,
 	port
 });
-
-checkMigrations();

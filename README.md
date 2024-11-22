@@ -17,5 +17,5 @@ Not needed for local development:
 ## Hosts file to use https with caddy proxy
 
 ```
-127.0.0.1 auth.cart5.dev
+127.0.0.1 auth.cart5dev.com
 ```

@@ -25,7 +25,12 @@ export const checkMigrations = async () => {
     const path = IS_PROD ? "../src/db/generated-sql" : "./generated-sql";
     console.log("Migrations path:", path);
     await migrate(db, { migrationsFolder: resolve(__dirname, path) });
-    console.log("Migrations checked");
+    console.log("Migrations completed");
 };
 
 export default db;
+
+if (getEnvironmentVariable("AUTO_MIGRATE_DB") === "1") {
+    console.log("Auto migrate enabled...");
+    checkMigrations();
+}
