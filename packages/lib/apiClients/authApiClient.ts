@@ -1,5 +1,5 @@
-// it is only type so it is not necessary to import the whole auth-hono app here
-import type { AuthAppType } from '../../../apps/auth-hono/src/index'
+// it is only type so it is not necessary to import the whole authapi-hono app here
+import type { AuthAppType } from '../../../apps/authapi-hono/src/index'
 import { hc } from 'hono/client'
 import type { InferRequestType, InferResponseType } from 'hono/client'
 

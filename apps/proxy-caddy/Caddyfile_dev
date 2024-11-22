@@ -1,13 +1,23 @@
+https://authapi-hono.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	reverse_proxy http://localhost:3000
+}
+https://auth-astro-ssg.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	reverse_proxy http://localhost:3001
+}
+https://store-astro-ssr.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	reverse_proxy http://localhost:3002
+}
 https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
 	handle_path /__p/* {
-		reverse_proxy http://localhost:3000 {
-			# sample
-		}
+		reverse_proxy http://localhost:3000
+		# reverse_proxy https://authapi-hono.{$PUBLIC_DOMAIN_NAME} #PROD
 	}
 	handle_path /* {
-		reverse_proxy http://localhost:3001 {
-			# sample
-		}
+		reverse_proxy http://localhost:3001
+		# reverse_proxy https://auth-astro-ssg.{$PUBLIC_DOMAIN_NAME}:443 #PROD
 	}
 }

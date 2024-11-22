@@ -1,5 +1,5 @@
 {
-	"name": "auth-hono",
+	"name": "authapi-hono",
 	"type": "module",
 	"scripts": {
 		"dev": "pnpm dev:db:studio && pnpm dev:hono",

@@ -11,7 +11,7 @@ require("esbuild").build({
         // Put the Sentry esbuild plugin after all other plugins
         // sentryEsbuildPlugin({
         //     authToken: process.env.SENTRY_AUTH_TOKEN,
-        //     project: "auth-hono",
+        //     project: "authapi-hono",
         // }),
     ],
     // Add the following lines
