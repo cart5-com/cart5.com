@@ -17,11 +17,7 @@ Not needed for local development:
 ## Hosts file to use https with caddy proxy
 
 ```
-127.0.0.1 authapi-hono.cart5dev.com
-127.0.0.1 auth-astro-ssg.cart5dev.com
 127.0.0.1 auth.cart5dev.com
-
-127.0.0.1 store-astro-ssr.cart5dev.com
-
-127.0.0.1 sample-store-1.cart5dev.com
+127.0.0.1 sample-store-1.com
+127.0.0.1 www.sample-store-1.com
 ```

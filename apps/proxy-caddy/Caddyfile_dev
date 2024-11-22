@@ -1,23 +1,30 @@
-https://authapi-hono.{$PUBLIC_DOMAIN_NAME} {
-	tls internal
-	reverse_proxy http://localhost:3000
+(authapi-hono-handler) {
+	handle_path /__p_auth/* {
+		#authapi-hono
+		reverse_proxy http://localhost:3000
+	}
 }
-https://auth-astro-ssg.{$PUBLIC_DOMAIN_NAME} {
-	tls internal
-	reverse_proxy http://localhost:3001
+
+:80 {
+	redir https://{host}{uri}
 }
-https://store-astro-ssr.{$PUBLIC_DOMAIN_NAME} {
-	tls internal
-	reverse_proxy http://localhost:3002
-}
+
 https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
-	handle_path /__p_auth/* {
-		reverse_proxy http://localhost:3000
-		# reverse_proxy https://authapi-hono.{$PUBLIC_DOMAIN_NAME} #PROD
-	}
+	import authapi-hono-handler
 	handle_path /* {
+		#auth-astro-ssg
 		reverse_proxy http://localhost:3001
-		# reverse_proxy https://auth-astro-ssg.{$PUBLIC_DOMAIN_NAME}:443 #PROD
+	}
+}
+
+sample-store-1.com,
+www.sample-store-1.com,
+:443 {
+	tls internal
+	import authapi-hono-handler
+	handle_path /* {
+		#store-astro-ssr
+		reverse_proxy http://localhost:3002
 	}
 }
