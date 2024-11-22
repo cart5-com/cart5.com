@@ -12,7 +12,7 @@ https://store-astro-ssr.{$PUBLIC_DOMAIN_NAME} {
 }
 https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
-	handle_path /__p/* {
+	handle_path /__p_auth/* {
 		reverse_proxy http://localhost:3000
 		# reverse_proxy https://authapi-hono.{$PUBLIC_DOMAIN_NAME} #PROD
 	}

@@ -33,7 +33,7 @@ app.get("/", (c) => {
 		<a href="/api/user/whoami">whoami</a>
 		<br>
 		<a href="/api/user/logout">Logout</a>
-	` : `<a href="/__p/api/login/google-signin">Google Signin</a>
+	` : `<a href="/__p_auth/api/login/google-signin">Google Signin</a>
 `}
 `);
 });

@@ -20,5 +20,8 @@ Not needed for local development:
 127.0.0.1 authapi-hono.cart5dev.com
 127.0.0.1 auth-astro-ssg.cart5dev.com
 127.0.0.1 auth.cart5dev.com
+
 127.0.0.1 store-astro-ssr.cart5dev.com
+
+127.0.0.1 sample-store-1.cart5dev.com
 ```

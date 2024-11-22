@@ -5,7 +5,7 @@
 // }
 // const host = Astro.request.headers.get("host");
 // const protocol = Astro.request.headers.get("x-forwarded-proto") ?? "http";
-// const authRequest = new Request(`${protocol}://${host}/__p/api/user/whoami`, {
+// const authRequest = new Request(`${protocol}://${host}/__p_auth/api/user/whoami`, {
 // 	headers: Astro.request.headers
 // });
 
@@ -32,7 +32,7 @@
 
 		<script>
 			import { createAuthApiClient } from "lib/apiClients/authApiClient";
-			const authApiClient = createAuthApiClient(`${window.location.origin}/__p/`);
+			const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
 			async function whoami() {
 				const { data, error } = await (await authApiClient.api.user.whoami.$get()).json();
 				window.user = data;
