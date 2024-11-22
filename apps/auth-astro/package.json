@@ -10,9 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.16.13",
     "@astrojs/check": "^0.9.4",
-    "typescript": "^5.6.3",
-    "lib": "workspace:*"
+    "astro": "^4.16.13",
+    "lib": "workspace:*",
+    "typescript": "^5.6.3"
   }
 }
