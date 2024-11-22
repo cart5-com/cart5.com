@@ -33,3 +33,22 @@ export const auth = createMiddleware(async (c, next) => {
 //     }
 //     return token ?? null;
 // }
+
+
+// // If required we can get the user info from SSR
+// if (import.meta.env.DEV) {
+// 	process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// }
+// const host = Astro.request.headers.get("host");
+// const protocol = Astro.request.headers.get("x-forwarded-proto") ?? "http";
+// const authRequest = new Request(`${protocol}://${host}/__p_auth/api/user/whoami`, {
+// 	headers: Astro.request.headers
+// });
+
+// const response = await fetch(authRequest);
+// const sessionCookie = response.headers.get("set-cookie");
+// if (sessionCookie) {
+// 	Astro.response.headers.set("Set-Cookie", sessionCookie);
+// }
+// const { data: serverSideUser } = await response.json();
+// console.log(serverSideUser);
