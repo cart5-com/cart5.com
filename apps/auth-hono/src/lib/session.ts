@@ -6,8 +6,10 @@ import { session, user } from "../db/schema";
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { SESSION_COOKIE_NAME } from "../consts";
-import { IS_PROD } from "lib/utils/getEnvironmentVariable";
 import { serializeCookie } from "lib/utils/cookie";
+
+const _15_DAYS_IN_MS = 60e3 * 60 * 24 * 15;
+const _30_DAYS_IN_MS = _15_DAYS_IN_MS * 2;
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
@@ -26,7 +28,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         .get();
 
     if (!row) {
-        return { session: null, user: null };
+        return { session: null, user: null, isSessionUpdated: false };
     }
     const sessionData: Session = {
         id: row.id,
@@ -40,19 +42,21 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         name: row.name,
         picture: row.picture || undefined
     };
+    let isSessionUpdated = false;
     if (Date.now() >= sessionData.expiresAt.getTime()) {
         // if session expired, delete it
         await db.delete(session).where(eq(session.id, sessionId));
-        return { session: null, user: null };
+        return { session: null, user: null, isSessionUpdated: false };
     }
-    if (Date.now() >= sessionData.expiresAt.getTime() - (60 * 60 * 24 * 15)) {
+    if (Date.now() >= sessionData.expiresAt.getTime() - _15_DAYS_IN_MS) {
         // if less than 15 days left, refresh for 30 days
-        sessionData.expiresAt = new Date(Date.now() + (60 * 60 * 24 * 30));
+        sessionData.expiresAt = new Date(Date.now() + _30_DAYS_IN_MS);
         await db.update(session).set({
             expiresAt: sessionData.expiresAt.getTime()
         }).where(eq(session.id, sessionId));
+        isSessionUpdated = true;
     }
-    return { session: sessionData, user: userData };
+    return { session: sessionData, user: userData, isSessionUpdated };
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
@@ -67,7 +71,8 @@ export function setSessionTokenCookie(c: Context, token: string, expiresAt: Date
     c.header("Set-Cookie", serializeCookie(SESSION_COOKIE_NAME, token, {
         httpOnly: true,
         path: "/",
-        secure: IS_PROD,
+        // secure: IS_PROD,
+        secure: true, // using https in dev
         sameSite: "strict",
         expires: expiresAt
     }), { append: true });
@@ -77,7 +82,8 @@ export function deleteSessionTokenCookie(c: Context): void {
     c.header("Set-Cookie", serializeCookie(SESSION_COOKIE_NAME, "", {
         httpOnly: true,
         path: "/",
-        secure: IS_PROD,
+        // secure: IS_PROD,
+        secure: true, // using https in dev
         sameSite: "strict",
         maxAge: 0,
     }), { append: true });
@@ -112,4 +118,6 @@ export interface Session {
     userId: string;
 }
 
-type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+type SessionValidationResult =
+    { session: Session; user: User, isSessionUpdated: boolean } |
+    { session: null; user: null, isSessionUpdated: boolean };

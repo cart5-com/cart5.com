@@ -33,7 +33,8 @@ export const loginRoute = new Hono<honoTypes>()
             const cookie = serializeCookie(GOOGLE_OAUTH_STATE_COOKIE_NAME, jwtString, {
                 httpOnly: true,
                 path: "/",
-                secure: IS_PROD,
+                // secure: IS_PROD,
+                secure: true, // using https in dev
                 sameSite: "lax", // use lax to allow redirects, strict does not allow redirects
                 maxAge: 600
             });

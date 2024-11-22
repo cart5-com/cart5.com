@@ -11,9 +11,11 @@ export const auth = createMiddleware(async (c, next) => {
         c.set("SESSION", null);
         return next();
     } else {
-        const { user, session } = await validateSessionToken(token);
+        const { user, session, isSessionUpdated } = await validateSessionToken(token);
         if (session !== null) {
-            setSessionTokenCookie(c, token, session.expiresAt);
+            if (isSessionUpdated) {
+                setSessionTokenCookie(c, token, session.expiresAt);
+            }
         } else {
             deleteSessionTokenCookie(c);
         }
