@@ -87,7 +87,7 @@ export function setSessionTokenCookie(c: Context, token: string, expiresAt: Date
         path: "/",
         // secure: IS_PROD,
         secure: true, // using https in dev
-        sameSite: "lax",
+        sameSite: "lax", // TODO: check if we can use strict, maybe I can use a clientside request with turnstile
         expires: expiresAt
     }), { append: true });
 }
@@ -98,7 +98,7 @@ export function deleteSessionTokenCookie(c: Context): void {
         path: "/",
         // secure: IS_PROD,
         secure: true, // using https in dev
-        sameSite: "lax",
+        sameSite: "lax", // TODO: check if we can use strict, maybe I can use a clientside request with turnstile
         maxAge: 0,
     }), { append: true });
 }
