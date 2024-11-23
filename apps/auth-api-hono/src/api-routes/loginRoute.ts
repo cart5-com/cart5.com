@@ -18,19 +18,25 @@ const publicDomainName = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 
 export const loginRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
-        // only allow
-        // referer: auth.${publicDomainName}
-        // or referer: accounts.google.com
-        // or url: http://auth.${publicDomainName}/api/login/google-callback?state={STATE}&code={CODE}&scope={SCOPE}&authuser={AUTHUSER}&prompt={PROMPT}
+        // This middleware validates that requests only come from allowed sources:
+        // 1. Our own auth domain (auth.example.com)
+        // 2. Google's authentication domain (accounts.google.com) 
+        // 3. The Google OAuth callback URL with required parameters
+
         const referer = c.req.header('referer');
         const url = new URL(c.req.url);
+
+        // Check if this is the Google OAuth callback request
         const isGoogleCallback = url.pathname === '/api/login/google-callback' &&
             url.searchParams.has('state') &&
             url.searchParams.has('code') &&
             url.searchParams.has('scope');
 
+        // If this is not the callback URL, validate the referer
         if (!isGoogleCallback && referer) {
             const refererUrl = new URL(referer);
+
+            // Only allow requests from our auth domain or Google's auth domain
             const isAllowedReferer =
                 refererUrl.origin === `https://auth.${publicDomainName}` ||
                 refererUrl.origin === 'https://accounts.google.com';
