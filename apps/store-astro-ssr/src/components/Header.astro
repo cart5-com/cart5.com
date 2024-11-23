@@ -20,11 +20,9 @@
 		});
 		const loginButton = document.querySelector<HTMLButtonElement>("#login-button");
 		loginButton?.addEventListener("click", async () => {
-			const loginBtnHandlerUrl = createAuthApiClient(
-				`https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/__p_auth/`
-			).api.login["handle-redirect-login-btn"].$url();
-			loginBtnHandlerUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
-			window.location.href = loginBtnHandlerUrl.toString();
+			const loginRedirectUrl = new URL(`https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/handle-login-redirect`);
+			loginRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
+			window.location.href = loginRedirectUrl.toString();
 		});
 	</script>
 </header>

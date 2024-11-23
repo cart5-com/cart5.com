@@ -1,0 +1,17 @@
+---
+import Header from "../components/Header.astro";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link href={`/favicon.ico`} rel="icon" type="image/x-icon" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<Header />
+		<slot />
+	</body>
+</html>

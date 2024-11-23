@@ -1,0 +1,30 @@
+<div id="user-info"><button id="whoami-button">whoami</button></div>
+<script>
+	import { createAuthApiClient } from "lib/apiClients/authApiClient";
+	const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
+	async function whoami() {
+		const { data, error } = await (await authApiClient.api.user.whoami.$get()).json();
+		window.user = data;
+		const userInfo = document.querySelector<HTMLDivElement>("#user-info");
+		if (userInfo) {
+			if (data) {
+				userInfo.innerHTML =
+					`<pre>${JSON.stringify(window.user?.email, null, 2)}</pre>` +
+					`<a 
+								href="${authApiClient.api.user.logout.$url().href}">
+									Signout
+							</a>`;
+			} else {
+				userInfo.innerHTML = `<a 
+								href="${authApiClient.api.login["google-signin"].$url().href}">
+									<img src="/google-mini.svg" width="40px" alt="Google Signin" />
+									Google Signin
+							</a>`;
+			}
+		}
+	}
+	const whoamiButton = document.querySelector<HTMLButtonElement>("#whoami-button");
+	if (whoamiButton) {
+		whoamiButton.addEventListener("click", whoami);
+	}
+</script>

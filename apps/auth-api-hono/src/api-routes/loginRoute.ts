@@ -12,36 +12,36 @@ import { z } from 'zod'
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { createUser, getUserFromGoogleId } from '../lib/user';
 import { createLongLivedSession, setSessionTokenCookie } from '../lib/session';
+import { KNOWN_ERROR } from 'lib/errors';
+
+const publicDomainName = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 
 export const loginRoute = new Hono<honoTypes>()
-    .get(
-        '/handle-redirect-login-btn',
-        zValidator('query', z.object({
-            redirect_uri: z.string().min(1)
-        })),
-        (c) => {
-            const { redirect_uri } = c.req.valid('query');
-            const referer = c.req.header('referer');
-            let refererUrl: URL | undefined;
-            if (referer) {
-                refererUrl = new URL(referer!);
+    .use(async (c, next) => {
+        // only allow
+        // referer: auth.${publicDomainName}
+        // or referer: accounts.google.com
+        // or url: http://auth.${publicDomainName}/api/login/google-callback?state={STATE}&code={CODE}&scope={SCOPE}&authuser={AUTHUSER}&prompt={PROMPT}
+        const referer = c.req.header('referer');
+        const url = new URL(c.req.url);
+        const isGoogleCallback = url.pathname === '/api/login/google-callback' &&
+            url.searchParams.has('state') &&
+            url.searchParams.has('code') &&
+            url.searchParams.has('scope');
+
+        if (!isGoogleCallback && referer) {
+            const refererUrl = new URL(referer);
+            const isAllowedReferer =
+                refererUrl.origin === `https://auth.${publicDomainName}` ||
+                refererUrl.origin === 'https://accounts.google.com';
+
+            if (!isAllowedReferer) {
+                throw new KNOWN_ERROR("UNAUTHORIZED-REFERRER", "UNAUTHORIZED-REFERRER");
             }
-            const redirectUrl = new URL(decodeURIComponent(redirect_uri));
-
-            const user = c.get('USER');
-
-            return c.text(`
-
-                ${decodeURIComponent(redirect_uri)}
-
-                ${refererUrl?.host}
-
-                ${referer}
-
-                ${JSON.stringify(user)}
-            `);
         }
-    )
+
+        await next();
+    })
     .get(
         '/google-signin',
         async (c) => {

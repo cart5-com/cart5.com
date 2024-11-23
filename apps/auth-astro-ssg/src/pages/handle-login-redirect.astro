@@ -1,0 +1,11 @@
+---
+import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
+---
+
+<AuthBaseLayout>
+	<h1>handle-login-redirect</h1>
+	<script>
+		const redirectUri = new URL(window.location.href).searchParams.get("redirect_uri");
+		console.log("redirectUri", decodeURIComponent(redirectUri!));
+	</script>
+</AuthBaseLayout>
