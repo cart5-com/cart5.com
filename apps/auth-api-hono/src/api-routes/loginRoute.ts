@@ -22,17 +22,24 @@ export const loginRoute = new Hono<honoTypes>()
         (c) => {
             const { redirect_uri } = c.req.valid('query');
             const referer = c.req.header('referer');
-            const refererUrl = new URL(referer!);
+            let refererUrl: URL | undefined;
+            if (referer) {
+                refererUrl = new URL(referer!);
+            }
             const redirectUrl = new URL(decodeURIComponent(redirect_uri));
 
+            const user = c.get('USER');
+
             return c.text(`
-                handle-redirect-login-btn: 
 
                 ${decodeURIComponent(redirect_uri)}
 
-                refererUrl.host: ${refererUrl.host}
+                ${refererUrl?.host}
 
-                ${referer}`);
+                ${referer}
+
+                ${JSON.stringify(user)}
+            `);
         }
     )
     .get(

@@ -1,0 +1,30 @@
+<header>
+	<ul>
+		<li>
+			<a href="/#sample-hash-1">Home</a>
+		</li>
+		<li>
+			<a href="/hello/page#sample-hash-2">Hello Page</a>
+		</li>
+	</ul>
+	<div id="user-info"><button id="whoami-button">whoami</button></div>
+	<button id="login-button">login</button>
+	<script>
+		import { createAuthApiClient } from "lib/apiClients/authApiClient";
+		const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
+		const whoamiButton = document.querySelector<HTMLButtonElement>("#whoami-button");
+		whoamiButton?.addEventListener("click", async () => {
+			const response = await authApiClient.api.user.whoami.$get();
+			const { data: user, error } = await response.json();
+			document.getElementById("user-info")!.innerHTML = JSON.stringify(user);
+		});
+		const loginButton = document.querySelector<HTMLButtonElement>("#login-button");
+		loginButton?.addEventListener("click", async () => {
+			const loginBtnHandlerUrl = createAuthApiClient(
+				`https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/__p_auth/`
+			).api.login["handle-redirect-login-btn"].$url();
+			loginBtnHandlerUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
+			window.location.href = loginBtnHandlerUrl.toString();
+		});
+	</script>
+</header>
