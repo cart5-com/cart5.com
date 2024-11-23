@@ -3,7 +3,7 @@ import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "../consts";
 import { deleteSessionTokenCookie, invalidateSession, setSessionTokenCookie, validateSessionToken } from "../lib/session";
 
-export const auth = createMiddleware(async (c, next) => {
+export const authChecks = createMiddleware(async (c, next) => {
     // c.req.header("Cookie") ?? ""
     const token = getCookie(c, SESSION_COOKIE_NAME) ?? null;
     if (token === null) {

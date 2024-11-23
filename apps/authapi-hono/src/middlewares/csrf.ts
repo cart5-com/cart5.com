@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
 import { verifyRequestOrigin } from "lib/utils/requestCheck";
 
-export const csrf = createMiddleware(async (c, next) => {
+export const csrfChecks = createMiddleware(async (c, next) => {
 	if (c.req.method === "GET") {
 		await next();
 	} else {

@@ -1,10 +1,10 @@
 import { serve, type HttpBindings } from '@hono/node-server'
 import { Hono } from "hono";
-import { csrf } from "./middlewares/csrf";
+import { csrfChecks } from "./middlewares/csrf";
 import type { Session } from './lib/session.js';
 import type { User } from './lib/user.js';
 import { userRoute } from './api-routes/userRoute.js';
-import { auth } from './middlewares/auth.js';
+import { authChecks } from './middlewares/auth.js';
 import { loginRoute } from './api-routes/loginRoute.js';
 
 export type HonoVariables = {
@@ -19,8 +19,8 @@ type Bindings = HttpBindings & {
 export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
 
 const app = new Hono<honoTypes>();
-app.use(csrf);
-app.use(auth);
+app.use(csrfChecks);
+app.use(authChecks);
 
 app.get("/", (c) => {
 	return c.html(`
