@@ -3,6 +3,16 @@ import db from "../db/drizzle";
 import { user } from "../db/schema";
 import { generateKey } from "lib/utils/generateKey";
 
+
+export interface User {
+    id: string;
+    email: string;
+    googleId?: string;
+    name: string;
+    picture?: string;
+}
+
+
 export async function createUser(googleId: string, email: string, name: string, picture: string): Promise<User> {
     const id = generateKey('u');
     const row = await db.insert(user).values({
@@ -47,11 +57,3 @@ export async function getUserFromGoogleId(googleId: string): Promise<User | null
     return userData;
 }
 
-
-export interface User {
-    id: string;
-    email: string;
-    googleId?: string;
-    name: string;
-    picture?: string;
-}

@@ -13,5 +13,6 @@ export const session = sqliteTable("session", {
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
-	expiresAt: integer("expires_at").notNull() // milliseconds are included, full timestamp using Date object
+	expiresAt: integer("expires_at").notNull(), // milliseconds are included, full timestamp using Date object
+	hostname: text("hostname").notNull(),
 });

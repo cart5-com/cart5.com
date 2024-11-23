@@ -10,12 +10,25 @@ import { serializeCookie } from "lib/utils/cookie";
 
 const _15_DAYS_IN_MS = 60e3 * 60 * 24 * 15;
 const _30_DAYS_IN_MS = _15_DAYS_IN_MS * 2;
+const _10_MINUTES_IN_MS = 60e3 * 10;
+
+export interface Session {
+    id: string;
+    expiresAt: Date;
+    userId: string;
+    hostname: string;
+}
+
+type SessionValidationResult =
+    { session: Session; user: User, isSessionUpdated: boolean } |
+    { session: null; user: null, isSessionUpdated: boolean };
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const row = await db.select({
         id: session.id,
         expiresAt: session.expiresAt,
+        hostname: session.hostname,
         userId: session.userId,
         googleId: user.googleId,
         email: user.email,
@@ -33,7 +46,8 @@ export async function validateSessionToken(token: string): Promise<SessionValida
     const sessionData: Session = {
         id: row.id,
         userId: row.userId,
-        expiresAt: new Date(row.expiresAt)
+        expiresAt: new Date(row.expiresAt),
+        hostname: row.hostname
     };
     const userData: User = {
         id: row.userId,
@@ -89,35 +103,47 @@ export function deleteSessionTokenCookie(c: Context): void {
     }), { append: true });
 }
 
-export function generateSessionToken(): string {
+export function generateSessionCookieValue(): string {
     const tokenBytes = new Uint8Array(20);
     crypto.getRandomValues(tokenBytes);
     const token = encodeBase32(tokenBytes).toLowerCase();
     return token;
 }
 
+export async function createLongLivedSession(userId: string, hostname: string): Promise<{
+    session: Session;
+    cookieValue: string;
+}> {
+    const expiresAt = new Date(Date.now() + _30_DAYS_IN_MS);
+    const cookieValue = generateSessionCookieValue();
+    const session = await createSession(cookieValue, userId, expiresAt, hostname);
+    return { session, cookieValue };
+}
 
-export async function createSession(token: string, userId: string): Promise<Session> {
+export async function createShortLivedSession(userId: string, hostname: string): Promise<{
+    session: Session;
+    cookieValue: string;
+}> {
+    const expiresAt = new Date(Date.now() + _10_MINUTES_IN_MS);
+    const cookieValue = generateSessionCookieValue();
+    const session = await createSession(cookieValue, userId, expiresAt, hostname);
+    return { session, cookieValue };
+}
+
+export async function createSession(token: string, userId: string, expiresAt: Date, hostname: string): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const sessionData: Session = {
         id: sessionId,
         userId,
-        expiresAt: new Date(Date.now() + (60 * 60 * 24 * 30)) // 30 days
+        expiresAt,
+        hostname
     };
     await db.insert(session).values({
         id: sessionId,
         userId,
-        expiresAt: sessionData.expiresAt.getTime()
+        expiresAt: sessionData.expiresAt.getTime(),
+        hostname
     });
     return sessionData;
 }
 
-export interface Session {
-    id: string;
-    expiresAt: Date;
-    userId: string;
-}
-
-type SessionValidationResult =
-    { session: Session; user: User, isSessionUpdated: boolean } |
-    { session: null; user: null, isSessionUpdated: boolean };

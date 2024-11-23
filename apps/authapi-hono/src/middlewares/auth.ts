@@ -1,7 +1,7 @@
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "../consts";
-import { deleteSessionTokenCookie, setSessionTokenCookie, validateSessionToken } from "../lib/session";
+import { deleteSessionTokenCookie, invalidateSession, setSessionTokenCookie, validateSessionToken } from "../lib/session";
 
 export const auth = createMiddleware(async (c, next) => {
     // c.req.header("Cookie") ?? ""
@@ -12,16 +12,30 @@ export const auth = createMiddleware(async (c, next) => {
         return next();
     } else {
         const { user, session, isSessionUpdated } = await validateSessionToken(token);
-        if (session !== null) {
-            if (isSessionUpdated) {
-                setSessionTokenCookie(c, token, session.expiresAt);
-            }
-        } else {
+        if (session === null) {
             deleteSessionTokenCookie(c);
+            c.set("USER", null);
+            c.set("SESSION", null);
+            return next();
+        } else {
+            // session is valid
+            const hostname = c.req.header('Host');
+            if (session.hostname !== hostname) {
+                await invalidateSession(session.id);
+                deleteSessionTokenCookie(c);
+                c.set("USER", null);
+                c.set("SESSION", null);
+                await next();
+            } else {
+                if (isSessionUpdated) {
+                    setSessionTokenCookie(c, token, session.expiresAt);
+                }
+                c.set("USER", user);
+                c.set("SESSION", session);
+                await next();
+            }
         }
-        c.set("USER", user);
-        c.set("SESSION", session);
-        await next();
+
     }
 });
 

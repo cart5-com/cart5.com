@@ -5,7 +5,7 @@
 		"dev": "pnpm dev:db:studio && pnpm dev:hono",
 		"dev:db:studio": "dotenv -e ../../.env -- sh ./start-local-db.sh",
 		"dev:hono": "dotenv -e ../../.env -- tsx watch src/index.ts",
-		"generate:sql": "drizzle-kit generate",
+		"generate:sql": "dotenv -e ../../.env -- drizzle-kit generate --config=drizzle.config.ts",
 		"build": "rm -rf ./dist && node ./esbuild.cjs",
 		"preview": "dotenv -e ../../.env.prod -- bash -c 'node ./dist/index.js'"
 	},

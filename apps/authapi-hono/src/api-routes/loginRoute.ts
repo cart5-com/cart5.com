@@ -11,12 +11,30 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { createUser, getUserFromGoogleId } from '../lib/user';
-import { createSession, generateSessionToken, setSessionTokenCookie } from '../lib/session';
+import { createLongLivedSession, setSessionTokenCookie } from '../lib/session';
 
 export const loginRoute = new Hono<honoTypes>()
-    .get('/handle-redirect-login-btn', (c) => {
-        return c.text("handle-redirect-login-btn");
-    })
+    .get(
+        '/handle-redirect-login-btn',
+        zValidator('query', z.object({
+            redirect_uri: z.string().min(1)
+        })),
+        (c) => {
+            const { redirect_uri } = c.req.valid('query');
+            const referer = c.req.header('referer');
+            const refererUrl = new URL(referer!);
+            const redirectUrl = new URL(decodeURIComponent(redirect_uri));
+
+            return c.text(`
+                handle-redirect-login-btn: 
+
+                ${decodeURIComponent(redirect_uri)}
+
+                refererUrl.host: ${refererUrl.host}
+
+                ${referer}`);
+        }
+    )
     .get(
         '/google-signin',
         async (c) => {
@@ -53,6 +71,7 @@ export const loginRoute = new Hono<honoTypes>()
             state: z.string().min(1)
         })),
         async (c) => {
+            const hostname = c.req.header('Host');
             const jwtString = getCookie(c, GOOGLE_OAUTH_STATE_COOKIE_NAME);
             deleteCookie(c, GOOGLE_OAUTH_STATE_COOKIE_NAME);
             if (!jwtString) {
@@ -97,15 +116,15 @@ export const loginRoute = new Hono<honoTypes>()
 
             const existingUser = await getUserFromGoogleId(googleId);
             if (existingUser !== null) {
-                const sessionToken = generateSessionToken();
-                const session = await createSession(sessionToken, existingUser.id);
-                setSessionTokenCookie(c, sessionToken, session.expiresAt);
+                const { session, cookieValue } = await createLongLivedSession(existingUser.id, hostname!);
+                setSessionTokenCookie(c, cookieValue, session.expiresAt);
                 return c.redirect("/");
             } else {
                 const user = await createUser(googleId, email, name, picture);
-                const sessionToken = generateSessionToken();
-                const session = await createSession(sessionToken, user.id);
-                setSessionTokenCookie(c, sessionToken, session.expiresAt);
+                // const sessionToken = generateSessionToken();
+                // const session = await createSession(sessionToken, user.id);
+                const { session, cookieValue } = await createLongLivedSession(user.id, hostname!);
+                setSessionTokenCookie(c, cookieValue, session.expiresAt);
                 return c.redirect("/");
             }
 
