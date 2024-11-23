@@ -1,6 +1,6 @@
-(authapi-hono-handler) {
+(auth-api-hono-handler) {
 	handle_path /__p_auth/* {
-		#authapi-hono
+		#auth-api-hono
 		reverse_proxy http://localhost:3000
 	}
 }
@@ -11,7 +11,7 @@
 
 https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
-	import authapi-hono-handler
+	import auth-api-hono-handler
 	handle_path /* {
 		#auth-astro-ssg
 		reverse_proxy http://localhost:3001
@@ -22,7 +22,7 @@ sample-store-1.com,
 www.sample-store-1.com,
 :443 {
 	tls internal
-	import authapi-hono-handler
+	import auth-api-hono-handler
 	handle_path /* {
 		#store-astro-ssr
 		reverse_proxy http://localhost:3002
