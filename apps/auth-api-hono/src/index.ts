@@ -3,9 +3,9 @@ import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import type { Session } from './lib/session.js';
 import type { User } from './lib/user.js';
-import { userRoute } from './api-routes/userRoute.js';
 import { authChecks } from './middlewares/auth.js';
-import { loginRoute } from './api-routes/loginRoute.js';
+import { userRoute } from './routes/userRoute.js';
+import { loginRoute } from './routes/loginRoute.js';
 
 export type HonoVariables = {
 	SESSION: Session | null,

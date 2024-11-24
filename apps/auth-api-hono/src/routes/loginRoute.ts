@@ -1,18 +1,18 @@
 import { Hono } from 'hono'
 import type { honoTypes } from '../index'
 import { getGoogleOAuthHelper } from "../lib/googleOAuthHelper";
-import { generateCodeVerifier, generateState } from "arctic";
-import { getEnvironmentVariable, IS_PROD } from 'lib/utils/getEnvironmentVariable';
-import { serializeCookie } from 'lib/utils/cookie';
+import { getEnvironmentVariable } from 'lib/utils/getEnvironmentVariable';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from 'lib/utils/jwt';
 import { GOOGLE_OAUTH_STATE_COOKIE_NAME } from '../consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { decodeIdToken, type OAuth2Tokens } from "arctic";
+import { decodeIdToken, generateCodeVerifier, generateState, type OAuth2Tokens } from "arctic";
 import { createUser, getUserFromGoogleId } from '../lib/user';
 import { createLongLivedSession, createShortLivedSession, setSessionTokenCookie } from '../lib/session';
 import { KNOWN_ERROR } from 'lib/errors';
+import { createAuthApiClient } from 'lib/apiClients/authApiClient';
+import { serializeCookie } from 'lib/utils/cookie';
 
 const publicDomainName = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 
@@ -42,7 +42,7 @@ export const loginRoute = new Hono<honoTypes>()
                 refererUrl.origin === 'https://accounts.google.com';
 
             if (!isAllowedReferer) {
-                throw new KNOWN_ERROR("UNAUTHORIZED-REFERRER", "UNAUTHORIZED-REFERRER");
+                throw new KNOWN_ERROR("UNAUTHORIZED_REF", "UNAUTHORIZED_REF");
             }
         }
 
@@ -50,34 +50,27 @@ export const loginRoute = new Hono<honoTypes>()
     })
     .post(
         '/create-short-lived-session',
+        // Validate that request body contains a redirectUrl string
         zValidator('json', z.object({
             redirectUrl: z.string().min(1)
         })),
         async (c) => {
+            // Get redirectUrl from validated request body
             const { redirectUrl } = c.req.valid('json');
+
+            // Check if user is authenticated
             const user = c.get('USER');
             if (!user) {
                 throw new KNOWN_ERROR("UNAUTHORIZED", "UNAUTHORIZED");
             }
+
+            // Parse the redirect URL to get its hostname
             const redirectUrlObj = new URL(redirectUrl);
-            const { cookieValue } = await createShortLivedSession(user.id, redirectUrlObj.hostname);
-            const shortLivedSessionJwt = await signJwtAndEncrypt(
-                {
-                    cookieValue,
-                    hostname: redirectUrlObj.hostname,
-                    exp: Math.floor(Date.now() / 1000) + 600,
-                },
-                getEnvironmentVariable("JWT_SECRET"),
-                getEnvironmentVariable("ENCRYPTION_KEY")
-            );
             // TODO: check it is a known hostname
 
-            const goToUrl = new URL(`${redirectUrlObj.origin}` +
-                `/__p_auth/api/user/short-lived-session-redirect-handler?`);
-            goToUrl.searchParams.set("token", shortLivedSessionJwt);
-            goToUrl.searchParams.set("redirectUrl", encodeURIComponent(redirectUrlObj.toString()));
+            // Return the complete URL that the client should redirect to
             return c.json({
-                data: goToUrl.toString(),
+                data: await createShortLivedSessionRedirectUrl(user.id, redirectUrlObj),
                 error: null
             }, 200);
         }
@@ -85,29 +78,9 @@ export const loginRoute = new Hono<honoTypes>()
     .get(
         '/google-signin',
         async (c) => {
-            const state = generateState();
-            const codeVerifier = generateCodeVerifier();
-            const googleOAuthHelper = getGoogleOAuthHelper();
-            const url = googleOAuthHelper.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
-
-            const jwtString = await signJwtAndEncrypt({
-                state, codeVerifier,
-                exp: Math.floor(Date.now() / 1000) + 600
-            },
-                getEnvironmentVariable("JWT_SECRET"),
-                getEnvironmentVariable("ENCRYPTION_KEY")
-            );
-
-            const cookie = serializeCookie(GOOGLE_OAUTH_STATE_COOKIE_NAME, jwtString, {
-                httpOnly: true,
-                path: "/",
-                // secure: IS_PROD,
-                secure: true, // using https in dev
-                sameSite: "lax", // use lax to allow redirects, strict does not allow redirects
-                maxAge: 600
-            });
+            // referer is already validated in the middleware
+            const { cookie, url } = await createGoogleSigninCookieAndUrl();
             c.header("Set-Cookie", cookie);
-
             return c.redirect(url.toString());
         }
     )
@@ -177,3 +150,55 @@ export const loginRoute = new Hono<honoTypes>()
 
         }
     )
+
+export async function createShortLivedSessionRedirectUrl(userId: string, redirectUrlObj: URL): Promise<String> {
+    // Create a temporary session for this user on the target hostname
+    const { cookieValue } = await createShortLivedSession(userId, redirectUrlObj.hostname);
+
+    // Create an encrypted JWT containing the session info
+    // JWT expires in 10 minutes (600 seconds)
+    const shortLivedSessionJwt = await signJwtAndEncrypt(
+        {
+            cookieValue,
+            hostname: redirectUrlObj.hostname,
+            exp: Math.floor(Date.now() / 1000) + 600,
+        },
+        getEnvironmentVariable("JWT_SECRET"),
+        getEnvironmentVariable("ENCRYPTION_KEY")
+    );
+
+    // Build URL for the session handler endpoint
+    const authApiClient = createAuthApiClient(`${redirectUrlObj.origin}/__p_auth/`);
+    const goToUrl = new URL(authApiClient.api.user['short-lived-session-redirect-handler'].$url());
+
+    // Add session token and final redirect URL as query parameters
+    goToUrl.searchParams.set("token", shortLivedSessionJwt);
+    goToUrl.searchParams.set("redirectUrl", encodeURIComponent(redirectUrlObj.toString()));
+
+    return goToUrl.toString();
+}
+
+export const createGoogleSigninCookieAndUrl = async () => {
+    const state = generateState();
+    const codeVerifier = generateCodeVerifier();
+    const googleOAuthHelper = getGoogleOAuthHelper();
+    const url = googleOAuthHelper.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
+
+    const jwtString = await signJwtAndEncrypt({
+        state, codeVerifier,
+        exp: Math.floor(Date.now() / 1000) + 600
+    },
+        getEnvironmentVariable("JWT_SECRET"),
+        getEnvironmentVariable("ENCRYPTION_KEY")
+    );
+
+    const cookie = serializeCookie(GOOGLE_OAUTH_STATE_COOKIE_NAME, jwtString, {
+        httpOnly: true,
+        path: "/",
+        // secure: IS_PROD,
+        secure: true, // using https in dev
+        sameSite: "lax", // use lax to allow redirects, strict does not allow redirects
+        maxAge: 600
+    });
+    return { cookie, url };
+}
