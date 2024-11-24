@@ -1,39 +1,32 @@
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "../consts";
-import { deleteSessionTokenCookie, invalidateSession, setSessionTokenCookie, validateSessionToken } from "../lib/session";
+import { deleteSessionTokenCookie, invalidateSessionByCookieValue, setSessionTokenCookie, validateSessionToken } from "../lib/session";
 
 export const authChecks = createMiddleware(async (c, next) => {
     // c.req.header("Cookie") ?? ""
-    const token = getCookie(c, SESSION_COOKIE_NAME) ?? null;
-    if (token === null) {
+    const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
+    if (cookieValue === null) {
         c.set("USER", null);
         c.set("SESSION", null);
         return next();
     } else {
-        const { user, session, isSessionUpdated } = await validateSessionToken(token);
+        const hostname = c.req.header('Host');
+        const { user, session, isSessionUpdated } = await validateSessionToken(cookieValue, hostname!);
         if (session === null) {
+            await invalidateSessionByCookieValue(cookieValue);
             deleteSessionTokenCookie(c);
             c.set("USER", null);
             c.set("SESSION", null);
             return next();
         } else {
             // session is valid
-            const hostname = c.req.header('Host');
-            if (session.hostname !== hostname) {
-                await invalidateSession(session.id);
-                deleteSessionTokenCookie(c);
-                c.set("USER", null);
-                c.set("SESSION", null);
-                await next();
-            } else {
-                if (isSessionUpdated) {
-                    setSessionTokenCookie(c, token, session.expiresAt);
-                }
-                c.set("USER", user);
-                c.set("SESSION", session);
-                await next();
+            if (isSessionUpdated) {
+                setSessionTokenCookie(c, cookieValue, session.expiresAt);
             }
+            c.set("USER", user);
+            c.set("SESSION", session);
+            await next();
         }
 
     }

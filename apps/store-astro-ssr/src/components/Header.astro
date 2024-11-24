@@ -4,19 +4,31 @@
 			<a href="/#sample-hash-1">Home</a>
 		</li>
 		<li>
-			<a href="/hello/page#sample-hash-2">Hello Page</a>
+			<a href={`/hello/page?id=1&name=2#sample-hash-2=[12,"sample-string"]`}>Hello Page</a>
 		</li>
 	</ul>
-	<div id="user-info"><button id="whoami-button">whoami</button></div>
+	<pre id="user-info"><button id="whoami-button">whoami</button></pre>
 	<button id="login-button">login</button>
 	<script>
 		import { createAuthApiClient } from "lib/apiClients/authApiClient";
 		const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
 		const whoamiButton = document.querySelector<HTMLButtonElement>("#whoami-button");
 		whoamiButton?.addEventListener("click", async () => {
-			const response = await authApiClient.api.user.whoami.$get();
+			const response = await authApiClient.api.user.whoami.$post();
 			const { data: user, error } = await response.json();
-			document.getElementById("user-info")!.innerHTML = JSON.stringify(user);
+			if (user) {
+				document.getElementById("user-info")!.innerHTML = JSON.stringify(user, null, 2);
+				// add logout button
+				const logoutButton = document.createElement("button");
+				logoutButton.innerHTML = "Logout";
+				logoutButton.addEventListener("click", async () => {
+					await authApiClient.api.user.logout.$post();
+					window.location.reload();
+				});
+				document.getElementById("user-info")!.appendChild(logoutButton);
+			} else {
+				document.getElementById("user-info")!.innerHTML = "Not logged in";
+			}
 		});
 		const loginButton = document.querySelector<HTMLButtonElement>("#login-button");
 		loginButton?.addEventListener("click", async () => {

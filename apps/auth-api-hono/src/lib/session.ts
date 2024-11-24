@@ -23,8 +23,12 @@ type SessionValidationResult =
     { session: Session; user: User, isSessionUpdated: boolean } |
     { session: null; user: null, isSessionUpdated: boolean };
 
-export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
-    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+export async function validateSessionToken(
+    cookieValue: string,
+    hostname: string,
+    refreshSessionIfRequired: boolean = true
+): Promise<SessionValidationResult> {
+    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(cookieValue)));
     const row = await db.select({
         id: session.id,
         expiresAt: session.expiresAt,
@@ -56,13 +60,20 @@ export async function validateSessionToken(token: string): Promise<SessionValida
         name: row.name,
         picture: row.picture || undefined
     };
+    if (sessionData.hostname !== hostname) {
+        await invalidateSession(sessionId);
+        return { session: null, user: null, isSessionUpdated: false };
+    }
     let isSessionUpdated = false;
     if (Date.now() >= sessionData.expiresAt.getTime()) {
         // if session expired, delete it
-        await db.delete(session).where(eq(session.id, sessionId));
+        await invalidateSession(sessionId);
         return { session: null, user: null, isSessionUpdated: false };
     }
-    if (Date.now() >= sessionData.expiresAt.getTime() - _15_DAYS_IN_MS) {
+    if (
+        refreshSessionIfRequired &&
+        Date.now() >= sessionData.expiresAt.getTime() - _15_DAYS_IN_MS
+    ) {
         // if less than 15 days left, refresh for 30 days
         sessionData.expiresAt = new Date(Date.now() + _30_DAYS_IN_MS);
         await db.update(session).set({
@@ -73,11 +84,16 @@ export async function validateSessionToken(token: string): Promise<SessionValida
     return { session: sessionData, user: userData, isSessionUpdated };
 }
 
+export async function invalidateSessionByCookieValue(cookieValue: string): Promise<void> {
+    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(cookieValue)));
+    await invalidateSession(sessionId);
+}
+
 export async function invalidateSession(sessionId: string): Promise<void> {
     await db.delete(session).where(eq(session.id, sessionId));
 }
 
-export async function invalidateUserSessions(userId: string): Promise<void> {
+export async function invalidateAllUserSessions(userId: string): Promise<void> {
     await db.delete(session).where(eq(session.userId, userId));
 }
 

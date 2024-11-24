@@ -3,7 +3,7 @@
 	import { createAuthApiClient } from "lib/apiClients/authApiClient";
 	const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
 	async function whoami() {
-		const { data, error } = await (await authApiClient.api.user.whoami.$get()).json();
+		const { data, error } = await (await authApiClient.api.user.whoami.$post()).json();
 		window.user = data;
 		const userInfo = document.querySelector<HTMLDivElement>("#user-info");
 		if (userInfo) {

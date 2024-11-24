@@ -11,7 +11,7 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { createUser, getUserFromGoogleId } from '../lib/user';
-import { createLongLivedSession, setSessionTokenCookie } from '../lib/session';
+import { createLongLivedSession, createShortLivedSession, setSessionTokenCookie } from '../lib/session';
 import { KNOWN_ERROR } from 'lib/errors';
 
 const publicDomainName = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
@@ -48,6 +48,40 @@ export const loginRoute = new Hono<honoTypes>()
 
         await next();
     })
+    .post(
+        '/create-short-lived-session',
+        zValidator('json', z.object({
+            redirectUrl: z.string().min(1)
+        })),
+        async (c) => {
+            const { redirectUrl } = c.req.valid('json');
+            const user = c.get('USER');
+            if (!user) {
+                throw new KNOWN_ERROR("UNAUTHORIZED", "UNAUTHORIZED");
+            }
+            const redirectUrlObj = new URL(redirectUrl);
+            const { cookieValue } = await createShortLivedSession(user.id, redirectUrlObj.hostname);
+            const shortLivedSessionJwt = await signJwtAndEncrypt(
+                {
+                    cookieValue,
+                    hostname: redirectUrlObj.hostname,
+                    exp: Math.floor(Date.now() / 1000) + 600,
+                },
+                getEnvironmentVariable("JWT_SECRET"),
+                getEnvironmentVariable("ENCRYPTION_KEY")
+            );
+            // TODO: check it is a known hostname
+
+            const goToUrl = new URL(`${redirectUrlObj.origin}` +
+                `/__p_auth/api/user/short-lived-session-redirect-handler?`);
+            goToUrl.searchParams.set("token", shortLivedSessionJwt);
+            goToUrl.searchParams.set("redirectUrl", encodeURIComponent(redirectUrlObj.toString()));
+            return c.json({
+                data: goToUrl.toString(),
+                error: null
+            }, 200);
+        }
+    )
     .get(
         '/google-signin',
         async (c) => {

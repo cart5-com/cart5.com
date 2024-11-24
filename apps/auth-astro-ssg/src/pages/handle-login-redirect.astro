@@ -4,8 +4,21 @@ import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
 
 <AuthBaseLayout>
 	<h1>handle-login-redirect</h1>
+	<button id="create-short-lived-session">create-short-lived-session</button>
 	<script>
+		import { createAuthApiClient } from "lib/apiClients/authApiClient";
+
 		const redirectUri = new URL(window.location.href).searchParams.get("redirect_uri");
 		console.log("redirectUri", decodeURIComponent(redirectUri!));
+		const createShortLivedSessionButton = document.querySelector<HTMLButtonElement>("#create-short-lived-session");
+		createShortLivedSessionButton?.addEventListener("click", async () => {
+			const authApiClient = createAuthApiClient();
+			const response = await authApiClient.api.login["create-short-lived-session"].$post({
+				json: { redirectUrl: decodeURIComponent(redirectUri!) }
+			});
+			const data = await response.json();
+			console.log("redirectUrl", data);
+			window.location.href = data.data;
+		});
 	</script>
 </AuthBaseLayout>
