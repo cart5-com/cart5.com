@@ -3,6 +3,7 @@ import type { honoTypes } from '../index'
 import { getGoogleOAuthHelper } from "../lib/googleOAuthHelper";
 import { getEnvironmentVariable } from 'lib/utils/getEnvironmentVariable';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from 'lib/utils/jwt';
+import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { GOOGLE_OAUTH_STATE_COOKIE_NAME } from '../consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { zValidator } from '@hono/zod-validator'
@@ -52,12 +53,14 @@ export const loginRoute = new Hono<honoTypes>()
         '/create-short-lived-session',
         // Validate that request body contains a redirectUrl string
         zValidator('json', z.object({
-            redirectUrl: z.string().min(1)
+            redirectUrl: z.string().min(1),
+            turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
             // Get redirectUrl from validated request body
-            const { redirectUrl } = c.req.valid('json');
-
+            const { redirectUrl, turnstile } = c.req.valid('json');
+            // get request ip
+            await validateTurnstile(turnstile, c.req.header('x-forwarded-for'));
             // Check if user is authenticated
             const user = c.get('USER');
             if (!user) {

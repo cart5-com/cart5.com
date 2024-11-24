@@ -5,6 +5,7 @@ import type { Session } from './lib/session.js';
 import type { User } from './lib/user.js';
 import { authChecks } from './middlewares/auth.js';
 import { userRoute } from './routes/userRoute.js';
+import { secureHeaders } from 'hono/secure-headers'
 import { loginRoute } from './routes/loginRoute.js';
 import { KNOWN_ERROR } from 'lib/errors';
 
@@ -22,6 +23,8 @@ export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
 const app = new Hono<honoTypes>();
 app.use(csrfChecks);
 app.use(authChecks);
+app.use(secureHeaders());
+
 app.onError((err, c) => {
 	if (err instanceof KNOWN_ERROR) {
 		console.log("KNOWN_ERROR err:");
@@ -51,21 +54,8 @@ app.onError((err, c) => {
 	}
 })
 
-
 app.get("/", (c) => {
-	return c.html(`
-    Hello Hono!
-	<br>
-	NODE_ENV: ${process.env.NODE_ENV}
-	<br>
-	${c.get("USER") ? `<pre>${JSON.stringify(c.get("USER"), null, 2)}</pre>
-		<br>
-		<a href="/api/user/whoami">whoami</a>
-		<br>
-		<a href="/api/user/logout">Logout</a>
-	` : `<a href="/__p_auth/api/login/google-signin">Google Signin</a>
-`}
-`);
+	return c.html(`Hello Hono!`);
 });
 
 const routes = app.basePath('/api')
@@ -76,6 +66,8 @@ export type AuthAppType = typeof routes;
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 console.log(`Server is running on http://localhost:${port}`);
+
+
 
 serve({
 	fetch: app.fetch,

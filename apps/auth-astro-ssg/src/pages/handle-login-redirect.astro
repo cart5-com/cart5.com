@@ -8,6 +8,7 @@ import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
 	<script>
 		import { createAuthApiClient } from "lib/apiClients/authApiClient";
 		import { type ErrorType } from "lib/errors";
+		import { showTurnstile } from "../client-lib/turnstile";
 
 		const redirectUri = new URL(window.location.href).searchParams.get("redirect_uri");
 		console.log("redirectUri", decodeURIComponent(redirectUri!));
@@ -15,7 +16,10 @@ import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
 		createShortLivedSessionButton?.addEventListener("click", async () => {
 			const authApiClient = createAuthApiClient();
 			const response = await authApiClient.api.login["create-short-lived-session"].$post({
-				json: { redirectUrl: decodeURIComponent(redirectUri!) }
+				json: {
+					redirectUrl: decodeURIComponent(redirectUri!),
+					turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+				}
 			});
 			const { data, error } = await response.json();
 			if (error) {
