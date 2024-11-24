@@ -155,7 +155,7 @@ export const loginRoute = new Hono<honoTypes>()
         }
     )
 
-export async function createShortLivedSessionRedirectUrl(userId: string, redirectUrlObj: URL): Promise<String> {
+async function createShortLivedSessionRedirectUrl(userId: string, redirectUrlObj: URL): Promise<String> {
     // Create a temporary session for this user on the target hostname
     const { cookieValue } = await createShortLivedSession(userId, redirectUrlObj.hostname);
 
@@ -182,7 +182,7 @@ export async function createShortLivedSessionRedirectUrl(userId: string, redirec
     return goToUrl.toString();
 }
 
-export const createGoogleSigninCookieAndUrl = async () => {
+const createGoogleSigninCookieAndUrl = async () => {
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
     const googleOAuthHelper = getGoogleOAuthHelper();
