@@ -7,17 +7,17 @@
 			<a href={`/hello/page?id=1&name=2#sample-hash-2=[12,"sample-string"]`}>Hello Page</a>
 		</li>
 	</ul>
-	<pre id="user-info"><button id="whoami-button">whoami</button></pre>
-	<button id="login-button">login</button>
+	<div id="user-info-container"></div>
+	<!-- <pre id="user-info"><button id="whoami-button">whoami</button></pre>
+	<button id="login-button">login</button> -->
 	<script>
 		import { createAuthApiClient } from "lib/apiClients/authApiClient";
 		const authApiClient = createAuthApiClient(`${window.location.origin}/__p_auth/`);
-		const whoamiButton = document.querySelector<HTMLButtonElement>("#whoami-button");
-		whoamiButton?.addEventListener("click", async () => {
+		async function getUserInfo() {
 			const response = await authApiClient.api.user.whoami.$post();
 			const { data: user, error } = await response.json();
 			if (user) {
-				document.getElementById("user-info")!.innerHTML = JSON.stringify(user, null, 2);
+				document.getElementById("user-info-container")!.innerHTML = JSON.stringify(user, null, 2);
 				// add logout button
 				const logoutButton = document.createElement("button");
 				logoutButton.innerHTML = "Logout";
@@ -25,16 +25,21 @@
 					await authApiClient.api.user.logout.$post();
 					window.location.reload();
 				});
-				document.getElementById("user-info")!.appendChild(logoutButton);
+				document.getElementById("user-info-container")!.appendChild(document.createElement("hr"));
+				document.getElementById("user-info-container")!.appendChild(logoutButton);
 			} else {
-				document.getElementById("user-info")!.innerHTML = "Not logged in";
+				document.getElementById("user-info-container")!.innerHTML = "Not logged in";
+				document.getElementById("user-info-container")!.appendChild(document.createElement("hr"));
+				const loginButton = document.createElement("button");
+				loginButton.innerHTML = "Login";
+				loginButton.addEventListener("click", async () => {
+					const loginRedirectUrl = new URL(`https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/handle-login-redirect`);
+					loginRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
+					window.location.href = loginRedirectUrl.toString();
+				});
+				document.getElementById("user-info-container")!.appendChild(loginButton);
 			}
-		});
-		const loginButton = document.querySelector<HTMLButtonElement>("#login-button");
-		loginButton?.addEventListener("click", async () => {
-			const loginRedirectUrl = new URL(`https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/handle-login-redirect`);
-			loginRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
-			window.location.href = loginRedirectUrl.toString();
-		});
+		}
+		getUserInfo();
 	</script>
 </header>

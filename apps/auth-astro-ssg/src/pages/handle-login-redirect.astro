@@ -7,6 +7,7 @@ import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
 	<button id="create-short-lived-session">create-short-lived-session</button>
 	<script>
 		import { createAuthApiClient } from "lib/apiClients/authApiClient";
+		import { type ErrorType } from "lib/errors";
 
 		const redirectUri = new URL(window.location.href).searchParams.get("redirect_uri");
 		console.log("redirectUri", decodeURIComponent(redirectUri!));
@@ -16,9 +17,15 @@ import AuthBaseLayout from "../layouts/AuthBaseLayout.astro";
 			const response = await authApiClient.api.login["create-short-lived-session"].$post({
 				json: { redirectUrl: decodeURIComponent(redirectUri!) }
 			});
-			const data = await response.json();
-			console.log("redirectUrl", data);
-			window.location.href = data.data;
+			const { data, error } = await response.json();
+			if (error) {
+				const errorType = error as ErrorType;
+				console.error("error", errorType);
+				alert(errorType?.message);
+			} else {
+				console.log("redirectUrl", data);
+				window.location.href = data;
+			}
 		});
 	</script>
 </AuthBaseLayout>

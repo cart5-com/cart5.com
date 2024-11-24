@@ -6,6 +6,7 @@ import type { User } from './lib/user.js';
 import { authChecks } from './middlewares/auth.js';
 import { userRoute } from './routes/userRoute.js';
 import { loginRoute } from './routes/loginRoute.js';
+import { KNOWN_ERROR } from 'lib/errors';
 
 export type HonoVariables = {
 	SESSION: Session | null,
@@ -21,6 +22,35 @@ export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
 const app = new Hono<honoTypes>();
 app.use(csrfChecks);
 app.use(authChecks);
+app.onError((err, c) => {
+	if (err instanceof KNOWN_ERROR) {
+		console.log("KNOWN_ERROR err:");
+		console.log(err);
+		// ignore senty capture
+		c.error = undefined;
+		return c.json({
+			error: {
+				message: err.message,
+				code: err.code
+			},
+			// data: null
+		}, 500);
+	} else {
+		// this is same with hono's own error handler. 
+		// but i like JSON response
+		if ("getResponse" in err) {
+			return err.getResponse();
+		}
+		console.error(err);
+		return c.json({
+			error: {
+				message: "Internal Server Error"
+			},
+			// data: null
+		}, 503);
+	}
+})
+
 
 app.get("/", (c) => {
 	return c.html(`

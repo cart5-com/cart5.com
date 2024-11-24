@@ -68,9 +68,10 @@ export const loginRoute = new Hono<honoTypes>()
             const redirectUrlObj = new URL(redirectUrl);
             // TODO: check it is a known hostname
 
+            const goToUrl = await createShortLivedSessionRedirectUrl(user.id, redirectUrlObj);
             // Return the complete URL that the client should redirect to
             return c.json({
-                data: await createShortLivedSessionRedirectUrl(user.id, redirectUrlObj),
+                data: goToUrl.toString(),
                 error: null
             }, 200);
         }

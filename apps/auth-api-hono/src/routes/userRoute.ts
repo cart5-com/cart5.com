@@ -54,7 +54,10 @@ export const userRoute = new Hono<honoTypes>()
                 await invalidateSession(session.id);
                 deleteSessionTokenCookie(c);
             }
-            return c.redirect('/');
+            return c.json({
+                data: "success",
+                error: null
+            }, 200);
         }
     )
     .post(
