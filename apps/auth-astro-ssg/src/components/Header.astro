@@ -16,7 +16,7 @@
 							</a>`;
 			} else {
 				userInfo.innerHTML = `<a 
-								href="${authApiClient.api.login["google-signin"].$url().href}">
+								href="${authApiClient.api.login["google-signin"].$url().href}?redirect=${encodeURIComponent(window.location.href)}">
 									<img src="/google-mini.svg" width="40px" alt="Google Signin" />
 									Google Signin
 							</a>`;
