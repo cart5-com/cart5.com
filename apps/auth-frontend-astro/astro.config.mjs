@@ -22,7 +22,13 @@ export default defineConfig({
         },
     },
 
-    integrations: [vue(), tailwind({
-        applyBaseStyles: false,
-    })]
+    integrations: [
+        vue({
+            appEntrypoint: "./src/vue-app-entrypoint.ts",
+            // devtools: true
+        }),
+        tailwind({
+            applyBaseStyles: false,
+        })
+    ]
 });

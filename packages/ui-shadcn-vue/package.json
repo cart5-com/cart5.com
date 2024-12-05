@@ -8,6 +8,7 @@
     "download-all": "pnpx shadcn-vue@latest add -a"
   },
   "dependencies": {
+    "@internationalized/date": "^3.6.0",
     "@types/node": "^22.10.1",
     "@unovis/ts": "^1.4.5",
     "@unovis/vue": "^1.4.5",

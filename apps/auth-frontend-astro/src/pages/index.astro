@@ -1,13 +1,10 @@
 ---
 import BaseLayout from "src/layouts/BaseLayout.astro";
-import Auth2 from "ui-shadcn-vue/src/samples/Auth2.vue";
-import AuthTabs from "ui-shadcn-vue/src/samples/AuthTabs.vue";
-import { Button } from "@/components/ui/button";
+import AuthTabs from "../components/AuthTabs.vue";
 ---
 
 <BaseLayout>
-	<h1 class="bg-primary text-primary-foreground">Hello auth-frontend-astro</h1>
-	<AuthTabs client:load />
-	<Auth2 client:load />
-	<Button variant="destructive">Hello World</Button>
+	<div class="container justify-center p-1 sm:p-5">
+		<AuthTabs client:visible class="mx-auto my-auto" />
+	</div>
 </BaseLayout>
