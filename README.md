@@ -1,55 +1,17 @@
-# Simple Cross-Domain Authentication Monorepo
+# Cart5.com Monorepo
 
-This is a monorepo for a simple cross-domain authentication example.
-(used auth sample from lucia-auth by pilcrowonpaper.com)
+This is a monorepo for the Cart5.com
 
 ## Features
-
-- ✅ Cross-domain authentication
-- ✅ Cloudflare Turnstile integration
-- ✅ One-time-code email authentication
-- ✅ Email/password authentication
-- ✅ Google OAuth integration
-- ✅ Two-factor authentication (2FA) and reset with a recovery code
-
-## Basic Flow for cross-domain auth
-
-1. User visits Store Site (e.g., sample-store-1.com)
-
-   - User clicks "Login" button
-   - Gets redirected to auth.cart5dev.com with return URL
-
-2. On Auth Site (auth.cart5dev.com)
-
-   - User logs in using OTP (one-time password)
-   - After successful login, initiates cross-domain auth process
-
-3. Cross-Domain Authentication
-   - Creates temporary session
-   - Encrypts session data
-   - Redirects back to store with encrypted data
-   - Store website validates and creates its own session
-
-## Basic Flow details for OTP
-
-1. User enters email and completes Turnstile verification
-
-   - System generates OTP
-   - Encrypts OTP and email into JWT token
-   - Stores token in **HTTP-only cookie**
-   - Sends OTP to user's email
-
-2. User enters received OTP code
-   - System validates OTP code against stored token
-   - Creates or updates user record
-   - Generates session token
-   - Sets session cookie
+- ✅ Authentication
 
 ## Architecture
 
-- **Frontend**: Astro (SSG & SSR)
-- **Backend**: Hono (TypeScript)
-- **Database**: SQLite with Drizzle ORM
+- **UI**: Shadcn Vue
+- **Auth Frontend**: Astro (SSG)
+- **Auth Backend**: Hono (TypeScript)
+- **Store Frontend**: Astro (SSR-Node)
+- **Database**: SQLite with Drizzle ORM, TURSO for Production
 - **Proxy**: Caddy for local development (yes, I do not like dealing with CORS issues)
 
 ## Project Structure

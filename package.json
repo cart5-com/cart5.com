@@ -8,7 +8,7 @@
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\""
   },
-  "devDependencies": {
+  "dependencies": {
     "@types/node": "^22.9.1",
     "dotenv-cli": "^7.4.4",
     "prettier": "^3.3.3",
