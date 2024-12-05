@@ -1,6 +1,14 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "jsx": "preserve"
+    // Astro-Vue
+    "jsx": "preserve",
+    // Shadcn-Vue
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "../../packages/ui-shadcn-vue/src/*"
+      ]
+    }
   }
 }
