@@ -3,6 +3,7 @@
 This is a monorepo for the Cart5.com
 
 ## Features
+
 - ✅ Authentication
 
 ## Architecture
@@ -19,7 +20,7 @@ This is a monorepo for the Cart5.com
 ```
 apps/
 ├── auth-api-hono/ # Authentication API service
-├── auth-client-astro/ # Authentication client (SSG)
+├── auth-frontend-astro/ # Authentication client (SSG)
 ├── web-store-ssr-astro/# Demo store with SSR
 └── proxy-caddy/ # Local development proxy
 ```

@@ -14,7 +14,7 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
 	import auth-api-hono-proxy
 	handle_path /* {
-		#auth-client-astro
+		#auth-frontend-astro
 		reverse_proxy http://localhost:3001
 	}
 }
