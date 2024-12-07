@@ -24,7 +24,7 @@ const emit = defineEmits<{
 
 const schema = z.object({
     verifyEmail: z.string().email(),
-    code: z.string().min(8).max(8),
+    code: z.string().min(6, { message: 'Please enter 6 characters' }).max(6, { message: 'Please enter exactly 6 characters' }),
 })
 
 const formSchema = toTypedSchema(schema)

@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { generateRandomOTP } from '../utils/generateRandomOtp';
+import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
 import { sendUserOtpEmail } from '../utils/email';
@@ -36,7 +36,7 @@ export const otpRoute = new Hono<honoTypes>()
             const { verifyEmail, turnstile } = c.req.valid('form');
             await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
 
-            const otp = generateRandomOTP().toUpperCase();
+            const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(
                 {
                     email: verifyEmail,
@@ -64,7 +64,7 @@ export const otpRoute = new Hono<honoTypes>()
         '/verify',
         zValidator('form', z.object({
             verifyEmail: z.string().email().max(200),
-            code: z.string().min(1, { message: "One-time password required" }),
+            code: z.string().min(1, { message: "One-time password required" }).max(6, { message: "6 digits required" }),
             turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
