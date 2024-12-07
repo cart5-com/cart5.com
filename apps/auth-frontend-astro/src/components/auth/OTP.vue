@@ -9,10 +9,15 @@ import {
 } from "@/components/ui/card";
 import { AutoForm } from "@/components/ui/auto-form";
 import { useFormPersistence } from "@/ui-plus/form/useFormPersistence";
+import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
+import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import * as z from "zod";
 import { LOCAL_STORAGE_KEYS } from "src/const";
+import { authApiClient } from "../authApiClient";
+import OTPVerifyForm from "src/components/auth/OTPVerifyForm.vue";
+const dialog = useDialog();
 
 const schema = z.object({
 	email: z.string().email(),
@@ -28,14 +33,44 @@ useFormPersistence(form, {
 	}
 });
 
-// setTimeout(() => {
-// 	// form.setErrors({
-// 	// 	password: "Password is too weak or has been compromised"
-// 	// });
-// }, 100);
+async function onSubmit(values: z.infer<typeof schema>) {
+	const { data, error } = await (await authApiClient.api.otp.otp.$post({
+		form: {
+			verifyEmail: values.email,
+			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+		},
+	})).json()
 
-function onSubmit(values: Record<string, any>) {
-	console.log(JSON.stringify(values, null, 2));
+	if (error) {
+		console.error(error);
+		alert("Error sending OTP");
+	} else {
+		dialog.show<{ verifyEmail: string, code: string }>({
+			title: "Please verify your email",
+			closeable: false,
+			component: OTPVerifyForm,
+			props: {
+				verifyEmail: values.email,
+			},
+			onSuccess: async (result) => {
+				const loadingId = dialog.showBlockingLoadingModal();
+				const { error } = await (await authApiClient.api.otp.verify.$post({
+					form: {
+						verifyEmail: result.verifyEmail,
+						code: result.code,
+						turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+					},
+				})).json()
+				if (error) {
+					console.error(error);
+					alert("Error verifying OTP");
+				} else {
+					window.location.reload();
+				}
+				dialog.cancel(loadingId)
+			}
+		});
+	}
 }
 </script>
 
@@ -53,7 +88,7 @@ function onSubmit(values: Record<string, any>) {
 					  :field-config="{
 						email: {
 							inputProps: {
-								autocomplete: 'email'
+								autocomplete: 'email',
 							}
 						},
 					}">

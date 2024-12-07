@@ -6,22 +6,22 @@ import OTP from "src/components/auth/OTP.vue";
 </script>
 
 <template>
-	<Tabs default-value="register"
+	<Tabs default-value="one-time-password"
 		  class="w-full">
 		<TabsList class="mx-auto grid w-full grid-cols-3 sm:max-w-[600px]">
+			<TabsTrigger value="one-time-password"> OTP </TabsTrigger>
 			<TabsTrigger value="register"> Register </TabsTrigger>
 			<TabsTrigger value="login"> Login </TabsTrigger>
-			<TabsTrigger value="one-time-password"> OTP </TabsTrigger>
 		</TabsList>
 		<div class="mx-auto w-full sm:max-w-[600px]">
+			<TabsContent value="one-time-password">
+				<OTP />
+			</TabsContent>
 			<TabsContent value="register">
 				<Register />
 			</TabsContent>
 			<TabsContent value="login">
 				<Login />
-			</TabsContent>
-			<TabsContent value="one-time-password">
-				<OTP />
 			</TabsContent>
 		</div>
 	</Tabs>

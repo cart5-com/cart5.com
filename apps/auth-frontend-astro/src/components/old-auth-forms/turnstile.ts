@@ -30,7 +30,7 @@ export const showTurnstile = async function (sitekey: string, containerElement?:
                                 if (error.toString() === "300030") {
                                     // Error 300030 is generic Client Execution Error.
                                     // Retry on 300030 error
-                                    resolve(showTurnstile(sitekey));
+                                    resolve(showTurnstile(sitekey, containerElement));
                                 } else {
                                     reject(error);
                                 }

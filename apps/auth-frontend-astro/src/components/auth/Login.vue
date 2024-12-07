@@ -29,12 +29,6 @@ useFormPersistence(form, {
 	}
 });
 
-// setTimeout(() => {
-// 	// form.setErrors({
-// 	// 	password: "Password is too weak or has been compromised"
-// 	// });
-// }, 100);
-
 function onSubmit(values: Record<string, any>) {
 	console.log(JSON.stringify(values, null, 2));
 }
