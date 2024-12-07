@@ -39,6 +39,7 @@ export const otpRoute = new Hono<honoTypes>()
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(
                 {
+                    nonce: crypto.randomUUID(),
                     email: verifyEmail,
                     otp,
                 }
@@ -95,9 +96,9 @@ export const otpRoute = new Hono<honoTypes>()
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
                     {
+                        nonce: crypto.randomUUID(),
                         userId: user.id,
                         email: user.email,
-                        nonce: crypto.randomUUID(),
                     }
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
@@ -119,6 +120,7 @@ export const otpRoute = new Hono<honoTypes>()
     )
 
 type OtpTokenPayload = {
+    nonce: string;
     email: string;
     otp: string;
 }

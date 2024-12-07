@@ -91,9 +91,9 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
                     {
+                        nonce: crypto.randomUUID(),
                         userId: user.id,
                         email: user.email,
-                        nonce: crypto.randomUUID(),
                     }
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {

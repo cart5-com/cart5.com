@@ -58,10 +58,10 @@ export const crossDomainRoute = new Hono<honoTypes>()
             }
 
             const payload: CrossDomainCodePayload = {
+                nonce: crypto.randomUUID(),
                 userId: user.id,
                 turnstile,
                 createdAtTimestamp: Date.now(),
-                nonce: crypto.randomUUID(),
                 sourceHost: new URL(refererHeader).hostname,
                 targetHost: url.hostname
             };
