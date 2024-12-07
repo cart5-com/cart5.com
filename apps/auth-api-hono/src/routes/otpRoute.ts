@@ -72,7 +72,7 @@ export const otpRoute = new Hono<honoTypes>()
             const { verifyEmail, code, turnstile } = c.req.valid('form');
             await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
             const otpToken = getCookie(c, OTP_COOKIE_NAME);
-            deleteCookie(c, OTP_COOKIE_NAME);
+
 
             if (!otpToken) {
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
@@ -83,7 +83,7 @@ export const otpRoute = new Hono<honoTypes>()
             if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
                 throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
             }
-
+            deleteCookie(c, OTP_COOKIE_NAME);
             const user = await upsertUser(email);
 
             if (!user.isEmailVerified) {
