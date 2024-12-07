@@ -5,7 +5,6 @@ import { SESSION_COOKIE_NAME, SESSION_EXPIRES_IN } from "../../consts";
 import { sessionTable } from "../schema";
 import db from "../drizzle";
 import type { Context } from "hono";
-import type { User } from "../../types/UserType";
 import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
 

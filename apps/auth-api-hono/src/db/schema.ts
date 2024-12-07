@@ -23,4 +23,8 @@ export const sessionTable = sqliteTable("session", {
 		.references(() => userTable.id),
 	expiresAt: integer("expires_at").notNull(), // milliseconds are included, full timestamp using Date object
 	hostname: text("hostname").notNull(),
+
+	// TODO: add createdAt to detect is new or old. 
+	// it will be used for security validation
+	// for ex:password reset, authentication reset, etc.
 });
