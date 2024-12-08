@@ -8,7 +8,7 @@ import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
 import { sendUserOtpEmail } from '../utils/email';
 import { validateTurnstile } from '../utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
@@ -114,7 +114,7 @@ export const otpRoute = new Hono<honoTypes>()
 
             return c.json({
                 data: "success",
-                error: null
+                error: null as ErrorType
             }, 200);
         }
     )

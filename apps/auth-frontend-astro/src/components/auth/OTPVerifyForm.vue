@@ -8,10 +8,14 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
+import { useDialog } from '@/ui-plus/dialog/use-dialog';
+import { authApiClient } from 'src/components/authApiClient'
+import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
+
+const dialog = useDialog();
 
 const props = defineProps<{
     verifyEmail: string
@@ -34,8 +38,27 @@ const form = useForm({
 })
 
 form.setFieldValue("verifyEmail", props.verifyEmail);
-const onSubmit = form.handleSubmit((values) => {
-    emit('close', values);
+const onSubmit = form.handleSubmit(async (values) => {
+    const loadingId = dialog.showBlockingLoadingModal();
+    const { error } = await (await authApiClient.api.otp.verify.$post({
+        form: {
+            verifyEmail: values.verifyEmail,
+            code: values.code,
+            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+        },
+    })).json()
+    if (error) {
+        console.error(error);
+        form.setFieldError("code", error.message ?? "Unknown error");
+        error.issues?.forEach((issue) => {
+            form.setFieldError(issue.path[0] as (keyof z.infer<typeof schema>), issue.message);
+        });
+    } else {
+        window.location.reload();
+    }
+    dialog.cancel(loadingId)
+    // emit('close', values);
+    // emit('cancel')
 })
 </script>
 

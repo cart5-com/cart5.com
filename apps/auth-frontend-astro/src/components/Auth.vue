@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import UserTabs from "./user/UserTabs.vue";
 import AuthTabs from "./AuthTabs.vue";
 import { authApiClient } from "./authApiClient";
 import { userStore } from './userStore';
@@ -21,11 +22,13 @@ const whoAmI = async () => {
 whoAmI();
 </script>
 <template>
-    <div v-if="userStore.user">
-        Welcome, {{ userStore.user.email }}
-    </div>
-    <div v-else>
-        <AuthTabs />
+    <div class="mx-auto sm:max-w-[600px] w-full">
+        <div v-if="userStore.user">
+            <UserTabs />
+        </div>
+        <div v-else>
+            <AuthTabs />
+        </div>
     </div>
     <DialogProvider />
 </template>

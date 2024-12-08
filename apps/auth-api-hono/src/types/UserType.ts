@@ -3,6 +3,7 @@ export interface User {
     email: string;
     isEmailVerified: boolean;
     name: string;
+    pictureUrl: string;
 }
 
 export type TwoFactorAuthVerifyPayload = {

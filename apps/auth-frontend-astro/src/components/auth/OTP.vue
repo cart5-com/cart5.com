@@ -53,21 +53,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
 				verifyEmail: values.email,
 			},
 			onSuccess: async (result) => {
-				const loadingId = dialog.showBlockingLoadingModal();
-				const { error } = await (await authApiClient.api.otp.verify.$post({
-					form: {
-						verifyEmail: result.verifyEmail,
-						code: result.code,
-						turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
-					},
-				})).json()
-				if (error) {
-					console.error(error);
-					alert("Error verifying OTP");
-				} else {
-					window.location.reload();
-				}
-				dialog.cancel(loadingId)
+
+
 			}
 		});
 	}
