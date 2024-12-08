@@ -4,13 +4,6 @@
         <form @submit.prevent="changePassword"
               class="space-y-4">
             <div class="space-y-2">
-                <Label for="current-password">Current Password</Label>
-                <Input id="current-password"
-                       type="password"
-                       v-model="currentPassword"
-                       required />
-            </div>
-            <div class="space-y-2">
                 <Label for="new-password">New Password</Label>
                 <Input id="new-password"
                        type="password"

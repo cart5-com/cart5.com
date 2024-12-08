@@ -4,11 +4,11 @@
         <Tabs default-value="website"
               class="w-full">
             <TabsList class="grid w-full grid-cols-2">
-                <TabsTrigger value="website">www.otherside.com</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
+                <TabsTrigger value="website">{{ OtherSideDomain }}</TabsTrigger>
+                <TabsTrigger value="account">Account</TabsTrigger>
             </TabsList>
-            <TabsContent value="settings">
-                <Settings />
+            <TabsContent value="account">
+                <Account />
             </TabsContent>
             <TabsContent value="website">
                 <CrossDomainAuth />
@@ -19,6 +19,8 @@
 
 <script setup lang="ts">
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import Settings from './Settings.vue'
+import Account from './Account.vue'
 import CrossDomainAuth from './CrossDomainAuth.vue';
+import { getRedirectHostname } from 'src/components/queryHelpers';
+const OtherSideDomain = getRedirectHostname();
 </script>

@@ -16,12 +16,14 @@ const mode = useColorMode();
 <template>
 	<DropdownMenu>
 		<DropdownMenuTrigger as-child>
-			<Button variant="secondary" size="icon" class="rounded-full">
+			<Button variant="secondary"
+					size="icon"
+					class="rounded-full">
 				<Moon class="block dark:hidden" />
 				<Sun class="hidden dark:block" />
 			</Button>
 		</DropdownMenuTrigger>
-		<DropdownMenuContent align="end">
+		<DropdownMenuContent align="start">
 			<DropdownMenuItem @click="mode = 'light'"> Light </DropdownMenuItem>
 			<DropdownMenuItem @click="mode = 'dark'"> Dark </DropdownMenuItem>
 			<DropdownMenuItem @click="mode = 'auto'"> System </DropdownMenuItem>
