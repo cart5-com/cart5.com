@@ -16,7 +16,8 @@ const logoutAll = async () => {
 
 
 <template>
-    <div class="flex items-center p-4 space-x-4 bg-accent rounded-lg border border-border/50 shadow-sm">
+    <div
+         class="flex items-center p-4 space-x-4 bg-accent rounded-lg border border-border/50 shadow-sm flex-col sm:flex-row">
         <Avatar class="w-12 h-12 border-2 bg-card"
                 :style="`background-image: url('https://avatar.vercel.sh/${userStore.user?.name}.jpg');background-size: cover;`">
             <AvatarImage :src="userStore.user?.pictureUrl || ``" />
@@ -29,6 +30,7 @@ const logoutAll = async () => {
             <p class="text-sm text-muted-foreground">{{ userStore.user?.email }}</p>
         </div>
         <Button variant="outline"
+                class="my-2"
                 @click="logoutAll">Logout</Button>
     </div>
 </template>
