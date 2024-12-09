@@ -29,7 +29,6 @@ const navigateToMainSite = async () => {
     document.body.appendChild(newForm);
     newForm.submit();
 }
-// const { PUBLIC_DOMAIN_NAME } = import.meta.env;
 const crossDomainHostname = getRedirectHostname();
 const redirectUrl = getRedirectUrl();
 

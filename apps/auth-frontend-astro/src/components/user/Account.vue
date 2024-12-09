@@ -9,6 +9,7 @@ import UserDetails from './UserDetails.vue'
 import { getReturnBackHostname, getReturnBackUrl } from '../queryHelpers';
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-vue-next'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 const returnBackUrl = getReturnBackUrl();
 const returnBackHostname = getReturnBackHostname();
 </script>
@@ -24,13 +25,24 @@ const returnBackHostname = getReturnBackHostname();
         <CardContent>
             <div class="space-y-6">
                 <UserDetails />
-                <Button variant="outline"
-                        v-if="returnBackUrl"
-                        as="a"
-                        class="w-full"
-                        :href="returnBackUrl">
-                    <ChevronLeft class="w-4 h-4" /> return back to {{ returnBackHostname }}
-                </Button>
+
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <Button variant="outline"
+                                    v-if="returnBackUrl"
+                                    as="a"
+                                    :href="returnBackUrl">
+                                <ChevronLeft class="w-4 h-4" /> {{ returnBackHostname }}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>return back to `{{ returnBackHostname }}`</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+
                 <Separator class="my-4" />
                 <OtpSection />
                 <Separator class="my-4" />
