@@ -13,14 +13,20 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import * as z from "zod";
 import { LOCAL_STORAGE_KEYS } from "src/const";
-import CancelGoBackButton from "./CancelGoBackButton.vue";
-import GoogleButton from "./GoogleButton.vue";
+import CancelGoBackButton from "../CancelGoBackButton.vue";
+import GoogleButton from "../GoogleButton.vue";
 import { Separator } from "@/components/ui/separator";
 import { ref } from "vue";
-import { authApiClient } from "src/components/authApiClient";
+import { authApiClient } from "../../authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
+import { useDialog } from "@/ui-plus/dialog/use-dialog";
+import RegisterVerifyForm from "src/components/auth/register/RegisterVerifyForm.vue";
+import { Loader2 } from "lucide-vue-next";
+
+const dialog = useDialog();
 
 const schema = z.object({
+	name: z.string().min(1).max(255),
 	email: z.string().email(),
 	password: z.string().min(8).max(255)
 });
@@ -28,23 +34,30 @@ const schema = z.object({
 const form = useForm({
 	validationSchema: toTypedSchema(schema)
 });
+const isLoading = ref(false);
+const globalError = ref<string | null>(null);
 
 useFormPersistence(form, {
 	fields: {
-		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL
+		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL,
+		name: LOCAL_STORAGE_KEYS.REMEMBER_LAST_NAME
 	}
 });
 
-const isLoading = ref(false);
-const globalError = ref<string | null>(null);
+// setTimeout(() => {
+// 	// form.setErrors({
+// 	// 	password: "Password is too weak or has been compromised"
+// 	// });
+// }, 100);
 
 async function onSubmit(values: Record<string, any>) {
 	isLoading.value = true;
 	globalError.value = null;
-	const { data, error } = await (await authApiClient.api.email_password.login.$post({
+	const { data, error } = await (await authApiClient.api.email_password.register.$post({
 		form: {
 			email: values.email,
 			password: values.password,
+			name: values.name,
 			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
 		},
 	})).json()
@@ -55,8 +68,15 @@ async function onSubmit(values: Record<string, any>) {
 			form.setFieldError(issue.path[0] as (keyof z.infer<typeof schema>), issue.message);
 		});
 	} else {
-		// Success
-		window.location.reload();
+		dialog.show<{ verifyEmail: string, code: string }>({
+			title: "Please verify your email",
+			closeable: false,
+			component: RegisterVerifyForm,
+			props: {
+				verifyEmail: values.email,
+			},
+			onSuccess: async (result) => { }
+		});
 	}
 	isLoading.value = false;
 }
@@ -65,7 +85,7 @@ async function onSubmit(values: Record<string, any>) {
 <template>
 	<Card>
 		<CardHeader>
-			<CardTitle>Login</CardTitle>
+			<CardTitle>Register</CardTitle>
 			<CardDescription></CardDescription>
 		</CardHeader>
 		<CardContent class="">
@@ -74,6 +94,11 @@ async function onSubmit(values: Record<string, any>) {
 					  :form="form"
 					  @submit="onSubmit"
 					  :field-config="{
+						name: {
+							inputProps: {
+								autocomplete: 'name'
+							}
+						},
 						email: {
 							inputProps: {
 								autocomplete: 'email'
@@ -82,7 +107,7 @@ async function onSubmit(values: Record<string, any>) {
 						password: {
 							inputProps: {
 								type: 'password',
-								autocomplete: 'current-password'
+								autocomplete: 'new-password'
 							}
 						}
 					}">
@@ -91,7 +116,12 @@ async function onSubmit(values: Record<string, any>) {
 					{{ globalError }}
 				</div>
 				<Button type="submit"
-						class="w-full"> Login </Button>
+						:disabled="isLoading"
+						class="w-full">
+					<Loader2 v-if="isLoading"
+							 class="animate-spin" />
+					Register
+				</Button>
 				<Separator class="my-4"
 						   label="Or" />
 				<GoogleButton />

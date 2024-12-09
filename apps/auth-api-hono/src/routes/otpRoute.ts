@@ -27,7 +27,7 @@ export const otpRoute = new Hono<honoTypes>()
         await next();
     })
     .post(
-        '/otp',
+        '/send',
         zValidator('form', z.object({
             verifyEmail: z.string().email().max(200),
             turnstile: z.string().min(1, { message: "Verification required" })
@@ -57,7 +57,7 @@ export const otpRoute = new Hono<honoTypes>()
 
             return c.json({
                 data: "success",
-                error: null
+                error: null as ErrorType
             }, 200);
         }
     )

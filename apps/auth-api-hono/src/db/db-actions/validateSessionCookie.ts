@@ -1,5 +1,5 @@
 import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "../../consts";
-import deleteSession from "./deleteSession";
+import { deleteSession } from "./deleteSession";
 import { getSessionAndUser } from "./getSessionAndUser";
 import updateSessionExpiration from "./updateSessionExpiration";
 import type { Session } from "../../types/SessionType";

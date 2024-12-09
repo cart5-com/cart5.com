@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+const newName = ref('')
+
+const changeName = () => {
+    // Implement name change logic here
+    console.log('Changing name to:', newName.value)
+    // Reset form field after submission
+    newName.value = ''
+}
+</script>
+
 <template>
     <div class="space-y-4">
         <h3 class="text-lg font-medium">Change Name</h3>
@@ -14,19 +30,3 @@
         </form>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
-const newName = ref('')
-
-const changeName = () => {
-    // Implement name change logic here
-    console.log('Changing name to:', newName.value)
-    // Reset form field after submission
-    newName.value = ''
-}
-</script>

@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+
+const changePassword = () => {
+    // Implement password change logic here
+    console.log('Changing password...')
+    // Reset form fields after submission
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+}
+</script>
+
 <template>
     <div class="space-y-4">
         <h3 class="text-lg font-medium">Change Password</h3>
@@ -21,23 +41,3 @@
         </form>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
-const currentPassword = ref('')
-const newPassword = ref('')
-const confirmPassword = ref('')
-
-const changePassword = () => {
-    // Implement password change logic here
-    console.log('Changing password...')
-    // Reset form fields after submission
-    currentPassword.value = ''
-    newPassword.value = ''
-    confirmPassword.value = ''
-}
-</script>

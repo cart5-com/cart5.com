@@ -24,7 +24,7 @@ otpForm?.addEventListener("submit", async (e) => {
             },
         });
     } else {
-        req = authApiClient.api.otp.otp.$post({
+        req = authApiClient.api.otp.send.$post({
             form: {
                 verifyEmail,
                 turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)

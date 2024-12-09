@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+
+const otpEnabled = ref(false)
+
+const enableOtp = () => {
+    // Implement OTP enabling logic here
+    otpEnabled.value = true
+}
+
+const disableOtp = () => {
+    // Implement OTP disabling logic here
+    otpEnabled.value = false
+}
+</script>
+
 <template>
     <div class="space-y-4">
         <h3 class="text-lg font-medium">Two-Factor Authentication</h3>
@@ -19,21 +37,3 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-
-const otpEnabled = ref(false)
-
-const enableOtp = () => {
-    // Implement OTP enabling logic here
-    otpEnabled.value = true
-}
-
-const disableOtp = () => {
-    // Implement OTP disabling logic here
-    otpEnabled.value = false
-}
-</script>

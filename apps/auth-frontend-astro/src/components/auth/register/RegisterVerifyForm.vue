@@ -12,7 +12,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import { authApiClient } from 'src/components/authApiClient'
+import { authApiClient } from '../../authApiClient'
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 
 const dialog = useDialog();
@@ -40,7 +40,7 @@ const form = useForm({
 form.setFieldValue("verifyEmail", props.verifyEmail);
 const onSubmit = form.handleSubmit(async (values) => {
     const loadingId = dialog.showBlockingLoadingModal();
-    const { error } = await (await authApiClient.api.otp.verify.$post({
+    const { error } = await (await authApiClient.api.email_password.verify.$post({
         form: {
             verifyEmail: values.verifyEmail,
             code: values.code,

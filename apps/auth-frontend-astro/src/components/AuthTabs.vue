@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Register from "./auth/Register.vue";
-import Login from "src/components/auth/Login.vue";
-import OTP from "src/components/auth/OTP.vue";
+import Register from "./auth/register/Register.vue";
+import Login from "./auth/Login.vue";
+import OTP from "./auth/otp/OTP.vue";
 </script>
 
 <template>

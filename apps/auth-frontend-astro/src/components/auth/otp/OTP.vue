@@ -15,8 +15,13 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import * as z from "zod";
 import { LOCAL_STORAGE_KEYS } from "src/const";
-import { authApiClient } from "../authApiClient";
-import OTPVerifyForm from "src/components/auth/OTPVerifyForm.vue";
+import { authApiClient } from "../../authApiClient";
+import OTPVerifyForm from "./OTPVerifyForm.vue";
+import CancelGoBackButton from "../CancelGoBackButton.vue";
+import GoogleButton from "../GoogleButton.vue";
+import { Separator } from "@/components/ui/separator";
+import { ref } from "vue";
+import { Loader2 } from "lucide-vue-next";
 const dialog = useDialog();
 
 const schema = z.object({
@@ -33,8 +38,13 @@ useFormPersistence(form, {
 	}
 });
 
+const isLoading = ref(false);
+const globalError = ref<string | null>(null);
+
 async function onSubmit(values: z.infer<typeof schema>) {
-	const { data, error } = await (await authApiClient.api.otp.otp.$post({
+	isLoading.value = true;
+	globalError.value = null;
+	const { data, error } = await (await authApiClient.api.otp.send.$post({
 		form: {
 			verifyEmail: values.email,
 			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
@@ -43,7 +53,10 @@ async function onSubmit(values: z.infer<typeof schema>) {
 
 	if (error) {
 		console.error(error);
-		alert("Error sending OTP");
+		globalError.value = error.message ?? "Unknown error";
+		error.issues?.forEach((issue) => {
+			form.setFieldError(issue.path[0] as (keyof z.infer<typeof schema>), issue.message);
+		});
 	} else {
 		dialog.show<{ verifyEmail: string, code: string }>({
 			title: "Please verify your email",
@@ -52,12 +65,10 @@ async function onSubmit(values: z.infer<typeof schema>) {
 			props: {
 				verifyEmail: values.email,
 			},
-			onSuccess: async (result) => {
-
-
-			}
+			onSuccess: async (result) => { }
 		});
 	}
+	isLoading.value = false;
 }
 </script>
 
@@ -79,10 +90,22 @@ async function onSubmit(values: z.infer<typeof schema>) {
 							}
 						},
 					}">
-				<div>
-					<Button type="submit"
-							class="mt-10 w-full"> Send Code </Button>
+				<div class="text-sm font-medium text-destructive"
+					 v-if="globalError">
+					{{ globalError }}
 				</div>
+				<Button type="submit"
+						:disabled="isLoading"
+						class="w-full">
+					<Loader2 v-if="isLoading"
+							 class="animate-spin" />
+					Send Code
+				</Button>
+				<Separator class="my-4"
+						   label="Or" />
+				<GoogleButton />
+				<Separator class="my-4" />
+				<CancelGoBackButton />
 			</AutoForm>
 		</CardContent>
 	</Card>

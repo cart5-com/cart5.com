@@ -5,13 +5,15 @@ import { z } from 'zod';
 import { validateTurnstile } from '../utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
-import { getUserByEmail, isEmailExists, updateUserName, upsertUser } from '../db/db-actions/userActions';
+import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
-import { signJwtAndEncrypt } from '../utils/jwt';
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
-import { TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
-import { setCookie } from 'hono/cookie';
+import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
+import { generateOTPJsOnly } from '../utils/generateRandomOtp';
+import { sendUserOtpEmail } from '../utils/email';
 
 const PUBLIC_DOMAIN_NAME = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 
@@ -47,15 +49,75 @@ export const emailPasswordRoute = new Hono<honoTypes>()
 
             const isRegistered = await isEmailExists(email);
             if (isRegistered) {
-                throw new KNOWN_ERROR("Email already registered", "EMAIL_ALREADY_REGISTERED");
+                throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
             }
+
+            // Do not store user without verification
+            // const user = await upsertUser(email, await hashPassword(password));
+            // await updateUserName(user.id, name);
+
+            // verify email with one time password authentication
+            // throw new KNOWN_ERROR("OTP required", "OTP_REQUIRED");
+
+            // save user after otp verification
+            const otp = generateOTPJsOnly();
+            const otpToken = await signJwtAndEncrypt<OtpTokenAfterRegisterPayload>(
+                {
+                    nonce: crypto.randomUUID(),
+                    email: email,
+                    password: password,
+                    name: name,
+                    otp,
+                }
+            );
+            setCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER, otpToken, {
+                path: "/",
+                secure: true, // using https in dev with caddy
+                httpOnly: true,
+                maxAge: 600, // 10 minutes
+                sameSite: "strict"
+            });
+            await sendUserOtpEmail(email, otp);
+            return c.json({
+                data: "success",
+                error: null as ErrorType
+            }, 200);
+        }
+    )
+    .post(
+        '/verify',
+        zValidator('form', z.object({
+            verifyEmail: z.string().email().max(200),
+            code: z.string().min(1, { message: "One-time password required" }).max(6, { message: "6 digits required" }),
+            turnstile: z.string().min(1, { message: "Verification required" })
+        })),
+        async (c) => {
+            const { verifyEmail, code, turnstile } = c.req.valid('form');
+            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const otpToken = getCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
+            if (!otpToken) {
+                throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
+            }
+            const { email, otp, password, name } = await decryptAndVerifyJwt<OtpTokenAfterRegisterPayload>(
+                otpToken
+            );
+            if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
+                throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
+            }
+            deleteCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
+            const isRegistered = await isEmailExists(email);
+            if (isRegistered) {
+                throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
+            }
+
             const user = await upsertUser(email, await hashPassword(password));
             await updateUserName(user.id, name);
-            // verify email with one time password authentication
-            throw new KNOWN_ERROR("OTP required", "OTP_REQUIRED");
+            await markEmailAsVerified(email);
+            await createUserSessionAndSetCookie(c, user.id);
+
             return c.json({
-                data: null,
-                error: null as ErrorType | KNOWN_ERROR
+                data: "success",
+                error: null as ErrorType
             }, 200);
         }
     )
@@ -110,7 +172,15 @@ export const emailPasswordRoute = new Hono<honoTypes>()
 
             return c.json({
                 data: "success",
-                error: null
+                error: null as ErrorType
             }, 200);
         }
     )
+
+type OtpTokenAfterRegisterPayload = {
+    nonce: string;
+    email: string;
+    password: string;
+    name: string;
+    otp: string;
+}

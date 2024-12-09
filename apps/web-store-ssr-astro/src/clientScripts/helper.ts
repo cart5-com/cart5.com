@@ -13,9 +13,11 @@ const whoAmI = async () => {
     whoamiResult.textContent = JSON.stringify(data, null, 2);
     if (data) {
         logoutButton.classList.remove("hidden");
+        manageAccountButton.classList.remove("hidden");
         loginButton.classList.add("hidden");
     } else {
         logoutButton.classList.add("hidden");
+        manageAccountButton.classList.add("hidden");
         loginButton.classList.remove("hidden");
     }
 }
@@ -37,4 +39,11 @@ logoutButton.addEventListener("click", async () => {
     const { data, error } = await (await client.api.user.logout.$post()).json();
     console.log(data, error);
     window.location.reload();
-}); 
+});
+
+const manageAccountButton = document.getElementById("manage-account-button") as HTMLButtonElement;
+manageAccountButton.addEventListener("click", async () => {
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?returnBackUrl=${encodeURIComponent(
+        window.location.href
+    )}`;
+});
