@@ -1,0 +1,7 @@
+{
+  "name": "astro-ui",
+  "type": "module",
+  "dependencies": {
+    "astro": "^5.0.2"
+  }
+}

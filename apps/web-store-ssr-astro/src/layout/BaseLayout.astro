@@ -1,0 +1,44 @@
+---
+interface Props {
+	title: string;
+}
+const { title } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<ul>
+			<li><a href="/">index.astro</a></li>
+			<li>
+				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
+			</li>
+		</ul>
+		<h1>{title}</h1>
+		<hr />
+		<button id="whoami-button">Who am I</button>
+		<pre id="whoami-result"></pre>
+		<hr />
+		<button class="hidden" id="manage-account-button">Manage Account</button>
+		<br />
+		<button class="hidden" id="logout-button">Logout</button>
+		<button class="hidden" id="login-button">Login</button>
+		<button class="hidden" id="register-button">Register</button>
+		<script src="../clientScripts/helper.ts"></script>
+		<style>
+			.hidden {
+				display: none;
+			}
+		</style>
+		<hr />
+		<h2>SSR User Info</h2>
+		<pre id="ssr-user-info">{
+		JSON.stringify(Astro.locals.USER, null, 2)
+		}</pre>
+	</body>
+</html>

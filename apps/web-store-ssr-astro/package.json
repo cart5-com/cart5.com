@@ -1,0 +1,19 @@
+{
+  "name": "web-store-ssr-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev --port 3002",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/node": "^9.0.0",
+    "astro": "^5.0.2",
+    "lib": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

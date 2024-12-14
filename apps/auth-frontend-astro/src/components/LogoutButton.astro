@@ -1,0 +1,24 @@
+---
+import { Button } from "@/components/ui/button";
+---
+
+<Button class="logout-button w-full" variant="outline"> Logout </Button>
+<script>
+	import { authApiClient } from "@root/lib/authApiClient";
+	import { $userStore, saveUserToSession } from "@root/stores/userStore";
+
+	const googleRedirectUrl = authApiClient.api.google_oauth.redirect.$url();
+	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
+	export const googleUrl = googleRedirectUrl.toString();
+	const logoutButtons = document.querySelectorAll(".logout-button") as NodeListOf<HTMLAnchorElement>;
+
+	logoutButtons.forEach((btn) => {
+		btn.addEventListener("click", async () => {
+			const { data, error } = await (await authApiClient.api.user["logout-all"].$post()).json();
+			console.log(data, error);
+			$userStore.set(null);
+			saveUserToSession(null);
+			window.location.reload();
+		});
+	});
+</script>

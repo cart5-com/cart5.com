@@ -1,0 +1,22 @@
+---
+import BaseLayout from "src/layouts/BaseLayout.astro";
+import Logo from "@root/components/Logo.astro";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import UserMenu from "@root/components/UserMenu.astro";
+import LogoutButton from "@root/components/LogoutButton.astro";
+---
+
+<BaseLayout>
+	<Logo />
+	<!-- <UserMenu /> -->
+	<Card>
+		<CardContent class="my-6">
+			<h1 class="text-2xl font-bold">ASK</h1>
+			<Separator class="my-10" label="Or" />
+			<LogoutButton />
+			<Separator class="my-10" label="Or" />
+		</CardContent>
+	</Card>
+	<script src="@root/lib/userRedirectCheck.ts"></script>
+</BaseLayout>

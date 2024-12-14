@@ -1,0 +1,22 @@
+---
+import BaseLayout from "src/layouts/BaseLayout.astro";
+import Logo from "@root/components/Logo.astro";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import AuthMenu from "@root/components/AuthMenu.astro";
+import GoogleButton from "@root/components/GoogleButton.astro";
+---
+
+<BaseLayout>
+	<Logo />
+	<AuthMenu />
+	<Card>
+		<CardContent class="my-6">
+			<h1 class="text-2xl font-bold">OTP FORM</h1>
+			<Separator class="my-10" label="Or" />
+			<GoogleButton />
+			<Separator class="my-10" label="Or" />
+		</CardContent>
+	</Card>
+	<script src="@root/lib/authRedirectCheck.ts"></script>
+</BaseLayout>

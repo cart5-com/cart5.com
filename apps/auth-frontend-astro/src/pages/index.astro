@@ -1,0 +1,17 @@
+---
+import Logo from "@root/components/Logo.astro";
+import { ROUTES } from "@root/const";
+import TabButton from "astro-ui/src/components/tab/TabButton.astro";
+import Tabs from "astro-ui/src/components/tab/Tabs.astro";
+import BaseLayout from "src/layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+	<Logo />
+	<Tabs>
+		<TabButton href={ROUTES.LOGIN}>Log in</TabButton>
+		<TabButton href={ROUTES.SIGNUP}>Sign up</TabButton>
+		<TabButton href={ROUTES.OTP}>OTP</TabButton>
+	</Tabs>
+	<h1>Index</h1>
+</BaseLayout>
