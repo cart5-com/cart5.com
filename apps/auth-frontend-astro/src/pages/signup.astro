@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "src/layouts/BaseLayout.astro";
+import AuthPagesLayout from "@root/layouts/AuthPagesLayout.astro";
 import Logo from "@root/components/Logo.astro";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -7,7 +7,7 @@ import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
 ---
 
-<BaseLayout>
+<AuthPagesLayout>
 	<Logo />
 	<AuthMenu />
 	<Card>
@@ -18,5 +18,4 @@ import GoogleButton from "@root/components/GoogleButton.astro";
 			<Separator class="my-10" label="Or" />
 		</CardContent>
 	</Card>
-	<script src="@root/lib/authPagesRedirectCheck.ts"></script>
-</BaseLayout>
+</AuthPagesLayout>
