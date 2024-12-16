@@ -39,6 +39,7 @@ import { Button } from "@/components/ui/button";
 
 	googleBtns.forEach((btn) => {
 		btn.addEventListener("click", () => {
+			// recheck user data is required after google oauth redirects
 			removeUserFromSession();
 			window.location.href = googleUrl;
 		});

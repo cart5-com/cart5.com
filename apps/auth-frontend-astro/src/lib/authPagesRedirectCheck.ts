@@ -1,8 +1,7 @@
 import { ROUTES } from "@root/const";
-import { waitUntilUserReady, $userStore } from "@root/stores/userStore";
+import { $isUserReady, $userStore } from "@root/stores/userStore";
 
-async function authRedirectCheck() {
-    await waitUntilUserReady();
+async function authPagesRedirectCheck() {
     const user = $userStore.get();
     if (user) {
         const url = new URL(window.location.href);
@@ -17,6 +16,11 @@ async function authRedirectCheck() {
     }
 }
 
-authRedirectCheck();
-
-
+const unsubscribe = $isUserReady.subscribe(function (ready) {
+    if (ready) {
+        authPagesRedirectCheck();
+        setTimeout(function () {
+            unsubscribe();
+        });
+    }
+});
