@@ -11,15 +11,12 @@ import { Input } from '@/components/ui/input'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
-import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { authApiClient } from "@root/lib/authApiClient";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
-import { useFormError } from '@/ui-plus/form/useFormError'
-import { ref } from 'vue'
+import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { removeUserFromSession } from '@root/stores/userStore'
 
-const dialog = useDialog();
 
 const props = defineProps<{
     verifyEmail: string
@@ -41,31 +38,25 @@ const form = useForm({
     validationSchema: formSchema,
 })
 
-const { globalError, handleError, clearError } = useFormError();
-const isLoading = ref(false);
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 form.setFieldValue("verifyEmail", props.verifyEmail);
 const onSubmit = form.handleSubmit(async (values) => {
-    const loadingId = dialog.showBlockingLoadingModal();
-    clearError();
-    isLoading.value = true;
-    const { error } = await (await authApiClient.api.otp.verify.$post({
-        form: {
-            verifyEmail: values.verifyEmail,
-            code: values.code,
-            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
-        },
-    })).json()
-    if (error) {
-        handleError(error, form);
-    } else {
-        removeUserFromSession();
-        window.location.reload();
-    }
-    dialog.cancel(loadingId)
-    isLoading.value = false;
-    // emit('close', values);
-    // emit('cancel')
+    await withSubmit(async () => {
+        const { error } = await (await authApiClient.api.otp.verify.$post({
+            form: {
+                verifyEmail: values.verifyEmail,
+                code: values.code,
+                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            },
+        })).json()
+        if (error) {
+            handleError(error, form);
+        } else {
+            removeUserFromSession();
+            window.location.reload();
+        }
+    })
 })
 </script>
 

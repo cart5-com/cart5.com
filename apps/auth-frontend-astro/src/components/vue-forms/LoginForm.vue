@@ -1,54 +1,44 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/components/ui/auto-form";
-import { useFormPersistence } from "@/ui-plus/form/useFormPersistence";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@root/const";
-import { ref } from "vue";
 import { authApiClient } from "@root/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { removeUserFromSession } from "@root/stores/userStore";
-import { useFormError } from "@/ui-plus/form/useFormError";
+import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
-
 const schema = z_object({
 	email: z_string().email(),
 	password: z_string().min(8).max(255)
 });
-
 const form = useForm({
 	validationSchema: toTypedSchema(schema)
 });
-
-useFormPersistence(form, {
-	fields: {
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
+	persistenceFields: {
 		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL
 	}
 });
-
-const isLoading = ref(false);
-const { handleError, clearError } = useFormError();
-
-async function onSubmit(values: Record<string, any>) {
-	isLoading.value = true;
-	clearError();
-	const { data, error } = await (await authApiClient.api.email_password.login.$post({
-		form: {
-			email: values.email,
-			password: values.password,
-			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
-		},
-	})).json()
-	if (error) {
-		handleError(error, form);
-	} else {
-		// Success
-		removeUserFromSession();
-		window.location.reload();
-	}
-	isLoading.value = false;
+async function onSubmit(values: z_infer<typeof schema>) {
+	await withSubmit(async () => {
+		const { data, error } = await (await authApiClient.api.email_password.login.$post({
+			form: {
+				email: values.email,
+				password: values.password,
+				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+			},
+		})).json()
+		if (error) {
+			handleError(error, form);
+		} else {
+			// Success
+			removeUserFromSession();
+			window.location.reload();
+		}
+	})
 }
 </script>
 
@@ -70,6 +60,10 @@ async function onSubmit(values: Record<string, any>) {
 					}
 				}
 			}">
+		<div class="text-sm font-medium text-destructive"
+			 v-if="globalError">
+			{{ globalError }}
+		</div>
 		<div>
 			<Button type="submit"
 					:disabled="isLoading"

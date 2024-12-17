@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/components/ui/auto-form";
-import { useFormPersistence } from "@/ui-plus/form/useFormPersistence";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -10,9 +9,8 @@ import { object as z_object, string as z_string, type infer as z_infer } from "z
 import { LOCAL_STORAGE_KEYS } from "@root/const";
 import { authApiClient } from "@root/lib/authApiClient";
 import OTPVerifyForm from "./OTPVerifyForm.vue";
-import { ref } from "vue";
 import { Loader2 } from "lucide-vue-next";
-import { useFormError } from "@/ui-plus/form/useFormError";
+import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
 const dialog = useDialog();
 
 const schema = z_object({
@@ -23,39 +21,34 @@ const form = useForm({
 	validationSchema: toTypedSchema(schema)
 });
 
-useFormPersistence(form, {
-	fields: {
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
+	persistenceFields: {
 		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL
 	}
 });
 
-const isLoading = ref(false);
-const { globalError, handleError, clearError } = useFormError();
-
 async function onSubmit(values: z_infer<typeof schema>) {
-	isLoading.value = true;
-	clearError();
-	const { data, error } = await (await authApiClient.api.otp.send.$post({
-		form: {
-			verifyEmail: values.email,
-			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
-		},
-	})).json()
-
-	if (error) {
-		handleError(error, form);
-	} else {
-		dialog.show<{ verifyEmail: string, code: string }>({
-			title: "Please verify your email",
-			closeable: false,
-			component: OTPVerifyForm,
-			props: {
+	await withSubmit(async () => {
+		const { data, error } = await (await authApiClient.api.otp.send.$post({
+			form: {
 				verifyEmail: values.email,
+				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
 			},
-			onSuccess: async (result) => { }
-		});
-	}
-	isLoading.value = false;
+		})).json()
+		if (error) {
+			handleError(error, form);
+		} else {
+			dialog.show<{ verifyEmail: string, code: string }>({
+				title: "Please verify your email",
+				closeable: false,
+				component: OTPVerifyForm,
+				props: {
+					verifyEmail: values.email,
+				},
+				onSuccess: async () => { }
+			});
+		}
+	})
 }
 </script>
 

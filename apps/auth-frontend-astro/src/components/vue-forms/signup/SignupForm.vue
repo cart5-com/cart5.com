@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/components/ui/auto-form";
-import { useFormPersistence } from "@/ui-plus/form/useFormPersistence";
-import { useFormError } from "@/ui-plus/form/useFormError";
+import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
 import { LOCAL_STORAGE_KEYS } from "src/const";
-import { ref } from "vue";
 import { authApiClient } from "@root/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
@@ -17,50 +15,46 @@ import SignupVerifyForm from "@root/components/vue-forms/signup/SignupVerifyForm
 const dialog = useDialog();
 
 const schema = z_object({
-	name: z_string().min(1).max(255),
+	name: z_string().min(1, { message: "min 1" }).max(255, { message: "max 255" }),
 	email: z_string().email(),
-	password: z_string().min(8).max(255)
+	password: z_string().min(8, { message: "min 8, use only StroNg_P@ssw0rd" }).max(255, { message: "max 255" })
 });
 
 const form = useForm({
 	validationSchema: toTypedSchema(schema)
 });
-const isLoading = ref(false);
 
-useFormPersistence(form, {
-	fields: {
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
+	persistenceFields: {
 		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL,
 		name: LOCAL_STORAGE_KEYS.REMEMBER_LAST_NAME
 	}
 });
 
-const { globalError, handleError, clearError } = useFormError();
-
-async function onSubmit(values: Record<string, any>) {
-	isLoading.value = true;
-	clearError()
-	const { data, error } = await (await authApiClient.api.email_password.register.$post({
-		form: {
-			email: values.email,
-			password: values.password,
-			name: values.name,
-			turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
-		},
-	})).json()
-	if (error) {
-		handleError(error, form)
-	} else {
-		dialog.show<{ verifyEmail: string, code: string }>({
-			title: "Please verify your email",
-			closeable: false,
-			component: SignupVerifyForm,
-			props: {
-				verifyEmail: values.email,
+async function onSubmit(values: z_infer<typeof schema>) {
+	await withSubmit(async () => {
+		const { data, error } = await (await authApiClient.api.email_password.register.$post({
+			form: {
+				email: values.email,
+				password: values.password,
+				name: values.name,
+				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
 			},
-			onSuccess: async (result) => { }
-		});
-	}
-	isLoading.value = false;
+		})).json()
+		if (error) {
+			handleError(error, form)
+		} else {
+			dialog.show<{ verifyEmail: string, code: string }>({
+				title: "Please verify your email",
+				closeable: false,
+				component: SignupVerifyForm,
+				props: {
+					verifyEmail: values.email,
+				},
+				onSuccess: async (result) => { }
+			});
+		}
+	})
 }
 </script>
 
