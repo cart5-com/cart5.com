@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
+import LoginForm from "@root/components/vue-forms/LoginForm.vue";
+import { Button } from "@/components/ui/button";
+import { ROUTES } from "@root/const";
 ---
 
 <AuthPagesLayout>
@@ -12,7 +15,9 @@ import GoogleButton from "@root/components/GoogleButton.astro";
 	<AuthMenu />
 	<Card>
 		<CardContent class="my-6">
-			<h1 class="text-2xl font-bold">LOGIN FORM</h1>
+			<LoginForm client:only="vue" />
+
+			<Button as="a" href={ROUTES.OTP} class="my-6 w-full" variant="secondary"> Forgot password? </Button>
 			<Separator class="my-10" label="Or" />
 			<GoogleButton />
 			<Separator class="my-10" label="Or" />

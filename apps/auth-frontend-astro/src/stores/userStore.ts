@@ -1,4 +1,4 @@
-import { USER_DATA_SESSION_EXPIRATION_TIME, USER_DATA_SESSION_KEY } from "@root/const";
+import { USER_DATA_SESSION_EXPIRATION_TIME, SESSION_STORAGE_KEYS } from "@root/const";
 import { authApiClient, type User } from "@root/lib/authApiClient";
 import { atom } from 'nanostores'
 
@@ -7,7 +7,7 @@ export const $isUserReady = atom<boolean>(false);
 
 const getUserData = async () => {
     if (typeof sessionStorage !== "undefined") {
-        const userData = sessionStorage.getItem(USER_DATA_SESSION_KEY);
+        const userData = sessionStorage.getItem(SESSION_STORAGE_KEYS.USER_DATA);
         if (userData) {
             const { user, date } = JSON.parse(userData);
             if (Date.now() - date < USER_DATA_SESSION_EXPIRATION_TIME) {
@@ -33,13 +33,13 @@ getUserData();
 
 export const removeUserFromSession = () => {
     if (typeof sessionStorage !== "undefined") {
-        sessionStorage.removeItem(USER_DATA_SESSION_KEY);
+        sessionStorage.removeItem(SESSION_STORAGE_KEYS.USER_DATA);
     }
 }
 
 export const saveUserToSession = (user: User | null) => {
     if (typeof sessionStorage !== "undefined") {
-        sessionStorage.setItem(USER_DATA_SESSION_KEY, JSON.stringify({
+        sessionStorage.setItem(SESSION_STORAGE_KEYS.USER_DATA, JSON.stringify({
             user,
             date: Date.now()
         }));

@@ -20,6 +20,7 @@ const unsubscribe = $isUserReady.subscribe(function (ready) {
     if (ready) {
         authPagesRedirectCheck();
         setTimeout(function () {
+            document.body.classList.remove("hidden");
             unsubscribe();
         });
     }

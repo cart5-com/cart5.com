@@ -102,6 +102,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             }
 
             // Verify turnstile token is valid
+            // this will make sure it is used only one time!
             await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
 
             // Validate current domain is in allowed list

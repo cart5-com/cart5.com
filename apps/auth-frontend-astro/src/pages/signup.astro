@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
+import SignupForm from "@root/components/vue-forms/signup/SignupForm.vue";
 ---
 
 <AuthPagesLayout>
@@ -12,7 +13,7 @@ import GoogleButton from "@root/components/GoogleButton.astro";
 	<AuthMenu />
 	<Card>
 		<CardContent class="my-6">
-			<h1 class="text-2xl font-bold">SIGNUP FORM</h1>
+			<SignupForm client:only="vue" />
 			<Separator class="my-10" label="Or" />
 			<GoogleButton />
 			<Separator class="my-10" label="Or" />
