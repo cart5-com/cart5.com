@@ -6,14 +6,9 @@ import { Button } from "@/components/ui/button";
 <script>
 	import { createAuthApiClientFunction } from "@root/lib/authApiClient";
 	import { $userStore, saveUserToSession } from "@root/stores/userStore";
-
-	const authApiClient = createAuthApiClientFunction(`${window.location.origin}/__p_auth/`);
-	const googleRedirectUrl = authApiClient.api.google_oauth.redirect.$url();
-	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
-	export const googleUrl = googleRedirectUrl.toString();
 	const logoutButtons = document.querySelectorAll(".logout-button") as NodeListOf<HTMLAnchorElement>;
-
 	logoutButtons.forEach((btn) => {
+		const authApiClient = createAuthApiClientFunction(`${window.location.origin}/__p_auth/`);
 		btn.addEventListener("click", async () => {
 			const { data, error } = await (await authApiClient.api.user["logout-all"].$post()).json();
 			console.log(data, error);
