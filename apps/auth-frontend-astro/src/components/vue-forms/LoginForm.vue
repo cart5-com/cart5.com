@@ -53,8 +53,7 @@ async function onSubmit(values: Record<string, any>) {
 </script>
 
 <template>
-	<AutoForm id="login-form-id"
-			  class="space-y-6"
+	<AutoForm class="space-y-6"
 			  :schema="schema"
 			  :form="form"
 			  @submit="onSubmit"
