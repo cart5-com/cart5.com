@@ -5,7 +5,7 @@ import { atom } from 'nanostores'
 export const $userStore = atom<User | null>(null);
 export const $isUserReady = atom<boolean>(false);
 
-const getUserData = async () => {
+export const getUserData = async () => {
     if (typeof sessionStorage !== "undefined") {
         const userData = sessionStorage.getItem(SESSION_STORAGE_KEYS.USER_DATA);
         if (userData) {
@@ -28,8 +28,6 @@ const getUserData = async () => {
         $isUserReady.set(true);
     }
 };
-
-getUserData();
 
 export const removeUserFromSession = () => {
     if (typeof sessionStorage !== "undefined") {

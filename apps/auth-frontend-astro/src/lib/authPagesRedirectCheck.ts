@@ -1,5 +1,5 @@
 import { ROUTES } from "@root/const";
-import { $isUserReady, $userStore } from "@root/stores/userStore";
+import { $isUserReady, $userStore, getUserData } from "@root/stores/userStore";
 
 async function authPagesRedirectCheck() {
     const user = $userStore.get();
@@ -25,3 +25,5 @@ const unsubscribe = $isUserReady.subscribe(function (ready) {
         });
     }
 });
+
+getUserData();

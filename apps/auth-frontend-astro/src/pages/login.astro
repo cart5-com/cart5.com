@@ -15,8 +15,7 @@ import { ROUTES } from "@root/const";
 	<AuthMenu />
 	<Card>
 		<CardContent class="my-6">
-			<LoginForm client:only="vue" />
-
+			<LoginForm client:visible />
 			<Button as="a" href={ROUTES.OTP} class="my-6 w-full" variant="secondary"> Forgot password? </Button>
 			<Separator class="my-10" label="Or" />
 			<GoogleButton />

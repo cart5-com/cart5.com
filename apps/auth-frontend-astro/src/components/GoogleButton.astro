@@ -29,9 +29,9 @@ import { Button } from "@/components/ui/button";
 	Continue with Google
 </Button>
 <script>
-	import { authApiClient } from "@root/lib/authApiClient";
+	import { createAuthApiClientFunction } from "@root/lib/authApiClient";
 	import { removeUserFromSession } from "@root/stores/userStore";
-
+	const authApiClient = createAuthApiClientFunction(`${window.location.origin}/__p_auth/`);
 	const googleRedirectUrl = authApiClient.api.google_oauth.redirect.$url();
 	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
 	export const googleUrl = googleRedirectUrl.toString();
