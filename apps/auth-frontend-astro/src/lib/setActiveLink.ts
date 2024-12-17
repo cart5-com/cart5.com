@@ -10,4 +10,4 @@ export const setActiveLink = () => {
 
 setTimeout(() => {
     setActiveLink();
-}, 100);
+});
