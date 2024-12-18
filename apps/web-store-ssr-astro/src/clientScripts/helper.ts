@@ -52,7 +52,7 @@ logoutButton.addEventListener("click", async () => {
 
 const manageAccountButton = document.getElementById("manage-account-button") as HTMLButtonElement;
 manageAccountButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?returnBackUrl=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/user/settings?next=${encodeURIComponent(
         window.location.href
     )}`;
 });

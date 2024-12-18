@@ -4,16 +4,17 @@ import Logo from "@root/components/Logo.astro";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import LogoutButton from "@root/components/LogoutButton.astro";
+import UserDetails from "@root/components/vue/UserDetails.vue";
 ---
 
 <UserPagesLayout>
 	<Logo />
 	<Card>
-		<CardContent class="my-6">
+		<CardContent class="space-y-6">
 			<h1 class="text-2xl font-bold">Settings</h1>
-			<Separator class="my-10" label="Or" />
+			<UserDetails client:only="vue" />
 			<LogoutButton />
-			<Separator class="my-10" label="Or" />
+			<Separator class="my-10" />
 		</CardContent>
 	</Card>
 </UserPagesLayout>
