@@ -11,6 +11,6 @@ export function getNextUrl() {
 
 export function getNextHostname() {
     const nextUrl = getNextUrl()
-    if (!nextUrl) return document.referrer.split('/')[2]
+    if (!nextUrl) return null
     return new URL(nextUrl).hostname
 }

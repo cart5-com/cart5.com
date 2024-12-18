@@ -2,28 +2,75 @@
 import UserPagesLayout from "@root/layouts/UserPagesLayout.astro";
 import Logo from "@root/components/Logo.astro";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import LogoutButton from "@root/components/LogoutButton.astro";
+import UserDetails from "@root/components/vue/UserDetails.vue";
+import { Button } from "@/components/ui/button";
 ---
 
 <UserPagesLayout>
 	<Logo />
 	<Card>
 		<CardContent class="my-6">
-			<h1 class="text-2xl font-bold">ASK</h1>
-			<Separator class="my-10" label="Or" />
-			<LogoutButton />
-			<Separator class="my-10" label="Or" />
+			<UserDetails client:only="vue" />
+			<Button class="mt-6 w-full font-medium" size="lg" id="continue-button"> Continue </Button>
 		</CardContent>
 	</Card>
 	<script>
 		import { toast } from "@/components/ui/sonner";
+		import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
+		import { useDialog } from "@/ui-plus/dialog/use-dialog";
+		import { createAuthApiClient_AsUrlHelper } from "@root/lib/authApiClient";
+		import { getNextUrl, getNextHostname } from "@root/lib/queryHelpers";
+		const dialog = useDialog();
+		const crossDomainHostname = getNextHostname();
+		const continueButton = document.getElementById("continue-button") as HTMLButtonElement;
+		if (crossDomainHostname && continueButton) {
+			continueButton.innerHTML = `Continue to <b><u>${crossDomainHostname}</u></b>`;
+		}
 		document.addEventListener("DOMContentLoaded", () => {
 			setTimeout(() => {
-				toast.success("welcome back", {
+				toast.success("Welcome back", {
 					description: "Click continue to use your account"
 				});
+				if (import.meta.env.PUBLIC_AUTH_AUTO_REDIRECT === "1") {
+					navigateToMainSite();
+				}
 			}, 500);
 		});
+		const showErrorToast = () => {
+			toast.error("Unable to get redirect url", {
+				description: "Please go back to the previous website then try again",
+				action: {
+					label: "Go back",
+					onClick: () => {
+						window.history.back();
+					}
+				}
+			});
+		};
+		const navigateToMainSite = async () => {
+			const redirectUrl = getNextUrl();
+			if (!redirectUrl) {
+				showErrorToast();
+				return;
+			}
+			const turnstile = await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
+			dialog.showBlockingLoadingModal();
+			const postActionUrl = createAuthApiClient_AsUrlHelper().api.cross_domain.redirector.$url();
+			const newForm = document.createElement("form");
+			newForm.method = "POST";
+			newForm.action = postActionUrl.toString();
+			const inputRedirectUrl = document.createElement("input");
+			inputRedirectUrl.name = "redirectUrl";
+			inputRedirectUrl.value = redirectUrl;
+			const inputTurnstile = document.createElement("input");
+			inputTurnstile.name = "turnstile";
+			inputTurnstile.value = turnstile;
+			newForm.appendChild(inputRedirectUrl);
+			newForm.appendChild(inputTurnstile);
+			newForm.style.display = "none";
+			document.body.appendChild(newForm);
+			newForm.submit();
+		};
+		continueButton.addEventListener("click", navigateToMainSite);
 	</script>
 </UserPagesLayout>

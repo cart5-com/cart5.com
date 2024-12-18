@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 
 <Button class="logout-button w-full" variant="outline"> Logout </Button>
 <script>
-	import { createAuthApiClientFunction } from "@root/lib/authApiClient";
+	import { authApiClient } from "@root/lib/authApiClient";
 	import { $userStore, saveUserToSession } from "@root/stores/userStore";
 	const logoutButtons = document.querySelectorAll(".logout-button") as NodeListOf<HTMLAnchorElement>;
 	logoutButtons.forEach((btn) => {
-		const authApiClient = createAuthApiClientFunction(`${window.location.origin}/__p_auth/`);
 		btn.addEventListener("click", async () => {
 			const { data, error } = await (await authApiClient.api.user["logout-all"].$post()).json();
 			console.log(data, error);

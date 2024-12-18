@@ -101,6 +101,9 @@ importers:
       '@astrojs/vue':
         specifier: ^5.0.1
         version: 5.0.2(@types/node@22.10.1)(astro@5.0.2(@types/node@22.10.1)(jiti@2.4.1)(rollup@4.28.0)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1))(jiti@2.4.1)(rollup@4.28.0)(tsx@4.19.2)(vue@3.5.13(typescript@5.7.2))(yaml@2.6.1)
+      '@nanostores/vue':
+        specifier: ^0.11.0
+        version: 0.11.0(@vue/devtools-api@7.6.7)(nanostores@0.11.3)(vue@3.5.13(typescript@5.7.2))
       '@vee-validate/zod':
         specifier: ^4.14.7
         version: 4.14.7(vue@3.5.13(typescript@5.7.2))
@@ -1454,6 +1457,20 @@ packages:
   '@mapbox/whoots-js@3.1.0':
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
+
+  '@nanostores/vue@0.11.0':
+    resolution: {integrity: sha512-4ndyLhwVFl1xhOnvWuMvYiG4K2rYvkaQWP3nJC1/RwK/dvpDgLPywwv6MnBdFydqbOGuXNaXOEwa3HsG9CujmA==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      '@nanostores/logger': '>=0.4.0'
+      '@vue/devtools-api': '>=7.6.2'
+      nanostores: '>=0.11.3'
+      vue: '>=3.3.1'
+    peerDependenciesMeta:
+      '@nanostores/logger':
+        optional: true
+      '@vue/devtools-api':
+        optional: true
 
   '@napi-rs/wasm-runtime@0.2.5':
     resolution: {integrity: sha512-kwUxR7J9WLutBbulqg1dfOrMTwhMdXLdcGUhcbCcGwnPLt3gz19uHVdwH1syKVDbE022ZS2vZxOWflFLS0YTjw==}
@@ -3153,6 +3170,7 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lilconfig@3.1.3:
@@ -5510,6 +5528,13 @@ snapshots:
       '@mapbox/point-geometry': 0.1.0
 
   '@mapbox/whoots-js@3.1.0': {}
+
+  '@nanostores/vue@0.11.0(@vue/devtools-api@7.6.7)(nanostores@0.11.3)(vue@3.5.13(typescript@5.7.2))':
+    dependencies:
+      nanostores: 0.11.3
+      vue: 3.5.13(typescript@5.7.2)
+    optionalDependencies:
+      '@vue/devtools-api': 7.6.7
 
   '@napi-rs/wasm-runtime@0.2.5':
     dependencies:

@@ -29,15 +29,14 @@ import { Button } from "@/components/ui/button";
 	Continue with Google
 </Button>
 <script>
-	import { createAuthApiClientFunction } from "@root/lib/authApiClient";
 	import { removeUserFromSession } from "@root/stores/userStore";
+	import { createAuthApiClient_AsUrlHelper } from "@root/lib/authApiClient";
 	const googleBtns = document.querySelectorAll(".google-button") as NodeListOf<HTMLAnchorElement>;
 	googleBtns.forEach((btn) => {
-		const authApiClient = createAuthApiClientFunction(`${window.location.origin}/__p_auth/`);
-		const googleRedirectUrl = authApiClient.api.google_oauth.redirect.$url();
-		googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
-		const googleUrl = googleRedirectUrl.toString();
 		btn.addEventListener("click", () => {
+			const googleRedirectUrl = createAuthApiClient_AsUrlHelper().api.google_oauth.redirect.$url();
+			googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
+			const googleUrl = googleRedirectUrl.toString();
 			// recheck user data is required after google oauth redirects
 			removeUserFromSession();
 			window.location.href = googleUrl;

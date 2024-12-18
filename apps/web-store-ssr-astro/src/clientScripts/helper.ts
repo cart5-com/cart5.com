@@ -38,7 +38,7 @@ registerButton.addEventListener("click", async () => {
 
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 loginButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/login?next=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/user/ask?next=${encodeURIComponent(
         window.location.href
     )}`;
 });
