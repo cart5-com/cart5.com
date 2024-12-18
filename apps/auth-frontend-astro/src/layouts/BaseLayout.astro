@@ -1,6 +1,6 @@
 ---
 import "ui-shadcn-vue/src/index.css";
-import DialogProvider from "ui-shadcn-vue/src/ui-plus/dialog/DialogProvider.vue";
+import LayoutHelpers from "ui-shadcn-vue/src/ui-plus/LayoutHelpers.vue";
 ---
 
 <html lang="en">
@@ -31,7 +31,7 @@ import DialogProvider from "ui-shadcn-vue/src/ui-plus/dialog/DialogProvider.vue"
 		<div class="mx-auto w-full sm:max-w-[600px]">
 			<slot />
 		</div>
-		<DialogProvider client:visible />
+		<LayoutHelpers client:only="vue" />
 		<script src="@root/lib/fixLinks.ts"></script>
 		<script src="@root/lib/setActiveLink.ts"></script>
 	</body>

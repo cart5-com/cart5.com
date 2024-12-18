@@ -16,4 +16,14 @@ import LogoutButton from "@root/components/LogoutButton.astro";
 			<Separator class="my-10" label="Or" />
 		</CardContent>
 	</Card>
+	<script>
+		import { toast } from "@/components/ui/sonner";
+		document.addEventListener("DOMContentLoaded", () => {
+			setTimeout(() => {
+				toast.success("welcome back", {
+					description: "Click continue to use your account"
+				});
+			}, 500);
+		});
+	</script>
 </UserPagesLayout>
