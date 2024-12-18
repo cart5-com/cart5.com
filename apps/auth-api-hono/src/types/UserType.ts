@@ -4,6 +4,8 @@ export interface User {
     isEmailVerified: boolean;
     name: string;
     pictureUrl: string;
+    has2FA: boolean;
+    hasNewSession: boolean;
 }
 
 export type TwoFactorAuthVerifyPayload = {

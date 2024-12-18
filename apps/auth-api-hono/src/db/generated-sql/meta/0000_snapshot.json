@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7208dc86-092f-4e57-8618-05dc0c3e944c",
+  "id": "86107ef6-6685-4baf-8a82-4092f6e9d00d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "session": {
@@ -31,6 +31,13 @@
         "hostname": {
           "name": "hostname",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at_ts": {
+          "name": "created_at_ts",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

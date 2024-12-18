@@ -3,6 +3,7 @@ CREATE TABLE `session` (
 	`user_id` text NOT NULL,
 	`expires_at` integer NOT NULL,
 	`hostname` text NOT NULL,
+	`created_at_ts` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

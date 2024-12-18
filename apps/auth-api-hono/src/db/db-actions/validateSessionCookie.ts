@@ -28,16 +28,17 @@ export const validateSessionCookie = async (
         await deleteSession(databaseSession.id);
         return { session: null, user: null };
     }
-    const activePeriodExpirationDate = new Date(
-        databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
-    );
     const session: Session = {
         hostname: databaseSession.hostname,
         id: databaseSession.id,
         userId: databaseSession.userId,
         fresh: false,
-        expiresAt: databaseSession.expiresAt
+        expiresAt: databaseSession.expiresAt,
+        createdAtTs: databaseSession.createdAtTs
     };
+    const activePeriodExpirationDate = new Date(
+        databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
+    );
     if (!isWithinExpirationDate(activePeriodExpirationDate)) {
         session.fresh = true;
         session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);

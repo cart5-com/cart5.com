@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
 import db from "../drizzle";
@@ -11,6 +11,12 @@ export const getSessionAndUser = async (
         getSession(sessionId),
         getUserFromSessionId(sessionId)
     ]);
+    if (databaseUser) {
+        databaseUser.has2FA = databaseUser.has2FA || false;
+    }
+    if (databaseUser && databaseSession && databaseSession.createdAtTs) {
+        databaseUser.hasNewSession = databaseSession.createdAtTs > Date.now() - 600_000; // 10 minutes
+    }
     return [databaseSession, databaseUser];
 }
 
@@ -25,7 +31,8 @@ const getSession = async (sessionId: string): Promise<Session | null> => {
         userId: result[0].userId,
         hostname: result[0].hostname,
         fresh: false,
-        expiresAt: new Date(result[0].expiresAt)
+        expiresAt: new Date(result[0].expiresAt),
+        createdAtTs: result[0].created_at_ts,
     } as Session;
 }
 
@@ -36,7 +43,8 @@ const getUserFromSessionId = async (sessionId: string): Promise<User | null> => 
             email: userTable.email,
             isEmailVerified: userTable.isEmailVerified,
             name: userTable.name,
-            pictureUrl: userTable.pictureUrl
+            pictureUrl: userTable.pictureUrl,
+            has2FA: sql<boolean>`${userTable.encryptedTwoFactorAuthKey} IS NOT NULL`
         })
         .from(sessionTable)
         .innerJoin(userTable, eq(sessionTable.userId, userTable.id))

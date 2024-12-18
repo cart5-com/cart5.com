@@ -24,7 +24,10 @@ export const sessionTable = sqliteTable("session", {
 	expiresAt: integer("expires_at").notNull(), // milliseconds are included, full timestamp using Date object
 	hostname: text("hostname").notNull(),
 
-	// TODO: add createdAt to detect is new or old. 
+	// createdAt to detect is new or old. 
 	// it will be used for security validation
 	// for ex:password reset, authentication reset, etc.
+	created_at_ts: integer("created_at_ts")
+		.notNull()
+		.$defaultFn(() => Date.now()),
 });
