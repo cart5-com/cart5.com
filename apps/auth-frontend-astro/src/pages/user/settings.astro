@@ -2,9 +2,10 @@
 import UserPagesLayout from "@root/layouts/UserPagesLayout.astro";
 import Logo from "@root/components/Logo.astro";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import LogoutButton from "@root/components/LogoutButton.astro";
 import UserDetails from "@root/components/vue/UserDetails.vue";
+import UserSecuritySettings from "@root/components/vue/UserSecuritySettings.vue";
+import { Separator } from "@/components/ui/separator";
 ---
 
 <UserPagesLayout>
@@ -15,6 +16,7 @@ import UserDetails from "@root/components/vue/UserDetails.vue";
 			<UserDetails client:only="vue" />
 			<LogoutButton />
 			<Separator class="my-10" />
+			<UserSecuritySettings class="my-10" client:only="vue" />
 		</CardContent>
 	</Card>
 </UserPagesLayout>

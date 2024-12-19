@@ -11,6 +11,7 @@ export class KNOWN_ERROR extends Error {
 
 export type ErrorType = {
     message?: string;
+    code?: string;
     issues?: {
         message: string;
         path: string[];

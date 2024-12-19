@@ -9,7 +9,7 @@ export const ROUTES = {
     },
 };
 
-export const USER_DATA_SESSION_EXPIRATION_TIME = 180_000; // 3 minutes
+export const USER_DATA_SESSION_EXPIRATION_TIME = 60_000; // 1 minutes
 
 export const SESSION_STORAGE_KEYS = {
     USER_DATA: "SESSION_USER_DATA",

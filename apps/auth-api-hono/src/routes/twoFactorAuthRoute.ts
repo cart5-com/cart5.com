@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { encodeBase64, decodeBase64 } from "@oslojs/encoding";
 import { createTOTPKeyURI, verifyTOTP } from "@oslojs/otp";
 import { renderSVG } from "uqr";
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { getUserByEmail, updateEncryptedTwoFactorAuthKey, updateEncryptedTwoFactorAuthRecoveryCode } from '../db/db-actions/userActions';
 import { generateRandomRecoveryCode } from '../utils/generateRandomOtp';
 import { decryptAesGcm, decryptToString, encryptAesGcm, encryptString } from '../utils/encryption';
@@ -34,6 +34,12 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+            }
+            if (user.has2FA) {
+                throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
+            }
             const totpKey = new Uint8Array(20);
             crypto.getRandomValues(totpKey);
             const encodedTOTPKey = encodeBase64(totpKey);
@@ -42,9 +48,9 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 data: {
                     qrCodeSVG: renderSVG(keyURI),
                     encodedTOTPKey,
-                    name: `auth.${PUBLIC_DOMAIN_NAME}: ${user.email}`,
+                    name: `auth.${PUBLIC_DOMAIN_NAME} - ${user.email}`,
                 },
-                error: null
+                error: null as ErrorType
             }, 200);
         }
     )
@@ -53,13 +59,21 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
         zValidator('form', z.object({
             encodedTOTPKey: z.string().length(28, { message: "Invalid TOTP key length" }),
             userProvidedCode: z.string().length(6, { message: "TOTP code must be 6 digits" }),
+            turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
-            const { encodedTOTPKey, userProvidedCode } = c.req.valid('form');
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+            }
+            if (user.has2FA) {
+                throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
+            }
+            const { encodedTOTPKey, userProvidedCode, turnstile } = c.req.valid('form');
+            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
             let key: Uint8Array;
             try {
                 key = decodeBase64(encodedTOTPKey);
@@ -85,7 +99,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 data: {
                     recoveryCode,
                 },
-                error: null
+                error: null as ErrorType
             }, 200);
         }
     )
@@ -125,7 +139,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
 
             return c.json({
                 data: "success",
-                error: null
+                error: null as ErrorType
             }, 200);
 
         }
@@ -168,7 +182,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
 
             return c.json({
                 data: "success",
-                error: null
+                error: null as ErrorType
             }, 200);
 
         }
@@ -180,30 +194,32 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
         async (c) => {
             const { turnstile } = c.req.valid('form');
             await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
-            const authenticatedUser = c.get("USER");
-            if (!authenticatedUser || !authenticatedUser.id) {
+            const user = c.get("USER");
+            if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+            }
             // get user by email
-            const user = await getUserByEmail(authenticatedUser.email);
-            if (!user) {
-                throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+            const savedUser = await getUserByEmail(user.email);
+            if (!savedUser) {
+                throw new KNOWN_ERROR("User not saved", "USER_NOT_SAVED");
             }
 
             // user should have a recovery code already
-            if (!user.encryptedTwoFactorAuthRecoveryCode) {
+            if (!savedUser.encryptedTwoFactorAuthRecoveryCode) {
                 throw new KNOWN_ERROR("User does not have a recovery code", "USER_DOES_NOT_HAVE_RECOVERY_CODE");
             }
 
             const newRecoveryCode = generateRandomRecoveryCode();
             const encryptedRecoveryCode = encryptString(newRecoveryCode);
-            await updateEncryptedTwoFactorAuthRecoveryCode(user.id, encryptedRecoveryCode);
+            await updateEncryptedTwoFactorAuthRecoveryCode(savedUser.id, encryptedRecoveryCode);
 
             return c.json({
                 data: newRecoveryCode,
-                error: null
+                error: null as ErrorType
             }, 200);
 
         }
     )
-
