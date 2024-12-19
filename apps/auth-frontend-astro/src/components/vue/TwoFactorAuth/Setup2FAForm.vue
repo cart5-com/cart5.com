@@ -68,7 +68,7 @@ const onSubmit = form.handleSubmit(async (values) => {
         })).json()
         if (error) {
             handleError(error, form);
-            if (error.code === "MUST_BE_NEW_SESSION") {
+            if (error.code === "FRESH_SESSION_REQUIRED") {
                 toast.error("Fresh session required", {
                     description: "Please logout and login again"
                 });
@@ -82,78 +82,75 @@ const onSubmit = form.handleSubmit(async (values) => {
 </script>
 
 <template>
-    <div>
-        <Button variant="outline"
-                @click="$emit('cancel')"> Cancel </Button>
-
-        <Separator class="my-10"
-                   label="Scan a QR code" />
+    <Separator class="my-10"
+               label="Scan a QR code" />
 
 
-        <div id="qrcode-container"
-             ref="qrCodeContainer"
-             class="max-w-xs my-4"></div>
+    <div id="qrcode-container"
+         ref="qrCodeContainer"
+         class="max-w-xs my-4"></div>
 
-        <form class="space-y-6"
-              @submit="onSubmit">
+    <form class="space-y-6"
+          @submit="onSubmit">
 
-            <details class="mb-4 bg-muted rounded-md p-4">
-                <summary class="cursor-pointer">
-                    Or use a setup key
-                </summary>
-                <div class="mt-4 space-y-4 border-t py-2">
-                    <label
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Account
-                        Name</label>
-                    <div class="flex items-center space-x-2">
-                        <Input type="text"
-                               disabled
-                               v-model="name"
-                               class="flex-1" />
-                        <CopyButton :content="name" />
-                    </div>
-                    <label
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Key
-                    </label>
-                    <div class="flex items-center space-x-2">
-                        <Input type="text"
-                               disabled
-                               v-model="totpKey"
-                               class="flex-1" />
-                        <CopyButton :content="totpKey" />
-                    </div>
+        <details class="mb-4 bg-muted rounded-md p-4">
+            <summary class="cursor-pointer">
+                Or use a setup key
+            </summary>
+            <div class="mt-4 space-y-4 border-t py-2">
+                <label
+                       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Account
+                    Name</label>
+                <div class="flex items-center space-x-2">
+                    <Input type="text"
+                           disabled
+                           v-model="name"
+                           class="flex-1" />
+                    <CopyButton :content="name" />
                 </div>
-            </details>
-
-            <Separator class="my-10" />
-
-            <FormField v-slot="{ componentField }"
-                       name="userProvidedCode">
-                <FormItem>
-                    <FormLabel>Enter generated 6 digit code</FormLabel>
-                    <FormControl>
-                        <Input type="text"
-                               autofocus
-                               v-bind="componentField" />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
-
-            <div class="text-sm font-medium text-destructive"
-                 v-if="globalError">
-                {{ globalError }}
+                <label
+                       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Key
+                </label>
+                <div class="flex items-center space-x-2">
+                    <Input type="text"
+                           disabled
+                           v-model="totpKey"
+                           class="flex-1" />
+                    <CopyButton :content="totpKey" />
+                </div>
             </div>
-            <div>
-                <Button type="submit"
-                        :disabled="isLoading"
-                        class="w-full my-6">
-                    <Loader2 v-if="isLoading"
-                             class="animate-spin" />
-                    Verify
-                </Button>
-            </div>
-        </form>
-    </div>
+        </details>
+
+        <Separator class="my-10" />
+
+        <FormField v-slot="{ componentField }"
+                   name="userProvidedCode">
+            <FormItem>
+                <FormLabel>Enter generated 6 digit code</FormLabel>
+                <FormControl>
+                    <Input type="text"
+                           autofocus
+                           v-bind="componentField" />
+                </FormControl>
+                <FormMessage />
+            </FormItem>
+        </FormField>
+
+        <div class="text-sm font-medium text-destructive"
+             v-if="globalError">
+            {{ globalError }}
+        </div>
+        <div>
+            <Button type="submit"
+                    :disabled="isLoading"
+                    class="w-full my-6">
+                <Loader2 v-if="isLoading"
+                         class="animate-spin" />
+                Verify
+            </Button>
+        </div>
+    </form>
+    <Button variant="secondary"
+            @click="$emit('cancel')"> Cancel </Button>
 </template>

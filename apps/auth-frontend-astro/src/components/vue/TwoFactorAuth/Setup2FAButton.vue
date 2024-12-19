@@ -8,6 +8,7 @@ import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@root/components/vue/TwoFactorAuth/RecoveryCodeDialog.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore, refreshUserData } from '@root/stores/userStore';
+import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 const user = useStore($userStore);
 
 const dialog = useDialog();
@@ -17,7 +18,7 @@ const setupTwoFactorAuthentication = async () => {
     dialog.cancel(loadingDialogId);
     if (error) {
         console.error(error);
-        if (error.code === "MUST_BE_NEW_SESSION") {
+        if (error.code === "FRESH_SESSION_REQUIRED") {
             toast.error("Fresh session required", {
                 description: "Please logout and login again"
             });
@@ -31,6 +32,7 @@ const setupTwoFactorAuthentication = async () => {
             component: Setup2FAForm,
             props: data,
             onSuccess: async (values) => {
+                toast.success("Two factor authentication setup successful");
                 showRecoveryCodeDialog(values.recoveryCode)
                 refreshUserData();
             }
@@ -39,12 +41,6 @@ const setupTwoFactorAuthentication = async () => {
 }
 
 const showRecoveryCodeDialog = (recoveryCode: string) => {
-    toast.success("Two factor authentication setup successful", {
-        action: {
-            label: "Show Code",
-            onClick: () => showRecoveryCodeDialog(recoveryCode)
-        }
-    });
     dialog.show<{ recoveryCode: string }>({
         title: "2FA Recovery Code",
         description: "Save this code in a secure location. It can be used to reset your 2FA settings if you lose your device.",
@@ -54,10 +50,54 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
         },
     });
 }
+
+const getRecoveryCode = async () => {
+    const { data, error } = await (await authApiClient.api["two-factor-auth"]["get-recovery-code"].$post({
+        form: {
+            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+        toast.error(error.message ?? "Something went wrong");
+    } else {
+        showRecoveryCodeDialog(data);
+    }
+}
+
+const generateNewRecoveryCode = async () => {
+    const { data, error } = await (await authApiClient.api["two-factor-auth"]["generate-new-recovery-code"].$post({
+        form: {
+            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+        toast.error(error.message ?? "Something went wrong");
+    } else {
+        showRecoveryCodeDialog(data);
+    }
+}
+
+const removeTwoFactorAuthentication = async () => {
+    if (confirm("Are you sure you want to remove two factor authentication?")) {
+        const { data, error } = await (await authApiClient.api["two-factor-auth"]["remove-2fa"].$post({
+            form: {
+                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            }
+        })).json();
+        if (error) {
+            console.error(error);
+            toast.error(error.message ?? "Something went wrong");
+        } else {
+            toast.success("Two factor authentication removed");
+            refreshUserData();
+        }
+    }
+}
 </script>
 
 <template>
-
     <div>
         <Button v-if="!user?.has2FA"
                 variant="outline"
@@ -68,11 +108,29 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
             Setup Two Factor Authentication (2FA)
         </Button>
         <div v-if="user?.has2FA"
-             class="flex items-center gap-2 border border-muted-foreground border-dashed rounded-md p-2">
-            <FileKey />
-            Two factor authentication is enabled
+             class="border border-muted-foreground border-dashed rounded-md p-2">
+            <div class="flex items-center gap-2">
+                <FileKey />
+                Two factor authentication (2FA) is enabled
+            </div>
+            <Button variant="outline"
+                    class="my-2"
+                    :disabled="!user?.hasNewSession"
+                    @click="getRecoveryCode()">
+                Show Recovery Code
+            </Button>
+            <Button variant="outline"
+                    class="my-2"
+                    :disabled="!user?.hasNewSession"
+                    @click="generateNewRecoveryCode()">
+                Generate New Recovery Code
+            </Button>
+            <Button class="my-2"
+                    variant="destructive"
+                    :disabled="!user?.hasNewSession"
+                    @click="removeTwoFactorAuthentication()">
+                Remove 2FA
+            </Button>
         </div>
-        <!-- TODO: Add a button to remove 2FA -->
-        <!-- TODO: show recovery code button -->
     </div>
 </template>

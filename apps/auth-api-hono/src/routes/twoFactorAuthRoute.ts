@@ -35,7 +35,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
             if (!user.hasNewSession) {
-                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
             if (user.has2FA) {
                 throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
@@ -68,7 +68,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
             if (!user.hasNewSession) {
-                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
             if (user.has2FA) {
                 throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
@@ -200,7 +200,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
             if (!user.hasNewSession) {
-                throw new KNOWN_ERROR("Must be a new session", "MUST_BE_NEW_SESSION");
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
             // get user by email
             const savedUser = await getUserByEmail(user.email);
@@ -222,5 +222,57 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 error: null as ErrorType
             }, 200);
 
+        }
+    )
+    .post(
+        '/get-recovery-code',
+        zValidator('form', z.object({
+            turnstile: z.string().min(1, { message: "Verification required" }),
+        })),
+        async (c) => {
+            const { turnstile } = c.req.valid('form');
+            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const user = c.get("USER");
+            if (!user || !user.id) {
+                throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+            }
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
+            }
+            const savedUser = await getUserByEmail(user.email);
+            if (!savedUser) {
+                throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
+            }
+            if (!savedUser.encryptedTwoFactorAuthRecoveryCode) {
+                throw new KNOWN_ERROR("Invalid request 2", "INVALID_REQUEST_2");
+            }
+            const decryptedRecoveryCode = decryptToString(savedUser.encryptedTwoFactorAuthRecoveryCode);
+            return c.json({
+                data: decryptedRecoveryCode,
+                error: null as ErrorType
+            }, 200);
+        }
+    )
+    .post(
+        '/remove-2fa',
+        zValidator('form', z.object({
+            turnstile: z.string().min(1, { message: "Verification required" }),
+        })),
+        async (c) => {
+            const { turnstile } = c.req.valid('form');
+            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const user = c.get("USER");
+            if (!user || !user.id) {
+                throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+            }
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
+            }
+            await updateEncryptedTwoFactorAuthKey(user.id, null);
+            await updateEncryptedTwoFactorAuthRecoveryCode(user.id, null);
+            return c.json({
+                data: "success",
+                error: null as ErrorType
+            }, 200);
         }
     )

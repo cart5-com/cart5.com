@@ -3,7 +3,8 @@ import Separator from '@/components/ui/separator/Separator.vue';
 import Setup2FAButton from '@root/components/vue/TwoFactorAuth/Setup2FAButton.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore } from '@root/stores/userStore';
-import { ShieldCheck } from 'lucide-vue-next';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
 const user = useStore($userStore);
 </script>
 
@@ -13,15 +14,22 @@ const user = useStore($userStore);
             <summary class="cursor-pointer w-full flex items-center gap-2 bg-secondary p-2 rounded-md">
                 <ShieldCheck stroke-width="3" /> Security
             </summary>
-            <div>
-                <div v-if="!user?.hasNewSession"
-                     class="text-destructive text-sm my-2">
-                    Fresh session required.
-                    <div>
-                        Please log out and log in again to change your security settings
-                    </div>
-                    <Separator class="my-10" />
-                </div>
+            <div class="my-4">
+                <Alert v-if="user?.hasNewSession">
+                    <LockOpen />
+                    <AlertTitle>For your security</AlertTitle>
+                    <AlertDescription>
+                        You can only change security settings in the first 10 minutes
+                    </AlertDescription>
+                </Alert>
+                <Alert v-if="!user?.hasNewSession"
+                       variant="destructive">
+                    <Lock />
+                    <AlertTitle>A fresh login is required</AlertTitle>
+                    <AlertDescription>
+                        For your security, you can only make changes within 10 minutes of logging in
+                    </AlertDescription>
+                </Alert>
                 <Setup2FAButton class="my-10"
                                 client:only="vue" />
                 <Separator class="my-10" />
