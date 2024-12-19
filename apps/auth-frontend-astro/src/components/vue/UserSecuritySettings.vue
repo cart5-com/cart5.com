@@ -1,12 +1,49 @@
 <script setup lang="ts">
 import Separator from '@/components/ui/separator/Separator.vue';
 import Setup2FAButton from '@root/components/vue/TwoFactorAuth/Setup2FAButton.vue';
-import UpdatePasswordButton from '@root/components/vue/UpdatePassword/UpdatePasswordButton.vue';
 import { useStore } from '@nanostores/vue'
-import { $userStore } from '@root/stores/userStore';
+import { $userStore, refreshUserData } from '@root/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
+import Button from '@/components/ui/button/Button.vue';
+import { toast } from '@/components/ui/sonner';
+import { authApiClient } from '@root/lib/authApiClient';
+import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
+import { useDialog } from '@/ui-plus/dialog/use-dialog';
+import UpdatePasswordForm from '@root/components/vue/UpdatePasswordForm.vue';
+const dialog = useDialog();
 const user = useStore($userStore);
+
+async function updateName() {
+    const newName = prompt("Enter new name");
+    if (!newName) {
+        toast.error('Please enter a name');
+        return;
+    }
+    const { data, error } = await (await authApiClient.api["user"]['update-name'].$post({
+        form: {
+            newName,
+            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+        },
+    })).json()
+    if (error) {
+        toast.error(error.message ?? 'An error occurred');
+    } else {
+        toast.success('Name updated');
+        refreshUserData();
+    }
+}
+
+const updatePasswordDialog = useDialog();
+function openUpdatePasswordDialog() {
+    function openDialog() {
+        dialog.show({
+            title: "Update Password",
+            closeable: false,
+            component: UpdatePasswordForm,
+        });
+    }
+}
 </script>
 
 <template>
@@ -31,12 +68,19 @@ const user = useStore($userStore);
                         For your security, you can only make changes within 10 minutes of logging in
                     </AlertDescription>
                 </Alert>
-                <Setup2FAButton class="my-10"
-                                client:only="vue" />
+                <Setup2FAButton class="my-10" />
                 <Separator class="my-10" />
-                <UpdatePasswordButton client:only="vue" />
-                <!-- <Separator class="my-10" /> -->
-                <!-- TODO: update name button -->
+                <Button @click="openUpdatePasswordDialog"
+                        variant="outline"
+                        :disabled="!user?.hasNewSession">
+                    Update Password
+                </Button>
+                <Button class="ml-3"
+                        :disabled="!user?.hasNewSession"
+                        @click="updateName"
+                        variant="outline">
+                    Update name
+                </Button>
             </div>
         </details>
     </div>

@@ -17,6 +17,6 @@ const toasterTheme = computed(() => (mode.value === "dark" ? "dark" : "light"));
              richColors
              class="pointer-events-auto" />
     <div class="mx-auto my-4 max-w-fit">
-        <DarkModeToggle client:only="vue" />
+        <DarkModeToggle />
     </div>
 </template>

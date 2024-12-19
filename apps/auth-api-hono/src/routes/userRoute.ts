@@ -8,7 +8,7 @@ import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from '../utils/validateTurnstile';
-import { getUserByEmail, updateUserPassword } from '../db/db-actions/userActions';
+import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
 export const userRoute = new Hono<honoTypes>()
     .post(
         '/logout',
@@ -77,6 +77,33 @@ export const userRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
             await updateUserPassword(user.id, await hashPassword(password));
+            return c.json({
+                data: "success",
+                error: null as ErrorType
+            }, 200);
+        }
+    )
+    .post(
+        '/update-name',
+        zValidator('form', z.object({
+            newName: z.string().min(1, { message: "Name is required" }),
+            turnstile: z.string().min(1, { message: "Verification required" })
+        })),
+        async (c) => {
+            const { newName, turnstile } = c.req.valid('form');
+            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const user = c.get("USER");
+            if (!user || !user.id) {
+                throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+            }
+            if (!user.hasNewSession) {
+                throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
+            }
+            const savedUser = await getUserByEmail(user.email);
+            if (!savedUser) {
+                throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
+            }
+            await updateUserName(user.id, newName);
             return c.json({
                 data: "success",
                 error: null as ErrorType
