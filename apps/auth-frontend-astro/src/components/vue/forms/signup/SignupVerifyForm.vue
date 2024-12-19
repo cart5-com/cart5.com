@@ -25,6 +25,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
     cancel: [];
+    onError: [error: any];
 }>();
 
 const schema = z_object({

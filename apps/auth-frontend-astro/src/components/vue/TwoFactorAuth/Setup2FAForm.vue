@@ -24,12 +24,12 @@ import { removeUserFromSession } from '@root/stores/userStore';
 const props = defineProps<{
     name: string
     encodedTOTPKey: string
+    totpKey: string
     qrCodeSVG: string
 }>();
 
-const encodedTOTPKey = ref(props.encodedTOTPKey);
-const userProvidedCode = ref('');
 const name = ref(props.name);
+const totpKey = ref(props.totpKey);
 const qrCodeContainer = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
@@ -42,11 +42,11 @@ onMounted(async () => {
 const emit = defineEmits<{
     close: [values: { recoveryCode: string }],
     cancel: [];
+    onError: [error: any];
 }>();
 
 const schema = z_object({
     userProvidedCode: z_string().length(6, { message: "TOTP code must be 6 digits" }),
-    encodedTOTPKey: z_string().length(28, { message: "Invalid TOTP key length" }),
 })
 
 const formSchema = toTypedSchema(schema)
@@ -57,12 +57,12 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-form.setFieldValue("encodedTOTPKey", props.encodedTOTPKey);
 const onSubmit = form.handleSubmit(async (values) => {
     await withSubmit(async () => {
         const { data, error } = await (await authApiClient.api["two-factor-auth"].save.$post({
             form: {
                 ...values,
+                encodedTOTPKey: props.encodedTOTPKey,
                 turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
@@ -112,24 +112,17 @@ const onSubmit = form.handleSubmit(async (values) => {
                                class="flex-1" />
                         <CopyButton :content="name" />
                     </div>
-
-                    <FormField v-slot="{ componentField }"
-                               name="encodedTOTPKey">
-                        <FormItem>
-                            <FormLabel>Key</FormLabel>
-                            <FormControl>
-                                <div class="flex items-center space-x-2">
-                                    <Input type="text"
-                                           disabled
-                                           class="flex-1"
-                                           v-bind="componentField" />
-                                    <CopyButton :content="encodedTOTPKey" />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    </FormField>
-
+                    <label
+                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Key
+                    </label>
+                    <div class="flex items-center space-x-2">
+                        <Input type="text"
+                               disabled
+                               v-model="totpKey"
+                               class="flex-1" />
+                        <CopyButton :content="totpKey" />
+                    </div>
                 </div>
             </details>
 

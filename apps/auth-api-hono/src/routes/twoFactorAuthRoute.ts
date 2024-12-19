@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { encodeBase64, decodeBase64 } from "@oslojs/encoding";
+import { encodeBase64, decodeBase64, encodeBase32NoPadding } from "@oslojs/encoding";
 import { createTOTPKeyURI, verifyTOTP } from "@oslojs/otp";
 import { renderSVG } from "uqr";
 import { KNOWN_ERROR, type ErrorType } from '../errors';
@@ -48,6 +48,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 data: {
                     qrCodeSVG: renderSVG(keyURI),
                     encodedTOTPKey,
+                    totpKey: encodeBase32NoPadding(totpKey),
                     name: `auth.${PUBLIC_DOMAIN_NAME} - ${user.email}`,
                 },
                 error: null as ErrorType

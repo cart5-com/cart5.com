@@ -29,6 +29,10 @@ export const getUserData = async () => {
     }
 };
 
+export const refreshUserData = async () => {
+    removeUserFromSession();
+    await getUserData();
+}
 export const removeUserFromSession = () => {
     if (typeof sessionStorage !== "undefined") {
         sessionStorage.removeItem(SESSION_STORAGE_KEYS.USER_DATA);

@@ -7,7 +7,7 @@ import { toast } from '@/components/ui/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@root/components/vue/TwoFactorAuth/RecoveryCodeDialog.vue';
 import { useStore } from '@nanostores/vue'
-import { $userStore } from '@root/stores/userStore';
+import { $userStore, refreshUserData } from '@root/stores/userStore';
 const user = useStore($userStore);
 
 const dialog = useDialog();
@@ -32,6 +32,7 @@ const setupTwoFactorAuthentication = async () => {
             props: data,
             onSuccess: async (values) => {
                 showRecoveryCodeDialog(values.recoveryCode)
+                refreshUserData();
             }
         });
     }
