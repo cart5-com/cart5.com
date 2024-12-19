@@ -3,7 +3,7 @@ import { useColorMode } from "@vueuse/core";
 import DialogProvider from "@/ui-plus/dialog/DialogProvider.vue";
 import { Toaster } from "@/components/ui/sonner";
 import { computed } from "vue";
-// import DarkModeToggle from "@/ui-plus/DarkModeToggle.vue";
+import DarkModeToggle from "./DarkModeToggle.vue";
 
 const mode = useColorMode();
 const toasterTheme = computed(() => (mode.value === "dark" ? "dark" : "light"));
@@ -16,4 +16,7 @@ const toasterTheme = computed(() => (mode.value === "dark" ? "dark" : "light"));
              closeButton
              richColors
              class="pointer-events-auto" />
+    <div class="mx-auto my-4 max-w-fit">
+        <DarkModeToggle client:only="vue" />
+    </div>
 </template>

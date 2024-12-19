@@ -68,10 +68,12 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
             Setup Two Factor Authentication (2FA)
         </Button>
         <div v-if="user?.has2FA"
-             class="flex items-center gap-2 border border-dashed rounded-md p-2">
+             class="flex items-center gap-2 border border-muted-foreground border-dashed rounded-md p-2">
             <FileKey />
             Two factor authentication is enabled
         </div>
+        <!-- TODO: show recovery code button -->
         <!-- TODO: Add a button to remove 2FA -->
+
     </div>
 </template>
