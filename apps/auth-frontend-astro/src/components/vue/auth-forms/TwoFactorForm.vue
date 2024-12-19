@@ -9,6 +9,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { removeUserFromSession } from "@root/stores/userStore";
 import { Loader2 } from "lucide-vue-next";
+import { toast } from "@/components/ui/sonner";
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
@@ -45,6 +46,30 @@ async function onSubmit(values: z_infer<typeof schema>) {
         }
     })
 }
+
+async function resetWithRecoveryCode() {
+    const recoveryCode = prompt('Enter your recovery code') ?? '';
+    if (!recoveryCode) {
+        toast.error('Please enter a recovery code to reset 2FA');
+        return;
+    }
+    await withSubmit(async () => {
+        const { data, error } = await (await authApiClient.api["two-factor-auth"]['remove-2fa-with-recovery-code'].$post({
+            form: {
+                recoveryCode,
+                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            },
+        })).json()
+        if (error) {
+            toast.error(error.message ?? 'An error occurred');
+        } else {
+            // Success
+            removeUserFromSession();
+            window.location.reload();
+        }
+    })
+}
+
 </script>
 
 <template>
@@ -76,6 +101,11 @@ async function onSubmit(values: z_infer<typeof schema>) {
             </Button>
         </div>
     </AutoForm>
+    <Button variant="link"
+            class="text-secondary-foreground"
+            @click="resetWithRecoveryCode">
+        Reset 2FA with recovery code
+    </Button>
     <Button variant="secondary"
-            @click="$emit('cancel')"> Cancel </Button>
+            @click="emit('cancel')"> Cancel </Button>
 </template>
