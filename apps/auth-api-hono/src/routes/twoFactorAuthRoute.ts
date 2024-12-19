@@ -268,6 +268,10 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
+            const savedUser = await getUserByEmail(user.email);
+            if (!savedUser) {
+                throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
+            }
             await updateEncryptedTwoFactorAuthKey(user.id, null);
             await updateEncryptedTwoFactorAuthRecoveryCode(user.id, null);
             return c.json({

@@ -23,6 +23,10 @@ export async function upsertUser(email: string, passwordHash: string | null = nu
     return existingUser;
 }
 
+export async function updateUserPassword(userId: string, passwordHash: string) {
+    await db.update(userTable).set({ passwordHash }).where(eq(userTable.id, userId));
+}
+
 export async function updateEncryptedTwoFactorAuthKey(userId: string, encryptedKey: Uint8Array | null) {
     await db.update(userTable).set({ encryptedTwoFactorAuthKey: encryptedKey }).where(eq(userTable.id, userId));
 }

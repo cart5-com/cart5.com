@@ -12,6 +12,8 @@ import { ArrowLeftIcon } from "lucide-vue-next";
 			const nextUrl = getNextUrl();
 			if (nextUrl) {
 				window.location.href = nextUrl;
+			} else {
+				window.history.back();
 			}
 		});
 		const nextHostname = getNextHostname();

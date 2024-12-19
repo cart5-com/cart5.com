@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Separator from '@/components/ui/separator/Separator.vue';
 import Setup2FAButton from '@root/components/vue/TwoFactorAuth/Setup2FAButton.vue';
+import UpdatePasswordButton from '@root/components/vue/UpdatePassword/UpdatePasswordButton.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore } from '@root/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -33,7 +34,7 @@ const user = useStore($userStore);
                 <Setup2FAButton class="my-10"
                                 client:only="vue" />
                 <Separator class="my-10" />
-                <!-- TODO: update password button -->
+                <UpdatePasswordButton client:only="vue" />
                 <!-- <Separator class="my-10" /> -->
                 <!-- TODO: update name button -->
             </div>
