@@ -76,6 +76,6 @@ async function onSubmit(values: z_infer<typeof schema>) {
             </Button>
         </div>
     </AutoForm>
-    <Button variant="outline"
+    <Button variant="secondary"
             @click="$emit('cancel')"> Cancel </Button>
 </template>

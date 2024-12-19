@@ -101,6 +101,6 @@ const onSubmit = form.handleSubmit(async (values) => {
             </Button>
         </div>
     </form>
-    <Button variant="outline"
+    <Button variant="secondary"
             @click="emit('cancel')"> Cancel </Button>
 </template>
