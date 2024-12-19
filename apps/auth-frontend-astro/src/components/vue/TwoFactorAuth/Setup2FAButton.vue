@@ -72,8 +72,7 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
             <FileKey />
             Two factor authentication is enabled
         </div>
-        <!-- TODO: show recovery code button -->
         <!-- TODO: Add a button to remove 2FA -->
-
+        <!-- TODO: show recovery code button -->
     </div>
 </template>

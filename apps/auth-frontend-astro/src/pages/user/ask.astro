@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button";
 					description: "Click continue to use your account"
 				});
 				if (import.meta.env.PUBLIC_AUTH_AUTO_REDIRECT === "1") {
-					navigateToMainSite();
+					redirectWithUser();
 				}
 			}, 500);
 		});
@@ -47,7 +47,7 @@ import { Button } from "@/components/ui/button";
 				}
 			});
 		};
-		const navigateToMainSite = async () => {
+		const redirectWithUser = async () => {
 			const redirectUrl = getNextUrl();
 			if (!redirectUrl) {
 				showErrorToast();
@@ -71,6 +71,6 @@ import { Button } from "@/components/ui/button";
 			document.body.appendChild(newForm);
 			newForm.submit();
 		};
-		continueButton.addEventListener("click", navigateToMainSite);
+		continueButton.addEventListener("click", redirectWithUser);
 	</script>
 </UserPagesLayout>

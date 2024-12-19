@@ -1,0 +1,25 @@
+---
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "lucide-vue-next";
+---
+
+<Button class="go-back-button mt-4"> <ArrowLeftIcon /> <span>Go back</span> </Button>
+<script>
+	const logoutButtons = document.querySelectorAll(".go-back-button") as NodeListOf<HTMLAnchorElement>;
+	import { getNextUrl, getNextHostname } from "@root/lib/queryHelpers";
+	logoutButtons.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const nextUrl = getNextUrl();
+			if (nextUrl) {
+				window.location.href = nextUrl;
+			}
+		});
+		const nextHostname = getNextHostname();
+		if (nextHostname) {
+			const span = btn.querySelector("span");
+			if (span) {
+				span.innerHTML = `Go back to <b><u>${nextHostname}</u></b>`;
+			}
+		}
+	});
+</script>
