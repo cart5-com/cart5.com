@@ -18,7 +18,7 @@
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "1.1.0",
 		"lib": "workspace:*",
-		"@oslojs/otp": "^1.0.0",
+		"@oslojs/otp": "^1.1.0",
 		"@types/node": "^22.10.1",
 		"arctic": "^2.3.0",
 		"drizzle-kit": "^0.29.1",

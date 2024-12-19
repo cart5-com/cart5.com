@@ -3,7 +3,7 @@ import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { encodeBase64, decodeBase64, encodeBase32NoPadding } from "@oslojs/encoding";
-import { createTOTPKeyURI, verifyTOTP } from "@oslojs/otp";
+import { createTOTPKeyURI, verifyTOTPWithGracePeriod } from "@oslojs/otp";
 import { renderSVG } from "uqr";
 import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { getUserByEmail, updateEncryptedTwoFactorAuthKey, updateEncryptedTwoFactorAuthRecoveryCode } from '../db/db-actions/userActions';
@@ -86,7 +86,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid TOTP key format", "INVALID_KEY");
             }
 
-            if (!verifyTOTP(key, 30, 6, userProvidedCode)) {
+            if (!verifyTOTPWithGracePeriod(key, 30, 6, userProvidedCode, 30)) {
                 throw new KNOWN_ERROR("Invalid TOTP code", "INVALID_TOTP");
             }
 
@@ -131,7 +131,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 // no need to throw error here, as it's not expected to happen
                 throw new KNOWN_ERROR("UNKNOWN_ERROR", "UNKNOWN_ERROR");
             }
-            if (!verifyTOTP(decryptAesGcm(user.encryptedTwoFactorAuthKey), 30, 6, userProvidedCode)) {
+            if (!verifyTOTPWithGracePeriod(decryptAesGcm(user.encryptedTwoFactorAuthKey), 30, 6, userProvidedCode, 30)) {
                 throw new KNOWN_ERROR("Invalid TOTP code", "INVALID_TOTP");
             }
 
