@@ -48,7 +48,11 @@ async function onSubmit(values: z_infer<typeof schema>) {
 }
 
 async function resetWithRecoveryCode() {
-    const recoveryCode = prompt('Enter your recovery code') ?? '';
+    const recoveryCode = prompt(
+        'Enter your recovery code.\n\n' +
+        'This is the code you saved when you first enabled 2FA. ' +
+        'This action will disable 2FA on your account.'
+    ) ?? '';
     if (!recoveryCode) {
         toast.error('Please enter a recovery code to reset 2FA');
         return;
@@ -104,7 +108,7 @@ async function resetWithRecoveryCode() {
     <Button variant="link"
             class="text-secondary-foreground"
             @click="resetWithRecoveryCode">
-        Reset 2FA with recovery code
+        Reset 2FA
     </Button>
     <Button variant="secondary"
             @click="emit('cancel')"> Cancel </Button>
