@@ -1,62 +1,54 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/components/ui/auto-form";
-import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
-import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@root/const";
 import { authApiClient } from "@root/lib/authApiClient";
-import OTPVerifyForm from "./OTPVerifyForm.vue";
+import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
+import { removeUserFromSession } from "@root/stores/userStore";
+import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
-import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
-import TwoFactorForm from "@root/components/vue/forms/TwoFactorForm.vue";
+import TwoFactorForm from "@root/components/vue/auth-forms/TwoFactorForm.vue";
+import { useDialog } from "@/ui-plus/dialog/use-dialog";
 const dialog = useDialog();
 
 const schema = z_object({
 	email: z_string().email(),
+	password: z_string().min(8).max(255)
 });
-
 const form = useForm({
 	validationSchema: toTypedSchema(schema)
 });
-
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 	persistenceFields: {
 		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL
 	}
 });
-
 async function onSubmit(values: z_infer<typeof schema>) {
 	await withSubmit(async () => {
-		const { data, error } = await (await authApiClient.api.otp.send.$post({
+		const { data, error } = await (await authApiClient.api.email_password.login.$post({
 			form: {
-				verifyEmail: values.email,
+				email: values.email,
+				password: values.password,
 				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
 			},
 		})).json()
 		if (error) {
-			handleError(error, form);
+			if (error.code === 'TWO_FACTOR_AUTH_REQUIRED') {
+				dialog.show({
+					title: "Use your two factor authentication code",
+					closeable: false,
+					component: TwoFactorForm,
+				});
+			} else {
+				handleError(error, form);
+			}
 		} else {
-			dialog.show<{ verifyEmail: string, code: string }>({
-				title: "Please verify your email",
-				closeable: false,
-				component: OTPVerifyForm,
-				props: {
-					verifyEmail: values.email,
-				},
-				onSuccess: async () => { },
-				onError: async (error: any) => {
-					if (error.code === 'TWO_FACTOR_AUTH_REQUIRED') {
-						dialog.show({
-							title: "Use your two factor authentication code",
-							closeable: false,
-							component: TwoFactorForm,
-						});
-					}
-				}
-			});
+			// Success
+			removeUserFromSession();
+			window.location.reload();
 		}
 	})
 }
@@ -70,9 +62,15 @@ async function onSubmit(values: z_infer<typeof schema>) {
 			  :field-config="{
 				email: {
 					inputProps: {
-						autocomplete: 'email',
+						autocomplete: 'email'
 					}
 				},
+				password: {
+					inputProps: {
+						type: 'password',
+						autocomplete: 'current-password'
+					}
+				}
 			}">
 		<div class="text-sm font-medium text-destructive"
 			 v-if="globalError">
@@ -84,7 +82,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 					class="w-full my-6">
 				<Loader2 v-if="isLoading"
 						 class="animate-spin" />
-				Send Code
+				Log in
 			</Button>
 		</div>
 	</AutoForm>
