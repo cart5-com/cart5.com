@@ -11,6 +11,7 @@ export interface DialogOptions<TResult = any> {
   closeable?: boolean;
   onSuccess?: (result: TResult) => void;
   onCancel?: () => void;
+  onError?: (error: any) => void;
 }
 
 interface DialogInstance {
@@ -63,12 +64,25 @@ export function useDialog() {
           },
           onCancel: () => {
             options.onCancel?.();
+          },
+          onError: (error) => {
+            options.onError?.(error);
           }
         },
       });
     })
 
     return id;
+  };
+
+  const onError = (id: string, error?: any) => {
+    const dialogIndex = state.value.dialogs.findIndex(d => d.id === id);
+    if (dialogIndex === -1) return;
+
+    const dialog = state.value.dialogs[dialogIndex];
+    dialog.options.onError?.(error);
+
+    state.value.dialogs.splice(dialogIndex, 1);
   };
 
   const close = (id: string, result?: any) => {
@@ -106,6 +120,7 @@ export function useDialog() {
     state,
     show,
     close,
+    onError,
     cancel,
     getDialog,
     showBlockingLoadingModal,

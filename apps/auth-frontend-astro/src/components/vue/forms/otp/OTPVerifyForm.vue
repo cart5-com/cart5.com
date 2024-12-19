@@ -17,7 +17,6 @@ import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { removeUserFromSession } from '@root/stores/userStore'
 
-
 const props = defineProps<{
     verifyEmail: string
 }>();
@@ -25,6 +24,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
     cancel: [];
+    onError: [error: any];
 }>();
 
 const schema = z_object({
@@ -51,7 +51,11 @@ const onSubmit = form.handleSubmit(async (values) => {
             },
         })).json()
         if (error) {
-            handleError(error, form);
+            if (error.code === 'TWO_FACTOR_AUTH_REQUIRED') {
+                emit('onError', error);
+            } else {
+                handleError(error, form);
+            }
         } else {
             removeUserFromSession();
             window.location.reload();

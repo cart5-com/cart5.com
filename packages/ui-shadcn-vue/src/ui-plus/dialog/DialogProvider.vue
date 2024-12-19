@@ -3,7 +3,7 @@ import { Dialog, DialogHeader, DialogTitle, DialogDescription } from "@/componen
 import DialogContent from "./DialogContent.vue"; // use modified DialogContent
 import { useDialog } from "./use-dialog";
 
-const { state, close, cancel } = useDialog();
+const { state, close, cancel, onError } = useDialog();
 
 const handleUpdateOpen = (dialogId: string, val: boolean) => {
 	if (!val) {
@@ -16,8 +16,10 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 </script>
 
 <template>
-	<template v-for="dialog in state.dialogs" :key="dialog.id">
-		<Dialog :open="dialog.isOpen" @update:open="(val) => handleUpdateOpen(dialog.id, val)">
+	<template v-for="dialog in state.dialogs"
+			  :key="dialog.id">
+		<Dialog :open="dialog.isOpen"
+				@update:open="(val) => handleUpdateOpen(dialog.id, val)">
 			<DialogContent :closeable="dialog.options?.closeable">
 				<DialogHeader>
 					<DialogTitle>
@@ -28,15 +30,15 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 					</DialogDescription>
 				</DialogHeader>
 
-				<component
-					v-if="dialog.options?.component"
-					:is="dialog.options.component"
-					v-bind="dialog.options.props"
-					@close="(result: any) => close(dialog.id, result)"
-					@cancel="() => cancel(dialog.id)"
-				/>
+				<component v-if="dialog.options?.component"
+						   :is="dialog.options.component"
+						   v-bind="dialog.options.props"
+						   @onError="(error: any) => onError(dialog.id, error)"
+						   @close="(result: any) => close(dialog.id, result)"
+						   @cancel="() => cancel(dialog.id)" />
 
-				<div v-if="dialog.options?.html" v-html="dialog.options.html" />
+				<div v-if="dialog.options?.html"
+					 v-html="dialog.options.html" />
 			</DialogContent>
 		</Dialog>
 	</template>

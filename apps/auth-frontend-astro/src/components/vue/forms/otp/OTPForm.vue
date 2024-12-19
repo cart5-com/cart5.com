@@ -11,6 +11,7 @@ import { authApiClient } from "@root/lib/authApiClient";
 import OTPVerifyForm from "./OTPVerifyForm.vue";
 import { Loader2 } from "lucide-vue-next";
 import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
+import TwoFactorForm from "@root/components/vue/forms/TwoFactorForm.vue";
 const dialog = useDialog();
 
 const schema = z_object({
@@ -45,7 +46,16 @@ async function onSubmit(values: z_infer<typeof schema>) {
 				props: {
 					verifyEmail: values.email,
 				},
-				onSuccess: async () => { }
+				onSuccess: async () => { },
+				onError: async (error: any) => {
+					if (error.code === 'TWO_FACTOR_AUTH_REQUIRED') {
+						dialog.show({
+							title: "Use your two factor authentication code",
+							closeable: false,
+							component: TwoFactorForm,
+						});
+					}
+				}
 			});
 		}
 	})

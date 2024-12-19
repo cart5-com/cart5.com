@@ -10,6 +10,10 @@ import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { removeUserFromSession } from "@root/stores/userStore";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
+import TwoFactorForm from "@root/components/vue/forms/TwoFactorForm.vue";
+import { useDialog } from "@/ui-plus/dialog/use-dialog";
+const dialog = useDialog();
+
 const schema = z_object({
 	email: z_string().email(),
 	password: z_string().min(8).max(255)
@@ -32,7 +36,15 @@ async function onSubmit(values: z_infer<typeof schema>) {
 			},
 		})).json()
 		if (error) {
-			handleError(error, form);
+			if (error.code === 'TWO_FACTOR_AUTH_REQUIRED') {
+				dialog.show({
+					title: "Use your two factor authentication code",
+					closeable: false,
+					component: TwoFactorForm,
+				});
+			} else {
+				handleError(error, form);
+			}
 		} else {
 			// Success
 			removeUserFromSession();
