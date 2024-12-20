@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import Sheet from '@/components/ui/sheet/Sheet.vue'
-import SheetContent from '@/components/ui/sheet/SheetContent.vue'
+import type { SidebarProps } from '.'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import { SIDEBAR_WIDTH_MOBILE, useSidebar } from './utils'
 
@@ -9,12 +8,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const props = withDefaults(defineProps<{
-  side?: 'left' | 'right'
-  variant?: 'sidebar' | 'floating' | 'inset'
-  collapsible?: 'offcanvas' | 'icon' | 'none'
-  class?: HTMLAttributes['class']
-}>(), {
+const props = withDefaults(defineProps<SidebarProps>(), {
   side: 'left',
   variant: 'sidebar',
   collapsible: 'offcanvas',
