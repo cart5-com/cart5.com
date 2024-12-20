@@ -12,10 +12,10 @@ import { onMounted, ref } from 'vue';
 import { Input } from '@/components/ui/input';
 import Button from '@/components/ui/button/Button.vue';
 import CopyButton from '@/ui-plus/CopyButton.vue';
-import Separator from '@/components/ui/separator/Separator.vue';
+import Separator from '@/ui-plus/separator/Separator.vue';
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/ui-plus/sonner';
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useColorMode } from "@vueuse/core";
 import DialogProvider from "@/ui-plus/dialog/DialogProvider.vue";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/ui-plus/sonner";
 import { computed } from "vue";
 import DarkModeToggle from "./DarkModeToggle.vue";
 
@@ -10,7 +10,6 @@ const toasterTheme = computed(() => (mode.value === "dark" ? "dark" : "light"));
 </script>
 
 <template>
-    <!-- <DarkModeToggle /> -->
     <DialogProvider />
     <Toaster :theme="toasterTheme"
              closeButton

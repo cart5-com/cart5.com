@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { AutoForm } from "@/components/ui/auto-form";
+import { AutoForm } from "@/ui-plus/auto-form";
 import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";

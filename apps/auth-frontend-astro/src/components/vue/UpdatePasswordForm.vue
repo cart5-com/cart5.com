@@ -7,7 +7,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-import { toast } from '@/components/ui/sonner'
+import { toast } from '@/ui-plus/sonner'
 import { useFormPlus } from "ui-shadcn-vue/src/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { authApiClient } from "@root/lib/authApiClient";

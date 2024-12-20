@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { AutoForm } from "@/components/ui/auto-form";
+import { AutoForm } from "@/ui-plus/auto-form";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { authApiClient } from "@root/lib/authApiClient";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
@@ -9,7 +9,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { removeUserFromSession } from "@root/stores/userStore";
 import { Loader2 } from "lucide-vue-next";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/ui-plus/sonner";
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],

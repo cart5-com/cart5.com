@@ -3,7 +3,7 @@ import Button from '@/components/ui/button/Button.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import Setup2FAForm from './Setup2FAForm.vue';
 import { authApiClient } from '@root/lib/authApiClient';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/ui-plus/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@root/components/vue/TwoFactorAuth/RecoveryCodeDialog.vue';
 import { useStore } from '@nanostores/vue'

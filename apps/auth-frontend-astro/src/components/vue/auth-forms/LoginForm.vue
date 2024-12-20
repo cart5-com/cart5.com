@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { AutoForm } from "@/components/ui/auto-form";
+import { AutoForm } from "@/ui-plus/auto-form";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";

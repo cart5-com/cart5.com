@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import Separator from '@/components/ui/separator/Separator.vue';
+import Separator from '@/ui-plus/separator/Separator.vue';
 import Setup2FAButton from '@root/components/vue/TwoFactorAuth/Setup2FAButton.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore, refreshUserData } from '@root/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
-import { toast } from '@/components/ui/sonner';
+import { toast } from '@/ui-plus/sonner'
 import { authApiClient } from '@root/lib/authApiClient';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
