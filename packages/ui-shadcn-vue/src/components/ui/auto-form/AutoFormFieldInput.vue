@@ -12,19 +12,20 @@ const inputComponent = computed(() => props.config?.component === 'textarea' ? T
 </script>
 
 <template>
-  <FormField v-slot="slotProps" :name="fieldName">
+  <FormField v-slot="slotProps"
+             :name="fieldName">
     <FormItem v-bind="$attrs">
-      <AutoFormLabel v-if="!config?.hideLabel" :required="required">
+      <AutoFormLabel v-if="!config?.hideLabel"
+                     :required="required">
         {{ config?.label || beautifyObjectName(label ?? fieldName) }}
       </AutoFormLabel>
       <FormControl>
         <slot v-bind="slotProps">
-          <component
-            :is="inputComponent"
-            type="text"
-            v-bind="{ ...slotProps.componentField, ...config?.inputProps }"
-            :disabled="disabled"
-          />
+          <component :is="inputComponent"
+                     type="text"
+                     v-bind="{ ...slotProps.componentField, ...config?.inputProps }" />
+          <!-- SHADCN-VUE-CHANGES:REMOVED -->
+          <!-- :disabled="disabled" -->
         </slot>
       </FormControl>
       <FormDescription v-if="config?.description">
