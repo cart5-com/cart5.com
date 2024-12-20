@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
@@ -29,19 +22,19 @@ const emit = defineEmits<{
 
 const schema = z_object({
     verifyEmail: z_string().email(),
-    code: z_string().min(6, { message: 'Please enter 6 characters' }).max(6, { message: 'Please enter exactly 6 characters' }),
+    code: z_string()
+        .min(6, { message: '6 characters' })
+        .max(6, { message: '6 characters' }),
 })
 
-const formSchema = toTypedSchema(schema)
-
 const form = useForm({
-    validationSchema: formSchema,
+    validationSchema: toTypedSchema(schema),
 })
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 form.setFieldValue("verifyEmail", props.verifyEmail);
-const onSubmit = form.handleSubmit(async (values) => {
+async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {
         const { error } = await (await authApiClient.api.otp.verify.$post({
             form: {
@@ -61,35 +54,30 @@ const onSubmit = form.handleSubmit(async (values) => {
             window.location.reload();
         }
     })
-})
+}
 </script>
 
 <template>
-    <form class="space-y-6"
-          @submit="onSubmit">
-        <FormField v-slot="{ componentField }"
-                   name="verifyEmail">
-            <FormItem>
-                <FormControl>
-                    <Input type="text"
-                           disabled
-                           v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }"
-                   name="code">
-            <FormItem>
-                <FormLabel>One-time password</FormLabel>
-                <FormControl>
-                    <Input type="text"
-                           autofocus
-                           v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-        </FormField>
+    <AutoForm class="space-y-6"
+              :schema="schema"
+              :form="form"
+              @submit="onSubmit"
+              :field-config="{
+                verifyEmail: {
+                    label: 'Email',
+                    inputProps: {
+                        disabled: true,
+                    },
+                },
+                code: {
+                    label: 'One-time password',
+                    description: 'Enter the code we sent to your email',
+                    inputProps: {
+                        autocomplete: 'one-time-code',
+                        autofocus: true,
+                    },
+                },
+            }">
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">
             {{ globalError }}
@@ -103,7 +91,7 @@ const onSubmit = form.handleSubmit(async (values) => {
                 Verify
             </Button>
         </div>
-    </form>
+    </AutoForm>
     <Button variant="secondary"
             @click="emit('cancel')"> Cancel </Button>
 </template>

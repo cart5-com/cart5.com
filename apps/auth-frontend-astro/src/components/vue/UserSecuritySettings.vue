@@ -36,13 +36,11 @@ async function updateName() {
 
 const updatePasswordDialog = useDialog();
 function openUpdatePasswordDialog() {
-    function openDialog() {
-        dialog.show({
-            title: "Update Password",
-            closeable: false,
-            component: UpdatePasswordForm,
-        });
-    }
+    dialog.show({
+        title: "Update Password",
+        closeable: false,
+        component: UpdatePasswordForm,
+    });
 }
 </script>
 
@@ -55,9 +53,10 @@ function openUpdatePasswordDialog() {
             <div class="my-4">
                 <Alert v-if="user?.hasNewSession">
                     <LockOpen />
-                    <AlertTitle>For your security</AlertTitle>
+                    <AlertTitle>Your login is fresh</AlertTitle>
                     <AlertDescription>
-                        You can only change security settings in the first 10 minutes
+                        You can update your security settings for 10 minutes after logging in.
+                        After that, you'll need to log out and log back in to make changes.
                     </AlertDescription>
                 </Alert>
                 <Alert v-if="!user?.hasNewSession"
@@ -65,7 +64,7 @@ function openUpdatePasswordDialog() {
                     <Lock />
                     <AlertTitle>A fresh login is required</AlertTitle>
                     <AlertDescription>
-                        For your security, you can only make changes within 10 minutes of logging in
+                        For your security, log out then log in again to update security settings.
                     </AlertDescription>
                 </Alert>
                 <Setup2FAButton class="my-10" />

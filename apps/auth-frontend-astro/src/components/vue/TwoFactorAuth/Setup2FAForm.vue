@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form'
+import { AutoForm } from '@/ui-plus/auto-form'
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
 import { authApiClient } from '@root/lib/authApiClient';
 import { onMounted, ref } from 'vue';
@@ -57,7 +51,7 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-const onSubmit = form.handleSubmit(async (values) => {
+async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await authApiClient.api["two-factor-auth"].save.$post({
             form: {
@@ -78,7 +72,7 @@ const onSubmit = form.handleSubmit(async (values) => {
             emit('close', data);
         }
     })
-})
+}
 </script>
 
 <template>
@@ -90,53 +84,51 @@ const onSubmit = form.handleSubmit(async (values) => {
          ref="qrCodeContainer"
          class="max-w-xs my-4"></div>
 
-    <form class="space-y-6"
-          @submit="onSubmit">
 
-        <details class="mb-4 bg-muted rounded-md p-4">
-            <summary class="cursor-pointer">
-                Or use a setup key
-            </summary>
-            <div class="mt-4 space-y-4 border-t py-2">
-                <label
-                       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Account
-                    Name</label>
-                <div class="flex items-center space-x-2">
-                    <Input type="text"
-                           disabled
-                           v-model="name"
-                           class="flex-1" />
-                    <CopyButton :content="name" />
-                </div>
-                <label
-                       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Key
-                </label>
-                <div class="flex items-center space-x-2">
-                    <Input type="text"
-                           disabled
-                           v-model="totpKey"
-                           class="flex-1" />
-                    <CopyButton :content="totpKey" />
-                </div>
+    <details class="mb-4 bg-muted rounded-md p-4">
+        <summary class="cursor-pointer">
+            Or use a setup key
+        </summary>
+        <div class="mt-4 space-y-4 border-t py-2">
+            <label
+                   class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Account
+                Name</label>
+            <div class="flex items-center space-x-2">
+                <Input type="text"
+                       disabled
+                       v-model="name"
+                       class="flex-1" />
+                <CopyButton :content="name" />
             </div>
-        </details>
+            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Key
+            </label>
+            <div class="flex items-center space-x-2">
+                <Input type="text"
+                       disabled
+                       v-model="totpKey"
+                       class="flex-1" />
+                <CopyButton :content="totpKey" />
+            </div>
+        </div>
+    </details>
 
-        <Separator class="my-10" />
+    <Separator class="my-10" />
 
-        <FormField v-slot="{ componentField }"
-                   name="userProvidedCode">
-            <FormItem>
-                <FormLabel>Enter generated 6 digit code</FormLabel>
-                <FormControl>
-                    <Input type="text"
-                           autofocus
-                           v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-        </FormField>
-
+    <AutoForm class="space-y-6"
+              :schema="schema"
+              :form="form"
+              @submit="onSubmit"
+              :field-config="{
+                userProvidedCode: {
+                    label: '2FA code',
+                    description: 'Enter generated 6 digit code from your authenticator app',
+                    inputProps: {
+                        autocomplete: 'one-time-code',
+                        autofocus: true,
+                    },
+                },
+            }">
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">
             {{ globalError }}
@@ -150,7 +142,7 @@ const onSubmit = form.handleSubmit(async (values) => {
                 Verify
             </Button>
         </div>
-    </form>
+    </AutoForm>
     <Button variant="secondary"
             @click="$emit('cancel')"> Cancel </Button>
 </template>
