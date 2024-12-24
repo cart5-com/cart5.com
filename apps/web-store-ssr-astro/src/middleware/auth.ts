@@ -35,7 +35,7 @@ async function fetchWhoAmI(context: APIContext) {
     // no need to go through network
     console.log('AUTH_API_ORIGIN:', import.meta.env.AUTH_API_ORIGIN);
     const authApiClient = createAuthApiClient(import.meta.env.AUTH_API_ORIGIN);
-    const whoamiUrl = await authApiClient.api.user.whoami.$url();
+    const whoamiUrl = authApiClient.api.user.whoami.$url();
     const authCookieValue = context.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value;
     // whoamiUrl.protocol = "https";
     // if (import.meta.env.DEV) {
@@ -53,6 +53,7 @@ async function fetchWhoAmI(context: APIContext) {
     const { data, error } = await whoamiResponse.json();
     return {
         data,
-        whoamiResponse
+        whoamiResponse,
+        error
     };
 }
