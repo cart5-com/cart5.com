@@ -1,4 +1,4 @@
-import { Component, ref, markRaw, h } from "vue";
+import { type Component, ref, markRaw, h } from "vue";
 import LoadingSpinner from "./LoadingSpinner.vue";
 
 export interface DialogOptions<TResult = any> {
