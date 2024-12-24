@@ -6,7 +6,8 @@ import Separator from "ui-shadcn-vue/src/ui-plus/separator/Separator.vue";
 import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
 import LoginForm from "@root/components/vue/auth-forms/LoginForm.vue";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ROUTES } from "@root/const";
 ---
 
@@ -16,7 +17,11 @@ import { ROUTES } from "@root/const";
 	<Card>
 		<CardContent class="my-6">
 			<LoginForm client:visible />
-			<Button as="a" href={ROUTES.OTP} class="my-6 w-full" variant="secondary"> Forgot password? </Button>
+			<a
+				class={cn(buttonVariants({ size: "lg" }), buttonVariants({ variant: "secondary" }), "my-6", "w-full")}
+				href={ROUTES.OTP}>
+				Forgot password?
+			</a>
 			<Separator class="my-10" label="Or" />
 			<GoogleButton />
 		</CardContent>

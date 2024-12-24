@@ -3,7 +3,8 @@ import UserPagesLayout from "@root/layouts/UserPagesLayout.astro";
 import Logo from "@root/components/Logo.astro";
 import { Card, CardContent } from "@/components/ui/card";
 import UserDetails from "@root/components/vue/UserDetails.vue";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 ---
 
 <UserPagesLayout>
@@ -11,7 +12,9 @@ import { Button } from "@/components/ui/button";
 	<Card>
 		<CardContent class="my-6">
 			<UserDetails client:only="vue" />
-			<Button class="mt-6 w-full font-medium" size="lg" id="continue-button"> Continue </Button>
+			<button class={cn(buttonVariants({ variant: "default" }), "mt-6 w-full font-medium continue-button")}>
+				Continue
+			</button>
 		</CardContent>
 	</Card>
 	<script>
@@ -22,7 +25,7 @@ import { Button } from "@/components/ui/button";
 		import { getNextUrl, getNextHostname } from "@root/lib/queryHelpers";
 		const dialog = useDialog();
 		const crossDomainHostname = getNextHostname();
-		const continueButton = document.getElementById("continue-button") as HTMLButtonElement;
+		const continueButton = document.querySelector(".continue-button") as HTMLButtonElement;
 		if (crossDomainHostname && continueButton) {
 			continueButton.innerHTML = `Continue to <b><u>${crossDomainHostname}</u></b>`;
 		}

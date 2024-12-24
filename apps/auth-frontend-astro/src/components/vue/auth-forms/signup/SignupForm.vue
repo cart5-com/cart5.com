@@ -91,7 +91,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 					class="w-full my-6">
 				<Loader2 v-if="isLoading"
 						 class="animate-spin" />
-				Register
+				Sign up
 			</Button>
 		</div>
 	</AutoForm>
