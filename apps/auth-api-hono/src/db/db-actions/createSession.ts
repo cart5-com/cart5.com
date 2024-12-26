@@ -13,6 +13,7 @@ export async function createSession(token: string, userId: string, hostname: str
     const session: Session = {
         id: sessionId,
         userId,
+        createdAtTs: Date.now(),
         expiresAt: new Date(Date.now() + timeInMs),
         fresh: false,
         hostname
