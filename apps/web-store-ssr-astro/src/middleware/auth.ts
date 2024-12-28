@@ -1,15 +1,15 @@
 import { defineMiddleware } from "astro:middleware";
-import { createAuthApiClient, AUTH_SESSION_COOKIE_NAME } from '../../../auth-api-hono/src/authApiClient'
+import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/src/apiClients/authApiClient'
 import type { APIContext } from "astro";
 
 export const authMiddleware = defineMiddleware(async (context, next) => {
     // Skip auth check if no session cookie exists
-    if (!context.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value) {
+    if (!context.cookies.get(SESSION_COOKIE_NAME)?.value) {
         context.locals.USER = null;
         return next();
     }
 
-    if (context.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value) {
+    if (context.cookies.get(SESSION_COOKIE_NAME)?.value) {
         try {
             const { data, whoamiResponse } = await fetchWhoAmI(context);
             context.locals.USER = data;
@@ -36,7 +36,7 @@ async function fetchWhoAmI(context: APIContext) {
     console.log('AUTH_API_ORIGIN:', import.meta.env.AUTH_API_ORIGIN);
     const authApiClient = createAuthApiClient(import.meta.env.AUTH_API_ORIGIN);
     const whoamiUrl = authApiClient.api.user.whoami.$url();
-    const authCookieValue = context.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value;
+    const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
     // whoamiUrl.protocol = "https";
     // if (import.meta.env.DEV) {
     //     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -47,7 +47,7 @@ async function fetchWhoAmI(context: APIContext) {
             internalHost: context.url.host,
             internalSecret: import.meta.env.JWT_SECRET,
             origin: context.url.origin,
-            cookie: `${AUTH_SESSION_COOKIE_NAME}=${authCookieValue}`
+            cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
         }
     });
     const { data, error } = await whoamiResponse.json();

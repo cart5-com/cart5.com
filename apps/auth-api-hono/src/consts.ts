@@ -1,4 +1,3 @@
-export const SESSION_COOKIE_NAME = `auth_session`;
 export const GOOGLE_OAUTH_COOKIE_NAME = `google_oauth_token`;
 export const OTP_COOKIE_NAME = "otp_token";
 export const OTP_COOKIE_NAME_AFTER_REGISTER = "otp_token_after_register";

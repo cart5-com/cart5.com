@@ -113,6 +113,9 @@ importers:
       astro-ui:
         specifier: workspace:*
         version: link:../../packages/astro-ui
+      lib:
+        specifier: workspace:*
+        version: link:../../packages/lib
       lucide-vue-next:
         specifier: ^0.465.0
         version: 0.465.0(vue@3.5.13(typescript@5.7.2))
@@ -137,58 +140,6 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.23.8
-
-  apps/auth-frontend-vue:
-    dependencies:
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      lucide-vue-next:
-        specifier: ^0.465.0
-        version: 0.465.0(vue@3.5.13(typescript@5.7.2))
-      radix-vue:
-        specifier: ^1.9.10
-        version: 1.9.10(vue@3.5.13(typescript@5.7.2))
-      tailwind-merge:
-        specifier: ^2.5.5
-        version: 2.5.5
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.16)
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.13(typescript@5.7.2)
-    devDependencies:
-      '@types/node':
-        specifier: ^22.10.1
-        version: 22.10.1
-      '@vitejs/plugin-vue':
-        specifier: ^5.2.1
-        version: 5.2.1(vite@6.0.5(@types/node@22.10.1)(jiti@2.4.1)(tsx@4.19.2)(yaml@2.6.1))(vue@3.5.13(typescript@5.7.2))
-      '@vue/tsconfig':
-        specifier: ^0.7.0
-        version: 0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.20(postcss@8.4.49)
-      tailwindcss:
-        specifier: ^3.4.16
-        version: 3.4.16
-      typescript:
-        specifier: ^5.7.2
-        version: 5.7.2
-      ui-shadcn-vue:
-        specifier: workspace:*
-        version: link:../../packages/ui-shadcn-vue
-      vite:
-        specifier: ^6.0.5
-        version: 6.0.5(@types/node@22.10.1)(jiti@2.4.1)(tsx@4.19.2)(yaml@2.6.1)
-      vue-tsc:
-        specifier: ^2.2.0
-        version: 2.2.0(typescript@5.7.2)
 
   apps/proxy-caddy: {}
 
@@ -216,7 +167,11 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2(@types/node@22.10.1)(jiti@2.4.1)(rollup@4.28.0)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1)
 
-  packages/lib: {}
+  packages/lib:
+    dependencies:
+      hono:
+        specifier: ^4.6.12
+        version: 4.6.12
 
   packages/ui-shadcn-vue:
     dependencies:
@@ -2135,17 +2090,6 @@ packages:
 
   '@vue/shared@3.5.13':
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
-
-  '@vue/tsconfig@0.7.0':
-    resolution: {integrity: sha512-ku2uNz5MaZ9IerPPUyOHzyjhXoX2kVJaVf7hL315DC17vS6IiZRmmCPfggNbU16QTvM80+uYYy3eYJB59WCtvg==}
-    peerDependencies:
-      typescript: 5.x
-      vue: ^3.4.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      vue:
-        optional: true
 
   '@vueuse/core@10.11.1':
     resolution: {integrity: sha512-guoy26JQktXPcz+0n3GukWIy/JDNKti9v6VEMu6kV2sYBsWuGiTU8OWdg+ADfUbHg3/3DlqySDe7JmdHrktiww==}
@@ -6382,11 +6326,6 @@ snapshots:
       vue: 3.5.13(typescript@5.7.2)
 
   '@vue/shared@3.5.13': {}
-
-  '@vue/tsconfig@0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))':
-    optionalDependencies:
-      typescript: 5.7.2
-      vue: 3.5.13(typescript@5.7.2)
 
   '@vueuse/core@10.11.1(vue@3.5.13(typescript@5.7.2))':
     dependencies:

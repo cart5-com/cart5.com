@@ -1,5 +1,6 @@
 import { USER_DATA_SESSION_EXPIRATION_TIME, SESSION_STORAGE_KEYS } from "@root/const";
-import { authApiClient, type User } from "@root/lib/authApiClient";
+import { authApiClient } from "@root/lib/authApiClient";
+import { type User } from "lib/src/apiClients/authApiClient";
 import { atom } from 'nanostores'
 
 export const $userStore = atom<User | null>(null);

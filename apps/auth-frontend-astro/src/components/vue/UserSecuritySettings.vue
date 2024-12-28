@@ -34,7 +34,6 @@ async function updateName() {
     }
 }
 
-const updatePasswordDialog = useDialog();
 function openUpdatePasswordDialog() {
     dialog.show({
         title: "Update Password",

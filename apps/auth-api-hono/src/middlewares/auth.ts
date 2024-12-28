@@ -1,6 +1,6 @@
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import { SESSION_COOKIE_NAME } from "../consts";
+import { SESSION_COOKIE_NAME } from "lib/src/apiClients/authApiClient";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
 import { getEnvironmentVariable } from "../utils/getEnvironmentVariable";
 

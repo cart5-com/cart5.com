@@ -76,9 +76,10 @@
 }
 
 /* .router-link-active, */
-.router-link-exact-active {
+/* .router-link-exact-active {
   @apply bg-card text-primary;
-}
+} */
+
 
 :where([data-sonner-toaster]) {
   font-family: unset;

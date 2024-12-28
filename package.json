@@ -5,6 +5,7 @@
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
     "dev": "turbo dev --ui=stream",
+    "preview": "turbo preview --ui=stream",
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\""
   },

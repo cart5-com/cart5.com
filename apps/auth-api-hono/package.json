@@ -7,7 +7,7 @@
 		"postdev": "kill $(lsof -t -i:7022)",
 		"generate:sql": "dotenv -e ../../.env -- drizzle-kit generate --config=drizzle.config.ts",
 		"build": "rm -rf ./dist && node ./esbuild.cjs",
-		"preview": "dotenv -e ../../.env.prod -- bash -c 'node ./dist/index.js'"
+		"preview": "dotenv -e ../../.env -- bash -c 'node ./dist/index.js'"
 	},
 	"dependencies": {
 		"@hono/node-server": "^1.13.7",

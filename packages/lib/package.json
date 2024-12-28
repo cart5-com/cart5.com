@@ -1,4 +1,7 @@
 {
   "name": "lib",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.6.12"
+  }
 }
