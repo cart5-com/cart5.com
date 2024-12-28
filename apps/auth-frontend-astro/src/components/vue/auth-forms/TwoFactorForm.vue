@@ -68,6 +68,7 @@ async function resetWithRecoveryCode() {
             toast.error(error.message ?? 'An error occurred');
         } else {
             // Success
+            console.log(data);
             removeUserFromSession();
             window.location.reload();
         }

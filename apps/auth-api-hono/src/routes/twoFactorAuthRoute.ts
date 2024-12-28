@@ -120,7 +120,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid or expired two factor authentication token", "INVALID_TWO_FACTOR_AUTH_TOKEN");
             }
 
-            const { userId, email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
+            const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
                 twoFactorAuthToken
             );
             const user = await getUserByEmail(email);
@@ -160,7 +160,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid or expired two factor authentication token", "INVALID_TWO_FACTOR_AUTH_TOKEN");
             }
 
-            const { userId, email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
+            const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
                 twoFactorAuthToken
             );
             const user = await getUserByEmail(email);

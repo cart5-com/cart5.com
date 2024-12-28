@@ -1,4 +1,4 @@
-import { createAuthApiClient } from "lib/src/apiClients/authApiClient";
+import { createAuthApiClient } from "lib/apiClients/authApiClient";
 // this only provides the hono/client with typing
 // https://hono.dev/docs/guides/rpc
 // it does not include any server code, 

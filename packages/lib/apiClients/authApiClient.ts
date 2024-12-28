@@ -1,4 +1,4 @@
-import { type AuthAppType } from '../../../../apps/auth-api-hono/src/index'
+import type { AuthAppType } from '../../../apps/auth-api-hono/src/index'
 import { hc } from 'hono/client'
 import type { InferRequestType, InferResponseType } from 'hono/client'
 export const SESSION_COOKIE_NAME = `auth_session`;

@@ -1,0 +1,31 @@
+{
+  "name": "auth-frontend-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "4",
+    "@nanostores/vue": "^0.11.0",
+    "lib": "workspace:*",
+    "nanostores": "^0.11.3",
+    "lucide-vue-next": "^0.465.0",
+    "@types/node": "^22.10.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "ui-shadcn-vue": "workspace:*",
+    "@vee-validate/zod": "^4.14.7",
+    "vee-validate": "^4.14.7",
+    "zod": "^3.23.8",
+    "vite": "^6.0.5",
+    "vue-tsc": "^2.2.0"
+  }
+}

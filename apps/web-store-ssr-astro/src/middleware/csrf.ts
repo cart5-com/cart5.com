@@ -1,5 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { verifyRequestOrigin } from "lib/src/utils/verifyRequestOrigin";
+import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
 
 export const csrfMiddleware = defineMiddleware(async (context, next) => {
     if (context.request.method !== "GET") {

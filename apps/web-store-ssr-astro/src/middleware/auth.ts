@@ -1,5 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/src/apiClients/authApiClient'
+import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/apiClients/authApiClient'
 import type { APIContext } from "astro";
 
 export const authMiddleware = defineMiddleware(async (context, next) => {
