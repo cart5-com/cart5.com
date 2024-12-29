@@ -1,0 +1,35 @@
+---
+- hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    PROXY_SECRET: "{{ lookup('env', 'PROXY_SECRET') }}"
+    SHARED_DATA_FOLDER: "{{ lookup('env', 'SHARED_DATA_FOLDER') }}"
+    PUBLIC_DOMAIN_NAME: "{{ lookup('env', 'PUBLIC_DOMAIN_NAME') }}"
+  tasks:
+    - name: Add PROXY_SECRET to Caddy service environment
+      ansible.builtin.blockinfile:
+        path: /lib/systemd/system/caddy.service
+        block: |
+          Environment="PROXY_SECRET={{ PROXY_SECRET }}"
+          Environment="SHARED_DATA_FOLDER={{ SHARED_DATA_FOLDER }}"
+          Environment="PUBLIC_DOMAIN_NAME={{ PUBLIC_DOMAIN_NAME }}"
+
+          # Automatically restart caddy if it crashes except if the exit code was 1
+          RestartPreventExitStatus=1
+          Restart=on-failure
+          RestartSec=5s
+        insertafter: '^\[Service\]'
+        state: present
+
+    - name: copy Caddyfile
+      ansible.builtin.copy:
+        src: ./Caddyfile_prod
+        dest: /etc/caddy/Caddyfile
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: reload caddy
+      command: systemctl reload caddy

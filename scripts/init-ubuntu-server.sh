@@ -200,3 +200,10 @@ sudo ln -s $(which pnpm) /usr/bin/pnpm
 # sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
 # # sudo setcap cap_net_bind_service=+eip $(which caddy)
 # ========================================================================
+
+
+# ========================================================================
+# SHARED IP BLOCK FOLDER
+sudo mkdir -p /var/lib/shared-data-folder # Create the shared folder:
+sudo chmod 7777 /var/lib/shared-data-folder # Set the permissions to allow all users to read, write, and execute files in the shared folder.
+# ========================================================================
