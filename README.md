@@ -30,6 +30,7 @@ apps/
 - Node.js v20.11+ (recommended: use nvm)
 - pnpm v9.9.0+ (`npm install -g pnpm`)
 - Caddy v2.8.4+ (macOS: `brew install caddy`)
+- Ansible v2.17.4+ (Optional, deploy only) (`brew install ansible && ansible --version`)
 
 ## Local Development Setup
 

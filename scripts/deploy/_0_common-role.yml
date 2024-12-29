@@ -1,0 +1,21 @@
+---
+- hosts: all
+  gather_facts: false
+  # become: yes
+  tasks:
+    - name: git checkout
+      ansible.builtin.git:
+        repo: https://github.com/cart5-com/cart5.com.git
+        dest: $HOME/PROD_CART5_COM
+
+    - name: pnpm install
+      shell: "cd $HOME/PROD_CART5_COM && pnpm i"
+
+    # TODO: seperate api and clientside env vars
+    - name: copy .env.production
+      ansible.builtin.copy:
+        src: ./.env.production
+        dest: $HOME/PROD_CART5_COM/.env
+
+    - name: pnpm build
+      shell: "cd $HOME/PROD_CART5_COM && pnpm build"
