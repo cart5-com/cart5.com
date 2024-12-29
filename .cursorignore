@@ -1,0 +1,10 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+packages/ui-shadcn-vue/src/components/ui/
+.pnpm-store/
+**/node_modules/**, 
+**/.turbo/**, 
+**/dist/**, 
+**/.astro/**, 
+**/.wrangler/**, 
+.git/**, 
+.nuxt/**
