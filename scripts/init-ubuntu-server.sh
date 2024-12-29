@@ -1,3 +1,37 @@
+#!/bin/bash
+
+# ========================================================================
+# Ubuntu Server Setup Script
+# ========================================================================
+# This script performs the following setup tasks:
+# 1. System Updates
+#    - Updates and upgrades system packages
+#    - Installs basic utilities (unzip)
+#
+# 2. Swap Configuration (10GB)
+#    - Creates and configures swap file
+#    - Optimizes swap settings (swappiness=10, cache_pressure=50)
+#
+# 3. Web Server Setup
+#    - Installs Caddy web server
+#    - Installs xCaddy with rate-limit plugin
+#
+# 4. Tools: nvm, node, pnpm, pm2
+#    - Installs Node.js via nvm (v22.12.0)
+#    - Installs pnpm package manager
+#    - Installs PM2 process manager
+#    - Configures PM2 log rotation (max 1GB)
+#
+# 5. System Configuration
+#    - Creates symbolic links for Ansible compatibility
+#    - Sets up PM2 startup service
+# ========================================================================
+
+
+
+# ========================================================================
+# 1. System Updates
+# ========================================================================
 # sudo apt update -qq
 sudo apt upgrade --assume-yes
 # sudo apt-get install --assume-yes wget curl 
@@ -11,6 +45,12 @@ sudo apt-get install --assume-yes unzip
 # ========================================================================
 
 
+
+
+
+
+# ========================================================================
+# 2. Swap Configuration (10GB)
 # ========================================================================
 # setup swap
 # https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04
@@ -40,6 +80,12 @@ sudo swapon --show
 
 
 
+
+
+
+# ========================================================================
+# 3. Web Server Setup
+# ========================================================================
 # ================================INSTALL CADDY===========================
 # install caddy
 # ubuntu 22.04 commands to setup server
@@ -94,6 +140,8 @@ sudo systemctl start caddy
 
 
 # ========================================================================
+# 4. Tools: nvm, node, pnpm, pm2
+# ========================================================================
 # https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04
 # install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
@@ -128,14 +176,17 @@ pm2 set pm2-logrotate:max_size 1G
 # force rotate every hours
 # pm2 set pm2-logrotate:rotateInterval '0 * * * *'
 
-# enable pm2 Startup Service for your instance
+
+
+
+
+
+
+# ========================================================================
+# 5. Enable pm2 Startup Service for your instance
+# ========================================================================
 pm2 startup # after this, check for generated command and run if required
 # ========================================================================
-
-
-
-
-
 
 # ========================================================================
 # ANSIBLE FIXES
