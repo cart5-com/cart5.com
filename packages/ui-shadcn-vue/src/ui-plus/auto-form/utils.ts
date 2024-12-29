@@ -1,6 +1,6 @@
 import type { z } from 'zod'
 
-// TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
+// TO DO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
 export type ZodObjectOrWrapped =
   | z.ZodObject<any, any>
   | z.ZodEffects<z.ZodObject<any, any>>
