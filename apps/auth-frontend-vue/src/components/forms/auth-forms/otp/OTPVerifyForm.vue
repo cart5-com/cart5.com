@@ -8,7 +8,6 @@ import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import { removeUserFromSession } from '@src/stores/userStore'
 import { refreshUserAndRedirectToSavedPath } from '@src/lib/refreshUserAndRedirectToSavedPath';
 
 const props = defineProps<{

@@ -7,7 +7,6 @@ import { object as z_object, string as z_string, type infer as z_infer } from "z
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
-import { removeUserFromSession } from '@src/stores/userStore'
 import { Loader2 } from 'lucide-vue-next'
 import { refreshUserAndRedirectToSavedPath } from '@src/lib/refreshUserAndRedirectToSavedPath';
 
