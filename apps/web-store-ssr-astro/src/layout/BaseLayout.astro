@@ -5,8 +5,9 @@ interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-let RESEND_API_KEY = getEnvironmentVariable("RESEND_API_KEY");
-RESEND_API_KEY = RESEND_API_KEY.slice(-5);
+const NODE_APP_INSTANCE = getEnvironmentVariable("NODE_APP_INSTANCE");
+let GOOGLE_OAUTH_REDIRECT_URI = getEnvironmentVariable("GOOGLE_OAUTH_REDIRECT_URI");
+GOOGLE_OAUTH_REDIRECT_URI = GOOGLE_OAUTH_REDIRECT_URI.slice(-5);
 ---
 
 <html lang="en">
@@ -14,8 +15,9 @@ RESEND_API_KEY = RESEND_API_KEY.slice(-5);
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title} {RESEND_API_KEY}</title>
+		<title>{`'${GOOGLE_OAUTH_REDIRECT_URI}'|${title} `}</title>
 	</head>
+
 	<body>
 		<ul>
 			<li><a href="/">index.astro</a></li>
@@ -44,5 +46,8 @@ RESEND_API_KEY = RESEND_API_KEY.slice(-5);
 		<pre id="ssr-user-info">{
 		JSON.stringify(Astro.locals.USER, null, 2)
 		}</pre>
+		<hr />
+		<h2>NODE_APP_INSTANCE</h2>
+		<pre id="node-app-instance">{NODE_APP_INSTANCE}</pre>
 	</body>
 </html>
