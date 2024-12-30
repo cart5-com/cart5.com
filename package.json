@@ -8,7 +8,8 @@
     "preview": "turbo preview --ui=stream",
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
-    "deploy": "dotenv -e ./scripts/deploy/.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'"
+    "deploy": "dotenv -e ./scripts/deploy/.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'",
+    "start": "turbo start --ui=stream"
   },
   "dependencies": {
     "@types/node": "^22.10.1",

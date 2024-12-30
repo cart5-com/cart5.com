@@ -22,3 +22,6 @@
 
     - name: pnpm build
       shell: "cd $HOME/PROD_CART5_COM && pnpm build"
+
+    - name: pnpm start
+      shell: "cd $HOME/PROD_CART5_COM && pnpm start"

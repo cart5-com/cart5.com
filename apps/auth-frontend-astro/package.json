@@ -4,10 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev --port 3001",
-    "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview --port 3001",
-    "astro": "astro"
+    "astro": "astro",
+    "start": "mkdir -p /srv/auth-frontend-astro && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-astro/dist/ /srv/auth-frontend-astro/"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
