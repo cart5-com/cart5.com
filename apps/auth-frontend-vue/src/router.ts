@@ -13,11 +13,6 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/',
-            name: 'home',
-            component: () => import('./views/HomeView.vue'),
-        },
-        {
             path: '/login',
             name: 'login',
             component: () => import('./views/auth/LoginView.vue'),
@@ -41,6 +36,18 @@ const router = createRouter({
             path: '/user/ask',
             name: 'user-ask',
             component: () => import('./views/user/AskView.vue'),
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            redirect: to => {
+                return {
+                    path: '/login',
+                    query: {
+                        ...to.query,
+                        pathname: '/user/settings'
+                    }
+                }
+            }
         }
     ]
 })
@@ -55,7 +62,11 @@ router.beforeEach((to, _from) => {
 
     // Non-authenticated users trying to access protected routes
     if (!user && !isAuthRoute) {
-        const query = { ...to.query, pathname: to.fullPath } // Save the intended destination
+        console.log('to.fullPath:', to.fullPath);
+        const query = {
+            ...to.query,
+            pathname: to.fullPath === '/' ? '/user/settings' : to.fullPath
+        } // Save the intended destination
         return {
             path: ROUTES.LOGIN,
             query
