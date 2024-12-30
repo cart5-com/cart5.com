@@ -35,7 +35,8 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	}
 	import auth-api-hono-proxy
 	handle_path /* {
-		root * /srv/auth-frontend-astro/dist/
+		try_files {path} /
+		root * /srv/auth-frontend-vue/dist/
 		file_server
 	}
 }
