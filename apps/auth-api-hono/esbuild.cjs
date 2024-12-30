@@ -9,8 +9,6 @@ require("esbuild").build({
     sourcemap: true,
     plugins: [],
     external: [
-        // TODO: need to make sure these dependencies are copied to your dist folder. 
-        // add a copy step to your build script in package.json: `build && cp -r node_modules/@node-rs dist/`
         '@node-rs/argon2'
     ],
     banner: {
