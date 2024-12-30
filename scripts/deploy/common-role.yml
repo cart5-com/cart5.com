@@ -19,6 +19,3 @@
 
     - name: pnpm build
       shell: "cd $HOME/PROD_CART5_COM && pnpm build"
-
-    - name: copy dist folders
-      shell: "mkdir -p /srv/auth-frontend-astro && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-astro/dist/ /srv/auth-frontend-astro/"

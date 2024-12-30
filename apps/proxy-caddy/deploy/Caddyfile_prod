@@ -29,22 +29,13 @@ http://localhost:3434 {
 	redir https://{host}{uri}
 }
 
-https://auth.cart5.com {
+https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls {
 		on_demand
 	}
-	root * /srv/auth-frontend-astro/dist/
-	file_server
-	# respond "hello world auth.cart5.com" 200
+	import auth-api-hono-proxy
+	handle_path /* {
+		root * /srv/auth-frontend-astro/dist/
+		file_server
+	}
 }
-
-# 	https://auth.{$PUBLIC_DOMAIN_NAME} {
-# 		tls {
-# 			on_demand
-# 		}
-# 		import auth-api-hono-proxy
-# 		handle_path /* {
-# 			root * {$HOME}/PROD_CART5_COM/apps/auth-frontend-astro/dist/
-# 			file_server
-# 		}
-# 	}
