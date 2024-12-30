@@ -1,7 +1,0 @@
----
-- hosts: all
-  gather_facts: false
-  # become: yes
-  tasks:
-    - name: pm2 reload auth-api-hono
-      shell: cd $HOME/PROD_CART5_COM/apps/auth-api-hono; pm2 reload ./ecosystem.config.cjs -i 0 --update-env && pm2 save

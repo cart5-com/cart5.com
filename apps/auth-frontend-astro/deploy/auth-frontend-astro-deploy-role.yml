@@ -1,7 +1,0 @@
----
-- hosts: all
-  gather_facts: false
-  # become: yes
-  tasks:
-    - name: copy dist folders
-      shell: "mkdir -p /srv/auth-frontend-astro && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-astro/dist/ /srv/auth-frontend-astro/"
