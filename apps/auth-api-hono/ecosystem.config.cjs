@@ -2,7 +2,7 @@
 // var envConfig = require('dotenv').config({ path: penv });
 const path = require('path');
 require('dotenv').config({
-    path: path.join(__dirname, '../../.env')
+    path: path.join(__dirname, '../../.env.production')
 });
 
 module.exports = {

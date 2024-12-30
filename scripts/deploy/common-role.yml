@@ -15,7 +15,7 @@
     - name: copy .env.production
       ansible.builtin.copy:
         src: ./.env.production
-        dest: $HOME/PROD_CART5_COM/.env
+        dest: $HOME/PROD_CART5_COM/.env.production
 
     - name: pnpm build
       shell: "cd $HOME/PROD_CART5_COM && pnpm build"
