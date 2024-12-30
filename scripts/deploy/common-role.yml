@@ -8,6 +8,9 @@
         repo: https://github.com/cart5-com/cart5.com.git
         dest: $HOME/PROD_CART5_COM
 
+    - name: git pull
+      shell: "cd $HOME/PROD_CART5_COM && git pull"
+
     - name: pnpm install
       shell: "cd $HOME/PROD_CART5_COM && pnpm i"
 
