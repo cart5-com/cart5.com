@@ -5,6 +5,9 @@ node_modules
 .pnp
 .pnp.js
 
+# cursor
+.cursorignore
+
 # Local env files
 .env*
 !.env.example
