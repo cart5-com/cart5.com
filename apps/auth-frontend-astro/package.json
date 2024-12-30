@@ -7,7 +7,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview --port 3001",
     "astro": "astro",
-    "start": "rm -rf /srv/auth-frontend-astro/dist/ && mkdir -p /srv/auth-frontend-astro && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-astro/dist/ /srv/auth-frontend-astro/"
+    "_start": "rm -rf /srv/auth-frontend-astro/dist/ && mkdir -p /srv/auth-frontend-astro && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-astro/dist/ /srv/auth-frontend-astro/"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

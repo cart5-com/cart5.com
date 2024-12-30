@@ -6,11 +6,12 @@ import Separator from "ui-shadcn-vue/src/ui-plus/separator/Separator.vue";
 import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
 import SignupForm from "@root/components/vue/auth-forms/signup/SignupForm.vue";
+import { ROUTES } from "@root/const";
 ---
 
 <AuthPagesLayout>
 	<Logo />
-	<AuthMenu />
+	<AuthMenu selected={ROUTES.SIGNUP} />
 	<Card>
 		<CardContent class="my-6">
 			<SignupForm client:visible />

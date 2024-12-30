@@ -2,10 +2,26 @@
 import { ROUTES } from "@root/const";
 import Tabs from "astro-ui/src/components/tab/Tabs.astro";
 import TabButton from "astro-ui/src/components/tab/TabButton.astro";
+interface Props {
+	selected: string;
+}
+const { selected } = Astro.props;
 ---
 
 <Tabs>
-	<TabButton href={ROUTES.LOGIN}>Log in</TabButton>
-	<TabButton href={ROUTES.SIGNUP}>Sign up</TabButton>
-	<TabButton href={ROUTES.OTP}>OTP</TabButton>
+	<TabButton
+		href={ROUTES.LOGIN}
+		data-state={selected === ROUTES.LOGIN ? "active" : undefined}
+		aria-selected={selected === ROUTES.LOGIN}>Log in</TabButton
+	>
+	<TabButton
+		href={ROUTES.SIGNUP}
+		data-state={selected === ROUTES.SIGNUP ? "active" : undefined}
+		aria-selected={selected === ROUTES.SIGNUP}>Sign up</TabButton
+	>
+	<TabButton
+		href={ROUTES.OTP}
+		data-state={selected === ROUTES.OTP ? "active" : undefined}
+		aria-selected={selected === ROUTES.OTP}>OTP</TabButton
+	>
 </Tabs>

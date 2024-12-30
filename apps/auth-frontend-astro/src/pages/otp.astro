@@ -6,11 +6,12 @@ import Separator from "ui-shadcn-vue/src/ui-plus/separator/Separator.vue";
 import AuthMenu from "@root/components/AuthMenu.astro";
 import GoogleButton from "@root/components/GoogleButton.astro";
 import OTPForm from "@root/components/vue/auth-forms/otp/OTPForm.vue";
+import { ROUTES } from "@root/const";
 ---
 
 <AuthPagesLayout>
 	<Logo />
-	<AuthMenu />
+	<AuthMenu selected={ROUTES.OTP} />
 	<Card>
 		<CardContent class="my-6">
 			<OTPForm client:visible />
