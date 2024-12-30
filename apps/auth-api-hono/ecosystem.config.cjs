@@ -10,6 +10,14 @@ module.exports = {
         {
             name: "auth-api-hono",
             script: "./dist/index.js",
+
+            // instances: 0,
+            // // https://www.digitalocean.com/community/tutorials/how-to-scale-node-js-applications-with-clustering#step-5-using-pm2-for-clustering
+            // exec_mode: "cluster",
+            // max_memory_restart: '150M',
+            // kill_timeout: 5000,
+            // wait_ready: true,
+
             // // cron_restart: "0 */6 * * *", // every 6 hours
             // env: Object.assign({}, envConfig, {
             //     "HOST": "0.0.0.0",
