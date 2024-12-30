@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Separator from '@/ui-plus/separator/Separator.vue';
-import Setup2FAButton from '@src/components/vue/TwoFactorAuth/Setup2FAButton.vue';
+import Setup2FAButton from '@src/components/forms/TwoFactorAuth/Setup2FAButton.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore, refreshUserData } from '@src/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -10,7 +10,7 @@ import { toast } from '@/ui-plus/sonner'
 import { getAuthApiClient } from '@src/lib/authApiClient';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import UpdatePasswordForm from '@src/components/vue/UpdatePasswordForm.vue';
+import UpdatePasswordForm from '@src/components/forms/UpdatePasswordForm.vue';
 const dialog = useDialog();
 const user = useStore($userStore);
 

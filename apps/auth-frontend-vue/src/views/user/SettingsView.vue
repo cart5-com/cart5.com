@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Card, CardContent } from "@/components/ui/card";
-import UserDetails from "@src/components/vue/UserDetails.vue";
-import UserSecuritySettings from "@src/components/vue/UserSecuritySettings.vue";
+import UserDetails from "@src/components/forms/UserDetails.vue";
+import UserSecuritySettings from "@src/components/forms/UserSecuritySettings.vue";
 import Separator from "@/ui-plus/separator/Separator.vue";
 import GoBackButton from "@src/components/GoBackButton.vue";
 import Logo from "@src/components/Logo.vue";

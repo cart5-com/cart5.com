@@ -10,7 +10,7 @@ import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { Loader2 } from "lucide-vue-next";
-import SignupVerifyForm from "@src/components/vue/auth-forms/signup/SignupVerifyForm.vue";
+import SignupVerifyForm from "@src/components/forms/auth-forms/signup/SignupVerifyForm.vue";
 
 const dialog = useDialog();
 

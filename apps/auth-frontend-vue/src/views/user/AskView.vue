@@ -17,7 +17,7 @@
 import { onMounted } from 'vue';
 import Logo from "@src/components/Logo.vue";
 import { Card, CardContent } from "@/components/ui/card";
-import UserDetails from "@src/components/vue/UserDetails.vue";
+import UserDetails from "@src/components/forms/UserDetails.vue";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";

@@ -5,7 +5,7 @@ import Setup2FAForm from './Setup2FAForm.vue';
 import { getAuthApiClient } from '@src/lib/authApiClient';
 import { toast } from '@/ui-plus/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
-import RecoveryCodeDialog from '@src/components/vue/TwoFactorAuth/RecoveryCodeDialog.vue';
+import RecoveryCodeDialog from '@src/components/forms/TwoFactorAuth/RecoveryCodeDialog.vue';
 import { useStore } from '@nanostores/vue'
 import { $userStore, refreshUserData } from '@src/stores/userStore';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
