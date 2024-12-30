@@ -13,6 +13,9 @@ export default defineConfig({
       plugins: [tailwind(), autoprefixer()],
     },
   },
+  build: {
+    sourcemap: true,
+  },
   plugins: [vue()],
   resolve: {
     alias: {
