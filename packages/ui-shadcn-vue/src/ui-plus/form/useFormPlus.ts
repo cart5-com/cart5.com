@@ -67,10 +67,10 @@ export function useFormPlus(form?: ReturnType<typeof useForm>, options?: Persist
     const withSubmit = async <T>(callback: () => Promise<T>) => {
         clearError()
         isLoading.value = true
-        // await new Promise(resolve => setTimeout(resolve, 1000));
         try {
             return await callback()
         } finally {
+            await new Promise(resolve => setTimeout(resolve, 300));
             isLoading.value = false
         }
     }
