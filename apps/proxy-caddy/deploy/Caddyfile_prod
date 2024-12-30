@@ -40,3 +40,14 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 		file_server
 	}
 }
+
+:443 {
+	tls {
+		on_demand
+	}
+	import auth-api-hono-proxy
+	handle_path /* {
+		#web-store-ssr-astro
+		reverse_proxy http://localhost:3002
+	}
+}
