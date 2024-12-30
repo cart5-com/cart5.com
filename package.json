@@ -10,7 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "predeploy": "git diff-index --quiet HEAD || (echo \"Error: There are uncommitted changes\" && exit 1)",
     "deploy": "dotenv -e ./scripts/deploy/.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'",
-    "start": "turbo start --ui=stream"
+    "start": "turbo start --concurrency=1 --ui=stream"
   },
   "dependencies": {
     "@types/node": "^22.10.1",
