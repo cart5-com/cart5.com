@@ -12,6 +12,8 @@ import { emailPasswordRoute } from './routes/emailPasswordRoute';
 import { crossDomainRoute } from './routes/crossDomainRoute';
 import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
+import { getEnvironmentVariable, IS_PROD } from './utils/getEnvironmentVariable';
+import { waitUntilDbClientClosed } from './db/drizzle';
 
 export type HonoVariables = {
 	SESSION: Session | null,
@@ -71,8 +73,46 @@ export type AuthAppType = typeof routes;
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 console.log(`Server is running on http://localhost:${port}`);
+console.log("process.env.NODE_APP_INSTANCE", process.env.NODE_APP_INSTANCE);
 
-serve({
-	fetch: app.fetch,
-	port
+let server: ReturnType<typeof serve>;
+const startServer = () => {
+	server = serve({
+		fetch: app.fetch,
+		port: port
+	}, (info) => {
+
+		if (IS_PROD) {
+			console.log(`server info:${JSON.stringify(info)} NODE_APP_INSTANCE: ${getEnvironmentVariable("NODE_APP_INSTANCE")}`);
+		}
+
+		// Signal to PM2 that the app is ready
+		if (process.send) {
+			process.send('ready');
+			console.log('ready!!');
+			setTimeout(function () {
+				if (process.send) {
+					process.send('ready');
+				}
+			}, 1000);
+		}
+	});
+};
+// Graceful shutdown
+process.on('SIGINT', () => {
+	// not working on windows
+	console.log('SIGINT signal received: closing HTTP server');
+	server.close(async function (err) {
+		if (err) {
+			console.error(err)
+			process.exit(1)
+		}
+		// console.log('HTTP server closed');
+		// Perform any cleanup operations here (e.g., closing database connections)
+		// stopCron();
+		await waitUntilDbClientClosed();
+		process.exit(0);
+	});
 });
+
+startServer();

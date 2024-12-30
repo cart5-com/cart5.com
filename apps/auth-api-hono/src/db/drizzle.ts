@@ -16,4 +16,13 @@ const db: ReturnType<typeof drizzle> = IS_PROD ?
     drizzle(localDbPath);
 export default db;
 
+export const waitUntilDbClientClosed = async () => {
+    db.$client.close();
+    while (!db.$client.closed) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    console.log("db.$client.closed");
+    return true;
+}
+
 checkMigrations();
