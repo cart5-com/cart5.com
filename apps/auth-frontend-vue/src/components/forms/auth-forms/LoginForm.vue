@@ -7,11 +7,11 @@ import { object as z_object, string as z_string, type infer as z_infer } from "z
 import { LOCAL_STORAGE_KEYS } from "@src/const";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
-import { removeUserFromSession } from "@src/stores/userStore";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
 import TwoFactorForm from "@src/components/forms/auth-forms/TwoFactorForm.vue";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
+import { refreshUserAndRedirectToSavedPath } from "@src/lib/refreshUserAndRedirectToSavedPath";
 const dialog = useDialog();
 
 const schema = z_object({
@@ -48,8 +48,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 		} else {
 			// Success
 			console.log(data);
-			removeUserFromSession();
-			window.location.reload();
+			await refreshUserAndRedirectToSavedPath()
 		}
 	})
 }

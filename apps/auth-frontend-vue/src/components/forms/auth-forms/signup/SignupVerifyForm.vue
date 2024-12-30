@@ -9,6 +9,7 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { removeUserFromSession } from '@src/stores/userStore'
 import { Loader2 } from 'lucide-vue-next'
+import { refreshUserAndRedirectToSavedPath } from '@src/lib/refreshUserAndRedirectToSavedPath';
 
 const props = defineProps<{
     verifyEmail: string
@@ -38,7 +39,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 form.setFieldValue("verifyEmail", props.verifyEmail);
 async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {
-        const { error } = await (await getAuthApiClient().api.email_password.verify.$post({
+        const { data, error } = await (await getAuthApiClient().api.email_password.verify.$post({
             form: {
                 verifyEmail: values.verifyEmail,
                 code: values.code,
@@ -48,8 +49,10 @@ async function onSubmit(values: z_infer<typeof schema>) {
         if (error) {
             handleError(error, form);
         } else {
-            removeUserFromSession();
-            window.location.reload();
+            // Success
+            console.log(data);
+            await refreshUserAndRedirectToSavedPath();
+            emit('cancel');
         }
     })
 }

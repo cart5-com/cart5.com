@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { ROUTES } from './const'
 import { $userStore } from './stores/userStore'
+import LoginView from './views/auth/LoginView.vue'
+import SignupView from './views/auth/SignupView.vue'
+import OtpView from './views/auth/OtpView.vue'
+import SettingsView from './views/user/SettingsView.vue'
+import AskView from './views/user/AskView.vue'
 
 const router = createRouter({
     scrollBehavior(_to, _from, _savedPosition) {
@@ -15,27 +20,27 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: () => import('./views/auth/LoginView.vue'),
+            component: LoginView
         },
         {
             path: '/signup',
             name: 'signup',
-            component: () => import('./views/auth/SignupView.vue'),
+            component: SignupView
         },
         {
             path: '/otp',
             name: 'otp',
-            component: () => import('./views/auth/OtpView.vue'),
+            component: OtpView
         },
         {
             path: '/user/settings',
             name: 'user-settings',
-            component: () => import('./views/user/SettingsView.vue'),
+            component: SettingsView
         },
         {
             path: '/user/ask',
             name: 'user-ask',
-            component: () => import('./views/user/AskView.vue'),
+            component: AskView
         },
         {
             path: '/:pathMatch(.*)*',
@@ -63,9 +68,10 @@ router.beforeEach((to, _from) => {
     // Non-authenticated users trying to access protected routes
     if (!user && !isAuthRoute) {
         console.log('to.fullPath:', to.fullPath);
+        console.log('to.path:', to.path);
         const query = {
             ...to.query,
-            pathname: to.fullPath === '/' ? '/user/settings' : to.fullPath
+            pathname: to.path === '/' ? '/user/settings' : to.path
         } // Save the intended destination
         return {
             path: ROUTES.LOGIN,

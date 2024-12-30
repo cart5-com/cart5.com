@@ -33,14 +33,14 @@ const registerButton = document.getElementById("register-button") as HTMLButtonE
 registerButton.addEventListener("click", async () => {
     window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/signup?next=${encodeURIComponent(
         window.location.href
-    )}`;
+    )}&pathname=/user/ask`;
 });
 
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 loginButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/user/ask?next=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/login?next=${encodeURIComponent(
         window.location.href
-    )}`;
+    )}&pathname=/user/ask`;
 });
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;

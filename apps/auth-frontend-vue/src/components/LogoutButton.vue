@@ -14,7 +14,6 @@ async function handleLogout() {
 	console.log(data, error);
 	$userStore.set(null);
 	saveUserToSession(null);
-	// window.location.reload();
 	router.push({ path: ROUTES.LOGIN, query: { ...route.query, pathname: ROUTES.USER.SETTINGS } });
 }
 </script>

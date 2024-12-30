@@ -7,9 +7,9 @@ import { object as z_object, string as z_string, type infer as z_infer } from "z
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
-import { removeUserFromSession } from "@src/stores/userStore";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "@/ui-plus/sonner";
+import { refreshUserAndRedirectToSavedPath } from "@src/lib/refreshUserAndRedirectToSavedPath";
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
@@ -42,8 +42,8 @@ async function onSubmit(values: z_infer<typeof schema>) {
         } else {
             // Success
             console.log(data);
-            removeUserFromSession();
-            window.location.reload();
+            await refreshUserAndRedirectToSavedPath();
+            emit('cancel');
         }
     })
 }
@@ -70,8 +70,8 @@ async function resetWithRecoveryCode() {
         } else {
             // Success
             console.log(data);
-            removeUserFromSession();
-            window.location.reload();
+            await refreshUserAndRedirectToSavedPath();
+            emit('cancel');
         }
     })
 }
@@ -85,7 +85,7 @@ async function resetWithRecoveryCode() {
               @submit="onSubmit"
               :field-config="{
                 userProvidedCode: {
-                    label: 'OTP Code',
+                    label: 'Code',
                     inputProps: {
                         name: 'totp',
                         id: 'totp',
