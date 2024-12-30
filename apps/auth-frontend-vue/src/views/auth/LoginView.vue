@@ -6,7 +6,6 @@ import AuthMenu from '@src/components/AuthMenu.vue';
 import GoogleButton from "@src/components/GoogleButton.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import Separator from "@/ui-plus/separator/Separator.vue";
-import { buttonVariants } from "@/components/ui/button";
 import QueryLink from "@src/components/QueryLink.vue";
 </script>
 
@@ -17,10 +16,12 @@ import QueryLink from "@src/components/QueryLink.vue";
         <Card>
             <CardContent class="my-6">
                 <LoginForm />
-                <QueryLink :to="ROUTES.OTP"
-                           :class="buttonVariants({ size: 'lg', variant: 'secondary' }) + ' my-6 w-full'">
-                    Forgot password?
-                </QueryLink>
+                <div class="text-center">
+                    <QueryLink :to="ROUTES.OTP"
+                               class="ml-auto inline-block text-sm underline">
+                        Forgot password?
+                    </QueryLink>
+                </div>
                 <Separator class="my-10"
                            label="Or" />
                 <GoogleButton />
