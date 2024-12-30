@@ -24,6 +24,11 @@ export default defineConfig({
             },
         },
     },
+    build: {
+        // Default: 'directory', options:('file' | 'directory' | 'preserve')
+        //Example: Generate`page.html` instead of `page/index.html` during build.
+        format: 'file'
+    },
 
     integrations: [
         vue({
