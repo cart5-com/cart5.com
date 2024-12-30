@@ -5,7 +5,10 @@ import db from "./drizzle";
 
 
 export const checkMigrations = async () => {
-    if (getEnvironmentVariable("AUTO_MIGRATE_DB") === "1") {
+    if (
+        getEnvironmentVariable("AUTO_MIGRATE_DB") === "1" &&
+        getEnvironmentVariable("NODE_APP_INSTANCE") === "0" // only run on the first instance
+    ) {
         console.log("Auto migrate enabled");
         const __dirname = dirname(new URL(import.meta.url).pathname);
         // path is ./dist in production
