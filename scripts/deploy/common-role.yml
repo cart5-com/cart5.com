@@ -17,7 +17,7 @@
     # TODO: seperate api and clientside env vars
     - name: copy .env.production
       ansible.builtin.copy:
-        src: ./.env.production
+        src: ../../.env.production
         dest: $HOME/PROD_CART5_COM/.env.production
 
     - name: pnpm build

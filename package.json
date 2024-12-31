@@ -9,7 +9,7 @@
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "predeploy": "git diff-index --quiet HEAD || (echo \"Error: There are uncommitted changes\" && exit 1)",
-    "deploy": "dotenv -e ./scripts/deploy/.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'",
+    "deploy": "dotenv -e ./.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'",
     "start": "turbo start --concurrency=1 --ui=stream"
   },
   "dependencies": {
