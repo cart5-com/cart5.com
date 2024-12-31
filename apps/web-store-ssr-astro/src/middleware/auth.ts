@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
+import { getEnvironmentVariable } from "lib/utils/getEnvironmentVariable";
 import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/apiClients/authApiClient'
 import type { APIContext } from "astro";
 
@@ -33,8 +34,8 @@ async function fetchWhoAmI(context: APIContext) {
 
     // use direct connection for auth check,
     // no need to go through network
-    console.log('AUTH_API_ORIGIN:', import.meta.env.AUTH_API_ORIGIN);
-    const authApiClient = createAuthApiClient(import.meta.env.AUTH_API_ORIGIN);
+    console.log('AUTH_API_ORIGIN:', getEnvironmentVariable("AUTH_API_ORIGIN"));
+    const authApiClient = createAuthApiClient(getEnvironmentVariable("AUTH_API_ORIGIN"));
     const whoamiUrl = authApiClient.api.user.whoami.$url();
     const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
     // whoamiUrl.protocol = "https";
@@ -45,7 +46,7 @@ async function fetchWhoAmI(context: APIContext) {
         method: "POST",
         headers: {
             internalHost: context.url.host,
-            internalSecret: import.meta.env.JWT_SECRET,
+            internalSecret: getEnvironmentVariable("JWT_SECRET"),
             origin: context.url.origin,
             cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
         }
