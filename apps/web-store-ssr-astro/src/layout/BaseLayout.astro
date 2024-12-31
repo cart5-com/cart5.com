@@ -1,13 +1,11 @@
 ---
-import { getEnvironmentVariable } from "lib/utils/getEnvironmentVariable";
-
 interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-const NODE_APP_INSTANCE = getEnvironmentVariable("NODE_APP_INSTANCE");
-let GOOGLE_OAUTH_REDIRECT_URI = getEnvironmentVariable("GOOGLE_OAUTH_REDIRECT_URI");
-GOOGLE_OAUTH_REDIRECT_URI = GOOGLE_OAUTH_REDIRECT_URI.slice(-5);
+const NODE_APP_INSTANCE = import.meta.env.NODE_APP_INSTANCE;
+let GOOGLE_OAUTH_REDIRECT_URI = import.meta.env.GOOGLE_OAUTH_REDIRECT_URI;
+GOOGLE_OAUTH_REDIRECT_URI = GOOGLE_OAUTH_REDIRECT_URI.slice(-10);
 ---
 
 <html lang="en">
