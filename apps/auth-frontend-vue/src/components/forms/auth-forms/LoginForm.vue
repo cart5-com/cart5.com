@@ -11,7 +11,7 @@ import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
 import TwoFactorForm from "@src/components/forms/auth-forms/TwoFactorForm.vue";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { refreshUserAndRedirectToSavedPath } from "@src/lib/refreshUserAndRedirectToSavedPath";
+import { refreshUserData } from "@src/stores/userStore";
 const dialog = useDialog();
 
 const schema = z_object({
@@ -48,7 +48,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 		} else {
 			// Success
 			console.log(data);
-			await refreshUserAndRedirectToSavedPath()
+			await refreshUserData();
 		}
 	})
 }

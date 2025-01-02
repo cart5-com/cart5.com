@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { removeUserFromSession } from "@src/stores/userStore";
 import { createAuthApiClient_AsUrlHelper } from "@src/lib/authApiClient";
 
 const handleGoogleClick = () => {
@@ -8,7 +7,6 @@ const handleGoogleClick = () => {
 	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
 	const googleUrl = googleRedirectUrl.toString();
 	// recheck user data is required after google oauth redirects
-	removeUserFromSession();
 	window.location.href = googleUrl;
 };
 </script>

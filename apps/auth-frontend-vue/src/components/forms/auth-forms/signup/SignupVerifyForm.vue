@@ -8,7 +8,7 @@ import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import { refreshUserAndRedirectToSavedPath } from '@src/lib/refreshUserAndRedirectToSavedPath';
+import { refreshUserData } from '@src/stores/userStore';
 
 const props = defineProps<{
     verifyEmail: string
@@ -50,7 +50,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
         } else {
             // Success
             console.log(data);
-            await refreshUserAndRedirectToSavedPath();
+            await refreshUserData();
             emit('cancel');
         }
     })

@@ -1,12 +1,11 @@
 import "@/index.css";
 import { createApp } from 'vue'
-import router from './router'
 import App from './App.vue'
-import { getUserData } from '@src/stores/userStore';
-
-getUserData().then(() => {
+import { refreshUserData } from '@src/stores/userStore';
+import { refreshQueryParams } from "./stores/queryParamsStore";
+refreshQueryParams();
+refreshUserData().then(() => {
     const app = createApp(App);
-    app.use(router);
     app.mount('#app');
 })
 

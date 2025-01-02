@@ -31,16 +31,16 @@ whoamiButton.addEventListener("click", whoAmI);
 
 const registerButton = document.getElementById("register-button") as HTMLButtonElement;
 registerButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/signup?next=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
         window.location.href
-    )}&pathname=/user/ask`;
+    )}&type=ask&auth=signup`;
 });
 
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 loginButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/login?next=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
         window.location.href
-    )}&pathname=/user/ask`;
+    )}&type=ask&auth=login`;
 });
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
@@ -52,7 +52,7 @@ logoutButton.addEventListener("click", async () => {
 
 const manageAccountButton = document.getElementById("manage-account-button") as HTMLButtonElement;
 manageAccountButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/user/settings?next=${encodeURIComponent(
+    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
         window.location.href
-    )}`;
+    )}&type=settings`;
 });

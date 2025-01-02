@@ -1,21 +1,5 @@
-<template>
-    <div>
-        <Logo />
-        <Card>
-            <CardContent class="my-6">
-                <UserDetails />
-                <button :class="[buttonVariants({ variant: 'default' }), 'mt-6 w-full font-medium continue-button']"
-                        @click="redirectWithUser">
-                    Continue
-                </button>
-            </CardContent>
-        </Card>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import Logo from "@src/components/Logo.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import UserDetails from "@src/components/forms/UserDetails.vue";
 import { buttonVariants } from "@/components/ui/button";
@@ -81,3 +65,15 @@ onMounted(() => {
     }, 500);
 });
 </script>
+
+<template>
+    <Card>
+        <CardContent class="my-6">
+            <UserDetails />
+            <button :class="[buttonVariants({ variant: 'default' }), 'mt-6 w-full font-medium continue-button']"
+                    @click="redirectWithUser">
+                Continue
+            </button>
+        </CardContent>
+    </Card>
+</template>

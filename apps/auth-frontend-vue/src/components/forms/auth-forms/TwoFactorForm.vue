@@ -9,7 +9,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "@/ui-plus/sonner";
-import { refreshUserAndRedirectToSavedPath } from "@src/lib/refreshUserAndRedirectToSavedPath";
+import { refreshUserData } from "@src/stores/userStore";
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
@@ -42,7 +42,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
         } else {
             // Success
             console.log(data);
-            await refreshUserAndRedirectToSavedPath();
+            await refreshUserData();
             emit('cancel');
         }
     })
@@ -70,7 +70,7 @@ async function resetWithRecoveryCode() {
         } else {
             // Success
             console.log(data);
-            await refreshUserAndRedirectToSavedPath();
+            await refreshUserData();
             emit('cancel');
         }
     })

@@ -11,7 +11,6 @@ import { toast } from '@/ui-plus/sonner';
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
-import { removeUserFromSession } from '@src/stores/userStore';
 import Setup2FaWithKey from './Setup2FaWithKey.vue';
 const props = defineProps<{
     name: string
@@ -66,7 +65,6 @@ async function onSubmit(values: z_infer<typeof schema>) {
                 });
             }
         } else {
-            removeUserFromSession();
             emit('close', data);
         }
     })
