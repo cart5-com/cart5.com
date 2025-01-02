@@ -3,7 +3,7 @@ import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, generateCodeVerifier, generateState, Google, OAuth2Tokens } from 'arctic';
-import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
+import { getEnvironmentVariable, IS_PROD } from '../utils/getEnvironmentVariable';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from '../consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
@@ -50,7 +50,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
             setCookie(c, GOOGLE_OAUTH_COOKIE_NAME, google_oauth_token, {
                 path: "/",
-                secure: true,
+                secure: IS_PROD,
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "lax" // must use lax to read cookie value after google's redirect

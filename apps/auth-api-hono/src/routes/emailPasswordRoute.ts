@@ -7,7 +7,7 @@ import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
 import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
+import { getEnvironmentVariable, IS_PROD } from '../utils/getEnvironmentVariable';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
@@ -72,7 +72,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             );
             setCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER, otpToken, {
                 path: "/",
-                secure: true, // using https in dev with caddy
+                secure: IS_PROD,
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "strict"
@@ -160,7 +160,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
                     path: "/",
-                    secure: true, // using https in dev with caddy
+                    secure: IS_PROD,
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "strict"

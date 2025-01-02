@@ -8,6 +8,7 @@ import db from "../drizzle";
 import type { Context } from "hono";
 import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
+import { IS_PROD } from "../../utils/getEnvironmentVariable";
 
 export async function createSession(token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
@@ -34,7 +35,7 @@ export async function createUserSessionAndSetCookie(c: Context, userId: string) 
     const session = await createSession(sessionToken, userId, c.req.header('host')!);
     setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
         path: "/",
-        secure: true, // using https in dev with caddy
+        secure: IS_PROD,
         httpOnly: true,
         expires: session.expiresAt,
         sameSite: "strict"

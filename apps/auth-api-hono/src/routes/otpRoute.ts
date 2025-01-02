@@ -11,7 +11,7 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
+import { getEnvironmentVariable, IS_PROD } from '../utils/getEnvironmentVariable';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 
 const PUBLIC_DOMAIN_NAME = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
@@ -47,7 +47,7 @@ export const otpRoute = new Hono<honoTypes>()
 
             setCookie(c, OTP_COOKIE_NAME, otpToken, {
                 path: "/",
-                secure: true, // using https in dev with caddy
+                secure: IS_PROD,
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "strict"
@@ -103,7 +103,7 @@ export const otpRoute = new Hono<honoTypes>()
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
                     path: "/",
-                    secure: true, // using https in dev with caddy
+                    secure: IS_PROD,
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "strict"

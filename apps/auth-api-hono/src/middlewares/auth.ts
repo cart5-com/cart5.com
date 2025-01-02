@@ -2,7 +2,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "lib/apiClients/authApiClient";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
-import { getEnvironmentVariable } from "../utils/getEnvironmentVariable";
+import { getEnvironmentVariable, IS_PROD } from "../utils/getEnvironmentVariable";
 
 export const authChecks = createMiddleware(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
@@ -20,7 +20,7 @@ export const authChecks = createMiddleware(async (c, next) => {
         if (session && session.fresh) {
             setCookie(c, SESSION_COOKIE_NAME, cookieValue, {
                 path: "/",
-                secure: true, // using https in dev with caddy
+                secure: IS_PROD,
                 httpOnly: true,
                 expires: session.expiresAt,
                 sameSite: "strict"
