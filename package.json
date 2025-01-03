@@ -4,8 +4,8 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
-    "dev": "turbo dev --ui=stream",
-    "preview": "turbo preview --ui=stream",
+    "dev": "turbo dev ",
+    "preview": "turbo preview",
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "predeploy": "git diff-index --quiet HEAD || (echo \"Error: There are uncommitted changes\" && exit 1)",

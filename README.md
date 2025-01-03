@@ -38,6 +38,9 @@ apps/
 
 Add to /etc/hosts
 
+TODO: REMOVE CADDY
+and use nixpacks for prod build and start
+
 ```
 127.0.0.1 auth.cart5dev.com
 127.0.0.1 sample-store-1.com

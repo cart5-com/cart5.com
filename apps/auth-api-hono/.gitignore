@@ -11,9 +11,6 @@ auth-sqlite.db
 # deps
 node_modules/
 
-# env
-.env
-.env.production
 
 # logs
 logs/
