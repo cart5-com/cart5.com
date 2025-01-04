@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
+import { verifyRequestOrigin } from "../utils/verifyRequestOrigin";
 import type { honoTypes } from "..";
 
 export const csrfChecks = createMiddleware<honoTypes>(async (c, next) => {
