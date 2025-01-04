@@ -8,7 +8,8 @@
     "start": "turbo start",
     "prod:generate:sql": "cd apps/auth-api-hono && pnpm prod:generate:sql",
     "prod:migrate": "cd apps/auth-api-hono && pnpm prod:migrate",
-    "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
+    "caddy:deploy": "cd apps/proxy-caddy && pnpm caddy:deploy"
   },
   "dependencies": {
     "@types/node": "^22.10.1",
