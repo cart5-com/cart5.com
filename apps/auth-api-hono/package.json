@@ -8,7 +8,8 @@
 		"dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7022 --config=./drizzle.config.ts",
 		"postdev:drizzle-studio": "kill $(lsof -t -i:7022)",
 		"prod:generate:sql": "dotenvx run -- drizzle-kit generate --config=drizzle.config.prod.ts",
-		"prod:migrate": "dotenvx run -- drizzle-kit generate --config=drizzle.config.prod.ts",
+		"preprod:migrate": "read -p 'sure?(Yes/any) ' answer && [ \"$answer\" = \"Yes\" ] || { echo 'Exiting...'; exit 1; }",
+		"prod:migrate": "dotenvx run -f .env.production -- drizzle-kit migrate --config=drizzle.config.prod.ts",
 		"build": "rm -rf ./dist && dotenvx run -- node ./esbuild.cjs",
 		"start": "dotenvx run -- node dist/index.js"
 	},
