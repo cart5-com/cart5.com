@@ -36,10 +36,16 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 }
 
                 const refererHeader = c.req.header('referer') || c.req.header('Referer');
+
                 // TODO: remove this after testing
                 const headers = c.req.header();
                 console.log("headers", headers);
                 console.log(JSON.stringify(headers, null, 2));
+
+                const rawHeaders = c.req.raw.headers;
+                console.log("rawHeaders", rawHeaders);
+                console.log(JSON.stringify(rawHeaders, null, 2));
+
                 if (!refererHeader) {
                     throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
                 }
