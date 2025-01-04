@@ -6,6 +6,10 @@ import { env } from "hono/adapter";
 
 export const getDrizzleDb = function (c: Context<honoTypes>): ReturnType<typeof drizzle> {
     const { IS_PROD, AUTHAPI_TURSO_DB_URL, AUTHAPI_TURSO_DB_TOKEN } = env(c);
+    console.log("getDrizzleDb❌❌❌❌")
+    console.log("IS_PROD", IS_PROD)
+    console.log("AUTHAPI_TURSO_DB_URL", AUTHAPI_TURSO_DB_URL)
+    console.log("AUTHAPI_TURSO_DB_TOKEN", AUTHAPI_TURSO_DB_TOKEN)
     return IS_PROD ?
         // PROD
         drizzle({
