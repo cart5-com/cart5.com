@@ -1,13 +1,8 @@
 ---
-import { getEnvironmentVariable } from "lib/utils/getEnvironmentVariable";
-
 interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-const NODE_APP_INSTANCE = getEnvironmentVariable("NODE_APP_INSTANCE");
-let TURNSTILE_SECRET = getEnvironmentVariable("TURNSTILE_SECRET");
-TURNSTILE_SECRET = TURNSTILE_SECRET.slice(-5);
 ---
 
 <html lang="en">
@@ -15,7 +10,7 @@ TURNSTILE_SECRET = TURNSTILE_SECRET.slice(-5);
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{`'${TURNSTILE_SECRET}'|${title} `}</title>
+		<title>{title}</title>
 	</head>
 
 	<body>
@@ -46,8 +41,5 @@ TURNSTILE_SECRET = TURNSTILE_SECRET.slice(-5);
 		<pre id="ssr-user-info">{
 		JSON.stringify(Astro.locals.USER, null, 2)
 		}</pre>
-		<hr />
-		<h2>NODE_APP_INSTANCE</h2>
-		<pre id="node-app-instance">{NODE_APP_INSTANCE}</pre>
 	</body>
 </html>

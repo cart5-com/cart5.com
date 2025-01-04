@@ -2,9 +2,9 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "lib/apiClients/authApiClient";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
-import { getEnvironmentVariable, IS_PROD } from "../utils/getEnvironmentVariable";
+import type { honoTypes } from "..";
 
-export const authChecks = createMiddleware(async (c, next) => {
+export const authChecks = createMiddleware<honoTypes>(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
     if (cookieValue === null) {
         c.set("USER", null);
@@ -12,15 +12,11 @@ export const authChecks = createMiddleware(async (c, next) => {
         await next();
     } else {
         let hostname = c.req.header('Host');
-        const internalSecret = c.req.header("internalSecret") ?? null;
-        if (internalSecret === getEnvironmentVariable('JWT_SECRET')) {
-            hostname = c.req.header("internalHost");
-        }
-        const { user, session } = await validateSessionCookie(cookieValue, hostname!);
+        const { user, session } = await validateSessionCookie(c, cookieValue, hostname!);
         if (session && session.fresh) {
             setCookie(c, SESSION_COOKIE_NAME, cookieValue, {
                 path: "/",
-                secure: IS_PROD,
+                secure: c.get('IS_PROD'),
                 httpOnly: true,
                 expires: session.expiresAt,
                 sameSite: "strict"

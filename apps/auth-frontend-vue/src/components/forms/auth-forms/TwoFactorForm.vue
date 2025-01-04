@@ -34,7 +34,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
         const { data, error } = await (await getAuthApiClient().api["two-factor-auth"].verify.$post({
             form: {
                 userProvidedCode: values.userProvidedCode,
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
         if (error) {
@@ -62,7 +62,7 @@ async function resetWithRecoveryCode() {
         const { data, error } = await (await getAuthApiClient().api["two-factor-auth"]['remove-2fa-with-recovery-code'].$post({
             form: {
                 recoveryCode,
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
         if (error) {

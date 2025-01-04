@@ -4,17 +4,13 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
-    "dev": "turbo dev ",
-    "preview": "turbo preview",
+    "dev": "turbo dev",
+    "start": "turbo start",
     "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
-    "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
-    "predeploy": "git diff-index --quiet HEAD || (echo \"Error: There are uncommitted changes\" && exit 1)",
-    "deploy": "dotenv -e ./.env.production -- bash -c 'cd scripts/deploy/ && ./_start.sh'",
-    "start": "turbo start --concurrency=1 --ui=stream"
+    "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\""
   },
   "dependencies": {
     "@types/node": "^22.10.1",
-    "dotenv-cli": "^7.4.4",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.9",

@@ -54,7 +54,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
             form: {
                 ...values,
                 encodedTOTPKey: props.encodedTOTPKey,
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
         if (error) {

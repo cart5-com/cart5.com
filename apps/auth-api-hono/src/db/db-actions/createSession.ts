@@ -4,13 +4,13 @@ import type { Session } from "../../types/SessionType";
 import { SESSION_EXPIRES_IN } from "../../consts";
 import { SESSION_COOKIE_NAME } from "lib/apiClients/authApiClient";
 import { sessionTable } from "../schema";
-import db from "../drizzle";
+import getDrizzleDb from "../drizzle";
 import type { Context } from "hono";
 import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
-import { IS_PROD } from "../../utils/getEnvironmentVariable";
+import type { honoTypes } from "../../index";
 
-export async function createSession(token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
+export async function createSession(c: Context<honoTypes>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const session: Session = {
         id: sessionId,
@@ -20,7 +20,7 @@ export async function createSession(token: string, userId: string, hostname: str
         fresh: false,
         hostname
     };
-    await db.insert(sessionTable).values({
+    await getDrizzleDb(c).insert(sessionTable).values({
         id: session.id,
         userId: session.userId,
         expiresAt: session.expiresAt.getTime(),
@@ -30,12 +30,12 @@ export async function createSession(token: string, userId: string, hostname: str
 }
 
 
-export async function createUserSessionAndSetCookie(c: Context, userId: string) {
+export async function createUserSessionAndSetCookie(c: Context<honoTypes>, userId: string) {
     const sessionToken = generateSessionToken();
-    const session = await createSession(sessionToken, userId, c.req.header('host')!);
+    const session = await createSession(c, sessionToken, userId, c.req.header('host')!);
     setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
         path: "/",
-        secure: IS_PROD,
+        secure: c.get('IS_PROD'),
         httpOnly: true,
         expires: session.expiresAt,
         sameSite: "strict"

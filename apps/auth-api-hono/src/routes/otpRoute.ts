@@ -11,17 +11,16 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { getEnvironmentVariable, IS_PROD } from '../utils/getEnvironmentVariable';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
+import { env } from 'hono/adapter';
 
-const PUBLIC_DOMAIN_NAME = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 
 export const otpRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
         // const referer = c.req.header('referer');
         // const host = c.req.header('host');
         const origin = c.req.header('origin');
-        if (origin !== `https://auth.${PUBLIC_DOMAIN_NAME}`) {
+        if (origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
         }
         await next();
@@ -34,10 +33,17 @@ export const otpRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { verifyEmail, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+                JWT_SECRET,
+                ENCRYPTION_KEY
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
 
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(
+                JWT_SECRET,
+                ENCRYPTION_KEY,
                 {
                     nonce: crypto.randomUUID(),
                     email: verifyEmail,
@@ -47,13 +53,13 @@ export const otpRoute = new Hono<honoTypes>()
 
             setCookie(c, OTP_COOKIE_NAME, otpToken, {
                 path: "/",
-                secure: IS_PROD,
+                secure: c.get('IS_PROD'),
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "strict"
             });
 
-            await sendUserOtpEmail(verifyEmail, otp);
+            await sendUserOtpEmail(verifyEmail, otp, c);
 
             return c.json({
                 data: "success",
@@ -70,7 +76,12 @@ export const otpRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { verifyEmail, code, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+                JWT_SECRET,
+                ENCRYPTION_KEY
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
             const otpToken = getCookie(c, OTP_COOKIE_NAME);
 
 
@@ -78,23 +89,27 @@ export const otpRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
             }
             const { email, otp } = await decryptAndVerifyJwt<OtpTokenPayload>(
+                JWT_SECRET,
+                ENCRYPTION_KEY,
                 otpToken
             );
             if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
                 throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
             }
             deleteCookie(c, OTP_COOKIE_NAME);
-            const user = await upsertUser(email);
+            const user = await upsertUser(c, email);
 
             if (!user.isEmailVerified) {
-                await markEmailAsVerified(email);
+                await markEmailAsVerified(c, email);
             }
             if (user.name === null) {
-                await updateUserName(user.id, email.split('@')[0]);
+                await updateUserName(c, user.id, email.split('@')[0]);
             }
 
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
+                    JWT_SECRET,
+                    ENCRYPTION_KEY,
                     {
                         nonce: crypto.randomUUID(),
                         userId: user.id,
@@ -103,7 +118,7 @@ export const otpRoute = new Hono<honoTypes>()
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
                     path: "/",
-                    secure: IS_PROD,
+                    secure: c.get('IS_PROD'),
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "strict"

@@ -30,7 +30,7 @@ const redirectWithUser = async () => {
         showErrorToast();
         return;
     }
-    const turnstile = await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
+    const turnstile = await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY);
     dialog.showBlockingLoadingModal();
     const postActionUrl = createAuthApiClient_AsUrlHelper().api.cross_domain.redirector.$url();
     const newForm = document.createElement("form");
@@ -59,7 +59,7 @@ onMounted(() => {
         toast.success("Welcome back", {
             description: "Click continue to use your account"
         });
-        if (import.meta.env.PUBLIC_AUTH_AUTO_REDIRECT === "1") {
+        if (import.meta.env.VITE_AUTH_AUTO_REDIRECT === "1") {
             redirectWithUser();
         }
     }, 500);

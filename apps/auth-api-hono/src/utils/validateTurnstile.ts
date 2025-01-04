@@ -1,10 +1,9 @@
 import { KNOWN_ERROR } from '../errors';
-import { getEnvironmentVariable } from './getEnvironmentVariable';
 
-export const validateTurnstile = async function (token: string, remoteip?: string) {
+export const validateTurnstile = async function (TURNSTILE_SECRET: string, token: string, remoteip?: string) {
     const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
     const body: { secret: string; response: string; remoteip?: string } = {
-        secret: getEnvironmentVariable("TURNSTILE_SECRET"),
+        secret: TURNSTILE_SECRET,
         response: token
     }
     if (remoteip) {

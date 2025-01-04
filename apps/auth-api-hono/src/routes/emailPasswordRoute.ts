@@ -7,22 +7,20 @@ import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
 import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { getEnvironmentVariable, IS_PROD } from '../utils/getEnvironmentVariable';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { sendUserOtpEmail } from '../utils/email';
-
-const PUBLIC_DOMAIN_NAME = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
+import { env } from 'hono/adapter';
 
 export const emailPasswordRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
         // const referer = c.req.header('referer');
         // const host = c.req.header('host');
         const origin = c.req.header('origin');
-        if (origin !== `https://auth.${PUBLIC_DOMAIN_NAME}`) {
+        if (origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
         }
         await next();
@@ -45,9 +43,14 @@ export const emailPasswordRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { email, password, name, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+                JWT_SECRET,
+                ENCRYPTION_KEY
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
 
-            const isRegistered = await isEmailExists(email);
+            const isRegistered = await isEmailExists(c, email);
             if (isRegistered) {
                 throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
             }
@@ -62,6 +65,8 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             // save user after otp verification
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenAfterRegisterPayload>(
+                JWT_SECRET,
+                ENCRYPTION_KEY,
                 {
                     nonce: crypto.randomUUID(),
                     email: email,
@@ -72,12 +77,12 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             );
             setCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER, otpToken, {
                 path: "/",
-                secure: IS_PROD,
+                secure: c.get('IS_PROD'),
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "strict"
             });
-            await sendUserOtpEmail(email, otp);
+            await sendUserOtpEmail(email, otp, c);
             return c.json({
                 data: "success",
                 error: null as ErrorType
@@ -93,26 +98,33 @@ export const emailPasswordRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { verifyEmail, code, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+                JWT_SECRET,
+                ENCRYPTION_KEY
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
             const otpToken = getCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
             if (!otpToken) {
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
             }
             const { email, otp, password, name } = await decryptAndVerifyJwt<OtpTokenAfterRegisterPayload>(
+                JWT_SECRET,
+                ENCRYPTION_KEY,
                 otpToken
             );
             if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
                 throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
             }
             deleteCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
-            const isRegistered = await isEmailExists(email);
+            const isRegistered = await isEmailExists(c, email);
             if (isRegistered) {
                 throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
             }
 
-            const user = await upsertUser(email, await hashPassword(password));
-            await updateUserName(user.id, name);
-            await markEmailAsVerified(email);
+            const user = await upsertUser(c, email, await hashPassword(password));
+            await updateUserName(c, user.id, name);
+            await markEmailAsVerified(c, email);
             await createUserSessionAndSetCookie(c, user.id);
 
             return c.json({
@@ -130,12 +142,17 @@ export const emailPasswordRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { email, password, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
-            const isRegistered = await isEmailExists(email);
+            const {
+                TURNSTILE_SECRET,
+                JWT_SECRET,
+                ENCRYPTION_KEY
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            const isRegistered = await isEmailExists(c, email);
             if (!isRegistered) {
                 throw new KNOWN_ERROR("Email not registered", "EMAIL_NOT_REGISTERED");
             }
-            const user = await getUserByEmail(email);
+            const user = await getUserByEmail(c, email);
             if (!user) {
                 throw new KNOWN_ERROR("Invalid email or password", "INVALID_EMAIL_OR_PASSWORD");
             }
@@ -152,6 +169,8 @@ export const emailPasswordRoute = new Hono<honoTypes>()
 
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
+                    JWT_SECRET,
+                    ENCRYPTION_KEY,
                     {
                         nonce: crypto.randomUUID(),
                         userId: user.id,
@@ -160,7 +179,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
                     path: "/",
-                    secure: IS_PROD,
+                    secure: c.get('IS_PROD'),
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "strict"

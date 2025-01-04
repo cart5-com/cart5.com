@@ -6,8 +6,6 @@ import tailwind from 'tailwindcss'
 
 // https://vite.dev/config/
 export default defineConfig({
-  envDir: "../../",
-  envPrefix: "PUBLIC_",
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()],

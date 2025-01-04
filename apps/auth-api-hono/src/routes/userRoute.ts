@@ -9,13 +9,15 @@ import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from '../utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
+import { env } from 'hono/adapter';
+
 export const userRoute = new Hono<honoTypes>()
     .post(
         '/logout',
         async (c) => {
             const session = c.get('SESSION');
             if (session) {
-                await deleteSession(session.id);
+                await deleteSession(c, session.id);
                 deleteCookie(c, SESSION_COOKIE_NAME);
             }
             return c.json({
@@ -29,7 +31,7 @@ export const userRoute = new Hono<honoTypes>()
         async (c) => {
             const session = c.get('SESSION');
             if (session) {
-                await deleteAllUserSessions(session.userId);
+                await deleteAllUserSessions(c, session.userId);
                 deleteCookie(c, SESSION_COOKIE_NAME);
             }
             return c.json({
@@ -64,7 +66,10 @@ export const userRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { turnstile, password } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -72,11 +77,11 @@ export const userRoute = new Hono<honoTypes>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(user.email);
+            const savedUser = await getUserByEmail(c, user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
-            await updateUserPassword(user.id, await hashPassword(password));
+            await updateUserPassword(c, user.id, await hashPassword(password));
             return c.json({
                 data: "success",
                 error: null as ErrorType
@@ -91,7 +96,10 @@ export const userRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const { newName, turnstile } = c.req.valid('form');
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            const {
+                TURNSTILE_SECRET,
+            } = env(c);
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -99,11 +107,11 @@ export const userRoute = new Hono<honoTypes>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(user.email);
+            const savedUser = await getUserByEmail(c, user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
-            await updateUserName(user.id, newName);
+            await updateUserName(c, user.id, newName);
             return c.json({
                 data: "success",
                 error: null as ErrorType

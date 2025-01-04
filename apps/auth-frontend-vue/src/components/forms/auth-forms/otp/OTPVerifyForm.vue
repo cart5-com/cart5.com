@@ -40,7 +40,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
             form: {
                 verifyEmail: values.verifyEmail,
                 code: values.code,
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
         if (error) {

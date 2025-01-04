@@ -23,7 +23,7 @@ async function updateName() {
     const { data, error } = await (await getAuthApiClient().api["user"]['update-name'].$post({
         form: {
             newName,
-            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
         },
     })).json()
     if (error) {

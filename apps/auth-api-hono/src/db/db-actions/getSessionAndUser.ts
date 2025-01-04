@@ -1,15 +1,18 @@
 import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
-import db from "../drizzle";
+import getDrizzleDb from "../drizzle";
+import type { honoTypes } from "../../index";
+import type { Context } from "hono";
 import { sessionTable, userTable } from "../schema";
 
 export const getSessionAndUser = async (
+    c: Context<honoTypes>,
     sessionId: string
 ): Promise<[session: Session | null, user: User | null]> => {
     const [databaseSession, databaseUser] = await Promise.all([
-        getSession(sessionId),
-        getUserFromSessionId(sessionId)
+        getSession(c, sessionId),
+        getUserFromSessionId(c, sessionId)
     ]);
     if (databaseUser) {
         databaseUser.has2FA = databaseUser.has2FA || false;
@@ -20,8 +23,8 @@ export const getSessionAndUser = async (
     return [databaseSession, databaseUser];
 }
 
-const getSession = async (sessionId: string): Promise<Session | null> => {
-    const result = await db
+const getSession = async (c: Context<honoTypes>, sessionId: string): Promise<Session | null> => {
+    const result = await getDrizzleDb(c)
         .select()
         .from(sessionTable)
         .where(eq(sessionTable.id, sessionId));
@@ -36,8 +39,8 @@ const getSession = async (sessionId: string): Promise<Session | null> => {
     } as Session;
 }
 
-const getUserFromSessionId = async (sessionId: string): Promise<User | null> => {
-    const result = await db
+const getUserFromSessionId = async (c: Context<honoTypes>, sessionId: string): Promise<User | null> => {
+    const result = await getDrizzleDb(c)
         .select({
             id: userTable.id,
             email: userTable.email,

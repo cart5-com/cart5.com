@@ -8,9 +8,8 @@ import { isKnownHostname } from '../utils/knownHostnames';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../consts';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
-import { getEnvironmentVariable } from '../utils/getEnvironmentVariable';
+import { env } from 'hono/adapter';
 
-const PUBLIC_DOMAIN_NAME = getEnvironmentVariable("PUBLIC_DOMAIN_NAME");
 /**
  * Cross domain authentication route handler
  * Handles authentication across different domains in a secure way
@@ -34,6 +33,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
+            const PUBLIC_DOMAIN_NAME = env(c).PUBLIC_DOMAIN_NAME;
             const { redirectUrl, turnstile } = c.req.valid('form');
 
             // Security check: Verify request comes from our auth domain
@@ -65,9 +65,13 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 sourceHost: new URL(refererHeader).hostname,
                 targetHost: url.hostname
             };
+            const { JWT_SECRET, ENCRYPTION_KEY } = env(c);
             // Create encrypted JWT containing session info
             const code = await signJwtAndEncrypt<CrossDomainCodePayload>(
-                payload
+                JWT_SECRET,
+                ENCRYPTION_KEY,
+                payload,
+                CROSS_DOMAIN_SESSION_EXPIRES_IN,
             );
 
             // Redirect to callback URL on target domain
@@ -86,6 +90,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             const query = c.req.valid('query');
             const redirectUrl = new URL(decodeURIComponent(query.redirectUrl));
 
+            const { JWT_SECRET, ENCRYPTION_KEY, PUBLIC_DOMAIN_NAME, TURNSTILE_SECRET } = env(c);
             // Decrypt and verify the JWT token
             const {
                 userId,
@@ -94,6 +99,8 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 sourceHost,
                 targetHost
             } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
+                JWT_SECRET,
+                ENCRYPTION_KEY,
                 query.code
             );
 
@@ -103,7 +110,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
 
             // Verify turnstile token is valid
             // this will make sure it is used only one time!
-            await validateTurnstile(turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
 
             // Validate current domain is in allowed list
             const host = c.req.header('host');

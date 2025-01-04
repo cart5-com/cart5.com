@@ -33,7 +33,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 		const { data, error } = await (await getAuthApiClient().api.otp.send.$post({
 			form: {
 				verifyEmail: values.email,
-				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+				turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
 			},
 		})).json()
 		if (error) {

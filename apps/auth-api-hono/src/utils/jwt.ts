@@ -2,9 +2,6 @@ import { sign, verify } from 'hono/jwt'
 import { type JWTPayload } from "hono/utils/jwt/types";
 import { decrypt, encrypt } from './encryption';
 import { KNOWN_ERROR } from '../errors';
-import { getEnvironmentVariable } from "./getEnvironmentVariable";
-
-const JWT_SECRET = getEnvironmentVariable("JWT_SECRET");
 
 export const signJWT = (payloadParam: JWTPayload, JWT_SECRET: string, maxAge: number = 600) => {
     if (!payloadParam.hasOwnProperty("exp")) {
@@ -23,18 +20,22 @@ export const verifyJWT = <T>(token: string, JWT_SECRET: string): T => {
 };
 
 export const signJwtAndEncrypt = async <T extends JWTPayload>(
+    JWT_SECRET: string,
+    ENCRYPTION_KEY: string,
     payloadParam: T,
-    maxAge: number = 600
+    maxAge: number = 600,
 ): Promise<string> => {
     const jwt = await signJWT(payloadParam, JWT_SECRET, maxAge);
-    return await encrypt(jwt);
+    return await encrypt(jwt, ENCRYPTION_KEY);
 };
 
 export const decryptAndVerifyJwt = async <T>(
+    JWT_SECRET: string,
+    ENCRYPTION_KEY: string,
     token: string,
 ): Promise<T> => {
     try {
-        const jwt = await decrypt(token);
+        const jwt = await decrypt(token, ENCRYPTION_KEY);
         return await verifyJWT<T>(jwt, JWT_SECRET);
     } catch (error) {
         if (error instanceof Error && error.name === 'JwtTokenExpired') {

@@ -38,7 +38,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
 				email: values.email,
 				password: values.password,
 				name: values.name,
-				turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+				turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
 			},
 		})).json()
 		if (error) {

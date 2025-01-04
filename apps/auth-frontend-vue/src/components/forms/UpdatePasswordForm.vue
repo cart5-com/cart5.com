@@ -39,7 +39,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
         const { error } = await (await getAuthApiClient().api.user['update-password'].$post({
             form: {
                 password: values.password,
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             },
         })).json()
         if (error) {

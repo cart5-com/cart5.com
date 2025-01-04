@@ -1,11 +1,13 @@
 import { eq } from "drizzle-orm";
 import { sessionTable } from "../schema";
-import db from "../drizzle";
+import getDrizzleDb from "../drizzle";
+import type { honoTypes } from "../../index";
+import type { Context } from "hono";
 
-export async function deleteSession(sessionId: string): Promise<void> {
-    await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+export async function deleteSession(c: Context<honoTypes>, sessionId: string): Promise<void> {
+    await getDrizzleDb(c).delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 
-export async function deleteAllUserSessions(userId: string): Promise<void> {
-    await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+export async function deleteAllUserSessions(c: Context<honoTypes>, userId: string): Promise<void> {
+    await getDrizzleDb(c).delete(sessionTable).where(eq(sessionTable.userId, userId));
 }

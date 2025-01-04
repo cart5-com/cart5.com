@@ -1,8 +1,10 @@
 {
   "name": "proxy-caddy",
   "scripts": {
-    "dev": "pnpm format && dotenv -e ../../.env -- caddy run --config ./Caddyfile_dev",
-    "preview": "pnpm dev",
+    "dev": "pnpm format && dotenvx run -- caddy run --config ./Caddyfile_dev",
     "format": "caddy fmt ./Caddyfile_dev  --overwrite"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0"
   }
 }

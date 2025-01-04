@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3001",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "start": "rm -rf /srv/auth-frontend-vue/dist/ && mkdir -p /srv/auth-frontend-vue && cp -R $HOME/PROD_CART5_COM/apps/auth-frontend-vue/dist/ /srv/auth-frontend-vue/"
+    "dev": "dotenvx run -- vite --port 3001",
+    "build": "dotenvx run -- vue-tsc -b && dotenvx run -- vite build",
+    "start": "http-server dist -p 3001 -a 0.0.0.0 -d false --log-ip false -c-1 --cors --gzip --brotli --proxy http://localhost:3001?"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
+    "http-server": "^14.1.1",
     "vue": "^3.5.13",
     "@nanostores/vue": "^0.11.0",
     "lib": "workspace:*",

@@ -54,7 +54,7 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
 const getRecoveryCode = async () => {
     const { data, error } = await (await getAuthApiClient().api["two-factor-auth"]["get-recovery-code"].$post({
         form: {
-            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
         }
     })).json();
     if (error) {
@@ -68,7 +68,7 @@ const getRecoveryCode = async () => {
 const generateNewRecoveryCode = async () => {
     const { data, error } = await (await getAuthApiClient().api["two-factor-auth"]["generate-new-recovery-code"].$post({
         form: {
-            turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+            turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
         }
     })).json();
     if (error) {
@@ -83,7 +83,7 @@ const removeTwoFactorAuthentication = async () => {
     if (confirm("Are you sure you want to remove two factor authentication?")) {
         const { data, error } = await (await getAuthApiClient().api["two-factor-auth"]["remove-2fa"].$post({
             form: {
-                turnstile: await showTurnstile(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             }
         })).json();
         if (error) {
