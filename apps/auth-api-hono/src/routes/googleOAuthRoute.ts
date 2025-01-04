@@ -20,51 +20,115 @@ export const googleOAuthRoute = new Hono<honoTypes>()
         async (c) => {
             const { PUBLIC_DOMAIN_NAME } = env(c);
             const IS_PROD = c.get('IS_PROD');
-
             const { redirect_uri } = c.req.valid('query');
 
-            const hostHeader = c.req.header('host');
-            if (!hostHeader) {
-                throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
-            }
-
-            if (hostHeader !== `auth.${PUBLIC_DOMAIN_NAME}`) {
-                throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
-            }
-
-            const refererHeader = c.req.header('referer')
-            if (!refererHeader) {
-                throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
-            }
-            if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
-                throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
-            }
-
-            const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl(c);
-            const {
-                JWT_SECRET,
-                ENCRYPTION_KEY
-            } = env(c);
-            const google_oauth_token = await signJwtAndEncrypt<GoogleOAuthTokenPayload>(
-                JWT_SECRET,
-                ENCRYPTION_KEY,
-                {
-                    storedState,
-                    storedCodeVerifier,
-                    redirect_uri: decodeURIComponent(redirect_uri)
+            if (!IS_PROD) {
+                // simulate a redirect to the google oauth page
+                return c.redirect(`https://auth.${PUBLIC_DOMAIN_NAME}/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
+            } else {
+                const hostHeader = c.req.header('host');
+                if (!hostHeader) {
+                    throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
                 }
-            );
 
-            setCookie(c, GOOGLE_OAUTH_COOKIE_NAME, google_oauth_token, {
-                path: "/",
-                secure: IS_PROD,
-                httpOnly: true,
-                maxAge: 600, // 10 minutes
-                sameSite: "lax" // must use lax to read cookie value after google's redirect
-                // strict does not allow reading the cookie value after redirect
-            });
+                if (hostHeader !== `auth.${PUBLIC_DOMAIN_NAME}`) {
+                    throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
+                }
 
-            return c.redirect(url.toString());
+                const refererHeader = c.req.header('referer')
+                if (!refererHeader) {
+                    throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
+                }
+                if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
+                    throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
+                }
+
+                const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl(c);
+                const {
+                    JWT_SECRET,
+                    ENCRYPTION_KEY
+                } = env(c);
+                const google_oauth_token = await signJwtAndEncrypt<GoogleOAuthTokenPayload>(
+                    JWT_SECRET,
+                    ENCRYPTION_KEY,
+                    {
+                        storedState,
+                        storedCodeVerifier,
+                        redirect_uri: decodeURIComponent(redirect_uri)
+                    }
+                );
+
+                setCookie(c, GOOGLE_OAUTH_COOKIE_NAME, google_oauth_token, {
+                    path: "/",
+                    secure: IS_PROD,
+                    httpOnly: true,
+                    maxAge: 600, // 10 minutes
+                    sameSite: "lax" // must use lax to read cookie value after google's redirect
+                    // strict does not allow reading the cookie value after redirect
+                });
+
+                return c.redirect(url.toString());
+            }
+        }
+    )
+    .get(
+        '/dev-ask-email',
+        zValidator('query', z.object({
+            redirect_uri: z.string().min(1),
+        })),
+        async (c) => {
+            const IS_PROD = c.get('IS_PROD');
+            if (!IS_PROD) {
+                const { redirect_uri } = c.req.valid('query');
+                const { PUBLIC_DOMAIN_NAME } = env(c);
+                return c.html(`<html>
+                    <head>
+                        <title>simulate Google OAuth dev</title>
+                    </head>
+                    <body>
+                        <form action="https://auth.${PUBLIC_DOMAIN_NAME}/__p_auth/api/google_oauth/simulate-google-oauth-callback" method="get">
+                            <label for="email">Email:</label>
+                        <br />
+                        <input type="text" id="email" name="email" placeholder="email" />
+                        <br />
+                        <br />
+                        <label for="redirect_uri">Redirect URI:</label>
+                        <br />
+                        <input type="text" id="redirect_uri" name="redirect_uri" placeholder="redirect_uri" value="${redirect_uri}" />
+                        <br />
+                        <br />
+                        <button type="submit">submit</button>
+                    </form>
+                </body>
+                </html>`);
+            } else {
+                c.text('not allowed in prod');
+            }
+        }
+    )
+    .get(
+        '/simulate-google-oauth-callback',
+        zValidator('query', z.object({
+            email: z.string().email(),
+            redirect_uri: z.string().min(1)
+        })),
+        async (c) => {
+            const IS_PROD = c.get('IS_PROD');
+            if (!IS_PROD) {
+                const { email, redirect_uri } = c.req.valid('query');
+                const user = await upsertUser(c, email);
+                // if email is not verified, mark it as verified
+                if (!user.isEmailVerified) {
+                    await markEmailAsVerified(c, email);
+                }
+
+                await createUserSessionAndSetCookie(c, user.id);
+
+                return c.redirect(decodeURIComponent(redirect_uri));
+            } else {
+                c.text('not allowed in prod');
+            }
+
         }
     )
     .get(
