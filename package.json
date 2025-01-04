@@ -6,7 +6,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "start": "turbo start",
-    "generate:sql": "cd apps/auth-api-hono && pnpm generate:sql",
+    "prod:generate:sql": "cd apps/auth-api-hono && pnpm prod:generate:sql",
+    "prod:migrate": "cd apps/auth-api-hono && pnpm prod:migrate",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\""
   },
   "dependencies": {
