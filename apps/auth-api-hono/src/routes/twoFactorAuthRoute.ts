@@ -19,7 +19,7 @@ import { env } from 'hono/adapter';
 
 export const twoFactorAuthRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
-        const origin = c.req.header('origin');
+        const origin = c.req.header()['origin'];
         if (origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
         }
@@ -77,7 +77,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 TURNSTILE_SECRET,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             let key: Uint8Array;
             try {
                 key = decodeBase64(encodedTOTPKey);
@@ -120,7 +120,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
             if (!twoFactorAuthToken) {
@@ -167,7 +167,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
             if (!twoFactorAuthToken) {
@@ -214,7 +214,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 TURNSTILE_SECRET,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -255,7 +255,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
                 TURNSTILE_SECRET,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -287,7 +287,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             const {
                 TURNSTILE_SECRET,
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");

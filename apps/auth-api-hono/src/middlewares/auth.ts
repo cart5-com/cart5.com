@@ -11,7 +11,7 @@ export const authChecks = createMiddleware<honoTypes>(async (c, next) => {
         c.set("SESSION", null);
         await next();
     } else {
-        let hostname = c.req.header('Host');
+        let hostname = c.req.header()['host'];
         const { user, session } = await validateSessionCookie(c, cookieValue, hostname!);
         if (session && session.fresh) {
             setCookie(c, SESSION_COOKIE_NAME, cookieValue, {

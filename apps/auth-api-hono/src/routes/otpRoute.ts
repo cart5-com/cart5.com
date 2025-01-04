@@ -17,9 +17,9 @@ import { env } from 'hono/adapter';
 
 export const otpRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
-        // const referer = c.req.header('referer');
-        // const host = c.req.header('host');
-        const origin = c.req.header('origin');
+        // const referer = c.req.header()['referer'];
+        // const host = c.req.header()['host'];
+        const origin = c.req.header()['origin'];
         if (origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
         }
@@ -38,7 +38,7 @@ export const otpRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
 
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(
@@ -81,7 +81,7 @@ export const otpRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const otpToken = getCookie(c, OTP_COOKIE_NAME);
 
 

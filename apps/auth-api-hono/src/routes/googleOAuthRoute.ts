@@ -26,7 +26,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 // simulate a redirect to the google oauth page
                 return c.redirect(`https://auth.${PUBLIC_DOMAIN_NAME}/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
             } else {
-                const hostHeader = c.req.header('host');
+                const hostHeader = c.req.header()['host'];
                 if (!hostHeader) {
                     throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
                 }
@@ -35,7 +35,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                     throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
                 }
 
-                const refererHeader = c.req.header('referer') || c.req.header('Referer');
+                const refererHeader = c.req.header()['referer'] || c.req.header()['referer'];
 
                 // TODO: remove this after testing
                 const headers = c.req.header();
@@ -155,7 +155,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
             }
             deleteCookie(c, GOOGLE_OAUTH_COOKIE_NAME);
 
-            const refererHeader = c.req.header('referer')
+            const refererHeader = c.req.header()['referer']
             if (!refererHeader) {
                 throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
             }
@@ -163,7 +163,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
             }
 
-            const hostHeader = c.req.header('host');
+            const hostHeader = c.req.header()['host'];
             if (!hostHeader) {
                 throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
             }

@@ -37,7 +37,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             const { redirectUrl, turnstile } = c.req.valid('form');
 
             // Security check: Verify request comes from our auth domain
-            const refererHeader = c.req.header('referer')
+            const refererHeader = c.req.header()['referer']
             if (!refererHeader) {
                 throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
             }
@@ -117,10 +117,10 @@ export const crossDomainRoute = new Hono<honoTypes>()
 
             // Verify turnstile token is valid
             // this will make sure it is used only one time!
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
 
             // Validate current domain is in allowed list
-            const host = c.req.header('host');
+            const host = c.req.header()['host'];
             if (!host) {
                 throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
             }

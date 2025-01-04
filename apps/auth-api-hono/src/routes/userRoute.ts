@@ -69,7 +69,7 @@ export const userRoute = new Hono<honoTypes>()
             const {
                 TURNSTILE_SECRET,
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -99,7 +99,7 @@ export const userRoute = new Hono<honoTypes>()
             const {
                 TURNSTILE_SECRET,
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");

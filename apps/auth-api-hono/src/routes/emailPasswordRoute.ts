@@ -17,9 +17,9 @@ import { env } from 'hono/adapter';
 
 export const emailPasswordRoute = new Hono<honoTypes>()
     .use(async (c, next) => {
-        // const referer = c.req.header('referer');
-        // const host = c.req.header('host');
-        const origin = c.req.header('origin');
+        // const referer = c.req.header()['referer'];
+        // const host = c.req.header()['host'];
+        const origin = c.req.header()['origin'];
         if (origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
         }
@@ -48,7 +48,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
 
             const isRegistered = await isEmailExists(c, email);
             if (isRegistered) {
@@ -103,7 +103,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const otpToken = getCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
             if (!otpToken) {
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
@@ -147,7 +147,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
+            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const isRegistered = await isEmailExists(c, email);
             if (!isRegistered) {
                 throw new KNOWN_ERROR("Email not registered", "EMAIL_NOT_REGISTERED");

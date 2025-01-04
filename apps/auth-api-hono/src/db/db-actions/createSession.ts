@@ -32,7 +32,7 @@ export async function createSession(c: Context<honoTypes>, token: string, userId
 
 export async function createUserSessionAndSetCookie(c: Context<honoTypes>, userId: string) {
     const sessionToken = generateSessionToken();
-    const session = await createSession(c, sessionToken, userId, c.req.header('host')!);
+    const session = await createSession(c, sessionToken, userId, c.req.header()['host']!);
     setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
         path: "/",
         secure: c.get('IS_PROD'),
