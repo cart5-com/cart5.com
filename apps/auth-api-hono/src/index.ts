@@ -23,6 +23,7 @@ export type HonoVariables = {
 type Bindings = HttpBindings & {
 	NODE_ENV: string;
 	PUBLIC_DOMAIN_NAME: string;
+	KNOWN_DOMAINS_REGEX: string;
 	ENCRYPTION_KEY: string;
 	JWT_PRIVATE_KEY: string;
 	TURNSTILE_SECRET: string;

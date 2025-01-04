@@ -33,7 +33,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
-            const PUBLIC_DOMAIN_NAME = env(c).PUBLIC_DOMAIN_NAME;
+            const { PUBLIC_DOMAIN_NAME, KNOWN_DOMAINS_REGEX } = env(c);
             const { redirectUrl, turnstile } = c.req.valid('form');
 
             // Security check: Verify request comes from our auth domain
@@ -53,7 +53,8 @@ export const crossDomainRoute = new Hono<honoTypes>()
 
             // Validate target domain is in our allowed list
             const url = new URL(redirectUrl);
-            if (!await isKnownHostname(url.hostname)) {
+            const IS_PROD = c.get('IS_PROD');
+            if (!await isKnownHostname(url.hostname, KNOWN_DOMAINS_REGEX, IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 
@@ -90,7 +91,13 @@ export const crossDomainRoute = new Hono<honoTypes>()
             const query = c.req.valid('query');
             const redirectUrl = new URL(decodeURIComponent(query.redirectUrl));
 
-            const { JWT_PRIVATE_KEY, ENCRYPTION_KEY, PUBLIC_DOMAIN_NAME, TURNSTILE_SECRET } = env(c);
+            const {
+                JWT_PRIVATE_KEY,
+                ENCRYPTION_KEY,
+                PUBLIC_DOMAIN_NAME,
+                TURNSTILE_SECRET,
+                KNOWN_DOMAINS_REGEX
+            } = env(c);
             // Decrypt and verify the JWT token
             const {
                 userId,
@@ -117,7 +124,8 @@ export const crossDomainRoute = new Hono<honoTypes>()
             if (!host) {
                 throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
             }
-            if (!await isKnownHostname(host)) {
+            const IS_PROD = c.get('IS_PROD');
+            if (!await isKnownHostname(host, KNOWN_DOMAINS_REGEX, IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 
