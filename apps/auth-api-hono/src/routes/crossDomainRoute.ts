@@ -39,6 +39,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             // Security check: Verify request comes from our auth domain
             const refererHeader = c.req.header()['referer']
             if (!refererHeader) {
+                console.log("🟪c.req.header():", c.req.header());
                 throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
             }
             if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {

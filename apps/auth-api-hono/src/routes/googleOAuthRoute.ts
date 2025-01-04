@@ -47,6 +47,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 console.log(JSON.stringify(rawHeaders, null, 2));
 
                 if (!refererHeader) {
+                    console.log("🔴c.req.header():", c.req.header());
                     throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
                 }
                 if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
@@ -157,6 +158,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
             const refererHeader = c.req.header()['referer']
             if (!refererHeader) {
+                console.log("⭐️c.req.header():", c.req.header());
                 throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
             }
             if (refererHeader !== `https://accounts.google.com/`) {
