@@ -124,7 +124,7 @@ sudo apt update
 sudo apt install xcaddy -y
 
 # install caddy-ratelimit https://github.com/mholt/caddy-ratelimit
-# it takes a while to build
+# it takes a while to build ⏳🥲
 xcaddy build --with github.com/mholt/caddy-ratelimit
 
 # replace old caddy with new caddy
@@ -177,11 +177,6 @@ pm2 set pm2-logrotate:max_size 1G
 # pm2 set pm2-logrotate:rotateInterval '0 * * * *'
 
 
-
-
-
-
-
 # ========================================================================
 # 5. Enable pm2 Startup Service for your instance
 # ========================================================================
@@ -194,6 +189,7 @@ sudo ln -s $(which npm) /usr/bin/npm
 sudo ln -s $(which node) /usr/bin/node
 sudo ln -s $(which pm2) /usr/bin/pm2
 sudo ln -s $(which pnpm) /usr/bin/pnpm
+# NOT REQUIRED # sudo ln -s $(which caddy) /usr/bin/caddy # caddy is already in /usr/bin
 # ========================================================================
 # sudo ufw allow 80 && sudo ufw allow 443 # not required caddy handles them all
 # sudo apt-get install --assume-yes libcap2-bin
