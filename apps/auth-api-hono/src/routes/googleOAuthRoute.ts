@@ -37,17 +37,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
                 const refererHeader = c.req.header()['referer'] || c.req.header()['referer'];
 
-                // TODO: remove this after testing
-                const headers = c.req.header();
-                console.log("headers", headers);
-                console.log(JSON.stringify(headers, null, 2));
-
-                const rawHeaders = c.req.raw.headers;
-                console.log("rawHeaders", rawHeaders);
-                console.log(JSON.stringify(rawHeaders, null, 2));
-
                 if (!refererHeader) {
-                    console.log("🔴c.req.header():", c.req.header());
                     throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
                 }
                 if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
@@ -156,13 +146,17 @@ export const googleOAuthRoute = new Hono<honoTypes>()
             }
             deleteCookie(c, GOOGLE_OAUTH_COOKIE_NAME);
 
+            // if redirect shows auth page, callback has a referer header
             const refererHeader = c.req.header()['referer']
-            if (!refererHeader) {
-                console.log("⭐️c.req.header():", c.req.header());
-                throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
+            if (refererHeader) {
+                if (refererHeader !== `https://accounts.google.com/`) {
+                    throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
+                }
             }
-            if (refererHeader !== `https://accounts.google.com/`) {
-                throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
+
+            const secFetchSite = c.req.header()['sec-fetch-site'];
+            if (secFetchSite !== 'cross-site') {
+                throw new KNOWN_ERROR("Invalid request origin", "INVALID_REQUEST_ORIGIN");
             }
 
             const hostHeader = c.req.header()['host'];
