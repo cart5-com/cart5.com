@@ -7,14 +7,10 @@
 	}
 }
 
-# TODO: validate before SSL challenge 
+# TODO: validate domain before SSL challenge 
 # allow all for now
 http://localhost:5555 {
 	respond 200
-}
-
-http://localhost:3434 {
-	respond "hello world localhost:3434" 200
 }
 
 (auth-api-hono-proxy) {
@@ -35,9 +31,8 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	}
 	import auth-api-hono-proxy
 	handle_path /* {
-		try_files {path} /
-		root * /srv/auth-frontend-vue/dist/
-		file_server
+		#auth-frontend-vue
+		reverse_proxy http://localhost:3001
 	}
 }
 

@@ -3,29 +3,28 @@ import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/apiClients/authApi
 import type { APIContext } from "astro";
 
 export const authMiddleware = defineMiddleware(async (context, next) => {
-    // Skip auth check if no session cookie exists
-    if (!context.cookies.get(SESSION_COOKIE_NAME)?.value) {
-        context.locals.USER = null;
-        return next();
-    }
-
-    if (context.cookies.get(SESSION_COOKIE_NAME)?.value) {
-        try {
-            const { data, whoamiResponse } = await fetchWhoAmI(context);
-            context.locals.USER = data;
-            const response = await next();
-            const setCookieHeaders = whoamiResponse.headers.getSetCookie();
-            for (const setCookie of setCookieHeaders) {
-                response.headers.append("Set-Cookie", setCookie);
-            }
-            return response;
-        } catch (e) {
-            console.log('Auth middleware error:', e);
-            context.locals.USER = null;
-            return next();
-        }
-    }
     return next();
+    // TODO: check SSR auth
+    // // Skip auth check if no session cookie exists
+    // if (!context.cookies.get(SESSION_COOKIE_NAME)?.value) {
+    //     context.locals.USER = null;
+    //     return next();
+    // } else {
+    //     try {
+    //         const { data, whoamiResponse } = await fetchWhoAmI(context);
+    //         context.locals.USER = data;
+    //         const response = await next();
+    //         const setCookieHeaders = whoamiResponse.headers.getSetCookie();
+    //         for (const setCookie of setCookieHeaders) {
+    //             response.headers.append("Set-Cookie", setCookie);
+    //         }
+    //         return response;
+    //     } catch (e) {
+    //         console.log('Auth middleware error:', e);
+    //         context.locals.USER = null;
+    //         return next();
+    //     }
+    // }
 });
 
 async function fetchWhoAmI(context: APIContext) {

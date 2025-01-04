@@ -18,7 +18,7 @@ export const getQueryParams = (): QueryParams => {
     return {
         auth: (entries.auth as "login" | "signup" | "otp") || "login",
         type: (entries.type as "ask" | "settings") || "settings",
-        next: entries.next || `https://www.${import.meta.env.VITE_DOMAIN_NAME}/`
+        next: entries.next || `https://www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/`
     };
 }
 

@@ -59,7 +59,7 @@ onMounted(() => {
         toast.success("Welcome back", {
             description: "Click continue to use your account"
         });
-        if (import.meta.env.VITE_AUTH_AUTO_REDIRECT === "1") {
+        if (import.meta.env.VITE_PUBLIC_AUTH_AUTO_REDIRECT === "1") {
             redirectWithUser();
         }
     }, 500);
