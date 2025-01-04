@@ -35,7 +35,11 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                     throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
                 }
 
-                const refererHeader = c.req.header('referer')
+                const refererHeader = c.req.header('referer') || c.req.header('Referer');
+                // TODO: remove this after testing
+                const headers = c.req.header();
+                console.log("headers", headers);
+                console.log(JSON.stringify(headers, null, 2));
                 if (!refererHeader) {
                     throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
                 }
