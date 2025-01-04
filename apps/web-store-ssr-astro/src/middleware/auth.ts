@@ -1,5 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { createAuthApiClient, SESSION_COOKIE_NAME } from 'lib/apiClients/authApiClient'
+import { createAuthApiClient } from 'lib/apiClients/authApiClient'
 import type { APIContext } from "astro";
 
 export const authMiddleware = defineMiddleware(async (context, next) => {
@@ -27,30 +27,30 @@ export const authMiddleware = defineMiddleware(async (context, next) => {
     // }
 });
 
-async function fetchWhoAmI(context: APIContext) {
-    // const authApiClient = createAuthApiClient(`${context.url.origin}/__p_auth/`);
+// async function fetchWhoAmI(context: APIContext) {
+//     // const authApiClient = createAuthApiClient(`${context.url.origin}/__p_auth/`);
 
-    // use direct connection for auth check,
-    // no need to go through network
-    const authApiClient = createAuthApiClient(import.meta.env.AUTH_API_ORIGIN);
-    const whoamiUrl = authApiClient.api.user.whoami.$url();
-    const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
-    // whoamiUrl.protocol = "https";
-    // if (import.meta.env.DEV) {
-    //     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-    // }
-    const whoamiResponse = await fetch(whoamiUrl.toString(), {
-        method: "POST",
-        headers: {
-            internalHost: context.url.host,
-            origin: context.url.origin,
-            cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
-        }
-    });
-    const { data, error } = await whoamiResponse.json();
-    return {
-        data,
-        whoamiResponse,
-        error
-    };
-}
+//     // use direct connection for auth check,
+//     // no need to go through network
+//     const authApiClient = createAuthApiClient(import.meta.env.AUTH_API_ORIGIN);
+//     const whoamiUrl = authApiClient.api.user.whoami.$url();
+//     const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
+//     // whoamiUrl.protocol = "https";
+//     // if (import.meta.env.DEV) {
+//     //     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+//     // }
+//     const whoamiResponse = await fetch(whoamiUrl.toString(), {
+//         method: "POST",
+//         headers: {
+//             internalHost: context.url.host,
+//             origin: context.url.origin,
+//             cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
+//         }
+//     });
+//     const { data, error } = await whoamiResponse.json();
+//     return {
+//         data,
+//         whoamiResponse,
+//         error
+//     };
+// }
