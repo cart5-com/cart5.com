@@ -65,10 +65,10 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 sourceHost: new URL(refererHeader).hostname,
                 targetHost: url.hostname
             };
-            const { JWT_SECRET, ENCRYPTION_KEY } = env(c);
+            const { JWT_PRIVATE_KEY, ENCRYPTION_KEY } = env(c);
             // Create encrypted JWT containing session info
             const code = await signJwtAndEncrypt<CrossDomainCodePayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 payload,
                 CROSS_DOMAIN_SESSION_EXPIRES_IN,
@@ -90,7 +90,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             const query = c.req.valid('query');
             const redirectUrl = new URL(decodeURIComponent(query.redirectUrl));
 
-            const { JWT_SECRET, ENCRYPTION_KEY, PUBLIC_DOMAIN_NAME, TURNSTILE_SECRET } = env(c);
+            const { JWT_PRIVATE_KEY, ENCRYPTION_KEY, PUBLIC_DOMAIN_NAME, TURNSTILE_SECRET } = env(c);
             // Decrypt and verify the JWT token
             const {
                 userId,
@@ -99,7 +99,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 sourceHost,
                 targetHost
             } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 query.code
             );

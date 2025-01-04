@@ -45,7 +45,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             const { email, password, name, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -65,7 +65,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             // save user after otp verification
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenAfterRegisterPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 {
                     nonce: crypto.randomUUID(),
@@ -100,7 +100,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             const { verifyEmail, code, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -109,7 +109,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
             }
             const { email, otp, password, name } = await decryptAndVerifyJwt<OtpTokenAfterRegisterPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 otpToken
             );
@@ -144,7 +144,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
             const { email, password, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -169,7 +169,7 @@ export const emailPasswordRoute = new Hono<honoTypes>()
 
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
-                    JWT_SECRET,
+                    JWT_PRIVATE_KEY,
                     ENCRYPTION_KEY,
                     {
                         nonce: crypto.randomUUID(),

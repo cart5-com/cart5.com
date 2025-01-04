@@ -45,11 +45,11 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
                 const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl(c);
                 const {
-                    JWT_SECRET,
+                    JWT_PRIVATE_KEY,
                     ENCRYPTION_KEY
                 } = env(c);
                 const google_oauth_token = await signJwtAndEncrypt<GoogleOAuthTokenPayload>(
-                    JWT_SECRET,
+                    JWT_PRIVATE_KEY,
                     ENCRYPTION_KEY,
                     {
                         storedState,
@@ -172,12 +172,12 @@ export const googleOAuthRoute = new Hono<honoTypes>()
             }
 
             const {
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
 
             const { storedState, storedCodeVerifier, redirect_uri } = await decryptAndVerifyJwt<GoogleOAuthTokenPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 google_oauth_token
             );

@@ -117,7 +117,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             const { userProvidedCode, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -128,7 +128,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             }
 
             const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 twoFactorAuthToken
             );
@@ -164,7 +164,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             const { turnstile, recoveryCode } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -175,7 +175,7 @@ export const twoFactorAuthRoute = new Hono<honoTypes>()
             }
 
             const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 twoFactorAuthToken
             );

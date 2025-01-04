@@ -35,14 +35,14 @@ export const otpRoute = new Hono<honoTypes>()
             const { verifyEmail, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
 
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 {
                     nonce: crypto.randomUUID(),
@@ -78,7 +78,7 @@ export const otpRoute = new Hono<honoTypes>()
             const { verifyEmail, code, turnstile } = c.req.valid('form');
             const {
                 TURNSTILE_SECRET,
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY
             } = env(c);
             await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header('X-Forwarded-For'));
@@ -89,7 +89,7 @@ export const otpRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
             }
             const { email, otp } = await decryptAndVerifyJwt<OtpTokenPayload>(
-                JWT_SECRET,
+                JWT_PRIVATE_KEY,
                 ENCRYPTION_KEY,
                 otpToken
             );
@@ -108,7 +108,7 @@ export const otpRoute = new Hono<honoTypes>()
 
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
-                    JWT_SECRET,
+                    JWT_PRIVATE_KEY,
                     ENCRYPTION_KEY,
                     {
                         nonce: crypto.randomUUID(),

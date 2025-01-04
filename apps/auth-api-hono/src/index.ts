@@ -24,7 +24,7 @@ type Bindings = HttpBindings & {
 	NODE_ENV: string;
 	PUBLIC_DOMAIN_NAME: string;
 	ENCRYPTION_KEY: string;
-	JWT_SECRET: string;
+	JWT_PRIVATE_KEY: string;
 	TURNSTILE_SECRET: string;
 	GOOGLE_OAUTH_CLIENT_ID?: string;
 	GOOGLE_OAUTH_CLIENT_SECRET?: string;
