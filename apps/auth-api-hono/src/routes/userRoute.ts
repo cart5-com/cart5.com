@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import type { honoTypes } from '../index'
 import { deleteSession, deleteAllUserSessions } from '../db/db-actions/deleteSession';
-import { SESSION_COOKIE_NAME } from "lib/apiClients/authApiClient";
+import { SESSION_COOKIE_NAME } from "../consts";
 import { deleteCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from '../errors';
 import { z } from 'zod';

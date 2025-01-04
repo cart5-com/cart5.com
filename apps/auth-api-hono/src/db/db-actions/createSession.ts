@@ -2,7 +2,7 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Session } from "../../types/SessionType";
 import { SESSION_EXPIRES_IN } from "../../consts";
-import { SESSION_COOKIE_NAME } from "lib/apiClients/authApiClient";
+import { SESSION_COOKIE_NAME } from "../../consts";
 import { sessionTable } from "../schema";
 import getDrizzleDb from "../drizzle";
 import type { Context } from "hono";
