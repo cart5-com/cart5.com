@@ -33,6 +33,7 @@ type Bindings = HttpBindings & {
 	GOOGLE_OAUTH_REDIRECT_URI?: string;
 	AUTHAPI_TURSO_DB_URL?: string;
 	AUTHAPI_TURSO_DB_TOKEN?: string;
+	AUTHAPI_TURSO_EMBEDDED_DB_PATH?: string;
 }
 
 export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
