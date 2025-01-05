@@ -11,8 +11,8 @@
 		"preprod:migrate": "read -p 'sure?(Yes/any) ' answer && [ \"$answer\" = \"Yes\" ] || { echo 'Exiting...'; exit 1; } && pnpm test:db-migration",
 		"prod:migrate": "dotenvx run -f .env.production -- drizzle-kit migrate --config=drizzle.config.prod.ts",
 		"test:db-migration": "dotenvx run -f .env.turso-migration -- tsx src/db/migrationTest.ts",
-		"build": "rm -rf ./dist && dotenvx run -- node ./esbuild.cjs",
-		"start": "dotenvx run -- node dist/index.js"
+		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
+		"start": "dotenvx run -f .env.production -- node dist/index.js"
 	},
 	"dependencies": {
 		"@dotenvx/dotenvx": "^1.32.0",

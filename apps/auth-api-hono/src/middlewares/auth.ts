@@ -14,6 +14,7 @@ export const authChecks = createMiddleware<honoTypes>(async (c, next) => {
         let hostname = c.req.header()['host'];
         const internalAuthApiKey = c.req.header()['internal-auth-api-key'] ?? null;
         if (internalAuthApiKey === env(c).INTERNAL_AUTH_API_KEY) {
+            // allow internal requests to bypass hostname checks
             hostname = c.req.header()['internal-host'];
         }
         const { user, session } = await validateSessionCookie(c, cookieValue, hostname!);
