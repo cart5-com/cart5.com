@@ -8,13 +8,15 @@ import { resolve, dirname } from "node:path";
     It is used to test the database migration process.
 */
 const start = async () => {
+    const newDatabaseName = "test-db-migration-with-branching-" + Date.now();
+    let isDbDeleted = true;
     try {
-        const newDatabaseName = "test-db-migration-with-branching-" + Date.now();
         console.log("🥹 Creating a new database from production database:", newDatabaseName);
         const database = await createDatabase(newDatabaseName);
         if (!database?.database?.Hostname) {
             throw new Error("Failed to create database");
         }
+        isDbDeleted = false;
         console.log("- Creating a token for the new database:", newDatabaseName);
         const token = await createToken(newDatabaseName);
         if (!token?.jwt) {
@@ -39,11 +41,18 @@ const start = async () => {
         if (!deleteResult) {
             throw new Error("Failed to delete database");
         }
+        isDbDeleted = true;
         console.log("✅ Deleted the new database:", newDatabaseName);
         process.exit(0);
     } catch (error) {
+        console.error("💩💩💩💩💩💩💩💩💩💩💩");
         console.error("🟥🟥🟥 Error ❌❌❌");
+        console.error("💩💩💩💩💩💩💩💩💩💩💩");
         console.error(error);
+        if (isDbDeleted === false) {
+            await deleteDatabase(newDatabaseName);
+            console.log("❌Deleted the new database:", newDatabaseName);
+        }
         process.exit(1);
     }
 }
