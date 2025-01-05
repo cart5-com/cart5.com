@@ -8,6 +8,10 @@ export const csrfChecks = createMiddleware<honoTypes>(async (c, next) => {
 		await next();
 	} else {
 		const internalAuthApiKey = c.req.header()['internal-auth-api-key'] ?? null;
+		console.log("🔔🔔🔔internalAuthApiKey🔥🔥🔥");
+		console.log(internalAuthApiKey);
+		console.log("🔔🔔🔔env(c).INTERNAL_AUTH_API_KEY���🔔");
+		console.log(env(c).INTERNAL_AUTH_API_KEY);
 		if (internalAuthApiKey === env(c).INTERNAL_AUTH_API_KEY) {
 			await next();
 		} else {
