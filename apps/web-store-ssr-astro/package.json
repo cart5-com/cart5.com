@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "dotenvx run -- astro dev --port 3002",
-    "build": "dotenvx run -- astro check && dotenvx run -- astro build",
-    "start": "dotenvx run --env HOST=0.0.0.0 --env PORT=3002 -- node ./dist/server/entry.mjs"
+    "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
+    "start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
