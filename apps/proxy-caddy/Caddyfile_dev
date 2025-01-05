@@ -1,7 +1,7 @@
 (auth-api-hono-proxy) {
 	handle_path /__p_auth/* {
 		#auth-api-hono
-		reverse_proxy http://localhost:3000
+		reverse_proxy http://127.0.0.1:3000
 	}
 }
 
@@ -15,7 +15,7 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	import auth-api-hono-proxy
 	handle_path /* {
 		#auth-frontend-vue
-		reverse_proxy http://localhost:3001
+		reverse_proxy http://127.0.0.1:3001
 	}
 }
 
@@ -27,6 +27,6 @@ unknown-store.com,
 	import auth-api-hono-proxy
 	handle_path /* {
 		#web-store-ssr-astro
-		reverse_proxy http://localhost:3002
+		reverse_proxy http://127.0.0.1:3002
 	}
 }

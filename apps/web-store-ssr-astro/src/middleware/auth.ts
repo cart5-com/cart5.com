@@ -40,14 +40,17 @@ async function fetchWhoAmI(context: APIContext) {
     // if (import.meta.env.DEV) {
     //     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     // }
+    const headers = {
+        "internal-auth-api-key": import.meta.env.INTERNAL_AUTH_API_KEY,
+        "internal-host": context.url.host,
+        origin: context.url.origin,
+        cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
+    }
+    console.log("🔥🔥🔥headers🔥🔥🔥");
+    console.log(headers);
     const whoamiResponse = await fetch(whoamiUrl.toString(), {
         method: "POST",
-        headers: {
-            "internal-auth-api-key": import.meta.env.INTERNAL_AUTH_API_KEY,
-            "internal-host": context.url.host,
-            origin: context.url.origin,
-            cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
-        }
+        headers
     });
     const { data, error } = await whoamiResponse.json();
     return {

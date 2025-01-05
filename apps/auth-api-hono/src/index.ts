@@ -98,7 +98,7 @@ serve({
 	port: port
 }, (info) => {
 	console.log(`Api hono server is running on 
-		http://localhost:${info.port} 
+		http://127.0.0.1:${info.port} 
 		address:${info.address} 
 		family:${info.family}`);
 });
