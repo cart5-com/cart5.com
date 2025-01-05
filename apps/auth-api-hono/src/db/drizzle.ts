@@ -12,7 +12,7 @@ export const getDrizzleDb = function (c: Context<honoTypes>): ReturnType<typeof 
     const {
         AUTHAPI_TURSO_DB_URL,
         AUTHAPI_TURSO_DB_TOKEN,
-        AUTHAPI_TURSO_EMBEDDED_DB_PATH
+        // AUTHAPI_TURSO_EMBEDDED_DB_PATH
     } = env(c);
     const IS_PROD = c.get('IS_PROD')
     if (IS_PROD) {
