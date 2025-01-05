@@ -60,8 +60,8 @@ pnpm dev
 
 4. Access the demo store at https://sample-store-1.com
 
-# TODO: make caddy optional for dev env
+## [TODOS]
 
-# TODO: add rate limiting for prod caddy config
-
-# TODO: add sentry
+- TODO: make caddy optional for dev env
+- TODO: add rate limiting for prod caddy config
+- TODO: add sentry

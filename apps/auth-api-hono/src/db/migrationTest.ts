@@ -6,6 +6,14 @@ import { resolve, dirname } from "node:path";
     This script is used to test the database migration process.
     It creates a new database from the production database, migrates the new database, and then deletes the new database.
     It is used to test the database migration process.
+
+    if you would like test a failed migration, add a new required field without a default value in your drizzle schema
+    requiredField: text("required_field").notNull(),
+
+    then run  `pnpm prod:generate:sql`
+    then run `pnpm test:db-migration`
+    it will fail and you will see the error in the console, 
+    thanks to 'preprod:migrate' script, it will not continue to `prod:migrate`
 */
 const start = async () => {
     const newDatabaseName = "test-db-migration-with-branching-" + Date.now();

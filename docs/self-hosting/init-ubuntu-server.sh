@@ -6,7 +6,7 @@
 # This script performs the following setup tasks:
 # 1. System Updates
 #    - Updates and upgrades system packages
-#    - Installs basic utilities (unzip)
+#    - Installs basic utilities (if required)
 #
 # 2. Swap Configuration (10GB)
 #    - Creates and configures swap file
@@ -32,10 +32,9 @@
 # ========================================================================
 # 1. System Updates
 # ========================================================================
-# sudo apt update -qq
+sudo apt update -qq
 sudo apt upgrade --assume-yes
-# sudo apt-get install --assume-yes wget curl 
-sudo apt-get install --assume-yes unzip
+# sudo apt-get install --assume-yes wget curl  unzip tree
 # ========================================================================
 # NETWORKING
 # make instance static ip

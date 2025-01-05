@@ -2,6 +2,7 @@ import { getAuthApiClient } from "@src/lib/authApiClient";
 import { type User } from "lib/apiClients/authApiClient";
 import { atom } from 'nanostores'
 
+// TODO: do I need nanostores?
 export const $userStore = atom<User | null>(null);
 
 export const refreshUserData = async () => {
