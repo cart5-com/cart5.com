@@ -27,7 +27,7 @@ export const getDrizzleDb = function (c: Context<honoTypes>): ReturnType<typeof 
                 syncUrl: AUTHAPI_TURSO_DB_URL!,
                 syncInterval: 120,
             });
-            const db = drizzle(client);
+            db = drizzle(client);
             return db;
         } else {
             // no embedded db
