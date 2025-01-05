@@ -4,7 +4,7 @@ import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
-import { KNOWN_ERROR } from './errors';
+import { KNOWN_ERROR } from 'lib/errors';
 import type { Session } from './types/SessionType';
 import type { User } from './types/UserType';
 import { userRoute } from './routes/userRoute';

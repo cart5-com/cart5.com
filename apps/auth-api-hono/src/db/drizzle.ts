@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { localDbPath } from "../consts";
+import { localDbPath } from "lib/auth-consts";
 import type { honoTypes } from "..";
 import type { Context } from "hono";
 import { env } from "hono/adapter";

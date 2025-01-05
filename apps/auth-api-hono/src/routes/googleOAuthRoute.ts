@@ -5,9 +5,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, generateCodeVerifier, generateState, Google, OAuth2Tokens } from 'arctic';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
-import { GOOGLE_OAUTH_COOKIE_NAME } from '../consts';
+import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR } from 'lib/errors';
 import { markEmailAsVerified, updateUserName, updateUserPictureUrl, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 

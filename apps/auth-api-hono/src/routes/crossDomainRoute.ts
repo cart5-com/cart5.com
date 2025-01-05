@@ -3,10 +3,10 @@ import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from '../utils/validateTurnstile';
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR } from 'lib/errors';
 import { isKnownHostname } from '../utils/knownHostnames';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../consts';
+import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from 'lib/auth-consts';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { env } from 'hono/adapter';
 

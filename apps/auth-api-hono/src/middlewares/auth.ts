@@ -1,6 +1,6 @@
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import { SESSION_COOKIE_NAME } from "../consts";
+import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
 import type { honoTypes } from "..";
 

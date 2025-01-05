@@ -3,13 +3,13 @@ import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from '../utils/validateTurnstile';
-import { KNOWN_ERROR, type ErrorType } from '../errors';
+import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
 import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
-import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from '../consts';
+import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { sendUserOtpEmail } from '../utils/email';

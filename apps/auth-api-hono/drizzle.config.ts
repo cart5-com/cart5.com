@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { localDbPath } from "./src/consts";
+import { localDbPath } from "lib/auth-consts";
 
 let config: ReturnType<typeof defineConfig>;
 config = defineConfig({

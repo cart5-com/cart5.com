@@ -1,7 +1,7 @@
 import { sign, verify } from 'hono/jwt'
 import { type JWTPayload } from "hono/utils/jwt/types";
 import { decrypt, encrypt } from './encryption';
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR } from 'lib/errors';
 
 export const signJWT = (payloadParam: JWTPayload, JWT_PRIVATE_KEY: string, maxAge: number = 600) => {
     if (!payloadParam.hasOwnProperty("exp")) {
