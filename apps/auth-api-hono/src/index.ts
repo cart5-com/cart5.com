@@ -26,6 +26,7 @@ type Bindings = HttpBindings & {
 	KNOWN_DOMAINS_REGEX: string;
 	ENCRYPTION_KEY: string;
 	JWT_PRIVATE_KEY: string;
+	INTERNAL_AUTH_API_KEY: string;
 	TURNSTILE_SECRET: string;
 	GOOGLE_OAUTH_CLIENT_ID?: string;
 	GOOGLE_OAUTH_CLIENT_SECRET?: string;
