@@ -46,8 +46,6 @@ async function fetchWhoAmI(context: APIContext) {
         origin: context.url.origin,
         cookie: `${SESSION_COOKIE_NAME}=${authCookieValue}`
     }
-    console.log("🔥🔥🔥headers🔥🔥🔥");
-    console.log(headers);
     const whoamiResponse = await fetch(whoamiUrl.toString(), {
         method: "POST",
         headers
