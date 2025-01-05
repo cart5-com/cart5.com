@@ -9,7 +9,9 @@ require("esbuild").build({
     sourcemap: true,
     plugins: [],
     external: [
-        '@node-rs/argon2'
+        '@node-rs/argon2',
+        '@libsql/client',
+        '@libsql/linux-x64-gnu'
     ],
     banner: {
         js: `
