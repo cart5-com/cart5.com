@@ -4,9 +4,8 @@ import App from './App.vue'
 import { refreshUserData } from '@src/stores/userStore';
 import { refreshQueryParams } from "./stores/queryParamsStore";
 refreshQueryParams();
-refreshUserData()
-const app = createApp(App);
-app.mount('#app');
-// .then(() => {
-// })
+refreshUserData().then(() => {
+    const app = createApp(App);
+    app.mount('#app');
+})
 
