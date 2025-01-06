@@ -9,7 +9,9 @@
     pkgs.pnpm
   ];
   # Sets environment variables in the workspace
-  env = { };
+  env = {
+    PORT = "3002";
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [ 
@@ -34,7 +36,7 @@
       previews = {
         web = {
           command =
-            [ "PORT=$PORT" "pnpm" "dev" ];
+            [ "pnpm" "dev" ];
           manager = "web";
         };
       };
