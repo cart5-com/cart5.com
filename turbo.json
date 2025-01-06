@@ -2,7 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "globalEnv": [
-    "DOTENV_PRIVATE_KEY_PRODUCTION"
+    "DOTENV_PRIVATE_KEY_PRODUCTION",
+    "PORT"
   ],
   "tasks": {
     "build": {

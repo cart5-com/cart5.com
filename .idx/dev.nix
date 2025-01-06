@@ -10,7 +10,7 @@
   ];
   # Sets environment variables in the workspace
   env = {
-    PORT = "3002";
+    # PORT = "3002";
   };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
@@ -36,7 +36,7 @@
       previews = {
         web = {
           command =
-            [ "pnpm" "dev" ];
+            [ "pnpm" "run" "dev" ];
           manager = "web";
         };
       };
