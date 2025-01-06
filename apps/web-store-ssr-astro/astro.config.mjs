@@ -7,10 +7,14 @@ import node from "@astrojs/node";
 export default defineConfig({
   output: "server",
   adapter: node({
-    mode: "standalone"
+    mode: "standalone",
   }),
+  server: {
+    host: '0.0.0.0',
+  },
   vite: {
     server: {
+      host: '0.0.0.0',
       proxy: {
         '/__p_auth': {
           target: 'http://127.0.0.1:3000',

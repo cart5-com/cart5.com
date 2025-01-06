@@ -7,6 +7,7 @@ import tailwind from 'tailwindcss'
 // https://vite.dev/config/
 export default defineConfig({
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/__p_auth': {
         target: 'http://127.0.0.1:3000',
