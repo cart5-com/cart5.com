@@ -36,7 +36,7 @@
       previews = {
         web = {
           command =
-            [ "echo" "$PORT" "&&" "pnpm" "dev" ];
+            [ "PORT=$PORT" "pnpm" "dev" ];
           manager = "web";
         };
       };
