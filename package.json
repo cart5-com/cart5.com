@@ -5,6 +5,7 @@
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:caddy": "turbo dev:caddy",
     "start": "turbo start",
     "prod:generate:sql": "cd apps/auth-api-hono && pnpm prod:generate:sql",
     "prod:migrate": "cd apps/auth-api-hono && pnpm prod:migrate",

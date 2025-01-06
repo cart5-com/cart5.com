@@ -42,7 +42,8 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 console.log("🟪c.req.header():", c.req.header());
                 throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
             }
-            if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
+            const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
+            if (ENFORCE_HOSTNAME_CHECKS && !refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
                 throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
             }
 
@@ -55,7 +56,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
             // Validate target domain is in our allowed list
             const url = new URL(redirectUrl);
             const IS_PROD = c.get('IS_PROD');
-            if (!await isKnownHostname(url.hostname, KNOWN_DOMAINS_REGEX, IS_PROD)) {
+            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, KNOWN_DOMAINS_REGEX, IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 
@@ -112,7 +113,9 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 query.code
             );
 
-            if (sourceHost !== (`auth.${PUBLIC_DOMAIN_NAME}`)) {
+            const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
+
+            if (ENFORCE_HOSTNAME_CHECKS && sourceHost !== (`auth.${PUBLIC_DOMAIN_NAME}`)) {
                 throw new KNOWN_ERROR("Invalid source host", "INVALID_SOURCE_HOST");
             }
 
@@ -125,8 +128,9 @@ export const crossDomainRoute = new Hono<honoTypes>()
             if (!host) {
                 throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
             }
+
             const IS_PROD = c.get('IS_PROD');
-            if (!await isKnownHostname(host, KNOWN_DOMAINS_REGEX, IS_PROD)) {
+            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, KNOWN_DOMAINS_REGEX, IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 
@@ -138,7 +142,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("Code expired", "CODE_EXPIRED");
             }
 
-            if (targetHost !== host) {
+            if (ENFORCE_HOSTNAME_CHECKS && targetHost !== host) {
                 throw new KNOWN_ERROR("Host mismatch", "HOST_MISMATCH");
             }
 

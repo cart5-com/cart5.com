@@ -24,7 +24,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
             if (!IS_PROD) {
                 // simulate a redirect to the google oauth page
-                return c.redirect(`https://auth.${PUBLIC_DOMAIN_NAME}/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
+                return c.redirect(`/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
             } else {
                 const hostHeader = c.req.header()['host'];
                 if (!hostHeader) {
@@ -81,13 +81,12 @@ export const googleOAuthRoute = new Hono<honoTypes>()
             const IS_PROD = c.get('IS_PROD');
             if (!IS_PROD) {
                 const { redirect_uri } = c.req.valid('query');
-                const { PUBLIC_DOMAIN_NAME } = env(c);
                 return c.html(`<html>
                     <head>
                         <title>simulate Google OAuth dev</title>
                     </head>
                     <body>
-                        <form action="https://auth.${PUBLIC_DOMAIN_NAME}/__p_auth/api/google_oauth/simulate-google-oauth-callback" method="get">
+                        <form action="/__p_auth/api/google_oauth/simulate-google-oauth-callback" method="get">
                             <label for="email">Email:</label>
                         <br />
                         <input type="text" id="email" name="email" placeholder="email" />
@@ -103,7 +102,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 </body>
                 </html>`);
             } else {
-                c.text('not allowed in prod');
+                return c.text('not allowed in prod');
             }
         }
     )
@@ -127,7 +126,7 @@ export const googleOAuthRoute = new Hono<honoTypes>()
 
                 return c.redirect(decodeURIComponent(redirect_uri));
             } else {
-                c.text('not allowed in prod');
+                return c.text('not allowed in prod');
             }
 
         }

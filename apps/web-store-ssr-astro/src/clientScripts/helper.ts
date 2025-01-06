@@ -31,16 +31,28 @@ whoamiButton.addEventListener("click", whoAmI);
 
 const registerButton = document.getElementById("register-button") as HTMLButtonElement;
 registerButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
-        window.location.href
-    )}&type=ask&auth=signup`;
+    if (import.meta.env.PROD) {
+        window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=ask&auth=signup`;
+    } else {
+        window.location.href = `http://localhost:3001/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=ask&auth=signup`;
+    }
 });
 
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 loginButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
-        window.location.href
-    )}&type=ask&auth=login`;
+    if (import.meta.env.PROD) {
+        window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=ask&auth=login`;
+    } else {
+        window.location.href = `http://localhost:3001/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=ask&auth=login`;
+    }
 });
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
@@ -52,7 +64,13 @@ logoutButton.addEventListener("click", async () => {
 
 const manageAccountButton = document.getElementById("manage-account-button") as HTMLButtonElement;
 manageAccountButton.addEventListener("click", async () => {
-    window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
-        window.location.href
-    )}&type=settings`;
+    if (import.meta.env.PROD) {
+        window.location.href = `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=settings`;
+    } else {
+        window.location.href = `http://localhost:3001/?next=${encodeURIComponent(
+            window.location.href
+        )}&type=settings`;
+    }
 });

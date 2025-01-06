@@ -13,7 +13,7 @@ This is a monorepo for the Cart5.com
 - **Auth Backend**: Hono (TypeScript)
 - **Store Frontend**: Astro (SSR-Node)
 - **Database**: SQLite with Drizzle ORM, TURSO for Production
-- **Proxy**: Caddy for local development (yes, I do not like dealing with CORS issues)
+- **Optionel Proxy**: Caddy for local development (yes, I do not like dealing with CORS issues)
 
 ## Project Structure
 
@@ -22,20 +22,30 @@ apps/
 ├── auth-api-hono/ # Authentication API service
 ├── auth-frontend-vue/ # Authentication SPA
 ├── web-store-ssr-astro/# Demo store with SSR
-└── proxy-caddy/ # Local development proxy
+└── proxy-caddy/ # Local development proxy (optional)
 ```
 
 ## Prerequisites
 
 - Node.js v20.11+ (recommended: use nvm)
 - pnpm v9.9.0+ (`npm install -g pnpm`)
-- Caddy v2.8.4+ (macOS: `brew install caddy`)
+- Caddy v2.8.4+ (Optional, macOS: `brew install caddy`)
 - Ansible v2.17.4+ (Optional, deploy only) (`brew install ansible && ansible --version`)
 
 ## Local Development Setup
 
-1. Configure hosts file:
+1. Install dependencies and start development servers:
 
+```
+pnpm install
+pnpm dev
+```
+
+2. Access the demo store at http://localhost:3002
+
+## Caddy for Local Development Setup
+
+Configure hosts file:
 Add to /etc/hosts
 
 ```
@@ -45,23 +55,8 @@ Add to /etc/hosts
 127.0.0.1 unknown-store.com
 ```
 
-2. Setup environment:
-
-```
-cp .env.example .env
-```
-
-3. Install dependencies and start development servers:
-
-```
-pnpm install
-pnpm dev
-```
-
-4. Access the demo store at https://sample-store-1.com
-
 ## [TODOS]
 
-- TODO: make caddy optional for dev env
-- TODO: add rate limiting for prod caddy config
-- TODO: add sentry
+- [DONE]: make caddy optional for development
+- [ ] TODO: add rate limiting for prod caddy config
+- [ ] TODO: add sentry

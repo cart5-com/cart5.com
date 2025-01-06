@@ -19,7 +19,8 @@ export const validateSessionCookie = async (
     if (!databaseSession) {
         return { session: null, user: null };
     }
-    if (databaseSession.hostname !== hostname) {
+    const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
+    if (ENFORCE_HOSTNAME_CHECKS && databaseSession.hostname !== hostname) {
         await deleteSession(c, databaseSession.id);
         return { session: null, user: null };
     }

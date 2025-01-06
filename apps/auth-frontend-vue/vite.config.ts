@@ -6,6 +6,15 @@ import tailwind from 'tailwindcss'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/__p_auth': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: false,
+        rewrite: (path) => path.replace(/^\/__p_auth/, '')
+      },
+    },
+  },
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()],

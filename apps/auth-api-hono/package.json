@@ -2,8 +2,8 @@
 	"name": "auth-api-hono",
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm dev:drizzle-push && pnpm dev:watch",
-		"dev:watch": "dotenvx run -- tsx watch src/index.ts",
+		"dev": "pnpm dev:drizzle-push && dotenvx run -- tsx watch src/index.ts",
+		"dev:caddy": "pnpm dev:drizzle-push && dotenvx run -- tsx watch src/index.ts",
 		"dev:drizzle-push": "dotenvx run -- drizzle-kit push --verbose --force --config=./drizzle.config.ts",
 		"dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7022 --config=./drizzle.config.ts",
 		"postdev:drizzle-studio": "kill $(lsof -t -i:7022)",

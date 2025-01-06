@@ -17,11 +17,13 @@ import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
 export type HonoVariables = {
 	SESSION: Session | null,
 	USER: User | null,
-	IS_PROD: boolean
+	IS_PROD: boolean,
+	ENFORCE_HOSTNAME_CHECKS: boolean
 }
 
 type Bindings = HttpBindings & {
 	NODE_ENV: string;
+	npm_lifecycle_event: string;
 	PUBLIC_DOMAIN_NAME: string;
 	KNOWN_DOMAINS_REGEX: string;
 	ENCRYPTION_KEY: string;
@@ -35,7 +37,6 @@ type Bindings = HttpBindings & {
 	AUTHAPI_TURSO_DB_TOKEN?: string;
 	AUTHAPI_TURSO_EMBEDDED_DB_PATH?: string;
 }
-
 export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
 
 const app = new Hono<honoTypes>();
@@ -44,8 +45,12 @@ const app = new Hono<honoTypes>();
 // console.log("isNode:", isNode, getRuntimeKey())
 
 app.use(async (c, next) => {
-	const { NODE_ENV } = env(c)
-	c.set('IS_PROD', NODE_ENV === 'production')
+	const { NODE_ENV, npm_lifecycle_event } = env(c)
+	const IS_PROD = NODE_ENV === 'production'
+	const IS_CADDY_DEV = npm_lifecycle_event === 'dev:caddy'
+	c.set('IS_PROD', IS_PROD)
+	// IF PROD OR CADDY DEV, ENFORCE HOSTNAME CHECKS
+	c.set('ENFORCE_HOSTNAME_CHECKS', (IS_CADDY_DEV || IS_PROD))
 	await next()
 })
 app.use(csrfChecks);
@@ -80,7 +85,8 @@ app.onError((err, c) => {
 
 app.get("/", (c) => {
 	const IS_PROD = c.get('IS_PROD');
-	return c.html(`Hello Hono! ${IS_PROD ? "PROD" : "DEV"}`);
+	const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
+	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "ENFORCE_HOSTNAME_CHECKS" : "NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 
 const routes = app.basePath('/api')
