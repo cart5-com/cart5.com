@@ -1,3 +1,8 @@
+# stackblitz is not recommended, "turbo" gives error
+# codesandbox is not recommended, max 500 modules
+# idx is not recommended, too slow and minimal docs.
+# only codespaces-github runs dev as expected
+
 # To learn more about how to use Nix to configure your environment
 # see: https://developers.google.com/idx/guides/customize-idx-env
 { pkgs, ... }: {
