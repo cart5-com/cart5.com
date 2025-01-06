@@ -34,7 +34,7 @@
       previews = {
         web = {
           command =
-            [ "pnpm" "dev" ];
+            [ "PORT=$PORT" "pnpm" "dev" ];
           manager = "web";
         };
       };
