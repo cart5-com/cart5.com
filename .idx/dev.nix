@@ -14,8 +14,8 @@
   };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
-    extensions = [ 
-      "astro-build.astro-vscode" 
+    extensions = [
+      "astro-build.astro-vscode"
       "Vue.volar"
     ];
     workspace = {
@@ -36,7 +36,11 @@
       previews = {
         web = {
           command =
-            [ "PORT=$PORT" "pnpm" "dev" ];
+            [ 
+                "sh"
+                "-c"
+                "PORT=$PORT pnpm dev"
+            ];
           manager = "web";
         };
       };
