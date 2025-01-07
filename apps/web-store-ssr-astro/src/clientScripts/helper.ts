@@ -74,3 +74,6 @@ manageAccountButton.addEventListener("click", async () => {
         )}&type=settings`;
     }
 });
+
+
+console.log("purple 🟣 clientScripts/helper.ts");

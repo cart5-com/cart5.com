@@ -37,7 +37,7 @@ const { title } = Astro.props;
 				display: none;
 			}
 			.cache-date {
-				border: 1px solid green;
+				border: 1px solid purple;
 				padding: 3px;
 				border-radius: 3px;
 			}
@@ -49,7 +49,7 @@ const { title } = Astro.props;
 		}</pre>
 		<hr /> -->
 		<div>
-			cache:
+			🟣cache:
 			<span class="cache-date" data-cache-date={Date.now()}></span>
 		</div>
 		<script>
@@ -58,7 +58,7 @@ const { title } = Astro.props;
 			if (cacheDateSpanElement) {
 				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
 			}
-			console.log("green ✅ cacheDateSpanElement");
+			console.log("purple 🟣 cacheDateSpanElement");
 			console.log(cacheDateSpanElement);
 		</script>
 	</body>
