@@ -1,4 +1,4 @@
-import { atom } from 'nanostores'
+import { ref } from 'vue'
 
 interface QueryParams {
     auth: "login" | "signup" | "otp" | null;
@@ -6,7 +6,7 @@ interface QueryParams {
     next: string | null;
 }
 
-export const $queryParamsStore = atom<QueryParams>({
+export const queryParamsStore = ref<QueryParams>({
     auth: null,
     type: null,
     next: null
@@ -23,5 +23,5 @@ export const getQueryParams = (): QueryParams => {
 }
 
 export const refreshQueryParams = () => {
-    $queryParamsStore.set(getQueryParams());
+    queryParamsStore.value = getQueryParams();
 }

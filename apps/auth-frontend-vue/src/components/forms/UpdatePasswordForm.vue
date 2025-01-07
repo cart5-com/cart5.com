@@ -9,7 +9,7 @@ import { useForm } from "vee-validate";
 import { object as z_object, string as z_string, type infer as z_infer } from "zod";
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
-import { $userStore, refreshUserData } from '@src/stores/userStore';
+import { refreshUserData, userStore } from '@src/stores/userStore';
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
@@ -32,7 +32,7 @@ const form = useForm({
     validationSchema: toTypedSchema(schema)
 });
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
-form.setFieldValue("email", $userStore.get()?.email || "");
+form.setFieldValue("email", userStore.value?.email || "");
 
 async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {

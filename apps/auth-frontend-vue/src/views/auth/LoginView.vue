@@ -3,12 +3,12 @@ import LoginForm from '@src/components/forms/auth-forms/LoginForm.vue';
 import GoogleButton from "@src/components/GoogleButton.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import Separator from "@/ui-plus/separator/Separator.vue";
-import { $queryParamsStore, getQueryParams } from '@src/stores/queryParamsStore'
+import { queryParamsStore, getQueryParams } from '@src/stores/queryParamsStore'
 
 const onForgotPasswordClick = () => {
     const queryParams = getQueryParams();
     queryParams.auth = "otp";
-    $queryParamsStore.set(queryParams);
+    queryParamsStore.value = queryParams;
 }
 </script>
 

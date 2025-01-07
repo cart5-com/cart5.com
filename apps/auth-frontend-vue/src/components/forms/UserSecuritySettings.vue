@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import Separator from '@/ui-plus/separator/Separator.vue';
 import Setup2FAButton from '@src/components/forms/TwoFactorAuth/Setup2FAButton.vue';
-import { useStore } from '@nanostores/vue'
-import { $userStore, refreshUserData } from '@src/stores/userStore';
+import { userStore, refreshUserData } from '@src/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
@@ -12,7 +11,6 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import UpdatePasswordForm from '@src/components/forms/UpdatePasswordForm.vue';
 const dialog = useDialog();
-const user = useStore($userStore);
 
 async function updateName() {
     const newName = prompt("Enter new name");
@@ -57,7 +55,7 @@ function openUpdatePasswordDialog() {
                 <ShieldCheck stroke-width="3" /> Security
             </summary>
             <div class="my-4">
-                <Alert v-if="user?.hasNewSession">
+                <Alert v-if="userStore?.hasNewSession">
                     <LockOpen />
                     <AlertTitle>Your login is fresh</AlertTitle>
                     <AlertDescription>
@@ -65,7 +63,7 @@ function openUpdatePasswordDialog() {
                         After that, you'll need to log out and log back in to make changes in security settings.
                     </AlertDescription>
                 </Alert>
-                <Alert v-if="!user?.hasNewSession"
+                <Alert v-if="!userStore?.hasNewSession"
                        variant="destructive">
                     <Lock />
                     <AlertTitle>A fresh login is required</AlertTitle>
@@ -77,11 +75,11 @@ function openUpdatePasswordDialog() {
                 <Separator class="my-10" />
                 <Button @click="openUpdatePasswordDialog"
                         variant="outline"
-                        :disabled="!user?.hasNewSession">
+                        :disabled="!userStore?.hasNewSession">
                     Update Password
                 </Button>
                 <Button class="ml-3"
-                        :disabled="!user?.hasNewSession"
+                        :disabled="!userStore?.hasNewSession"
                         @click="updateName"
                         variant="outline">
                     Update name

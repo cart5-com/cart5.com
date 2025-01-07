@@ -6,10 +6,8 @@ import { getAuthApiClient } from '@src/lib/authApiClient';
 import { toast } from '@/ui-plus/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@src/components/forms/TwoFactorAuth/RecoveryCodeDialog.vue';
-import { useStore } from '@nanostores/vue'
-import { $userStore, refreshUserData } from '@src/stores/userStore';
+import { userStore, refreshUserData } from '@src/stores/userStore';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
-const user = useStore($userStore);
 
 const dialog = useDialog();
 const setupTwoFactorAuthentication = async () => {
@@ -100,15 +98,15 @@ const removeTwoFactorAuthentication = async () => {
 
 <template>
     <div>
-        <Button v-if="!user?.has2FA"
+        <Button v-if="!userStore?.has2FA"
                 variant="outline"
-                :disabled="!user?.hasNewSession"
+                :disabled="!userStore?.hasNewSession"
                 class="text-xs sm:text-sm whitespace-normal"
                 @click="setupTwoFactorAuthentication">
             <ScanQrCodeIcon class="w-4 h-4" />
             Setup Two Factor Authentication (2FA)
         </Button>
-        <div v-if="user?.has2FA"
+        <div v-if="userStore?.has2FA"
              class="border border-muted-foreground border-dashed rounded-md p-2">
             <div class="flex items-center gap-2">
                 <FileKey />
@@ -116,19 +114,19 @@ const removeTwoFactorAuthentication = async () => {
             </div>
             <Button variant="outline"
                     class="my-2"
-                    :disabled="!user?.hasNewSession"
+                    :disabled="!userStore?.hasNewSession"
                     @click="getRecoveryCode()">
                 Show Recovery Code
             </Button>
             <Button variant="outline"
                     class="my-2"
-                    :disabled="!user?.hasNewSession"
+                    :disabled="!userStore?.hasNewSession"
                     @click="generateNewRecoveryCode()">
                 Generate New Recovery Code
             </Button>
             <Button class="my-2"
                     variant="destructive"
-                    :disabled="!user?.hasNewSession"
+                    :disabled="!userStore?.hasNewSession"
                     @click="removeTwoFactorAuthentication()">
                 Remove 2FA
             </Button>

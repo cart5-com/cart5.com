@@ -1,15 +1,15 @@
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { type User } from "lib/apiClients/authApiClient";
-import { atom } from 'nanostores'
+import { ref } from 'vue'
 
-export const $userStore = atom<User | null>(null);
+export const userStore = ref<User | null>(null)
 
-export const refreshUserData = async () => {
+export async function refreshUserData() {
     const { data, error } = await (await getAuthApiClient().api.user.whoami.$post()).json();
     if (error) {
         console.error(error);
-        $userStore.set(null);
+        userStore.value = null
     } else {
-        $userStore.set(data);
+        userStore.value = data
     }
 }
