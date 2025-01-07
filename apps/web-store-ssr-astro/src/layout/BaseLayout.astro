@@ -37,7 +37,7 @@ const { title } = Astro.props;
 				display: none;
 			}
 			.cache-date {
-				border: 1px solid red;
+				border: 1px solid green;
 				padding: 3px;
 				border-radius: 3px;
 			}
@@ -58,6 +58,7 @@ const { title } = Astro.props;
 			if (cacheDateSpanElement) {
 				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
 			}
+			console.log("green ✅ cacheDateSpanElement");
 			console.log(cacheDateSpanElement);
 		</script>
 	</body>
