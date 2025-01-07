@@ -36,6 +36,11 @@ const { title } = Astro.props;
 			.hidden {
 				display: none;
 			}
+			.cache-date {
+				border: 1px solid red;
+				padding: 3px;
+				border-radius: 3px;
+			}
 		</style>
 		<hr />
 		<!-- <h2>SSR User Info</h2>
@@ -53,6 +58,7 @@ const { title } = Astro.props;
 			if (cacheDateSpanElement) {
 				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
 			}
+			console.log(cacheDateSpanElement);
 		</script>
 	</body>
 </html>
