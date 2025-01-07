@@ -41,5 +41,17 @@ const { title } = Astro.props;
 		<pre id="ssr-user-info">{
 		JSON.stringify(Astro.locals.USER, null, 2)
 		}</pre>
+		<hr />
+		<div>
+			cache:
+			<span class="cache-date" data-cache-date={Date.now()}></span>
+		</div>
+		<script>
+			import { formatDate } from "lib/utils/formatDate";
+			const cacheDateSpanElement = document.querySelector<HTMLSpanElement>(".cache-date");
+			if (cacheDateSpanElement) {
+				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
+			}
+		</script>
 	</body>
 </html>

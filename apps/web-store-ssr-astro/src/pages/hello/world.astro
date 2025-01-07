@@ -1,19 +1,7 @@
 ---
 import BaseLayout from "../../layout/BaseLayout.astro";
 
-const dateTs = Date.now();
 Astro.response.headers.set("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
 ---
 
 <BaseLayout title="Web Store hello/world.astro" />
-<div>
-	cache:
-	<span class="cache-date" data-cache-date={dateTs}></span>
-</div>
-<script>
-	import { formatDate } from "lib/utils/formatDate";
-	const cacheDateSpanElement = document.querySelector<HTMLSpanElement>(".cache-date");
-	if (cacheDateSpanElement) {
-		cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
-	}
-</script>
