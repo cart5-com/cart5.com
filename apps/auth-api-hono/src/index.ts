@@ -95,7 +95,7 @@ const routes = app.basePath('/api')
 	.route('/email_password', emailPasswordRoute)
 	.route('/cross_domain', crossDomainRoute)
 	.route('/google_oauth', googleOAuthRoute)
-	.route('/two-factor-auth', twoFactorAuthRoute)
+	.route('/two_factor_auth', twoFactorAuthRoute)
 
 export type AuthAppType = typeof routes;
 
