@@ -3,7 +3,6 @@ interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-const INTERNAL_AUTH_API_ORIGIN = import.meta.env.INTERNAL_AUTH_API_ORIGIN;
 ---
 
 <html lang="en">
@@ -21,7 +20,7 @@ const INTERNAL_AUTH_API_ORIGIN = import.meta.env.INTERNAL_AUTH_API_ORIGIN;
 				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
 			</li>
 		</ul>
-		<h4>{title} INTERNAL_AUTH_API_ORIGIN:{INTERNAL_AUTH_API_ORIGIN}</h4>
+		<h4>{title}</h4>
 		<hr />
 		<button id="whoami-button">Who am I</button>
 		<pre id="whoami-result"></pre>
