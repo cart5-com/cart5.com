@@ -97,7 +97,7 @@ const routes = app.basePath('/api')
 	.route('/google_oauth', googleOAuthRoute)
 	.route('/two_factor_auth', twoFactorAuthRoute)
 
-export type AuthAppType = typeof routes;
+export type AuthApiAppType = typeof routes;
 
 const port = 3000;
 serve({
