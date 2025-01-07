@@ -52,7 +52,7 @@ function openUpdatePasswordDialog() {
     <div>
         <details class="mb-4 px-4">
             <summary class="cursor-pointer w-full flex items-center gap-2 bg-secondary p-2 rounded-md">
-                <ShieldCheck stroke-width="3" /> Security
+                <ShieldCheck stroke-width="3" /> {{ $t('security') }}
             </summary>
             <div class="my-4">
                 <Alert v-if="userStore?.hasNewSession">

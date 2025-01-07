@@ -140,6 +140,9 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.2)
+      vue-i18n:
+        specifier: ^11.0.1
+        version: 11.0.1(vue@3.5.13(typescript@5.7.2))
       vue-tsc:
         specifier: ^2.2.0
         version: 2.2.0(typescript@5.7.2)
@@ -1260,6 +1263,18 @@ packages:
   '@internationalized/number@3.6.0':
     resolution: {integrity: sha512-PtrRcJVy7nw++wn4W2OuePQQfTqDzfusSuY1QTtui4wa7r+rGVtR75pO8CyKvHvzyQYi3Q1uO5sY0AsB4e65Bw==}
 
+  '@intlify/core-base@11.0.1':
+    resolution: {integrity: sha512-NAmhw1l/llM0HZRpagR/ChJTNymW4ll6/4EDSJML5c8L5Hl/+k6UyF8EIgE6DeHpfheQujkSRngauViHqq6jJQ==}
+    engines: {node: '>= 16'}
+
+  '@intlify/message-compiler@11.0.1':
+    resolution: {integrity: sha512-5RFH8x+Mn3mbjcHXnb6KCXGiczBdiQkWkv99iiA0JpKrNuTAQeW59Pjq/uObMB0eR0shnKYGTkIJxum+DbL3sw==}
+    engines: {node: '>= 16'}
+
+  '@intlify/shared@11.0.1':
+    resolution: {integrity: sha512-lH164+aDDptHZ3dBDbIhRa1dOPQUp+83iugpc+1upTOWCnwyC1PVis6rSWNMMJ8VQxvtHQB9JMib48K55y0PvQ==}
+    engines: {node: '>= 16'}
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1328,6 +1343,7 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.5':
     resolution: {integrity: sha512-RHaxQB4+wttd3H8GXofoaFalzIpuicr8DlD7yuVN3rAy5OsOP6ny+Tu12Iz/IQrgA4vvKAFxJt3AJxqhs8Ltcg==}
+    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
@@ -1912,6 +1928,9 @@ packages:
 
   '@vue/compiler-vue2@2.7.16':
     resolution: {integrity: sha512-qYC3Psj9S/mfu9uVi5WvNZIzq+xnXMhOwbTFKKDD7b1lhpnn71jXSFdTQ+WsIEk0ONCd7VV2IMm7ONl6tbQ86A==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/devtools-api@7.6.7':
     resolution: {integrity: sha512-PV4I31WaV2rfA8RGauM+69uFEzWkqtP561RiLU2wK+Ce85u3zyKW3aoESlLCNzkc4y0JaJyskH6zAE3xWOP8+Q==}
@@ -3104,6 +3123,7 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lilconfig@3.1.3:
@@ -4366,6 +4386,12 @@ packages:
       '@vue/composition-api':
         optional: true
 
+  vue-i18n@11.0.1:
+    resolution: {integrity: sha512-pWAT8CusK8q9/EpN7V3oxwHwxWm6+Kp2PeTZmRGvdZTkUzMQDpbbmHp0TwQ8xw04XKm23cr6B4GL72y3W8Yekg==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      vue: ^3.0.0
+
   vue-screen-utils@1.0.0-beta.13:
     resolution: {integrity: sha512-EJ/8TANKhFj+LefDuOvZykwMr3rrLFPLNb++lNBqPOpVigT2ActRg6icH9RFQVm4nHwlHIHSGm5OY/Clar9yIg==}
     peerDependencies:
@@ -5244,6 +5270,18 @@ snapshots:
     dependencies:
       '@swc/helpers': 0.5.15
 
+  '@intlify/core-base@11.0.1':
+    dependencies:
+      '@intlify/message-compiler': 11.0.1
+      '@intlify/shared': 11.0.1
+
+  '@intlify/message-compiler@11.0.1':
+    dependencies:
+      '@intlify/shared': 11.0.1
+      source-map-js: 1.2.1
+
+  '@intlify/shared@11.0.1': {}
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -5967,6 +6005,8 @@ snapshots:
     dependencies:
       de-indent: 1.0.2
       he: 1.2.0
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/devtools-api@7.6.7':
     dependencies:
@@ -8710,6 +8750,13 @@ snapshots:
 
   vue-demi@0.14.10(vue@3.5.13(typescript@5.7.2)):
     dependencies:
+      vue: 3.5.13(typescript@5.7.2)
+
+  vue-i18n@11.0.1(vue@3.5.13(typescript@5.7.2)):
+    dependencies:
+      '@intlify/core-base': 11.0.1
+      '@intlify/shared': 11.0.1
+      '@vue/devtools-api': 6.6.4
       vue: 3.5.13(typescript@5.7.2)
 
   vue-screen-utils@1.0.0-beta.13(vue@3.5.13(typescript@5.7.2)):

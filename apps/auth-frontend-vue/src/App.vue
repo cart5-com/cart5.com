@@ -26,13 +26,13 @@ import AskView from '@src/views/user/AskView.vue';
           class="container max-w-lg mx-auto px-4">
       <TabsList class="grid w-full grid-cols-3">
         <TabsTrigger value="login">
-          Login
+          {{ $t('login') }}
         </TabsTrigger>
         <TabsTrigger value="signup">
-          Signup
+          {{ $t('signup') }}
         </TabsTrigger>
         <TabsTrigger value="otp">
-          OTP
+          {{ $t('otp') }}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="login">

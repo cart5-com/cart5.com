@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-vue-next";
 import { getNextUrl, getNextHostname } from "@src/lib/queryHelpers";
 import { onMounted, ref } from 'vue';
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
-const buttonText = ref('Go back');
+const buttonText = ref(t('goBackTo'));
 
 function handleClick() {
 	const nextUrl = getNextUrl();
@@ -18,7 +20,7 @@ function handleClick() {
 onMounted(() => {
 	const nextHostname = getNextHostname();
 	if (nextHostname) {
-		buttonText.value = `Go back to ${nextHostname}`;
+		buttonText.value = t('goBackTo', { hostname: nextHostname });
 	}
 });
 </script>

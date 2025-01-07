@@ -14,6 +14,6 @@ async function handleLogout() {
 	<Button class="w-full"
 			variant="secondary"
 			@click="handleLogout">
-		Logout
+		{{ $t('logout') }}
 	</Button>
 </template>

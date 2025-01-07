@@ -33,6 +33,6 @@ const handleGoogleClick = () => {
 				  d="M20 12c2.93 0 5.55 1.01 7.62 2.98l5.76-5.76C29.92 5.98 25.39 4 20 4 12.18 4 5.43 8.49 2.14 15.03l6.7 5.2C10.41 15.51 14.81 12 20 12z">
 			</path>
 		</svg>
-		Continue with Google
+		{{ $t('continueWithGoogle') }}
 	</Button>
 </template>

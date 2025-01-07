@@ -10,6 +10,8 @@ import { object as z_object, string as z_string, type infer as z_infer } from "z
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { refreshUserData, userStore } from '@src/stores/userStore';
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 const emit = defineEmits<{
     close: [values: z_infer<typeof schema>],
@@ -20,11 +22,11 @@ const emit = defineEmits<{
 const schema = z_object({
     email: z_string(),
     password: z_string()
-        .min(8, { message: "min 8, use only StroNg_P@ssw0rd" })
+        .min(8, { message: t('passwordWarning') })
         .max(255, { message: "max 255" }),
     confirm: z_string(),
 }).refine(data => data.password === data.confirm, {
-    message: 'Passwords must match.',
+    message: t('passwordsMustMatch'),
     path: ['confirm'],
 })
 
@@ -46,12 +48,12 @@ async function onSubmit(values: z_infer<typeof schema>) {
             handleError(error, form);
             if (error.code === "FRESH_SESSION_REQUIRED") {
                 refreshUserData();
-                toast.error("Fresh session required", {
-                    description: "Please logout and login again"
+                toast.error(t('freshSessionRequired'), {
+                    description: t('pleaseLogoutAndLoginAgain')
                 });
             }
         } else {
-            toast.success("Password updated");
+            toast.success(t('passwordUpdated'));
             emit("cancel");
         }
     })
@@ -66,13 +68,13 @@ async function onSubmit(values: z_infer<typeof schema>) {
               @submit="onSubmit"
               :field-config="{
                 email: {
-                    label: 'Your email',
+                    label: t('yourEmail'),
                     inputProps: {
                         disabled: true,
                     },
                 },
                 password: {
-                    label: 'New password',
+                    label: t('newPassword'),
                     inputProps: {
                         type: 'password',
                         autofocus: true,
@@ -80,7 +82,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
                     },
                 },
                 confirm: {
-                    label: 'Confirm password',
+                    label: t('confirmPassword'),
                     inputProps: {
                         type: 'password',
                         autocomplete: 'new-password',
@@ -97,11 +99,11 @@ async function onSubmit(values: z_infer<typeof schema>) {
                     class="w-full my-6">
                 <Loader2 v-if="isLoading"
                          class="animate-spin" />
-                Update
+                {{ t('update') }}
             </Button>
         </div>
     </AutoForm>
 
     <Button variant="secondary"
-            @click="emit('cancel')"> Cancel </Button>
+            @click="emit('cancel')"> {{ t('cancel') }} </Button>
 </template>

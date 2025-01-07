@@ -11,7 +11,7 @@ import LogoutButton from "@src/components/LogoutButton.vue";
     <Card>
         <CardContent class="space-y-6">
             <GoBackButton />
-            <h1 class="my-6 text-2xl font-bold">Settings</h1>
+            <h1 class="my-6 text-2xl font-bold">{{ $t('settings') }}</h1>
             <UserDetails />
             <LogoutButton />
             <Separator class="my-10" />

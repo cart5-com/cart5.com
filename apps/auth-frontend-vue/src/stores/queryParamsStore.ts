@@ -3,13 +3,15 @@ import { ref } from 'vue'
 interface QueryParams {
     auth: "login" | "signup" | "otp" | null;
     type: "ask" | "settings" | null;
+    lang: "en" | null;
     next: string | null;
 }
 
 export const queryParamsStore = ref<QueryParams>({
     auth: null,
     type: null,
-    next: null
+    lang: null,
+    next: null,
 });
 
 export const getQueryParams = (): QueryParams => {
@@ -18,6 +20,7 @@ export const getQueryParams = (): QueryParams => {
     return {
         auth: (entries.auth as "login" | "signup" | "otp") || "login",
         type: (entries.type as "ask" | "settings") || "settings",
+        lang: (entries.lang as "en") || "en",
         next: entries.next || `https://www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/`
     };
 }
