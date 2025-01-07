@@ -8,8 +8,8 @@ import { getQueryParams, queryParamsStore } from "./stores/queryParamsStore";
 const queryParams = getQueryParams();
 queryParamsStore.value = queryParams;
 const i18n = createI18n({
+    legacy: false,
     locale: queryParams.lang || 'en',
-    globalInjection: true,
     fallbackLocale: 'en',
     messages: {
         en: {
@@ -20,7 +20,6 @@ const i18n = createI18n({
             settings: 'Settings',
             goBackTo: 'Go back to {hostname}',
             continueWithGoogle: 'Continue with Google',
-            passwordWarning: "min 8, use only StroNg_P@ssw0rd",
             passwordsMustMatch: "Passwords must match",
             freshSessionRequired: "Fresh session required",
             pleaseLogoutAndLoginAgain: "Please logout and login again",
@@ -40,7 +39,6 @@ const i18n = createI18n({
             settings: 'Ayarlar',
             goBackTo: '{hostname}\'e geri dön',
             continueWithGoogle: 'Google ile devam et',
-            passwordWarning: "min 8, güçlü bir şifre kullanın StroNg_P@ssw0rd",
             passwordsMustMatch: "Şifreler eşleşmelidir",
             freshSessionRequired: "yeni oturum gerekli",
             pleaseLogoutAndLoginAgain: "Lütfen çıkış yapın ve tekrar giriş yapın",
@@ -60,7 +58,6 @@ const i18n = createI18n({
             settings: 'Configuración',
             goBackTo: 'Volver a {hostname}',
             continueWithGoogle: 'Continuar con Google',
-            passwordWarning: "mín 8, use solo StroNg_P@ssw0rd",
             passwordsMustMatch: "Las contraseñas deben coincidir",
             freshSessionRequired: "Nueva sesión requerida",
             pleaseLogoutAndLoginAgain: "Por favor cierre la sesión y vuelva a iniciar sesión",

@@ -22,7 +22,7 @@ const emit = defineEmits<{
 const schema = z_object({
     email: z_string(),
     password: z_string()
-        .min(8, { message: t('passwordWarning') })
+        .min(8, { message: "min 8, use only StroNg_P@ssw0rd" })
         .max(255, { message: "max 255" }),
     confirm: z_string(),
 }).refine(data => data.password === data.confirm, {
@@ -71,6 +71,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
                     label: t('yourEmail'),
                     inputProps: {
                         disabled: true,
+                        autocomplete: 'email',
                     },
                 },
                 password: {
