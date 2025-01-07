@@ -123,8 +123,9 @@ sudo apt update
 sudo apt install xcaddy -y
 
 # install caddy-ratelimit https://github.com/mholt/caddy-ratelimit
+# and cache plugin https://github.com/darkweak/souin/plugins/caddy
 # it takes a while to build ⏳🥲
-xcaddy build --with github.com/mholt/caddy-ratelimit
+xcaddy build --with github.com/mholt/caddy-ratelimit --with github.com/darkweak/souin/plugins/caddy
 
 # replace old caddy with new caddy
 sudo mv /usr/bin/caddy /usr/bin/caddy-old
@@ -134,7 +135,6 @@ sudo systemctl start caddy
 # sudo systemctl reload caddy
 # sudo ufw allow 80 && sudo ufw allow 443 # maybe required for xcaddy
 # ========================================================================
-
 
 
 
