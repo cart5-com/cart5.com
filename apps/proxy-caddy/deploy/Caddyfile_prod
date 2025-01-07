@@ -1,6 +1,8 @@
 {
 	#debug
-	cache
+	cache {
+		default_cache_control no-store
+	}
 	on_demand_tls {
 		ask http://127.0.0.1:5555/
 		# https://caddyserver.com/docs/caddyfile/options#on-demand-tls
