@@ -41,6 +41,7 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	handle_path /* {
 		#auth-frontend-vue
 		reverse_proxy http://127.0.0.1:3001
+		cache
 	}
 }
 
