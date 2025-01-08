@@ -76,4 +76,4 @@ manageAccountButton.addEventListener("click", async () => {
 });
 
 
-console.log("blue ✅✅✅🟨🟨🟨🔵⚫️🟪🟢🟨🟨🟨 clientScripts/helper.ts");
+console.log("blue 🔴🔴🔴✅✅✅🟨🟨🟨🔵⚫️🟪🟢🟨🟨🟨 clientScripts/helper.ts");
