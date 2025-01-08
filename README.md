@@ -79,5 +79,8 @@ Add to /etc/hosts
 ## [TODOS]
 
 - [DONE]: make caddy optional for development
+- [ ] TODO: use s3/r2 for static assets
+- [ ] TODO: start a simple blog
 - [ ] TODO: add rate limiting for prod caddy config
 - [ ] TODO: add sentry
+- [ ] TODO: seed dev database with sample data

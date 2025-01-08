@@ -15,6 +15,10 @@ export default defineConfig({
     port: parseInt(process.env.PORT || '3002'),
   },
   vite: {
+    build: {
+      sourcemap: true,
+      minify: true,
+    },
     server: {
       host: '0.0.0.0',
       proxy: {
