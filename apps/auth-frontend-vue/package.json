@@ -7,7 +7,7 @@
     "dev": "dotenvx run -- vite --port 3001",
     "dev:caddy": "pnpm dev",
     "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
-    "start": "http-server dist -s -p 3001 -a 0.0.0.0 -d false --log-ip false -c-1 --cors --gzip --brotli --proxy http://127.0.0.1:3001?"
+    "start": "http-server dist -s -p 3001 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3001?"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
