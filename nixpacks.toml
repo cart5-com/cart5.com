@@ -1,6 +1,13 @@
 [phases.setup]
 nixPkgs = ['...', 'awscli2']
 
+[phases.build]
+cmds = [
+    '...', 
+    # Purge cache on production after build
+    'cd apps/proxy-caddy && pnpm prod:cache:purge'
+]
+
 # No need to repeat the whole configuration,
 # Nixpacks is smart enough to add packages without repeating the whole configuration
 # [phases.install]
@@ -9,8 +16,6 @@ nixPkgs = ['...', 'awscli2']
 #     'pnpm i --frozen-lockfile'
 # ]
 
-# [phases.build]
-# cmds = ['pnpm run build']
 
 # [start]
 # cmd = 'pnpm run start'

@@ -4,6 +4,7 @@
   become: yes
   vars:
     PROXY_PRIVATE_KEY: "{{ lookup('env', 'PROXY_PRIVATE_KEY') }}"
+    SOUIN_API_BASEPATH: "{{ lookup('env', 'SOUIN_API_BASEPATH') }}"
     PUBLIC_DOMAIN_NAME: "{{ lookup('env', 'PUBLIC_DOMAIN_NAME') }}"
   tasks:
     - name: Add PROXY_PRIVATE_KEY to Caddy service environment
@@ -12,7 +13,7 @@
         block: |
           Environment="PROXY_PRIVATE_KEY={{ PROXY_PRIVATE_KEY }}"
           Environment="PUBLIC_DOMAIN_NAME={{ PUBLIC_DOMAIN_NAME }}"
-
+          Environment="SOUIN_API_BASEPATH={{ SOUIN_API_BASEPATH }}"
           # Automatically restart caddy if it crashes except if the exit code was 1
           RestartPreventExitStatus=1
           Restart=on-failure

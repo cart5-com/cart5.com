@@ -3,7 +3,11 @@
 	cache {
 		default_cache_control no-store
 		# to maintain server-side caching even when clients send no-cache headers
-		mode bypass_request 
+		mode bypass_request
+		api {
+			souin # Enables the Souin API endpoint
+			basepath {$SOUIN_API_BASEPATH}
+		}
 	}
 	on_demand_tls {
 		ask http://127.0.0.1:5555/
