@@ -1,7 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
 import node from "@astrojs/node";
+
+console.log("🟨process.env.GIT_HASH", process.env.GIT_HASH)
 
 // https://astro.build/config
 export default defineConfig({

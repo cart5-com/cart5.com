@@ -4,8 +4,14 @@ import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
 
+console.log("🟨process.env.GIT_HASH", process.env.GIT_HASH)
+
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production'
+    // ? 'https://cdn.mydomain.com/auth-frontend-vue/'
+    ? '/'
+    : '/',
   server: {
     host: '0.0.0.0',
     proxy: {
@@ -36,4 +42,4 @@ export default defineConfig({
       // 'vue': 'vue/dist/vue.esm-bundler.js',
     },
   },
-})
+}))

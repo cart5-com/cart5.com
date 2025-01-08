@@ -3,6 +3,7 @@
   "ui": "stream",
   "globalEnv": [
     "DOTENV_PRIVATE_KEY_PRODUCTION",
+    "GIT_HASH",
     "PORT"
   ],
   "tasks": {

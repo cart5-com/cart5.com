@@ -20,3 +20,5 @@ require("esbuild").build({
         `,
     },
 });
+
+console.log("🟨process.env.GIT_HASH", process.env.GIT_HASH)
