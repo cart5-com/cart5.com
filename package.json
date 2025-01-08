@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "GIT_HASH=$(git rev-parse HEAD) turbo build",
+    "build": "turbo build",
     "dev": "turbo dev",
     "dev:caddy": "turbo dev:caddy",
     "start": "turbo start",

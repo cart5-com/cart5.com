@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
 
-console.log("🟨process.env.GIT_HASH", process.env.GIT_HASH)
+console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({

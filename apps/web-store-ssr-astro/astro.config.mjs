@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import node from "@astrojs/node";
 
-console.log("🟨process.env.GIT_HASH", process.env.GIT_HASH)
+console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
 // https://astro.build/config
 export default defineConfig({
