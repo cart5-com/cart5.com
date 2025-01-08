@@ -7,8 +7,9 @@ cmds = [
     # Purge cache on production after build
     'cd apps/proxy-caddy && pnpm prod:cache:purge'
 ]
-[start]
-cmd = 'cd apps/proxy-caddy && pnpm prod:cache:purge && cd ../../ && pnpm run start'
+
+# [start]
+# cmd = 'cd apps/proxy-caddy && pnpm prod:cache:purge && cd ../../ && pnpm run start'
 
 
 # No need to repeat the whole configuration,
