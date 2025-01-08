@@ -3,9 +3,13 @@ import { env } from 'hono/adapter'
 import { Hono } from "hono";
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
+import type { User } from 'lib/apiClients/authApiClient';
+import { csrfChecks } from './middlewares/csrf';
+import { authChecks } from './middlewares/auth';
 
 export type HonoVariables = {
 	IS_PROD: boolean,
+	USER: User | null;
 }
 
 type Bindings = HttpBindings & {
@@ -28,8 +32,8 @@ app.use(async (c, next) => {
 	c.set('IS_PROD', IS_PROD)
 	await next()
 })
-// app.use(csrfChecks);
-// app.use(authChecks);
+app.use(csrfChecks);
+app.use(authChecks);
 app.use(secureHeaders());
 
 app.onError((err, c) => {
@@ -60,7 +64,8 @@ app.onError((err, c) => {
 
 app.get("/", (c) => {
 	const IS_PROD = c.get('IS_PROD');
-	return c.html(`Hello ecom api ${IS_PROD ? "PROD" : "DEV"}`);
+	const USER = c.get('USER');
+	return c.html(`Hello ecom api ${IS_PROD ? "PROD" : "DEV"} ${USER ? JSON.stringify(USER) : "no user"}`);
 });
 
 const routes = app.basePath('/api')

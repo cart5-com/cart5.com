@@ -9,7 +9,7 @@ import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
 import type { honoTypes } from "../../index";
 
-export async function createSession(c: Context<honoTypes>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
+async function createSession(c: Context<honoTypes>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const session: Session = {
         id: sessionId,

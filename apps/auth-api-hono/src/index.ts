@@ -13,6 +13,7 @@ import { emailPasswordRoute } from './routes/emailPasswordRoute';
 import { crossDomainRoute } from './routes/crossDomainRoute';
 import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
+import { authBearerTokenChecks } from './middlewares/authBearerToken';
 
 export type HonoVariables = {
 	SESSION: Session | null,
@@ -55,6 +56,8 @@ app.use(async (c, next) => {
 })
 app.use(csrfChecks);
 app.use(authChecks);
+// authBearerTokenChecks must be after authChecks
+app.use(authBearerTokenChecks);
 app.use(secureHeaders());
 
 app.onError((err, c) => {

@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { verifyRequestOrigin } from "../utils/verifyRequestOrigin";
+import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
 import type { honoTypes } from "..";
 import { env } from "hono/adapter";
 
@@ -15,13 +15,7 @@ export const csrfChecks = createMiddleware<honoTypes>(async (c, next) => {
 			const originHeader = c.req.header()['origin'] ?? null;
 			const hostHeader = c.req.header()['host'] ?? null;
 			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-				// console.log("❌❌❌csrfChecks:403:hono");
-				// console.log("❌❌❌originHeader", originHeader);
-				// console.log("❌❌❌hostHeader", hostHeader);
-				// console.log("❌❌❌verifyRequestOrigin", verifyRequestOrigin(originHeader, [hostHeader]));
-				// console.log("❌❌❌internalAuthApiKey", internalAuthApiKey);
-				// console.log("❌❌❌env(c).INTERNAL_AUTH_API_KEY", env(c).INTERNAL_AUTH_API_KEY);
-				return c.body("csrfChecks:403:hono", 403);
+				return c.body("csrfChecks:403:auth-api-hono", 403);
 			}
 			await next();
 		}

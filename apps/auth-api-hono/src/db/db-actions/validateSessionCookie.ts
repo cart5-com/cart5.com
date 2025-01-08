@@ -12,7 +12,8 @@ import type { honoTypes } from "../../index";
 export const validateSessionCookie = async (
     c: Context<honoTypes>,
     sessionCookieValue: string,
-    hostname: string
+    hostname: string,
+    ignoreUpdateSessionExpiration: boolean = false // default:do not ignore
 ): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionCookieValue)));
     const [databaseSession, databaseUser] = await getSessionAndUser(c, sessionId);
@@ -40,13 +41,15 @@ export const validateSessionCookie = async (
         expiresAt: databaseSession.expiresAt,
         createdAtTs: databaseSession.createdAtTs
     };
-    const activePeriodExpirationDate = new Date(
-        databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
-    );
-    if (!isWithinExpirationDate(activePeriodExpirationDate)) {
-        session.fresh = true;
-        session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
-        await updateSessionExpiration(c, databaseSession.id, session.expiresAt);
+    if (ignoreUpdateSessionExpiration === false) {
+        const activePeriodExpirationDate = new Date(
+            databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
+        );
+        if (!isWithinExpirationDate(activePeriodExpirationDate)) {
+            session.fresh = true;
+            session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
+            await updateSessionExpiration(c, databaseSession.id, session.expiresAt);
+        }
     }
     return { user: databaseUser, session };
 }
