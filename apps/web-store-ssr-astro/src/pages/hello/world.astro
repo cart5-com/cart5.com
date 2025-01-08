@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layout/BaseLayout.astro";
 
-Astro.response.headers.set("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
+Astro.response.headers.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=7200");
 ---
 
 <BaseLayout title="Web Store hello/world.astro" />
