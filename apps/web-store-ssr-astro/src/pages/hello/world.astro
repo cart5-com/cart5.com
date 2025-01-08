@@ -1,8 +1,5 @@
 ---
 import BaseLayout from "../../layout/BaseLayout.astro";
-
-Astro.response.headers.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=7200");
-Astro.response.headers.set("ETag", import.meta.env.SOURCE_COMMIT || "dev");
 ---
 
 <BaseLayout title="Web Store hello/world.astro" />

@@ -3,8 +3,6 @@ interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-// const user = Astro.locals.USER;
-// console.log("user", user);
 ---
 
 <html lang="en">
@@ -44,12 +42,6 @@ const { title } = Astro.props;
 				border-radius: 3px;
 			}
 		</style>
-		<!-- <hr />
-		<h2>SSR User Info</h2>
-		<pre id="ssr-user-info">{
-		JSON.stringify(Astro.locals.USER, null, 2)
-		}</pre>
-		<hr /> -->
 		<div>
 			💩💩💩💩cache:
 			<span class="cache-date" data-cache-date={Date.now()}></span>

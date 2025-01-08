@@ -2,6 +2,10 @@ import { defineMiddleware } from "astro:middleware";
 import { createAuthApiClient } from 'lib/apiClients/authApiClient'
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 
+/** @deprecated 
+ * because global cache configured for whole ssr astro app, 
+ * /src/middleware/cacheHeaders.ts 
+ * */
 export const authMiddleware = defineMiddleware(async (context, next) => {
     // Skip auth check if no session cookie exists
     if (!context.cookies.get(SESSION_COOKIE_NAME)?.value) {
