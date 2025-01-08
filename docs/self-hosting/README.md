@@ -98,7 +98,7 @@ https://coolify.io/docs/installation
 
 - stop coolify's proxy
 - start turborepo app in coolify
-- expose 3000,3001,3002 ports to caddy
+- expose 3000,3001,3002,3003 ports to caddy
 
 7. Deploy caddy:
 

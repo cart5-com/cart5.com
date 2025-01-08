@@ -2,6 +2,7 @@
   "name": "lib",
   "type": "module",
   "dependencies": {
-    "hono": "^4.6.12"
+    "hono": "^4.6.12",
+    "@oslojs/encoding": "1.1.0"
   }
 }

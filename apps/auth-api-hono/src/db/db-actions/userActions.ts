@@ -3,7 +3,7 @@ import type { honoTypes } from "../../index";
 import type { Context } from "hono";
 import getDrizzleDb from "../drizzle";
 import { userTable } from "../schema";
-import { generateKey } from "../../utils/generateKey";
+import { generateKey } from "lib/utils/generateKey";
 
 export async function upsertUser(c: Context<honoTypes>, email: string, passwordHash: string | null = null) {
     let existingUser = await getUserByEmail(c, email);

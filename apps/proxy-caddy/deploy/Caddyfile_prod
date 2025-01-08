@@ -32,6 +32,13 @@ http://127.0.0.1:5555 {
 	}
 }
 
+(ecom-api-hono-proxy) {
+	handle_path /__p_ecom/* {
+		#auth-api-hono
+		reverse_proxy http://127.0.0.1:3003
+	}
+}
+
 # redirect to HTTPS
 :80 {
 	redir https://{host}{uri}
@@ -54,6 +61,7 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 		on_demand
 	}
 	import auth-api-hono-proxy
+	import ecom-api-hono-proxy
 	handle_path /* {
 		#web-store-ssr-astro
 		reverse_proxy http://127.0.0.1:3002

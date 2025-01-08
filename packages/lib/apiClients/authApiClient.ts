@@ -1,6 +1,6 @@
 import type { AuthApiAppType } from '../../../apps/auth-api-hono/src/index'
-import { hc } from 'hono/client'
 import type { InferRequestType, InferResponseType } from 'hono/client'
+import { hc } from 'hono/client'
 
 export const createAuthApiClient = (baseUrl: string = '/__p_auth/') => {
     const calculatedApiClient = hc<AuthApiAppType>(baseUrl)
