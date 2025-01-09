@@ -132,6 +132,11 @@ sudo mv /usr/bin/caddy /usr/bin/caddy-old
 sudo mv caddy /usr/bin/caddy
 
 sudo systemctl start caddy
+# see logs
+# journalctl -f -u caddy
+
+# cert path: /var/lib/caddy/.local/share/caddy/config/config.json
+
 # sudo systemctl reload caddy
 # sudo ufw allow 80 && sudo ufw allow 443 # maybe required for xcaddy
 # ========================================================================
