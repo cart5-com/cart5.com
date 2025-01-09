@@ -8,7 +8,7 @@ cmds = [
     'cd apps/proxy-caddy && pnpm prod:cache:purge'
 ]
 
-# [start]
+# [start] moved to proxy-caddy start command
 # cmd = 'cd apps/proxy-caddy && pnpm prod:cache:purge && cd ../../ && pnpm run start'
 
 

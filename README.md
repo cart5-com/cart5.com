@@ -32,6 +32,7 @@ Our Solution:
 - **UI**: Shadcn Vue
 - **Auth Frontend**: Vue (SPA)
 - **Auth Backend**: Hono (TypeScript)
+- **Dashboard Frontend**: Vue (SPA)
 - **Ecom Backend**: Hono (TypeScript)
 - **Store Frontend**: Astro (SSR-Node)
 - **Database**: SQLite with Drizzle ORM, TURSO for Production
@@ -43,6 +44,7 @@ Our Solution:
 apps/
 ├── auth-api-hono/ # Authentication API service
 ├── auth-frontend-vue/ # Authentication SPA
+├── dashboard-spa-vue/ # Dashboard SPA
 ├── ecom-api-hono/ # Ecommerce API service
 ├── web-store-ssr-astro/# Demo store with SSR
 └── proxy-caddy/ # Local development proxy (optional)
@@ -66,7 +68,7 @@ pnpm dev
 
 2. Access the demo store at http://localhost:3002
 
-## Caddy for Local Development Setup
+## Optional: Caddy for Local Development Setup
 
 `pnpm dev:caddy`
 
@@ -75,6 +77,7 @@ Add to /etc/hosts
 
 ```
 127.0.0.1 auth.cart5dev.com
+127.0.0.1 dashboard.cart5dev.com
 127.0.0.1 sample-store-1.com
 127.0.0.1 sample-store-2.com
 127.0.0.1 unknown-store.com
@@ -84,6 +87,7 @@ Add to /etc/hosts
 
 - [DONE]: make caddy optional for development
 - [DONE] create simple ecom api
+- [DONE] create empty dashboard page
 - [ ] TODO: use s3/r2 for static assets
 - [ ] TODO: start a simple blog
 - [ ] TODO: add rate limiting for prod caddy config

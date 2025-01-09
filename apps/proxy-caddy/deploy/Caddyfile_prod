@@ -19,8 +19,7 @@
 	}
 }
 
-# TODO: validate domain before SSL challenge 
-# disable all for now
+# TODO: validate domain before SSL challenge # disable all for now
 http://127.0.0.1:5555 {
 	respond 404
 }
@@ -53,6 +52,18 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 		#auth-frontend-vue
 		reverse_proxy http://127.0.0.1:3001
 		cache
+	}
+}
+
+https://dashboard.{$PUBLIC_DOMAIN_NAME} {
+	tls {
+		on_demand
+	}
+	import auth-api-hono-proxy
+	import ecom-api-hono-proxy
+	handle_path /* {
+		#auth-frontend-vue
+		reverse_proxy http://127.0.0.1:3004
 	}
 }
 
