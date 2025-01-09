@@ -14,9 +14,7 @@ export const cacheHeadersMiddleware = defineMiddleware(async ({ request }, next)
             // 5 min cache, 10 min stale, better than no cache
             response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
         }
-        response.headers.set('X-Deployment-ID', import.meta.env.SOURCE_COMMIT || 'DEV');
-        response.headers.set('X-Source-Version', import.meta.env.SOURCE_COMMIT || 'DEV');
-        response.headers.set("ETag", import.meta.env.SOURCE_COMMIT || "dev");
+        response.headers.set('ETag', `"${import.meta.env.SOURCE_COMMIT || 'DEV'}"`);
     }
     return response;
 });
