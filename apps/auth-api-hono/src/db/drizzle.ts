@@ -27,6 +27,7 @@ export const getDrizzleDb = function (c: Context<honoTypes>): ReturnType<typeof 
                 syncUrl: AUTHAPI_TURSO_DB_URL!,
                 syncInterval: 120,
             });
+            client.sync();
             db = drizzle(client);
             return db;
         } else {
