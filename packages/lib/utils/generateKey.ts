@@ -1,6 +1,6 @@
 import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 
-export const generateKey = (prefix = 'na', size = 24) => {
+export const generateKey = (prefix = 'na', size = 16) => {
     return `${prefix}_${generateIdFromEntropySize(size)}`;
 }
 

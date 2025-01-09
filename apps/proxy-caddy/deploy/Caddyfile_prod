@@ -20,9 +20,9 @@
 }
 
 # TODO: validate domain before SSL challenge 
-# allow all for now
+# disable all for now
 http://127.0.0.1:5555 {
-	respond 200
+	respond 404
 }
 
 (auth-api-hono-proxy) {
