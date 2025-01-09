@@ -1,4 +1,5 @@
 import { createAuthApiClient } from "lib/apiClients/authApiClient";
+import { getLoginUrl, getSettingsUrl, getSignupUrl } from "lib/clientUtils/getAuthOrigin";
 // this only provides the hono/client with typing
 // https://hono.dev/docs/guides/rpc
 // it does not include any server code, 
@@ -31,14 +32,12 @@ whoamiButton.addEventListener("click", whoAmI);
 
 const registerButton = document.getElementById("register-button") as HTMLButtonElement;
 registerButton.addEventListener("click", async () => {
-    const returnUrl = encodeURIComponent(window.location.href);
-    window.location.href = `${getAuthDomain()}/?next=${returnUrl}&type=ask&auth=signup`;
+    window.location.href = getSignupUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
 });
 
 const loginButton = document.getElementById("login-button") as HTMLButtonElement;
 loginButton.addEventListener("click", async () => {
-    const returnUrl = encodeURIComponent(window.location.href);
-    window.location.href = `${getAuthDomain()}/?next=${returnUrl}&type=ask&auth=login`;
+    window.location.href = getLoginUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
 });
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
@@ -50,19 +49,6 @@ logoutButton.addEventListener("click", async () => {
 
 const manageAccountButton = document.getElementById("manage-account-button") as HTMLButtonElement;
 manageAccountButton.addEventListener("click", async () => {
-    const returnUrl = encodeURIComponent(window.location.href);
-    window.location.href = `${getAuthDomain()}/?next=${returnUrl}&type=settings`;
+    window.location.href = getSettingsUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
 });
 
-const getAuthDomain = () => {
-    if (window.location.host.includes(':')) {
-        // Local development with port number
-        return 'http://localhost:3001';
-    } else if (window.location.host.includes('3002.app.github.dev')) {
-        // github codespaces
-        return window.location.origin.replace('3002', '3001');
-    } else {
-        // Production or other environments
-        return `https://auth.${import.meta.env.PUBLIC_DOMAIN_NAME}`;
-    }
-}

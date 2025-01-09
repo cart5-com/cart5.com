@@ -1,8 +1,17 @@
 import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
+import autoprefixer from 'autoprefixer'
+import tailwind from 'tailwindcss'
+
+console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production'
+    // ? 'https://cdn.mydomain.com/auth-frontend-vue/'
+    ? '/'
+    : '/',
   server: {
     host: '0.0.0.0',
     proxy: {
@@ -18,5 +27,25 @@ export default defineConfig({
       },
     },
   },
+  css: {
+    postcss: {
+      plugins: [tailwind(), autoprefixer()],
+    },
+  },
+  build: {
+    minify: true,
+    sourcemap: true,
+  },
   plugins: [vue()],
-})
+  resolve: {
+    alias: {
+      "@": fileURLToPath(
+        new URL("../../packages/ui-shadcn-vue/src", import.meta.url),
+      ),
+      "@dash": fileURLToPath(
+        new URL("./src", import.meta.url),
+      ),
+      // 'vue': 'vue/dist/vue.esm-bundler.js',
+    },
+  },
+}))
