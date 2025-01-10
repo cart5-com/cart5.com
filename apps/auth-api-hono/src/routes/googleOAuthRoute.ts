@@ -22,10 +22,17 @@ export const googleOAuthRoute = new Hono<honoTypes>()
             const IS_PROD = c.get('IS_PROD');
             const { redirect_uri } = c.req.valid('query');
 
-            if (!IS_PROD) {
-                // simulate a redirect to the google oauth page
-                return c.redirect(`/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
-            } else {
+            const {
+                GOOGLE_OAUTH_CLIENT_ID,
+                GOOGLE_OAUTH_CLIENT_SECRET,
+                GOOGLE_OAUTH_REDIRECT_URI
+            } = env(c);
+
+            if (
+                GOOGLE_OAUTH_CLIENT_ID &&
+                GOOGLE_OAUTH_CLIENT_SECRET &&
+                GOOGLE_OAUTH_REDIRECT_URI
+            ) {
                 const hostHeader = c.req.header()['host'];
                 if (!hostHeader) {
                     throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
@@ -60,6 +67,11 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 });
 
                 return c.redirect(url.toString());
+            } else if (!IS_PROD) {
+                // simulate a redirect to the google oauth page
+                return c.redirect(`/__p_auth/api/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
+            } else {
+                throw new KNOWN_ERROR("Google OAuth credentials not found", "GOOGLE_OAUTH_CREDENTIALS_NOT_FOUND");
             }
         }
     )
@@ -70,7 +82,9 @@ export const googleOAuthRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const IS_PROD = c.get('IS_PROD');
-            if (!IS_PROD) {
+            if (IS_PROD) {
+                return c.text('not allowed in prod');
+            } else {
                 const { redirect_uri } = c.req.valid('query');
                 return c.html(`<html>
                     <head>
@@ -92,8 +106,6 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                     </form>
                 </body>
                 </html>`);
-            } else {
-                return c.text('not allowed in prod');
             }
         }
     )
@@ -105,21 +117,18 @@ export const googleOAuthRoute = new Hono<honoTypes>()
         })),
         async (c) => {
             const IS_PROD = c.get('IS_PROD');
-            if (!IS_PROD) {
+            if (IS_PROD) {
+                return c.text('not allowed in prod');
+            } else {
                 const { email, redirect_uri } = c.req.valid('query');
                 const user = await upsertUser(c, email);
                 // if email is not verified, mark it as verified
                 if (!user.isEmailVerified) {
                     await markEmailAsVerified(c, email);
                 }
-
                 await createUserSessionAndSetCookie(c, user.id);
-
                 return c.redirect(decodeURIComponent(redirect_uri));
-            } else {
-                return c.text('not allowed in prod');
             }
-
         }
     )
     .get(
@@ -135,11 +144,6 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("No google oauth token", "NO_GOOGLE_OAUTH_TOKEN");
             }
             deleteCookie(c, GOOGLE_OAUTH_COOKIE_NAME);
-
-            const secFetchSite = c.req.header()['sec-fetch-site'];
-            if (secFetchSite !== 'cross-site') {
-                throw new KNOWN_ERROR("Invalid request origin", "INVALID_REQUEST_ORIGIN");
-            }
 
             const hostHeader = c.req.header()['host'];
             if (!hostHeader) {
