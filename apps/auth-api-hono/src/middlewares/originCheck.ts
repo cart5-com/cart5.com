@@ -16,7 +16,7 @@ export const originCheck = createMiddleware<honoTypes>(async (c, next) => {
         const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
         if (ENFORCE_HOSTNAME_CHECKS && origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
             console.log("originCheck: origin:", origin);
-            throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
+            throw new KNOWN_ERROR(`Invalid origin: ${origin}`, "INVALID_ORIGIN");
         }
         await next();
     }
