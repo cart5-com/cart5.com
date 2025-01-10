@@ -14,7 +14,7 @@ import { crossDomainRoute } from './routes/crossDomainRoute';
 import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
-import { originCheck } from './middlewares/originCheck';
+import { hostnameCheck } from './middlewares/hostnameCheck';
 
 export type HonoVariables = {
 	SESSION: Session | null,
@@ -55,7 +55,7 @@ app.use(async (c, next) => {
 	c.set('ENFORCE_HOSTNAME_CHECKS', (IS_CADDY_DEV || IS_PROD))
 	await next()
 });
-app.use(originCheck);
+app.use(hostnameCheck);
 app.use(csrfChecks);
 app.use(authChecks);
 // authBearerTokenChecks must be after authChecks
