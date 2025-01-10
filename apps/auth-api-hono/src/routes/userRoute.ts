@@ -7,7 +7,7 @@ import { deleteCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
-import { validateTurnstile } from '../utils/validateTurnstile';
+import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
 import { env } from 'hono/adapter';
 

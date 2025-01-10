@@ -1,4 +1,4 @@
-import { KNOWN_ERROR } from 'lib/errors';
+import { KNOWN_ERROR } from '../errors';
 
 export const validateTurnstile = async function (TURNSTILE_SECRET: string, token: string, remoteip?: string) {
     console.log("validateTurnstile: remoteip:", remoteip);

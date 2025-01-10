@@ -6,7 +6,7 @@ import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { sendUserOtpEmail } from '../utils/email';
-import { validateTurnstile } from '../utils/validateTurnstile';
+import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';

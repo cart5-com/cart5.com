@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { validateTurnstile } from '../utils/validateTurnstile';
+import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
 import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
