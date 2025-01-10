@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => ({
       "@": fileURLToPath(
         new URL("../../packages/ui-shadcn-vue/src", import.meta.url),
       ),
-      "@dash": fileURLToPath(
+      "@src": fileURLToPath(
         new URL("./src", import.meta.url),
       ),
       // 'vue': 'vue/dist/vue.esm-bundler.js',

@@ -29,7 +29,7 @@
       "@/*": [
         "../../packages/ui-shadcn-vue/src/*"
       ],
-      "@dash/*": [
+      "@src/*": [
         "./src/*"
       ]
     }

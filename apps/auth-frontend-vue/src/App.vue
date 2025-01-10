@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LayoutHelpers from '@/ui-plus/LayoutHelpers.vue'
+import DarkModeToggle from '@/ui-plus/DarkModeToggle.vue'
 import {
   Tabs,
   TabsContent,
@@ -54,5 +55,8 @@ import AskView from '@src/views/user/AskView.vue';
       </div>
     </div>
     <LayoutHelpers />
+    <div class="mx-auto my-4 max-w-fit">
+      <DarkModeToggle />
+    </div>
   </div>
 </template>
