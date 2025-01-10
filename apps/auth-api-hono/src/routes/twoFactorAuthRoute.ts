@@ -18,14 +18,6 @@ import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { env } from 'hono/adapter';
 
 export const twoFactorAuthRoute = new Hono<honoTypes>()
-    .use(async (c, next) => {
-        const origin = c.req.header()['origin'];
-        const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
-        if (ENFORCE_HOSTNAME_CHECKS && origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
-            throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
-        }
-        await next();
-    })
     .post(
         '/new',
         async (c) => {

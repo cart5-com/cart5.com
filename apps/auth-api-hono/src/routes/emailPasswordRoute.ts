@@ -16,14 +16,6 @@ import { sendUserOtpEmail } from '../utils/email';
 import { env } from 'hono/adapter';
 
 export const emailPasswordRoute = new Hono<honoTypes>()
-    .use(async (c, next) => {
-        const origin = c.req.header()['origin'];
-        const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
-        if (ENFORCE_HOSTNAME_CHECKS && origin !== `https://auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
-            throw new KNOWN_ERROR("Invalid origin", "INVALID_ORIGIN");
-        }
-        await next();
-    })
     .post(
         '/register',
         zValidator('form', z.object({

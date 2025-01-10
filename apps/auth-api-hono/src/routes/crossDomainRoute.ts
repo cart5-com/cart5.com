@@ -65,7 +65,7 @@ export const crossDomainRoute = new Hono<honoTypes>()
                 userId: user.id,
                 turnstile,
                 createdAtTimestamp: Date.now(),
-                sourceHost: new URL(refererHeader).hostname,
+                sourceHost: hostHeader,
                 targetHost: url.hostname
             };
             const { JWT_PRIVATE_KEY, ENCRYPTION_KEY } = env(c);

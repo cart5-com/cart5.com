@@ -1,6 +1,7 @@
 import { KNOWN_ERROR } from 'lib/errors';
 
 export const validateTurnstile = async function (TURNSTILE_SECRET: string, token: string, remoteip?: string) {
+    console.log("validateTurnstile: remoteip:", remoteip);
     const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
     const body: { secret: string; response: string; remoteip?: string } = {
         secret: TURNSTILE_SECRET,
