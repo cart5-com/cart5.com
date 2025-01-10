@@ -37,14 +37,14 @@ export const crossDomainRoute = new Hono<honoTypes>()
             const { redirectUrl, turnstile } = c.req.valid('form');
 
             // Security check: Verify request comes from our auth domain
-            const refererHeader = c.req.header()['referer']
-            if (!refererHeader) {
-                console.log("🟪c.req.header():", c.req.header());
-                throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
+            const hostHeader = c.req.header()['host'];
+            if (!hostHeader) {
+                throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
             }
+
             const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
-            if (ENFORCE_HOSTNAME_CHECKS && !refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
-                throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
+            if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${PUBLIC_DOMAIN_NAME}`) {
+                throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
             }
 
             // Verify user is authenticated

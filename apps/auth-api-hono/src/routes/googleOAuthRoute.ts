@@ -35,15 +35,6 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                     throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
                 }
 
-                const refererHeader = c.req.header()['referer'] || c.req.header()['referer'];
-
-                if (!refererHeader) {
-                    throw new KNOWN_ERROR("Referer header not found", "REFERRER_HEADER_NOT_FOUND");
-                }
-                if (!refererHeader.startsWith(`https://auth.${PUBLIC_DOMAIN_NAME}`)) {
-                    throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
-                }
-
                 const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl(c);
                 const {
                     JWT_PRIVATE_KEY,
@@ -144,14 +135,6 @@ export const googleOAuthRoute = new Hono<honoTypes>()
                 throw new KNOWN_ERROR("No google oauth token", "NO_GOOGLE_OAUTH_TOKEN");
             }
             deleteCookie(c, GOOGLE_OAUTH_COOKIE_NAME);
-
-            // if redirect shows auth page, callback has a referer header
-            const refererHeader = c.req.header()['referer']
-            if (refererHeader) {
-                if (refererHeader !== `https://accounts.google.com/`) {
-                    throw new KNOWN_ERROR("Invalid referer header", "INVALID_REFERER_HEADER");
-                }
-            }
 
             const secFetchSite = c.req.header()['sec-fetch-site'];
             if (secFetchSite !== 'cross-site') {
