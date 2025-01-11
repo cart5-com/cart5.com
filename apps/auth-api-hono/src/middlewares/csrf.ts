@@ -1,9 +1,8 @@
 import { createMiddleware } from "hono/factory";
 import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
-import type { honoTypes } from "..";
 import { env } from "hono/adapter";
 
-export const csrfChecks = createMiddleware<honoTypes>(async (c, next) => {
+export const csrfChecks = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
 	if (c.req.method === "GET") {
 		await next();
 	} else {

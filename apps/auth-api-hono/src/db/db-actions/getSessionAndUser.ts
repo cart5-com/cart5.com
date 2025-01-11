@@ -1,12 +1,11 @@
 import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
-import type { honoTypes } from "../../index";
 import type { Context } from "hono";
 import { sessionTable, userTable } from "../schema";
 
 export const getSessionAndUser = async (
-    c: Context<honoTypes>,
+    c: Context<AuthApiHonoEnv>,
     sessionId: string
 ): Promise<[session: Session | null, user: User | null]> => {
     const [databaseSession, databaseUser] = await Promise.all([
@@ -22,7 +21,7 @@ export const getSessionAndUser = async (
     return [databaseSession, databaseUser];
 }
 
-const getSession = async (c: Context<honoTypes>, sessionId: string): Promise<Session | null> => {
+const getSession = async (c: Context<AuthApiHonoEnv>, sessionId: string): Promise<Session | null> => {
     const result = await c.get('DRIZZLE_DB')
         .select()
         .from(sessionTable)
@@ -38,7 +37,7 @@ const getSession = async (c: Context<honoTypes>, sessionId: string): Promise<Ses
     } as Session;
 }
 
-const getUserFromSessionId = async (c: Context<honoTypes>, sessionId: string): Promise<User | null> => {
+const getUserFromSessionId = async (c: Context<AuthApiHonoEnv>, sessionId: string): Promise<User | null> => {
     const result = await c.get('DRIZZLE_DB')
         .select({
             id: userTable.id,

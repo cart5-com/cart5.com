@@ -1,13 +1,12 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { ecomApiSqlitelocalDbPath } from "lib/ecom-api-consts";
-import type { honoTypes } from "..";
 import type { Context } from "hono";
 import { env } from "hono/adapter";
 import { createClient } from '@libsql/client';
 
 
 let db: ReturnType<typeof drizzle>;
-export const getDrizzleDb = function (c: Context<honoTypes>): ReturnType<typeof drizzle> {
+export const getDrizzleDb = function (c: Context<EcomApiHonoEnv>): ReturnType<typeof drizzle> {
     if (db) {
         return db;
     }

@@ -1,9 +1,8 @@
 import { createMiddleware } from "hono/factory";
-import type { honoTypes } from "..";
 import { env } from "hono/adapter";
 import { KNOWN_ERROR } from "lib/errors";
 
-export const hostnameCheck = createMiddleware<honoTypes>(async (c, next) => {
+export const hostnameCheck = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
     if (
         c.req.path === '/api/cross_domain/callback' ||
         c.req.path === '/api/user/logout' ||

@@ -1,11 +1,10 @@
 import { and, count, eq } from "drizzle-orm";
 import type { Context } from "hono";
-import type { honoTypes } from "../../index";
 import { restaurantTable, restaurantUserAdminsMapTable } from "../schema/restaurant";
 import { KNOWN_ERROR } from "lib/errors";
 
 export const getUserRestaurants = async (
-    c: Context<honoTypes>,
+    c: Context<EcomApiHonoEnv>,
     options: { userId: string }
 ) => {
     return await c.get('DRIZZLE_DB')
@@ -19,7 +18,7 @@ export const getUserRestaurants = async (
 }
 
 export const createRestaurant = async (
-    c: Context<honoTypes>,
+    c: Context<EcomApiHonoEnv>,
     options: { name: string, userId: string }
 ) => {
     const db = c.get('DRIZZLE_DB');
@@ -39,7 +38,7 @@ export const createRestaurant = async (
 }
 
 export const checkUserIsRestaurantAdmin = async (
-    c: Context<honoTypes>,
+    c: Context<EcomApiHonoEnv>,
     options: { userId: string, restaurantId: string }
 ) => {
     return await c.get('DRIZZLE_DB').select({
@@ -55,7 +54,7 @@ export const checkUserIsRestaurantAdmin = async (
 export const updateRestaurant = async (options: {
     restaurantId: string,
     dataToUpdate: Partial<typeof restaurantTable.$inferInsert>,
-}, c: Context<honoTypes>) => {
+}, c: Context<EcomApiHonoEnv>) => {
     const { restaurantId, dataToUpdate } = options;
 
     // unallowed fields for admins

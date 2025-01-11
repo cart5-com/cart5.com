@@ -1,6 +1,5 @@
 import { Hono, type Context } from 'hono'
 import { env } from 'hono/adapter'
-import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, generateCodeVerifier, generateState, Google, OAuth2Tokens } from 'arctic';
@@ -11,7 +10,7 @@ import { KNOWN_ERROR } from 'lib/errors';
 import { markEmailAsVerified, updateUserName, updateUserPictureUrl, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 
-export const googleOAuthRoute = new Hono<honoTypes>()
+export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
     .get(
         '/redirect',
         zValidator('query', z.object({
@@ -227,7 +226,7 @@ type GoogleOAuthClaims = {
 async function validateAuthorizationCode(
     code: string,
     codeVerifier: string,
-    c: Context<honoTypes>
+    c: Context<AuthApiHonoEnv>
 ) {
     const {
         GOOGLE_OAUTH_CLIENT_ID,
@@ -248,7 +247,7 @@ async function validateAuthorizationCode(
     return decodeIdToken(tokens.idToken()) as GoogleOAuthClaims;
 }
 
-async function getSignInUrl(c: Context<honoTypes>) {
+async function getSignInUrl(c: Context<AuthApiHonoEnv>) {
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
     const {

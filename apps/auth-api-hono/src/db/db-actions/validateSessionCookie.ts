@@ -7,10 +7,9 @@ import type { User } from "../../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Context } from "hono";
-import type { honoTypes } from "../../index";
 
 export const validateSessionCookie = async (
-    c: Context<honoTypes>,
+    c: Context<AuthApiHonoEnv>,
     sessionCookieValue: string,
     hostname: string,
     ignoreUpdateSessionExpiration: boolean = false // default:do not ignore

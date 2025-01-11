@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
@@ -14,7 +13,7 @@ import { env } from 'hono/adapter';
  * Cross domain authentication route handler
  * Handles authentication across different domains in a secure way
  */
-export const crossDomainRoute = new Hono<honoTypes>()
+export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
     .post(
         '/redirector',
         // Validate the form data - redirectUrl must not be pre-encoded and turnstile token required

@@ -1,12 +1,10 @@
-import { serve, type HttpBindings } from '@hono/node-server'
+import { serve } from '@hono/node-server'
 import { env } from 'hono/adapter'
 import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
-import type { Session } from './types/SessionType';
-import type { User } from './types/UserType';
 import { userRoute } from './routes/userRoute';
 import { otpRoute } from './routes/otpRoute';
 import { emailPasswordRoute } from './routes/emailPasswordRoute';
@@ -15,36 +13,9 @@ import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { hostnameCheck } from './middlewares/hostnameCheck';
-import type { drizzle } from 'drizzle-orm/libsql';
 import { getDrizzleDb } from './db/drizzle';
 
-export type HonoVariables = {
-	SESSION: Session | null,
-	USER: User | null,
-	IS_PROD: boolean,
-	ENFORCE_HOSTNAME_CHECKS: boolean,
-	DRIZZLE_DB: ReturnType<typeof drizzle>
-}
-
-type Bindings = HttpBindings & {
-	NODE_ENV: string;
-	npm_lifecycle_event: string;
-	PUBLIC_DOMAIN_NAME: string;
-	KNOWN_DOMAINS_REGEX: string;
-	ENCRYPTION_KEY: string;
-	JWT_PRIVATE_KEY: string;
-	INTERNAL_AUTH_API_KEY: string;
-	TURNSTILE_SECRET: string;
-	GOOGLE_OAUTH_CLIENT_ID?: string;
-	GOOGLE_OAUTH_CLIENT_SECRET?: string;
-	GOOGLE_OAUTH_REDIRECT_URI?: string;
-	AUTHAPI_TURSO_DB_URL?: string;
-	AUTHAPI_TURSO_DB_TOKEN?: string;
-	AUTHAPI_TURSO_EMBEDDED_DB_PATH?: string;
-}
-export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
-
-const app = new Hono<honoTypes>();
+const app = new Hono<AuthApiHonoEnv>();
 
 // const IS_PROD = getRuntimeKey() === "node"
 // console.log("isNode:", isNode, getRuntimeKey())

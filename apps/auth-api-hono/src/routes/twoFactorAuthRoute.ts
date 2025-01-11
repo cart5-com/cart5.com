@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { encodeBase64, decodeBase64, encodeBase32NoPadding } from "@oslojs/encoding";
@@ -17,7 +16,7 @@ import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { env } from 'hono/adapter';
 
-export const twoFactorAuthRoute = new Hono<honoTypes>()
+export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
     .post(
         '/new',
         async (c) => {

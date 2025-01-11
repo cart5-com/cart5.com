@@ -1,11 +1,10 @@
 import { createMiddleware } from "hono/factory";
 import { createAuthApiClient } from 'lib/apiClients/authApiClient'
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
-import type { honoTypes } from "..";
 import { getCookie } from "hono/cookie";
 import { env } from "hono/adapter";
 
-export const authChecks = createMiddleware<honoTypes>(async (c, next) => {
+export const authChecks = createMiddleware<EcomApiHonoEnv>(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
     // Skip auth check if no session cookie exists
     if (!cookieValue) {

@@ -1,10 +1,9 @@
 import type { Context } from "hono";
-import type { honoTypes } from "..";
 import { env } from "hono/adapter";
 
 export const sendEmail = async function (
     options: { from: string, to: string[], subject: string, html: string },
-    c: Context<honoTypes>
+    c: Context<AuthApiHonoEnv>
 ) {
     const { RESEND_API_KEY } = env(c);
     const res = await fetch('https://api.resend.com/emails', {
@@ -26,7 +25,7 @@ export const sendEmail = async function (
 export const sendUserOtpEmail = async (
     email: string,
     code: string,
-    c: Context<honoTypes>
+    c: Context<AuthApiHonoEnv>
 ) => {
     const from = "no-reply-otp <no-reply-otp@cart5.com>";
     const to = email;

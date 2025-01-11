@@ -1,34 +1,15 @@
-import { serve, type HttpBindings } from '@hono/node-server'
+import { serve } from '@hono/node-server'
 import { env } from 'hono/adapter'
 import { Hono } from "hono";
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
-import type { User } from 'lib/apiClients/authApiClient';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
 import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
-import type { drizzle } from 'drizzle-orm/libsql';
 import getDrizzleDb from './db/drizzle';
 
-export type HonoVariables = {
-	IS_PROD: boolean,
-	USER: User | null,
-	DRIZZLE_DB: ReturnType<typeof drizzle>
-}
 
-type Bindings = HttpBindings & {
-	NODE_ENV: string;
-	PUBLIC_DOMAIN_NAME: string;
-	INTERNAL_AUTH_API_ORIGIN: string;
-	INTERNAL_AUTH_API_KEY: string;
-	TURNSTILE_SECRET: string;
-	ECOM_API_TURSO_DB_URL?: string;
-	ECOM_API_TURSO_DB_TOKEN?: string;
-	ECOM_API_TURSO_EMBEDDED_DB_PATH?: string;
-}
-export type honoTypes = { Bindings: Bindings, Variables: HonoVariables };
-
-const app = new Hono<honoTypes>();
+const app = new Hono<EcomApiHonoEnv>();
 
 
 app.use(async (c, next) => {
@@ -80,6 +61,7 @@ export type EcomApiAppType = typeof routes;
 
 const dashboardRoutes = app
 	.use(async (c, next) => {
+		// all dashboard routes are protected by auth
 		const userId = c.get('USER')?.id;
 		if (!userId) {
 			throw new KNOWN_ERROR("UNAUTHORIZED", "UNAUTHORIZED");

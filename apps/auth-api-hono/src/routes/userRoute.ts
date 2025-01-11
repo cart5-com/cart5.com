@@ -1,6 +1,5 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator';
-import type { honoTypes } from '../index'
 import { deleteSession, deleteAllUserSessions } from '../db/db-actions/deleteSession';
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { deleteCookie } from 'hono/cookie';
@@ -11,7 +10,7 @@ import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
 import { env } from 'hono/adapter';
 
-export const userRoute = new Hono<honoTypes>()
+export const userRoute = new Hono<AuthApiHonoEnv>()
     .post(
         '/logout',
         async (c) => {

@@ -37,6 +37,8 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "../../apps/ecom-api-hono/src/ecom-api-hono-env.d.ts",
+    "../../apps/auth-api-hono/src/auth-api-hono-env.d.ts"
   ]
 }

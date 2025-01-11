@@ -6,9 +6,8 @@ import { sessionTable } from "../schema";
 import type { Context } from "hono";
 import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
-import type { honoTypes } from "../../index";
 
-async function createSession(c: Context<honoTypes>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
+async function createSession(c: Context<AuthApiHonoEnv>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const session: Session = {
         id: sessionId,
@@ -28,7 +27,7 @@ async function createSession(c: Context<honoTypes>, token: string, userId: strin
 }
 
 
-export async function createUserSessionAndSetCookie(c: Context<honoTypes>, userId: string) {
+export async function createUserSessionAndSetCookie(c: Context<AuthApiHonoEnv>, userId: string) {
     const sessionToken = generateSessionToken();
     const session = await createSession(c, sessionToken, userId, c.req.header()['host']!);
     setCookie(c, SESSION_COOKIE_NAME, sessionToken, {

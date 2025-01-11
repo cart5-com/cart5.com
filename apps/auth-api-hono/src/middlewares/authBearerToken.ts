@@ -1,6 +1,5 @@
 import { createMiddleware } from "hono/factory";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
-import type { honoTypes } from "..";
 import { env } from "hono/adapter";
 import { readBearerToken } from "../utils/readBearerToken";
 
@@ -11,7 +10,7 @@ import { readBearerToken } from "../utils/readBearerToken";
  * @param c - The Hono context.
  * @param next - The next middleware function.
  */
-export const authBearerTokenChecks = createMiddleware<honoTypes>(async (c, next) => {
+export const authBearerTokenChecks = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
     const authorizationHeader = c.req.header()['authorization'] ?? null;
     const localUser = c.get('USER');
     const token = readBearerToken(authorizationHeader);

@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
@@ -15,7 +14,7 @@ import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { env } from 'hono/adapter';
 
 
-export const otpRoute = new Hono<honoTypes>()
+export const otpRoute = new Hono<AuthApiHonoEnv>()
     .post(
         '/send',
         zValidator('form', z.object({

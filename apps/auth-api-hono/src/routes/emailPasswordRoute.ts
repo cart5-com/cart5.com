@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import type { honoTypes } from '../index'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
@@ -15,7 +14,7 @@ import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { sendUserOtpEmail } from '../utils/email';
 import { env } from 'hono/adapter';
 
-export const emailPasswordRoute = new Hono<honoTypes>()
+export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
     .post(
         '/register',
         zValidator('form', z.object({

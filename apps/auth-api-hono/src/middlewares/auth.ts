@@ -2,9 +2,8 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
-import type { honoTypes } from "..";
 import { env } from "hono/adapter";
-export const authChecks = createMiddleware<honoTypes>(async (c, next) => {
+export const authChecks = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
     if (cookieValue === null) {
         c.set("USER", null);
