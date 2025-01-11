@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { currentRestaurant, currentRestaurantId } from './_restaurantStore';
+import { currentRestaurant, setCurrentRestaurantId } from './_restaurantStore';
 import { RouterView, useRoute } from "vue-router";
 const route = useRoute();
 const restaurantId = route.params.restaurantId;
-currentRestaurantId.value = restaurantId as string;
+setCurrentRestaurantId(restaurantId as string);
 </script>
 
 <template>

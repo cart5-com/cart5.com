@@ -3,12 +3,13 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
-import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from './_restaurantStore'
+import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType, loadMyRestaurants } from './_restaurantStore'
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import RestaurantNewForm from "@src/pages/restaurant/RestaurantNewForm.vue";
 const dialog = useDialog();
 const IS_DEV = import.meta.env.DEV;
 
+loadMyRestaurants();
 
 const openNewRestaurantDialog = () => {
     dialog.show<restaurantListType[number]>({

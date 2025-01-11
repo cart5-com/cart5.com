@@ -1,5 +1,5 @@
 import { and, count, eq } from "drizzle-orm";
-import type { Context } from "hono";
+import { type Context, type Next } from 'hono';
 import { restaurantTable, restaurantUserAdminsMapTable } from "../schema/restaurant";
 import { KNOWN_ERROR } from "lib/errors";
 
@@ -21,8 +21,7 @@ export const createRestaurant = async (
     c: Context<EcomApiHonoEnv>,
     options: { name: string, userId: string }
 ) => {
-    const db = c.get('DRIZZLE_DB');
-    return await db.transaction(async (tx) => {
+    return await c.get('DRIZZLE_DB').transaction(async (tx) => {
         const restaurant = await tx.insert(restaurantTable).values({
             name: options.name,
             ownerUserId: options.userId,
@@ -35,6 +34,22 @@ export const createRestaurant = async (
 
         return restaurant[0].id;
     });
+}
+
+export const restaurantRouteAdminCheck = async (c: Context, next: Next) => {
+    const userId = c.get('USER')?.id;
+    const restaurantId = c.req.param('restaurantId');
+    if (!userId || !restaurantId) {
+        throw new KNOWN_ERROR("Unauthorized", "UNAUTHORIZED");
+    }
+    const isAdmin = await checkUserIsRestaurantAdmin(c, {
+        userId,
+        restaurantId
+    });
+    if (!isAdmin) {
+        throw new KNOWN_ERROR("Not admin", "UNAUTHORIZED");
+    }
+    await next();
 }
 
 export const checkUserIsRestaurantAdmin = async (
@@ -51,10 +66,13 @@ export const checkUserIsRestaurantAdmin = async (
     ).then(result => result[0].count === 1);
 }
 
-export const updateRestaurant = async (options: {
-    restaurantId: string,
-    dataToUpdate: Partial<typeof restaurantTable.$inferInsert>,
-}, c: Context<EcomApiHonoEnv>) => {
+export const updateRestaurant = async (
+    c: Context<EcomApiHonoEnv>,
+    options: {
+        restaurantId: string,
+        dataToUpdate: Partial<typeof restaurantTable.$inferInsert>,
+    }
+) => {
     const { restaurantId, dataToUpdate } = options;
 
     // unallowed fields for admins
@@ -71,4 +89,15 @@ export const updateRestaurant = async (options: {
     }
 
     return true;
+}
+
+export const getRestaurant = async (
+    c: Context<EcomApiHonoEnv>,
+    options: {
+        restaurantId: string,
+    }
+) => {
+    const { restaurantId } = options;
+    const results = await c.get('DRIZZLE_DB').select().from(restaurantTable).where(eq(restaurantTable.id, restaurantId));
+    return results[0];
 }
