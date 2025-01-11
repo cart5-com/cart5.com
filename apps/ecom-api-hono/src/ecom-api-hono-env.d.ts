@@ -1,12 +1,13 @@
 import type { User } from 'lib/apiClients/authApiClient';
 import type { drizzle } from 'drizzle-orm/libsql';
 import type { HttpBindings } from '@hono/node-server';
+import type { schema } from './db/drizzle';
 
 declare global {
     type HonoVariables = {
         IS_PROD: boolean,
         USER: User | null,
-        DRIZZLE_DB: ReturnType<typeof drizzle>
+        DRIZZLE_DB: ReturnType<typeof drizzle<typeof schema>>
     }
 
     type HonoBindings = HttpBindings & {

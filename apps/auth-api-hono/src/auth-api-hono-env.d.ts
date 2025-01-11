@@ -2,6 +2,7 @@ import type { User } from './types/UserType';
 import type { Session } from './types/SessionType';
 import type { drizzle } from 'drizzle-orm/libsql';
 import type { HttpBindings } from '@hono/node-server';
+import type { schema } from './db/drizzle';
 
 declare global {
     type HonoVariables = {
@@ -9,7 +10,7 @@ declare global {
         USER: User | null,
         IS_PROD: boolean,
         ENFORCE_HOSTNAME_CHECKS: boolean,
-        DRIZZLE_DB: ReturnType<typeof drizzle>
+        DRIZZLE_DB: ReturnType<typeof drizzle<typeof schema>>
     }
 
     type HonoBindings = HttpBindings & {

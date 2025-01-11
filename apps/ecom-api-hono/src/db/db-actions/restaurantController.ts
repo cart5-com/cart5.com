@@ -95,9 +95,12 @@ export const getRestaurant = async (
     c: Context<EcomApiHonoEnv>,
     options: {
         restaurantId: string,
+        columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>,
     }
 ) => {
-    const { restaurantId } = options;
-    const results = await c.get('DRIZZLE_DB').select().from(restaurantTable).where(eq(restaurantTable.id, restaurantId));
-    return results[0];
+    const db = c.get('DRIZZLE_DB');
+    return await db.query.restaurantTable.findFirst({
+        where: eq(restaurantTable.id, options.restaurantId),
+        columns: options.columns
+    });
 }

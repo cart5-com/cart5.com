@@ -3,10 +3,14 @@ import { localDbPath } from "lib/auth-consts";
 import type { Context } from "hono";
 import { env } from "hono/adapter";
 import { createClient } from '@libsql/client';
+import * as authSchema from './schema';
 
+export const schema = {
+    ...authSchema
+};
 
-let db: ReturnType<typeof drizzle>;
-export const getDrizzleDb = function (c: Context<AuthApiHonoEnv>): ReturnType<typeof drizzle> {
+let db: ReturnType<typeof drizzle<typeof schema>>;
+export const getDrizzleDb = function (c: Context<AuthApiHonoEnv>): ReturnType<typeof drizzle<typeof schema>> {
     if (db) {
         return db;
     }
@@ -18,8 +22,6 @@ export const getDrizzleDb = function (c: Context<AuthApiHonoEnv>): ReturnType<ty
     const IS_PROD = c.get('IS_PROD')
     if (IS_PROD) {
         if (AUTHAPI_TURSO_EMBEDDED_DB_PATH) {
-            // has embedded db
-            console.log("🔥🔥🔥has embedded db🔥🔥🔥");
             const client = createClient({
                 url: `file:${AUTHAPI_TURSO_EMBEDDED_DB_PATH}`,
                 authToken: AUTHAPI_TURSO_DB_TOKEN!,
@@ -27,23 +29,14 @@ export const getDrizzleDb = function (c: Context<AuthApiHonoEnv>): ReturnType<ty
                 syncInterval: 120,
             });
             client.sync();
-            db = drizzle(client);
+            db = drizzle(client, { schema });
             return db;
         } else {
-            // no embedded db
-            console.log("🔥🔥🔥no embedded db🔥🔥🔥");
-            db = drizzle({
-                connection: {
-                    url: AUTHAPI_TURSO_DB_URL!,
-                    authToken: AUTHAPI_TURSO_DB_TOKEN!,
-                }
-            })
+            db = drizzle({ connection: { url: AUTHAPI_TURSO_DB_URL!, authToken: AUTHAPI_TURSO_DB_TOKEN! }, schema });
             return db;
         }
     } else {
-        // DEV
-        console.log("🔥🔥🔥DEV🔥🔥🔥");
-        db = drizzle(localDbPath);
+        db = drizzle(localDbPath, { schema });
         return db;
     }
 

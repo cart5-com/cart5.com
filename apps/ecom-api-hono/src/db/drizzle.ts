@@ -3,10 +3,14 @@ import { ecomApiSqlitelocalDbPath } from "lib/ecom-api-consts";
 import type { Context } from "hono";
 import { env } from "hono/adapter";
 import { createClient } from '@libsql/client';
+import * as restaurantSchema from "./schema/restaurantSchema";
 
+export const schema = {
+    ...restaurantSchema
+};
 
-let db: ReturnType<typeof drizzle>;
-export const getDrizzleDb = function (c: Context<EcomApiHonoEnv>): ReturnType<typeof drizzle> {
+let db: ReturnType<typeof drizzle<typeof schema>>;
+export const getDrizzleDb = function (c: Context<EcomApiHonoEnv>): ReturnType<typeof drizzle<typeof schema>> {
     if (db) {
         return db;
     }
@@ -18,8 +22,6 @@ export const getDrizzleDb = function (c: Context<EcomApiHonoEnv>): ReturnType<ty
     const IS_PROD = c.get('IS_PROD')
     if (IS_PROD) {
         if (ECOM_API_TURSO_EMBEDDED_DB_PATH) {
-            // has embedded db
-            console.log("🔥🔥🔥has embedded db🔥🔥🔥");
             const client = createClient({
                 url: `file:${ECOM_API_TURSO_EMBEDDED_DB_PATH}`,
                 authToken: ECOM_API_TURSO_DB_TOKEN!,
@@ -27,23 +29,14 @@ export const getDrizzleDb = function (c: Context<EcomApiHonoEnv>): ReturnType<ty
                 syncInterval: 120,
             });
             client.sync();
-            db = drizzle(client);
+            db = drizzle(client, { schema });
             return db;
         } else {
-            // no embedded db
-            console.log("🔥🔥🔥no embedded db🔥🔥🔥");
-            db = drizzle({
-                connection: {
-                    url: ECOM_API_TURSO_DB_URL!,
-                    authToken: ECOM_API_TURSO_DB_TOKEN!,
-                }
-            })
+            db = drizzle({ connection: { url: ECOM_API_TURSO_DB_URL!, authToken: ECOM_API_TURSO_DB_TOKEN! }, schema })
             return db;
         }
     } else {
-        // DEV
-        console.log("🔥🔥🔥DEV🔥🔥🔥");
-        db = drizzle(ecomApiSqlitelocalDbPath);
+        db = drizzle(ecomApiSqlitelocalDbPath, { schema });
         return db;
     }
 

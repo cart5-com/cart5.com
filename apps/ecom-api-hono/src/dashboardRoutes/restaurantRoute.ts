@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { Hono } from "hono";
-import { KNOWN_ERROR, type ErrorType } from "lib/errors";
-import { checkUserIsRestaurantAdmin, createRestaurant, getRestaurant, getUserRestaurants, restaurantRouteAdminCheck, updateRestaurant } from "../db/db-actions/restaurantController";
+import { type ErrorType } from "lib/errors";
+import { createRestaurant, getRestaurant, getUserRestaurants, restaurantRouteAdminCheck, updateRestaurant } from "../db/db-actions/restaurantController";
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { env } from 'hono/adapter';
 
@@ -56,7 +56,7 @@ export const restaurantRoute = new Hono<EcomApiHonoEnv>()
         async (c) => {
             const restaurantId = c.req.param('restaurantId');
             return c.json({
-                data: await getRestaurant(c, { restaurantId }),
+                data: await getRestaurant(c, { restaurantId, columns: { name: true } }),
                 error: null as ErrorType
             }, 200);
         }
