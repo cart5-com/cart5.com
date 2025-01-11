@@ -3,17 +3,14 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
-import { $myRestaurantsSearchQuery, loadMyRestaurants, $myRestaurantsFiltered, restaurantListType } from './restaurantStore'
-import { useStore } from '@nanostores/vue'
-import { useVModel } from '@nanostores/vue'
+import { myRestaurantsFiltered, myRestaurants, searchQuery, loadMyRestaurants, restaurantListType } from './restaurantStore'
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import RestaurantNewForm from "@src/pages/restaurant/RestaurantNewForm.vue";
 const dialog = useDialog();
+const IS_DEV = import.meta.env.DEV;
 
 loadMyRestaurants();
 
-const myRestaurants = useStore($myRestaurantsFiltered);
-const myRestaurantsSearchQuery = useVModel($myRestaurantsSearchQuery);
 
 const openNewRestaurantDialog = () => {
     dialog.show<restaurantListType[number]>({
@@ -48,14 +45,13 @@ const openNewRestaurantDialog = () => {
             </Button>
         </div>
         <div class="mb-4"
-             v-if="myRestaurants.length > 3">
-            <Input v-model="myRestaurantsSearchQuery as string"
+             v-if="myRestaurants.length > 3 || IS_DEV">
+            <Input v-model="searchQuery"
                    placeholder="Search"
                    class="max-w-sm" />
         </div>
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-
-            <RouterLink v-for="restaurant in myRestaurants"
+            <RouterLink v-for="restaurant in myRestaurantsFiltered"
                         :key="restaurant.id"
                         :to="`/restaurant/${restaurant.id}`"
                         class="block">

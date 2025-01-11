@@ -8,7 +8,7 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { $myRestaurants } from '@src/pages/restaurant/restaurantStore';
+import { myRestaurants } from '@src/pages/restaurant/restaurantStore';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -38,7 +38,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
             handleError(error, form);
         } else {
             // Success
-            $myRestaurants.set([...$myRestaurants.get(), { id: data, name: values.name }]);
+            myRestaurants.value = [...myRestaurants.value, { id: data, name: values.name }];
             emit('close', { id: data, name: values.name });
         }
     })

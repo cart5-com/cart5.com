@@ -1,4 +1,4 @@
-import { atom, computed } from 'nanostores'
+import { ref, computed } from 'vue'
 import { type ResType } from 'lib/apiClients/ecomApiClient'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
@@ -6,16 +6,14 @@ export type restaurantListType = ResType<
     typeof dashboardApiClient["api"]["dashboard"]["restaurant"]["my-restaurants"]["$get"]
 >["data"];
 
-export const $myRestaurants = atom<restaurantListType>([]);
-export const $myRestaurantsSearchQuery = atom<string>('');
-export const $myRestaurantsFiltered = computed(
-    [$myRestaurants, $myRestaurantsSearchQuery],
-    (restaurants, searchQuery) => restaurants.filter(
-        i => i.name.toLowerCase().includes(
-            searchQuery.toLowerCase()
-        )
+export const myRestaurants = ref<restaurantListType>([]);
+export const searchQuery = ref('')
+export const myRestaurantsFiltered = computed(() =>
+    myRestaurants.value.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
-);
+)
+
 export async function loadMyRestaurants() {
     console.log('loadMyRestaurants');
     const response = await (await dashboardApiClient.api.dashboard.restaurant["my-restaurants"].$get()).json()
@@ -23,6 +21,6 @@ export async function loadMyRestaurants() {
         console.error(response.error)
         return
     } else {
-        $myRestaurants.set(response.data)
+        myRestaurants.value = response.data
     }
 }

@@ -155,9 +155,6 @@ importers:
       '@dotenvx/dotenvx':
         specifier: ^1.32.0
         version: 1.32.0
-      '@nanostores/vue':
-        specifier: ^0.11.0
-        version: 0.11.0(@vue/devtools-api@7.6.7)(nanostores@0.11.3)(vue@3.5.13(typescript@5.7.2))
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
@@ -182,9 +179,6 @@ importers:
       lucide-vue-next:
         specifier: ^0.465.0
         version: 0.465.0(vue@3.5.13(typescript@5.7.2))
-      nanostores:
-        specifier: ^0.11.3
-        version: 0.11.3
       tailwindcss:
         specifier: ^3.4.16
         version: 3.4.16
@@ -1489,20 +1483,6 @@ packages:
   '@mapbox/whoots-js@3.1.0':
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
-
-  '@nanostores/vue@0.11.0':
-    resolution: {integrity: sha512-4ndyLhwVFl1xhOnvWuMvYiG4K2rYvkaQWP3nJC1/RwK/dvpDgLPywwv6MnBdFydqbOGuXNaXOEwa3HsG9CujmA==}
-    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
-    peerDependencies:
-      '@nanostores/logger': '>=0.4.0'
-      '@vue/devtools-api': '>=7.6.2'
-      nanostores: '>=0.11.3'
-      vue: '>=3.3.1'
-    peerDependenciesMeta:
-      '@nanostores/logger':
-        optional: true
-      '@vue/devtools-api':
-        optional: true
 
   '@napi-rs/wasm-runtime@0.2.5':
     resolution: {integrity: sha512-kwUxR7J9WLutBbulqg1dfOrMTwhMdXLdcGUhcbCcGwnPLt3gz19uHVdwH1syKVDbE022ZS2vZxOWflFLS0YTjw==}
@@ -3489,10 +3469,6 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
 
-  nanostores@0.11.3:
-    resolution: {integrity: sha512-TUes3xKIX33re4QzdxwZ6tdbodjmn3tWXCEc1uokiEmo14sI1EaGYNs2k3bU2pyyGNmBqFGAVl6jAGWd06AVIg==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-
   neotraverse@0.6.18:
     resolution: {integrity: sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA==}
     engines: {node: '>= 10'}
@@ -5477,13 +5453,6 @@ snapshots:
       '@mapbox/point-geometry': 0.1.0
 
   '@mapbox/whoots-js@3.1.0': {}
-
-  '@nanostores/vue@0.11.0(@vue/devtools-api@7.6.7)(nanostores@0.11.3)(vue@3.5.13(typescript@5.7.2))':
-    dependencies:
-      nanostores: 0.11.3
-      vue: 3.5.13(typescript@5.7.2)
-    optionalDependencies:
-      '@vue/devtools-api': 7.6.7
 
   '@napi-rs/wasm-runtime@0.2.5':
     dependencies:
@@ -7842,8 +7811,6 @@ snapshots:
   nanoid@3.3.8: {}
 
   nanoid@5.0.9: {}
-
-  nanostores@0.11.3: {}
 
   neotraverse@0.6.18: {}
 
