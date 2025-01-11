@@ -1,21 +1,13 @@
-<script setup lang="ts">
-import AppLinks from "@src/components/AppLinks.vue";
-import HeaderOnly from "@src/layouts/HeaderOnly.vue";
+<script lang="ts" setup>
+import { Store } from 'lucide-vue-next';
 </script>
 
 <template>
-	<HeaderOnly>
-		<main class="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-			<div class="flex flex-col gap-1">
-				<h3 class="text-2xl font-bold tracking-tight">Dashboard</h3>
-				<p class="text-muted-foreground text-sm">Apps to help you run your business.</p>
-				<p class="text-muted-foreground text-sm">Start with a new business or manage existing ones.</p>
-			</div>
-			<div class="rounded-lg border border-dashed shadow-sm">
-				<div class="mx-auto sm:max-w-[50%]">
-					<AppLinks />
-				</div>
-			</div>
-		</main>
-	</HeaderOnly>
+	<div class="grid grid-cols-3 gap-4 p-4">
+		<RouterLink :to="{ name: 'my-restaurants' }"
+					class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
+			<Store class="text-muted-foreground h-10 w-10" />
+			<span class="text-foreground mt-2 text-sm">My Restaurants</span>
+		</RouterLink>
+	</div>
 </template>

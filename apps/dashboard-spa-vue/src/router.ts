@@ -17,17 +17,12 @@ const router = createRouter({
       name: 'home',
       component: () => import('@src/views/HomeView.vue'),
     },
-    // BUSINESS ROUTES
-    // {
-    //   path: '/business-new',
-    //   name: 'business-new',
-    //   component: () => import('@src/pages/business/BusinessNewView.vue'),
-    // },
-    // {
-    //   path: '/business',
-    //   name: 'business',
-    //   component: () => import('@src/pages/business/BusinessListView.vue'),
-    // },
+    // RESTAURANT ROUTES
+    {
+      path: '/my-restaurants',
+      name: 'my-restaurants',
+      component: () => import('@src/pages/restaurant/RestaurantListView.vue'),
+    },
     // {
     //   path: '/business/:businessId',
     //   component: () => import('@src/pages/BusinessLayout.vue'),

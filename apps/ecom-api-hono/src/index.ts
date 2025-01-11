@@ -6,6 +6,7 @@ import { KNOWN_ERROR } from 'lib/errors';
 import type { User } from 'lib/apiClients/authApiClient';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
+import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
 
 export type HonoVariables = {
 	IS_PROD: boolean,
@@ -17,6 +18,7 @@ type Bindings = HttpBindings & {
 	PUBLIC_DOMAIN_NAME: string;
 	INTERNAL_AUTH_API_ORIGIN: string;
 	INTERNAL_AUTH_API_KEY: string;
+	TURNSTILE_SECRET: string;
 	ECOM_API_TURSO_DB_URL?: string;
 	ECOM_API_TURSO_DB_TOKEN?: string;
 	ECOM_API_TURSO_EMBEDDED_DB_PATH?: string;
@@ -68,9 +70,23 @@ app.get("/", (c) => {
 	return c.html(`Hello ecom api ${IS_PROD ? "PROD" : "DEV"} ${USER ? JSON.stringify(USER) : "no user"}`);
 });
 
-const routes = app.basePath('/api')
-
+const routes = app.basePath('/api');
 export type EcomApiAppType = typeof routes;
+
+
+const dashboardRoutes = app
+	.use(async (c, next) => {
+		const userId = c.get('USER')?.id;
+		if (!userId) {
+			throw new KNOWN_ERROR("UNAUTHORIZED", "UNAUTHORIZED");
+		}
+		await next();
+	})
+	.basePath('/api/dashboard')
+	.route('/restaurant', restaurantRoute);
+
+
+export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 const port = 3003;
 serve({

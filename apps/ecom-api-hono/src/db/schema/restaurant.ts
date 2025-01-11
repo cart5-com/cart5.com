@@ -1,10 +1,13 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "lib/utils/generateKey";
 
-export const restaurantTable = sqliteTable("restaurant", {
-	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('resto')),
 
-	name: text("name").notNull().unique(),
+
+/// RESTAURANT TABLE START
+export const restaurantTable = sqliteTable("restaurant", {
+	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
+
+	name: text("name").notNull(),
 
 	ownerUserId: text("owner_user_id").notNull(),
 
@@ -16,3 +19,18 @@ export const restaurantTable = sqliteTable("restaurant", {
 		.$defaultFn(() => Date.now())
 		.$onUpdate(() => Date.now()),
 });
+/// RESTAURANT TABLE END
+
+
+
+
+
+
+/// RESTAURANT USER ADMINS MAP START
+export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_map", {
+	restaurantId: text("restaurant_id").notNull(),
+	userId: text("user_id").notNull(),
+}, (table) => ({
+	pk: primaryKey({ columns: [table.restaurantId, table.userId] }),
+}));
+/// RESTAURANT USER ADMINS MAP END

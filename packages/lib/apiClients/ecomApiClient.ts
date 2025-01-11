@@ -1,4 +1,4 @@
-import type { EcomApiAppType } from '../../../apps/ecom-api-hono/src/index'
+import type { EcomApiAppType, EcomDashboardApiAppType } from '../../../apps/ecom-api-hono/src/index'
 import type { InferRequestType, InferResponseType } from 'hono/client'
 import { hc } from 'hono/client'
 
@@ -7,6 +7,14 @@ export const createEcomApiClient = (baseUrl: string = '/__p_ecom/') => {
     type typeFromCalculated = typeof calculatedApiClient;
     const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>
         hc<EcomApiAppType>(...args)
+    return hcWithType(baseUrl, {})
+}
+
+export const createEcomDashboardApiClient = (baseUrl: string = '/__p_ecom/') => {
+    const calculatedApiClient = hc<EcomDashboardApiAppType>(baseUrl)
+    type typeFromCalculated = typeof calculatedApiClient;
+    const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>
+        hc<EcomDashboardApiAppType>(...args)
     return hcWithType(baseUrl, {})
 }
 
