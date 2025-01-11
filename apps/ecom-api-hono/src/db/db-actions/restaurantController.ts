@@ -1,6 +1,6 @@
 import { and, count, eq } from "drizzle-orm";
 import { type Context, type Next } from 'hono';
-import { restaurantTable, restaurantUserAdminsMapTable } from "../schema/restaurant";
+import { restaurantTable, restaurantUserAdminsMapTable } from "../schema/restaurantSchema";
 import { KNOWN_ERROR } from "lib/errors";
 
 export const getUserRestaurants = async (
