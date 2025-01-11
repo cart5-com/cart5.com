@@ -8,7 +8,7 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { myRestaurants } from '@src/pages/restaurant/restaurantStore';
+import { myRestaurants } from './_restaurantStore';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],

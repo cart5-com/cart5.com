@@ -14,6 +14,13 @@ export const myRestaurantsFiltered = computed(() =>
     )
 )
 
+export const currentRestaurantId = ref<string | null>(null);
+
+export const currentRestaurant = computed(() => {
+    if (!currentRestaurantId.value) return null;
+    return myRestaurants.value.find(restaurant => restaurant.id === currentRestaurantId.value);
+});
+
 export async function loadMyRestaurants() {
     console.log('loadMyRestaurants');
     const response = await (await dashboardApiClient.api.dashboard.restaurant["my-restaurants"].$get()).json()
@@ -24,3 +31,5 @@ export async function loadMyRestaurants() {
         myRestaurants.value = response.data
     }
 }
+
+loadMyRestaurants();
