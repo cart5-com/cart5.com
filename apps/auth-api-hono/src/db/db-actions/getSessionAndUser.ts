@@ -1,7 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
-import getDrizzleDb from "../drizzle";
 import type { honoTypes } from "../../index";
 import type { Context } from "hono";
 import { sessionTable, userTable } from "../schema";
@@ -24,7 +23,7 @@ export const getSessionAndUser = async (
 }
 
 const getSession = async (c: Context<honoTypes>, sessionId: string): Promise<Session | null> => {
-    const result = await getDrizzleDb(c)
+    const result = await c.get('DRIZZLE_DB')
         .select()
         .from(sessionTable)
         .where(eq(sessionTable.id, sessionId));
@@ -40,7 +39,7 @@ const getSession = async (c: Context<honoTypes>, sessionId: string): Promise<Ses
 }
 
 const getUserFromSessionId = async (c: Context<honoTypes>, sessionId: string): Promise<User | null> => {
-    const result = await getDrizzleDb(c)
+    const result = await c.get('DRIZZLE_DB')
         .select({
             id: userTable.id,
             email: userTable.email,

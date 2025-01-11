@@ -1,12 +1,14 @@
 import { and, count, eq } from "drizzle-orm";
 import type { Context } from "hono";
-import getDrizzleDb from "../drizzle";
 import type { honoTypes } from "../../index";
 import { restaurantTable, restaurantUserAdminsMapTable } from "../schema/restaurant";
 import { KNOWN_ERROR } from "lib/errors";
 
-export const getUserRestaurants = async (options: { userId: string, c: Context<honoTypes> }) => {
-    return await getDrizzleDb(options.c)
+export const getUserRestaurants = async (
+    c: Context<honoTypes>,
+    options: { userId: string }
+) => {
+    return await c.get('DRIZZLE_DB')
         .select({
             id: restaurantTable.id,
             name: restaurantTable.name,
@@ -16,8 +18,11 @@ export const getUserRestaurants = async (options: { userId: string, c: Context<h
         .where(eq(restaurantUserAdminsMapTable.userId, options.userId));
 }
 
-export const createRestaurant = async (options: { name: string, userId: string, c: Context<honoTypes> }) => {
-    const db = getDrizzleDb(options.c);
+export const createRestaurant = async (
+    c: Context<honoTypes>,
+    options: { name: string, userId: string }
+) => {
+    const db = c.get('DRIZZLE_DB');
     return await db.transaction(async (tx) => {
         const restaurant = await tx.insert(restaurantTable).values({
             name: options.name,
@@ -33,12 +38,11 @@ export const createRestaurant = async (options: { name: string, userId: string, 
     });
 }
 
-export const checkUserIsRestaurantAdmin = async (options: {
-    userId: string,
-    restaurantId: string,
-    c: Context<honoTypes>
-}) => {
-    return await getDrizzleDb(options.c).select({
+export const checkUserIsRestaurantAdmin = async (
+    c: Context<honoTypes>,
+    options: { userId: string, restaurantId: string }
+) => {
+    return await c.get('DRIZZLE_DB').select({
         count: count()
     }).from(restaurantUserAdminsMapTable).where(
         and(
@@ -51,16 +55,14 @@ export const checkUserIsRestaurantAdmin = async (options: {
 export const updateRestaurant = async (options: {
     restaurantId: string,
     dataToUpdate: Partial<typeof restaurantTable.$inferInsert>,
-    c: Context<honoTypes>
-}) => {
-    const { restaurantId, dataToUpdate, c } = options;
-    const db = getDrizzleDb(c);
+}, c: Context<honoTypes>) => {
+    const { restaurantId, dataToUpdate } = options;
 
     // unallowed fields for admins
     const { id, ownerUserId, created_at_ts, updated_at_ts,
         ...updateData } = dataToUpdate;
 
-    const result = await db
+    const result = await c.get('DRIZZLE_DB')
         .update(restaurantTable)
         .set(updateData) // Type assertion to bypass the type error
         .where(eq(restaurantTable.id, restaurantId))

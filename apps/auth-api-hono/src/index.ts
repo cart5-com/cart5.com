@@ -15,12 +15,15 @@ import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { hostnameCheck } from './middlewares/hostnameCheck';
+import type { drizzle } from 'drizzle-orm/libsql';
+import { getDrizzleDb } from './db/drizzle';
 
 export type HonoVariables = {
 	SESSION: Session | null,
 	USER: User | null,
 	IS_PROD: boolean,
-	ENFORCE_HOSTNAME_CHECKS: boolean
+	ENFORCE_HOSTNAME_CHECKS: boolean,
+	DRIZZLE_DB: ReturnType<typeof drizzle>
 }
 
 type Bindings = HttpBindings & {
@@ -53,6 +56,7 @@ app.use(async (c, next) => {
 	c.set('IS_PROD', IS_PROD)
 	// IF PROD OR CADDY DEV, ENFORCE HOSTNAME CHECKS
 	c.set('ENFORCE_HOSTNAME_CHECKS', (IS_CADDY_DEV || IS_PROD))
+	c.set('DRIZZLE_DB', getDrizzleDb(c))
 	await next()
 });
 app.use(hostnameCheck);

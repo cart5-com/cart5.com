@@ -9,7 +9,7 @@ import { env } from 'hono/adapter';
 
 export const restaurantRoute = new Hono<honoTypes>()
     .get('/my-restaurants', async (c) => {
-        const restaurants = await getUserRestaurants({ userId: c.get('USER')?.id!, c });
+        const restaurants = await getUserRestaurants(c, { userId: c.get('USER')?.id! });
         return c.json({
             data: restaurants,
             error: null as ErrorType
@@ -25,10 +25,9 @@ export const restaurantRoute = new Hono<honoTypes>()
             const { name, turnstile } = c.req.valid('form');
             await validateTurnstile(env(c).TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             return c.json({
-                data: await createRestaurant({
+                data: await createRestaurant(c, {
                     name,
-                    userId: c.get('USER')?.id!,
-                    c,
+                    userId: c.get('USER')?.id!
                 }),
                 error: null as ErrorType
             }, 200);

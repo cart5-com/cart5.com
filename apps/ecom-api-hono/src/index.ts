@@ -7,10 +7,13 @@ import type { User } from 'lib/apiClients/authApiClient';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
 import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
+import type { drizzle } from 'drizzle-orm/libsql';
+import getDrizzleDb from './db/drizzle';
 
 export type HonoVariables = {
 	IS_PROD: boolean,
-	USER: User | null;
+	USER: User | null,
+	DRIZZLE_DB: ReturnType<typeof drizzle>
 }
 
 type Bindings = HttpBindings & {
@@ -32,6 +35,7 @@ app.use(async (c, next) => {
 	const { NODE_ENV } = env(c)
 	const IS_PROD = NODE_ENV === 'production'
 	c.set('IS_PROD', IS_PROD)
+	c.set('DRIZZLE_DB', getDrizzleDb(c))
 	await next()
 })
 app.use(csrfChecks);
