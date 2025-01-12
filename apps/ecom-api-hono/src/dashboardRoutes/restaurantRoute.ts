@@ -7,12 +7,13 @@ import { KNOWN_ERROR, type ErrorType } from "lib/errors";
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { env } from 'hono/adapter';
 import { insertRestaurantSchema, restaurantTable, restaurantUserAdminsMapTable, selectRestaurantSchema, updateRestaurantSchema } from '../db/schema/restaurantSchema';
+import db from '../db/drizzle';
 
 
 export const restaurantRoute = new Hono<EcomApiHonoEnv>()
     .get('/my-restaurants', async (c) => {
         return c.json({
-            data: await c.get('DRIZZLE_DB')
+            data: await db
                 .select({
                     id: restaurantTable.id,
                     name: restaurantTable.name,
@@ -34,7 +35,7 @@ export const restaurantRoute = new Hono<EcomApiHonoEnv>()
             await validateTurnstile(env(c).TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
             const userId = c.get('USER')?.id!;
             return c.json({
-                data: await c.get('DRIZZLE_DB').transaction(async (tx) => {
+                data: await db.transaction(async (tx) => {
                     const restaurant = await tx.insert(restaurantTable).values({
                         name: name,
                         ownerUserId: userId,
@@ -64,7 +65,7 @@ export const restaurantRoute = new Hono<EcomApiHonoEnv>()
         })),
         async (c) => {
             return c.json({
-                data: (await c.get('DRIZZLE_DB')
+                data: (await db
                     .update(restaurantTable)
                     .set(c.req.valid('json'))
                     .where(eq(restaurantTable.id, c.req.param('restaurantId')))).rowsAffected === 1 ? 'success' : 'nochange',
@@ -83,7 +84,7 @@ export const restaurantRoute = new Hono<EcomApiHonoEnv>()
             // restaurantTable._.columns
             // columns ?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>
             return c.json({
-                data: await c.get('DRIZZLE_DB').query.restaurantTable.findFirst({
+                data: await db.query.restaurantTable.findFirst({
                     where: eq(restaurantTable.id, c.req.param('restaurantId')),
                     columns: c.req.valid('json').columns
                 }),
@@ -113,7 +114,7 @@ async function checkUserIsRestaurantAdmin(
     c: Context<EcomApiHonoEnv>,
     options: { userId: string, restaurantId: string }
 ) {
-    return await c.get('DRIZZLE_DB').select({
+    return await db.select({
         count: count()
     }).from(restaurantUserAdminsMapTable).where(
         and(

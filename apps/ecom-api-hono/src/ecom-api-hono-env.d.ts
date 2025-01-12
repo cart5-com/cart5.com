@@ -5,9 +5,7 @@ import type { schema } from './db/drizzle';
 
 declare global {
     type HonoVariables = {
-        IS_PROD: boolean,
         USER: User | null,
-        DRIZZLE_DB: ReturnType<typeof drizzle<typeof schema>>
     }
 
     type HonoBindings = HttpBindings & {

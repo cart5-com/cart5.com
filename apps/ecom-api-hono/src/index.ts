@@ -6,19 +6,11 @@ import { KNOWN_ERROR } from 'lib/errors';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
 import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
-import db from './db/drizzle';
+import { IS_PROD } from 'lib/utils/getEnvVariable';
 
 
 const app = new Hono<EcomApiHonoEnv>();
 
-
-app.use(async (c, next) => {
-	const { NODE_ENV } = env(c)
-	const IS_PROD = NODE_ENV === 'production'
-	c.set('IS_PROD', IS_PROD)
-	c.set('DRIZZLE_DB', db)
-	await next()
-})
 app.use(csrfChecks);
 app.use(authChecks);
 app.use(secureHeaders());
@@ -50,7 +42,6 @@ app.onError((err, c) => {
 })
 
 app.get("/", (c) => {
-	const IS_PROD = c.get('IS_PROD');
 	const USER = c.get('USER');
 	return c.html(`Hello ecom api ${IS_PROD ? "PROD" : "DEV"} ${USER ? JSON.stringify(USER) : "no user"}`);
 });
