@@ -35,3 +35,5 @@ export async function loadMyRestaurants() {
 export function setCurrentRestaurantId(restaurantId: string) {
     currentRestaurantId.value = restaurantId
 }
+
+loadMyRestaurants();

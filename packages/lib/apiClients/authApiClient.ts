@@ -12,4 +12,5 @@ export const createAuthApiClient = (baseUrl: string = '/__p_auth/') => {
 
 export type ReqType<T> = InferRequestType<T>;
 export type ResType<T> = InferResponseType<T>;
+// TODO: fix type of user
 export type User = ResType<Awaited<ReturnType<typeof createAuthApiClient>['api']['user']['whoami']['$post']>>['data'];

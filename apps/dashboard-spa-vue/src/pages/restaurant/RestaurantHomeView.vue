@@ -18,10 +18,16 @@ const form = useForm({
 })
 
 const loadData = async () => {
-    const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$get({
+    const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
+        json: {
+            columns: {
+                name: true,
+                id: true,
+            }
+        }
     })).json()
     if (error) {
         handleError(error, form);
@@ -41,11 +47,11 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant['update-restaurant'][':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant.update[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
-            form: values,
+            json: values
         })).json()
         if (error) {
             handleError(error, form);

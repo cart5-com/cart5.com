@@ -1,13 +1,13 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "lib/utils/generateKey";
-
-
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
+// TODO: try  drizzle-zod with '@hono/zod-openapi' 'createSchemaFactory' https://orm.drizzle.team/docs/zod
 
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
 
-	name: text("name").notNull(),
+	name: text("name", { length: 550 }).notNull(),
 
 	ownerUserId: text("owner_user_id").notNull(),
 
@@ -19,6 +19,10 @@ export const restaurantTable = sqliteTable("restaurant", {
 		.$defaultFn(() => Date.now())
 		.$onUpdate(() => Date.now()),
 });
+
+export const selectRestaurantSchema = createSelectSchema(restaurantTable);
+export const insertRestaurantSchema = createInsertSchema(restaurantTable);
+export const updateRestaurantSchema = createUpdateSchema(restaurantTable);
 /// RESTAURANT TABLE END
 
 
