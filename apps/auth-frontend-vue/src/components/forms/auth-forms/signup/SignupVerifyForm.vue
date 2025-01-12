@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
@@ -15,14 +15,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    close: [values: z_infer<typeof schema>],
+    close: [values: z.infer<typeof schema>],
     cancel: [];
     onError: [error: any];
 }>();
 
-const schema = z_object({
-    verifyEmail: z_string().email(),
-    code: z_string()
+const schema = z.object({
+    verifyEmail: z.string().email(),
+    code: z.string()
         .min(6, { message: '6 characters' })
         .max(6, { message: '6 characters' }),
 })
@@ -36,7 +36,7 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 form.setFieldValue("verifyEmail", props.verifyEmail);
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await getAuthApiClient().api.email_password.verify.$post({
             form: {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/ui-plus/auto-form";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { getAuthApiClient } from "@src/lib/authApiClient";
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
@@ -12,13 +12,13 @@ import { toast } from "@/ui-plus/sonner";
 import { refreshUserData } from "@src/stores/userStore";
 
 const emit = defineEmits<{
-    close: [values: z_infer<typeof schema>],
+    close: [values: z.infer<typeof schema>],
     cancel: [];
     onError: [error: any];
 }>();
 
-const schema = z_object({
-    userProvidedCode: z_string().min(6, { message: 'Please enter 6 characters' }).max(6, { message: 'Please enter exactly 6 characters' }),
+const schema = z.object({
+    userProvidedCode: z.string().min(6, { message: 'Please enter 6 characters' }).max(6, { message: 'Please enter exactly 6 characters' }),
 })
 
 const formSchema = toTypedSchema(schema)
@@ -29,7 +29,7 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await getAuthApiClient().api["two_factor_auth"].verify.$post({
             form: {

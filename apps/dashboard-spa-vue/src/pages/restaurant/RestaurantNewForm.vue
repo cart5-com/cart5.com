@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
@@ -16,8 +16,8 @@ const emit = defineEmits<{
     onError: [error: any];
 }>();
 
-const schema = z_object({
-    name: z_string().max(255),
+const schema = z.object({
+    name: z.string().max(255),
 })
 
 const form = useForm({
@@ -26,7 +26,7 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant.$post({
             form: {

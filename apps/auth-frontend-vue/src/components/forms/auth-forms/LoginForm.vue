@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/ui-plus/auto-form";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@src/const";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
@@ -14,9 +14,9 @@ import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { refreshUserData } from "@src/stores/userStore";
 const dialog = useDialog();
 
-const schema = z_object({
-	email: z_string().email(),
-	password: z_string().min(8).max(255)
+const schema = z.object({
+	email: z.string().email(),
+	password: z.string().min(8).max(255)
 });
 const form = useForm({
 	validationSchema: toTypedSchema(schema)
@@ -26,7 +26,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 		email: LOCAL_STORAGE_KEYS.REMEMBER_LAST_EMAIL
 	}
 });
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
 		const { data, error } = await (await getAuthApiClient().api.email_password.login.$post({
 			form: {

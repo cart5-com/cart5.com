@@ -36,4 +36,12 @@ export function setCurrentRestaurantId(restaurantId: string) {
     currentRestaurantId.value = restaurantId
 }
 
+export function setCurrentRestaurantName(name: string) {
+    if (!currentRestaurantId.value) return;
+    const restaurant = myRestaurants.value.find(restaurant => restaurant.id === currentRestaurantId.value);
+    if (restaurant) {
+        restaurant.name = name;
+    }
+}
+
 loadMyRestaurants();

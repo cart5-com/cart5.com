@@ -6,7 +6,7 @@ import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { useForm } from "vee-validate";
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { refreshUserData, userStore } from '@src/stores/userStore';
@@ -14,17 +14,17 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const emit = defineEmits<{
-    close: [values: z_infer<typeof schema>],
+    close: [values: z.infer<typeof schema>],
     cancel: [];
     onError: [error: any];
 }>();
 
-const schema = z_object({
-    email: z_string(),
-    password: z_string()
+const schema = z.object({
+    email: z.string(),
+    password: z.string()
         .min(8, { message: "min 8, use only StroNg_P@ssw0rd" })
         .max(255, { message: "max 255" }),
-    confirm: z_string(),
+    confirm: z.string(),
 }).refine(data => data.password === data.confirm, {
     message: t('passwordsMustMatch'),
     path: ['confirm'],
@@ -36,7 +36,7 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 form.setFieldValue("email", userStore.value?.email || "");
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { error } = await (await getAuthApiClient().api.user['update-password'].$post({
             form: {

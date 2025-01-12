@@ -4,7 +4,7 @@ import { AutoForm } from "@/ui-plus/auto-form";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@src/const";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
@@ -14,10 +14,10 @@ import SignupVerifyForm from "@src/components/forms/auth-forms/signup/SignupVeri
 
 const dialog = useDialog();
 
-const schema = z_object({
-	name: z_string().min(1, { message: "min 1" }).max(255, { message: "max 255" }),
-	email: z_string().email(),
-	password: z_string().min(8, { message: "min 8, use only StroNg_P@ssw0rd" }).max(255, { message: "max 255" })
+const schema = z.object({
+	name: z.string().min(1, { message: "min 1" }).max(255, { message: "max 255" }),
+	email: z.string().email(),
+	password: z.string().min(8, { message: "min 8, use only StroNg_P@ssw0rd" }).max(255, { message: "max 255" })
 });
 
 const form = useForm({
@@ -31,7 +31,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 	}
 });
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
 		const { data, error } = await (await getAuthApiClient().api.email_password.register.$post({
 			form: {

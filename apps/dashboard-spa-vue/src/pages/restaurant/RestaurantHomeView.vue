@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button'
 import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { currentRestaurantId, myRestaurants } from './_restaurantStore';
+import { currentRestaurantId, setCurrentRestaurantName } from './_restaurantStore';
 
-const schema = z_object({
-    name: z_string().max(255),
+const schema = z.object({
+    name: z.string().max(550).min(1),
 })
 
 const form = useForm({
@@ -47,7 +47,7 @@ loadData();
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
@@ -60,10 +60,7 @@ async function onSubmit(values: z_infer<typeof schema>) {
         } else {
             // Success
             console.log('data', data);
-            const restaurant = myRestaurants.value.find(restaurant => restaurant.id === currentRestaurantId.value);
-            if (restaurant) {
-                restaurant.name = values.name;
-            }
+            setCurrentRestaurantName(values.name);
         }
     })
 }

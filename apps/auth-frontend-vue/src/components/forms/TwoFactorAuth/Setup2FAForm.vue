@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AutoForm } from '@/ui-plus/auto-form'
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { getAuthApiClient } from '@src/lib/authApiClient';
 import { onMounted, ref } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -36,8 +36,8 @@ const emit = defineEmits<{
     onError: [error: any];
 }>();
 
-const schema = z_object({
-    userProvidedCode: z_string().length(6, { message: "TOTP code must be 6 digits" }),
+const schema = z.object({
+    userProvidedCode: z.string().length(6, { message: "TOTP code must be 6 digits" }),
 })
 
 const formSchema = toTypedSchema(schema)
@@ -48,7 +48,7 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         const { data, error } = await (await getAuthApiClient().api["two_factor_auth"].save.$post({
             form: {

@@ -5,7 +5,7 @@ import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
-import { object as z_object, string as z_string, type infer as z_infer } from "zod";
+import { z } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@src/const";
 import { getAuthApiClient } from "@src/lib/authApiClient";
 import OTPVerifyForm from "./OTPVerifyForm.vue";
@@ -14,8 +14,8 @@ import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import TwoFactorForm from "@src/components/forms/auth-forms/TwoFactorForm.vue";
 const dialog = useDialog();
 
-const schema = z_object({
-	email: z_string().email(),
+const schema = z.object({
+	email: z.string().email(),
 });
 
 const form = useForm({
@@ -28,7 +28,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 	}
 });
 
-async function onSubmit(values: z_infer<typeof schema>) {
+async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
 		const { data, error } = await (await getAuthApiClient().api.otp.send.$post({
 			form: {
