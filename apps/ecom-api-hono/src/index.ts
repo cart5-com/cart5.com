@@ -6,7 +6,7 @@ import { KNOWN_ERROR } from 'lib/errors';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
 import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
-import getDrizzleDb from './db/drizzle';
+import db from './db/drizzle';
 
 
 const app = new Hono<EcomApiHonoEnv>();
@@ -16,7 +16,7 @@ app.use(async (c, next) => {
 	const { NODE_ENV } = env(c)
 	const IS_PROD = NODE_ENV === 'production'
 	c.set('IS_PROD', IS_PROD)
-	c.set('DRIZZLE_DB', getDrizzleDb(c))
+	c.set('DRIZZLE_DB', db)
 	await next()
 })
 app.use(csrfChecks);
