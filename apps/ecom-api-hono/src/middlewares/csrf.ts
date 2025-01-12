@@ -1,7 +1,8 @@
 import { createMiddleware } from "hono/factory";
 import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
+import type { HonoVariables } from '../index';
 
-export const csrfChecks = createMiddleware<EcomApiHonoEnv>(async (c, next) => {
+export const csrfChecks = createMiddleware<HonoVariables>(async (c, next) => {
 	if (c.req.method === "GET") {
 		await next();
 	} else {

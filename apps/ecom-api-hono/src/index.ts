@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import { env } from 'hono/adapter'
+import type { User } from 'lib/apiClients/authApiClient';
 import { Hono } from "hono";
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
@@ -8,8 +8,13 @@ import { authChecks } from './middlewares/auth';
 import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 
+export type HonoVariables = {
+	Variables: {
+		USER: User | null,
+	}
+}
 
-const app = new Hono<EcomApiHonoEnv>();
+const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
 app.use(authChecks);

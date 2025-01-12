@@ -5,12 +5,13 @@ import { type Context, type Next } from 'hono';
 import { Hono } from "hono";
 import { KNOWN_ERROR, type ErrorType } from "lib/errors";
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
-import { env } from 'hono/adapter';
 import { insertRestaurantSchema, restaurantTable, restaurantUserAdminsMapTable, selectRestaurantSchema, updateRestaurantSchema } from '../db/schema/restaurantSchema';
 import db from '../db/drizzle';
+import type { HonoVariables } from '../index';
+import { getEnvVariable } from 'lib/utils/getEnvVariable';
 
 
-export const restaurantRoute = new Hono<EcomApiHonoEnv>()
+export const restaurantRoute = new Hono<HonoVariables>()
     .get('/my-restaurants', async (c) => {
         return c.json({
             data: await db
@@ -32,7 +33,7 @@ export const restaurantRoute = new Hono<EcomApiHonoEnv>()
         })),
         async (c) => {
             const { name, turnstile } = c.req.valid('form');
-            await validateTurnstile(env(c).TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable("TURNSTILE_SECRET"), turnstile, c.req.header()['x-forwarded-for']);
             const userId = c.get('USER')?.id!;
             return c.json({
                 data: await db.transaction(async (tx) => {
@@ -100,10 +101,7 @@ async function restaurantRouteAdminCheck(c: Context, next: Next) {
     if (!userId || !restaurantId) {
         throw new KNOWN_ERROR("Unauthorized", "UNAUTHORIZED");
     }
-    const isAdmin = await checkUserIsRestaurantAdmin(c, {
-        userId,
-        restaurantId
-    });
+    const isAdmin = await checkUserIsRestaurantAdmin(userId, restaurantId);
     if (!isAdmin) {
         throw new KNOWN_ERROR("Not admin", "UNAUTHORIZED");
     }
@@ -111,15 +109,14 @@ async function restaurantRouteAdminCheck(c: Context, next: Next) {
 }
 
 async function checkUserIsRestaurantAdmin(
-    c: Context<EcomApiHonoEnv>,
-    options: { userId: string, restaurantId: string }
+    userId: string, restaurantId: string
 ) {
     return await db.select({
         count: count()
     }).from(restaurantUserAdminsMapTable).where(
         and(
-            eq(restaurantUserAdminsMapTable.userId, options.userId),
-            eq(restaurantUserAdminsMapTable.restaurantId, options.restaurantId)
+            eq(restaurantUserAdminsMapTable.userId, userId),
+            eq(restaurantUserAdminsMapTable.restaurantId, restaurantId)
         )
     ).then(result => result[0].count === 1);
 }

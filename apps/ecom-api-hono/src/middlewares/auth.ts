@@ -2,9 +2,10 @@ import { createMiddleware } from "hono/factory";
 import { createAuthApiClient } from 'lib/apiClients/authApiClient'
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { getCookie } from "hono/cookie";
-import { env } from "hono/adapter";
+import type { HonoVariables } from '../index';
+import { getEnvVariable } from "lib/utils/getEnvVariable";
 
-export const authChecks = createMiddleware<EcomApiHonoEnv>(async (c, next) => {
+export const authChecks = createMiddleware<HonoVariables>(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;
     // Skip auth check if no session cookie exists
     if (!cookieValue) {
@@ -15,11 +16,10 @@ export const authChecks = createMiddleware<EcomApiHonoEnv>(async (c, next) => {
         // if session cookie exists, fetch user data
         try {
             const authCookieValue = cookieValue;
-            const { INTERNAL_AUTH_API_ORIGIN, INTERNAL_AUTH_API_KEY } = env(c);
-            const authApiClient = createAuthApiClient(INTERNAL_AUTH_API_ORIGIN);
+            const authApiClient = createAuthApiClient(getEnvVariable("INTERNAL_AUTH_API_ORIGIN"));
             const { data } = await (await authApiClient.api.user.whoami.$post({}, {
                 headers: {
-                    "internal-auth-api-key": INTERNAL_AUTH_API_KEY,
+                    "internal-auth-api-key": getEnvVariable("INTERNAL_AUTH_API_KEY"),
                     "internal-host": c.req.header()['host'],
                     "authorization": `Bearer ${authCookieValue}`
                 }
