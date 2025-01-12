@@ -1,7 +1,6 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-// TODO: try  drizzle-zod with '@hono/zod-openapi' 'createSchemaFactory' https://orm.drizzle.team/docs/zod
 
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
