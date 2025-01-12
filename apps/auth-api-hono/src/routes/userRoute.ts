@@ -9,6 +9,7 @@ import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
 import { env } from 'hono/adapter';
+import type { User } from '../types/UserType';
 
 export const userRoute = new Hono<AuthApiHonoEnv>()
     .post(
@@ -44,7 +45,7 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
         async (c) => {
             const user = c.get("USER");
             return c.json({
-                data: user,
+                data: user as (User | null),
                 error: null as ErrorType
             }, 200);
         }
