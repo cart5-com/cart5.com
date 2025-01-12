@@ -23,7 +23,9 @@ export const selectRestaurantSchema = createSelectSchema(restaurantTable);
 export const insertRestaurantSchema = createInsertSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 });
-export const updateRestaurantSchema = createUpdateSchema(restaurantTable);
+export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
+	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
+});
 /// RESTAURANT TABLE END
 
 
