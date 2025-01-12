@@ -1,12 +1,13 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "lib/utils/generateKey";
+import { z } from "zod";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
 
-	name: text("name", { length: 550 }).notNull(),
+	name: text("name", { mode: 'text', length: 510 }).notNull(),
 
 	ownerUserId: text("owner_user_id").notNull(),
 
@@ -20,7 +21,9 @@ export const restaurantTable = sqliteTable("restaurant", {
 });
 
 export const selectRestaurantSchema = createSelectSchema(restaurantTable);
-export const insertRestaurantSchema = createInsertSchema(restaurantTable);
+export const insertRestaurantSchema = createInsertSchema(restaurantTable, {
+	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
+});
 export const updateRestaurantSchema = createUpdateSchema(restaurantTable);
 /// RESTAURANT TABLE END
 

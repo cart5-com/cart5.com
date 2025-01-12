@@ -10,12 +10,14 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId, setCurrentRestaurantName } from './_restaurantStore';
 
 const schema = z.object({
-    name: z.string().max(550).min(1),
+    name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
 })
 
 const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
+
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 const loadData = async () => {
     const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
@@ -25,9 +27,9 @@ const loadData = async () => {
         json: {
             columns: {
                 name: true,
-                id: true,
-                created_at_ts: true,
-                updated_at_ts: true,
+                // id: true,
+                // created_at_ts: true,
+                // updated_at_ts: true,
             }
         }
     })).json()
@@ -45,7 +47,7 @@ const loadData = async () => {
 
 loadData();
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {

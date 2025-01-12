@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>();
 
 const schema = z.object({
-    name: z.string().max(255),
+    name: z.string().max(510, { message: "max 510" }).min(3, { message: "min 3" }),
 })
 
 const form = useForm({
