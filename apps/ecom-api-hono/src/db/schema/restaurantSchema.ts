@@ -1,6 +1,5 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "lib/utils/generateKey";
-import { z } from "zod";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 /// RESTAURANT TABLE START
