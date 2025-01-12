@@ -4,7 +4,7 @@ import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
-import { userRoute } from './routes/userRoute';
+import { userRoute } from './routes/user/user.router';
 import { otpRoute } from './routes/otpRoute';
 import { emailPasswordRoute } from './routes/emailPasswordRoute';
 import { crossDomainRoute } from './routes/crossDomainRoute';

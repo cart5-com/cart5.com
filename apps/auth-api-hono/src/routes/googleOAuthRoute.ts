@@ -6,7 +6,8 @@ import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
-import { markEmailAsVerified, updateUserName, updateUserPictureUrl, upsertUser } from '../db/db-actions/userActions';
+import { markEmailAsVerified, updateUserPictureUrl, upsertUser } from '../db/db-actions/userActions';
+import { updateUserNameService } from '../routes/user/user.service';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { getEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
@@ -181,7 +182,7 @@ export const googleOAuthRoute = new Hono<HonoVariables>()
             }
             // update name only if it is null
             if (user.name === null && googleOAuthUser.name) {
-                await updateUserName(user.id, googleOAuthUser.name);
+                await updateUserNameService(user.id, googleOAuthUser.name);
             }
             // update picture only if it is different
             if (googleOAuthUser.picture && googleOAuthUser.picture !== user.pictureUrl) {

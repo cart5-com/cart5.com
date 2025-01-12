@@ -1,5 +1,4 @@
 import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/auth-consts";
-import { deleteSession } from "./deleteSession";
 import { getSessionAndUser } from "./getSessionAndUser";
 import updateSessionExpiration from "./updateSessionExpiration";
 import type { Session } from "../../types/SessionType";
@@ -7,6 +6,7 @@ import type { User } from "../../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
+import { deleteSessionService } from "../../routes/user/user.service";
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,
@@ -19,15 +19,15 @@ export const validateSessionCookie = async (
         return { session: null, user: null };
     }
     if (ENFORCE_HOSTNAME_CHECKS && databaseSession.hostname !== hostname) {
-        await deleteSession(databaseSession.id);
+        await deleteSessionService(databaseSession.id);
         return { session: null, user: null };
     }
     if (!databaseUser) {
-        await deleteSession(databaseSession.id);
+        await deleteSessionService(databaseSession.id);
         return { session: null, user: null };
     }
     if (!isWithinExpirationDate(databaseSession.expiresAt)) {
-        await deleteSession(databaseSession.id);
+        await deleteSessionService(databaseSession.id);
         return { session: null, user: null };
     }
     const session: Session = {

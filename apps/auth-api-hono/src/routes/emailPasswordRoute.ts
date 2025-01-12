@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword, verifyPasswordHash, verifyPasswordStrength } from '../utils/password';
-import { getUserByEmail, isEmailExists, markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
+import { getUserByEmail, isEmailExists, markEmailAsVerified, upsertUser } from '../db/db-actions/userActions';
+import { updateUserNameService } from '../routes/user/user.service';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
@@ -44,7 +45,7 @@ export const emailPasswordRoute = new Hono<HonoVariables>()
 
             // Do not store user without verification
             // const user = await upsertUser(email, await hashPassword(password));
-            // await updateUserName(user.id, name);
+            // await updateUserNameService(user.id, name);
 
             // verify email with one time password authentication
             // throw new KNOWN_ERROR("OTP required", "OTP_REQUIRED");
@@ -105,7 +106,7 @@ export const emailPasswordRoute = new Hono<HonoVariables>()
             }
 
             const user = await upsertUser(email, await hashPassword(password));
-            await updateUserName(user.id, name);
+            await updateUserNameService(user.id, name);
             await markEmailAsVerified(email);
             await createUserSessionAndSetCookie(c, user.id);
 

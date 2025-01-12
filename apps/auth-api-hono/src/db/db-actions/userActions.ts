@@ -23,10 +23,6 @@ export async function upsertUser(email: string, passwordHash: string | null = nu
     return existingUser;
 }
 
-export async function updateUserPassword(userId: string, passwordHash: string) {
-    await db.update(userTable).set({ passwordHash }).where(eq(userTable.id, userId));
-}
-
 export async function updateEncryptedTwoFactorAuthKey(userId: string, encryptedKey: Uint8Array | null) {
     await db.update(userTable).set({ encryptedTwoFactorAuthKey: encryptedKey }).where(eq(userTable.id, userId));
 }
@@ -55,10 +51,6 @@ export async function isEmailExists(email: string) {
 
 export async function markEmailAsVerified(email: string) {
     await db.update(userTable).set({ isEmailVerified: true }).where(eq(userTable.email, email));
-}
-
-export async function updateUserName(userId: string, name: string) {
-    await db.update(userTable).set({ name }).where(eq(userTable.id, userId));
 }
 
 export async function getUserByEmail(email: string) {

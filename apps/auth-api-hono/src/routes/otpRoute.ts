@@ -8,12 +8,13 @@ import { sendUserOtpEmail } from '../utils/email';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
-import { markEmailAsVerified, updateUserName, upsertUser } from '../db/db-actions/userActions';
+import { markEmailAsVerified, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
+import { updateUserNameService } from './user/user.service';
 
 export const otpRoute = new Hono<HonoVariables>()
     .post(
@@ -84,7 +85,7 @@ export const otpRoute = new Hono<HonoVariables>()
                 await markEmailAsVerified(email);
             }
             if (user.name === null) {
-                await updateUserName(user.id, email.split('@')[0]);
+                await updateUserNameService(user.id, email.split('@')[0]);
             }
 
             if (user.encryptedTwoFactorAuthKey) {
