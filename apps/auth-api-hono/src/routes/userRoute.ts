@@ -8,7 +8,6 @@ import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
-import type { User } from '../types/UserType';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 
@@ -46,8 +45,7 @@ export const userRoute = new Hono<HonoVariables>()
         async (c) => {
             const user = c.get("USER");
             return c.json({
-                // TODO: remove unnecessary type from data
-                data: user as (User | null),
+                data: user,
                 error: null as ErrorType
             }, 200);
         }

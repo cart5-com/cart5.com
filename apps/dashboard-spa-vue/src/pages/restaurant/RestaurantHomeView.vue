@@ -26,6 +26,8 @@ const loadData = async () => {
             columns: {
                 name: true,
                 id: true,
+                created_at_ts: true,
+                updated_at_ts: true,
             }
         }
     })).json()
@@ -47,7 +49,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 async function onSubmit(values: z_infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant.update[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

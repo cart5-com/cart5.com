@@ -5,7 +5,7 @@ import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
-import { restaurantRoute } from './dashboardRoutes/restaurantRoute';
+import { restaurantRouter } from './dashboardRoutes/restaurant/restaurant.router';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 
 export type HonoVariables = {
@@ -65,7 +65,7 @@ const dashboardRoutes = app
 		await next();
 	})
 	.basePath('/api/dashboard')
-	.route('/restaurant', restaurantRoute);
+	.route('/restaurant', restaurantRouter);
 
 
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
