@@ -7,13 +7,15 @@ import { isKnownHostname } from '../utils/knownHostnames';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
 import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from 'lib/auth-consts';
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
-import { env } from 'hono/adapter';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
+import { IS_PROD, getEnvVariable } from 'lib/utils/getEnvVariable';
+import type { HonoVariables } from "../index";
 
 /**
  * Cross domain authentication route handler
  * Handles authentication across different domains in a secure way
  */
-export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
+export const crossDomainRoute = new Hono<HonoVariables>()
     .post(
         '/redirector',
         // Validate the form data - redirectUrl must not be pre-encoded and turnstile token required
@@ -32,7 +34,6 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
             turnstile: z.string().min(1, { message: "Verification required" })
         })),
         async (c) => {
-            const { PUBLIC_DOMAIN_NAME, KNOWN_DOMAINS_REGEX } = env(c);
             const { redirectUrl, turnstile } = c.req.valid('form');
 
             // Security check: Verify request comes from our auth domain
@@ -41,8 +42,7 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
             }
 
-            const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
-            if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${PUBLIC_DOMAIN_NAME}`) {
+            if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
                 throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
             }
 
@@ -54,8 +54,7 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
 
             // Validate target domain is in our allowed list
             const url = new URL(redirectUrl);
-            const IS_PROD = c.get('IS_PROD');
-            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, KNOWN_DOMAINS_REGEX, IS_PROD)) {
+            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 
@@ -67,11 +66,10 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
                 sourceHost: hostHeader,
                 targetHost: url.hostname
             };
-            const { JWT_PRIVATE_KEY, ENCRYPTION_KEY } = env(c);
             // Create encrypted JWT containing session info
             const code = await signJwtAndEncrypt<CrossDomainCodePayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 payload,
                 CROSS_DOMAIN_SESSION_EXPIRES_IN,
             );
@@ -92,13 +90,6 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
             const query = c.req.valid('query');
             const redirectUrl = new URL(decodeURIComponent(query.redirectUrl));
 
-            const {
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
-                PUBLIC_DOMAIN_NAME,
-                TURNSTILE_SECRET,
-                KNOWN_DOMAINS_REGEX
-            } = env(c);
             // Decrypt and verify the JWT token
             const {
                 userId,
@@ -107,20 +98,19 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
                 sourceHost,
                 targetHost
             } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 query.code
             );
 
-            const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
 
-            if (ENFORCE_HOSTNAME_CHECKS && sourceHost !== (`auth.${PUBLIC_DOMAIN_NAME}`)) {
+            if (ENFORCE_HOSTNAME_CHECKS && sourceHost !== (`auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`)) {
                 throw new KNOWN_ERROR("Invalid source host", "INVALID_SOURCE_HOST");
             }
 
             // Verify turnstile token is valid
             // this will make sure it is used only one time!
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
 
             // Validate current domain is in allowed list
             const host = c.req.header()['host'];
@@ -128,8 +118,7 @@ export const crossDomainRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
             }
 
-            const IS_PROD = c.get('IS_PROD');
-            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, KNOWN_DOMAINS_REGEX, IS_PROD)) {
+            if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
                 throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
             }
 

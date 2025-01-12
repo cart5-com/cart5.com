@@ -1,5 +1,4 @@
-import { Hono, type Context } from 'hono'
-import { env } from 'hono/adapter'
+import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, generateCodeVerifier, generateState, Google, OAuth2Tokens } from 'arctic';
@@ -9,46 +8,46 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
 import { markEmailAsVerified, updateUserName, updateUserPictureUrl, upsertUser } from '../db/db-actions/userActions';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
+import { getEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
+import type { HonoVariables } from "../index";
 
-export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
+export const googleOAuthRoute = new Hono<HonoVariables>()
     .get(
         '/redirect',
         zValidator('query', z.object({
             redirect_uri: z.string().min(1),
         })),
         async (c) => {
-            const { PUBLIC_DOMAIN_NAME } = env(c);
-            const IS_PROD = c.get('IS_PROD');
             const { redirect_uri } = c.req.valid('query');
 
-            const {
-                GOOGLE_OAUTH_CLIENT_ID,
-                GOOGLE_OAUTH_CLIENT_SECRET,
-                GOOGLE_OAUTH_REDIRECT_URI
-            } = env(c);
+            let hasRequiredEnvVariables = false;
+            try {
+                hasRequiredEnvVariables = !!(
+                    getEnvVariable('GOOGLE_OAUTH_CLIENT_ID') &&
+                    getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET') &&
+                    getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
+                );
+            } catch (e) {
+                hasRequiredEnvVariables = false;
+            }
 
             if (
-                GOOGLE_OAUTH_CLIENT_ID &&
-                GOOGLE_OAUTH_CLIENT_SECRET &&
-                GOOGLE_OAUTH_REDIRECT_URI
+                hasRequiredEnvVariables
             ) {
                 const hostHeader = c.req.header()['host'];
                 if (!hostHeader) {
                     throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
                 }
 
-                if (hostHeader !== `auth.${PUBLIC_DOMAIN_NAME}`) {
+                if (hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
                     throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
                 }
 
-                const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl(c);
-                const {
-                    JWT_PRIVATE_KEY,
-                    ENCRYPTION_KEY
-                } = env(c);
+                const { url, state: storedState, codeVerifier: storedCodeVerifier } = await getSignInUrl();
                 const google_oauth_token = await signJwtAndEncrypt<GoogleOAuthTokenPayload>(
-                    JWT_PRIVATE_KEY,
-                    ENCRYPTION_KEY,
+                    getEnvVariable('JWT_PRIVATE_KEY'),
+                    getEnvVariable('ENCRYPTION_KEY'),
                     {
                         storedState,
                         storedCodeVerifier,
@@ -58,7 +57,7 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
 
                 setCookie(c, GOOGLE_OAUTH_COOKIE_NAME, google_oauth_token, {
                     path: "/",
-                    secure: IS_PROD,
+                    secure: ENFORCE_HOSTNAME_CHECKS,
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "lax" // must use lax to read cookie value after google's redirect
@@ -80,7 +79,6 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
             redirect_uri: z.string().min(1),
         })),
         async (c) => {
-            const IS_PROD = c.get('IS_PROD');
             if (IS_PROD) {
                 return c.text('not allowed in prod');
             } else {
@@ -115,15 +113,14 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
             redirect_uri: z.string().min(1)
         })),
         async (c) => {
-            const IS_PROD = c.get('IS_PROD');
             if (IS_PROD) {
                 return c.text('not allowed in prod');
             } else {
                 const { email, redirect_uri } = c.req.valid('query');
-                const user = await upsertUser(c, email);
+                const user = await upsertUser(email);
                 // if email is not verified, mark it as verified
                 if (!user.isEmailVerified) {
-                    await markEmailAsVerified(c, email);
+                    await markEmailAsVerified(email);
                 }
                 await createUserSessionAndSetCookie(c, user.id);
                 return c.redirect(decodeURIComponent(redirect_uri));
@@ -148,7 +145,7 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
             if (!hostHeader) {
                 throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
             }
-            if (hostHeader !== `auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
+            if (hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
                 throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
             }
 
@@ -162,14 +159,10 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("Invalid request", "INVALID_REQUEST");
             }
 
-            const {
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
 
             const { storedState, storedCodeVerifier, redirect_uri } = await decryptAndVerifyJwt<GoogleOAuthTokenPayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 google_oauth_token
             );
             if (!storedState || !storedCodeVerifier || !redirect_uri) {
@@ -179,20 +172,20 @@ export const googleOAuthRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("Invalid state", "INVALID_STATE");
             }
 
-            const googleOAuthUser = await validateAuthorizationCode(code, storedCodeVerifier, c);
+            const googleOAuthUser = await validateAuthorizationCode(code, storedCodeVerifier);
 
-            const user = await upsertUser(c, googleOAuthUser.email);
+            const user = await upsertUser(googleOAuthUser.email);
             // if email is not verified, mark it as verified
             if (!user.isEmailVerified) {
-                await markEmailAsVerified(c, googleOAuthUser.email);
+                await markEmailAsVerified(googleOAuthUser.email);
             }
             // update name only if it is null
             if (user.name === null && googleOAuthUser.name) {
-                await updateUserName(c, user.id, googleOAuthUser.name);
+                await updateUserName(user.id, googleOAuthUser.name);
             }
             // update picture only if it is different
             if (googleOAuthUser.picture && googleOAuthUser.picture !== user.pictureUrl) {
-                await updateUserPictureUrl(c, user.id, googleOAuthUser.picture);
+                await updateUserPictureUrl(user.id, googleOAuthUser.picture);
             }
 
             await createUserSessionAndSetCookie(c, user.id);
@@ -225,18 +218,12 @@ type GoogleOAuthClaims = {
 
 async function validateAuthorizationCode(
     code: string,
-    codeVerifier: string,
-    c: Context<AuthApiHonoEnv>
+    codeVerifier: string
 ) {
-    const {
-        GOOGLE_OAUTH_CLIENT_ID,
-        GOOGLE_OAUTH_CLIENT_SECRET,
-        GOOGLE_OAUTH_REDIRECT_URI
-    } = env(c);
     const google = new Google(
-        GOOGLE_OAUTH_CLIENT_ID!,
-        GOOGLE_OAUTH_CLIENT_SECRET!,
-        GOOGLE_OAUTH_REDIRECT_URI!
+        getEnvVariable('GOOGLE_OAUTH_CLIENT_ID'),
+        getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET'),
+        getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
     );
     let tokens: OAuth2Tokens;
     try {
@@ -247,18 +234,13 @@ async function validateAuthorizationCode(
     return decodeIdToken(tokens.idToken()) as GoogleOAuthClaims;
 }
 
-async function getSignInUrl(c: Context<AuthApiHonoEnv>) {
+async function getSignInUrl() {
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
-    const {
-        GOOGLE_OAUTH_CLIENT_ID,
-        GOOGLE_OAUTH_CLIENT_SECRET,
-        GOOGLE_OAUTH_REDIRECT_URI
-    } = env(c);
     const google = new Google(
-        GOOGLE_OAUTH_CLIENT_ID!,
-        GOOGLE_OAUTH_CLIENT_SECRET!,
-        GOOGLE_OAUTH_REDIRECT_URI!
+        getEnvVariable('GOOGLE_OAUTH_CLIENT_ID'),
+        getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET'),
+        getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
     );
     const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
     return { url, state, codeVerifier };

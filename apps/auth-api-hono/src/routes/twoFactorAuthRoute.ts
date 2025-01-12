@@ -14,14 +14,14 @@ import { decryptAndVerifyJwt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { createUserSessionAndSetCookie } from '../db/db-actions/createSession';
-import { env } from 'hono/adapter';
+import { getEnvVariable } from 'lib/utils/getEnvVariable';
+import type { HonoVariables } from "../index";
 
-export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
+export const twoFactorAuthRoute = new Hono<HonoVariables>()
     .post(
         '/new',
         async (c) => {
             const user = c.get("USER");
-            const { PUBLIC_DOMAIN_NAME } = env(c);
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
@@ -34,13 +34,13 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             const totpKey = new Uint8Array(20);
             crypto.getRandomValues(totpKey);
             const encodedTOTPKey = encodeBase64(totpKey);
-            const keyURI = createTOTPKeyURI(`auth.${PUBLIC_DOMAIN_NAME}`, user.email, totpKey, 30, 6);
+            const keyURI = createTOTPKeyURI(`auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`, user.email, totpKey, 30, 6);
             return c.json({
                 data: {
                     qrCodeSVG: renderSVG(keyURI),
                     encodedTOTPKey,
                     totpKey: encodeBase32NoPadding(totpKey),
-                    name: `auth.${PUBLIC_DOMAIN_NAME} - ${user.email}`,
+                    name: `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')} - ${user.email}`,
                 },
                 error: null as ErrorType
             }, 200);
@@ -65,11 +65,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
             }
             const { encodedTOTPKey, userProvidedCode, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             let key: Uint8Array;
             try {
                 key = decodeBase64(encodedTOTPKey);
@@ -85,11 +81,11 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("Invalid TOTP code", "INVALID_TOTP");
             }
 
-            const encryptedKey = encryptAesGcm(key, ENCRYPTION_KEY);
-            await updateEncryptedTwoFactorAuthKey(c, user.id, encryptedKey);
+            const encryptedKey = encryptAesGcm(key, getEnvVariable('ENCRYPTION_KEY'));
+            await updateEncryptedTwoFactorAuthKey(user.id, encryptedKey);
             const recoveryCode = generateRandomRecoveryCode();
-            const encryptedRecoveryCode = encryptString(recoveryCode, ENCRYPTION_KEY);
-            await updateEncryptedTwoFactorAuthRecoveryCode(c, user.id, encryptedRecoveryCode);
+            const encryptedRecoveryCode = encryptString(recoveryCode, getEnvVariable('ENCRYPTION_KEY'));
+            await updateEncryptedTwoFactorAuthRecoveryCode(user.id, encryptedRecoveryCode);
 
             return c.json({
                 data: {
@@ -107,12 +103,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { userProvidedCode, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
             if (!twoFactorAuthToken) {
@@ -120,11 +111,11 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             }
 
             const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 twoFactorAuthToken
             );
-            const user = await getUserByEmail(c, email);
+            const user = await getUserByEmail(email);
             if (!user) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
             }
@@ -132,7 +123,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
                 // no need to throw error here, as it's not expected to happen
                 throw new KNOWN_ERROR("UNKNOWN_ERROR", "UNKNOWN_ERROR");
             }
-            if (!verifyTOTPWithGracePeriod(decryptAesGcm(user.encryptedTwoFactorAuthKey, ENCRYPTION_KEY), 30, 6, userProvidedCode, 30)) {
+            if (!verifyTOTPWithGracePeriod(decryptAesGcm(user.encryptedTwoFactorAuthKey, getEnvVariable('ENCRYPTION_KEY')), 30, 6, userProvidedCode, 30)) {
                 throw new KNOWN_ERROR("Invalid TOTP code", "INVALID_TOTP");
             }
 
@@ -154,12 +145,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { turnstile, recoveryCode } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
             if (!twoFactorAuthToken) {
@@ -167,24 +153,24 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             }
 
             const { email } = await decryptAndVerifyJwt<TwoFactorAuthVerifyPayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 twoFactorAuthToken
             );
-            const user = await getUserByEmail(c, email);
+            const user = await getUserByEmail(email);
             if (!user) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
             if (!user.encryptedTwoFactorAuthRecoveryCode) {
                 throw new KNOWN_ERROR("Invalid request 2", "INVALID_REQUEST_2");
             }
-            const decryptedRecoveryCode = decryptToString(user.encryptedTwoFactorAuthRecoveryCode, ENCRYPTION_KEY);
+            const decryptedRecoveryCode = decryptToString(user.encryptedTwoFactorAuthRecoveryCode, getEnvVariable('ENCRYPTION_KEY'));
             if (decryptedRecoveryCode !== recoveryCode) {
                 throw new KNOWN_ERROR("Invalid request 3", "INVALID_REQUEST_3");
             }
 
-            await updateEncryptedTwoFactorAuthKey(c, user.id, null);
-            await updateEncryptedTwoFactorAuthRecoveryCode(c, user.id, null);
+            await updateEncryptedTwoFactorAuthKey(user.id, null);
+            await updateEncryptedTwoFactorAuthRecoveryCode(user.id, null);
 
             await createUserSessionAndSetCookie(c, user.id);
             deleteCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
@@ -202,11 +188,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -215,7 +197,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
             // get user by email
-            const savedUser = await getUserByEmail(c, user.email);
+            const savedUser = await getUserByEmail(user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("User not saved", "USER_NOT_SAVED");
             }
@@ -226,8 +208,8 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             }
 
             const newRecoveryCode = generateRandomRecoveryCode();
-            const encryptedRecoveryCode = encryptString(newRecoveryCode, ENCRYPTION_KEY);
-            await updateEncryptedTwoFactorAuthRecoveryCode(c, savedUser.id, encryptedRecoveryCode);
+            const encryptedRecoveryCode = encryptString(newRecoveryCode, getEnvVariable('ENCRYPTION_KEY'));
+            await updateEncryptedTwoFactorAuthRecoveryCode(savedUser.id, encryptedRecoveryCode);
 
             return c.json({
                 data: newRecoveryCode,
@@ -243,11 +225,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -255,14 +233,14 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(c, user.email);
+            const savedUser = await getUserByEmail(user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
             if (!savedUser.encryptedTwoFactorAuthRecoveryCode) {
                 throw new KNOWN_ERROR("Invalid request 2", "INVALID_REQUEST_2");
             }
-            const decryptedRecoveryCode = decryptToString(savedUser.encryptedTwoFactorAuthRecoveryCode, ENCRYPTION_KEY);
+            const decryptedRecoveryCode = decryptToString(savedUser.encryptedTwoFactorAuthRecoveryCode, getEnvVariable('ENCRYPTION_KEY'));
             return c.json({
                 data: decryptedRecoveryCode,
                 error: null as ErrorType
@@ -276,10 +254,7 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -287,12 +262,12 @@ export const twoFactorAuthRoute = new Hono<AuthApiHonoEnv>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(c, user.email);
+            const savedUser = await getUserByEmail(user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
-            await updateEncryptedTwoFactorAuthKey(c, user.id, null);
-            await updateEncryptedTwoFactorAuthRecoveryCode(c, user.id, null);
+            await updateEncryptedTwoFactorAuthKey(user.id, null);
+            await updateEncryptedTwoFactorAuthRecoveryCode(user.id, null);
             return c.json({
                 data: "success",
                 error: null as ErrorType

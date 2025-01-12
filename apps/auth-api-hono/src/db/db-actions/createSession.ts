@@ -6,8 +6,10 @@ import { sessionTable } from "../schema";
 import type { Context } from "hono";
 import { generateSessionToken } from "../../utils/generateSessionToken";
 import { setCookie } from "hono/cookie";
-
-async function createSession(c: Context<AuthApiHonoEnv>, token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
+import db from "../drizzle";
+import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
+import type { HonoVariables } from "../../index";
+async function createSession(token: string, userId: string, hostname: string, timeInMs: number = SESSION_EXPIRES_IN): Promise<Session> {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
     const session: Session = {
         id: sessionId,
@@ -17,7 +19,7 @@ async function createSession(c: Context<AuthApiHonoEnv>, token: string, userId: 
         fresh: false,
         hostname
     };
-    await c.get('DRIZZLE_DB').insert(sessionTable).values({
+    await db.insert(sessionTable).values({
         id: session.id,
         userId: session.userId,
         expiresAt: session.expiresAt.getTime(),
@@ -27,12 +29,12 @@ async function createSession(c: Context<AuthApiHonoEnv>, token: string, userId: 
 }
 
 
-export async function createUserSessionAndSetCookie(c: Context<AuthApiHonoEnv>, userId: string) {
+export async function createUserSessionAndSetCookie(c: Context<HonoVariables>, userId: string) {
     const sessionToken = generateSessionToken();
-    const session = await createSession(c, sessionToken, userId, c.req.header()['host']!);
+    const session = await createSession(sessionToken, userId, c.req.header()['host']!);
     setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
         path: "/",
-        secure: c.get('IS_PROD'),
+        secure: ENFORCE_HOSTNAME_CHECKS,
         httpOnly: true,
         expires: session.expiresAt,
         sameSite: "strict"

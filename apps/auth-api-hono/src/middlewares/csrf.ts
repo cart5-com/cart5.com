@@ -1,13 +1,14 @@
 import { createMiddleware } from "hono/factory";
 import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
-import { env } from "hono/adapter";
+import { getEnvVariable } from "lib/utils/getEnvVariable";
+import type { HonoVariables } from "../index";
 
-export const csrfChecks = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
+export const csrfChecks = createMiddleware<HonoVariables>(async (c, next) => {
 	if (c.req.method === "GET") {
 		await next();
 	} else {
 		const internalAuthApiKey = c.req.header()['internal-auth-api-key'] ?? null;
-		if (internalAuthApiKey === env(c).INTERNAL_AUTH_API_KEY) {
+		if (internalAuthApiKey === getEnvVariable('INTERNAL_AUTH_API_KEY')) {
 			// allow internal requests to bypass csrf checks
 			await next();
 		} else {

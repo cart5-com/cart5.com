@@ -1,16 +1,13 @@
-import type { Context } from "hono";
-import { env } from "hono/adapter";
+import { getEnvVariable, IS_PROD } from "lib/utils/getEnvVariable";
 
 export const sendEmail = async function (
-    options: { from: string, to: string[], subject: string, html: string },
-    c: Context<AuthApiHonoEnv>
+    options: { from: string, to: string[], subject: string, html: string }
 ) {
-    const { RESEND_API_KEY } = env(c);
     const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${RESEND_API_KEY}`,
+            Authorization: `Bearer ${getEnvVariable('RESEND_API_KEY')}`,
         },
         body: JSON.stringify(options),
     });
@@ -24,8 +21,7 @@ export const sendEmail = async function (
 
 export const sendUserOtpEmail = async (
     email: string,
-    code: string,
-    c: Context<AuthApiHonoEnv>
+    code: string
 ) => {
     const from = "no-reply-otp <no-reply-otp@cart5.com>";
     const to = email;
@@ -39,14 +35,14 @@ ${code}
 
 This code will expire in 10 minutes.`;
 
-    if (c.get('IS_PROD')) {
+    if (IS_PROD) {
         // const send =
         sendEmail({
             from,
             to: [to],
             subject,
             html: html.replace(/\n/g, "<br>")
-        }, c);
+        });
         // return send.data;
         return 200;
     } else {

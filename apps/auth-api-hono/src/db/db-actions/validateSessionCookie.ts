@@ -6,30 +6,28 @@ import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import type { Context } from "hono";
+import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
 
 export const validateSessionCookie = async (
-    c: Context<AuthApiHonoEnv>,
     sessionCookieValue: string,
     hostname: string,
     ignoreUpdateSessionExpiration: boolean = false // default:do not ignore
 ): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionCookieValue)));
-    const [databaseSession, databaseUser] = await getSessionAndUser(c, sessionId);
+    const [databaseSession, databaseUser] = await getSessionAndUser(sessionId);
     if (!databaseSession) {
         return { session: null, user: null };
     }
-    const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
     if (ENFORCE_HOSTNAME_CHECKS && databaseSession.hostname !== hostname) {
-        await deleteSession(c, databaseSession.id);
+        await deleteSession(databaseSession.id);
         return { session: null, user: null };
     }
     if (!databaseUser) {
-        await deleteSession(c, databaseSession.id);
+        await deleteSession(databaseSession.id);
         return { session: null, user: null };
     }
     if (!isWithinExpirationDate(databaseSession.expiresAt)) {
-        await deleteSession(c, databaseSession.id);
+        await deleteSession(databaseSession.id);
         return { session: null, user: null };
     }
     const session: Session = {
@@ -47,7 +45,7 @@ export const validateSessionCookie = async (
         if (!isWithinExpirationDate(activePeriodExpirationDate)) {
             session.fresh = true;
             session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
-            await updateSessionExpiration(c, databaseSession.id, session.expiresAt);
+            await updateSessionExpiration(databaseSession.id, session.expiresAt);
         }
     }
     return { user: databaseUser, session };

@@ -1,16 +1,15 @@
 import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
-import type { Context } from "hono";
 import { sessionTable, userTable } from "../schema";
+import db from "../drizzle";
 
 export const getSessionAndUser = async (
-    c: Context<AuthApiHonoEnv>,
     sessionId: string
 ): Promise<[session: Session | null, user: User | null]> => {
     const [databaseSession, databaseUser] = await Promise.all([
-        getSession(c, sessionId),
-        getUserFromSessionId(c, sessionId)
+        getSession(sessionId),
+        getUserFromSessionId(sessionId)
     ]);
     if (databaseUser) {
         databaseUser.has2FA = databaseUser.has2FA || false;
@@ -21,8 +20,8 @@ export const getSessionAndUser = async (
     return [databaseSession, databaseUser];
 }
 
-const getSession = async (c: Context<AuthApiHonoEnv>, sessionId: string): Promise<Session | null> => {
-    const result = await c.get('DRIZZLE_DB')
+const getSession = async (sessionId: string): Promise<Session | null> => {
+    const result = await db
         .select()
         .from(sessionTable)
         .where(eq(sessionTable.id, sessionId));
@@ -37,8 +36,8 @@ const getSession = async (c: Context<AuthApiHonoEnv>, sessionId: string): Promis
     } as Session;
 }
 
-const getUserFromSessionId = async (c: Context<AuthApiHonoEnv>, sessionId: string): Promise<User | null> => {
-    const result = await c.get('DRIZZLE_DB')
+const getUserFromSessionId = async (sessionId: string): Promise<User | null> => {
+    const result = await db
         .select({
             id: userTable.id,
             email: userTable.email,

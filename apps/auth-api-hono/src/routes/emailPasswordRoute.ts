@@ -12,9 +12,11 @@ import { OTP_COOKIE_NAME_AFTER_REGISTER, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { sendUserOtpEmail } from '../utils/email';
-import { env } from 'hono/adapter';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
+import { getEnvVariable } from 'lib/utils/getEnvVariable';
+import type { HonoVariables } from "../index";
 
-export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
+export const emailPasswordRoute = new Hono<HonoVariables>()
     .post(
         '/register',
         zValidator('form', z.object({
@@ -33,14 +35,9 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { email, password, name, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
 
-            const isRegistered = await isEmailExists(c, email);
+            const isRegistered = await isEmailExists(email);
             if (isRegistered) {
                 throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
             }
@@ -55,8 +52,8 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
             // save user after otp verification
             const otp = generateOTPJsOnly();
             const otpToken = await signJwtAndEncrypt<OtpTokenAfterRegisterPayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 {
                     nonce: crypto.randomUUID(),
                     email: email,
@@ -67,12 +64,12 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
             );
             setCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER, otpToken, {
                 path: "/",
-                secure: c.get('IS_PROD'),
+                secure: ENFORCE_HOSTNAME_CHECKS,
                 httpOnly: true,
                 maxAge: 600, // 10 minutes
                 sameSite: "strict"
             });
-            await sendUserOtpEmail(email, otp, c);
+            await sendUserOtpEmail(email, otp);
             return c.json({
                 data: "success",
                 error: null as ErrorType
@@ -88,33 +85,28 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { verifyEmail, code, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const otpToken = getCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
             if (!otpToken) {
                 throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
             }
             const { email, otp, password, name } = await decryptAndVerifyJwt<OtpTokenAfterRegisterPayload>(
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY,
+                getEnvVariable('JWT_PRIVATE_KEY'),
+                getEnvVariable('ENCRYPTION_KEY'),
                 otpToken
             );
             if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
                 throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
             }
             deleteCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
-            const isRegistered = await isEmailExists(c, email);
+            const isRegistered = await isEmailExists(email);
             if (isRegistered) {
                 throw new KNOWN_ERROR("already registered", "ALREADY_REGISTERED");
             }
 
-            const user = await upsertUser(c, email, await hashPassword(password));
-            await updateUserName(c, user.id, name);
-            await markEmailAsVerified(c, email);
+            const user = await upsertUser(email, await hashPassword(password));
+            await updateUserName(user.id, name);
+            await markEmailAsVerified(email);
             await createUserSessionAndSetCookie(c, user.id);
 
             return c.json({
@@ -132,17 +124,12 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { email, password, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-                JWT_PRIVATE_KEY,
-                ENCRYPTION_KEY
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
-            const isRegistered = await isEmailExists(c, email);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+            const isRegistered = await isEmailExists(email);
             if (!isRegistered) {
                 throw new KNOWN_ERROR("Email not registered", "EMAIL_NOT_REGISTERED");
             }
-            const user = await getUserByEmail(c, email);
+            const user = await getUserByEmail(email);
             if (!user) {
                 throw new KNOWN_ERROR("Invalid email or password", "INVALID_EMAIL_OR_PASSWORD");
             }
@@ -159,8 +146,8 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
 
             if (user.encryptedTwoFactorAuthKey) {
                 const twoFactorAuthToken = await signJwtAndEncrypt<TwoFactorAuthVerifyPayload>(
-                    JWT_PRIVATE_KEY,
-                    ENCRYPTION_KEY,
+                    getEnvVariable('JWT_PRIVATE_KEY'),
+                    getEnvVariable('ENCRYPTION_KEY'),
                     {
                         nonce: crypto.randomUUID(),
                         userId: user.id,
@@ -169,7 +156,7 @@ export const emailPasswordRoute = new Hono<AuthApiHonoEnv>()
                 );
                 setCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME, twoFactorAuthToken, {
                     path: "/",
-                    secure: c.get('IS_PROD'),
+                    secure: ENFORCE_HOSTNAME_CHECKS,
                     httpOnly: true,
                     maxAge: 600, // 10 minutes
                     sameSite: "strict"

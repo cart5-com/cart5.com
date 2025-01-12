@@ -1,5 +1,4 @@
 import { serve } from '@hono/node-server'
-import { env } from 'hono/adapter'
 import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
@@ -13,23 +12,20 @@ import { googleOAuthRoute } from './routes/googleOAuthRoute';
 import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { hostnameCheck } from './middlewares/hostnameCheck';
-import { getDrizzleDb } from './db/drizzle';
+import { ENFORCE_HOSTNAME_CHECKS } from './enforceHostnameChecks';
+import { IS_PROD } from 'lib/utils/getEnvVariable';
+import type { User } from './types/UserType';
+import type { Session } from './types/SessionType';
 
-const app = new Hono<AuthApiHonoEnv>();
+export type HonoVariables = {
+	Variables: {
+		SESSION: Session | null,
+		USER: User | null,
+	}
+}
 
-// const IS_PROD = getRuntimeKey() === "node"
-// console.log("isNode:", isNode, getRuntimeKey())
+const app = new Hono<HonoVariables>();
 
-app.use(async (c, next) => {
-	const { NODE_ENV, npm_lifecycle_event } = env(c)
-	const IS_PROD = NODE_ENV === 'production'
-	const IS_CADDY_DEV = npm_lifecycle_event === 'dev:caddy'
-	c.set('IS_PROD', IS_PROD)
-	// IF PROD OR CADDY DEV, ENFORCE HOSTNAME CHECKS
-	c.set('ENFORCE_HOSTNAME_CHECKS', (IS_CADDY_DEV || IS_PROD))
-	c.set('DRIZZLE_DB', getDrizzleDb(c))
-	await next()
-});
 app.use(hostnameCheck);
 app.use(csrfChecks);
 app.use(authChecks);
@@ -64,8 +60,6 @@ app.onError((err, c) => {
 })
 
 app.get("/", (c) => {
-	const IS_PROD = c.get('IS_PROD');
-	const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "ENFORCE_HOSTNAME_CHECKS" : "NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 

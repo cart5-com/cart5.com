@@ -1,8 +1,10 @@
 import { createMiddleware } from "hono/factory";
-import { env } from "hono/adapter";
 import { KNOWN_ERROR } from "lib/errors";
+import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
+import { getEnvVariable } from "lib/utils/getEnvVariable";
+import type { HonoVariables } from "../index";
 
-export const hostnameCheck = createMiddleware<AuthApiHonoEnv>(async (c, next) => {
+export const hostnameCheck = createMiddleware<HonoVariables>(async (c, next) => {
     if (
         c.req.path === '/api/cross_domain/callback' ||
         c.req.path === '/api/user/logout' ||
@@ -12,8 +14,7 @@ export const hostnameCheck = createMiddleware<AuthApiHonoEnv>(async (c, next) =>
         await next();
     } else {
         const host = c.req.header()['host'];
-        const ENFORCE_HOSTNAME_CHECKS = c.get('ENFORCE_HOSTNAME_CHECKS');
-        if (ENFORCE_HOSTNAME_CHECKS && host !== `auth.${env(c).PUBLIC_DOMAIN_NAME}`) {
+        if (ENFORCE_HOSTNAME_CHECKS && host !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
             console.log("hostnameCheck: host:", host);
             throw new KNOWN_ERROR(`Invalid host: ${host}`, "INVALID_HOST");
         }

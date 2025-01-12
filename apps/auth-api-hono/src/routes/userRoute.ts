@@ -8,16 +8,17 @@ import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmail, updateUserName, updateUserPassword } from '../db/db-actions/userActions';
-import { env } from 'hono/adapter';
 import type { User } from '../types/UserType';
+import { getEnvVariable } from 'lib/utils/getEnvVariable';
+import type { HonoVariables } from "../index";
 
-export const userRoute = new Hono<AuthApiHonoEnv>()
+export const userRoute = new Hono<HonoVariables>()
     .post(
         '/logout',
         async (c) => {
             const session = c.get('SESSION');
             if (session) {
-                await deleteSession(c, session.id);
+                await deleteSession(session.id);
                 deleteCookie(c, SESSION_COOKIE_NAME);
             }
             return c.json({
@@ -31,7 +32,7 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
         async (c) => {
             const session = c.get('SESSION');
             if (session) {
-                await deleteAllUserSessions(c, session.userId);
+                await deleteAllUserSessions(session.userId);
                 deleteCookie(c, SESSION_COOKIE_NAME);
             }
             return c.json({
@@ -45,6 +46,7 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
         async (c) => {
             const user = c.get("USER");
             return c.json({
+                // TODO: remove unnecessary type from data
                 data: user as (User | null),
                 error: null as ErrorType
             }, 200);
@@ -66,10 +68,7 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { turnstile, password } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -77,11 +76,11 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(c, user.email);
+            const savedUser = await getUserByEmail(user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
-            await updateUserPassword(c, user.id, await hashPassword(password));
+            await updateUserPassword(user.id, await hashPassword(password));
             return c.json({
                 data: "success",
                 error: null as ErrorType
@@ -96,10 +95,7 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
         })),
         async (c) => {
             const { newName, turnstile } = c.req.valid('form');
-            const {
-                TURNSTILE_SECRET,
-            } = env(c);
-            await validateTurnstile(TURNSTILE_SECRET, turnstile, c.req.header()['x-forwarded-for']);
+            await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
             const user = c.get("USER");
             if (!user || !user.id) {
                 throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -107,11 +103,11 @@ export const userRoute = new Hono<AuthApiHonoEnv>()
             if (!user.hasNewSession) {
                 throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
             }
-            const savedUser = await getUserByEmail(c, user.email);
+            const savedUser = await getUserByEmail(user.email);
             if (!savedUser) {
                 throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
             }
-            await updateUserName(c, user.id, newName);
+            await updateUserName(user.id, newName);
             return c.json({
                 data: "success",
                 error: null as ErrorType
