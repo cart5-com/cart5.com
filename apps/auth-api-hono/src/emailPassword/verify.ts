@@ -5,7 +5,7 @@ import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword } from '../utils/password';
 import { isEmailExistsService } from '../user/user.service';
-import { updateUserNameService, markEmailAsVerifiedService, getUserByEmailService, upsertUserService } from '../user/user.service';
+import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../user/user.service';
 import { createUserSessionAndSetCookie } from '../session/session.controller';
 import { decryptAndVerifyJwt } from '../utils/jwt';
 import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
