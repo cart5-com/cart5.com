@@ -46,9 +46,13 @@ export const updateRestaurantService = async (
     restaurantId: string,
     data: Partial<typeof restaurantTable.$inferInsert>
 ) => {
+    // unallowed fields for admins
+    const { id, ownerUserId, created_at_ts, updated_at_ts,
+        ...rest
+    } = data;
     return (await db
         .update(restaurantTable)
-        .set(data)
+        .set(rest)
         .where(eq(restaurantTable.id, restaurantId)));
 }
 
