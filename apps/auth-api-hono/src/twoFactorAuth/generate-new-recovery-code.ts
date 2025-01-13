@@ -7,8 +7,8 @@ import { encryptString } from '../utils/encryption';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { getUserByEmailService } from '../db/db.user.service';
-import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/db.user.service';
+import { getUserByEmailService } from '../db/schema/user.service';
+import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/schema/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 
 

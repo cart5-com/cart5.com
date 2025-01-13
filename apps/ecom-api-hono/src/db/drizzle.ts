@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { ecomApiSqlitelocalDbPath } from "lib/ecom-api-consts";
 import { IS_PROD } from "lib/utils/getEnvVariable";
 import { createClient } from '@libsql/client';
-import * as restaurantSchema from "./schema/restaurantSchema";
+import * as restaurantSchema from "./schema/restaurant/restaurant.schema";
 
 export const schema = {
     ...restaurantSchema

@@ -12,8 +12,8 @@ import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { OtpTokenAfterRegisterPayload } from './register';
-import { isEmailExistsService } from '../db/db.user.service';
-import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../db/db.user.service';
+import { isEmailExistsService } from '../db/schema/user.service';
+import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../db/schema/user.service';
 
 export const verifyEmailPasswordSchemaValidator = zValidator('form', z.object({
     verifyEmail: z.string().email().max(200),

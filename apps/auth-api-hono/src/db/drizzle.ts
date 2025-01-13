@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { localDbPath } from "lib/auth-consts";
 import { IS_PROD } from "lib/utils/getEnvVariable";
 import { createClient } from '@libsql/client';
-import * as authSchema from './schema';
+import * as authSchema from './schema/schema';
 
 export const schema = {
     ...authSchema

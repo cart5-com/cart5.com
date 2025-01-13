@@ -6,13 +6,13 @@ import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
-import { upsertUserService, markEmailAsVerifiedService } from '../db/db.user.service';
+import { upsertUserService, markEmailAsVerifiedService } from '../db/schema/user.service';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { updateUserNameService } from '../db/db.user.service';
+import { updateUserNameService } from '../db/schema/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { OtpTokenPayload } from './send';
 

@@ -1,5 +1,5 @@
 import { generateKey } from "lib/utils/generateKey";
-import db from "./drizzle";
+import db from "../drizzle";
 import { userTable } from "./schema";
 import { eq } from "drizzle-orm";
 

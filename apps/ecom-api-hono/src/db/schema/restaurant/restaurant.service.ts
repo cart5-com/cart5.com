@@ -1,6 +1,6 @@
 import { and, count, eq } from "drizzle-orm";
-import { restaurantTable, restaurantUserAdminsMapTable } from '../../db/schema/restaurantSchema';
-import db from '../../db/drizzle';
+import { restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
+import db from '../../drizzle';
 
 export const checkUserIsRestaurantAdminService = async function (
     userId: string, restaurantId: string

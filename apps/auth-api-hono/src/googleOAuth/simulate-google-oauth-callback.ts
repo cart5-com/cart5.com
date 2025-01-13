@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { markEmailAsVerifiedService, upsertUserService } from '../db/db.user.service';
+import { markEmailAsVerifiedService, upsertUserService } from '../db/schema/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 
 

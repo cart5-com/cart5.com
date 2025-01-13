@@ -28,7 +28,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant.$post({
+        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant.create.$post({
             form: {
                 name: values.name,
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

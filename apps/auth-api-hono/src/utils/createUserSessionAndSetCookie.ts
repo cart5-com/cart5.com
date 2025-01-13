@@ -2,7 +2,7 @@ import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { setCookie } from "hono/cookie";
 import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
 import type { HonoVariables } from "../index";
-import { createSessionService } from "../db/db.session.service";
+import { createSessionService } from "../db/schema/session.service";
 import { generateSessionToken } from "../utils/generateSessionToken";
 import type { Context } from "hono";
 

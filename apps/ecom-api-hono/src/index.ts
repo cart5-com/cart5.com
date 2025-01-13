@@ -5,7 +5,7 @@ import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
 import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
-import { restaurantRouter } from './dashboardRoutes/restaurant/restaurant.router';
+import { restaurantRouter } from './dashboard/restaurant/router';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 
 export type HonoVariables = {

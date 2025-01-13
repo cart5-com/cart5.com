@@ -6,12 +6,12 @@ import { decryptAndVerifyJwt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
-import { updateUserNameService } from '../db/db.user.service';
+import { updateUserNameService } from '../db/schema/user.service';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { markEmailAsVerifiedService, upsertUserService } from '../db/db.user.service';
-import { updateUserPictureUrlService } from '../db/db.user.service';
+import { markEmailAsVerifiedService, upsertUserService } from '../db/schema/user.service';
+import { updateUserPictureUrlService } from '../db/schema/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { GoogleOAuthTokenPayload } from './redirect';
 
