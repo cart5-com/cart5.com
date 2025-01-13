@@ -1,13 +1,17 @@
 import { Hono } from 'hono'
 import type { HonoVariables } from "../index";
 import {
-    registerEmailPasswordSchemaValidator,
-    registerEmailPasswordRoute,
-    verifyEmailPasswordSchemaValidator,
-    verifyEmailPasswordRoute,
     loginEmailPasswordSchemaValidator,
     loginEmailPasswordRoute
-} from './emailPassword.controller';
+} from './login';
+import {
+    registerEmailPasswordSchemaValidator,
+    registerEmailPasswordRoute
+} from './register';
+import {
+    verifyEmailPasswordSchemaValidator,
+    verifyEmailPasswordRoute
+} from './verify';
 
 
 export const emailPasswordRoute = new Hono<HonoVariables>()

@@ -6,7 +6,7 @@ import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
 import { userRoute } from './user/user.router';
 import { otpRoute } from './otp/otp.router';
-import { emailPasswordRoute } from './emailPassword/emailPassword.router';
+import { emailPasswordRoute } from './emailPassword/router';
 import { crossDomainRoute } from './crossDomain/router';
 import { googleOAuthRoute } from './googleOAuth/googleOAuth.router';
 import { twoFactorAuthRoute } from './twoFactorAuth/twoFactorAuth.router';
