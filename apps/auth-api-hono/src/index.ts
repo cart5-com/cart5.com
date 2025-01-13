@@ -7,7 +7,7 @@ import { KNOWN_ERROR } from 'lib/errors';
 import { userRoute } from './user/user.router';
 import { otpRoute } from './otp/otp.router';
 import { emailPasswordRoute } from './emailPassword/emailPassword.router';
-import { crossDomainRoute } from './crossDomain/crossDomain.router';
+import { crossDomainRoute } from './crossDomain/router';
 import { googleOAuthRoute } from './googleOAuth/googleOAuth.router';
 import { twoFactorAuthRoute } from './twoFactorAuth/twoFactorAuth.router';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
