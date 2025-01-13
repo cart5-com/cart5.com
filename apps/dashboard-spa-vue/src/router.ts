@@ -15,28 +15,33 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@src/views/HomeView.vue'),
+      component: () => import('@src/pages/HomeView.vue'),
     },
     // RESTAURANT ROUTES
     {
       path: '/my-restaurants',
       name: 'my-restaurants',
-      component: () => import('@src/pages/restaurant/RestaurantListView.vue'),
+      component: () => import('@src/pages/MyRestaurantsView.vue'),
     },
     {
       path: '/restaurant/:restaurantId',
       name: 'restaurant',
-      component: () => import('@src/pages/restaurant/_RestaurantLayout.vue'),
+      component: () => import('@src/layouts/restaurant/_Layout.vue'),
       children: [
         {
           path: '',
           name: 'restaurant-home',
-          component: () => import('@src/pages/restaurant/RestaurantHomeView.vue'),
+          component: () => import('@src/pages/restaurant/HomeView.vue'),
+        },
+        {
+          path: 'name',
+          name: 'restaurant-name',
+          component: () => import('@src/pages/restaurant/NameView.vue'),
         },
         {
           path: 'address',
           name: 'restaurant-address',
-          component: () => import('@src/pages/restaurant/RestaurantAddressView.vue'),
+          component: () => import('@src/pages/restaurant/AddressView.vue'),
         },
       ],
     },
@@ -85,6 +90,11 @@ const router = createRouter({
     //     },
     //   ],
     // },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      redirect: { name: 'home' }
+    }
   ],
   strict: true,
 })

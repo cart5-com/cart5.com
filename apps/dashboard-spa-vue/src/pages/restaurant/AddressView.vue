@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { currentRestaurant } from './_restaurantStore';
+import { currentRestaurant } from '@src/stores/RestaurantStore';
 </script>
 
 <template>

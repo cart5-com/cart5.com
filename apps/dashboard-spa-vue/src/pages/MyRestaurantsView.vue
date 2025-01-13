@@ -3,9 +3,10 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
-import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from './_restaurantStore'
+import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from '@src/stores/RestaurantStore'
+import HeaderOnly from '@src/layouts/HeaderOnly.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import RestaurantNewForm from "@src/pages/restaurant/RestaurantNewForm.vue";
+import RestaurantNewForm from "@src/pages/restaurant/forms/RestaurantNewForm.vue";
 const dialog = useDialog();
 const IS_DEV = import.meta.env.DEV;
 
@@ -28,7 +29,7 @@ const openNewRestaurantDialog = () => {
 </script>
 
 <template>
-    <div>
+    <HeaderOnly>
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-col gap-1">
                 <h3 class="text-2xl font-bold tracking-tight">My Restaurants</h3>
@@ -59,5 +60,5 @@ const openNewRestaurantDialog = () => {
                 </Card>
             </RouterLink>
         </div>
-    </div>
+    </HeaderOnly>
 </template>

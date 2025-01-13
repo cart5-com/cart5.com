@@ -15,7 +15,7 @@ export const updateRestaurantSchemaValidator = zValidator('json', updateRestaura
 }))
 export const updateRestaurant = async (c: Context<
     HonoVariables,
-    "/update/:restaurantId",
+    "/:restaurantId",
     ValidatorContext<typeof updateRestaurantSchemaValidator>
 >) => {
     return c.json({

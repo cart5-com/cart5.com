@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { currentRestaurantId, setCurrentRestaurantName } from './_restaurantStore';
+import { currentRestaurantId, setCurrentRestaurantName } from '@src/stores/RestaurantStore';
 
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
@@ -20,6 +20,7 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
 const loadData = async () => {
+    console.log('loadData', currentRestaurantId.value);
     const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
