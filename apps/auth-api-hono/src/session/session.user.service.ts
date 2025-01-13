@@ -1,9 +1,9 @@
 import { eq, sql } from "drizzle-orm";
-import type { Session } from "../../types/SessionType";
-import type { User } from "../../types/UserType";
-import { sessionTable, userTable } from "../../db/schema";
-import db from "../../db/drizzle";
-import { getSessionService } from "../session/session.service";
+import type { Session } from "../types/SessionType";
+import type { User } from "../types/UserType";
+import { sessionTable, userTable } from "../db/schema";
+import db from "../db/drizzle";
+import { getSessionService } from "./session.service";
 
 export const getSessionAndUserService = async (
     sessionId: string

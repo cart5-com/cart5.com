@@ -1,19 +1,19 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { generateOTPJsOnly } from '../../utils/generateRandomOtp';
-import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../../utils/jwt';
+import { generateOTPJsOnly } from '../utils/generateRandomOtp';
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
-import { sendUserOtpEmail } from '../../utils/email';
+import { sendUserOtpEmail } from '../utils/email';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { upsertUserService, markEmailAsVerifiedService } from '../user/user.service';
 import { createUserSessionAndSetCookie } from '../session/session.controller';
-import type { TwoFactorAuthVerifyPayload } from '../../types/UserType';
-import { ENFORCE_HOSTNAME_CHECKS } from '../../enforceHostnameChecks';
+import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
-import type { HonoVariables } from "../../index";
+import type { HonoVariables } from "../index";
 import { updateUserNameService } from '../user/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 

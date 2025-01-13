@@ -1,9 +1,9 @@
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import type { Session } from "../../types/SessionType";
+import type { Session } from "../types/SessionType";
 import { SESSION_EXPIRES_IN } from "lib/auth-consts";
-import { sessionTable } from "../../db/schema";
-import db from "../../db/drizzle";
+import { sessionTable } from "../db/schema";
+import db from "../db/drizzle";
 import { eq, lte } from "drizzle-orm";
 
 export const deleteSessionService = async (sessionId: string) => {

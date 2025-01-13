@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { HonoVariables } from "../../index";
+import type { HonoVariables } from "../index";
 import {
     newTwoFactorAuthRoute,
     saveTwoFactorAuthRoute,

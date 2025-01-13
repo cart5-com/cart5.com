@@ -2,15 +2,15 @@ import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, generateCodeVerifier, generateState, Google, OAuth2Tokens } from 'arctic';
-import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../../utils/jwt';
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
 import { updateUserNameService } from '../user/user.service';
 import { createUserSessionAndSetCookie } from '../session/session.controller';
 import { getEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
-import { ENFORCE_HOSTNAME_CHECKS } from '../../enforceHostnameChecks';
-import type { HonoVariables } from "../../index";
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
+import type { HonoVariables } from "../index";
 import { markEmailAsVerifiedService, upsertUserService } from '../user/user.service';
 import { updateUserPictureUrlService } from '../user/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';

@@ -3,12 +3,12 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR } from 'lib/errors';
-import { isKnownHostname } from '../../utils/knownHostnames';
+import { isKnownHostname } from '../utils/knownHostnames';
 import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from 'lib/auth-consts';
-import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../../utils/jwt';
-import { ENFORCE_HOSTNAME_CHECKS } from '../../enforceHostnameChecks';
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { IS_PROD, getEnvVariable } from 'lib/utils/getEnvVariable';
-import type { HonoVariables } from "../../index";
+import type { HonoVariables } from "../index";
 import { createUserSessionAndSetCookie } from '../session/session.controller';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 

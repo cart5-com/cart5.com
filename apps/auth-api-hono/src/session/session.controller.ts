@@ -1,13 +1,13 @@
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { setCookie } from "hono/cookie";
-import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
-import type { HonoVariables } from "../../index";
+import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
+import type { HonoVariables } from "../index";
 import { createSessionService } from "./session.service";
-import { generateSessionToken } from "../../utils/generateSessionToken";
+import { generateSessionToken } from "../utils/generateSessionToken";
 import type { Context } from "hono";
 import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/auth-consts";
-import type { Session } from "../../types/SessionType";
-import type { User } from "../../types/UserType";
+import type { Session } from "../types/SessionType";
+import type { User } from "../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { deleteSessionService } from "./session.service";

@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { HonoVariables } from "../../index";
+import type { HonoVariables } from "../index";
 import { updateNameRoute } from './user.controller';
 import { updateNameSchemaValidator } from './user.controller';
 import { updatePasswordRoute } from './user.controller';

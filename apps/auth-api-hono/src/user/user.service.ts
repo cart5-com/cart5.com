@@ -1,6 +1,6 @@
 import { generateKey } from "lib/utils/generateKey";
-import db from "../../db/drizzle";
-import { userTable } from "../../db/schema";
+import db from "../db/drizzle";
+import { userTable } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export const updateUserPasswordService = async (userId: string, passwordHash: string) => {

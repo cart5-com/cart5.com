@@ -9,11 +9,11 @@ import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { deleteCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { z } from 'zod';
-import { hashPassword, verifyPasswordStrength } from '../../utils/password';
+import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { getUserByEmailService } from './user.service';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
-import type { HonoVariables } from "../../index";
+import type { HonoVariables } from "../index";
 import { deleteSessionService, deleteAllUserSessionsService } from '../session/session.service';
 
 export const logoutRoute = async (c: Context<HonoVariables>) => {
