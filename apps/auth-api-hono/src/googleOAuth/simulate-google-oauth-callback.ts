@@ -1,10 +1,10 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
+import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { markEmailAsVerifiedService, upsertUserService } from '../db/db.user';
+import { markEmailAsVerifiedService, upsertUserService } from '../db/db.user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 
 

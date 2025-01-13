@@ -8,13 +8,12 @@ import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { decryptAndVerifyJwt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
-import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
+import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { getUserByEmailService } from '../db/db.user';
-import { updateEncryptedTwoFactorAuthKeyService } from '../db/db.user';
-import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/db.user';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import { getUserByEmailService } from '../db/db.user.service';
+import { updateEncryptedTwoFactorAuthKeyService, updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/db.user.service';
 
 
 export const removeTwoFactorAuthSchemaValidator = zValidator('form', z.object({

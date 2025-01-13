@@ -29,7 +29,7 @@ const app = new Hono<HonoVariables>();
 app.use(hostnameCheck);
 app.use(csrfChecks);
 app.use(authChecks);
-// authBearerTokenChecks must be after authChecks
+// NOTE: authBearerTokenChecks must be after authChecks
 app.use(authBearerTokenChecks);
 app.use(secureHeaders());
 

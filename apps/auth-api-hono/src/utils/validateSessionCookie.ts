@@ -1,17 +1,12 @@
-import { SESSION_COOKIE_NAME } from "lib/auth-consts";
-import { setCookie } from "hono/cookie";
 import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
-import type { HonoVariables } from "../index";
-import { createSessionService, getSessionAndUserService } from "./db.session";
-import { generateSessionToken } from "../utils/generateSessionToken";
-import type { Context } from "hono";
+import { getSessionAndUserService } from "../db/db.session.service";
 import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/auth-consts";
 import type { Session } from "../types/SessionType";
 import type { User } from "../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { deleteSessionService } from "./db.session";
-import { updateSessionExpirationService } from "./db.session";
+import { deleteSessionService } from "../db/db.session.service";
+import { updateSessionExpirationService } from "../db/db.session.service";
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,
@@ -56,24 +51,6 @@ export const validateSessionCookie = async (
     return { user: databaseUser, session };
 }
 
-
-
-
 function isWithinExpirationDate(date: Date): boolean {
     return Date.now() < date.getTime();
-}
-
-
-
-
-export const createUserSessionAndSetCookie = async (c: Context<HonoVariables>, userId: string) => {
-    const sessionToken = generateSessionToken();
-    const session = await createSessionService(sessionToken, userId, c.req.header()['host']!);
-    setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
-        path: "/",
-        secure: ENFORCE_HOSTNAME_CHECKS,
-        httpOnly: true,
-        expires: session.expiresAt,
-        sameSite: "strict"
-    });
 }

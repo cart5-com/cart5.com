@@ -4,7 +4,7 @@ import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { deleteCookie } from 'hono/cookie';
 import { type ErrorType } from 'lib/errors';
 import type { HonoVariables } from "../index";
-import { deleteSessionService } from '../db/db.session';
+import { deleteSessionService } from '../db/db.session.service';
 
 export const logoutRoute = async (c: Context<HonoVariables>) => {
     const session = c.get('SESSION');

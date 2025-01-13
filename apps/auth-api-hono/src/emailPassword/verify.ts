@@ -4,9 +4,7 @@ import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword } from '../utils/password';
-import { isEmailExistsService } from '../db/db.user';
-import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../db/db.user';
-import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
+import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { decryptAndVerifyJwt } from '../utils/jwt';
 import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
@@ -14,6 +12,8 @@ import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { OtpTokenAfterRegisterPayload } from './register';
+import { isEmailExistsService } from '../db/db.user.service';
+import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../db/db.user.service';
 
 export const verifyEmailPasswordSchemaValidator = zValidator('form', z.object({
     verifyEmail: z.string().email().max(200),

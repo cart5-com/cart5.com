@@ -4,9 +4,7 @@ import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { verifyPasswordHash } from '../utils/password';
-import { isEmailExistsService } from '../db/db.user';
-import { getUserByEmailService } from '../db/db.user';
-import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
+import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
@@ -15,6 +13,9 @@ import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import { isEmailExistsService } from '../db/db.user.service';
+import { getUserByEmailService } from '../db/db.user.service';
+
 
 
 

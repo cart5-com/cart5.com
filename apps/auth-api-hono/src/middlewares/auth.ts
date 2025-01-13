@@ -4,7 +4,7 @@ import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
 import type { HonoVariables } from "../index";
-import { validateSessionCookie } from "../db/validateSessionCookie";
+import { validateSessionCookie } from "../utils/validateSessionCookie";
 
 export const authChecks = createMiddleware<HonoVariables>(async (c, next) => {
     const cookieValue = getCookie(c, SESSION_COOKIE_NAME) ?? null;

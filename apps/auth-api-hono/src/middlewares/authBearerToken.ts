@@ -1,12 +1,14 @@
 import { createMiddleware } from "hono/factory";
-import { validateSessionCookie } from "../db/validateSessionCookie";
+import { validateSessionCookie } from "../utils/validateSessionCookie";
 import { readBearerToken } from "../utils/readBearerToken";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
 import type { HonoVariables } from "../index";
+
 /**
  * Middleware to authenticate a request using a bearer token.
  * ignores session freshness checks
  * if user is already set, it will not be overwritten
+ * NOTE: authBearerTokenChecks must be after authChecks
  * @param c - The Hono context.
  * @param next - The next middleware function.
  */
