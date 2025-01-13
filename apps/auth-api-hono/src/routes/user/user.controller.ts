@@ -2,8 +2,6 @@ import { type Context } from 'hono'
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import { zValidator } from '@hono/zod-validator';
 import {
-    deleteSessionService,
-    deleteAllUserSessionsService,
     updateUserPasswordService,
     updateUserNameService
 } from './user.service';
@@ -13,9 +11,10 @@ import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../../utils/password';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
-import { getUserByEmail } from '../../db/db-actions/userActions';
+import { getUserByEmailService } from './user.service';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../../index";
+import { deleteSessionService, deleteAllUserSessionsService } from '../session/session.service';
 
 export const logoutRoute = async (c: Context<HonoVariables>) => {
     const session = c.get('SESSION');
@@ -76,7 +75,7 @@ export const updatePasswordRoute = async (c: Context<
     if (!user.hasNewSession) {
         throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
     }
-    const savedUser = await getUserByEmail(user.email);
+    const savedUser = await getUserByEmailService(user.email);
     if (!savedUser) {
         throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
     }
@@ -105,7 +104,7 @@ export const updateNameRoute = async (c: Context<
     if (!user.hasNewSession) {
         throw new KNOWN_ERROR("A fresh login is required", "FRESH_SESSION_REQUIRED");
     }
-    const savedUser = await getUserByEmail(user.email);
+    const savedUser = await getUserByEmailService(user.email);
     if (!savedUser) {
         throw new KNOWN_ERROR("Invalid request 1", "INVALID_REQUEST_1");
     }

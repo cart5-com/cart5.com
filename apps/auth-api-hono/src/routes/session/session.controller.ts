@@ -1,12 +1,18 @@
+import { SESSION_COOKIE_NAME } from "lib/auth-consts";
+import { setCookie } from "hono/cookie";
+import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
+import type { HonoVariables } from "../../index";
+import { createSessionService } from "./session.service";
+import { generateSessionToken } from "../../utils/generateSessionToken";
+import type { Context } from "hono";
 import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/auth-consts";
-import { getSessionAndUser } from "./getSessionAndUser";
-import updateSessionExpiration from "./updateSessionExpiration";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { ENFORCE_HOSTNAME_CHECKS } from "../../enforceHostnameChecks";
-import { deleteSessionService } from "../../routes/user/user.service";
+import { deleteSessionService } from "./session.service";
+import { updateSessionExpirationService } from "./session.service";
+import { getSessionAndUserService } from "./session.user.service";
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,
@@ -14,7 +20,7 @@ export const validateSessionCookie = async (
     ignoreUpdateSessionExpiration: boolean = false // default:do not ignore
 ): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionCookieValue)));
-    const [databaseSession, databaseUser] = await getSessionAndUser(sessionId);
+    const [databaseSession, databaseUser] = await getSessionAndUserService(sessionId);
     if (!databaseSession) {
         return { session: null, user: null };
     }
@@ -45,12 +51,30 @@ export const validateSessionCookie = async (
         if (!isWithinExpirationDate(activePeriodExpirationDate)) {
             session.fresh = true;
             session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
-            await updateSessionExpiration(databaseSession.id, session.expiresAt);
+            await updateSessionExpirationService(databaseSession.id, session.expiresAt);
         }
     }
     return { user: databaseUser, session };
 }
 
+
+
+
 function isWithinExpirationDate(date: Date): boolean {
     return Date.now() < date.getTime();
+}
+
+
+
+
+export const createUserSessionAndSetCookie = async (c: Context<HonoVariables>, userId: string) => {
+    const sessionToken = generateSessionToken();
+    const session = await createSessionService(sessionToken, userId, c.req.header()['host']!);
+    setCookie(c, SESSION_COOKIE_NAME, sessionToken, {
+        path: "/",
+        secure: ENFORCE_HOSTNAME_CHECKS,
+        httpOnly: true,
+        expires: session.expiresAt,
+        sameSite: "strict"
+    });
 }

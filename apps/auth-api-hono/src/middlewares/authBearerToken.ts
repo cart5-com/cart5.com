@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { validateSessionCookie } from "../db/db-actions/validateSessionCookie";
+import { validateSessionCookie } from "../routes/session/session.controller";
 import { readBearerToken } from "../utils/readBearerToken";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
 import type { HonoVariables } from "../index";

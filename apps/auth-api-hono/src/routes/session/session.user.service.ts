@@ -1,15 +1,16 @@
 import { eq, sql } from "drizzle-orm";
 import type { Session } from "../../types/SessionType";
 import type { User } from "../../types/UserType";
-import { sessionTable, userTable } from "../schema";
-import db from "../drizzle";
+import { sessionTable, userTable } from "../../db/schema";
+import db from "../../db/drizzle";
+import { getSessionService } from "../session/session.service";
 
-export const getSessionAndUser = async (
+export const getSessionAndUserService = async (
     sessionId: string
 ): Promise<[session: Session | null, user: User | null]> => {
     const [databaseSession, databaseUser] = await Promise.all([
-        getSession(sessionId),
-        getUserFromSessionId(sessionId)
+        getSessionService(sessionId),
+        getUserFromSessionIdService(sessionId)
     ]);
     if (databaseUser) {
         databaseUser.has2FA = databaseUser.has2FA || false;
@@ -20,23 +21,8 @@ export const getSessionAndUser = async (
     return [databaseSession, databaseUser];
 }
 
-const getSession = async (sessionId: string): Promise<Session | null> => {
-    const result = await db
-        .select()
-        .from(sessionTable)
-        .where(eq(sessionTable.id, sessionId));
-    if (result.length !== 1) return null;
-    return {
-        id: result[0].id,
-        userId: result[0].userId,
-        hostname: result[0].hostname,
-        fresh: false,
-        expiresAt: new Date(result[0].expiresAt),
-        createdAtTs: result[0].created_at_ts,
-    } as Session;
-}
 
-const getUserFromSessionId = async (sessionId: string): Promise<User | null> => {
+export const getUserFromSessionIdService = async (sessionId: string): Promise<User | null> => {
     const result = await db
         .select({
             id: userTable.id,

@@ -1,0 +1,71 @@
+import { encodeHexLowerCase } from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
+import type { Session } from "../../types/SessionType";
+import { SESSION_EXPIRES_IN } from "lib/auth-consts";
+import { sessionTable } from "../../db/schema";
+import db from "../../db/drizzle";
+import { eq, lte } from "drizzle-orm";
+
+export const deleteSessionService = async (sessionId: string) => {
+    await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}
+
+export const deleteAllUserSessionsService = async (userId: string) => {
+    await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+}
+
+export const createSessionService = async (
+    token: string,
+    userId: string,
+    hostname: string,
+    timeInMs: number = SESSION_EXPIRES_IN
+): Promise<Session> => {
+    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+    const session: Session = {
+        id: sessionId,
+        userId,
+        createdAtTs: Date.now(),
+        expiresAt: new Date(Date.now() + timeInMs),
+        fresh: false,
+        hostname
+    };
+    await db.insert(sessionTable).values({
+        id: session.id,
+        userId: session.userId,
+        expiresAt: session.expiresAt.getTime(),
+        hostname: session.hostname
+    });
+    return session;
+}
+
+
+
+export const updateSessionExpirationService = async (sessionId: string, expiresAt: Date): Promise<void> => {
+    await db.update(sessionTable).set({ expiresAt: expiresAt.getTime() }).where(eq(sessionTable.id, sessionId));
+}
+
+
+export const getSessionService = async (sessionId: string): Promise<Session | null> => {
+    const result = await db
+        .select()
+        .from(sessionTable)
+        .where(eq(sessionTable.id, sessionId));
+    if (result.length !== 1) return null;
+    return {
+        id: result[0].id,
+        userId: result[0].userId,
+        hostname: result[0].hostname,
+        fresh: false,
+        expiresAt: new Date(result[0].expiresAt),
+        createdAtTs: result[0].created_at_ts,
+    } as Session;
+}
+
+// TODO: add a cron job to delete expired sessions
+export const deleteExpiredSessionsService = async () => {
+    return (
+        await db
+            .delete(sessionTable)
+            .where(lte(sessionTable.expiresAt, Date.now()))
+    ).rowsAffected;
+}

@@ -5,11 +5,11 @@ import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
 import { userRoute } from './routes/user/user.router';
-import { otpRoute } from './routes/otpRoute';
-import { emailPasswordRoute } from './routes/emailPasswordRoute';
-import { crossDomainRoute } from './routes/crossDomainRoute';
-import { googleOAuthRoute } from './routes/googleOAuthRoute';
-import { twoFactorAuthRoute } from './routes/twoFactorAuthRoute';
+import { otpRoute } from './routes/otp/otp.router';
+import { emailPasswordRoute } from './routes/emailPassword/emailPassword.router';
+import { crossDomainRoute } from './routes/crossDomain/crossDomain.router';
+import { googleOAuthRoute } from './routes/googleOAuth/googleOAuth.router';
+import { twoFactorAuthRoute } from './routes/twoFactorAuth/twoFactorAuth.router';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { hostnameCheck } from './middlewares/hostnameCheck';
 import { ENFORCE_HOSTNAME_CHECKS } from './enforceHostnameChecks';
