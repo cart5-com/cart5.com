@@ -9,7 +9,7 @@ import { decryptAndVerifyJwt } from '../utils/jwt';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { IS_PROD, getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import { createUserSessionAndSetCookie } from '../session/session.controller';
+import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { CrossDomainCodePayload } from './redirector';
 

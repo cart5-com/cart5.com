@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { verifyPasswordStrength } from '../utils/password';
-import { isEmailExistsService } from '../user/user.service';
+import { isEmailExistsService } from '../db/db.user';
 import { signJwtAndEncrypt } from '../utils/jwt';
 import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
 import { setCookie } from 'hono/cookie';

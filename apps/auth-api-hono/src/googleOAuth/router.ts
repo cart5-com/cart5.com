@@ -1,15 +1,9 @@
 import { Hono } from 'hono'
 import type { HonoVariables } from "../index";
-import {
-    redirectGoogleOAuthSchemaValidator,
-    redirectGoogleOAuthRoute,
-    devAskEmailSchemaValidator,
-    devAskEmailRoute,
-    simulateGoogleOAuthCallbackSchemaValidator,
-    simulateGoogleOAuthCallbackRoute,
-    callbackGoogleOAuthSchemaValidator,
-    callbackGoogleOAuthRoute
-} from './googleOAuth.controller';
+import { redirectGoogleOAuthSchemaValidator, redirectGoogleOAuthRoute } from './redirect';
+import { devAskEmailSchemaValidator, devAskEmailRoute } from './dev-ask-email';
+import { simulateGoogleOAuthCallbackSchemaValidator, simulateGoogleOAuthCallbackRoute } from './simulate-google-oauth-callback';
+import { callbackGoogleOAuthSchemaValidator, callbackGoogleOAuthRoute } from './callback';
 
 export const googleOAuthRoute = new Hono<HonoVariables>()
     .get(

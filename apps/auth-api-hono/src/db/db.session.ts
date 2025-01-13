@@ -2,9 +2,11 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Session } from "../types/SessionType";
 import { SESSION_EXPIRES_IN } from "lib/auth-consts";
-import { sessionTable } from "../db/schema";
-import db from "../db/drizzle";
-import { eq, lte } from "drizzle-orm";
+import { sessionTable, userTable } from "./schema";
+import db from "./drizzle";
+import { eq, lte, sql } from "drizzle-orm";
+import type { User } from "../types/UserType";
+
 
 export const deleteSessionService = async (sessionId: string) => {
     await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
@@ -39,6 +41,41 @@ export const createSessionService = async (
 }
 
 
+export const getSessionAndUserService = async (
+    sessionId: string
+): Promise<[session: Session | null, user: User | null]> => {
+    const [databaseSession, databaseUser] = await Promise.all([
+        getSessionService(sessionId),
+        getUserFromSessionIdService(sessionId)
+    ]);
+    if (databaseUser) {
+        databaseUser.has2FA = databaseUser.has2FA || false;
+    }
+    if (databaseUser && databaseSession && databaseSession.createdAtTs) {
+        databaseUser.hasNewSession = databaseSession.createdAtTs > Date.now() - 600_000; // 10 minutes
+    }
+    return [databaseSession, databaseUser];
+}
+
+
+export const getUserFromSessionIdService = async (sessionId: string): Promise<User | null> => {
+    const result = await db
+        .select({
+            id: userTable.id,
+            email: userTable.email,
+            isEmailVerified: userTable.isEmailVerified,
+            name: userTable.name,
+            pictureUrl: userTable.pictureUrl,
+            has2FA: sql<boolean>`${userTable.encryptedTwoFactorAuthKey} IS NOT NULL`
+        })
+        .from(sessionTable)
+        .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
+        .where(eq(sessionTable.id, sessionId));
+    if (result.length !== 1) return null;
+    return result[0] as User;
+}
+
+
 
 export const updateSessionExpirationService = async (sessionId: string, expiresAt: Date): Promise<void> => {
     await db.update(sessionTable).set({ expiresAt: expiresAt.getTime() }).where(eq(sessionTable.id, sessionId));
@@ -69,3 +106,4 @@ export const deleteExpiredSessionsService = async () => {
             .where(lte(sessionTable.expiresAt, Date.now()))
     ).rowsAffected;
 }
+

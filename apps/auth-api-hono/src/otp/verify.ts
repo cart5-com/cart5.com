@@ -1,50 +1,58 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
+import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
-import { verifyPasswordHash } from '../utils/password';
-import { isEmailExistsService } from '../db/db.user';
-import { getUserByEmailService } from '../db/db.user';
+import { upsertUserService, markEmailAsVerifiedService } from '../db/db.user';
 import { createUserSessionAndSetCookie } from '../db/validateSessionCookie';
-import { signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
-import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
-import { setCookie } from 'hono/cookie';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
+import { updateUserNameService } from '../db/db.user';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { OtpTokenPayload } from './send';
 
 
-
-export const loginEmailPasswordSchemaValidator = zValidator('form', z.object({
-    email: z.string().email(),
-    password: z.string().min(8, { message: "Password required" }).max(255),
+export const verifyOtpSchemaValidator = zValidator('form', z.object({
+    verifyEmail: z.string().email().max(200),
+    code: z.string().min(1, { message: "One-time password required" }).max(6, { message: "6 digits required" }),
     turnstile: z.string().min(1, { message: "Verification required" })
 }))
-export const loginEmailPasswordRoute = async (
-    c: Context<HonoVariables, "/otp/verify", ValidatorContext<typeof loginEmailPasswordSchemaValidator>>
+export const verifyOtpRoute = async (
+    c: Context<
+        HonoVariables,
+        "/verify",
+        ValidatorContext<typeof verifyOtpSchemaValidator>
+    >
 ) => {
-    const { email, password, turnstile } = c.req.valid('form');
+    const { verifyEmail, code, turnstile } = c.req.valid('form');
     await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
-    const isRegistered = await isEmailExistsService(email);
-    if (!isRegistered) {
-        throw new KNOWN_ERROR("Email not registered", "EMAIL_NOT_REGISTERED");
+    const otpToken = getCookie(c, OTP_COOKIE_NAME);
+
+
+    if (!otpToken) {
+        throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");
     }
-    const user = await getUserByEmailService(email);
-    if (!user) {
-        throw new KNOWN_ERROR("Invalid email or password", "INVALID_EMAIL_OR_PASSWORD");
+    const { email, otp } = await decryptAndVerifyJwt<OtpTokenPayload>(
+        getEnvVariable('JWT_PRIVATE_KEY'),
+        getEnvVariable('ENCRYPTION_KEY'),
+        otpToken
+    );
+    if (verifyEmail.toUpperCase() !== email.toUpperCase() || otp.toUpperCase() !== code.toUpperCase()) {
+        throw new KNOWN_ERROR("Invalid OTP", "INVALID_OTP");
     }
-    if (!user.passwordHash) {
-        throw new KNOWN_ERROR("Invalid email or password", "INVALID_EMAIL_OR_PASSWORD");
-    }
-    if (!await verifyPasswordHash(user.passwordHash, password)) {
-        throw new KNOWN_ERROR("Invalid email or password", "INVALID_EMAIL_OR_PASSWORD");
-    }
+    deleteCookie(c, OTP_COOKIE_NAME);
+    const user = await upsertUserService(email);
+
     if (!user.isEmailVerified) {
-        // verify email with one time password authentication
-        throw new KNOWN_ERROR("OTP required", "OTP_REQUIRED");
+        await markEmailAsVerifiedService(email);
+    }
+    if (user.name === null) {
+        await updateUserNameService(user.id, email.split('@')[0]);
     }
 
     if (user.encryptedTwoFactorAuthKey) {
@@ -66,7 +74,6 @@ export const loginEmailPasswordRoute = async (
         });
         throw new KNOWN_ERROR("Two factor authentication required", "TWO_FACTOR_AUTH_REQUIRED");
     }
-
     await createUserSessionAndSetCookie(c, user.id);
 
     return c.json({
@@ -74,4 +81,3 @@ export const loginEmailPasswordRoute = async (
         error: null as ErrorType
     }, 200);
 }
-

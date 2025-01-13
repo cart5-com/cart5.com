@@ -1,11 +1,10 @@
 import { Hono } from 'hono'
 import type { HonoVariables } from "../index";
-import { updateNameRoute } from './user.controller';
-import { updateNameSchemaValidator } from './user.controller';
-import { updatePasswordRoute } from './user.controller';
-import { updatePasswordSchemaValidator } from './user.controller';
-import { logoutAllRoute, whoamiRoute } from './user.controller';
-import { logoutRoute } from './user.controller';
+import { logoutRoute } from './logout';
+import { logoutAllRoute } from './logout-all';
+import { whoamiRoute } from './whoami';
+import { updatePasswordRoute, updatePasswordSchemaValidator } from './update-password';
+import { updateNameRoute, updateNameSchemaValidator } from './update-name';
 
 export const userRoute = new Hono<HonoVariables>()
     .post(

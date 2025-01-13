@@ -1,20 +1,12 @@
 import { Hono } from 'hono'
 import type { HonoVariables } from "../index";
-import {
-    newTwoFactorAuthRoute,
-    saveTwoFactorAuthRoute,
-    verifyTwoFactorAuthRoute,
-    removeTwoFactorAuthRoute,
-    generateNewRecoveryCodeRoute,
-    getRecoveryCodeRoute,
-    remove2FARoute,
-    remove2FASchemaValidator,
-    saveTwoFactorAuthSchemaValidator,
-    verifyTwoFactorAuthSchemaValidator,
-    removeTwoFactorAuthSchemaValidator,
-    generateNewRecoveryCodeSchemaValidator,
-    getRecoveryCodeSchemaValidator,
-} from './twoFactorAuth.controller';
+import { newTwoFactorAuthRoute } from './new';
+import { saveTwoFactorAuthRoute, saveTwoFactorAuthSchemaValidator } from './save';
+import { verifyTwoFactorAuthRoute, verifyTwoFactorAuthSchemaValidator } from './verify';
+import { removeTwoFactorAuthRoute, removeTwoFactorAuthSchemaValidator } from './remove-2fa-with-recovery-code';
+import { generateNewRecoveryCodeRoute, generateNewRecoveryCodeSchemaValidator } from './generate-new-recovery-code';
+import { getRecoveryCodeRoute, getRecoveryCodeSchemaValidator } from './get-recovery-code';
+import { remove2FARoute, remove2FASchemaValidator } from './remove-2fa';
 
 export const twoFactorAuthRoute = new Hono<HonoVariables>()
     .post(
