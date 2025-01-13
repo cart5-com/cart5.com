@@ -7,7 +7,7 @@ import AppLinks from '@src/components/AppLinks.vue';
 
 <template>
 	<HeaderOnly>
-		<main class="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+		<main class="flex flex-1 flex-col gap-4 lg:gap-6 lg:p-6">
 			<div class="flex flex-col gap-1">
 				<h3 class="text-2xl font-bold tracking-tight">Dashboard</h3>
 				<!-- <p class="text-muted-foreground text-sm">Apps to help you run your business.</p>

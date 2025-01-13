@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type * as z from 'zod'
+import { z } from 'zod'
 import { createContext } from 'radix-vue'
 import { useFieldValue, useFormValues } from 'vee-validate'
 import { computed, ref, watch } from 'vue'

@@ -7,7 +7,7 @@ import Separator from "@/ui-plus/separator/Separator.vue";
 import { PlusIcon, TrashIcon } from 'lucide-vue-next'
 import { FieldArray, FieldContextKey, useField } from 'vee-validate'
 import { computed, provide } from 'vue'
-import * as z from 'zod'
+import { z } from 'zod'
 import AutoFormField from './AutoFormField.vue'
 import AutoFormLabel from './AutoFormLabel.vue'
 import { beautifyObjectName, getBaseType } from './utils'

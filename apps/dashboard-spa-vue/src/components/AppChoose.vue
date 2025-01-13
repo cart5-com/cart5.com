@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { GridIcon } from "lucide-vue-next";
+import { LayoutGrid } from "lucide-vue-next";
 import AppLinks from "@src/components/AppLinks.vue";
 </script>
 
@@ -9,8 +9,10 @@ import AppLinks from "@src/components/AppLinks.vue";
 	<div class="flex items-center justify-end">
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button variant="secondary" size="icon" class="rounded-full">
-					<GridIcon class="h-5 w-5" />
+				<Button variant="secondary"
+						size="icon"
+						class="rounded-full">
+					<LayoutGrid class="h-5 w-5" />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent class="bg-accent max-h-[50vh] overflow-y-auto">

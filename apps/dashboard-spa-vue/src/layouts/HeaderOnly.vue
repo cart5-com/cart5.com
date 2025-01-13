@@ -9,7 +9,7 @@ const VITE_PUBLIC_DOMAIN_NAME = import.meta.env.VITE_PUBLIC_DOMAIN_NAME;
             <h3 class="text-2xl font-bold tracking-tight">{{ VITE_PUBLIC_DOMAIN_NAME }}</h3>
         </RouterLink>
     </Header>
-    <div class="container mx-auto p-8">
+    <div class="container mx-auto p-2 lg:p-6">
         <slot />
     </div>
 </template>
