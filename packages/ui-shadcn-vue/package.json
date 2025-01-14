@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.6.0",
+    "@types/geojson": "^7946.0.15",
+    "@types/leaflet": "^1.9.16",
     "@types/node": "^22.10.1",
     "@unovis/ts": "^1.4.5",
     "@unovis/vue": "^1.4.5",
@@ -20,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-vue": "^8.5.1",
+    "leaflet": "^1.9.4",
     "lucide-vue-next": "^0.465.0",
     "radix-vue": "^1.9.10",
     "tailwind-merge": "^2.5.5",

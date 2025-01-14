@@ -296,6 +296,12 @@ importers:
       '@internationalized/date':
         specifier: ^3.6.0
         version: 3.6.0
+      '@types/geojson':
+        specifier: ^7946.0.15
+        version: 7946.0.15
+      '@types/leaflet':
+        specifier: ^1.9.16
+        version: 1.9.16
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
@@ -329,6 +335,9 @@ importers:
       embla-carousel-vue:
         specifier: ^8.5.1
         version: 8.5.1(vue@3.5.13(typescript@5.7.2))
+      leaflet:
+        specifier: ^1.9.4
+        version: 1.9.4
       lucide-vue-next:
         specifier: ^0.465.0
         version: 0.465.0(vue@3.5.13(typescript@5.7.2))
@@ -1454,6 +1463,7 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.5':
     resolution: {integrity: sha512-RHaxQB4+wttd3H8GXofoaFalzIpuicr8DlD7yuVN3rAy5OsOP6ny+Tu12Iz/IQrgA4vvKAFxJt3AJxqhs8Ltcg==}
+    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
@@ -1889,14 +1899,17 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/geojson@7946.0.14':
-    resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
+  '@types/geojson@7946.0.15':
+    resolution: {integrity: sha512-9oSxFzDCT2Rj6DfcHF8G++jxBKS7mBqXl5xrRW+Kbvjry6Uduya2iiwqHPhVXpasAVMBYKkEPGgKhd3+/HZ6xA==}
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
   '@types/leaflet@1.7.6':
     resolution: {integrity: sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==}
+
+  '@types/leaflet@1.9.16':
+    resolution: {integrity: sha512-wzZoyySUxkgMZ0ihJ7IaUIblG8Rdc8AbbZKLneyn+QjYsj5q1QU7TEKYqwTr10BGSzY5LI7tJk9Ifo+mEjdFRw==}
 
   '@types/lodash@4.17.13':
     resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
@@ -3242,11 +3255,15 @@ packages:
   leaflet@1.7.1:
     resolution: {integrity: sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==}
 
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
+
   libphonenumber-js@1.11.17:
     resolution: {integrity: sha512-Jr6v8thd5qRlOlc6CslSTzGzzQW03uiscab7KHQZX1Dfo4R6n6FDhZ0Hri6/X7edLIDv9gl4VMZXhxTjLnl0VQ==}
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lilconfig@3.1.3:
@@ -5730,7 +5747,7 @@ snapshots:
   '@types/d3-contour@3.0.6':
     dependencies:
       '@types/d3-array': 3.2.1
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/d3-delaunay@6.0.4': {}
 
@@ -5754,7 +5771,7 @@ snapshots:
 
   '@types/d3-geo@3.1.0':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/d3-hierarchy@3.1.7': {}
 
@@ -5848,7 +5865,7 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/geojson@7946.0.14': {}
+  '@types/geojson@7946.0.15': {}
 
   '@types/hast@3.0.4':
     dependencies:
@@ -5856,7 +5873,11 @@ snapshots:
 
   '@types/leaflet@1.7.6':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
+
+  '@types/leaflet@1.9.16':
+    dependencies:
+      '@types/geojson': 7946.0.15
 
   '@types/lodash@4.17.13': {}
 
@@ -5864,7 +5885,7 @@ snapshots:
 
   '@types/mapbox__vector-tile@1.3.4':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/mapbox__point-geometry': 0.1.4
       '@types/pbf': 3.0.5
 
@@ -5890,7 +5911,7 @@ snapshots:
 
   '@types/supercluster@5.0.3':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/three@0.135.0': {}
 
@@ -5898,26 +5919,26 @@ snapshots:
 
   '@types/topojson-client@3.1.5':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/topojson-specification': 1.0.5
 
   '@types/topojson-server@3.0.4':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/topojson-specification': 1.0.5
 
   '@types/topojson-simplify@3.0.3':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/topojson-specification': 1.0.5
 
   '@types/topojson-specification@1.0.5':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
 
   '@types/topojson@3.2.6':
     dependencies:
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/topojson-client': 3.1.5
       '@types/topojson-server': 3.0.4
       '@types/topojson-simplify': 3.0.3
@@ -5950,7 +5971,7 @@ snapshots:
       '@types/d3-collection': 1.0.13
       '@types/d3-sankey': 0.11.2
       '@types/dagre': 0.7.52
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/leaflet': 1.7.6
       '@types/supercluster': 5.0.3
       '@types/three': 0.135.0
@@ -7402,6 +7423,8 @@ snapshots:
 
   leaflet@1.7.1: {}
 
+  leaflet@1.9.4: {}
+
   libphonenumber-js@1.11.17: {}
 
   libsql@0.4.7:
@@ -7464,7 +7487,7 @@ snapshots:
       '@mapbox/unitbezier': 0.0.1
       '@mapbox/vector-tile': 1.3.1
       '@mapbox/whoots-js': 3.1.0
-      '@types/geojson': 7946.0.14
+      '@types/geojson': 7946.0.15
       '@types/mapbox__point-geometry': 0.1.4
       '@types/mapbox__vector-tile': 1.3.4
       '@types/pbf': 3.0.5
