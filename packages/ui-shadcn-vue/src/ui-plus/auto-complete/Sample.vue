@@ -2,7 +2,11 @@
 import { ref } from 'vue';
 import Autocomplete from './Autocomplete.vue'
 
-const countries = ['United States', 'Canada', 'United Kingdom', 'Australia', 'New Zealand', 'South Africa', 'India', 'China', 'Japan', 'Korea'];
+const countries = [
+    'United States', 'Canada', 'United Kingdom', 'Australia', 'New Zealand', 'South Africa', 'India', 'China', 'Japan', 'Korea',
+    // add 10 more countries
+    'France', 'Germany', 'Italy', 'Spain', 'Portugal', 'Greece', 'Turkey', 'Egypt', 'Nigeria', 'Kenya',
+];
 const options = ref<string[]>(countries);
 const isInputLoading = ref(false);
 const address = ref('')
@@ -11,6 +15,7 @@ let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 async function onInputChange(event: Event) {
     const query = (event.target as HTMLInputElement).value;
     isInputLoading.value = true;
+    clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
         options.value = countries.filter(country => country.toLowerCase().includes(query.toLowerCase()));
         isInputLoading.value = false;

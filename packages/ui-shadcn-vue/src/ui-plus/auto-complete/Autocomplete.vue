@@ -87,20 +87,30 @@ function onOptionClick(index: number) {
 </script>
 
 <template>
-	<div ref="containerRef" :class="cn('autocomplete-container-element relative', props.class)" @keydown="handleKeyDown">
-		<Textarea v-if="isTextarea" v-model="modelValue" v-bind="$attrs" @keyup="handleKeyUp" @focus="handleFocus" />
-		<Input v-else v-model="modelValue" v-bind="$attrs" @keyup="handleKeyUp" @focus="handleFocus" />
+	<div ref="containerRef"
+		 :class="cn('autocomplete-container-element relative', props.class)"
+		 @keydown="handleKeyDown">
+		<Textarea v-if="isTextarea"
+				  v-model="modelValue"
+				  v-bind="$attrs"
+				  @keyup="handleKeyUp"
+				  @focus="handleFocus" />
+		<Input v-else
+			   v-model="modelValue"
+			   v-bind="$attrs"
+			   @keyup="handleKeyUp"
+			   @focus="handleFocus" />
 		<!-- :disabled="isInputLoading" -->
-		<Skeleton class="bg-primary h-1 w-full" v-if="isInputLoading" />
-		<div v-if="isOpen" class="bg-background absolute left-0 top-full w-full">
-			<Button
-				type="button"
-				class="autocomplete-item focus:bg-muted mt-[1px] flex h-fit w-full justify-between whitespace-break-spaces text-left"
-				variant="outline"
-				v-for="(item, index) in options"
-				:key="index"
-				@click="onOptionClick(index)"
-			>
+		<Skeleton class="bg-primary h-1 w-full"
+				  v-if="isInputLoading" />
+		<div v-if="isOpen"
+			 class="bg-background absolute left-0 top-full w-full overflow-y-auto max-h-[50vh] min-h-[100px]">
+			<Button type="button"
+					class="autocomplete-item focus:bg-muted mt-[1px] flex h-fit w-full justify-between whitespace-break-spaces text-left"
+					variant="outline"
+					v-for="(item, index) in options"
+					:key="index"
+					@click="onOptionClick(index)">
 				{{ item }}
 				<ChevronRight class="h-4 w-4" />
 			</Button>
