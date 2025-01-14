@@ -12,9 +12,9 @@ function goToAccountSettings() {
 
 async function logout() {
     const client = createAuthApiClient();
-    const { data, error } = await (await client.api.user['logout-all'].$post()).json();
+    const { data, error } = await (await client.api.user['logout'].$post()).json();
     console.log(data, error);
-    window.location.reload();
+    window.location.href = `https://dashboard.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/after-logout.html`;
 }
 
 </script>
