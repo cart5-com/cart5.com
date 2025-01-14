@@ -2,7 +2,8 @@
   "name": "lib",
   "type": "module",
   "dependencies": {
+    "@oslojs/encoding": "1.1.0",
     "hono": "^4.6.12",
-    "@oslojs/encoding": "1.1.0"
+    "libphonenumber-js": "^1.11.7"
   }
 }
