@@ -9,7 +9,11 @@
 # DNS records
 
 ```
+"AAAA" "@" "0:0:0:0::1" "DNS only" "Auto"
 "AAAA" "dns-pointer.yourdomain.com" "0:0:0:0::1" "DNS only" "Auto"
+
+"A" "@" "0.0.0.0" "DNS only" "Auto"
 "A" "dns-pointer.yourdomain.com" "0.0.0.0" "DNS only" "Auto"
+
 "CNAME" "*.yourdomain.com" "dns-pointer.yourdomain.com" "DNS only" "Auto"
 ```

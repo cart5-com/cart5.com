@@ -68,6 +68,10 @@ https://dashboard.{$PUBLIC_DOMAIN_NAME} {
 	}
 }
 
+https://{$PUBLIC_DOMAIN_NAME} {
+	redir https://www.{host}{uri}
+}
+
 :443 {
 	tls {
 		on_demand
