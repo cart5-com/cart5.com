@@ -39,6 +39,11 @@ const router = createRouter({
           component: () => import('@src/pages/restaurant/NameView.vue'),
         },
         {
+          path: 'phone',
+          name: 'restaurant-phone',
+          component: () => import('@src/pages/restaurant/PhoneView.vue'),
+        },
+        {
           path: 'address',
           name: 'restaurant-address',
           component: () => import('@src/pages/restaurant/AddressView.vue'),
