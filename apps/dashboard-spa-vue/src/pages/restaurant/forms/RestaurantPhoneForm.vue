@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue'
+import { onMounted } from 'vue';
 const schema = z.object({
     phone: z.string(),
 })
@@ -19,9 +20,11 @@ const { isLoading, globalError,
     // handleError,
     withSubmit } = useFormPlus();
 
-setTimeout(() => {
-    form.setFieldValue('phone', '+445544443322')
-}, 200)
+onMounted(() => {
+    setTimeout(() => {
+        form.setFieldValue('phone', '+445544443322')
+    }, 1000)
+})
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
