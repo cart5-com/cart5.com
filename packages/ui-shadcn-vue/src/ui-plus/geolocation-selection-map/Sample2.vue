@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import Map from './Map.vue';
+import GeolocationSelectionMap from './GeolocationSelectionMap.vue';
 import { Input } from '@/components/ui/input';
 
-const mapComp = ref<InstanceType<typeof Map>>();
+const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
 const address = ref<string>('hello');
 const isDialogOpen = ref(false);
 
@@ -34,9 +34,9 @@ onMounted(() => {
 <template>
     <div>
         <div class="h-[400px] w-[400px] m-4">
-            <Map ref="mapComp"
-                 class="flex-1 overflow-hidden"
-                 :address="address" />
+            <GeolocationSelectionMap ref="mapComp"
+                                     class="flex-1 overflow-hidden"
+                                     :address="address" />
         </div>
         <div class="flex flex-col gap-2">
             <label for="address">Address</label>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Map from './Map.vue';
+import GeolocationSelectionMap from './GeolocationSelectionMap.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -68,9 +68,9 @@ function onMapConfirm() {
                             Move the map to your entrance/door and click Confirm
                         </DialogDescription>
                     </DialogHeader>
-                    <Map ref="mapComp"
-                         class="flex-1 overflow-hidden"
-                         :address="address" />
+                    <GeolocationSelectionMap ref="mapComp"
+                                             class="flex-1 overflow-hidden"
+                                             :address="address" />
                     <!-- <div class="grid gap-4 py-4">
                      <div class="grid grid-cols-4 items-center gap-4">
                          <Label for="name" class="text-right"> Name </Label>
