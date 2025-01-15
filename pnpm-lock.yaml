@@ -341,6 +341,9 @@ importers:
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
+      lib:
+        specifier: workspace:*
+        version: link:../lib
       lucide-vue-next:
         specifier: ^0.465.0
         version: 0.465.0(vue@3.5.13(typescript@5.7.2))
@@ -1466,7 +1469,6 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.5':
     resolution: {integrity: sha512-RHaxQB4+wttd3H8GXofoaFalzIpuicr8DlD7yuVN3rAy5OsOP6ny+Tu12Iz/IQrgA4vvKAFxJt3AJxqhs8Ltcg==}
-    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
@@ -3269,7 +3271,6 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
-    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lilconfig@3.1.3:

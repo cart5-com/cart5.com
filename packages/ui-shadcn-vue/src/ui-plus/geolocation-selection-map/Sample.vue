@@ -21,6 +21,7 @@ const setAddress = () => {
     isDialogOpen.value = true;
     setTimeout(async () => {
         // 43.646294506256936, -79.38741027876338
+        mapComp.value.address = 'sample address';
         mapComp.value.mapView.setView([43.646294506256936, -79.38741027876338], 18);
         mapComp.value.helperBtns = [
             {
@@ -62,15 +63,14 @@ function onMapConfirm() {
                     <DialogHeader>
                         <DialogTitle class="flex items-center gap-2">
                             <DoorOpen />
-                            Mark your address entrance/door location
+                            Confirm your address entrance/door location
                         </DialogTitle>
                         <DialogDescription class="hidden text-sm sm:block">
                             Move the map to your entrance/door and click Confirm
                         </DialogDescription>
                     </DialogHeader>
                     <GeolocationSelectionMap ref="mapComp"
-                                             class="flex-1 overflow-hidden"
-                                             :address="address" />
+                                             class="flex-1 overflow-hidden" />
                     <!-- <div class="grid gap-4 py-4">
                      <div class="grid grid-cols-4 items-center gap-4">
                          <Label for="name" class="text-right"> Name </Label>

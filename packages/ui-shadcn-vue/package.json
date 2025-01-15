@@ -27,6 +27,7 @@
     "radix-vue": "^1.9.10",
     "tailwind-merge": "^2.5.5",
     "tailwindcss": "^3.4.16",
+    "lib": "workspace:*",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.7.2",
     "v-calendar": "^3.1.2",

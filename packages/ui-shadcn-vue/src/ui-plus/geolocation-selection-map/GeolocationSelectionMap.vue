@@ -8,10 +8,6 @@ import { onMounted, ref } from "vue";
 import { defineExpose } from "vue";
 import { toast } from '@/ui-plus/sonner';
 
-const props = defineProps<{
-	address?: string;
-}>();
-
 interface HelperBtns {
 	label: string;
 	lat: number;
@@ -20,6 +16,7 @@ interface HelperBtns {
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
 const mapView = ref<Map>();
 const helperBtns = ref<HelperBtns[]>([]);
+const address = ref<string>('');
 
 onMounted(() => {
 	console.log("onMounted MAP");
@@ -52,6 +49,30 @@ async function handleGpsClick() {
 			(position) => {
 				isGpsLoading.value = false;
 				mapView.value?.setView([position.coords.latitude, position.coords.longitude], 18);
+
+				// Check if Current Location already exists in helperBtns
+				const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
+				if (currentLocationExists) {
+					// Update existing Current Location coordinates
+					helperBtns.value = helperBtns.value.map(btn => {
+						if (btn.label === "Current Location") {
+							return {
+								...btn,
+								lat: position.coords.latitude,
+								lng: position.coords.longitude
+							};
+						}
+						return btn;
+					});
+				} else {
+					// Add new Current Location to start of array
+					helperBtns.value = [{
+						label: "Current Location",
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
+					}, ...helperBtns.value];
+				}
+
 				toast.success("Your location has been set.");
 			},
 			(error) => {
@@ -68,7 +89,8 @@ async function handleGpsClick() {
 
 defineExpose({
 	mapView,
-	helperBtns
+	helperBtns,
+	address
 });
 </script>
 
@@ -76,7 +98,7 @@ defineExpose({
 	<div class="h-full">
 		<div class="flex h-full flex-col">
 			<p class="address-value border p-1 text-sm font-extrabold shrink-0">
-				{{ props.address || "" }}
+				{{ address || "" }}
 			</p>
 
 			<div :id="randomId"

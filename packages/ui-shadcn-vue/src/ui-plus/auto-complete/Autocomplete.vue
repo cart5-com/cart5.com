@@ -72,6 +72,10 @@ function handleKeyUp(event: KeyboardEvent) {
 	if (event.key === "ArrowDown" || event.key === "ArrowUp") {
 		return;
 	}
+	if (event.key === "Enter") {
+		isOpen.value = false;
+		return;
+	}
 	isOpen.value = true;
 	currentFocusIndex.value = -1;
 	const query = (event.target as HTMLInputElement).value;
@@ -80,6 +84,16 @@ function handleKeyUp(event: KeyboardEvent) {
 	emit("inputChange", event);
 }
 
+// , event: Event
+// if (event.currentTarget) {
+// 	const containerElement = (event.currentTarget as HTMLElement).closest(".autocomplete-container-element") as HTMLElement;
+// 	if (containerElement) {
+// 		const inputElement = containerElement.querySelector("input, textarea") as HTMLElement;
+// 		if (inputElement) {
+// 			inputElement.focus();
+// 		}
+// 	}
+// }
 function onOptionClick(index: number) {
 	isOpen.value = false;
 	emit("optionClick", index);
@@ -101,10 +115,10 @@ function onOptionClick(index: number) {
 			   @keyup="handleKeyUp"
 			   @focus="handleFocus" />
 		<!-- :disabled="isInputLoading" -->
-		<Skeleton class="bg-primary h-1 w-full"
+		<Skeleton class="bg-foreground h-1 w-full"
 				  v-if="isInputLoading" />
 		<div v-if="isOpen"
-			 class="bg-background absolute left-0 top-full w-full overflow-y-auto max-h-[50vh] min-h-[100px]">
+			 class="bg-background absolute left-0 top-full w-full overflow-y-auto max-h-[50vh] border border-foreground">
 			<Button type="button"
 					class="autocomplete-item focus:bg-muted mt-[1px] flex h-fit w-full justify-between whitespace-break-spaces text-left"
 					variant="outline"

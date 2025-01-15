@@ -114,45 +114,49 @@ export const mapsRoute = new Hono<HonoVariables>()
             }, 200);
         }
     )
-    // docs: https://developers.google.com/maps/documentation/places/web-service/details
-    .get(
-        '/place/details',
-        zValidator('query', z.object({
-            place_id: z.string(),
-            fields: z.string().optional(),
-            language: z.string().optional(),
-            region: z.string().optional(),
-            reviews_no_translations: z.boolean().optional(),
-            reviews_sort: z.string().optional(),
-            sessiontoken: z.string().optional(),
-        })),
-        async (c) => {
-            const {
-                // place_id,
-                // fields, language, region,
-                // reviews_no_translations
-                // reviews_sort
-                // sessiontoken
-            } = c.req.valid('query');
-            let reqUrl = new URL(c.req.url);
-            reqUrl.protocol = 'https';
-            reqUrl.hostname = 'maps.googleapis.com';
-            reqUrl.pathname = '/maps/api/place/details/json';
-            reqUrl.searchParams.delete('key');
-            reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
-            reqUrl.searchParams.delete('sessiontoken');
-            // reqUrl.searchParams.append('sessiontoken', generateSessionToken());
-            const response = (await (await fetch(reqUrl.toString())).json()) as {
-                html_attributions: string[];
-                result: google.maps.places.PlaceResult;
-                status: google.maps.places.PlacesServiceStatus;
-            };
-            return c.json({
-                data: response,
-                error: null as ErrorType
-            }, 200);
-        }
-    )
+
+// // docs: https://developers.google.com/maps/documentation/places/web-service/details
+// .get(
+//     '/place/details',
+//     zValidator('query', z.object({
+//         place_id: z.string(),
+//         fields: z.string().optional(),
+//         language: z.string().optional(),
+//         region: z.string().optional(),
+//         reviews_no_translations: z.boolean().optional(),
+//         reviews_sort: z.string().optional(),
+//         sessiontoken: z.string().optional(),
+//     })),
+//     async (c) => {
+//         const {
+//             // place_id,
+//             // fields, language, region,
+//             // reviews_no_translations
+//             // reviews_sort
+//             // sessiontoken
+//         } = c.req.valid('query');
+//         let reqUrl = new URL(c.req.url);
+//         reqUrl.protocol = 'https';
+//         reqUrl.hostname = 'maps.googleapis.com';
+//         reqUrl.pathname = '/maps/api/place/details/json';
+//         reqUrl.searchParams.delete('key');
+//         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+//         reqUrl.searchParams.delete('sessiontoken');
+//         // reqUrl.searchParams.append('sessiontoken', generateSessionToken());
+//         const response = (await (await fetch(reqUrl.toString())).json()) as {
+//             html_attributions: string[];
+//             result: google.maps.places.PlaceResult;
+//             status: google.maps.places.PlacesServiceStatus;
+//         };
+//         return c.json({
+//             data: response,
+//             error: null as ErrorType
+//         }, 200);
+//     }
+// )
+
+
+
 // .get(
 //     '/autocomplete-v2',
 //     zValidator('query', z.object({
