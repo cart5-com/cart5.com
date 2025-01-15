@@ -43,7 +43,7 @@ export const redirectGoogleOAuthRoute = async (
             throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
         }
 
-        if (hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
+        if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
             throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
         }
 

@@ -14,6 +14,7 @@ import { markEmailAsVerifiedService, upsertUserService } from '../db/schema/user
 import { updateUserPictureUrlService } from '../db/schema/user.service';
 import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import type { GoogleOAuthTokenPayload } from './redirect';
+import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 
 
 
@@ -39,7 +40,7 @@ export const callbackGoogleOAuthRoute = async (
     if (!hostHeader) {
         throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
     }
-    if (hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
+    if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
         throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
     }
 
