@@ -7,6 +7,7 @@ import { csrfChecks } from './middlewares/csrf';
 import { authChecks } from './middlewares/auth';
 import { restaurantRouter } from './dashboard/restaurant/router';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
+import { mapsRoute } from './google-maps/mapsRoute';
 
 export type HonoVariables = {
 	Variables: {
@@ -54,6 +55,9 @@ app.get("/", (c) => {
 const routes = app.basePath('/api');
 export type EcomApiAppType = typeof routes;
 
+const ecomApiMapsRoutes = app.basePath('/api/maps')
+	.route('/gmaps', mapsRoute);
+export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
 
 const dashboardRoutes = app
 	.use(async (c, next) => {

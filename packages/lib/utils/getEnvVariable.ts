@@ -11,7 +11,11 @@ export const getEnvVariable = function (
 export const getOptionalEnvVariable = function (
     environmentVariable: string
 ): string | undefined {
-    return process.env[environmentVariable];
+    const enVar = process.env[environmentVariable];
+    if (!enVar) {
+        console.warn(`Couldn't find environment variable: ${environmentVariable}`);
+    }
+    return enVar;
 }
 
 export const IS_PROD = getOptionalEnvVariable("NODE_ENV") === "production"
