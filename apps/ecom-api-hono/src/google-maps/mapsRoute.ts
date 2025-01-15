@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { type HonoVariables } from "../index";
 import { type ErrorType } from "lib/errors";
 import { getOptionalEnvVariable, IS_PROD } from "lib/utils/getEnvVariable";
+import { verifyRequestOrigin } from "lib/utils/verifyRequestOrigin";
 
 function generateSessionToken() {
     const fourHours = 14400000; //4 * 60 * 60 * 1000; // 4 hours in milliseconds
@@ -15,8 +16,36 @@ function generateSessionToken() {
 }
 
 const cacheControl = IS_PROD ? 'public, max-age=2592000, immutable' : 'no-cache'; // 30 days cache
+const REQUIRED_HEADERS = ['sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site'] as const;
 
 export const mapsRoute = new Hono<HonoVariables>()
+    .use(async (c, next) => {
+        c.header('Cache-Control', cacheControl);
+        const headers = c.req.header();
+
+        // 1. Check if all required Sec-Fetch headers are present
+        const missingHeaders = REQUIRED_HEADERS.filter(header => !headers[header]);
+        if (missingHeaders.length > 0) {
+            return c.body("Invalid request: Missing security headers", 403);
+        }
+
+        // 2. Validate Sec-Fetch headers values
+        if (headers['sec-fetch-mode'] !== 'cors' ||
+            headers['sec-fetch-dest'] !== 'empty' ||
+            !['same-origin', 'same-site'].includes(headers['sec-fetch-site'])) {
+            return c.body("Invalid request: Invalid security headers", 403);
+        }
+
+        // 3. Check origin/referer
+        const referer = headers['referer'];
+        const host = headers['host'];
+
+        // if (!refererHeader || !hostHeader || !verifyRequestOrigin(refererHeader, [hostHeader])) {
+        if (!referer || !host || !verifyRequestOrigin(referer, [host])) {
+            return c.body("Invalid request: Unauthorized origin", 403);
+        }
+        await next();
+    })
     // docs: https://developers.google.com/maps/documentation/places/web-service/autocomplete
     .get(
         '/autocomplete',
@@ -48,7 +77,6 @@ export const mapsRoute = new Hono<HonoVariables>()
             reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
             reqUrl.searchParams.delete('sessiontoken');
             reqUrl.searchParams.append('sessiontoken', generateSessionToken());
-            c.header('Cache-Control', cacheControl);
             const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.places.AutocompleteResponse;
 
             return c.json({
@@ -77,7 +105,6 @@ export const mapsRoute = new Hono<HonoVariables>()
             reqUrl.pathname = '/maps/api/geocode/json';
             reqUrl.searchParams.delete('key');
             reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
-            c.header('Cache-Control', cacheControl);
             const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
             // (response as any).userIp = c.req.header('caddy-user-ip') || "";
             // (response as any).dateTs = Date.now();
@@ -114,7 +141,6 @@ export const mapsRoute = new Hono<HonoVariables>()
             reqUrl.searchParams.delete('key');
             reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
             reqUrl.searchParams.delete('sessiontoken');
-            c.header('Cache-Control', cacheControl);
             // reqUrl.searchParams.append('sessiontoken', generateSessionToken());
             const response = (await (await fetch(reqUrl.toString())).json()) as {
                 html_attributions: string[];
@@ -145,7 +171,6 @@ export const mapsRoute = new Hono<HonoVariables>()
 //                 sessionToken: c.get('MAPS_SESSION_TOKEN'),
 //             })
 //         })).json();
-//         c.header('Cache-Control', cacheControl);
 //         return c.json({
 //             data: response
 //         }, 200);
@@ -170,7 +195,6 @@ export const mapsRoute = new Hono<HonoVariables>()
 //         reqUrl.pathname = '/maps/api/geocode/json';
 //         reqUrl.searchParams.delete('key');
 //         reqUrl.searchParams.append('key', ENV.MAPS_GOOGLE_KEY);
-//         c.header('Cache-Control', cacheControl);
 //         const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
 //         return c.json({
 //             data: response,
