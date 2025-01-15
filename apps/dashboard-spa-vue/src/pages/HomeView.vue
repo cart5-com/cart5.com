@@ -1,28 +1,10 @@
 <script lang="ts" setup>
 import HeaderOnly from '@src/layouts/HeaderOnly.vue';
 import AppLinks from '@src/components/AppLinks.vue';
-import { mapsApiClient } from '@src/lib/dashboardApiClient';
-import { Button } from '@/components/ui/button';
-import { ref } from 'vue';
-// import { Store } from 'lucide-vue-next';
-
-const result = ref({});
-const getAddress = async () => {
-	const { data, error } = await (await mapsApiClient.api.maps.gmaps.autocomplete.$get({
-		query: {
-			input: 'main street',
-		}
-	})).json();
-	console.log(data, error);
-	result.value = data ?? error;
-}
-
 </script>
 
 <template>
 	<HeaderOnly>
-		<Button @click="getAddress">Get Address</Button>
-		<pre>{{ result }}</pre>
 		<main class="flex flex-1 flex-col gap-4 lg:gap-6 lg:p-6">
 			<div class="flex flex-col gap-1">
 				<h3 class="text-2xl font-bold tracking-tight">Dashboard</h3>
