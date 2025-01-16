@@ -41,7 +41,7 @@ async function onInputChange(event: Event) {
             options.value = predictions.map(prediction => prediction.description) || [];
         }
         isInputLoading.value = false;
-    }, 2000);
+    }, 1000);
 }
 
 async function geocode(address: string) {
