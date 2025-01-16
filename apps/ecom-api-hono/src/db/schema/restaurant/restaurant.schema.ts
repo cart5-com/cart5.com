@@ -9,7 +9,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	name: text("name", { mode: 'text', length: 510 }).notNull(),
 
-	phoneNumber: text("default_phone_number"),
+	defaultPhoneNumber: text("default_phone_number"),
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
 	addressFull: text("address_full"),

@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "pnpm dev:drizzle-push && pnpm dev:drizzle-studio & dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
-		"dev:caddy": "pnpm dev:drizzle-push && dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
+		"dev:caddy": "pnpm dev:drizzle-push && pnpm dev:drizzle-studio & dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
 		"dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7023 --config=./drizzle.config.ts",
 		"dev:drizzle-push": "dotenvx run -- drizzle-kit push --verbose --force --config=./drizzle.config.ts",
 		"prod:generate:sql": "dotenvx run -f .env.production -- drizzle-kit generate --config=drizzle.config.prod.ts",
