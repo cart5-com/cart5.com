@@ -38,8 +38,9 @@ const { setOpenMobile } = useSidebar()
                                     <span class="truncate font-semibold">
                                         {{ currentRestaurant?.name }}
                                     </span>
-                                    <span class="truncate text-xs">address address address addressaddress address
-                                        address </span>
+                                    <span class="truncate text-xs">
+                                        {{ currentRestaurant?.addressFull }}
+                                    </span>
                                 </div>
                             </SidebarMenuButton>
                         </RouterLink>

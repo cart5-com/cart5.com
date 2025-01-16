@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import HeaderOnly from '@src/layouts/HeaderOnly.vue';
 import AppLinks from '@src/components/AppLinks.vue';
-import RestaurantAddressForm from '@src/pages/restaurant/forms/RestaurantAddressForm.vue';
 </script>
 
 <template>
@@ -18,8 +17,5 @@ import RestaurantAddressForm from '@src/pages/restaurant/forms/RestaurantAddress
 				</div>
 			</div>
 		</main>
-		<div class="mx-auto sm:max-w-[600px]">
-			<RestaurantAddressForm />
-		</div>
 	</HeaderOnly>
 </template>
