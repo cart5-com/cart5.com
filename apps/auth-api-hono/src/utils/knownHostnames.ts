@@ -10,7 +10,7 @@ export function isKnownOriginRegex(host: string, KNOWN_DOMAINS_REGEX: string) {
 }
 
 export const isKnownHostname = async (host: string, KNOWN_DOMAINS_REGEX: string, IS_PROD: boolean): Promise<boolean> => {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    //await new Promise(resolve => setTimeout(resolve, 100));
     if (IS_PROD) {
         return isKnownOriginRegex(host, KNOWN_DOMAINS_REGEX);
     }

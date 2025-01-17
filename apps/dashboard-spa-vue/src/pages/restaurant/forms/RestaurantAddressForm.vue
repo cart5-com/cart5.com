@@ -49,7 +49,7 @@ const loadData = async () => {
     isLoading.value = true;
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // await new Promise(resolve => setTimeout(resolve, 1000));
     const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
@@ -191,7 +191,7 @@ async function onMapConfirm() {
             console.log('data', data);
         }
         // wait 1 second
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // await new Promise(resolve => setTimeout(resolve, 1000));
         toast.success(`Saved`);
         isLoading.value = false;
     };
