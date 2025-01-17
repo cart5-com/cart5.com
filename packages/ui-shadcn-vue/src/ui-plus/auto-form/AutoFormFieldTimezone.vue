@@ -8,13 +8,40 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { beautifyObjectName } from './utils'
 import { ChevronsUpDown } from 'lucide-vue-next';
 import { ref } from 'vue'
+
 const open = ref(false);
 defineProps<FieldProps>()
 
-function getTimezones() {
+let cachedTimezones: {
+  name: string;
+  formatted: string;
+}[];
+
+function getTimezones(): {
+  name: string;
+  formatted: string;
+}[] {
+  if (cachedTimezones) {
+    return cachedTimezones;
+  }
   // @ts-ignore
-  return Intl.supportedValuesOf('timeZone');
+  cachedTimezones = Intl.supportedValuesOf('timeZone').map(timezone => ({
+    name: timezone,
+    formatted: formatTimezone(timezone),
+  }));
+  return cachedTimezones;
 }
+function formatTimezone(timezone: string) {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      timeZoneName: 'shortGeneric',
+      timeZone: timezone,
+    }).formatToParts().find(part => part.type === 'timeZoneName')?.value || timezone;
+  } catch (e) {
+    return timezone;
+  }
+}
+
 </script>
 
 <template>
@@ -48,15 +75,16 @@ function getTimezones() {
               <CommandList>
                 <CommandGroup>
                   <CommandItem v-for="option in getTimezones()"
-                               :key="option"
-                               :value="option"
+                               :key="option.name"
+                               :value="option.name + ' ' + option.formatted"
                                class="gap-2"
                                @select="() => {
-                                slotProps.setValue(option);
+                                slotProps.setValue(option.name);
                                 open = false;
                               }
                                 ">
-                    <span class="flex-1 text-sm">{{ option }}</span>
+                    <span class="flex-1 text-sm">{{ option.name }}</span>
+                    <span class="text-foreground/50 text-sm">{{ option.formatted }}</span>
                   </CommandItem>
                 </CommandGroup>
               </CommandList>

@@ -1,29 +1,14 @@
 import { mapsApiClient } from '@src/lib/dashboardApiClient';
-import { type predictionExtraType } from 'lib/apiClients/ecomApiClient'
 
 export async function geocode(address: string, countryCode?: string) {
-    console.log("geocode", address, countryCode);
-    const { data, error } = await (await mapsApiClient.api.maps.gmaps.geocode.$get({
+    return await (await mapsApiClient.api.maps.gmaps.geocode.$get({
         query: {
             address: address.trim().toLowerCase(),
             components: countryCode ? `country:${countryCode}` : undefined,
         }
     })).json();
-    if (error) {
-        console.error("error", error);
-        return null;
-    }
-    if (data && data.results && data.results.length > 0) {
-        return [
-            {
-                description: data.results[0].formatted_address,
-                lat: data.results[0].geometry.location.lat,
-                lng: data.results[0].geometry.location.lng
-            }
-        ] as predictionExtraType[];
-    }
-    return null;
 }
+
 
 export async function autocomplete(query: string, countryCode?: string) {
     const queryObj = {

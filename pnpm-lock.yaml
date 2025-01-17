@@ -338,9 +338,6 @@ importers:
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
-      lib:
-        specifier: workspace:*
-        version: link:../lib
       libphonenumber-js:
         specifier: ^1.11.18
         version: 1.11.18

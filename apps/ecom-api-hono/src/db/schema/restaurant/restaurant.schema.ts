@@ -20,6 +20,8 @@ export const restaurantTable = sqliteTable("restaurant", {
 	addressTimezone: text('address_timezone'),
 	addressMetadata: text('address_metadata', { mode: 'json' }).$type<any>(),
 
+	links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
+	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	ownerUserId: text("owner_user_id").notNull(),
 
 	created_at_ts: integer("created_at_ts")
@@ -35,10 +37,16 @@ export const selectRestaurantSchema = createSelectSchema(restaurantTable);
 export const insertRestaurantSchema = createInsertSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
+	links: z.array(z.string()).default([]),
+	cuisines: z.array(z.string()).default([]),
+	addressMetadata: z.any().default({}),
 });
 export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
+	links: z.array(z.string()).default([]),
+	cuisines: z.array(z.string()).default([]),
+	addressMetadata: z.any().default({}),
 });
 /// RESTAURANT TABLE END
 

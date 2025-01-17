@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    // DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -109,7 +109,11 @@ async function onInputChange(event: Event) {
     debounceTimer = setTimeout(async () => {
         const geocodeResult = await geocode(query, form.values.addressCountry);
         if (geocodeResult) {
-            predictions = geocodeResult;
+            predictions = geocodeResult.data.results.map(item => ({
+                description: item.formatted_address,
+                lat: item.geometry.location.lat,
+                lng: item.geometry.location.lng
+            })) as predictionExtraType[];
         }
         const { data, error } = await autocomplete(query, form.values.addressCountry);
         if (error) {
@@ -130,8 +134,7 @@ const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
 
-
-
+let locationMetadata: any = null;
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         console.log('values', values);
@@ -139,24 +142,32 @@ async function onSubmit(values: z.infer<typeof schema>) {
             geocode(values.addressFull, form.values.addressCountry?.toLowerCase()),
             getOpenStreetMapItems(values.addressFull, form.values.addressCountry?.toLowerCase())
         ]);
-        console.log('geocodeResult', geocodeResult);
+        locationMetadata = geocodeResult;
         console.log('openStreetMapItems', openStreetMapItems);
         isDialogOpen.value = true;
         await new Promise(resolve => setTimeout(resolve, 500));
         if (mapComp && mapComp.value && mapComp.value.mapView) {
             mapComp.value.address = values.addressFull + (values.addressDetails ? `, ${values.addressDetails}` : "");
             // 43.646294506256936, -79.38741027876338
-            if (geocodeResult && geocodeResult.length > 0) {
-                mapComp.value.mapView.setView([geocodeResult[0].lat!, geocodeResult[0].lng!], 18);
+            if (geocodeResult && geocodeResult.data.results.length > 0) {
+                mapComp.value.mapView.setView([
+                    geocodeResult.data.results[0].geometry.location.lat,
+                    geocodeResult.data.results[0].geometry.location.lng
+                ], 18);
             } else {
                 mapComp.value.mapView.setView([openStreetMapItems[0].lat, openStreetMapItems[0].lng], 18);
             }
             mapComp.value.helperBtns = [
-                ...(geocodeResult && geocodeResult.length > 0 ? geocodeResult.map(item => ({
-                    label: item.description,
-                    lat: item.lat!,
-                    lng: item.lng!
-                })) : []),
+                ...(
+                    geocodeResult &&
+                        geocodeResult.data.results.length > 0 ?
+                        geocodeResult.data.results.map(item => ({
+                            label: item.formatted_address,
+                            lat: item.geometry.location.lat,
+                            lng: item.geometry.location.lng
+                        })) :
+                        []
+                ),
                 ...openStreetMapItems.map(item => ({
                     label: item.label,
                     lat: item.lat,
@@ -172,8 +183,8 @@ async function onMapConfirm() {
     if (mapComp && mapComp.value && mapComp.value.mapView) {
         isLoading.value = true;
         const { lat, lng } = mapComp.value.mapView.getCenter();
-        console.log('lat', lat);
-        console.log('lng', lng);
+        // const reverseGeocodeResult = await reverseGeocode(lat, lng);
+        // console.log('reverseGeocodeResult', reverseGeocodeResult);
         const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
@@ -182,6 +193,7 @@ async function onMapConfirm() {
                 ...form.values,
                 addressLat: lat,
                 addressLng: lng,
+                addressMetadata: locationMetadata ? locationMetadata : null,
             }
         })).json()
         if (error) {
@@ -212,11 +224,11 @@ async function onMapConfirm() {
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <DoorOpen />
-                    Confirm your address entrance/door location
+                    Confirm your entrance/door location
                 </DialogTitle>
-                <DialogDescription class="hidden text-sm sm:block">
+                <!-- <DialogDescription class="hidden text-sm sm:block">
                     Move the map to your entrance/door and click Confirm
-                </DialogDescription>
+                </DialogDescription> -->
             </DialogHeader>
             <GeolocationSelectionMap ref="mapComp"
                                      class="flex-1 overflow-hidden" />

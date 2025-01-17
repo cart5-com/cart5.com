@@ -114,34 +114,34 @@ export const mapsRoute = new Hono<HonoVariables>()
             }, 200);
         }
     )
-    // https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding
-    .get(
-        '/reverse',
-        zValidator('query', z.object({
-            latlng: z.string(),
-            result_type: z.string().optional(),
-            location_type: z.string().optional(),
-            language: z.string().optional(),
-            region: z.string().optional(),
-        })),
-        async (c) => {
-            const {
-                //latlng,
-                // result_type, location_type, language, region
-            } = c.req.valid('query');
-            let reqUrl = new URL(c.req.url);
-            reqUrl.protocol = 'https';
-            reqUrl.hostname = 'maps.googleapis.com';
-            reqUrl.pathname = '/maps/api/geocode/json';
-            reqUrl.searchParams.delete('key');
-            reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
-            const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
-            return c.json({
-                data: response,
-                error: null as ErrorType
-            }, 200);
-        }
-    )
+// https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding
+// .get(
+//     '/reverse',
+//     zValidator('query', z.object({
+//         latlng: z.string(),
+//         result_type: z.string().optional(),
+//         location_type: z.string().optional(),
+//         language: z.string().optional(),
+//         region: z.string().optional(),
+//     })),
+//     async (c) => {
+//         const {
+//             //latlng,
+//             // result_type, location_type, language, region
+//         } = c.req.valid('query');
+//         let reqUrl = new URL(c.req.url);
+//         reqUrl.protocol = 'https';
+//         reqUrl.hostname = 'maps.googleapis.com';
+//         reqUrl.pathname = '/maps/api/geocode/json';
+//         reqUrl.searchParams.delete('key');
+//         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+//         const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
+//         return c.json({
+//             data: response,
+//             error: null as ErrorType
+//         }, 200);
+//     }
+// )
 
 // // docs: https://developers.google.com/maps/documentation/places/web-service/details
 // .get(
