@@ -21,7 +21,7 @@ setCurrentRestaurantId(restaurantId as string);
             <Header>
                 <SidebarTrigger class="-ml-1" />
             </Header>
-            <main class="flex-1 lg:max-w-3xl border-r border-foreground/10 p-2">
+            <main class="flex-1 lg:max-w-3xl border-r border-foreground/10 p-2 lg:p-4">
                 <RouterView />
             </main>
         </SidebarInset>

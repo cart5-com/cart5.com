@@ -17,6 +17,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 	addressDetails: text("address_details"),
 	addressLat: real('address_lat'), //.notNull().default(90), // North Pole latitude
 	addressLng: real('address_lng'), //.notNull().default(-180), // North Pole longitude
+	addressTimezone: text('address_timezone'),
 	addressMetadata: text('address_metadata', { mode: 'json' }).$type<any>(),
 
 	ownerUserId: text("owner_user_id").notNull(),
