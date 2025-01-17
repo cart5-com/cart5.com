@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import PhoneInput from "base-vue-phone-input";
+import PhoneInput from "../PhoneNumber/basePhoneInput/components/PhoneInput.vue";
 import { useFocus } from "@vueuse/core";
 import { ChevronsUpDown } from "lucide-vue-next";
 import FlagComponent from "./FlagComponent.vue";
@@ -17,8 +17,7 @@ const { focused } = useFocus(phoneInput);
 	<PhoneInput noUseBrowserLocale
 				fetchCountry
 				class="flex"
-				country-locale="en-EN"
-				:ignored-countries="['AC']">
+				country-locale="en-EN">
 		<template #selector="{ inputValue, updateInputValue, countries }">
 			<Popover v-model:open="open">
 				<PopoverTrigger>

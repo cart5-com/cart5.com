@@ -4,7 +4,7 @@ import { FormControl, FormDescription, FormField, FormItem, FormMessage } from '
 import AutoFormLabel from '../auto-form/AutoFormLabel.vue'
 import SPhoneInput from './SPhoneInput.vue'
 import { beautifyObjectName } from '../auto-form/utils'
-import { type Results } from 'base-vue-phone-input'
+import { type Results } from '../PhoneNumber/basePhoneInput/helpers/types'
 import { ref, watch } from 'vue'
 
 defineProps<FieldProps>()

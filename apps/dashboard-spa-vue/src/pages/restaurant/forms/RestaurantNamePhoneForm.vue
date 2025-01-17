@@ -5,7 +5,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, PlusIcon } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId, setCurrentRestaurantName } from '@src/stores/RestaurantStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
@@ -17,6 +17,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import SPhoneInput from '@/ui-plus/PhoneNumber/SPhoneInput.vue'
+import { toast } from '@/ui-plus/sonner';
 
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
@@ -81,6 +82,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         } else {
             // Success
             console.log('data', data);
+            toast.success(`Saved`);
             setCurrentRestaurantName(values.name);
         }
     })
@@ -128,6 +130,9 @@ const removePhoneNumber = (index: number) => {
               :schema="schema"
               :form="form"
               :field-config="{
+                name: {
+                    label: 'Restaurant Name',
+                },
                 defaultPhoneNumber: {
                     label: 'Phone Number',
                     component: AutoFormFieldPhone
@@ -173,7 +178,7 @@ const removePhoneNumber = (index: number) => {
                         variant="outline"
                         size="sm"
                         @click="addPhoneNumber">
-                    Add Extra Phone Number
+                    <PlusIcon class="w-4 h-4" /> Add Extra Phone Number
                 </Button>
             </div>
         </template>

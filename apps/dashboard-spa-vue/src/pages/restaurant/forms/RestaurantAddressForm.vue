@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import GeolocationSelectionMap from '@/ui-plus/geolocation-selection-map/GeolocationSelectionMap.vue';
 import { Button } from '@/components/ui/button';
-import { mapsApiClient } from '@src/lib/dashboardApiClient';
 import {
     Dialog,
     DialogContent,
@@ -9,25 +8,33 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    // DialogTrigger
 } from "@/components/ui/dialog";
 import { DoorOpen } from "lucide-vue-next";
-import { AutoForm } from '@/ui-plus/auto-form'
+import { AutoForm, AutoFormLabel } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import AutoFormFieldAddress from '@/ui-plus/auto-form/AutoFormFieldAddress.vue'
+import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
 import { onMounted, ref } from 'vue';
-import { type predictionExtraType } from 'lib/apiClients/ecomApiClient'
 import { toast } from '@/ui-plus/sonner';
-
-const isDialogOpen = ref(false);
-const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
+import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import Autocomplete from '@/ui-plus/auto-complete/Autocomplete.vue'
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from '@/components/ui/form'
+import { type predictionExtraType } from 'lib/apiClients/ecomApiClient'
+import { autocomplete, geocode, getOpenStreetMapItems } from './utils'
+import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
 const schema = z.object({
-    address: z.string().min(1, 'Address is required'),
+    addressCountry: z.string().min(1, 'Address is required'),
+    addressFull: z.string().min(1, 'Address is required'),
     addressDetails: z.string().optional(),
 })
 
@@ -35,53 +42,105 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
-const { isLoading, globalError,
-    // handleError,
-    withSubmit } = useFormPlus();
+
+const loadData = async () => {
+    isLoading.value = true;
+    console.log('loadData', currentRestaurantId.value);
+    // // sleep 1 second
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+        param: {
+            restaurantId: currentRestaurantId.value ?? '',
+        },
+        json: {
+            columns: {
+                addressCountry: true,
+                addressFull: true,
+                addressDetails: true,
+            }
+        }
+    })).json()
+    if (error) {
+        handleError(error, form);
+    } else {
+        if (data) {
+            for (const key in data) {
+                const typedKey = key as keyof typeof schema.shape;
+                if (data[typedKey]) {
+                    form.setFieldValue(typedKey, data[typedKey]);
+                }
+            }
+        }
+    }
+    isLoading.value = false;
+}
 
 onMounted(() => {
-    // setTimeout(() => {
-    //     form.setFieldValue('address', 'main street bla bla')
-    // }, 1000)
+    fetchCountryCode().then(countryCode => {
+        form.setFieldValue('addressCountry', countryCode);
+        loadData();
+    });
 })
 
-async function getOpenStreetMapItems(
-    addressQuery: string,
-    countrySelectElemValue?: string
-): Promise<{ lat: number; lng: number; label: string }[]> {
-    // https://nominatim.org/release-docs/latest/api/Search/
-    const url =
-        `https://nominatim.openstreetmap.org/search?` +
-        `q=${encodeURIComponent(addressQuery)}&` +
-        `limit=40&` +
-        `addressdetails=1&` +
-        `extratags=1&` +
-        `namedetails=1&` +
-        (countrySelectElemValue ? `countrycodes=${countrySelectElemValue}&` : "") +
-        `format=json`;
-    const response = await fetch(url);
-    return (await response.json()).map((item: { lat: number; lon: number; display_name: string }) => {
-        return {
-            lat: item.lat,
-            lng: item.lon,
-            label: item.display_name
-        };
-    });
+
+
+
+
+
+const options = ref<string[]>([]);
+const isInputLoading = ref(false);
+let predictions: predictionExtraType[] = [];
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+async function onInputChange(event: Event) {
+    const query = (event.target as HTMLInputElement).value;
+    isInputLoading.value = true;
+    predictions = [];
+    options.value = [];
+    clearTimeout(debounceTimer);
+    if (query.length < 3) {
+        isInputLoading.value = false;
+        return;
+    }
+    debounceTimer = setTimeout(async () => {
+        const geocodeResult = await geocode(query, form.values.addressCountry);
+        if (geocodeResult) {
+            predictions = geocodeResult;
+        }
+        const { data, error } = await autocomplete(query, form.values.addressCountry);
+        if (error) {
+            console.error("error", error);
+        } else {
+            predictions.push(...data.predictions);
+            options.value = predictions.map(prediction => prediction.description) || [];
+        }
+        isInputLoading.value = false;
+    }, 1000);
 }
+
+
+
+const isDialogOpen = ref(false);
+const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
+
+
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+
+
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         console.log('values', values);
         const [geocodeResult, openStreetMapItems] = await Promise.all([
-            geocode(values.address),
-            getOpenStreetMapItems(values.address)
+            geocode(values.addressFull, form.values.addressCountry?.toLowerCase()),
+            getOpenStreetMapItems(values.addressFull, form.values.addressCountry?.toLowerCase())
         ]);
         console.log('geocodeResult', geocodeResult);
         console.log('openStreetMapItems', openStreetMapItems);
         isDialogOpen.value = true;
         await new Promise(resolve => setTimeout(resolve, 500));
         if (mapComp && mapComp.value && mapComp.value.mapView) {
-            mapComp.value.address = values.address + (values.addressDetails ? `, ${values.addressDetails}` : "");
+            mapComp.value.address = values.addressFull + (values.addressDetails ? `, ${values.addressDetails}` : "");
             // 43.646294506256936, -79.38741027876338
             if (geocodeResult && geocodeResult.length > 0) {
                 mapComp.value.mapView.setView([geocodeResult[0].lat!, geocodeResult[0].lng!], 18);
@@ -104,40 +163,37 @@ async function onSubmit(values: z.infer<typeof schema>) {
     })
 }
 
-function onMapConfirm() {
-    console.log('onMapConfirm');
-    if (mapComp && mapComp.value && mapComp.value.mapView) {
-        const { lat, lng } = mapComp.value.mapView.getCenter();
-        console.log("confirmed coordinates", {
-            lat,
-            lng
-        });
-        toast.success(`Address confirmed: ${form.values.address} ${form.values.addressDetails} ${lat} ${lng}`);
-    };
+async function onMapConfirm() {
     isDialogOpen.value = false;
+    if (mapComp && mapComp.value && mapComp.value.mapView) {
+        isLoading.value = true;
+        const { lat, lng } = mapComp.value.mapView.getCenter();
+        console.log('lat', lat);
+        console.log('lng', lng);
+        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                ...form.values,
+                addressLat: lat,
+                addressLng: lng,
+            }
+        })).json()
+        if (error) {
+            handleError(error, form);
+        } else {
+            // Success
+            console.log('data', data);
+        }
+        // wait 1 second
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        toast.success(`Saved`);
+        isLoading.value = false;
+    };
 }
 
-async function geocode(address: string) {
-    const { data, error } = await (await mapsApiClient.api.maps.gmaps.geocode.$get({
-        query: {
-            address: address.trim().toLowerCase(),
-        }
-    })).json();
-    if (error) {
-        console.error("error", error);
-        return null;
-    }
-    if (data && data.results && data.results.length > 0) {
-        return [
-            {
-                description: data.results[0].formatted_address,
-                lat: data.results[0].geometry.location.lat,
-                lng: data.results[0].geometry.location.lng
-            }
-        ] as predictionExtraType[];
-    }
-    return null;
-}
+
 </script>
 
 <template>
@@ -182,11 +238,19 @@ async function geocode(address: string) {
     <AutoForm class="space-y-6"
               :schema="schema"
               :field-config="{
-                address: {
-                    component: AutoFormFieldAddress,
-                    description: 'Enter your full address',
+                addressCountry: {
+                    component: AutoFormFieldCountry,
+                    label: 'Country',
                     inputProps: {
-                        // placeholder: 'Enter your full address',
+                        // disabled: true,
+                    },
+                },
+                addressFull: {
+                    // component: AutoFormFieldAddress,
+                    // description: 'Enter your full address',
+                    label: 'Street Name & Number',
+                    inputProps: {
+                        placeholder: 'Enter your full address',
                     },
                 },
                 addressDetails: {
@@ -198,6 +262,32 @@ async function geocode(address: string) {
             }"
               :form="form"
               @submit="onSubmit">
+
+
+        <template #addressFull="_slotProps">
+            <FormField v-slot="slotProps"
+                       name="addressFull">
+                <FormItem>
+                    <AutoFormLabel :required="true">
+                        Street Name & Number
+                    </AutoFormLabel>
+                    <FormControl>
+                        <Autocomplete @inputChange="onInputChange"
+                                      @optionClick="(optionIndex) => {
+                                        slotProps.setValue(options[optionIndex]);
+                                    }"
+                                      :options="options"
+                                      :isInputLoading="isInputLoading"
+                                      :autocomplete="options.length > 0 ? 'off' : 'shipping street-address'"
+                                      v-bind="{ ...slotProps.componentField, ..._slotProps.config?.inputProps }" />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+        </template>
+
+
+
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">
             {{ globalError }}
@@ -208,7 +298,7 @@ async function geocode(address: string) {
                     class="w-full my-6">
                 <Loader2 v-if="isLoading"
                          class="animate-spin" />
-                Update
+                Save
             </Button>
         </div>
     </AutoForm>

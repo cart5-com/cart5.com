@@ -56,18 +56,18 @@ const { setOpenMobile } = useSidebar()
                             <RouterLink :to="{ name: 'restaurant-name' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
-                                    Name
+                                    Name & Phone
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
+                        <!-- <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-phone' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
                                     Phone
                                 </SidebarMenuButton>
                             </RouterLink>
-                        </SidebarMenuItem>
+                        </SidebarMenuItem> -->
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-address' }"
                                         @click="setOpenMobile(false)">

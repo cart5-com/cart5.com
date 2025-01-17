@@ -4,6 +4,6 @@
   "dependencies": {
     "@oslojs/encoding": "1.1.0",
     "hono": "^4.6.12",
-    "libphonenumber-js": "^1.11.7"
+    "libphonenumber-js": "^1.11.18"
   }
 }

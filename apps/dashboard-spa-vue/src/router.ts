@@ -34,15 +34,15 @@ const router = createRouter({
           component: () => import('@src/pages/restaurant/HomeView.vue'),
         },
         {
-          path: 'name',
+          path: 'name-phone',
           name: 'restaurant-name',
-          component: () => import('@src/pages/restaurant/NameView.vue'),
+          component: () => import('@src/pages/restaurant/NamePhoneView.vue'),
         },
-        {
-          path: 'phone',
-          name: 'restaurant-phone',
-          component: () => import('@src/pages/restaurant/PhoneView.vue'),
-        },
+        // {
+        //   path: 'phone',
+        //   name: 'restaurant-phone',
+        //   component: () => import('@src/pages/restaurant/PhoneView.vue'),
+        // },
         {
           path: 'address',
           name: 'restaurant-address',

@@ -291,8 +291,8 @@ importers:
         specifier: ^4.6.12
         version: 4.6.12
       libphonenumber-js:
-        specifier: ^1.11.7
-        version: 1.11.17
+        specifier: ^1.11.18
+        version: 1.11.18
 
   packages/ui-shadcn-vue:
     dependencies:
@@ -326,9 +326,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
-      base-vue-phone-input:
-        specifier: ^0.1.13
-        version: 0.1.13(vue@3.5.13(typescript@5.7.2))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -344,6 +341,9 @@ importers:
       lib:
         specifier: workspace:*
         version: link:../lib
+      libphonenumber-js:
+        specifier: ^1.11.18
+        version: 1.11.18
       lucide-vue-next:
         specifier: ^0.465.0
         version: 0.465.0(vue@3.5.13(typescript@5.7.2))
@@ -2218,11 +2218,6 @@ packages:
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
 
-  base-vue-phone-input@0.1.13:
-    resolution: {integrity: sha512-e3CH2cI/ddnAAv4+cBBiCmU/VVAcfhWjzBGlJMpte1d2xE/ASmENO72zwulHikLkywQ45lYBWkBQwSxMPYfUXA==}
-    peerDependencies:
-      vue: ^3.4.37
-
   basic-auth@2.0.1:
     resolution: {integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==}
     engines: {node: '>= 0.8'}
@@ -3266,8 +3261,8 @@ packages:
   leaflet@1.9.4:
     resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
-  libphonenumber-js@1.11.17:
-    resolution: {integrity: sha512-Jr6v8thd5qRlOlc6CslSTzGzzQW03uiscab7KHQZX1Dfo4R6n6FDhZ0Hri6/X7edLIDv9gl4VMZXhxTjLnl0VQ==}
+  libphonenumber-js@1.11.18:
+    resolution: {integrity: sha512-okMm/MCoFrm1vByeVFLBdkFIXLSHy/AIK2AEGgY3eoicfWZeOZqv3GfhtQgICkzs/tqorAMm3a4GBg5qNCrqzg==}
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
@@ -6382,11 +6377,6 @@ snapshots:
 
   base-64@1.0.0: {}
 
-  base-vue-phone-input@0.1.13(vue@3.5.13(typescript@5.7.2)):
-    dependencies:
-      libphonenumber-js: 1.11.17
-      vue: 3.5.13(typescript@5.7.2)
-
   basic-auth@2.0.1:
     dependencies:
       safe-buffer: 5.1.2
@@ -7434,7 +7424,7 @@ snapshots:
 
   leaflet@1.9.4: {}
 
-  libphonenumber-js@1.11.17: {}
+  libphonenumber-js@1.11.18: {}
 
   libsql@0.4.7:
     dependencies:

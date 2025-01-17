@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import type { FieldProps } from './interface'
 import { FormControl, FormDescription, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import AutoFormLabel from './AutoFormLabel.vue'
@@ -84,7 +84,6 @@ defineProps<FieldProps>()
             </AutoFormLabel>
             <FormControl>
                 <slot v-bind="slotProps">
-
                     <Autocomplete @inputChange="onInputChange"
                                   @optionClick="(optionIndex) => {
                                     slotProps.setValue(options[optionIndex]);
@@ -103,4 +102,4 @@ defineProps<FieldProps>()
             <FormMessage />
         </FormItem>
     </FormField>
-</template>
+</template> -->
