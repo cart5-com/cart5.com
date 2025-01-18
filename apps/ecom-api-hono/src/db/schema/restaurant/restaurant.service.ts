@@ -20,7 +20,7 @@ export const getMyRestaurantsService = async (userId: string) => {
         .select({
             id: restaurantTable.id,
             name: restaurantTable.name,
-            addressFull: restaurantTable.addressFull,
+            address1: restaurantTable.address1,
         })
         .from(restaurantTable)
         .innerJoin(restaurantUserAdminsMapTable, eq(restaurantTable.id, restaurantUserAdminsMapTable.restaurantId))

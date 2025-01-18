@@ -39,7 +39,7 @@ const { setOpenMobile } = useSidebar()
                                         {{ currentRestaurant?.name }}
                                     </span>
                                     <span class="truncate text-xs">
-                                        {{ currentRestaurant?.addressFull }}
+                                        {{ currentRestaurant?.address1 }}
                                     </span>
                                 </div>
                             </SidebarMenuButton>

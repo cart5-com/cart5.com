@@ -12,9 +12,13 @@ export const restaurantTable = sqliteTable("restaurant", {
 	defaultPhoneNumber: text("default_phone_number"),
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
-	addressFull: text("address_full"),
+	address1: text("address_1"),
+	address2: text("address_2"),
 	addressCountry: text("address_country"),
-	addressDetails: text("address_details"),
+	addressCity: text("address_city"),
+	addressState: text("address_state"), // State/Province/Territory
+	addressPostalCode: text("address_postal_code"),
+
 	addressLat: real('address_lat'), //.notNull().default(90), // North Pole latitude
 	addressLng: real('address_lng'), //.notNull().default(-180), // North Pole longitude
 	addressTimezone: text('address_timezone'),

@@ -38,7 +38,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             handleError(error, form);
         } else {
             // Success
-            myRestaurants.value = [...myRestaurants.value, { id: data, name: values.name, addressFull: null }];
+            myRestaurants.value = [...myRestaurants.value, { id: data, name: values.name, address1: null }];
             emit('close', { id: data, name: values.name });
         }
     })
