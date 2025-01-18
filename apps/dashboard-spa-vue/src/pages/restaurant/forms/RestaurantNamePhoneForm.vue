@@ -21,8 +21,8 @@ import { toast } from '@/ui-plus/sonner';
 
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
-    defaultPhoneNumber: z.string(),
-    extraPhoneNumbers: z.array(z.string().min(1, { message: "phone number required" })),
+    defaultPhoneNumber: z.string().min(1, { message: "required" }),
+    extraPhoneNumbers: z.array(z.string().min(1, { message: "required" })).optional(),
 })
 
 const form = useForm({

@@ -59,6 +59,7 @@ const { focused } = useFocus(phoneInput);
 			<Input ref="phoneInput"
 				   class="rounded-e-lg rounded-s-none"
 				   type="text"
+				   autocomplete="tel"
 				   :model-value="inputValue"
 				   @input="updateInputValue"
 				   :placeholder="placeholder" />
