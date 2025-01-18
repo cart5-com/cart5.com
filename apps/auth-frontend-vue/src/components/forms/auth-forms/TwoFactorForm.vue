@@ -27,7 +27,7 @@ const form = useForm({
     validationSchema: formSchema,
 })
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {

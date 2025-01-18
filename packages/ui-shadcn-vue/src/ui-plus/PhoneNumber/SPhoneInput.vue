@@ -62,7 +62,8 @@ const { focused } = useFocus(phoneInput);
 				   autocomplete="tel"
 				   :model-value="inputValue"
 				   @input="updateInputValue"
-				   :placeholder="placeholder" />
+				   :placeholder="placeholder"
+				   :name="$attrs.fieldName" />
 		</template>
 	</PhoneInput>
 </template>

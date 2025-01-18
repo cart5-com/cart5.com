@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -20,7 +20,7 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
@@ -103,4 +103,4 @@ async function onSubmit(values: z.infer<typeof schema>) {
             </Button>
         </div>
     </AutoForm>
-</template>
+</template> -->

@@ -10,7 +10,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { DoorOpen } from "lucide-vue-next";
-import { AutoForm, AutoFormLabel } from '@/ui-plus/auto-form'
+import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from "zod";
@@ -18,32 +18,57 @@ import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
 import AutoFormFieldTimezone from '@/ui-plus/auto-form/AutoFormFieldTimezone.vue'
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-import Autocomplete from '@/ui-plus/auto-complete/Autocomplete.vue'
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from '@/components/ui/form'
-import { type predictionType } from 'lib/apiClients/ecomApiClient'
-import { autocomplete, geocode, getOpenStreetMapItems } from './utils'
+import { geocode, getOpenStreetMapItems } from './utils'
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { DependencyType } from '@/ui-plus/auto-form/interface';
 
 const schema = z.object({
     addressCountry: z.string().min(1, 'Address is required'),
     addressTimezone: z.string().min(1, 'Timezone is required'),
     address1: z.string().min(1, 'Address is required'),
     address2: z.string().optional(),
+    addressCity: z.string().optional(),
+    addressState: z.string().optional(),
+    addressPostalCode: z.string().optional(),
 })
 
 const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
+const COUNTRIES_WITH_STATES = [
+    'US', // United States
+    'CA', // Canada
+    'AU', // Australia
+    'BR', // Brazil
+    'IN', // India
+    'MX', // Mexico
+    'AR', // Argentina
+    'MY', // Malaysia
+    'ID', // Indonesia
+    'RU', // Russia
+    'CN', // China
+    'JP', // Japan
+    'DE', // Germany
+    'ES', // Spain
+    'IT', // Italy
+    'GB', // United Kingdom (has countries/regions)
+    'FR', // France (has regions)
+    'PH', // Philippines
+    'PK', // Pakistan
+    'NG', // Nigeria
+    'VN', // Vietnam
+    'ZA', // South Africa
+    'TH', // Thailand
+    'MM', // Myanmar (Burma)
+    'KR', // South Korea
+    'CO', // Colombia
+    'VE', // Venezuela
+]; // Add more as needed
 
 const loadData = async () => {
     isLoading.value = true;
@@ -56,10 +81,13 @@ const loadData = async () => {
         },
         json: {
             columns: {
-                addressCountry: true,
-                addressTimezone: true,
                 address1: true,
                 address2: true,
+                addressCity: true,
+                addressState: true,
+                addressPostalCode: true,
+                addressCountry: true,
+                addressTimezone: true,
             }
         }
     })).json()
@@ -88,60 +116,11 @@ onMounted(() => {
 
 
 
-
-
-
-const options = ref<string[]>([]);
-const isInputLoading = ref(false);
-let predictions: predictionType[] = [];
-
-let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-async function onInputChange(event: Event) {
-    const query = (event.target as HTMLInputElement).value;
-    isInputLoading.value = true;
-    predictions = [];
-    options.value = [];
-    clearTimeout(debounceTimer);
-    if (query.length < 3) {
-        isInputLoading.value = false;
-        return;
-    }
-    debounceTimer = setTimeout(async () => {
-        // const geocodeResult = await geocode(query, form.values.addressCountry);
-        // if (geocodeResult) {
-        //     predictions = (geocodeResult.data.results.map(item => ({
-        //         description: item.formatted_address,
-        //         lat: item.geometry.location.lat,
-        //         lng: item.geometry.location.lng,
-        //         isGeocodeResult: true,
-        //         geocodeResult: item,
-        //     })) as unknown) as predictionExtraType[];
-        // }
-        predictions = [];
-        const { data, error } = await autocomplete(query, form.values.addressCountry);
-        if (error) {
-            console.error("error", error);
-        } else {
-            predictions.push(...data.predictions);
-            options.value = predictions.map(prediction => prediction.description) || [];
-        }
-        isInputLoading.value = false;
-    }, 1000);
-}
-
-function onInputOptionSelected(optionIndex: number) {
-    form.setFieldValue('address1', options.value[optionIndex]);
-    const prediction = predictions[optionIndex];
-    console.log('prediction', prediction);
-}
-
-
-
 const isDialogOpen = ref(false);
 const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
 
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 let locationMetadata: any = null;
 async function onSubmit(values: z.infer<typeof schema>) {
@@ -218,6 +197,28 @@ async function onMapConfirm() {
     };
 }
 
+const address1Label = ref('Street Name & Number (Address 1)');
+const address2Label = ref('Apt, Suite, Unit, Building (Address 2)');
+const addressStateLabel = ref('State/Province/Territory');
+const addressCityLabel = ref('City');
+const addressPostalCodeLabel = ref('Postcode/Zip');
+
+watch(() => form.values.addressCountry, (newCountry) => {
+    if (newCountry && newCountry === 'GB') {
+        address1Label.value = 'Address line 1 (or company name)';
+        address2Label.value = 'Address line 2 (optional)';
+        addressCityLabel.value = 'Town/City';
+        addressStateLabel.value = 'County (if applicable)';
+        addressPostalCodeLabel.value = 'Postcode';
+    } else {
+        address1Label.value = 'Street Name & Number (Address 1)';
+        address2Label.value = 'Apt, Suite, Unit, Building (Address 2)';
+        addressStateLabel.value = 'State';
+        addressCityLabel.value = 'City';
+        addressPostalCodeLabel.value = 'Postcode/Zip';
+    }
+});
+
 
 </script>
 
@@ -262,6 +263,14 @@ async function onMapConfirm() {
 
     <AutoForm class="space-y-6"
               :schema="schema"
+              :dependencies="[
+                {
+                    sourceField: 'addressCountry',
+                    type: DependencyType.HIDES,
+                    targetField: 'addressState',
+                    when: (country) => !COUNTRIES_WITH_STATES.includes(country),
+                }
+            ]"
               :field-config="{
                 addressCountry: {
                     component: AutoFormFieldCountry,
@@ -277,46 +286,39 @@ async function onMapConfirm() {
                 address1: {
                     // component: AutoFormFieldAddress,
                     // description: 'Enter your full address',
-                    label: 'Street Name & Number',
+                    label: address1Label,
                     inputProps: {
                         placeholder: 'Enter your full address',
+                        autocomplete: 'street-address',
                     },
                 },
                 address2: {
-                    label: 'Apt, Suite, Unit, Building',
+                    label: address2Label,
                     inputProps: {
                         autocomplete: 'address-line2',
+                    },
+                },
+                addressCity: {
+                    label: addressCityLabel,
+                    inputProps: {
+                        autocomplete: 'address-level2',
+                    },
+                },
+                addressState: {
+                    label: addressStateLabel,
+                    inputProps: {
+                        autocomplete: 'address-level1',
+                    },
+                },
+                addressPostalCode: {
+                    label: addressPostalCodeLabel,
+                    inputProps: {
+                        autocomplete: 'postal-code',
                     },
                 }
             }"
               :form="form"
               @submit="onSubmit">
-
-
-        <template #address1="_slotProps">
-            <FormField v-slot="slotProps"
-                       name="address1">
-                <FormItem>
-                    <AutoFormLabel :required="true">
-                        Street Name & Number
-                    </AutoFormLabel>
-                    <FormControl>
-                        <Autocomplete @inputChange="onInputChange"
-                                      @optionClick="(optionIndex) => {
-                                        // slotProps.setValue(options[optionIndex]);
-                                        onInputOptionSelected(optionIndex);
-                                    }"
-                                      :options="options"
-                                      :isInputLoading="isInputLoading"
-                                      :autocomplete="options.length > 0 ? 'off' : 'shipping street-address'"
-                                      v-bind="{ ...slotProps.componentField, ..._slotProps.config?.inputProps }" />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
-        </template>
-
-
 
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">

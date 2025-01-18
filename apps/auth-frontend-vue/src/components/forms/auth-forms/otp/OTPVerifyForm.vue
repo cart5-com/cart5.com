@@ -31,7 +31,7 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 form.setFieldValue("verifyEmail", props.verifyEmail);
 async function onSubmit(values: z.infer<typeof schema>) {

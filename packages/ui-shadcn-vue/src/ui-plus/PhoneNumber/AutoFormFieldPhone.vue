@@ -37,7 +37,8 @@ watch(
       </AutoFormLabel>
       <FormControl>
         <slot v-bind="slotProps">
-          <SPhoneInput v-model="phoneValue"
+          <SPhoneInput :fieldName="fieldName"
+                       v-model="phoneValue"
                        @update="($event: Results) => {
                         if ($event.isValid) {
                           slotProps.handleChange($event.e164)

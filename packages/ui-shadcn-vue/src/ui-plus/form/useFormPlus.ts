@@ -50,6 +50,24 @@ export function useFormPlus(form?: ReturnType<typeof useForm>, options?: Persist
     const isLoading = ref(false)
     const globalError = ref<string | null>(null)
 
+    if (form) {
+        watch(form.errors, (newErrors) => {
+            for (const fieldName of Object.keys(newErrors)) {
+                const name = fieldName.replace('[', '.').replace(']', '')
+                const field = document.querySelector<HTMLElement>(`[name="${name}"]`)
+                if (field) {
+                    field.classList.add('headShake-animation')
+                    setTimeout(() => {
+                        field.classList.remove('headShake-animation')
+                    }, 500)
+                    // try { field.focus() } catch (error) { console.error(error) }
+                } else {
+                    console.error(`Field with name "${name}" not found`)
+                }
+            }
+        })
+    }
+
     function handleError(error: any, form?: ReturnType<typeof useForm>) {
         console.error(error)
         globalError.value = error.message ?? (error.issues?.length === 0 ? "Unknown error" : null);

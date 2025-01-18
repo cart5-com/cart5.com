@@ -29,7 +29,7 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
     isLoading.value = true;
@@ -151,7 +151,9 @@ const removePhoneNumber = (index: number) => {
                             <!-- <FormLabel v-if="index === 0">Phone Numbers</FormLabel> -->
                             <div class="flex gap-2">
                                 <FormControl>
-                                    <SPhoneInput v-model="phantomPhoneValues[index]"
+                                    <!-- SPhoneInput here -->
+                                    <SPhoneInput :fieldName="`extraPhoneNumbers.${index}`"
+                                                 v-model="phantomPhoneValues[index]"
                                                  class="w-full"
                                                  @update="($event: any) => {
                                                     if ($event.isValid) {

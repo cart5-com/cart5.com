@@ -141,7 +141,7 @@ const isDialogOpen = ref(false);
 const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
 
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 let locationMetadata: any = null;
 async function onSubmit(values: z.infer<typeof schema>) {

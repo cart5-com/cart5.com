@@ -18,7 +18,7 @@ const form = useForm({
 
 const { isLoading, globalError,
     // handleError,
-    withSubmit } = useFormPlus();
+    withSubmit } = useFormPlus(form);
 
 onMounted(() => {
     setTimeout(() => {

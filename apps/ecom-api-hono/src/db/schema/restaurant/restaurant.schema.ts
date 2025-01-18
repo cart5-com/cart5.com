@@ -14,14 +14,14 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	address1: text("address_1"),
 	address2: text("address_2"),
-	addressCountry: text("address_country"),
 	addressCity: text("address_city"),
 	addressState: text("address_state"), // State/Province/Territory
 	addressPostalCode: text("address_postal_code"),
+	addressCountry: text("address_country"),
+	addressTimezone: text('address_timezone'),
 
 	addressLat: real('address_lat'), //.notNull().default(90), // North Pole latitude
 	addressLng: real('address_lng'), //.notNull().default(-180), // North Pole longitude
-	addressTimezone: text('address_timezone'),
 	addressMetadata: text('address_metadata', { mode: 'json' }).$type<any>(),
 
 	links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),

@@ -51,7 +51,7 @@ const removePhoneNumber = (index: number) => {
     form.setFieldValue('phoneNumbers', currentPhoneNumbers)
 }
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const onSubmit = form.handleSubmit(async (values) => {
     await withSubmit(async () => {

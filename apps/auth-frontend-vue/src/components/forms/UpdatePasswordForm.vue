@@ -33,7 +33,7 @@ const schema = z.object({
 const form = useForm({
     validationSchema: toTypedSchema(schema)
 });
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus();
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 form.setFieldValue("email", userStore.value?.email || "");
 
 async function onSubmit(values: z.infer<typeof schema>) {
