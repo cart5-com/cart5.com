@@ -105,6 +105,8 @@ export function getCountriesList(
 }
 
 export async function fetchCountryCode() {
+    // alternative: https://workers.cloudflare.com/cf.json
+    // alternative: https://ip2c.org/self
     try {
         const reponse = await fetch('https://ipwho.is')
         const { country_code } = (await reponse.json()) as IpWhoResponse
