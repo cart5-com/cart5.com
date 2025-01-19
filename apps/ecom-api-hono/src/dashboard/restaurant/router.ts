@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import type { HonoVariables } from '../../index';
 import { type Context, type Next } from 'hono';
-import { checkUserIsRestaurantAdminService } from '../../db/schema/restaurant/restaurant.service';
+import { isUserRestaurantAdminService } from '../../db/schema/restaurant/restaurant.service';
 import { KNOWN_ERROR } from 'lib/errors';
 import { createRestaurant, createRestaurantSchemaValidator } from './create';
 import { updateRestaurant, updateRestaurantSchemaValidator } from './update';
@@ -39,7 +39,7 @@ async function restaurantRouteAdminCheck(c: Context, next: Next) {
     if (!userId || !restaurantId) {
         throw new KNOWN_ERROR("Unauthorized", "UNAUTHORIZED");
     }
-    const isAdmin = await checkUserIsRestaurantAdminService(userId, restaurantId);
+    const isAdmin = await isUserRestaurantAdminService(userId, restaurantId);
     if (!isAdmin) {
         throw new KNOWN_ERROR("Not admin", "UNAUTHORIZED");
     }

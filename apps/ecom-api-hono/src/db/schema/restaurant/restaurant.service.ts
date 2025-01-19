@@ -2,7 +2,7 @@ import { and, count, eq } from "drizzle-orm";
 import { restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
 import db from '../../drizzle';
 
-export const checkUserIsRestaurantAdminService = async function (
+export const isUserRestaurantAdminService = async function (
     userId: string, restaurantId: string
 ) {
     return await db.select({
