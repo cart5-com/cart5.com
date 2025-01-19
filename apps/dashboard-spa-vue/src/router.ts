@@ -38,15 +38,15 @@ const router = createRouter({
           name: 'restaurant-name',
           component: () => import('@src/pages/restaurant/NamePhoneView.vue'),
         },
-        // {
-        //   path: 'phone',
-        //   name: 'restaurant-phone',
-        //   component: () => import('@src/pages/restaurant/PhoneView.vue'),
-        // },
         {
           path: 'address',
           name: 'restaurant-address',
           component: () => import('@src/pages/restaurant/AddressView.vue'),
+        },
+        {
+          path: 'cuisine',
+          name: 'restaurant-cuisine',
+          component: () => import('@src/pages/restaurant/CuisineView.vue'),
         },
       ],
     },
