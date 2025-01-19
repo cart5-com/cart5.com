@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
-    // DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -118,11 +117,9 @@ onMounted(() => {
 
 const isDialogOpen = ref(false);
 const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
-
-
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
-
 let locationMetadata: any = null;
+
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         console.log('values', values);
@@ -197,24 +194,41 @@ async function onMapConfirm() {
     };
 }
 
-const address1Label = ref('Street Name & Number (Address 1)');
-const address2Label = ref('Apt, Suite, Unit, Building (Address 2)');
+const address1Label = ref('Street address or P.O. Box (Address 1)');
+const address2Label = ref('Apt, suite, unit, building, floor, etc. (Address 2)');
+const hideAddress2Label = ref(false);
 const addressStateLabel = ref('State/Province/Territory');
 const addressCityLabel = ref('City');
 const addressPostalCodeLabel = ref('Postcode/Zip');
 
 watch(() => form.values.addressCountry, (newCountry) => {
-    if (newCountry && newCountry === 'GB') {
+    if (newCountry === 'US') {
+        address1Label.value = 'Street address or P.O. Box';
+        address2Label.value = 'Apt, suite, unit, building, floor, etc.';
+        hideAddress2Label.value = true;
+        addressCityLabel.value = 'City';
+        addressStateLabel.value = 'State';
+        addressPostalCodeLabel.value = 'Postcode';
+    } else if (newCountry === 'GB') {
         address1Label.value = 'Address line 1 (or company name)';
         address2Label.value = 'Address line 2 (optional)';
         addressCityLabel.value = 'Town/City';
         addressStateLabel.value = 'County (if applicable)';
+        hideAddress2Label.value = false;
         addressPostalCodeLabel.value = 'Postcode';
-    } else {
-        address1Label.value = 'Street Name & Number (Address 1)';
-        address2Label.value = 'Apt, Suite, Unit, Building (Address 2)';
-        addressStateLabel.value = 'State';
+    } else if (newCountry === 'CA') {
+        address1Label.value = 'Address';
+        address2Label.value = 'Apt, suite, unit, building (Address 2)';
+        hideAddress2Label.value = true;
+        addressStateLabel.value = 'Province/Territory';
         addressCityLabel.value = 'City';
+        addressPostalCodeLabel.value = 'Postal code';
+    } else {
+        address1Label.value = 'Street address or P.O. Box (Address 1)';
+        address2Label.value = 'Apt, suite, unit, building, floor, etc. (Address 2)';
+        addressStateLabel.value = 'State/Province/Territory';
+        addressCityLabel.value = 'City';
+        hideAddress2Label.value = true;
         addressPostalCodeLabel.value = 'Postcode/Zip';
     }
 });
@@ -294,7 +308,9 @@ watch(() => form.values.addressCountry, (newCountry) => {
                 },
                 address2: {
                     label: address2Label,
+                    hideLabel: hideAddress2Label,
                     inputProps: {
+                        placeholder: hideAddress2Label ? address2Label : '',
                         autocomplete: 'address-line2',
                     },
                 },

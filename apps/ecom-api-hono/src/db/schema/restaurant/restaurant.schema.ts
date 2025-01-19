@@ -24,7 +24,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 	addressLng: real('address_lng'), //.notNull().default(-180), // North Pole longitude
 	addressMetadata: text('address_metadata', { mode: 'json' }).$type<any>(),
 
-	links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
+	// links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	ownerUserId: text("owner_user_id").notNull(),
 
@@ -41,14 +41,14 @@ export const selectRestaurantSchema = createSelectSchema(restaurantTable);
 export const insertRestaurantSchema = createInsertSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
-	links: z.array(z.string()).default([]),
+	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
 	addressMetadata: z.any().default({}),
 });
 export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
-	links: z.array(z.string()).default([]),
+	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
 	addressMetadata: z.any().default({}),
 });
