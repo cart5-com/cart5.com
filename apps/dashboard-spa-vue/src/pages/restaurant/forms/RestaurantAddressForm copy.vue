@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import GeolocationSelectionMap from '@/ui-plus/geolocation-selection-map/GeolocationSelectionMap.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +35,7 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
 const schema = z.object({
     addressCountry: z.string().min(1, 'Address is required'),
-    addressTimezone: z.string().min(1, 'Timezone is required'),
+    timezone: z.string().min(1, 'Timezone is required'),
     address1: z.string().min(1, 'Address is required'),
     address2: z.string().optional(),
 })
@@ -57,7 +57,7 @@ const loadData = async () => {
         json: {
             columns: {
                 addressCountry: true,
-                addressTimezone: true,
+                timezone: true,
                 address1: true,
                 address2: true,
             }
@@ -79,7 +79,7 @@ const loadData = async () => {
 }
 
 onMounted(() => {
-    form.setFieldValue('addressTimezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+    form.setFieldValue('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
     fetchCountryCode().then(countryCode => {
         form.setFieldValue('addressCountry', countryCode);
         loadData();
@@ -235,23 +235,10 @@ async function onMapConfirm() {
                     <DoorOpen />
                     Confirm your entrance/door location
                 </DialogTitle>
-                <!-- <DialogDescription class="hidden text-sm sm:block">
-                    Move the map to your entrance/door and click Confirm
-                </DialogDescription> -->
+
             </DialogHeader>
             <GeolocationSelectionMap ref="mapComp"
                                      class="flex-1 overflow-hidden" />
-            <!-- <div class="grid gap-4 py-4">
-                     <div class="grid grid-cols-4 items-center gap-4">
-                         <Label for="name" class="text-right"> Name </Label>
-                         <Input id="name" value="Pedro Duarte" class="col-span-3" />
-                     </div>
-                     <div class="grid grid-cols-4 items-center gap-4">
-                         <Label for="username" class="text-right"> Username </Label>
-                         <Input id="username" value="@peduarte" class="col-span-3" />
-                     </div>
-                 </div>
-                 -->
             <DialogFooter>
                 <Button @click="onMapConfirm"
                         class="w-full"
@@ -270,7 +257,7 @@ async function onMapConfirm() {
                         // disabled: true,
                     },
                 },
-                addressTimezone: {
+                timezone: {
                     component: AutoFormFieldTimezone,
                     label: 'Timezone',
                 },
@@ -332,4 +319,4 @@ async function onMapConfirm() {
             </Button>
         </div>
     </AutoForm>
-</template>
+</template> -->

@@ -1,4 +1,5 @@
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { relations } from 'drizzle-orm';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -11,18 +12,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	defaultPhoneNumber: text("default_phone_number"),
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
-
-	address1: text("address_1"),
-	address2: text("address_2"),
-	addressCity: text("address_city"),
-	addressState: text("address_state"), // State/Province/Territory
-	addressPostalCode: text("address_postal_code"),
-	addressCountry: text("address_country"),
-	addressTimezone: text('address_timezone'),
-
-	addressLat: real('address_lat'), //.notNull().default(90), // North Pole latitude
-	addressLng: real('address_lng'), //.notNull().default(-180), // North Pole longitude
-	addressMetadata: text('address_metadata', { mode: 'json' }).$type<any>(),
 
 	// links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
@@ -43,19 +32,35 @@ export const insertRestaurantSchema = createInsertSchema(restaurantTable, {
 	extraPhoneNumbers: z.array(z.string()).default([]),
 	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
-	addressMetadata: z.any().default({}),
 });
 export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
 	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
-	addressMetadata: z.any().default({}),
 });
 /// RESTAURANT TABLE END
 
 
-
+/// RESTAURANT ADDRESS TABLE START
+export const restaurantAddressTable = sqliteTable("restaurant_address", {
+	restaurantId: text("restaurant_id").notNull(),
+	address1: text("address_1"),
+	address2: text("address_2"),
+	city: text("city"),
+	state: text("state"), // State/Province/Territory
+	postalCode: text("postal_code"),
+	country: text("country"),
+	lat: real('lat'), //.notNull().default(90), // North Pole latitude
+	lng: real('lng'), //.notNull().default(-180), // North Pole longitude
+	geocodeMetadata: text('geocode_metadata', { mode: 'json' }).$type<any>(),
+	timezone: text('timezone'),
+});
+export const selectRestaurantAddressSchema = createSelectSchema(restaurantAddressTable);
+export const insertRestaurantAddressSchema = createInsertSchema(restaurantAddressTable);
+export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddressTable);
+// geocodeMetadata: z.any().default({}),
+/// RESTAURANT ADDRESS TABLE END
 
 
 
@@ -63,7 +68,19 @@ export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_map", {
 	restaurantId: text("restaurant_id").notNull(),
 	userId: text("user_id").notNull(),
-}, (table) => ({
-	pk: primaryKey({ columns: [table.restaurantId, table.userId] }),
-}));
+}, (table) => [
+	primaryKey({ columns: [table.restaurantId, table.userId] }),
+]);
 /// RESTAURANT USER ADMINS MAP END
+
+
+export const restaurantRelations = relations(restaurantTable, ({ one, many }) => ({
+	address:
+		one(
+			restaurantAddressTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantAddressTable.restaurantId]
+		}),
+	// admins:
+	// 	many(restaurantUserAdminsMapTable),
+}));

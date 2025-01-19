@@ -26,13 +26,13 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
 const schema = z.object({
-    addressCountry: z.string().min(1, 'Address is required'),
-    addressTimezone: z.string().min(1, 'Timezone is required'),
+    country: z.string().min(1, 'Address is required'),
+    timezone: z.string().min(1, 'Timezone is required'),
     address1: z.string().min(1, 'Address is required'),
     address2: z.string().optional(),
-    addressCity: z.string().optional(),
-    addressState: z.string().optional(),
-    addressPostalCode: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    postalCode: z.string().optional(),
 })
 
 const form = useForm({
@@ -80,24 +80,36 @@ const loadData = async () => {
         },
         json: {
             columns: {
-                address1: true,
-                address2: true,
-                addressCity: true,
-                addressState: true,
-                addressPostalCode: true,
-                addressCountry: true,
-                addressTimezone: true,
+                address: {
+                    // columns: {
+                    timezone: true,
+                    country: true,
+                    city: true,
+                    state: true,
+                    postalCode: true,
+                    address1: true,
+                    address2: true,
+                    // }
+                }
             }
         }
     })).json()
     if (error) {
         handleError(error, form);
     } else {
-        if (data) {
-            for (const key in data) {
+        if (data && data.address) {
+            // form.setFieldValue('timezone', data.address?.timezone ?? undefined);
+            // form.setFieldValue('country', data.address?.country ?? undefined);
+            // form.setFieldValue('address1', data.address?.address1 ?? undefined);
+            // form.setFieldValue('address2', data.address?.address2 ?? undefined);
+            // form.setFieldValue('city', data.address?.city ?? undefined);
+            // form.setFieldValue('state', data.address?.state ?? undefined);
+            // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
+            // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
+            for (const key in data.address) {
                 const typedKey = key as keyof typeof schema.shape;
-                if (data[typedKey]) {
-                    form.setFieldValue(typedKey, data[typedKey]);
+                if (data.address[typedKey]) {
+                    form.setFieldValue(typedKey, data.address[typedKey]);
                 }
             }
         }
@@ -106,9 +118,9 @@ const loadData = async () => {
 }
 
 onMounted(() => {
-    form.setFieldValue('addressTimezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+    form.setFieldValue('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
     fetchCountryCode().then(countryCode => {
-        form.setFieldValue('addressCountry', countryCode);
+        form.setFieldValue('country', countryCode);
         loadData();
     });
 })
@@ -124,8 +136,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         console.log('values', values);
         const [geocodeResult, openStreetMapItems] = await Promise.all([
-            geocode(values.address1, form.values.addressCountry?.toLowerCase()),
-            getOpenStreetMapItems(values.address1, form.values.addressCountry?.toLowerCase())
+            geocode(values.address1, form.values.country?.toLowerCase()),
+            getOpenStreetMapItems(values.address1, form.values.country?.toLowerCase())
         ]);
         locationMetadata = geocodeResult;
         console.log('openStreetMapItems', openStreetMapItems);
@@ -175,10 +187,12 @@ async function onMapConfirm() {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                ...form.values,
-                addressLat: lat,
-                addressLng: lng,
-                addressMetadata: locationMetadata ? locationMetadata : null,
+                address: {
+                    ...form.values,
+                    lat: lat,
+                    lng: lng,
+                    geocodeMetadata: locationMetadata ? locationMetadata : null,
+                }
             }
         })).json()
         if (error) {
@@ -201,7 +215,7 @@ const addressStateLabel = ref('State/Province/Territory');
 const addressCityLabel = ref('City');
 const addressPostalCodeLabel = ref('Postcode/Zip');
 
-watch(() => form.values.addressCountry, (newCountry) => {
+watch(() => form.values.country, (newCountry) => {
     if (newCountry === 'US') {
         address1Label.value = 'Street address or P.O. Box';
         address2Label.value = 'Apt, suite, unit, building, floor, etc.';
@@ -279,21 +293,21 @@ watch(() => form.values.addressCountry, (newCountry) => {
               :schema="schema"
               :dependencies="[
                 {
-                    sourceField: 'addressCountry',
+                    sourceField: 'country',
                     type: DependencyType.HIDES,
-                    targetField: 'addressState',
+                    targetField: 'state',
                     when: (country) => !COUNTRIES_WITH_STATES.includes(country),
                 }
             ]"
               :field-config="{
-                addressCountry: {
+                country: {
                     component: AutoFormFieldCountry,
                     label: 'Country',
                     inputProps: {
                         // disabled: true,
                     },
                 },
-                addressTimezone: {
+                timezone: {
                     component: AutoFormFieldTimezone,
                     label: 'Timezone',
                 },
@@ -314,19 +328,19 @@ watch(() => form.values.addressCountry, (newCountry) => {
                         autocomplete: 'address-line2',
                     },
                 },
-                addressCity: {
+                city: {
                     label: addressCityLabel,
                     inputProps: {
                         autocomplete: 'address-level2',
                     },
                 },
-                addressState: {
+                state: {
                     label: addressStateLabel,
                     inputProps: {
                         autocomplete: 'address-level1',
                     },
                 },
-                addressPostalCode: {
+                postalCode: {
                     label: addressPostalCodeLabel,
                     inputProps: {
                         autocomplete: 'postal-code',
