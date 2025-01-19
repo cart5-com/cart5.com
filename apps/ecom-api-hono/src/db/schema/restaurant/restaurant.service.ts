@@ -72,14 +72,14 @@ export const updateRestaurantService = async (
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
     }
 ) => {
-    // unallowed fields for admins
-    const { id, ownerUserId, created_at_ts, updated_at_ts,
-        ...rest
-    } = data;
 
     return await db.transaction(async (tx) => {
-        const { address, id, ownerUserId, created_at_ts, updated_at_ts, ...restaurantData } = data;
-
+        const {
+            // unallowed fields for admins
+            id, ownerUserId, created_at_ts, updated_at_ts,
+            address,
+            ...restaurantData
+        } = data;
         // Update restaurant data
         if (Object.keys(restaurantData).length > 0) {
             await tx.update(restaurantTable)

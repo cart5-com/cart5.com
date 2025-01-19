@@ -81,7 +81,6 @@ const loadData = async () => {
         json: {
             columns: {
                 address: {
-                    // columns: {
                     timezone: true,
                     country: true,
                     city: true,
@@ -89,7 +88,6 @@ const loadData = async () => {
                     postalCode: true,
                     address1: true,
                     address2: true,
-                    // }
                 }
             }
         }
@@ -134,6 +132,7 @@ let locationMetadata: any = null;
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
+        isLoading.value = true;
         console.log('values', values);
         const [geocodeResult, openStreetMapItems] = await Promise.all([
             geocode(values.address1, form.values.country?.toLowerCase()),
@@ -172,6 +171,9 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 }))
             ];
         }
+        setTimeout(() => {
+            isLoading.value = false;
+        }, 500);
     })
 }
 
@@ -282,9 +284,14 @@ watch(() => form.values.country, (newCountry) => {
                  </div>
                  -->
             <DialogFooter>
-                <Button @click="onMapConfirm"
-                        class="w-full"
-                        type="button"> Confirm </Button>
+                <Button type="button"
+                        @click="onMapConfirm"
+                        :disabled="isLoading"
+                        class="w-full my-6">
+                    <Loader2 v-if="isLoading"
+                             class="animate-spin" />
+                    Confirm
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
