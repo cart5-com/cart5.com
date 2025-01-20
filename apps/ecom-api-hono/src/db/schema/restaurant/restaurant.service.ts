@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import { restaurantAddressTable, restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
 import db from '../../drizzle';
 
@@ -19,8 +19,11 @@ export const getMyRestaurantsService = async (userId: string) => {
     return (await db.query.restaurantUserAdminsMapTable.findMany({
         where: eq(restaurantUserAdminsMapTable.userId, userId),
         columns: {},
+        // offset is only available for top level query.
+        // offset: 2, // correct ✅
         with: {
             restaurant: {
+                // offset: 3, // incorrect ❌
                 columns: {
                     id: true,
                     name: true,
@@ -31,9 +34,15 @@ export const getMyRestaurantsService = async (userId: string) => {
                             address1: true,
                         }
                     }
-                }
+                },
+                // extras: {
+                //     loweredName: sql`lower(${restaurantTable.name})`.as('lowered_name'),
+                // },
             }
-        }
+        },
+        // extras: {
+        //     loweredName: sql`lower(${restaurantTable.name})`.as('lowered_name'),
+        // },
     })).map(item => item.restaurant);
     // return await db
     //     .select({
