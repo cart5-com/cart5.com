@@ -56,7 +56,7 @@ const router = createRouter({
         {
           path: 'delivery-options',
           name: 'restaurant-delivery-options',
-          component: () => import('@src/pages/restaurant/DeliveryZonesView.vue'),
+          component: () => import('@src/pages/restaurant/deliveryZones/DeliveryZonesView.vue'),
         },
       ],
     },
