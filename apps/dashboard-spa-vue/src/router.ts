@@ -53,6 +53,11 @@ const router = createRouter({
           name: 'restaurant-pickup',
           component: () => import('@src/pages/restaurant/PickupView.vue'),
         },
+        {
+          path: 'delivery-options',
+          name: 'restaurant-delivery-options',
+          component: () => import('@src/pages/restaurant/DeliveryZonesView.vue'),
+        },
       ],
     },
     // {

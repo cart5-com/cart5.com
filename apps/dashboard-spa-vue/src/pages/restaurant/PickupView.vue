@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
-import { Loader2, Check, X } from 'lucide-vue-next'
+import { Loader2 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient'
 import { currentRestaurantId } from '@src/stores/RestaurantStore'
