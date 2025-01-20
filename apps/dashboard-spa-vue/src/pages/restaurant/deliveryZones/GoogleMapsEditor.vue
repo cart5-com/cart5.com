@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import type { DeliveryZone, Point } from 'lib/types/restaurantTypes'
 
 const props = defineProps<{
@@ -170,7 +170,7 @@ const initMap = async () => {
     }
 
     // Extend bounds to include restaurant location
-    bounds.extend(props.restaurantLocation);
+    // bounds.extend(props.restaurantLocation);
 
     // Fit the map to show all shapes
     if (!bounds.isEmpty()) {

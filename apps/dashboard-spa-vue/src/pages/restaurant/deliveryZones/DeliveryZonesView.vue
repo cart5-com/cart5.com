@@ -9,6 +9,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
+import { toast } from '@/ui-plus/sonner';
 import { DeliveryZone } from 'lib/types/restaurantTypes';
 import { ref } from 'vue';
 
@@ -42,7 +43,10 @@ const selectedZone = ref<DeliveryZone | null>(null)
 const onDone = () => {
     const shape = mapComp.value?.getCurrentShape();
     console.log(`mapComp.value?.getCurrentShape:`, shape)
-    if (!shape) return;
+    if (!shape) {
+        toast.error('No shape found')
+        return;
+    };
 
     // Create or update zone based on shape type
     const newZone: DeliveryZone = {
@@ -111,6 +115,10 @@ const deleteZone = (zone: DeliveryZone) => {
                     <p class="text-sm capitalize">
                         {{ zone.shapeType }}
                     </p>
+                    <details>
+                        <summary>Details</summary>
+                        <pre>{{ zone }}</pre>
+                    </details>
                 </div>
                 <div class="space-x-2">
                     <Button variant="outline"
