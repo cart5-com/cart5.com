@@ -17,6 +17,9 @@ export const restaurantTable = sqliteTable("restaurant", {
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	ownerUserId: text("owner_user_id").notNull(),
 
+	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
+	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
+
 	created_at_ts: integer("created_at_ts")
 		.notNull()
 		.$defaultFn(() => Date.now()),

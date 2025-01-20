@@ -76,6 +76,14 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'restaurant-pickup' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Pickup Options
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
