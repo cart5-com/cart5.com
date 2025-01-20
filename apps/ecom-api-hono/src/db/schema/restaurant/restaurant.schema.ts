@@ -74,13 +74,18 @@ export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_
 /// RESTAURANT USER ADMINS MAP END
 
 
-export const restaurantRelations = relations(restaurantTable, ({ one, many }) => ({
+export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
 	address:
 		one(
 			restaurantAddressTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantAddressTable.restaurantId]
 		}),
-	// admins:
-	// 	many(restaurantUserAdminsMapTable),
+}));
+
+export const restaurantUserAdminsMapRelations = relations(restaurantUserAdminsMapTable, ({ one }) => ({
+	restaurant: one(restaurantTable, {
+		fields: [restaurantUserAdminsMapTable.restaurantId],
+		references: [restaurantTable.id]
+	}),
 }));

@@ -16,34 +16,35 @@ export const isUserRestaurantAdminService = async function (
 }
 
 export const getMyRestaurantsService = async (userId: string) => {
-    return await db
-        .select({
-            id: restaurantTable.id,
-            name: restaurantTable.name,
-            address1: restaurantAddressTable.address1,
-        })
-        .from(restaurantTable)
-        .innerJoin(restaurantUserAdminsMapTable, eq(restaurantTable.id, restaurantUserAdminsMapTable.restaurantId))
-        .innerJoin(restaurantAddressTable, eq(restaurantTable.id, restaurantAddressTable.restaurantId))
-        .where(eq(restaurantUserAdminsMapTable.userId, userId));
-    // return await db.query.restaurantUserAdminsMapTable.findMany({
-    //     where: eq(restaurantUserAdminsMapTable.userId, userId),
-    //     with: {
-    //         restaurant: {
-    //             columns: {
-    //                 id: true,
-    //                 name: true,
-    //             },
-    //             with: {
-    //                 address: {
-    //                     columns: {
-    //                         address1: true,
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    return (await db.query.restaurantUserAdminsMapTable.findMany({
+        where: eq(restaurantUserAdminsMapTable.userId, userId),
+        columns: {},
+        with: {
+            restaurant: {
+                columns: {
+                    id: true,
+                    name: true,
+                },
+                with: {
+                    address: {
+                        columns: {
+                            address1: true,
+                        }
+                    }
+                }
+            }
+        }
+    })).map(item => item.restaurant);
+    // return await db
+    //     .select({
+    //         id: restaurantTable.id,
+    //         name: restaurantTable.name,
+    //         address1: restaurantAddressTable.address1,
+    //     })
+    //     .from(restaurantTable)
+    //     .innerJoin(restaurantUserAdminsMapTable, eq(restaurantTable.id, restaurantUserAdminsMapTable.restaurantId))
+    //     .innerJoin(restaurantAddressTable, eq(restaurantTable.id, restaurantAddressTable.restaurantId))
+    //     .where(eq(restaurantUserAdminsMapTable.userId, userId));
 }
 
 export const createRestaurantService = async (userId: string, name: string) => {
