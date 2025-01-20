@@ -266,7 +266,7 @@ const initMap = async () => {
 
     drawingManager.value.setMap(map.value)
 
-    google.maps.event.addListener(drawingManager.value, "overlaycomplete", (r: any) => {
+    google.maps.event.addListener(drawingManager.value, "overlaycomplete", (_r: any) => {
         drawingManager.value?.setDrawingMode(null);
     })
 
@@ -317,7 +317,14 @@ onMounted(() => {
                          class="flex items-center space-x-2">
                         <div class="w-4 h-4"
                              :style="{ backgroundColor: zone.hexColor }"></div>
-                        <div>{{ zone.name }}</div>
+                        <div>
+                            {{ zone.name }}
+                            <details>
+                                <summary>🔴more</summary>
+                                <pre>{{ zone }}</pre>
+                            </details>
+                        </div>
+
                         <Button variant="outline"
                                 size="sm"
                                 :class="{ 'bg-primary text-primary-foreground': selectedZoneId === zone.id }"
