@@ -1,5 +1,5 @@
-import { and, count, eq, sql } from "drizzle-orm";
-import { restaurantAddressTable, restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
+import { and, count, eq } from "drizzle-orm";
+import { restaurantAddressTable, restaurantDeliveryZoneMapTable, restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
 import db from '../../drizzle';
 
 export const isUserRestaurantAdminService = async function (
@@ -72,6 +72,10 @@ export const createRestaurantService = async (userId: string, name: string) => {
             restaurantId: restaurant[0].id,
         });
 
+        await tx.insert(restaurantDeliveryZoneMapTable).values({
+            restaurantId: restaurant[0].id,
+        });
+
         return restaurant[0].id;
     })
 }
@@ -80,6 +84,8 @@ export const updateRestaurantService = async (
     restaurantId: string,
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
+    } & {
+        deliveryZones?: Partial<typeof restaurantDeliveryZoneMapTable.$inferInsert>
     }
 ) => {
 
@@ -88,6 +94,7 @@ export const updateRestaurantService = async (
             // unallowed fields for admins
             id, ownerUserId, created_at_ts, updated_at_ts,
             address,
+            deliveryZones,
             ...restaurantData
         } = data;
         // Update restaurant data
@@ -107,6 +114,15 @@ export const updateRestaurantService = async (
             }
         }
 
+        if (deliveryZones) {
+            const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
+            if (Object.keys(deliveryZoneData).length > 0) {
+                await tx.update(restaurantDeliveryZoneMapTable)
+                    .set(deliveryZoneData)
+                    .where(eq(restaurantDeliveryZoneMapTable.restaurantId, restaurantId));
+            }
+        }
+
         return { rowsAffected: 1 };
     });
 }
@@ -115,15 +131,25 @@ export const getRestaurantService = async (
     restaurantId: string,
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
+    } & {
+        deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
     }
 ) => {
+    console.log('columns', columns);
     return await db.query.restaurantTable.findFirst({
         where: eq(restaurantTable.id, restaurantId),
         columns: columns,
         with: {
-            address: {
-                columns: columns?.address
-            }
+            ...(columns?.address && {
+                address: {
+                    columns: columns.address
+                }
+            }),
+            ...(columns?.deliveryZones && {
+                deliveryZones: {
+                    columns: columns.deliveryZones
+                }
+            })
         }
     })
 }

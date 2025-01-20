@@ -3,7 +3,7 @@ import { relations } from 'drizzle-orm';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
-
+import { type DeliveryZone } from "lib/types/restaurantTypes";
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
@@ -45,6 +45,29 @@ export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 /// RESTAURANT TABLE END
 
 
+
+/// DELIVERY ZONES START
+export const restaurantDeliveryZoneMapTable = sqliteTable("restaurant_delivery_zone_map", {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	zones: text('zones', { mode: 'json' }).$type<DeliveryZone[]>().$defaultFn(() => []),
+	minLat: real('min_lat'), // .notkNull().default(90),
+	maxLat: real('max_lat'), // .notNull().default(90),
+	minLng: real('min_lng'), // .notNull().default(-180),
+	maxLng: real('max_lng'), // .notNull().default(-180),
+});
+const ZoneSchema = z.custom<DeliveryZone>((_val) => true);
+export const selectRestaurantDeliveryZoneMapSchema = createSelectSchema(restaurantDeliveryZoneMapTable, {
+	zones: z.array(ZoneSchema).default([]),
+});
+export const insertRestaurantDeliveryZoneMapSchema = createInsertSchema(restaurantDeliveryZoneMapTable, {
+	zones: z.array(ZoneSchema).default([]),
+});
+export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaurantDeliveryZoneMapTable, {
+	zones: z.array(ZoneSchema).default([]),
+});
+/// DELIVERY ZONES END
+
+
 /// RESTAURANT ADDRESS TABLE START
 export const restaurantAddressTable = sqliteTable("restaurant_address", {
 	restaurantId: text("restaurant_id").notNull(),
@@ -83,6 +106,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
 			restaurantAddressTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantAddressTable.restaurantId]
+		}),
+	deliveryZones:
+		one(
+			restaurantDeliveryZoneMapTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantDeliveryZoneMapTable.restaurantId]
 		}),
 }));
 

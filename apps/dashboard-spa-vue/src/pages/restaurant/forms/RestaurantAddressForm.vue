@@ -106,9 +106,7 @@ const loadData = async () => {
             // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
             for (const key in data.address) {
                 const typedKey = key as keyof typeof schema.shape;
-                if (data.address[typedKey]) {
-                    form.setFieldValue(typedKey, data.address[typedKey]);
-                }
+                form.setFieldValue(typedKey, (data.address as any)[key]);
             }
         }
     }
