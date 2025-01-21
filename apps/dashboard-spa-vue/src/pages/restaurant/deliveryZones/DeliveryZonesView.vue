@@ -10,37 +10,82 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from '@/ui-plus/sonner';
+import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { DeliveryZone } from 'lib/types/restaurantTypes';
-import { ref } from 'vue';
+import { Loader2 } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
-const restaurantLocation = { lat: 43.64765326293569, lng: -79.37036985441075 }
+let restaurantLocation: { lat: number, lng: number };
 const deliveryZones = ref<DeliveryZone[]>([
-    {
-        id: '1',
-        name: 'Zone 1',
-        shapeType: 'circle',
-        circleArea: {
-            center: { lat: 43.64765326293569, lng: -79.37036985441075 },
-            radius: 200
-        },
-        isActive: true,
-    },
-    {
-        id: '2',
-        name: 'Zone 2',
-        shapeType: 'circle',
-        circleArea: {
-            center: { lat: 43.64765326293569, lng: -79.37036985441075 },
-            radius: 100
-        },
-        isActive: true,
-    },
+    // {
+    //     id: '1',
+    //     name: 'Zone 1',
+    //     shapeType: 'circle',
+    //     circleArea: {
+    //         center: { lat: 43.64765326293569, lng: -79.37036985441075 },
+    //         radius: 200
+    //     },
+    //     isActive: true,
+    // },
+    // {
+    //     id: '2',
+    //     name: 'Zone 2',
+    //     shapeType: 'circle',
+    //     circleArea: {
+    //         center: { lat: 43.64765326293569, lng: -79.37036985441075 },
+    //         radius: 100
+    //     },
+    //     isActive: true,
+    // },
 ])
 const isDialogOpen = ref(false)
 const selectedZone = ref<DeliveryZone | null>(null)
+const isLoading = ref(false);
 
-const onDone = () => {
+
+// Load delivery zones from API
+const loadDeliveryZones = async () => {
+    isLoading.value = true;
+    try {
+        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                columns: {
+                    name: true,
+                },
+                addressColumns: {
+                    lat: true,
+                    lng: true,
+                },
+                deliveryZonesColumns: {
+                    zones: true
+                }
+            }
+        })).json();
+
+        if (error) {
+            toast.error('Failed to load delivery zones');
+            return;
+        }
+        console.log(`data:`, data?.name)
+        restaurantLocation = {
+            lat: data?.address?.lat ?? 0,
+            lng: data?.address?.lng ?? 0,
+        }
+        deliveryZones.value = (data?.deliveryZones as any)?.zones ?? [];
+    } catch (err) {
+        console.error('Error loading delivery zones:', err);
+        toast.error('Failed to load delivery zones');
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const onDone = async () => {
     const shape = mapComp.value?.getCurrentShape();
     console.log(`mapComp.value?.getCurrentShape:`, shape)
     if (!shape) {
@@ -84,6 +129,7 @@ const onDone = () => {
         deliveryZones.value.push(newZone)
     }
 
+    await saveDeliveryZones();
     isDialogOpen.value = false
     selectedZone.value = null
 }
@@ -93,9 +139,44 @@ const openDialog = (zone?: DeliveryZone) => {
     isDialogOpen.value = true
 }
 
-const deleteZone = (zone: DeliveryZone) => {
+const deleteZone = async (zone: DeliveryZone) => {
     deliveryZones.value = deliveryZones.value.filter(z => z.id !== zone.id)
+    await saveDeliveryZones();
 }
+
+// Save delivery zones to API
+const saveDeliveryZones = async () => {
+    isLoading.value = true;
+    try {
+        const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                deliveryZones: {
+                    zones: deliveryZones.value
+                }
+            }
+        })).json();
+
+        if (error) {
+            toast.error('Failed to save delivery zones');
+            return;
+        }
+
+        toast.success('Delivery zones saved successfully');
+    } catch (err) {
+        console.error('Error saving delivery zones:', err);
+        toast.error('Failed to save delivery zones');
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+
+onMounted(() => {
+    loadDeliveryZones();
+});
 </script>
 
 <template>
@@ -152,7 +233,12 @@ const deleteZone = (zone: DeliveryZone) => {
             <DialogFooter>
                 <Button @click="onDone"
                         class="w-full"
-                        type="button"> Done </Button>
+                        :disabled="isLoading"
+                        type="button">
+                    <Loader2 v-if="isLoading"
+                             class="animate-spin" />
+                    Done
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

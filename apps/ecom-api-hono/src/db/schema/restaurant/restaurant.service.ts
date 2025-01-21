@@ -129,29 +129,27 @@ export const updateRestaurantService = async (
 
 export const getRestaurantService = async (
     restaurantId: string,
-    columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
-        address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
-    } & {
-        deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
-    }
+    columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>,
+    addressColumns?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>,
+    deliveryZonesColumns?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
 ) => {
-    console.log('columns', columns);
-    return await db.query.restaurantTable.findFirst({
+    const result = await db.query.restaurantTable.findFirst({
         where: eq(restaurantTable.id, restaurantId),
         columns: columns,
         with: {
-            ...(columns?.address && {
+            ...(addressColumns && {
                 address: {
-                    columns: columns.address
+                    columns: addressColumns
                 }
             }),
-            ...(columns?.deliveryZones && {
+            ...(deliveryZonesColumns && {
                 deliveryZones: {
-                    columns: columns.deliveryZones
+                    columns: deliveryZonesColumns
                 }
             })
         }
     })
-}
+    return result;
+};
 
 

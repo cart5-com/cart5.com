@@ -79,16 +79,14 @@ const loadData = async () => {
             restaurantId: currentRestaurantId.value ?? '',
         },
         json: {
-            columns: {
-                address: {
-                    timezone: true,
-                    country: true,
-                    city: true,
-                    state: true,
-                    postalCode: true,
-                    address1: true,
-                    address2: true,
-                }
+            addressColumns: {
+                timezone: true,
+                country: true,
+                city: true,
+                state: true,
+                postalCode: true,
+                address1: true,
+                address2: true,
             }
         }
     })).json()
@@ -106,7 +104,9 @@ const loadData = async () => {
             // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
             for (const key in data.address) {
                 const typedKey = key as keyof typeof schema.shape;
-                form.setFieldValue(typedKey, (data.address as any)[key]);
+                if ((data.address as any)[key]) {
+                    form.setFieldValue(typedKey, (data.address as any)[key]);
+                }
             }
         }
     }
