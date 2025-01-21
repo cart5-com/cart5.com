@@ -135,7 +135,7 @@ export const getRestaurantService = async (
 ) => {
     const result = await db.query.restaurantTable.findFirst({
         where: eq(restaurantTable.id, restaurantId),
-        columns: columns,
+        columns: columns ? columns : {},
         with: {
             ...(addressColumns && {
                 address: {
