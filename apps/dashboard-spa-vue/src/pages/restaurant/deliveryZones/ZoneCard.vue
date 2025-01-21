@@ -4,6 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MapPin } from 'lucide-vue-next';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 defineProps<{
     zone: DeliveryZone
@@ -45,8 +48,46 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                 <AccordionItem value="details">
                     <AccordionTrigger>Zone Details</AccordionTrigger>
                     <AccordionContent>
-                        <pre class="text-sm bg-muted p-2 rounded-md overflow-x-auto">{{ JSON.stringify(zone, null, 2) }}
-                        </pre>
+                        <div class="space-y-4">
+                            <div class="grid gap-4">
+                                <div class="grid gap-2">
+                                    <Label for="name">Zone Name</Label>
+                                    <Input id="name"
+                                           v-model="zone.name"
+                                           placeholder="Enter zone name" />
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <Label for="minCart">Minimum Cart Value</Label>
+                                    <Input id="minCart"
+                                           type="number"
+                                           v-model="zone.minCart"
+                                           placeholder="0.00" />
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <Label for="deliveryFee">Delivery Fee</Label>
+                                    <Input id="deliveryFee"
+                                           type="number"
+                                           v-model="zone.deliveryFee"
+                                           placeholder="0.00" />
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <Label for="deliveryFeePerKm">Delivery Fee per KM</Label>
+                                    <Input id="deliveryFeePerKm"
+                                           type="number"
+                                           v-model="zone.deliveryFeePerKm"
+                                           placeholder="0.00" />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <Label>Active Status</Label>
+                                <Switch :checked="zone.isActive"
+                                        @update:checked="zone.isActive = $event" />
+                            </div>
+                        </div>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

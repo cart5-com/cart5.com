@@ -6,7 +6,7 @@ import UserDropDown from '@src/components/UserDropDown.vue';
 
 <template>
     <header
-            class="flex h-14 items-center gap-4 border-foreground/20 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0">
+            class="flex h-14 items-center gap-4 border-foreground/20 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10">
         <div class="w-full flex-1">
             <slot />
         </div>

@@ -26,6 +26,7 @@ import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { DeliveryZone } from 'lib/types/restaurantTypes';
 import { Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
+import { pageTitle } from '@src/stores/layout.store';
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
 let restaurantLocation: { lat: number, lng: number };
@@ -35,6 +36,8 @@ const isAlertDialogOpen = ref(false)
 const selectedZone = ref<DeliveryZone | null>(null)
 const zoneToDelete = ref<DeliveryZone | null>(null)
 const isLoading = ref(false);
+
+pageTitle.value = 'Delivery Options'
 
 // Load delivery zones from API
 const loadDeliveryZones = async () => {
@@ -179,15 +182,14 @@ onMounted(() => {
 <template>
     <div class="space-y-4 p-4">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Delivery Zones</h1>
+            <Button @click="openDialog()"
+                    variant="outline">
+                <Plus class="w-4 h-4" />Add new zone
+            </Button>
             <Button @click="saveDeliveryZones()"
                     :disabled="isLoading">
                 <Loader2 class="w-4 h-4 animate-spin"
                          v-if="isLoading" />Save
-            </Button>
-            <Button @click="openDialog()"
-                    variant="outline">
-                <Plus class="w-4 h-4" />Add Zone
             </Button>
         </div>
         <div class="space-y-4">
@@ -196,6 +198,19 @@ onMounted(() => {
                       :zone="zone"
                       @openDialog="openDialog"
                       @confirmDelete="confirmDelete" />
+        </div>
+
+        <div v-if="deliveryZones.length > 1"
+             class="flex justify-between items-center">
+            <Button @click="openDialog()"
+                    variant="outline">
+                <Plus class="w-4 h-4" />Add new zone
+            </Button>
+            <Button @click="saveDeliveryZones()"
+                    :disabled="isLoading">
+                <Loader2 class="w-4 h-4 animate-spin"
+                         v-if="isLoading" />Save
+            </Button>
         </div>
 
         <Dialog v-model:open="isDialogOpen">

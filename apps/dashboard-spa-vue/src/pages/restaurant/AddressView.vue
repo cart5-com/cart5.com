@@ -2,6 +2,9 @@
 import { Button } from '@/components/ui/button';
 import RestaurantAddressForm from '@src/pages/restaurant/forms/RestaurantAddressForm.vue';
 import { ArrowRightIcon } from 'lucide-vue-next';
+import { pageTitle } from '@src/stores/layout.store';
+
+pageTitle.value = 'Address'
 </script>
 
 <template>

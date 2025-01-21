@@ -2,6 +2,9 @@
 import { Button } from '@/components/ui/button';
 import RestaurantNamePhoneForm from '@src/pages/restaurant/forms/RestaurantNamePhoneForm.vue';
 import { ArrowRightIcon } from 'lucide-vue-next';
+import { pageTitle } from '@src/stores/layout.store';
+
+pageTitle.value = 'Name & Phone'
 </script>
 
 <template>

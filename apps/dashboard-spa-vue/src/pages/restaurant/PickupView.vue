@@ -7,6 +7,7 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient'
 import { currentRestaurantId } from '@src/stores/RestaurantStore'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { pageTitle } from '@src/stores/layout.store'
 
 const isLoading = ref(false)
 const offersPickup = ref(false)
@@ -62,6 +63,8 @@ const savePickupOption = async () => {
         isLoading.value = false
     }
 }
+
+pageTitle.value = 'Pickup'
 
 onMounted(() => {
     loadData()

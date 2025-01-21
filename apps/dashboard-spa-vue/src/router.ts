@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { pageTitle } from './stores/layout.store'
 // import HomeView from './views/HomeView.vue'
 // import { useDialog } from '@/ui-plus/dialog/use-dialog'
 
@@ -132,5 +133,10 @@ const router = createRouter({
 //     window.focusActiveLink();
 //   }, 100)
 // })
+
+router.beforeEach((_to, _from, next) => {
+  pageTitle.value = '';
+  next()
+})
 
 export default router

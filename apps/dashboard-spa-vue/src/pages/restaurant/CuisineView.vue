@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-vue-next';
 import { ecomApiCuisines } from 'lib/ecom-api-consts';
 import { Input } from '@/components/ui/input';
 import { PlusCircleIcon } from 'lucide-vue-next';
+import { pageTitle } from '@src/stores/layout.store';
 
 // Common cuisine types - expand this list as needed
 const AVAILABLE_CUISINES = ecomApiCuisines;
@@ -86,6 +87,8 @@ const saveCuisines = async () => {
         isLoading.value = false;
     }
 };
+
+pageTitle.value = 'Cuisine'
 
 onMounted(() => {
     loadData();

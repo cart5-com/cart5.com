@@ -8,6 +8,7 @@ import Sidebar from './Sidebar.vue'
 import { setCurrentRestaurantId } from '@src/stores/RestaurantStore';
 import { RouterView, useRoute } from "vue-router";
 import Header from '@src/components/Header.vue'
+import { pageTitle } from '@src/stores/layout.store';
 const route = useRoute();
 const restaurantId = route.params.restaurantId;
 setCurrentRestaurantId(restaurantId as string);
@@ -19,9 +20,14 @@ setCurrentRestaurantId(restaurantId as string);
         <Sidebar />
         <SidebarInset>
             <Header>
-                <SidebarTrigger class="-ml-1" />
+                <div class="flex items-center gap-2 max-w-40">
+                    <SidebarTrigger class="-ml-1" />
+                    <h3 class="text-sm font-bold tracking-tight truncate">
+                        {{ pageTitle }}
+                    </h3>
+                </div>
             </Header>
-            <main class="flex-1 lg:max-w-3xl border-r border-foreground/10 p-2 lg:p-4">
+            <main class="flex-1 lg:max-w-3xl border-r border-foreground/10 p-2">
                 <RouterView />
             </main>
         </SidebarInset>
