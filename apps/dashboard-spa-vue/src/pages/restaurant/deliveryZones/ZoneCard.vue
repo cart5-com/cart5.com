@@ -7,6 +7,8 @@ import { MapPin } from 'lucide-vue-next';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from '@/components/ui/badge'
+
 
 defineProps<{
     zone: DeliveryZone
@@ -22,7 +24,17 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
                         <MapPin class="h-4 w-4" />
-                        <h3 class="font-medium">{{ zone.name }}</h3>
+                        <h3 class="font-medium">
+                            {{ zone.name }}
+                        </h3>
+                        <Badge v-if="zone.isActive"
+                               variant="outline">
+                            Active
+                        </Badge>
+                        <Badge v-else
+                               variant="destructive">
+                            Inactive
+                        </Badge>
                     </div>
                     <p class="text-sm text-muted-foreground capitalize">
                         {{ zone.shapeType }} Zone
@@ -48,7 +60,7 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                 <AccordionItem value="details">
                     <AccordionTrigger>Zone Details</AccordionTrigger>
                     <AccordionContent>
-                        <div class="space-y-4">
+                        <div class="space-y-4 px-1 max-w-xs mx-auto">
                             <div class="grid gap-4">
                                 <div class="grid gap-2">
                                     <Label for="name">Zone Name</Label>

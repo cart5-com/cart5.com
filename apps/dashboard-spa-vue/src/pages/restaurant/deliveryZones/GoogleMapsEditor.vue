@@ -126,8 +126,8 @@ const initMap = async () => {
         center: props.restaurantLocation,
         zoom: 16,
         mapTypeControl: false,
-        streetViewControl: false
     })
+
 
     // Add restaurant marker
     new google.maps.Marker({

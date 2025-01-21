@@ -28,6 +28,7 @@ import { Check, Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { pageTitle } from '@src/stores/layout.store';
 import { useRouter } from 'vue-router';
+import { Switch } from '@/components/ui/switch';
 const router = useRouter();
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
@@ -37,11 +38,12 @@ const isAlertDialogOpen = ref(false)
 const selectedZone = ref<DeliveryZone | null>(null)
 const zoneToDelete = ref<DeliveryZone | null>(null)
 const isLoading = ref(false);
+const offersDelivery = ref(false)
 const deliveryZones = ref<DeliveryZone[]>([])
 
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
-watch(deliveryZones, () => {
+watch([deliveryZones, offersDelivery], () => {
     if (ignoreAutoSave) return;
     if (debounceTimer) {
         clearTimeout(debounceTimer)
@@ -63,6 +65,7 @@ const loadDeliveryZones = async () => {
             },
             json: {
                 columns: {
+                    offersDelivery: true,
                     address: {
                         lat: true,
                         lng: true,
@@ -83,6 +86,7 @@ const loadDeliveryZones = async () => {
             lng: data?.address?.lng ?? 0,
         }
         deliveryZones.value = data?.deliveryZones?.zones ?? [];
+        offersDelivery.value = data?.offersDelivery ?? false;
         if (restaurantLocation.lat === 0 && restaurantLocation.lng === 0) {
             toast.error('Set your address first');
             router.push({ name: 'restaurant-address' });
@@ -175,6 +179,7 @@ const saveDeliveryZones = async () => {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
+                offersDelivery: offersDelivery.value,
                 deliveryZones: {
                     zones: deliveryZones.value
                 }
@@ -200,39 +205,58 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="space-y-4 p-4">
-        <div class="flex justify-between items-center">
-            <Button @click="openDialog()"
-                    variant="outline">
-                <Plus class="w-4 h-4" />Add new zone
-            </Button>
-            <Button @click="saveDeliveryZones()"
-                    variant="outline"
-                    :disabled="isLoading">
-                <Loader2 class="w-4 h-4 animate-spin"
-                         v-if="isLoading" />Auto save
-                <Check />
-            </Button>
-        </div>
-        <div class="space-y-4">
-            <ZoneCard v-for="zone in deliveryZones"
-                      :key="zone.id"
-                      :zone="zone"
-                      @openDialog="openDialog"
-                      @confirmDelete="confirmDelete" />
-        </div>
+    <div>
+        <label for="offersDelivery"
+               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer">
+            <div class="space-y-0.5">
+                <h3 class="text-lg font-medium">Delivery status</h3>
+                <p class="text-muted-foreground">Do you offer food delivery?</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <Switch id="offersDelivery"
+                        :checked="offersDelivery"
+                        @update:checked="(checked: boolean) => offersDelivery = checked"
+                        :disabled="isLoading"
+                        class="scale-125">
+                </Switch>
+                <span class="font-medium">{{ offersDelivery ? 'Yes' : 'No' }}</span>
+            </div>
+        </label>
+        <div v-if="offersDelivery"
+             class="space-y-4 p-4">
+            <div class="flex justify-between items-center">
+                <Button @click="openDialog()"
+                        variant="outline">
+                    <Plus class="w-4 h-4" />Add new zone
+                </Button>
+                <Button @click="saveDeliveryZones()"
+                        variant="outline"
+                        :disabled="isLoading">
+                    <Loader2 class="w-4 h-4 animate-spin"
+                             v-if="isLoading" />Auto save
+                    <Check />
+                </Button>
+            </div>
+            <div class="space-y-4">
+                <ZoneCard v-for="zone in deliveryZones"
+                          :key="zone.id"
+                          :zone="zone"
+                          @openDialog="openDialog"
+                          @confirmDelete="confirmDelete" />
+            </div>
 
-        <div v-if="deliveryZones.length > 1"
-             class="flex justify-between items-center">
-            <Button @click="openDialog()"
-                    variant="outline">
-                <Plus class="w-4 h-4" />Add new zone
-            </Button>
-            <Button @click="saveDeliveryZones()"
-                    :disabled="isLoading">
-                <Loader2 class="w-4 h-4 animate-spin"
-                         v-if="isLoading" />Save
-            </Button>
+            <div v-if="deliveryZones.length > 1"
+                 class="flex justify-between items-center">
+                <Button @click="openDialog()"
+                        variant="outline">
+                    <Plus class="w-4 h-4" />Add new zone
+                </Button>
+                <Button @click="saveDeliveryZones()"
+                        :disabled="isLoading">
+                    <Loader2 class="w-4 h-4 animate-spin"
+                             v-if="isLoading" />Save
+                </Button>
+            </div>
         </div>
 
         <Dialog v-model:open="isDialogOpen">
