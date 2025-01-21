@@ -178,12 +178,85 @@ const initMap = async () => {
     }
 
     google.maps.event.addListener(drawingManager, "overlaycomplete", (event: google.maps.drawing.OverlayCompleteEvent) => {
+        console.log('overlaycomplete', event);
         onShapeComplete(event);
     })
+    google.maps.event.addListener(drawingManager, 'drawingmode_changed', () => {
+        console.log('drawingmode_changed', drawingManager?.getDrawingMode());
+        onDrawingModeChanged();
+    });
 
     mapInstance.controls[google.maps.ControlPosition.TOP_CENTER].push(clearControlDiv);
 
 }
+
+function onDrawingModeChanged() {
+    const mode = drawingManager?.getDrawingMode();
+    if (mode === google.maps.drawing.OverlayType.CIRCLE) {
+        // Clear any existing shape
+        if (currentShapeRef) {
+            currentShapeRef.setMap(null);
+        }
+
+        // Calculate maximum radius from existing delivery zones
+        let maxRadius = 500; // default fallback
+        props.deliveryZones.forEach(zone => {
+            if (zone.shapeType === 'circle' && zone.circleArea?.radius) {
+                maxRadius = Math.max(maxRadius, zone.circleArea.radius);
+            } else if (zone.shapeType === 'polygon' && zone.polygonArea) {
+                // For polygons, calculate distance to furthest point
+                zone.polygonArea.forEach(point => {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        props.restaurantLocation,
+                        point
+                    );
+                    maxRadius = Math.max(maxRadius, distance);
+                });
+            } else if (zone.shapeType === 'rectangle' && zone.rectangleArea) {
+                // For rectangles, calculate distance to corners
+                const corners = [
+                    { lat: zone.rectangleArea.topLeft.lat, lng: zone.rectangleArea.topLeft.lng },
+                    { lat: zone.rectangleArea.topLeft.lat, lng: zone.rectangleArea.bottomRight.lng },
+                    { lat: zone.rectangleArea.bottomRight.lat, lng: zone.rectangleArea.topLeft.lng },
+                    { lat: zone.rectangleArea.bottomRight.lat, lng: zone.rectangleArea.bottomRight.lng }
+                ];
+                corners.forEach(corner => {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        props.restaurantLocation,
+                        corner
+                    );
+                    maxRadius = Math.max(maxRadius, distance);
+                });
+            }
+        });
+
+        // Add 20% to the maximum radius found
+        maxRadius = maxRadius * 1.2;
+
+        // Create default circle at restaurant location with calculated radius
+        currentShapeRef = new google.maps.Circle({
+            center: props.restaurantLocation,
+            radius: maxRadius,
+            map: mapInstance,
+            ...selectedZoneOptions
+        });
+
+        // clearBtn.style.display = 'block';
+        // drawingManager?.setDrawingMode(null);
+        // drawingManager?.setOptions({
+        //     drawingControlOptions: {
+        //         position: google.maps.ControlPosition.TOP_CENTER,
+        //         drawingModes: []
+        //     }
+        // });
+        onShapeComplete({
+            overlay: currentShapeRef,
+            type: google.maps.drawing.OverlayType.CIRCLE
+        });
+    }
+}
+
+
 
 onMounted(() => {
     const script = document.querySelector('#google-maps-script')
