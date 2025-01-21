@@ -55,15 +55,14 @@ const loadDeliveryZones = async () => {
             },
             json: {
                 columns: {
-                    name: true,
+                    address: {
+                        lat: true,
+                        lng: true,
+                    },
+                    deliveryZones: {
+                        zones: true
+                    }
                 },
-                addressColumns: {
-                    lat: true,
-                    lng: true,
-                },
-                deliveryZonesColumns: {
-                    zones: true
-                }
             }
         })).json();
 
@@ -71,10 +70,9 @@ const loadDeliveryZones = async () => {
             toast.error('Failed to load delivery zones');
             return;
         }
-        console.log(`data:`, data?.name)
         restaurantLocation = {
-            lat: data?.address?.lat ?? 0,
-            lng: data?.address?.lng ?? 0,
+            lat: (data?.address as any)?.lat ?? 0,
+            lng: (data?.address as any)?.lng ?? 0,
         }
         deliveryZones.value = (data?.deliveryZones as any)?.zones ?? [];
     } catch (err) {

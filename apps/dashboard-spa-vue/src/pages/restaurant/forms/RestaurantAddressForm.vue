@@ -79,14 +79,16 @@ const loadData = async () => {
             restaurantId: currentRestaurantId.value ?? '',
         },
         json: {
-            addressColumns: {
-                timezone: true,
-                country: true,
-                city: true,
-                state: true,
-                postalCode: true,
-                address1: true,
-                address2: true,
+            columns: {
+                address: {
+                    timezone: true,
+                    country: true,
+                    city: true,
+                    state: true,
+                    postalCode: true,
+                    address1: true,
+                    address2: true,
+                }
             }
         }
     })).json()

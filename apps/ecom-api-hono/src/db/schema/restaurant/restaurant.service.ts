@@ -1,5 +1,10 @@
 import { and, count, eq } from "drizzle-orm";
-import { restaurantAddressTable, restaurantDeliveryZoneMapTable, restaurantTable, restaurantUserAdminsMapTable } from './restaurant.schema';
+import {
+    restaurantAddressTable,
+    restaurantDeliveryZoneMapTable,
+    restaurantTable,
+    restaurantUserAdminsMapTable
+} from './restaurant.schema';
 import db from '../../drizzle';
 
 export const isUserRestaurantAdminService = async function (
@@ -127,29 +132,30 @@ export const updateRestaurantService = async (
     });
 }
 
+
 export const getRestaurantService = async (
     restaurantId: string,
-    columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>,
-    addressColumns?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>,
-    deliveryZonesColumns?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
+    columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
+        address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
+    } & {
+        deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
+    }
 ) => {
-    const result = await db.query.restaurantTable.findFirst({
+    console.log('columns', columns);
+    return await db.query.restaurantTable.findFirst({
         where: eq(restaurantTable.id, restaurantId),
-        columns: columns ? columns : {},
+        columns: columns,
         with: {
-            ...(addressColumns && {
+            ...(columns?.address && {
                 address: {
-                    columns: addressColumns
+                    columns: columns.address
                 }
             }),
-            ...(deliveryZonesColumns && {
+            ...(columns?.deliveryZones && {
                 deliveryZones: {
-                    columns: deliveryZonesColumns
+                    columns: columns.deliveryZones
                 }
             })
         }
     })
-    return result;
-};
-
-
+}
