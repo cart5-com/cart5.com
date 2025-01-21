@@ -104,10 +104,16 @@ const loadData = async () => {
             // form.setFieldValue('state', data.address?.state ?? undefined);
             // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
             // form.setFieldValue('postalCode', data.address?.postalCode ?? undefined);
+            // for (const key in data.address) {
+            //     const typedKey = key as keyof typeof schema.shape;
+            //     if ((data.address as any)[key]) {
+            //         form.setFieldValue(typedKey, (data.address as any)[key]);
+            //     }
+            // }
             for (const key in data.address) {
                 const typedKey = key as keyof typeof schema.shape;
-                if ((data.address as any)[key]) {
-                    form.setFieldValue(typedKey, (data.address as any)[key]);
+                if (data.address[typedKey]) {
+                    form.setFieldValue(typedKey, data.address[typedKey]);
                 }
             }
         }

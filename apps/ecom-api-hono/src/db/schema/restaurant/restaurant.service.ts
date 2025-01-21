@@ -133,6 +133,22 @@ export const updateRestaurantService = async (
 }
 
 
+// type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
+// type getRestaurantServiceReturnType = NonNullable<Awaited<ReturnType<typeof getRestaurantService>>>;
+// // type deliveryZones = getRestaurantServiceReturnType['deliveryZones']
+// type address = getRestaurantServiceReturnType['address']
+// type nonEmptyAddress = NonEmpty<address>
+// const a: newAddress = {
+//     address1: '123',
+//     address2: '456',
+//     city: 'Toronto',
+//     province: 'ON',
+//     postalCode: 'M5A 1A1',
+// }
+// type RestaurantWithoutEmptyAddress = Omit<getRestaurantServiceReturnType, 'address'> & {
+//     address: Exclude<getRestaurantServiceReturnType['address'], {}>
+// };
+
 export const getRestaurantService = async (
     restaurantId: string,
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
@@ -141,8 +157,7 @@ export const getRestaurantService = async (
         deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
     }
 ) => {
-    console.log('columns', columns);
-    return await db.query.restaurantTable.findFirst({
+    const restaurant = await db.query.restaurantTable.findFirst({
         where: eq(restaurantTable.id, restaurantId),
         columns: columns,
         with: {
@@ -158,4 +173,17 @@ export const getRestaurantService = async (
             })
         }
     })
+    type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
+
+    type restaurantType = NonNullable<typeof restaurant>;
+    type address = restaurantType['address'] // this has | {}
+    type deliveryZones = restaurantType['deliveryZones'] // this has | {}
+    type nonEmptyAddress = NonEmpty<address> // this has not {}
+    type nonEmptyDeliveryZones = NonEmpty<deliveryZones> // this has not {}
+    type newRestaurantType = (Omit<restaurantType, 'address' | 'deliveryZones'> & {
+        address?: nonEmptyAddress
+        deliveryZones?: nonEmptyDeliveryZones
+    }) | undefined
+
+    return restaurant as newRestaurantType;
 }

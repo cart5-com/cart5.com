@@ -18,28 +18,7 @@ import { onMounted, ref } from 'vue';
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
 let restaurantLocation: { lat: number, lng: number };
-const deliveryZones = ref<DeliveryZone[]>([
-    // {
-    //     id: '1',
-    //     name: 'Zone 1',
-    //     shapeType: 'circle',
-    //     circleArea: {
-    //         center: { lat: 43.64765326293569, lng: -79.37036985441075 },
-    //         radius: 200
-    //     },
-    //     isActive: true,
-    // },
-    // {
-    //     id: '2',
-    //     name: 'Zone 2',
-    //     shapeType: 'circle',
-    //     circleArea: {
-    //         center: { lat: 43.64765326293569, lng: -79.37036985441075 },
-    //         radius: 100
-    //     },
-    //     isActive: true,
-    // },
-])
+const deliveryZones = ref<DeliveryZone[]>([])
 const isDialogOpen = ref(false)
 const selectedZone = ref<DeliveryZone | null>(null)
 const isLoading = ref(false);
@@ -71,10 +50,10 @@ const loadDeliveryZones = async () => {
             return;
         }
         restaurantLocation = {
-            lat: (data?.address as any)?.lat ?? 0,
-            lng: (data?.address as any)?.lng ?? 0,
+            lat: data?.address?.lat ?? 0,
+            lng: data?.address?.lng ?? 0,
         }
-        deliveryZones.value = (data?.deliveryZones as any)?.zones ?? [];
+        deliveryZones.value = data?.deliveryZones?.zones ?? [];
     } catch (err) {
         console.error('Error loading delivery zones:', err);
         toast.error('Failed to load delivery zones');
