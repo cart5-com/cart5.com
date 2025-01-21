@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import GoogleMapsEditor from './GoogleMapsEditor.vue'
+import ZoneCard from './ZoneCard.vue'
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,7 @@ import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { DeliveryZone } from 'lib/types/restaurantTypes';
-import { Loader2, MapPin } from 'lucide-vue-next';
+import { Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
@@ -119,7 +118,7 @@ const onDone = async () => {
         deliveryZones.value.push(newZone)
     }
 
-    await saveDeliveryZones();
+    // await saveDeliveryZones();
     isDialogOpen.value = false
     selectedZone.value = null
 }
@@ -138,7 +137,7 @@ const deleteZone = async () => {
     if (!zoneToDelete.value) return;
 
     deliveryZones.value = deliveryZones.value.filter(z => z.id !== zoneToDelete.value?.id)
-    await saveDeliveryZones();
+    // await saveDeliveryZones();
     isAlertDialogOpen.value = false;
     zoneToDelete.value = null;
 }
@@ -181,51 +180,22 @@ onMounted(() => {
     <div class="space-y-4 p-4">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold">Delivery Zones</h1>
-            <Button @click="openDialog()">Add Zone</Button>
+            <Button @click="saveDeliveryZones()"
+                    :disabled="isLoading">
+                <Loader2 class="w-4 h-4 animate-spin"
+                         v-if="isLoading" />Save
+            </Button>
+            <Button @click="openDialog()"
+                    variant="outline">
+                <Plus class="w-4 h-4" />Add Zone
+            </Button>
         </div>
         <div class="space-y-4">
-            <Card v-for="zone in deliveryZones"
-                  :key="zone.id"
-                  class="shadow-sm">
-                <CardContent class="p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <MapPin class="h-4 w-4" />
-                                <h3 class="font-medium">{{ zone.name }}</h3>
-                            </div>
-                            <p class="text-sm text-muted-foreground capitalize">
-                                {{ zone.shapeType }} Zone
-                            </p>
-                        </div>
-                        <div class="space-x-2">
-                            <Button variant="outline"
-                                    size="sm"
-                                    @click="openDialog(zone)">
-                                Edit
-                            </Button>
-                            <Button variant="destructive"
-                                    size="sm"
-                                    @click="confirmDelete(zone)">
-                                Delete
-                            </Button>
-                        </div>
-                    </div>
-
-                    <Accordion type="single"
-                               collapsible
-                               class="mt-4">
-                        <AccordionItem value="details">
-                            <AccordionTrigger>Zone Details</AccordionTrigger>
-                            <AccordionContent>
-                                <pre
-                                     class="text-sm bg-muted p-2 rounded-md overflow-x-auto">{{ JSON.stringify(zone, null, 2) }}
-                                </pre>
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </CardContent>
-            </Card>
+            <ZoneCard v-for="zone in deliveryZones"
+                      :key="zone.id"
+                      :zone="zone"
+                      @openDialog="openDialog"
+                      @confirmDelete="confirmDelete" />
         </div>
 
         <Dialog v-model:open="isDialogOpen">

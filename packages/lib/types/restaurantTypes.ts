@@ -10,15 +10,9 @@ export type Rectangle = {
     bottomRight: Point;
 };
 
-// export type EstimatedDeliveryTime = {
-//     min: number;
-//     max: number;
-// };
-
 export type DeliveryZone = {
     id: string;
     name?: string;
-    hexColor?: string;
     minCart?: number;
     deliveryFee?: number;
     deliveryFeePerKm?: number;
@@ -27,5 +21,4 @@ export type DeliveryZone = {
     circleArea?: Circle;
     rectangleArea?: Rectangle;
     isActive: boolean;
-    // estimatedDeliveryTime?: EstimatedDeliveryTime;
 };
