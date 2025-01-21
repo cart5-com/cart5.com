@@ -45,17 +45,18 @@ const defaultShapeOptions = {
     draggable: false,
     fillOpacity: 0.1,
     strokeColor: '#000000',
-    // fillColor: '',
     strokeWeight: 1,
     zIndex: 100
 }
 
 const selectedZoneOptions = {
+    clickable: true,
     editable: true,
     draggable: true,
     fillOpacity: 0.3,
     strokeColor: '#ff0000',
     fillColor: '#ff0000',
+    strokeWeight: 1,
     zIndex: 1000
 }
 
@@ -165,7 +166,6 @@ const initMap = async () => {
     // draw the selected zone on the map as editable, and make it red
     if (props.selectedZone) {
         currentShapeRef = createShape(props.selectedZone, {
-            ...defaultShapeOptions,
             ...selectedZoneOptions
         }, bounds);
     }

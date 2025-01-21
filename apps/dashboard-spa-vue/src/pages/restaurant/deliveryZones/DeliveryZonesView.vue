@@ -24,18 +24,32 @@ import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { DeliveryZone } from 'lib/types/restaurantTypes';
-import { Loader2, Plus } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { Check, Loader2, Plus } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 import { pageTitle } from '@src/stores/layout.store';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
 let restaurantLocation: { lat: number, lng: number };
-const deliveryZones = ref<DeliveryZone[]>([])
 const isDialogOpen = ref(false)
 const isAlertDialogOpen = ref(false)
 const selectedZone = ref<DeliveryZone | null>(null)
 const zoneToDelete = ref<DeliveryZone | null>(null)
 const isLoading = ref(false);
+const deliveryZones = ref<DeliveryZone[]>([])
+
+let ignoreAutoSave = true;
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+watch(deliveryZones, () => {
+    if (ignoreAutoSave) return;
+    if (debounceTimer) {
+        clearTimeout(debounceTimer)
+    }
+    debounceTimer = setTimeout(() => {
+        saveDeliveryZones()
+    }, 3000)
+}, { deep: true, immediate: true })
 
 pageTitle.value = 'Delivery Options'
 
@@ -69,11 +83,18 @@ const loadDeliveryZones = async () => {
             lng: data?.address?.lng ?? 0,
         }
         deliveryZones.value = data?.deliveryZones?.zones ?? [];
+        if (restaurantLocation.lat === 0 && restaurantLocation.lng === 0) {
+            toast.error('Set your address first');
+            router.push({ name: 'restaurant-address' });
+        }
     } catch (err) {
         console.error('Error loading delivery zones:', err);
         toast.error('Failed to load delivery zones');
     } finally {
         isLoading.value = false;
+        setTimeout(() => {
+            ignoreAutoSave = false;
+        }, 1000)
     }
 };
 
@@ -164,8 +185,7 @@ const saveDeliveryZones = async () => {
             toast.error('Failed to save delivery zones');
             return;
         }
-
-        toast.success('Delivery zones saved successfully');
+        toast.success('Saved successfully');
     } catch (err) {
         console.error('Error saving delivery zones:', err);
         toast.error('Failed to save delivery zones');
@@ -187,9 +207,11 @@ onMounted(() => {
                 <Plus class="w-4 h-4" />Add new zone
             </Button>
             <Button @click="saveDeliveryZones()"
+                    variant="outline"
                     :disabled="isLoading">
                 <Loader2 class="w-4 h-4 animate-spin"
-                         v-if="isLoading" />Save
+                         v-if="isLoading" />Auto save
+                <Check />
             </Button>
         </div>
         <div class="space-y-4">
@@ -221,10 +243,12 @@ onMounted(() => {
                         }">
                 <DialogHeader>
                     <DialogTitle class="flex items-center gap-2">
-                        Edit Area
+                        Draw/Edit Single Zone
                     </DialogTitle>
-                    <DialogDescription>
-                        Draw or edit delivery zones on the map
+                    <DialogDescription class="text-xs">
+                        Click shape btns to draw new
+                        <br>
+                        or edit/resize/move current shape with small dots around the edges
                     </DialogDescription>
                 </DialogHeader>
                 <GoogleMapsEditor ref="mapComp"
