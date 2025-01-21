@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import type { DeliveryZone, Point } from 'lib/types/restaurantTypes'
+import { toast } from '@/ui-plus/sonner';
 
 const props = defineProps<{
     deliveryZones: DeliveryZone[]
@@ -253,6 +254,12 @@ function onDrawingModeChanged() {
             overlay: currentShapeRef,
             type: google.maps.drawing.OverlayType.CIRCLE
         });
+
+        toast.info('resize the circle to define your delivery area')
+    } else if (mode === google.maps.drawing.OverlayType.POLYGON) {
+        toast.info('Start by clicking on the map to define your delivery area')
+    } else if (mode === google.maps.drawing.OverlayType.RECTANGLE) {
+        toast.info('Start by clicking on the map to define your delivery area')
     }
 }
 
