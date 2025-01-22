@@ -35,10 +35,9 @@ export const updateRestaurant = async (c: Context<
     "/:restaurantId",
     ValidatorContext<typeof updateRestaurantSchemaValidator>
 >) => {
+    const result = (await updateRestaurantService(c.req.param('restaurantId'), c.req.valid('json')));
     return c.json({
-        data: (await updateRestaurantService(c.req.param('restaurantId'), c.req.valid('json')))
-            .rowsAffected === 1 ?
-            'success' : 'nochange',
+        data: result.length > 0 ? 'success' : 'nochange',
         error: null as ErrorType
     }, 200);
 }

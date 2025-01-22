@@ -86,9 +86,12 @@ export const updateRestaurantService = async (
             deliveryZones,
             ...restaurantData
         } = data;
+
+        const updates = [];
+
         // Update restaurant data
         if (Object.keys(restaurantData).length > 0) {
-            await tx.update(restaurantTable)
+            updates[updates.length] = tx.update(restaurantTable)
                 .set(restaurantData)
                 .where(eq(restaurantTable.id, restaurantId));
         }
@@ -97,7 +100,7 @@ export const updateRestaurantService = async (
         if (address) {
             const { restaurantId: _, ...addressData } = address;
             if (Object.keys(addressData).length > 0) {
-                await tx.insert(restaurantAddressTable)
+                updates[updates.length] = tx.insert(restaurantAddressTable)
                     .values({ ...addressData, restaurantId })
                     .onConflictDoUpdate({
                         target: restaurantAddressTable.restaurantId,
@@ -109,7 +112,7 @@ export const updateRestaurantService = async (
         if (openHours) {
             const { restaurantId: _, ...openHoursData } = openHours;
             if (Object.keys(openHoursData).length > 0) {
-                await tx.insert(restaurantOpenHoursTable)
+                updates[updates.length] = tx.insert(restaurantOpenHoursTable)
                     .values({ ...openHoursData, restaurantId })
                     .onConflictDoUpdate({
                         target: restaurantOpenHoursTable.restaurantId,
@@ -121,7 +124,7 @@ export const updateRestaurantService = async (
         if (deliveryZones) {
             const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
             if (Object.keys(deliveryZoneData).length > 0) {
-                await tx.insert(restaurantDeliveryZoneMapTable)
+                updates[updates.length] = tx.insert(restaurantDeliveryZoneMapTable)
                     .values({ ...deliveryZoneData, restaurantId })
                     .onConflictDoUpdate({
                         target: restaurantDeliveryZoneMapTable.restaurantId,
@@ -129,8 +132,7 @@ export const updateRestaurantService = async (
                     });
             }
         }
-
-        return { rowsAffected: 1 };
+        return await Promise.all(updates);
     });
 }
 
