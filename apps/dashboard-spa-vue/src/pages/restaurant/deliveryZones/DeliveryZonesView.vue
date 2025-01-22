@@ -207,7 +207,7 @@ onMounted(() => {
 <template>
     <div>
         <label for="offersDelivery"
-               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer">
+               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer max-w-sm mx-auto">
             <div class="space-y-0.5">
                 <h3 class="text-lg font-medium">Delivery status</h3>
                 <p class="text-muted-foreground">Do you offer food delivery?</p>

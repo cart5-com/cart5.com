@@ -20,6 +20,10 @@ export const restaurantTable = sqliteTable("restaurant", {
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
 
+	// TODO: Table reservation
+	// TODO: On premise
+
+
 	created_at_ts: integer("created_at_ts")
 		.notNull()
 		.$defaultFn(() => Date.now()),
