@@ -1,9 +1,9 @@
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { relations } from 'drizzle-orm';
+import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import { z } from "zod";
-import { type DeliveryZone } from "lib/types/restaurantTypes";
+import { type DeliveryZone, type WeeklyHours } from "lib/types/restaurantTypes";
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
@@ -19,9 +19,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
-
-	// TODO: Table reservation
-	// TODO: On premise
 
 
 	created_at_ts: integer("created_at_ts")
@@ -46,35 +43,14 @@ export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
 });
+
 /// RESTAURANT TABLE END
 
 
 
-/// DELIVERY ZONES START
-export const restaurantDeliveryZoneMapTable = sqliteTable("restaurant_delivery_zone_map", {
-	restaurantId: text("restaurant_id").notNull().unique(),
-	zones: text('zones', { mode: 'json' }).$type<DeliveryZone[]>().$defaultFn(() => []),
-	minLat: real('min_lat'), // .notkNull().default(90),
-	maxLat: real('max_lat'), // .notNull().default(90),
-	minLng: real('min_lng'), // .notNull().default(-180),
-	maxLng: real('max_lng'), // .notNull().default(-180),
-});
-const ZoneSchema = z.custom<DeliveryZone>((_val) => true);
-export const selectRestaurantDeliveryZoneMapSchema = createSelectSchema(restaurantDeliveryZoneMapTable, {
-	zones: z.array(ZoneSchema).default([]),
-});
-export const insertRestaurantDeliveryZoneMapSchema = createInsertSchema(restaurantDeliveryZoneMapTable, {
-	zones: z.array(ZoneSchema).default([]),
-});
-export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaurantDeliveryZoneMapTable, {
-	zones: z.array(ZoneSchema).default([]),
-});
-/// DELIVERY ZONES END
-
-
 /// RESTAURANT ADDRESS TABLE START
 export const restaurantAddressTable = sqliteTable("restaurant_address", {
-	restaurantId: text("restaurant_id").notNull(),
+	restaurantId: text("restaurant_id").notNull().unique(),
 	address1: text("address_1"),
 	address2: text("address_2"),
 	city: text("city"),
@@ -87,10 +63,54 @@ export const restaurantAddressTable = sqliteTable("restaurant_address", {
 	timezone: text('timezone'),
 });
 export const selectRestaurantAddressSchema = createSelectSchema(restaurantAddressTable);
-export const insertRestaurantAddressSchema = createInsertSchema(restaurantAddressTable);
-export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddressTable);
-// geocodeMetadata: z.any().default({}),
+export const insertRestaurantAddressSchema = createInsertSchema(restaurantAddressTable, {
+	geocodeMetadata: z.any(),
+});
+export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddressTable, {
+	geocodeMetadata: z.any(),
+});
 /// RESTAURANT ADDRESS TABLE END
+
+
+
+/// RESTAURANT HOURS TABLE START
+export const restaurantOpenHoursTable = sqliteTable('restaurant_open_hours', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	defaultOpenHours: text('open_hours', { mode: 'json' }).$type<WeeklyHours>(),
+	deliveryHours: text('delivery_hours', { mode: 'json' }).$type<WeeklyHours>(),
+	pickupHours: text('pickup_hours', { mode: 'json' }).$type<WeeklyHours>(),
+});
+export const selectRestaurantOpenHoursSchema = createSelectSchema(restaurantOpenHoursTable);
+export const insertRestaurantOpenHoursSchema = createInsertSchema(restaurantOpenHoursTable, {
+	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
+	deliveryHours: z.custom<WeeklyHours>((_val) => true),
+	pickupHours: z.custom<WeeklyHours>((_val) => true),
+});
+export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpenHoursTable, {
+	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
+	deliveryHours: z.custom<WeeklyHours>((_val) => true),
+	pickupHours: z.custom<WeeklyHours>((_val) => true),
+});
+/// RESTAURANT HOURS TABLE END
+
+
+/// DELIVERY ZONES START
+export const restaurantDeliveryZoneMapTable = sqliteTable("restaurant_delivery_zone_map", {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	zones: text('zones', { mode: 'json' }).$type<DeliveryZone[]>().$defaultFn(() => []),
+	minLat: real('min_lat'), // .notkNull().default(90),
+	maxLat: real('max_lat'), // .notNull().default(90),
+	minLng: real('min_lng'), // .notNull().default(-180),
+	maxLng: real('max_lng'), // .notNull().default(-180),
+});
+export const selectRestaurantDeliveryZoneMapSchema = createSelectSchema(restaurantDeliveryZoneMapTable);
+export const insertRestaurantDeliveryZoneMapSchema = createInsertSchema(restaurantDeliveryZoneMapTable, {
+	zones: z.array(z.custom<DeliveryZone>((_val) => true)).default([]),
+});
+export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaurantDeliveryZoneMapTable, {
+	zones: z.array(z.custom<DeliveryZone>((_val) => true)).default([]),
+});
+/// DELIVERY ZONES END
 
 
 
@@ -110,6 +130,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
 			restaurantAddressTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantAddressTable.restaurantId]
+		}),
+	openHours:
+		one(
+			restaurantOpenHoursTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantOpenHoursTable.restaurantId]
 		}),
 	deliveryZones:
 		one(

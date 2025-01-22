@@ -2,6 +2,7 @@ import { and, count, eq } from "drizzle-orm";
 import {
     restaurantAddressTable,
     restaurantDeliveryZoneMapTable,
+    restaurantOpenHoursTable,
     restaurantTable,
     restaurantUserAdminsMapTable
 } from './restaurant.schema';
@@ -49,16 +50,6 @@ export const getMyRestaurantsService = async (userId: string) => {
         //     loweredName: sql`lower(${restaurantTable.name})`.as('lowered_name'),
         // },
     })).map(item => item.restaurant);
-    // return await db
-    //     .select({
-    //         id: restaurantTable.id,
-    //         name: restaurantTable.name,
-    //         address1: restaurantAddressTable.address1,
-    //     })
-    //     .from(restaurantTable)
-    //     .innerJoin(restaurantUserAdminsMapTable, eq(restaurantTable.id, restaurantUserAdminsMapTable.restaurantId))
-    //     .innerJoin(restaurantAddressTable, eq(restaurantTable.id, restaurantAddressTable.restaurantId))
-    //     .where(eq(restaurantUserAdminsMapTable.userId, userId));
 }
 
 export const createRestaurantService = async (userId: string, name: string) => {
@@ -73,14 +64,6 @@ export const createRestaurantService = async (userId: string, name: string) => {
             userId: userId,
         });
 
-        await tx.insert(restaurantAddressTable).values({
-            restaurantId: restaurant[0].id,
-        });
-
-        await tx.insert(restaurantDeliveryZoneMapTable).values({
-            restaurantId: restaurant[0].id,
-        });
-
         return restaurant[0].id;
     })
 }
@@ -89,7 +72,7 @@ export const updateRestaurantService = async (
     restaurantId: string,
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
-    } & {
+        openHours?: Partial<typeof restaurantOpenHoursTable.$inferInsert>
         deliveryZones?: Partial<typeof restaurantDeliveryZoneMapTable.$inferInsert>
     }
 ) => {
@@ -99,6 +82,7 @@ export const updateRestaurantService = async (
             // unallowed fields for admins
             id, ownerUserId, created_at_ts, updated_at_ts,
             address,
+            openHours,
             deliveryZones,
             ...restaurantData
         } = data;
@@ -113,18 +97,36 @@ export const updateRestaurantService = async (
         if (address) {
             const { restaurantId: _, ...addressData } = address;
             if (Object.keys(addressData).length > 0) {
-                await tx.update(restaurantAddressTable)
-                    .set(addressData)
-                    .where(eq(restaurantAddressTable.restaurantId, restaurantId));
+                await tx.insert(restaurantAddressTable)
+                    .values({ ...addressData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantAddressTable.restaurantId,
+                        set: addressData
+                    });
+            }
+        }
+
+        if (openHours) {
+            const { restaurantId: _, ...openHoursData } = openHours;
+            if (Object.keys(openHoursData).length > 0) {
+                await tx.insert(restaurantOpenHoursTable)
+                    .values({ ...openHoursData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantOpenHoursTable.restaurantId,
+                        set: openHoursData
+                    });
             }
         }
 
         if (deliveryZones) {
             const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
             if (Object.keys(deliveryZoneData).length > 0) {
-                await tx.update(restaurantDeliveryZoneMapTable)
-                    .set(deliveryZoneData)
-                    .where(eq(restaurantDeliveryZoneMapTable.restaurantId, restaurantId));
+                await tx.insert(restaurantDeliveryZoneMapTable)
+                    .values({ ...deliveryZoneData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantDeliveryZoneMapTable.restaurantId,
+                        set: deliveryZoneData
+                    });
             }
         }
 
@@ -139,11 +141,11 @@ export const updateRestaurantService = async (
 // type address = getRestaurantServiceReturnType['address']
 // type nonEmptyAddress = NonEmpty<address>
 // const a: newAddress = {
-//     address1: '123',
-//     address2: '456',
-//     city: 'Toronto',
-//     province: 'ON',
-//     postalCode: 'M5A 1A1',
+//     address1: '',
+//     address2: '',
+//     city: '',
+//     province: '',
+//     postalCode: '',
 // }
 // type RestaurantWithoutEmptyAddress = Omit<getRestaurantServiceReturnType, 'address'> & {
 //     address: Exclude<getRestaurantServiceReturnType['address'], {}>
@@ -153,7 +155,7 @@ export const getRestaurantService = async (
     restaurantId: string,
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
-    } & {
+        openHours?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
         deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
     }
 ) => {
@@ -166,6 +168,11 @@ export const getRestaurantService = async (
                     columns: columns.address
                 }
             }),
+            ...(columns?.openHours && {
+                openHours: {
+                    columns: columns.openHours
+                }
+            }),
             ...(columns?.deliveryZones && {
                 deliveryZones: {
                     columns: columns.deliveryZones
@@ -173,15 +180,21 @@ export const getRestaurantService = async (
             })
         }
     })
-    type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
 
+    // this typing is to make sure typing work with hono rpc.
+    // https://hono.dev/docs/guides/rpc
+    // api never returns {} but drizzle adds a {} when there is no data.
+    type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
     type restaurantType = NonNullable<typeof restaurant>;
     type address = restaurantType['address'] // this has | {}
+    type openHours = restaurantType['openHours'] // this has | {}
     type deliveryZones = restaurantType['deliveryZones'] // this has | {}
     type nonEmptyAddress = NonEmpty<address> // this has not {}
+    type nonEmptyOpenHours = NonEmpty<openHours> // this has not {}
     type nonEmptyDeliveryZones = NonEmpty<deliveryZones> // this has not {}
-    type newRestaurantType = (Omit<restaurantType, 'address' | 'deliveryZones'> & {
+    type newRestaurantType = (Omit<restaurantType, 'address' | 'openHours' | 'deliveryZones'> & {
         address?: nonEmptyAddress
+        openHours?: nonEmptyOpenHours
         deliveryZones?: nonEmptyDeliveryZones
     }) | undefined
 

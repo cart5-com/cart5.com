@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { type Context } from 'hono';
-import { selectRestaurantAddressSchema, selectRestaurantDeliveryZoneMapSchema, selectRestaurantSchema } from '../../db/schema/restaurant/restaurant.schema';
+import {
+    selectRestaurantAddressSchema,
+    selectRestaurantDeliveryZoneMapSchema,
+    selectRestaurantSchema,
+    selectRestaurantOpenHoursSchema
+} from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import { getRestaurantService } from '../../db/schema/restaurant/restaurant.service';
@@ -15,6 +20,11 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
         address: z.object(
             Object.fromEntries(
                 Object.keys(selectRestaurantAddressSchema.shape).map(key => [key, z.boolean().optional()])
+            )
+        ).optional(),
+        openHours: z.object(
+            Object.fromEntries(
+                Object.keys(selectRestaurantOpenHoursSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional(),
         deliveryZones: z.object(

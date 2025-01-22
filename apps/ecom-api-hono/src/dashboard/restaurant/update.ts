@@ -1,5 +1,10 @@
 import { type Context } from 'hono';
-import { updateRestaurantAddressSchema, updateRestaurantDeliveryZoneMapSchema, updateRestaurantSchema } from '../../db/schema/restaurant/restaurant.schema';
+import {
+    updateRestaurantAddressSchema,
+    updateRestaurantDeliveryZoneMapSchema,
+    updateRestaurantOpenHoursSchema,
+    updateRestaurantSchema
+} from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
 import { updateRestaurantService } from '../../db/schema/restaurant/restaurant.service';
@@ -15,6 +20,9 @@ export const updateRestaurantSchemaValidator = zValidator('json',
         updated_at_ts: true
     }).extend({
         address: updateRestaurantAddressSchema.omit({
+            restaurantId: true,
+        }).optional(),
+        openHours: updateRestaurantOpenHoursSchema.omit({
             restaurantId: true,
         }).optional(),
         deliveryZones: updateRestaurantDeliveryZoneMapSchema.omit({
