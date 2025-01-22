@@ -104,7 +104,6 @@ const loadDeliveryZones = async () => {
 
 const onDone = async () => {
     const shape = mapComp.value?.getCurrentShape();
-    console.log(`mapComp.value?.getCurrentShape:`, shape)
     if (!shape) {
         toast.error('No shape found')
         return;
