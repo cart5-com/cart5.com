@@ -109,12 +109,12 @@ export const restaurantScheduledOrdersSettingsTable = sqliteTable('restaurant_sc
 	isOnlyScheduledOrdersAllowed: integer("is_only_scheduled_orders_allowed", { mode: "boolean" }).default(false), // if true, ASAP delivery&pickup are disabled
 
 	// on update will be calculated from pickup_settings
-	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }).default(60), // 1 hour
-	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }).default(5760), // 4 days
+	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }),
+	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }),
 
 	// on update will be calculated from delivery_settings
-	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }).default(60), // 1 hour
-	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }).default(5760), // 4 days
+	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }),
+	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }),
 
 	pickup_settings: text('pickup_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper
 	delivery_settings: text('delivery_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper 
@@ -194,9 +194,7 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			references: [restaurantDeliveryZoneMapTable.restaurantId]
 		}),
 	admins:
-		many(restaurantUserAdminsMapTable, {
-			relationName: 'admins',
-		}),
+		many(restaurantUserAdminsMapTable),
 }));
 
 

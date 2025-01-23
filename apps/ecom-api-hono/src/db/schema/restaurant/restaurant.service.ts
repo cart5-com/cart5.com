@@ -8,6 +8,7 @@ import {
     restaurantUserAdminsMapTable
 } from './restaurant.schema';
 import db from '../../drizzle';
+import { calculateScheduledOrdersMinutes } from "./updateUtils/calculateScheduledOrdersMinutes";
 
 export const isUserRestaurantAdminService = async function (
     userId: string, restaurantId: string
@@ -83,10 +84,12 @@ export const updateRestaurantService = async (
         const {
             // unallowed fields for admins
             id, ownerUserId, created_at_ts, updated_at_ts,
+            // other restaurant tables
             address,
             openHours,
             scheduledOrdersSettings,
             deliveryZones,
+            // allowed fields for admins
             ...restaurantData
         } = data;
 
@@ -127,12 +130,24 @@ export const updateRestaurantService = async (
         if (scheduledOrdersSettings) {
             const { restaurantId: _, ...scheduledOrdersSettingsData } = scheduledOrdersSettings;
             if (Object.keys(scheduledOrdersSettingsData).length > 0) {
-                // TODO calculate all minutes from settings
+                const {
+                    pickup_minTimeInAdvance_minutes,
+                    pickup_maxTimeInAdvance_minutes,
+                    delivery_minTimeInAdvance_minutes,
+                    delivery_maxTimeInAdvance_minutes
+                } = calculateScheduledOrdersMinutes(scheduledOrdersSettingsData);
+                const scheduledOrdersSettingsDataWithMinutes = {
+                    ...scheduledOrdersSettingsData,
+                    pickup_minTimeInAdvance_minutes,
+                    pickup_maxTimeInAdvance_minutes,
+                    delivery_minTimeInAdvance_minutes,
+                    delivery_maxTimeInAdvance_minutes
+                }
                 updates[updates.length] = tx.insert(restaurantScheduledOrdersSettingsTable)
-                    .values({ ...scheduledOrdersSettingsData, restaurantId })
+                    .values({ ...scheduledOrdersSettingsDataWithMinutes, restaurantId })
                     .onConflictDoUpdate({
                         target: restaurantScheduledOrdersSettingsTable.restaurantId,
-                        set: scheduledOrdersSettingsData
+                        set: scheduledOrdersSettingsDataWithMinutes
                     });
             }
         }
