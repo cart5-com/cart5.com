@@ -63,6 +63,11 @@ const router = createRouter({
           path: 'open-hours',
           name: 'restaurant-open-hours',
           component: () => import('@src/pages/restaurant/openHours/OpenHoursView.vue')
+        },
+        {
+          path: 'scheduled-orders',
+          name: 'restaurant-scheduled-orders',
+          component: () => import('@src/pages/restaurant/ScheduledOrdersView.vue')
         }
       ],
     },
