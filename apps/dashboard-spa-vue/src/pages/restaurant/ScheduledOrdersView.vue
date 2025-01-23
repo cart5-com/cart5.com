@@ -73,7 +73,7 @@ const loadData = async () => {
 const saveSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -85,7 +85,7 @@ const saveSettings = async () => {
                     delivery_settings: deliverySettings.value,
                 }
             }
-        });
+        })).json();
 
         if (error) {
             toast.error('Failed to save settings');
@@ -142,7 +142,7 @@ const timeUnits = [
                             <h3 class="font-medium text-lg">Pickup Settings</h3>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <div class="space-y-4 pt-4">
+                            <div class="space-y-4 p-4">
                                 <!-- Minimum Time -->
                                 <div class="grid gap-2">
                                     <label class="text-sm font-medium">Minimum Time in Advance</label>
@@ -221,7 +221,7 @@ const timeUnits = [
                             <h3 class="font-medium text-lg">Delivery Settings</h3>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <div class="space-y-4 pt-4">
+                            <div class="space-y-4 p-4">
                                 <!-- Minimum Time -->
                                 <div class="grid gap-2">
                                     <label class="text-sm font-medium">Minimum Time in Advance</label>
