@@ -51,3 +51,20 @@ export type WeeklyHours = {
     };
 };
 /// OPEN HOURS END
+
+
+/// SCHEDULED ORDERS SETTINGS START
+export type timeForm = {
+    timeValue: number;
+    timeUnit: 'minutes' | 'hours' | 'days';
+}
+export type ScheduledOrdersSettings = {
+    pickup_min: timeForm;
+    pickup_max: timeForm;
+    pickup_slot_interval: timeForm;
+    delivery_min: timeForm;
+    delivery_max: timeForm;
+    delivery_slot_interval: timeForm;
+};
+/// SCHEDULED ORDERS SETTINGS END
+

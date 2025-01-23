@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { type DeliveryZone, type WeeklyHours } from "lib/types/restaurantTypes";
+
+
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
@@ -48,6 +50,8 @@ export const updateRestaurantSchema = createUpdateSchema(restaurantTable, {
 
 
 
+
+
 /// RESTAURANT ADDRESS TABLE START
 export const restaurantAddressTable = sqliteTable("restaurant_address", {
 	restaurantId: text("restaurant_id").notNull().unique(),
@@ -73,6 +77,8 @@ export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddres
 
 
 
+
+
 /// RESTAURANT HOURS TABLE START
 export const restaurantOpenHoursTable = sqliteTable('restaurant_open_hours', {
 	restaurantId: text("restaurant_id").notNull().unique(),
@@ -92,6 +98,27 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 	pickupHours: z.custom<WeeklyHours>((_val) => true),
 });
 /// RESTAURANT HOURS TABLE END
+
+
+
+
+/// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE START
+export const restaurantScheduledOrdersSettingsTable = sqliteTable('restaurant_scheduled_orders_settings', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	isScheduledOrdersEnabled: integer("is_scheduled_orders_enabled", { mode: "boolean" }).notNull().default(false),
+	isOnlyScheduledOrdersAllowed: integer("is_only_scheduled_orders_allowed", { mode: "boolean" }).notNull().default(false),
+
+	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }).notNull().default(60), // 1 hour
+	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }).notNull().default(5760), // 24 hours * 4
+
+	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }).notNull().default(60), // 1 hour
+	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }).notNull().default(5760), // 24 hours * 4
+
+});
+/// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE END
+
+
+
 
 
 /// DELIVERY ZONES START
@@ -114,6 +141,8 @@ export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaura
 
 
 
+
+
 /// RESTAURANT USER ADMINS MAP START
 export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_map", {
 	restaurantId: text("restaurant_id").notNull(),
@@ -122,6 +151,8 @@ export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_
 	primaryKey({ columns: [table.restaurantId, table.userId] }),
 ]);
 /// RESTAURANT USER ADMINS MAP END
+
+
 
 
 export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
@@ -144,6 +175,8 @@ export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
 			references: [restaurantDeliveryZoneMapTable.restaurantId]
 		}),
 }));
+
+
 
 export const restaurantUserAdminsMapRelations = relations(restaurantUserAdminsMapTable, ({ one }) => ({
 	restaurant: one(restaurantTable, {
