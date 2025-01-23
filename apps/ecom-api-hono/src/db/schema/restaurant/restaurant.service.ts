@@ -124,6 +124,7 @@ export const updateRestaurantService = async (
         if (deliveryZones) {
             const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
             if (Object.keys(deliveryZoneData).length > 0) {
+                // TODO calculate minLat maxLat minLng maxLng values from zones
                 updates[updates.length] = tx.insert(restaurantDeliveryZoneMapTable)
                     .values({ ...deliveryZoneData, restaurantId })
                     .onConflictDoUpdate({
