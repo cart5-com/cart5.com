@@ -59,6 +59,11 @@ const router = createRouter({
           name: 'restaurant-delivery-options',
           component: () => import('@src/pages/restaurant/deliveryZones/DeliveryZonesView.vue'),
         },
+        {
+          path: 'open-hours',
+          name: 'restaurant-open-hours',
+          component: () => import('@src/pages/restaurant/openHours/OpenHoursView.vue')
+        }
       ],
     },
     // {
