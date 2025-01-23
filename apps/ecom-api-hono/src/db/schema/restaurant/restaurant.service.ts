@@ -3,6 +3,7 @@ import {
     restaurantAddressTable,
     restaurantDeliveryZoneMapTable,
     restaurantOpenHoursTable,
+    restaurantScheduledOrdersSettingsTable,
     restaurantTable,
     restaurantUserAdminsMapTable
 } from './restaurant.schema';
@@ -73,6 +74,7 @@ export const updateRestaurantService = async (
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
         openHours?: Partial<typeof restaurantOpenHoursTable.$inferInsert>
+        scheduledOrdersSettings?: Partial<typeof restaurantScheduledOrdersSettingsTable.$inferInsert>
         deliveryZones?: Partial<typeof restaurantDeliveryZoneMapTable.$inferInsert>
     }
 ) => {
@@ -83,6 +85,7 @@ export const updateRestaurantService = async (
             id, ownerUserId, created_at_ts, updated_at_ts,
             address,
             openHours,
+            scheduledOrdersSettings,
             deliveryZones,
             ...restaurantData
         } = data;
@@ -117,6 +120,19 @@ export const updateRestaurantService = async (
                     .onConflictDoUpdate({
                         target: restaurantOpenHoursTable.restaurantId,
                         set: openHoursData
+                    });
+            }
+        }
+
+        if (scheduledOrdersSettings) {
+            const { restaurantId: _, ...scheduledOrdersSettingsData } = scheduledOrdersSettings;
+            if (Object.keys(scheduledOrdersSettingsData).length > 0) {
+                // TODO calculate all minutes from settings
+                updates[updates.length] = tx.insert(restaurantScheduledOrdersSettingsTable)
+                    .values({ ...scheduledOrdersSettingsData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantScheduledOrdersSettingsTable.restaurantId,
+                        set: scheduledOrdersSettingsData
                     });
             }
         }
@@ -159,6 +175,7 @@ export const getRestaurantService = async (
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
         openHours?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
+        scheduledOrdersSettings?: Partial<Record<keyof typeof restaurantScheduledOrdersSettingsTable.$inferSelect, boolean>>
         deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
     }
 ) => {
@@ -176,6 +193,11 @@ export const getRestaurantService = async (
                     columns: columns.openHours
                 }
             }),
+            ...(columns?.scheduledOrdersSettings && {
+                scheduledOrdersSettings: {
+                    columns: columns.scheduledOrdersSettings
+                }
+            }),
             ...(columns?.deliveryZones && {
                 deliveryZones: {
                     columns: columns.deliveryZones
@@ -186,18 +208,26 @@ export const getRestaurantService = async (
 
     // this typing is to make sure typing work with hono rpc.
     // https://hono.dev/docs/guides/rpc
-    // api never returns {} but drizzle adds a {} when there is no data.
+    // api never returns {} but drizzle adds a {} when there is no "with" query ...
     type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
     type restaurantType = NonNullable<typeof restaurant>;
+
     type address = restaurantType['address'] // this has | {}
-    type openHours = restaurantType['openHours'] // this has | {}
-    type deliveryZones = restaurantType['deliveryZones'] // this has | {}
     type nonEmptyAddress = NonEmpty<address> // this has not {}
+
+    type openHours = restaurantType['openHours'] // this has | {}
     type nonEmptyOpenHours = NonEmpty<openHours> // this has not {}
+
+    type scheduledOrdersSettings = restaurantType['scheduledOrdersSettings'] // this has | {}
+    type nonEmptyScheduledOrdersSettings = NonEmpty<scheduledOrdersSettings> // this has not {}
+
+    type deliveryZones = restaurantType['deliveryZones'] // this has | {}
     type nonEmptyDeliveryZones = NonEmpty<deliveryZones> // this has not {}
-    type newRestaurantType = (Omit<restaurantType, 'address' | 'openHours' | 'deliveryZones'> & {
+
+    type newRestaurantType = (Omit<restaurantType, 'address' | 'openHours' | 'deliveryZones' | 'scheduledOrdersSettings'> & {
         address?: nonEmptyAddress
         openHours?: nonEmptyOpenHours
+        scheduledOrdersSettings?: nonEmptyScheduledOrdersSettings
         deliveryZones?: nonEmptyDeliveryZones
     }) | undefined
 
