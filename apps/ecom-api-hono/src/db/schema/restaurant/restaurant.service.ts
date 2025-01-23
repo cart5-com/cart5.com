@@ -9,6 +9,7 @@ import {
 } from './restaurant.schema';
 import db from '../../drizzle';
 import { calculateScheduledOrdersMinutes } from "./updateUtils/calculateScheduledOrdersMinutes";
+import { calculateDeliveryZoneMinsMaxs } from "./updateUtils/calculateDeliveryZoneMinsMaxs";
 
 export const isUserRestaurantAdminService = async function (
     userId: string, restaurantId: string
@@ -156,11 +157,21 @@ export const updateRestaurantService = async (
             const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
             if (Object.keys(deliveryZoneData).length > 0) {
                 // TODO calculate minLat maxLat minLng maxLng values from zones
+                const { minLat, maxLat, minLng, maxLng } = calculateDeliveryZoneMinsMaxs(
+                    deliveryZoneData.zones || []
+                );
+                const deliveryZoneDataWithMinsMaxs = {
+                    ...deliveryZoneData,
+                    minLat,
+                    maxLat,
+                    minLng,
+                    maxLng
+                }
                 updates[updates.length] = tx.insert(restaurantDeliveryZoneMapTable)
-                    .values({ ...deliveryZoneData, restaurantId })
+                    .values({ ...deliveryZoneDataWithMinsMaxs, restaurantId })
                     .onConflictDoUpdate({
                         target: restaurantDeliveryZoneMapTable.restaurantId,
-                        set: deliveryZoneData
+                        set: deliveryZoneDataWithMinsMaxs
                     });
             }
         }
