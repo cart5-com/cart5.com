@@ -18,20 +18,30 @@ import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';
 pageTitle.value = 'Operating Hours';
 
+const defaultDaysData = {
+    "0": { isOpen24: false, hours: [] },
+    "1": { isOpen24: false, hours: [] },
+    "2": { isOpen24: false, hours: [] },
+    "3": { isOpen24: false, hours: [] },
+    "4": { isOpen24: false, hours: [] },
+    "5": { isOpen24: false, hours: [] },
+    "6": { isOpen24: false, hours: [] },
+}
+
 const isLoading = ref(false);
 const defaultHours = ref<WeeklyHours>({
     isActive: true,
-    days: {}
+    days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
 const deliveryHours = ref<WeeklyHours>({
     isActive: false,
-    days: {}
+    days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
 const pickupHours = ref<WeeklyHours>({
     isActive: false,
-    days: {}
+    days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
 let ignoreAutoSave = true;
@@ -46,15 +56,7 @@ watch([defaultHours, deliveryHours, pickupHours], () => {
     }, 3000)
 }, { deep: true, immediate: true })
 
-const defaultDaysData = {
-    "0": { isOpen24: false, hours: [] },
-    "1": { isOpen24: false, hours: [] },
-    "2": { isOpen24: false, hours: [] },
-    "3": { isOpen24: false, hours: [] },
-    "4": { isOpen24: false, hours: [] },
-    "5": { isOpen24: false, hours: [] },
-    "6": { isOpen24: false, hours: [] },
-}
+
 const loadData = async () => {
     isLoading.value = true;
     try {
