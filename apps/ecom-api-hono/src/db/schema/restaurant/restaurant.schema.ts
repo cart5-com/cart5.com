@@ -3,7 +3,7 @@ import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import { type DeliveryZone, type WeeklyHours } from "lib/types/restaurantTypes";
+import { type DeliveryZone, type ScheduledOrdersSettings, type WeeklyHours } from "lib/types/restaurantTypes";
 
 
 /// RESTAURANT TABLE START
@@ -105,15 +105,28 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 /// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE START
 export const restaurantScheduledOrdersSettingsTable = sqliteTable('restaurant_scheduled_orders_settings', {
 	restaurantId: text("restaurant_id").notNull().unique(),
-	isScheduledOrdersEnabled: integer("is_scheduled_orders_enabled", { mode: "boolean" }).notNull().default(false),
-	isOnlyScheduledOrdersAllowed: integer("is_only_scheduled_orders_allowed", { mode: "boolean" }).notNull().default(false),
+	isScheduledOrdersEnabled: integer("is_scheduled_orders_enabled", { mode: "boolean" }).default(false),
+	isOnlyScheduledOrdersAllowed: integer("is_only_scheduled_orders_allowed", { mode: "boolean" }).default(false), // if true, ASAP delivery&pickup are disabled
 
-	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }).notNull().default(60), // 1 hour
-	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }).notNull().default(5760), // 24 hours * 4
+	// on update will be calculated from pickup_settings
+	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }).default(60), // 1 hour
+	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }).default(5760), // 4 days
 
-	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }).notNull().default(60), // 1 hour
-	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }).notNull().default(5760), // 24 hours * 4
+	// on update will be calculated from delivery_settings
+	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }).default(60), // 1 hour
+	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }).default(5760), // 4 days
 
+	pickup_settings: text('pickup_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper
+	delivery_settings: text('delivery_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper 
+});
+export const selectRestaurantScheduledOrdersSettingsSchema = createSelectSchema(restaurantScheduledOrdersSettingsTable);
+export const insertRestaurantScheduledOrdersSettingsSchema = createInsertSchema(restaurantScheduledOrdersSettingsTable, {
+	pickup_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
+	delivery_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
+});
+export const updateRestaurantScheduledOrdersSettingsSchema = createUpdateSchema(restaurantScheduledOrdersSettingsTable, {
+	pickup_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
+	delivery_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
 });
 /// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE END
 
@@ -155,7 +168,7 @@ export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_
 
 
 
-export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
+export const restaurantRelations = relations(restaurantTable, ({ one, many }) => ({
 	address:
 		one(
 			restaurantAddressTable, {
@@ -168,11 +181,21 @@ export const restaurantRelations = relations(restaurantTable, ({ one }) => ({
 			fields: [restaurantTable.id],
 			references: [restaurantOpenHoursTable.restaurantId]
 		}),
+	scheduledOrdersSettings:
+		one(
+			restaurantScheduledOrdersSettingsTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantScheduledOrdersSettingsTable.restaurantId]
+		}),
 	deliveryZones:
 		one(
 			restaurantDeliveryZoneMapTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantDeliveryZoneMapTable.restaurantId]
+		}),
+	admins:
+		many(restaurantUserAdminsMapTable, {
+			relationName: 'admins',
 		}),
 }));
 
