@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Check, Loader2 } from 'lucide-vue-next';
+import { Check, Loader2, MoreVertical } from 'lucide-vue-next';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
@@ -126,6 +131,30 @@ const saveHours = async () => {
 onMounted(() => {
     loadData();
 });
+
+const copyFromDefault = () => {
+    deliveryHours.value = JSON.parse(JSON.stringify(defaultHours.value));
+    deliveryHours.value.isActive = true;
+    toast.success('Copied hours from default schedule');
+};
+
+const copyFromPickup = () => {
+    deliveryHours.value = JSON.parse(JSON.stringify(pickupHours.value));
+    deliveryHours.value.isActive = true;
+    toast.success('Copied hours from pickup schedule');
+};
+
+const copyFromDelivery2Pickup = () => {
+    pickupHours.value = JSON.parse(JSON.stringify(deliveryHours.value));
+    pickupHours.value.isActive = true;
+    toast.success('Copied hours from delivery schedule');
+};
+
+const copyFromDefault2Pickup = () => {
+    pickupHours.value = JSON.parse(JSON.stringify(defaultHours.value));
+    pickupHours.value.isActive = true;
+    toast.success('Copied hours from pickup schedule');
+};
 </script>
 
 <template>
@@ -163,7 +192,22 @@ onMounted(() => {
 
         <Card>
             <CardHeader>
-                <CardTitle>Delivery Hours</CardTitle>
+                <CardTitle>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <MoreVertical class="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem @click="copyFromDefault">
+                                Copy from Default Hours
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="copyFromPickup">
+                                Copy from Pickup Hours
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    Delivery Hours
+                </CardTitle>
                 <CardDescription>
                     {{ deliveryHours.isActive ? '(Custom delivery hours)' : '(Uses same hours as default)' }}
                 </CardDescription>
@@ -187,7 +231,22 @@ onMounted(() => {
 
         <Card>
             <CardHeader>
-                <CardTitle>Pickup Hours</CardTitle>
+                <CardTitle>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <MoreVertical class="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem @click="copyFromDefault2Pickup">
+                                Copy from Default Hours
+                            </DropdownMenuItem>
+                            <DropdownMenuItem @click="copyFromDelivery2Pickup">
+                                Copy from Delivery Hours
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    Pickup Hours
+                </CardTitle>
                 <CardDescription>
                     {{ pickupHours.isActive ? '(Custom pickup hours)' : '(Uses same hours as default)' }}
                 </CardDescription>
