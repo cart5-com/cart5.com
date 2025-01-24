@@ -296,6 +296,9 @@ importers:
       libphonenumber-js:
         specifier: ^1.11.18
         version: 1.11.18
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
   packages/ui-shadcn-vue:
     dependencies:
@@ -338,6 +341,9 @@ importers:
       embla-carousel-vue:
         specifier: ^8.5.1
         version: 8.5.1(vue@3.5.13(typescript@5.7.2))
+      iso-country-currency:
+        specifier: ^0.7.2
+        version: 0.7.2
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -3198,6 +3204,9 @@ packages:
   isexe@3.1.1:
     resolution: {integrity: sha512-LpB/54B+/2J5hqQ7imZHfdU31OlgQqx7ZicVlkm9kzg9/w8GKLEcFfJl/t7DCEDueOyBAD6zCCwTO6Fzs0NoEQ==}
     engines: {node: '>=16'}
+
+  iso-country-currency@0.7.2:
+    resolution: {integrity: sha512-RcFyqdvt1nbPPrUfAs2cuWnjynZYHU671r9MlcH7zn9Zkyif3tR9LJWVJmpFeSMDECDeycDUNiy9Mur+B21Sqw==}
 
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
@@ -7379,6 +7388,8 @@ snapshots:
   isexe@2.0.0: {}
 
   isexe@3.1.1: {}
+
+  iso-country-currency@0.7.2: {}
 
   jackspeak@3.4.3:
     dependencies:

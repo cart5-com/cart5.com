@@ -6,42 +6,36 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { beautifyObjectName } from './utils'
-import { ChevronsUpDown } from 'lucide-vue-next';
 import { ref } from 'vue'
+import FlagComponent from '@/ui-plus/PhoneNumber/FlagComponent.vue';
+import { getBrowserLocale, getCountriesList, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import { ChevronsUpDown } from 'lucide-vue-next';
+import { getAllISOCodes } from 'iso-country-currency'
 
-const open = ref(false);
+
+
+const open = ref(false)
+const locale = getBrowserLocale()?.browserLocale ?? 'en-US'
 defineProps<FieldProps>()
 
-let cachedTimezones: {
-  name: string;
-  formatted: string;
-}[];
+// Get unique currencies with their symbols
+const getCurrencyList = () => {
+  const allCountries = getAllISOCodes()
+  const uniqueCurrencies = new Map()
 
-function getTimezones(): {
-  name: string;
-  formatted: string;
-}[] {
-  if (cachedTimezones) {
-    return cachedTimezones;
-  }
-  cachedTimezones = Intl.supportedValuesOf('timeZone')
-    .map((timezone: string) => ({
-      name: timezone,
-      formatted: formatTimezone(timezone),
-    }));
-  return cachedTimezones;
-}
-function formatTimezone(timezone: string) {
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      timeZoneName: 'shortGeneric',
-      timeZone: timezone,
-    }).formatToParts().find(part => part.type === 'timeZoneName')?.value || timezone;
-  } catch (e) {
-    return timezone;
-  }
-}
+  allCountries.forEach(country => {
+    if (!uniqueCurrencies.has(country.currency)) {
+      uniqueCurrencies.set(country.currency, {
+        currency: country.currency,
+        symbol: country.symbol,
+        // Using first country's ISO as reference
+        iso2: country.iso
+      })
+    }
+  })
 
+  return Array.from(uniqueCurrencies.values())
+}
 </script>
 
 <template>
@@ -53,15 +47,16 @@ function formatTimezone(timezone: string) {
         {{ config?.label || beautifyObjectName(label ?? fieldName) }}
       </AutoFormLabel>
       <FormControl>
-        <!-- <Input type="number" v-bind="{ ...slotProps.componentField, ...config?.inputProps }" :disabled="disabled" /> -->
         <Popover v-model:open="open">
           <PopoverTrigger class="flex w-full">
             <Button type="button"
                     :disabled="config?.inputProps?.disabled"
                     class="flex w-full"
                     variant="outline">
-              <span class="flex-1 text-sm text-left">
-                {{ slotProps.componentField.modelValue || 'Select timezone' }}
+              <FlagComponent :country="slotProps.componentField.modelValue" />
+              <span v-if="slotProps.componentField.modelValue"
+                    class="flex-1 text-sm text-left">
+                {{ slotProps.componentField.modelValue }}
               </span>
               <ChevronsUpDown class="-mr-2 h-4 w-4 opacity-50" />
             </Button>
@@ -69,22 +64,21 @@ function formatTimezone(timezone: string) {
           <PopoverContent class="w-[300px] p-0"
                           v-if="!config?.inputProps?.disabled">
             <Command>
-              <!-- autocomplete="country-name" -->
-              <CommandInput placeholder="Search country..." />
-              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandInput placeholder="Search currency..." />
+              <CommandEmpty>No currency found.</CommandEmpty>
               <CommandList>
                 <CommandGroup>
-                  <CommandItem v-for="option in getTimezones()"
-                               :key="option.name"
-                               :value="option.name + ' ' + option.formatted"
+                  <CommandItem v-for="option in getCurrencyList()"
+                               :key="option.currency"
+                               :value="option.currency"
                                class="gap-2"
                                @select="() => {
-                                slotProps.setValue(option.name);
+                                slotProps.setValue(option.currency);
                                 open = false;
-                              }
-                                ">
-                    <span class="flex-1 text-sm">{{ option.name }}</span>
-                    <span class="text-foreground/50 text-sm">{{ option.formatted }}</span>
+                              }">
+                    <FlagComponent :country="option.iso2" />
+                    <span class="flex-1 text-sm">{{ option.currency }}</span>
+                    <span class="text-foreground/50 text-sm">{{ option.symbol }}</span>
                   </CommandItem>
                 </CommandGroup>
               </CommandList>
