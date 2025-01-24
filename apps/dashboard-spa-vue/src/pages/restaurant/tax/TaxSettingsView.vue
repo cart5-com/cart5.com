@@ -19,6 +19,7 @@ import type { TaxDetails } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
+import CurrencyWidget from './CurrencyWidget.vue';
 
 pageTitle.value = 'Tax Settings';
 
@@ -41,7 +42,6 @@ const defaultTaxSettings = {
 }
 const taxSettings = ref<TaxDetails>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
-const currencies = ref(['USD', 'CAD', 'EUR', 'GBP', 'AUD']);
 const selectedCurrency = ref('GBP');
 
 const loadData = async () => {
@@ -147,7 +147,8 @@ onMounted(() => {
                 </Alert>
                 <div class="space-y-2">
                     <Label>Currency</Label>
-                    <Select v-model="selectedCurrency">
+                    <CurrencyWidget v-model="selectedCurrency" />
+                    <!-- <Select v-model="selectedCurrency">
                         <SelectTrigger>
                             <SelectValue :placeholder="selectedCurrency" />
                         </SelectTrigger>
@@ -158,7 +159,7 @@ onMounted(() => {
                                 {{ currency }}
                             </SelectItem>
                         </SelectContent>
-                    </Select>
+                    </Select> -->
                 </div>
 
                 <!-- Tax Type Selection -->
@@ -184,7 +185,7 @@ onMounted(() => {
                 </div> -->
 
                 <div class="space-y-2">
-                    <Label>Tax Name (e.g., VAT, GST, HST, KDV)</Label>
+                    <Label>Tax Name</Label>
                     <Input v-model="taxSettings.taxName"
                            placeholder="e.g., VAT, GST, HST" />
                 </div>

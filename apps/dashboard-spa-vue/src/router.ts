@@ -72,7 +72,7 @@ const router = createRouter({
         {
           path: 'tax-settings',
           name: 'restaurant-tax-settings',
-          component: () => import('@src/pages/restaurant/TaxSettingsView.vue')
+          component: () => import('@src/pages/restaurant/tax/TaxSettingsView.vue')
         }
       ],
     },
