@@ -242,6 +242,17 @@ onMounted(() => {
                           :zone="zone"
                           @openDialog="openDialog"
                           @confirmDelete="confirmDelete" />
+                <div v-if="deliveryZones.length === 0"
+                     class="text-center text-muted-foreground">
+                    No delivery zones found.
+                    <br>
+                    you need to add at least one zone to start accepting delivery orders
+                    <br>
+                    <Button @click="openDialog()"
+                            variant="outline">
+                        <Plus class="w-4 h-4" />Add new zone
+                    </Button>
+                </div>
             </div>
 
             <div v-if="deliveryZones.length > 1"
