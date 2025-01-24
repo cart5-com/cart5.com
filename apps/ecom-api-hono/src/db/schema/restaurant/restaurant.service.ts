@@ -3,6 +3,7 @@ import {
     restaurantAddressTable,
     restaurantDeliveryZoneMapTable,
     restaurantOpenHoursTable,
+    restaurantTaxSettingsTable,
     restaurantScheduledOrdersSettingsTable,
     restaurantTable,
     restaurantUserAdminsMapTable
@@ -76,6 +77,7 @@ export const updateRestaurantService = async (
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
         openHours?: Partial<typeof restaurantOpenHoursTable.$inferInsert>
+        taxSettings?: Partial<typeof restaurantTaxSettingsTable.$inferInsert>
         scheduledOrdersSettings?: Partial<typeof restaurantScheduledOrdersSettingsTable.$inferInsert>
         deliveryZones?: Partial<typeof restaurantDeliveryZoneMapTable.$inferInsert>
     }
@@ -89,6 +91,7 @@ export const updateRestaurantService = async (
             address,
             openHours,
             scheduledOrdersSettings,
+            taxSettings,
             deliveryZones,
             // allowed fields for admins
             ...restaurantData
@@ -128,6 +131,18 @@ export const updateRestaurantService = async (
             }
         }
 
+        if (taxSettings) {
+            const { restaurantId: _, ...taxSettingsData } = taxSettings;
+            if (Object.keys(taxSettingsData).length > 0) {
+                updates[updates.length] = tx.insert(restaurantTaxSettingsTable)
+                    .values({ ...taxSettingsData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantTaxSettingsTable.restaurantId,
+                        set: taxSettingsData
+                    });
+            }
+        }
+
         if (scheduledOrdersSettings) {
             const { restaurantId: _, ...scheduledOrdersSettingsData } = scheduledOrdersSettings;
             if (Object.keys(scheduledOrdersSettingsData).length > 0) {
@@ -156,7 +171,6 @@ export const updateRestaurantService = async (
         if (deliveryZones) {
             const { restaurantId: _, ...deliveryZoneData } = deliveryZones;
             if (Object.keys(deliveryZoneData).length > 0) {
-                // TODO calculate minLat maxLat minLng maxLng values from zones
                 const { minLat, maxLat, minLng, maxLng } = calculateDeliveryZoneMinsMaxs(
                     deliveryZoneData.zones || []
                 );
@@ -201,6 +215,7 @@ export const getRestaurantService = async (
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
         openHours?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
+        taxSettings?: Partial<Record<keyof typeof restaurantTaxSettingsTable.$inferSelect, boolean>>
         scheduledOrdersSettings?: Partial<Record<keyof typeof restaurantScheduledOrdersSettingsTable.$inferSelect, boolean>>
         deliveryZones?: Partial<Record<keyof typeof restaurantDeliveryZoneMapTable.$inferSelect, boolean>>
     }
@@ -217,6 +232,11 @@ export const getRestaurantService = async (
             ...(columns?.openHours && {
                 openHours: {
                     columns: columns.openHours
+                }
+            }),
+            ...(columns?.taxSettings && {
+                taxSettings: {
+                    columns: columns.taxSettings
                 }
             }),
             ...(columns?.scheduledOrdersSettings && {
@@ -239,23 +259,33 @@ export const getRestaurantService = async (
     type restaurantType = NonNullable<typeof restaurant>;
 
     type address = restaurantType['address'] // this has | {}
-    type nonEmptyAddress = NonEmpty<address> // this has not {}
+    type nonEmptyAddress = NonEmpty<address> // this has not 
 
-    type openHours = restaurantType['openHours'] // this has | {}
-    type nonEmptyOpenHours = NonEmpty<openHours> // this has not {}
+    type openHours = restaurantType['openHours']
+    type nonEmptyOpenHours = NonEmpty<openHours>
 
-    type scheduledOrdersSettings = restaurantType['scheduledOrdersSettings'] // this has | {}
-    type nonEmptyScheduledOrdersSettings = NonEmpty<scheduledOrdersSettings> // this has not {}
+    type taxSettings = restaurantType['taxSettings']
+    type nonEmptyTaxSettings = NonEmpty<taxSettings>
 
-    type deliveryZones = restaurantType['deliveryZones'] // this has | {}
-    type nonEmptyDeliveryZones = NonEmpty<deliveryZones> // this has not {}
+    type scheduledOrdersSettings = restaurantType['scheduledOrdersSettings']
+    type nonEmptyScheduledOrdersSettings = NonEmpty<scheduledOrdersSettings>
 
-    type newRestaurantType = (Omit<restaurantType, 'address' | 'openHours' | 'deliveryZones' | 'scheduledOrdersSettings'> & {
-        address?: nonEmptyAddress
-        openHours?: nonEmptyOpenHours
-        scheduledOrdersSettings?: nonEmptyScheduledOrdersSettings
-        deliveryZones?: nonEmptyDeliveryZones
-    }) | undefined
+    type deliveryZones = restaurantType['deliveryZones']
+    type nonEmptyDeliveryZones = NonEmpty<deliveryZones>
+
+    type newRestaurantType = (
+        Omit<
+            restaurantType,
+            'address' | 'openHours' | 'deliveryZones' |
+            'scheduledOrdersSettings' | 'taxSettings'
+        > & {
+            address?: nonEmptyAddress
+            openHours?: nonEmptyOpenHours
+            scheduledOrdersSettings?: nonEmptyScheduledOrdersSettings
+            deliveryZones?: nonEmptyDeliveryZones
+            taxSettings?: nonEmptyTaxSettings
+        }
+    ) | undefined
 
     return restaurant as newRestaurantType;
 }

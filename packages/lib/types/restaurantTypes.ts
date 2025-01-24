@@ -53,6 +53,24 @@ export type WeeklyHours = {
 /// OPEN HOURS END
 
 
+/// TAX SETTINGS START
+export type TaxDetails = {
+    salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';
+    taxName: string; // VAT, HST, GST, etc
+    taxCategories: {
+        id: string;
+        name: string;
+        deliveryRate: number;
+        pickupRate: number;
+        inBusinessRate: number;
+    }[];
+    taxRateForDelivery: number; // 13, 5, etc,
+}
+/// TAX SETTINGS END
+
+
+
+
 /// SCHEDULED ORDERS SETTINGS START
 export type timeForm = {
     timeValue: number;

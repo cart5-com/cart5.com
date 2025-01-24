@@ -5,7 +5,8 @@ import {
     selectRestaurantDeliveryZoneMapSchema,
     selectRestaurantSchema,
     selectRestaurantOpenHoursSchema,
-    selectRestaurantScheduledOrdersSettingsSchema
+    selectRestaurantScheduledOrdersSettingsSchema,
+    selectRestaurantTaxSettingsSchema
 } from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
@@ -26,6 +27,11 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
         openHours: z.object(
             Object.fromEntries(
                 Object.keys(selectRestaurantOpenHoursSchema.shape).map(key => [key, z.boolean().optional()])
+            )
+        ).optional(),
+        taxSettings: z.object(
+            Object.fromEntries(
+                Object.keys(selectRestaurantTaxSettingsSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional(),
         scheduledOrdersSettings: z.object(

@@ -68,6 +68,11 @@ const router = createRouter({
           path: 'scheduled-orders',
           name: 'restaurant-scheduled-orders',
           component: () => import('@src/pages/restaurant/ScheduledOrdersView.vue')
+        },
+        {
+          path: 'tax-settings',
+          name: 'restaurant-tax-settings',
+          component: () => import('@src/pages/restaurant/TaxSettingsView.vue')
         }
       ],
     },

@@ -3,7 +3,10 @@ import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import { type DeliveryZone, type ScheduledOrdersSettings, type WeeklyHours } from "lib/types/restaurantTypes";
+import {
+	type DeliveryZone, type ScheduledOrdersSettings,
+	type TaxDetails, type WeeklyHours
+} from "lib/types/restaurantTypes";
 
 
 /// RESTAURANT TABLE START
@@ -21,7 +24,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
-
 
 	created_at_ts: integer("created_at_ts")
 		.notNull()
@@ -102,6 +104,30 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 
 
 
+
+
+
+/// TAX SETTINGS TABLE START
+export const restaurantTaxSettingsTable = sqliteTable('restaurant_tax_settings', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	currency: text('currency').default('USD'),
+	taxSettings: text('tax_settings', { mode: 'json' }).$type<TaxDetails>(),
+});
+export const selectRestaurantTaxSettingsSchema = createSelectSchema(restaurantTaxSettingsTable);
+export const insertRestaurantTaxSettingsSchema = createInsertSchema(restaurantTaxSettingsTable, {
+	taxSettings: z.custom<TaxDetails>((_val) => true),
+});
+export const updateRestaurantTaxSettingsSchema = createUpdateSchema(restaurantTaxSettingsTable, {
+	taxSettings: z.custom<TaxDetails>((_val) => true),
+});
+/// TAX SETTINGS TABLE END
+
+
+
+
+
+
+
 /// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE START
 export const restaurantScheduledOrdersSettingsTable = sqliteTable('restaurant_scheduled_orders_settings', {
 	restaurantId: text("restaurant_id").notNull().unique(),
@@ -134,6 +160,9 @@ export const updateRestaurantScheduledOrdersSettingsSchema = createUpdateSchema(
 
 
 
+
+
+
 /// DELIVERY ZONES START
 export const restaurantDeliveryZoneMapTable = sqliteTable("restaurant_delivery_zone_map", {
 	restaurantId: text("restaurant_id").notNull().unique(),
@@ -151,6 +180,8 @@ export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaura
 	zones: z.array(z.custom<DeliveryZone>((_val) => true)).default([]),
 });
 /// DELIVERY ZONES END
+
+
 
 
 
@@ -180,6 +211,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			restaurantOpenHoursTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantOpenHoursTable.restaurantId]
+		}),
+	taxSettings:
+		one(
+			restaurantTaxSettingsTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantTaxSettingsTable.restaurantId]
 		}),
 	scheduledOrdersSettings:
 		one(
