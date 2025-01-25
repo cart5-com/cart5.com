@@ -76,7 +76,7 @@ onMounted(() => {
                                 <CommandGroup>
                                     <CommandItem v-for="option in getCountriesList(locale)"
                                                  :key="option.iso2"
-                                                 :value="option.name + ' ' + option.dialCode"
+                                                 :value="option.name + ' ' + salesTaxRates[option?.iso2]?.currency + ' (' + salesTaxRates[option?.iso2]?.type.toUpperCase() + ')'"
                                                  class="gap-2"
                                                  @select="() => {
                                                     country = option.iso2;
@@ -85,7 +85,9 @@ onMounted(() => {
                                                     ">
                                         <FlagComponent :country="option?.iso2" />
                                         <span class="flex-1 text-sm">{{ option.name }}</span>
-                                        <span class="text-foreground/50 text-sm">{{ option.dialCode }}</span>
+                                        <span
+                                              class="text-foreground/50 text-sm">{{ salesTaxRates[option?.iso2]?.currency }}
+                                            ({{ salesTaxRates[option?.iso2]?.type.toUpperCase() }})</span>
                                     </CommandItem>
                                 </CommandGroup>
                             </CommandList>
