@@ -17,9 +17,8 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import type { TaxDetails } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-vue-next'
 import CurrencyWidget from './CurrencyWidget.vue';
+import SalesTaxInfoWidget from '@src/pages/restaurant/tax/SalesTaxInfoWidget.vue';
 
 pageTitle.value = 'Tax Settings';
 
@@ -135,16 +134,7 @@ onMounted(() => {
             <CardContent class="space-y-6">
                 <!-- Currency Selection -->
                 <!--  -->
-                <Alert variant="destructive">
-                    <AlertCircle class="w-4 h-4" />
-                    <AlertTitle>Important</AlertTitle>
-                    <AlertDescription>
-                        Please note that it is your responsibility to confirm that any and all currency and taxes are
-                        accurate for the applicable jurisdiction. We assume no liability related to the accuracy of the
-                        currency and/or taxes or to the appropriate collection and/or payment of such taxes as part of
-                        its products and services.
-                    </AlertDescription>
-                </Alert>
+                <SalesTaxInfoWidget />
                 <div class="space-y-2">
                     <Label>Currency</Label>
                     <CurrencyWidget v-model="selectedCurrency" />
