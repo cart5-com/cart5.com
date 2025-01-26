@@ -74,20 +74,19 @@ onMounted(() => {
                             <CommandEmpty>No country found.</CommandEmpty>
                             <CommandList>
                                 <CommandGroup>
-                                    <CommandItem v-for="option in getCountriesList(locale)"
-                                                 :key="option.iso2"
-                                                 :value="option.name + ' ' + salesTaxRates[option?.iso2]?.currency + ' (' + salesTaxRates[option?.iso2]?.type.toUpperCase() + ')'"
+                                    <CommandItem v-for="(value, key) in salesTaxRates"
+                                                 :key="key"
+                                                 :value="getCountryName(locale, key) + ' ' + value.currency + ' (' + value.type.toUpperCase() + ')'"
                                                  class="gap-2"
                                                  @select="() => {
-                                                    country = option.iso2;
+                                                    country = key;
                                                     open = false;
                                                 }
                                                     ">
-                                        <FlagComponent :country="option?.iso2" />
-                                        <span class="flex-1 text-sm">{{ option.name }}</span>
-                                        <span
-                                              class="text-foreground/50 text-sm">{{ salesTaxRates[option?.iso2]?.currency }}
-                                            ({{ salesTaxRates[option?.iso2]?.type.toUpperCase() }})</span>
+                                        <FlagComponent :country="key" />
+                                        <span class="flex-1 text-sm">{{ getCountryName(locale, key) }}</span>
+                                        <span class="text-foreground/50 text-sm">{{ value.currency }}
+                                            ({{ value.type.toUpperCase() }})</span>
                                     </CommandItem>
                                 </CommandGroup>
                             </CommandList>
