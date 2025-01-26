@@ -31,7 +31,7 @@ const getDefaultTaxCategory = () => {
         name: 'Food',
         deliveryRate: undefined,
         pickupRate: undefined,
-        inBusinessRate: undefined
+        onPremiseRate: undefined
     }
 }
 const defaultTaxSettings = {
@@ -42,8 +42,17 @@ const defaultTaxSettings = {
 }
 const taxSettings = ref<TaxDetails>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
-const selectedCurrency = ref('GBP');
-const countryCodeHelper = ref('GB');
+const selectedCurrency = ref('');
+const countryCodeHelper = ref('');
+
+onMounted(() => {
+    fetchCountryCode().then(countryCode => {
+        salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
+        countryCodeHelper.value = countryCode ?? 'GB';
+        selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
+        loadData();
+    });
+});
 
 const loadData = async () => {
     isLoading.value = true;
@@ -113,7 +122,7 @@ const addTaxCategory = () => {
         name: 'Cat ' + (taxSettings.value.taxCategories.length + 1),
         deliveryRate: 0,
         pickupRate: 0,
-        inBusinessRate: 0
+        onPremiseRate: 0
     });
 };
 
@@ -123,14 +132,6 @@ const removeTaxCategory = (index: number) => {
 
 const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
 
-onMounted(() => {
-    fetchCountryCode().then(countryCode => {
-        salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
-        countryCodeHelper.value = countryCode ?? 'GB';
-        selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
-        loadData();
-    });
-});
 </script>
 
 <template>
@@ -229,8 +230,8 @@ onMounted(() => {
                                        step="1" />
                             </div>
                             <div class="space-y-2">
-                                <Label>In-Store Rate (%)</Label>
-                                <Input v-model="category.inBusinessRate"
+                                <Label>On Premise Rate (%)</Label>
+                                <Input v-model="category.onPremiseRate"
                                        type="number"
                                        step="1" />
                             </div>

@@ -53,6 +53,17 @@ export type WeeklyHours = {
 /// OPEN HOURS END
 
 
+/// PAYMENT METHODS START
+export type PaymentMethodSettings = {
+    cash: {
+        pickup: boolean;
+        delivery: boolean;
+        onPremise: boolean;
+    }
+}
+/// PAYMENT METHODS END
+
+
 /// TABLE RESERVATION SETTINGS START
 export type TableReservationSettings = {
     minGuests: number;
@@ -74,7 +85,7 @@ export type TaxDetails = {
         name: string;
         deliveryRate: number;
         pickupRate: number;
-        inBusinessRate: number;
+        onPremiseRate: number;
     }[];
     taxRateForDelivery: number; // 13, 5, etc,
 }
