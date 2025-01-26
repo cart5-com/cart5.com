@@ -2,9 +2,9 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import FlagComponent from '@/ui-plus/PhoneNumber/FlagComponent.vue';
-import { fetchCountryCode, getBrowserLocale, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import { getBrowserLocale, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { ChevronsUpDown, HelpCircle } from 'lucide-vue-next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
@@ -25,15 +25,21 @@ import {
 } from '@/components/ui/collapsible'
 
 const open = ref(false);
+
 const locale = getBrowserLocale()?.browserLocale ?? 'en-US'
+
+defineProps<{
+    countryCodeHelper: string;
+}>();
+
 const country = ref('');
+const setCountry = (newVal: string) => {
+    country.value = newVal;
+}
 
-onMounted(() => {
-    fetchCountryCode().then(countryCode => {
-        country.value = countryCode ?? '';
-    });
+defineExpose({
+    setCountry
 })
-
 </script>
 <template>
     <div>

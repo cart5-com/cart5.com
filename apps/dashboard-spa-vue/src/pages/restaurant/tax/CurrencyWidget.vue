@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ref } from 'vue'
 import { ChevronsUpDown } from 'lucide-vue-next';
 import { getBrowserLocale } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import { stripeSupportedCurrencies } from 'lib/utils/stripe/StripeSupportedCurrencies';
 const open = ref(false);
 
 defineProps<{
@@ -25,7 +26,8 @@ function formatCurrency(amount: number, currency: string) {
 
 function getSupportedCurrencies() {
     let currencies: { currency: string, name: string }[] = [];
-    const supportedCurrencies = Intl.supportedValuesOf('currency');
+    // const supportedCurrencies = Intl.supportedValuesOf('currency');
+    const supportedCurrencies = Object.keys(stripeSupportedCurrencies);
     supportedCurrencies.forEach((cur) => {
         let obj = {
             currency: cur,

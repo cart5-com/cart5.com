@@ -19,7 +19,8 @@ import type { TaxDetails } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 import CurrencyWidget from './CurrencyWidget.vue';
 import SalesTaxInfoWidget from '@src/pages/restaurant/tax/SalesTaxInfoWidget.vue';
-
+import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import { currencies } from 'lib/utils/currencies';
 pageTitle.value = 'Tax Settings';
 
 // TODO: we may pre-populate the tax categories with some default ones from the address.
@@ -41,7 +42,8 @@ const defaultTaxSettings = {
 }
 const taxSettings = ref<TaxDetails>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
-const selectedCurrency = ref('GBP');
+const selectedCurrency = ref('');
+const countryCodeHelper = ref('GB');
 
 const loadData = async () => {
     isLoading.value = true;
@@ -119,8 +121,15 @@ const removeTaxCategory = (index: number) => {
     taxSettings.value.taxCategories.splice(index, 1);
 };
 
+const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
+
 onMounted(() => {
-    loadData();
+    fetchCountryCode().then(countryCode => {
+        salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
+        countryCodeHelper.value = countryCode ?? 'GB';
+        selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
+        loadData();
+    });
 });
 </script>
 
@@ -134,7 +143,8 @@ onMounted(() => {
             <CardContent class="space-y-6">
                 <!-- Currency Selection -->
                 <!--  -->
-                <SalesTaxInfoWidget />
+                <SalesTaxInfoWidget ref="salesTaxInfoWidget"
+                                    :countryCodeHelper="countryCodeHelper" />
                 <div class="space-y-2">
                     <Label>Currency</Label>
                     <CurrencyWidget v-model="selectedCurrency" />
@@ -197,8 +207,7 @@ onMounted(() => {
                          class="border p-4 rounded-lg space-y-4">
                         <div class="flex justify-between items-center">
                             <Input v-model="category.name"
-                                   placeholder="Category Name"
-                                   class="max-w-[200px]" />
+                                   placeholder="Category Name" />
                             <Button variant="ghost"
                                     size="sm"
                                     @click="removeTaxCategory(index)">
