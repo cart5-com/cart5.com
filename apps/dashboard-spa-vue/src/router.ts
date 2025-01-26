@@ -22,7 +22,7 @@ const router = createRouter({
     {
       path: '/my-restaurants',
       name: 'my-restaurants',
-      component: () => import('@src/pages/MyRestaurantsView.vue'),
+      component: () => import('@src/pages/my-restaurants/MyRestaurantsView.vue'),
     },
     {
       path: '/restaurant/:restaurantId',
@@ -37,12 +37,12 @@ const router = createRouter({
         {
           path: 'name-phone',
           name: 'restaurant-name',
-          component: () => import('@src/pages/restaurant/NamePhoneView.vue'),
+          component: () => import('@src/pages/restaurant/name/NamePhoneView.vue'),
         },
         {
           path: 'address',
           name: 'restaurant-address',
-          component: () => import('@src/pages/restaurant/AddressView.vue'),
+          component: () => import('@src/pages/restaurant/address/AddressView.vue'),
         },
         {
           path: 'cuisine',

@@ -20,7 +20,7 @@ import AutoFormFieldTimezone from '@/ui-plus/auto-form/AutoFormFieldTimezone.vue
 import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-import { geocode, getOpenStreetMapItems } from './utils'
+import { geocode, getOpenStreetMapItems } from '../utils'
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
