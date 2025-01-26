@@ -42,7 +42,7 @@ const defaultTaxSettings = {
 }
 const taxSettings = ref<TaxDetails>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
-const selectedCurrency = ref('');
+const selectedCurrency = ref('GBP');
 const countryCodeHelper = ref('GB');
 
 const loadData = async () => {

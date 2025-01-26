@@ -15,6 +15,9 @@ defineProps<{
 
 const locale = getBrowserLocale()?.browserLocale ?? 'en-US'
 function formatCurrency(amount: number, currency: string) {
+    if (!currency || currency === '') {
+        return '';
+    }
     const rx = /(?<= ).+/;
     const result = Intl.NumberFormat(locale, {
         style: 'currency',
@@ -46,8 +49,12 @@ function getSupportedCurrencies() {
             <Button type="button"
                     class="flex w-full"
                     variant="outline">
-                <span class="flex-1 text-sm text-left">
-                    {{ modelValue }}
+                <span class="flex-1 flex items-stretch text-sm text-left gap-2"
+                      v-if="modelValue">
+                    <span class="flex-1 text-sm">{{ modelValue }}</span>
+                    <span class="text-foreground/50 text-sm">
+                        {{ formatCurrency(0, modelValue) }}
+                    </span>
                 </span>
                 <ChevronsUpDown class="-mr-2 h-4 w-4 opacity-50" />
             </Button>
