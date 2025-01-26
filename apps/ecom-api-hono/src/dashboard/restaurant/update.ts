@@ -3,6 +3,7 @@ import {
     updateRestaurantAddressSchema,
     updateRestaurantDeliveryZoneMapSchema,
     updateRestaurantOpenHoursSchema,
+    updateRestaurantTableReservationSettingsSchema,
     updateRestaurantScheduledOrdersSettingsSchema,
     updateRestaurantSchema,
     updateRestaurantTaxSettingsSchema
@@ -25,6 +26,9 @@ export const updateRestaurantSchemaValidator = zValidator('json',
             restaurantId: true,
         }).optional(),
         openHours: updateRestaurantOpenHoursSchema.omit({
+            restaurantId: true,
+        }).optional(),
+        tableReservationSettings: updateRestaurantTableReservationSettingsSchema.omit({
             restaurantId: true,
         }).optional(),
         taxSettings: updateRestaurantTaxSettingsSchema.omit({

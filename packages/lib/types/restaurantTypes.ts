@@ -53,6 +53,18 @@ export type WeeklyHours = {
 /// OPEN HOURS END
 
 
+/// TABLE RESERVATION SETTINGS START
+export type TableReservationSettings = {
+    minGuests: number;
+    maxGuests: number;
+    minTimeInAdvanceMinutes: number;
+    maxTimeInAdvanceDays: number;
+    lateHoldTimeMinutes: number;
+    allowPreOrder: boolean;
+}
+/// TABLE RESERVATION SETTINGS END
+
+
 /// TAX SETTINGS START
 export type TaxDetails = {
     salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';

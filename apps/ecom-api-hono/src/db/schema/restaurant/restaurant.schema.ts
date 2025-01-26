@@ -5,6 +5,7 @@ import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import {
 	type DeliveryZone, type ScheduledOrdersSettings,
+	type TableReservationSettings,
 	type TaxDetails, type WeeklyHours
 } from "lib/types/restaurantTypes";
 
@@ -24,6 +25,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
+	offersTableReservation: integer("offers_table_reservation", { mode: "boolean" }).notNull().default(false),
 
 	created_at_ts: integer("created_at_ts")
 		.notNull()
@@ -101,6 +103,22 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 });
 /// RESTAURANT HOURS TABLE END
 
+
+
+
+/// RESTAURANT TABLE RESERVATION SETTINGS START
+export const restaurantTableReservationSettingsTable = sqliteTable('restaurant_table_reservation_settings', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	tableReservationSettings: text('table_reservation_settings', { mode: 'json' }).$type<TableReservationSettings>(),
+});
+export const selectRestaurantTableReservationSettingsSchema = createSelectSchema(restaurantTableReservationSettingsTable);
+export const insertRestaurantTableReservationSettingsSchema = createInsertSchema(restaurantTableReservationSettingsTable, {
+	tableReservationSettings: z.custom<TableReservationSettings>((_val) => true),
+});
+export const updateRestaurantTableReservationSettingsSchema = createUpdateSchema(restaurantTableReservationSettingsTable, {
+	tableReservationSettings: z.custom<TableReservationSettings>((_val) => true),
+});
+/// RESTAURANT TABLE RESERVATION SETTINGS END
 
 
 
@@ -211,6 +229,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			restaurantOpenHoursTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantOpenHoursTable.restaurantId]
+		}),
+	tableReservationSettings:
+		one(
+			restaurantTableReservationSettingsTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantTableReservationSettingsTable.restaurantId]
 		}),
 	taxSettings:
 		one(

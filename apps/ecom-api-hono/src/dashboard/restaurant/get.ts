@@ -5,6 +5,7 @@ import {
     selectRestaurantDeliveryZoneMapSchema,
     selectRestaurantSchema,
     selectRestaurantOpenHoursSchema,
+    selectRestaurantTableReservationSettingsSchema,
     selectRestaurantScheduledOrdersSettingsSchema,
     selectRestaurantTaxSettingsSchema
 } from '../../db/schema/restaurant/restaurant.schema';
@@ -27,6 +28,11 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
         openHours: z.object(
             Object.fromEntries(
                 Object.keys(selectRestaurantOpenHoursSchema.shape).map(key => [key, z.boolean().optional()])
+            )
+        ).optional(),
+        tableReservationSettings: z.object(
+            Object.fromEntries(
+                Object.keys(selectRestaurantTableReservationSettingsSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional(),
         taxSettings: z.object(
