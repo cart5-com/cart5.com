@@ -102,7 +102,6 @@ const loadData = async () => {
 
 const saveHours = async () => {
     isLoading.value = true;
-    debugger;
     try {
         const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
