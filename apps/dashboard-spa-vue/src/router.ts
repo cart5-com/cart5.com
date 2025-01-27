@@ -55,6 +55,16 @@ const router = createRouter({
           component: () => import('@src/pages/restaurant/PickupView.vue'),
         },
         {
+          path: 'on-premise',
+          name: 'restaurant-on-premise',
+          component: () => import('@src/pages/restaurant/OnPremiseView.vue'),
+        },
+        {
+          path: 'table-reservation-settings',
+          name: 'restaurant-table-reservation-settings',
+          component: () => import('@src/pages/restaurant/TableReservationSettingsView.vue')
+        },
+        {
           path: 'delivery-options',
           name: 'restaurant-delivery-options',
           component: () => import('@src/pages/restaurant/deliveryZones/DeliveryZonesView.vue'),
@@ -74,11 +84,6 @@ const router = createRouter({
           name: 'restaurant-tax-settings',
           component: () => import('@src/pages/restaurant/tax/TaxSettingsView.vue')
         },
-        {
-          path: 'table-reservation-settings',
-          name: 'restaurant-table-reservation-settings',
-          component: () => import('@src/pages/restaurant/TableReservationSettingsView.vue')
-        }
       ],
     },
     // {

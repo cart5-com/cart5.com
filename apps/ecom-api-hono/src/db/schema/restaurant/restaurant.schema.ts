@@ -25,6 +25,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
+	offersOnPremise: integer("offers_on_premise", { mode: "boolean" }).notNull().default(false),
 	offersTableReservation: integer("offers_table_reservation", { mode: "boolean" }).notNull().default(false),
 
 	created_at_ts: integer("created_at_ts")
@@ -89,17 +90,23 @@ export const restaurantOpenHoursTable = sqliteTable('restaurant_open_hours', {
 	defaultOpenHours: text('open_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	deliveryHours: text('delivery_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	pickupHours: text('pickup_hours', { mode: 'json' }).$type<WeeklyHours>(),
+	onPremiseHours: text('on_premise_hours', { mode: 'json' }).$type<WeeklyHours>(),
+	tableReservationHours: text('table_reservation_hours', { mode: 'json' }).$type<WeeklyHours>(),
 });
 export const selectRestaurantOpenHoursSchema = createSelectSchema(restaurantOpenHoursTable);
 export const insertRestaurantOpenHoursSchema = createInsertSchema(restaurantOpenHoursTable, {
 	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
 	deliveryHours: z.custom<WeeklyHours>((_val) => true),
 	pickupHours: z.custom<WeeklyHours>((_val) => true),
+	onPremiseHours: z.custom<WeeklyHours>((_val) => true),
+	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpenHoursTable, {
 	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
 	deliveryHours: z.custom<WeeklyHours>((_val) => true),
 	pickupHours: z.custom<WeeklyHours>((_val) => true),
+	onPremiseHours: z.custom<WeeklyHours>((_val) => true),
+	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 /// RESTAURANT HOURS TABLE END
 
