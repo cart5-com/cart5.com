@@ -54,12 +54,53 @@ export type WeeklyHours = {
 
 
 /// PAYMENT METHODS START
+export type CustomPaymentMethodProps = {
+    isActive: boolean;
+    description?: string;
+    defaultTipRate?: number;
+}
+export type customPaymentMethod = {
+    name: string;
+    description?: string;
+    delivery: CustomPaymentMethodProps;
+    onPremise: CustomPaymentMethodProps;
+    pickup: CustomPaymentMethodProps;
+    reservationPreorder: CustomPaymentMethodProps;
+}
+export type orderTypesForPayment = {
+    delivery: boolean;
+    onPremise: boolean;
+    pickup: boolean;
+    reservationPreorder: boolean;
+}
 export type PaymentMethodSettings = {
+    cash?: orderTypesForPayment;
+
+    // offline card payment like: pickup counter, delivery person, in restaurant...
+    card?: orderTypesForPayment;
+
+    // Call me back and I'll tell you my card details
+    callMeBack?: orderTypesForPayment;
+
+    customPaymentMethods?: customPaymentMethod[];
+}
+const sampleData: PaymentMethodSettings = {
     cash: {
-        pickup: boolean;
-        delivery: boolean;
-        onPremise: boolean;
-    }
+        delivery: true,
+        onPremise: true,
+        pickup: true,
+        reservationPreorder: true,
+    },
+    customPaymentMethods: [
+        {
+            name: 'Custom Payment Method',
+            description: 'Custom Payment Method Description',
+            delivery: { isActive: true, defaultTipRate: 10 },
+            onPremise: { isActive: true, defaultTipRate: 10 },
+            pickup: { isActive: true, defaultTipRate: 10 },
+            reservationPreorder: { isActive: true, defaultTipRate: 10 },
+        }
+    ]
 }
 /// PAYMENT METHODS END
 
