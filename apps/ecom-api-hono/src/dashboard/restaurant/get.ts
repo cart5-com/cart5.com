@@ -7,7 +7,8 @@ import {
     selectRestaurantOpenHoursSchema,
     selectRestaurantTableReservationSettingsSchema,
     selectRestaurantScheduledOrdersSettingsSchema,
-    selectRestaurantTaxSettingsSchema
+    selectRestaurantTaxSettingsSchema,
+    selectRestaurantPaymentMethodsSchema
 } from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
@@ -28,6 +29,11 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
         openHours: z.object(
             Object.fromEntries(
                 Object.keys(selectRestaurantOpenHoursSchema.shape).map(key => [key, z.boolean().optional()])
+            )
+        ).optional(),
+        paymentMethods: z.object(
+            Object.fromEntries(
+                Object.keys(selectRestaurantPaymentMethodsSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional(),
         tableReservationSettings: z.object(

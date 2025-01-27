@@ -56,12 +56,21 @@ export type WeeklyHours = {
 /// PAYMENT METHODS START
 
 // Payments that happen in-person with physical presence
-export type PhysicalPaymentMethods = { // cash, pickup counter, delivery person, in restaurant
+// cash or (Card+Terminal/Card Reader)
+// (at pickup counter) /(at delivery address with delivery person's device or cash)/(at restaurant)
+export type CustomPaymentMethod = {
+    id: string;
     name: string;
+    description?: string;
     isActive: boolean;
-    informationToShowBuyer: string;
-    defaultTipRate: number;
-}[];
+}
+
+export type PhysicalPaymentMethods = {
+    isActive: boolean; // if not active will use defaultPaymentMethods
+    cash: boolean;
+    cardTerminal: boolean;
+    customMethods: CustomPaymentMethod[];
+};
 /// PAYMENT METHODS END
 
 

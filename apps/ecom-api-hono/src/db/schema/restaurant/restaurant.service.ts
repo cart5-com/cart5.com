@@ -7,7 +7,8 @@ import {
     restaurantScheduledOrdersSettingsTable,
     restaurantTaxSettingsTable,
     restaurantTable,
-    restaurantUserAdminsMapTable
+    restaurantUserAdminsMapTable,
+    restaurantPaymentMethodsTable
 } from './restaurant.schema';
 import db from '../../drizzle';
 import { calculateScheduledOrdersMinutes } from "./updateUtils/calculateScheduledOrdersMinutes";
@@ -78,6 +79,7 @@ export const updateRestaurantService = async (
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
         openHours?: Partial<typeof restaurantOpenHoursTable.$inferInsert>
+        paymentMethods?: Partial<typeof restaurantPaymentMethodsTable.$inferInsert>
         tableReservationSettings?: Partial<typeof restaurantTableReservationSettingsTable.$inferInsert>
         taxSettings?: Partial<typeof restaurantTaxSettingsTable.$inferInsert>
         scheduledOrdersSettings?: Partial<typeof restaurantScheduledOrdersSettingsTable.$inferInsert>
@@ -92,6 +94,7 @@ export const updateRestaurantService = async (
             // other restaurant tables
             address,
             openHours,
+            paymentMethods,
             tableReservationSettings,
             scheduledOrdersSettings,
             taxSettings,
@@ -130,6 +133,18 @@ export const updateRestaurantService = async (
                     .onConflictDoUpdate({
                         target: restaurantOpenHoursTable.restaurantId,
                         set: openHoursData
+                    });
+            }
+        }
+
+        if (paymentMethods) {
+            const { restaurantId: _, ...paymentMethodsData } = paymentMethods;
+            if (Object.keys(paymentMethodsData).length > 0) {
+                updates[updates.length] = tx.insert(restaurantPaymentMethodsTable)
+                    .values({ ...paymentMethodsData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantPaymentMethodsTable.restaurantId,
+                        set: paymentMethodsData
                     });
             }
         }
@@ -230,6 +245,7 @@ export const getRestaurantService = async (
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
         openHours?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
+        paymentMethods?: Partial<Record<keyof typeof restaurantPaymentMethodsTable.$inferSelect, boolean>>
         tableReservationSettings?: Partial<Record<keyof typeof restaurantTableReservationSettingsTable.$inferSelect, boolean>>
         taxSettings?: Partial<Record<keyof typeof restaurantTaxSettingsTable.$inferSelect, boolean>>
         scheduledOrdersSettings?: Partial<Record<keyof typeof restaurantScheduledOrdersSettingsTable.$inferSelect, boolean>>
@@ -248,6 +264,11 @@ export const getRestaurantService = async (
             ...(columns?.openHours && {
                 openHours: {
                     columns: columns.openHours
+                }
+            }),
+            ...(columns?.paymentMethods && {
+                paymentMethods: {
+                    columns: columns.paymentMethods
                 }
             }),
             ...(columns?.tableReservationSettings && {
@@ -285,6 +306,9 @@ export const getRestaurantService = async (
     type openHours = restaurantType['openHours']
     type nonEmptyOpenHours = NonEmpty<openHours>
 
+    type paymentMethods = restaurantType['paymentMethods']
+    type nonEmptyPaymentMethods = NonEmpty<paymentMethods>
+
     type tableReservationSettings = restaurantType['tableReservationSettings']
     type nonEmptyTableReservationSettings = NonEmpty<tableReservationSettings>
 
@@ -305,6 +329,7 @@ export const getRestaurantService = async (
         > & {
             address?: nonEmptyAddress
             openHours?: nonEmptyOpenHours
+            paymentMethods?: nonEmptyPaymentMethods
             tableReservationSettings?: nonEmptyTableReservationSettings
             scheduledOrdersSettings?: nonEmptyScheduledOrdersSettings
             deliveryZones?: nonEmptyDeliveryZones

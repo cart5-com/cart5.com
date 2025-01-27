@@ -4,7 +4,9 @@ import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import {
-	type DeliveryZone, type ScheduledOrdersSettings,
+	type DeliveryZone,
+	type PhysicalPaymentMethods,
+	type ScheduledOrdersSettings,
 	type TableReservationSettings,
 	type TaxDetails, type WeeklyHours
 } from "lib/types/restaurantTypes";
@@ -109,6 +111,36 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 /// RESTAURANT HOURS TABLE END
+
+
+
+
+/// RESTAURANT PAYMENT METHODS TABLE START
+export const restaurantPaymentMethodsTable = sqliteTable('restaurant_payment_methods', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	defaultPaymentMethods: text('default_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
+	deliveryPaymentMethods: text('delivery_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
+	pickupPaymentMethods: text('pickup_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
+	onPremisePaymentMethods: text('on_premise_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
+	tableReservationPaymentMethods: text('table_reservation_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
+});
+
+export const selectRestaurantPaymentMethodsSchema = createSelectSchema(restaurantPaymentMethodsTable);
+export const insertRestaurantPaymentMethodsSchema = createInsertSchema(restaurantPaymentMethodsTable, {
+	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	onPremisePaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	tableReservationPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+});
+export const updateRestaurantPaymentMethodsSchema = createUpdateSchema(restaurantPaymentMethodsTable, {
+	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	onPremisePaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	tableReservationPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+});
+/// RESTAURANT PAYMENT METHODS TABLE END
 
 
 
@@ -236,6 +268,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			restaurantOpenHoursTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantOpenHoursTable.restaurantId]
+		}),
+	paymentMethods:
+		one(
+			restaurantPaymentMethodsTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantPaymentMethodsTable.restaurantId]
 		}),
 	tableReservationSettings:
 		one(

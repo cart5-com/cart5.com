@@ -6,7 +6,8 @@ import {
     updateRestaurantTableReservationSettingsSchema,
     updateRestaurantScheduledOrdersSettingsSchema,
     updateRestaurantSchema,
-    updateRestaurantTaxSettingsSchema
+    updateRestaurantTaxSettingsSchema,
+    updateRestaurantPaymentMethodsSchema
 } from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
@@ -26,6 +27,9 @@ export const updateRestaurantSchemaValidator = zValidator('json',
             restaurantId: true,
         }).optional(),
         openHours: updateRestaurantOpenHoursSchema.omit({
+            restaurantId: true,
+        }).optional(),
+        paymentMethods: updateRestaurantPaymentMethodsSchema.omit({
             restaurantId: true,
         }).optional(),
         tableReservationSettings: updateRestaurantTableReservationSettingsSchema.omit({
