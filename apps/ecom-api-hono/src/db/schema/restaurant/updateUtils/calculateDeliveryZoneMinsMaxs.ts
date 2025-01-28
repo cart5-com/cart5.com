@@ -28,35 +28,40 @@ export const calculateDeliveryZoneMinsMaxs = (deliveryZones: DeliveryZone[]) => 
                     const { center, radius } = zone.circleArea;
                     // Convert radius from meters to degrees
                     // Latitude: 1 degree = 111,111 meters
-                    const latDegrees = radius / 111111;
+                    const latDegrees = radius ? radius / 111111 : 0;
 
-                    // Longitude: 1 degree = 111,111 * cos(latitude) meters
-                    const lngDegrees = radius / (111111 * Math.cos(center.lat * Math.PI / 180));
+                    if (center?.lat && center?.lng) {
+                        // Longitude: 1 degree = 111,111 * cos(latitude) meters
+                        const lngDegrees = radius ? radius / (111111 * Math.cos(center.lat * Math.PI / 180)) : 0;
 
-                    points.push(
-                        { lat: center.lat + latDegrees, lng: center.lng + lngDegrees }, // North-East
-                        { lat: center.lat + latDegrees, lng: center.lng - lngDegrees }, // North-West
-                        { lat: center.lat - latDegrees, lng: center.lng + lngDegrees }, // South-East
-                        { lat: center.lat - latDegrees, lng: center.lng - lngDegrees }  // South-West
-                    );
+                        points.push(
+                            { lat: center.lat + latDegrees, lng: center.lng + lngDegrees }, // North-East
+                            { lat: center.lat + latDegrees, lng: center.lng - lngDegrees }, // North-West
+                            { lat: center.lat - latDegrees, lng: center.lng + lngDegrees }, // South-East
+                            { lat: center.lat - latDegrees, lng: center.lng - lngDegrees }  // South-West
+                        );
+                    }
                 }
                 break;
 
             case 'rectangle':
                 if (zone.rectangleArea) {
                     const { topLeft, bottomRight } = zone.rectangleArea;
-                    points.push(
-                        topLeft,
-                        bottomRight,
-                        { lat: topLeft.lat, lng: bottomRight.lng },    // topRight
-                        { lat: bottomRight.lat, lng: topLeft.lng }     // bottomLeft
-                    );
+                    if (topLeft?.lat && topLeft?.lng && bottomRight?.lat && bottomRight?.lng) {
+                        points.push(
+                            topLeft,
+                            bottomRight,
+                            { lat: topLeft.lat, lng: bottomRight.lng },    // topRight
+                            { lat: bottomRight.lat, lng: topLeft.lng }     // bottomLeft
+                        );
+                    }
                 }
                 break;
         }
     });
 
-    if (!points.length) {
+    const validPoints = points.filter(p => p.lat != null && p.lng != null);
+    if (!validPoints.length) {
         return {
             minLat: null,
             maxLat: null,
@@ -66,9 +71,9 @@ export const calculateDeliveryZoneMinsMaxs = (deliveryZones: DeliveryZone[]) => 
     }
 
     return {
-        minLat: Math.min(...points.map(p => p.lat)),
-        maxLat: Math.max(...points.map(p => p.lat)),
-        minLng: Math.min(...points.map(p => p.lng)),
-        maxLng: Math.max(...points.map(p => p.lng)),
+        minLat: Math.min(...validPoints.map(p => p.lat!)),
+        maxLat: Math.max(...validPoints.map(p => p.lat!)),
+        minLng: Math.min(...validPoints.map(p => p.lng!)),
+        maxLng: Math.max(...validPoints.map(p => p.lng!)),
     };
 };

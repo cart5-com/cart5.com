@@ -1,27 +1,30 @@
 /// DELIVERY ZONES START
-export type Point = { lat: number, lng: number };
+export type Point = {
+    lat?: number,
+    lng?: number
+};
 
 export type Circle = {
-    center: Point;
-    radius: number;
+    center?: Point;
+    radius?: number;
 };
 
 export type Rectangle = {
-    topLeft: Point;
-    bottomRight: Point;
+    topLeft?: Point;
+    bottomRight?: Point;
 };
 
 export type DeliveryZone = {
-    id: string;
+    id?: string;
     name?: string;
     minCart?: number;
     deliveryFee?: number;
     deliveryFeePerKm?: number;
-    shapeType: 'polygon' | 'circle' | 'rectangle';
+    shapeType?: 'polygon' | 'circle' | 'rectangle';
     polygonArea?: Point[];
     circleArea?: Circle;
     rectangleArea?: Rectangle;
-    isActive: boolean;
+    isActive?: boolean;
 };
 /// DELIVERY ZONES END
 

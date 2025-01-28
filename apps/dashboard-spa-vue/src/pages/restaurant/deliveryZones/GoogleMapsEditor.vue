@@ -13,7 +13,7 @@ const props = defineProps<{
 const mapId = `gmap-${Math.random().toString(36).substring(2, 15)}`
 let mapInstance: google.maps.Map | null = null
 let drawingManager: google.maps.drawing.DrawingManager | null = null
-let currentShapeRef: google.maps.Polygon | google.maps.Circle | google.maps.Rectangle | null = null;
+let currentShapeRef: google.maps.Polygon | google.maps.Circle | google.maps.Rectangle | undefined = undefined;
 
 defineExpose({
     getCurrentShape
@@ -88,32 +88,52 @@ function createShape(
         polygon.getPath().forEach(point => bounds.extend(point));
         return polygon;
     } else if (zone.shapeType === 'circle') {
-        const circle = new google.maps.Circle({
-            center: zone.circleArea?.center,
-            radius: zone.circleArea?.radius,
-            map: mapInstance,
-            ...shapeOptions,
-        });
-        bounds.extend(circle.getCenter()!);
-        const radius = circle.getRadius()!;
-        bounds.extend(google.maps.geometry.spherical.computeOffset(circle.getCenter()!, radius, 0));
-        bounds.extend(google.maps.geometry.spherical.computeOffset(circle.getCenter()!, radius, 180));
-        return circle;
+        if (zone && zone.circleArea &&
+            zone.circleArea.center &&
+            zone.circleArea.center.lat &&
+            zone.circleArea.center.lng &&
+            zone.circleArea.radius
+        ) {
+            const circle = new google.maps.Circle({
+                center: {
+                    lat: zone.circleArea.center.lat,
+                    lng: zone.circleArea.center.lng
+                },
+                radius: zone.circleArea.radius,
+                map: mapInstance,
+                ...shapeOptions,
+            });
+            bounds.extend(circle.getCenter()!);
+            const radius = circle.getRadius()!;
+            bounds.extend(google.maps.geometry.spherical.computeOffset(circle.getCenter()!, radius, 0));
+            bounds.extend(google.maps.geometry.spherical.computeOffset(circle.getCenter()!, radius, 180));
+            return circle;
+        }
     } else if (zone.shapeType === 'rectangle') {
-        const rectangle = new google.maps.Rectangle({
-            bounds: {
-                north: zone.rectangleArea?.topLeft.lat ?? 0,
-                south: zone.rectangleArea?.bottomRight.lat ?? 0,
-                east: zone.rectangleArea?.bottomRight.lng ?? 0,
-                west: zone.rectangleArea?.topLeft.lng ?? 0
-            },
-            map: mapInstance,
-            ...shapeOptions,
-        });
-        bounds.union(rectangle.getBounds()!);
-        return rectangle;
+        if (
+            zone.rectangleArea &&
+            zone.rectangleArea.topLeft &&
+            zone.rectangleArea.topLeft.lat &&
+            zone.rectangleArea.topLeft.lng &&
+            zone.rectangleArea.bottomRight &&
+            zone.rectangleArea.bottomRight.lat &&
+            zone.rectangleArea.bottomRight.lng
+        ) {
+            const rectangle = new google.maps.Rectangle({
+                bounds: {
+                    north: zone.rectangleArea.topLeft.lat,
+                    south: zone.rectangleArea.bottomRight.lat,
+                    east: zone.rectangleArea.bottomRight.lng,
+                    west: zone.rectangleArea.topLeft.lng
+                },
+                map: mapInstance,
+                ...shapeOptions,
+            });
+            bounds.union(rectangle.getBounds()!);
+            return rectangle;
+        }
     } else {
-        return null
+        return undefined
     }
 }
 
@@ -123,7 +143,10 @@ const initMap = async () => {
     }
 
     mapInstance = new google.maps.Map(document.getElementById(mapId) as HTMLElement, {
-        center: props.restaurantLocation,
+        center: {
+            lat: props.restaurantLocation.lat ?? 0,
+            lng: props.restaurantLocation.lng ?? 0
+        },
         zoom: 16,
         mapTypeControl: false,
     })
@@ -131,7 +154,10 @@ const initMap = async () => {
 
     // Add restaurant marker
     new google.maps.Marker({
-        position: props.restaurantLocation,
+        position: {
+            lat: props.restaurantLocation.lat ?? 0,
+            lng: props.restaurantLocation.lng ?? 0
+        },
         map: mapInstance,
     })
 
@@ -208,22 +234,31 @@ function onDrawingModeChanged() {
                 // For polygons, calculate distance to furthest point
                 zone.polygonArea.forEach(point => {
                     const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                        props.restaurantLocation,
-                        point
+                        {
+                            lat: props.restaurantLocation.lat ?? 0,
+                            lng: props.restaurantLocation.lng ?? 0
+                        },
+                        {
+                            lat: point.lat ?? 0,
+                            lng: point.lng ?? 0
+                        }
                     );
                     maxRadius = Math.max(maxRadius, distance);
                 });
             } else if (zone.shapeType === 'rectangle' && zone.rectangleArea) {
                 // For rectangles, calculate distance to corners
                 const corners = [
-                    { lat: zone.rectangleArea.topLeft.lat, lng: zone.rectangleArea.topLeft.lng },
-                    { lat: zone.rectangleArea.topLeft.lat, lng: zone.rectangleArea.bottomRight.lng },
-                    { lat: zone.rectangleArea.bottomRight.lat, lng: zone.rectangleArea.topLeft.lng },
-                    { lat: zone.rectangleArea.bottomRight.lat, lng: zone.rectangleArea.bottomRight.lng }
+                    { lat: zone.rectangleArea.topLeft?.lat ?? 0, lng: zone.rectangleArea.topLeft?.lng ?? 0 },
+                    { lat: zone.rectangleArea.topLeft?.lat ?? 0, lng: zone.rectangleArea.bottomRight?.lng ?? 0 },
+                    { lat: zone.rectangleArea.bottomRight?.lat ?? 0, lng: zone.rectangleArea.topLeft?.lng ?? 0 },
+                    { lat: zone.rectangleArea.bottomRight?.lat ?? 0, lng: zone.rectangleArea.bottomRight?.lng ?? 0 }
                 ];
                 corners.forEach(corner => {
                     const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                        props.restaurantLocation,
+                        {
+                            lat: props.restaurantLocation.lat ?? 0,
+                            lng: props.restaurantLocation.lng ?? 0
+                        },
                         corner
                     );
                     maxRadius = Math.max(maxRadius, distance);
@@ -236,7 +271,10 @@ function onDrawingModeChanged() {
 
         // Create default circle at restaurant location with calculated radius
         currentShapeRef = new google.maps.Circle({
-            center: props.restaurantLocation,
+            center: {
+                lat: props.restaurantLocation.lat ?? 0,
+                lng: props.restaurantLocation.lng ?? 0
+            },
             radius: maxRadius,
             map: mapInstance,
             ...selectedZoneOptions
@@ -280,7 +318,7 @@ const clearShape = () => {
     if (currentShapeRef) {
         google.maps.event.clearInstanceListeners(currentShapeRef);
         currentShapeRef.setMap(null)
-        currentShapeRef = null;
+        currentShapeRef = undefined;
 
         drawingManager?.setDrawingMode(null);
         drawingManager?.setOptions({
