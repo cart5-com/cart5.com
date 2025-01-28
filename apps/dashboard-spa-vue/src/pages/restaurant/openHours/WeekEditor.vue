@@ -27,10 +27,13 @@ const props = defineProps<{
 
 
 const applyToOtherDays = (sourceDay: string) => {
+    if (!props.weekHours.days) {
+        props.weekHours.days = {};
+    }
     type DayKey = keyof typeof props.weekHours.days;
     const sourceSettings = props.weekHours.days[sourceDay as DayKey];
     DAYS.forEach(({ key }) => {
-        if (key !== sourceDay) {
+        if (key !== sourceDay && props.weekHours.days) {
             props.weekHours.days[key] = {
                 isOpen24: sourceSettings?.isOpen24 ?? false,
                 hours: JSON.parse(JSON.stringify(sourceSettings?.hours ?? [])),
@@ -51,8 +54,12 @@ const applyToOtherDays = (sourceDay: string) => {
                     <label :for="`default-hours-${day.key}`"
                            class="cursor-pointer flex flex-row items-center gap-2">
                         <Switch :id="`default-hours-${day.key}`"
-                                :checked="weekHours.days[day.key]?.isOpen24"
-                                @update:checked="weekHours.days[day.key]!.isOpen24 = $event" />
+                                :checked="weekHours.days?.[day.key]?.isOpen24 ?? false"
+                                @update:checked="(val) => {
+                                    if (!weekHours.days) weekHours.days = {};
+                                    if (!weekHours.days[day.key]) weekHours.days[day.key] = {};
+                                    weekHours.days[day.key]!.isOpen24 = val;
+                                }" />
                         <span class="text-muted-foreground text-xs">
                             Open 24 hours</span>
                     </label>
@@ -73,10 +80,10 @@ const applyToOtherDays = (sourceDay: string) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div v-if="!weekHours.days[day.key]?.isOpen24"
+            <div v-if="!weekHours.days?.[day.key]?.isOpen24"
                  class="space-y-2">
-                <div v-if="weekHours.days[day.key]"
-                     v-for="(timeSlot, index) in weekHours.days[day.key]!.hours"
+                <div v-if="weekHours.days?.[day.key]"
+                     v-for="(timeSlot, index) in weekHours.days[day.key]?.hours ?? []"
                      :key="index"
                      class="flex gap-2 items-center">
                     <Input type="time"
@@ -86,13 +93,18 @@ const applyToOtherDays = (sourceDay: string) => {
                            v-model="timeSlot.close" />
                     <Button variant="outline"
                             size="sm"
-                            @click="weekHours.days[day.key]!.hours.splice(index, 1)">
+                            @click="weekHours.days?.[day.key]?.hours?.splice(index, 1)">
                         <XIcon />
                     </Button>
                 </div>
                 <Button variant="outline"
                         size="sm"
-                        @click="weekHours.days[day.key]!.hours.push({ open: '09:00', close: '20:00' })">
+                        @click="() => {
+                            if (!weekHours.days) weekHours.days = {};
+                            if (!weekHours.days[day.key]) weekHours.days[day.key] = {};
+                            if (!weekHours.days[day.key]!.hours) weekHours.days[day.key]!.hours = [];
+                            weekHours.days[day.key]!.hours!.push({ open: '09:00', close: '20:00' });
+                        }">
                     <PlusIcon class="h-4 w-4 mr-2" />
                     Add Time Slot
                 </Button>

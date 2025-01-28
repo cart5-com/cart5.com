@@ -29,25 +29,25 @@ export type DeliveryZone = {
 
 /// OPEN HOURS START
 export type OpenHours = {
-    open: string;
-    close: string;
+    open?: string;
+    close?: string;
 };
 
 export type hoursDay = {
-    isOpen24: boolean;
-    hours: OpenHours[];
+    isOpen24?: boolean;
+    hours?: OpenHours[];
 };
 
 export type WeeklyHours = {
-    isActive: boolean; // if not active will use defaultOpenHours
-    days: {
-        "0": hoursDay; // sunday
-        "1": hoursDay; // monday
-        "2": hoursDay; // tuesday
-        "3": hoursDay; // wednesday
-        "4": hoursDay; // thursday
-        "5": hoursDay; // friday
-        "6": hoursDay; // saturday
+    isActive?: boolean;
+    days?: {
+        "0"?: hoursDay | undefined; // sunday
+        "1"?: hoursDay | undefined; // monday
+        "2"?: hoursDay | undefined; // tuesday
+        "3"?: hoursDay | undefined; // wednesday
+        "4"?: hoursDay | undefined; // thursday
+        "5"?: hoursDay | undefined; // friday
+        "6"?: hoursDay | undefined; // saturday
     };
 };
 /// OPEN HOURS END
