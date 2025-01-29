@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { pageTitle } from '@src/stores/layout.store'
 import draggable from "vuedraggable";
 import { AlignJustify, MoveIcon } from "lucide-vue-next";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 pageTitle.value = 'Menu Editor'
