@@ -7,7 +7,7 @@ import type {
 	DeliveryZone,
 	PhysicalPaymentMethods,
 	ScheduledOrdersSettings,
-	TaxDetails,
+	TaxCategory,
 	WeeklyHours
 } from "lib/types/restaurantTypes";
 
@@ -168,15 +168,18 @@ export const updateRestaurantTableReservationSettingsSchema = createUpdateSchema
 /// TAX SETTINGS TABLE START
 export const restaurantTaxSettingsTable = sqliteTable('restaurant_tax_settings', {
 	restaurantId: text("restaurant_id").notNull().unique(),
-	currency: text('currency').default('USD'),
-	taxSettings: text('tax_settings', { mode: 'json' }).$type<TaxDetails>(),
+	currency: text('currency'),
+	salesTaxType: text('sales_tax_type', { enum: ['ITEMS_PRICES_ALREADY_INCLUDE_TAXES', 'APPLY_TAX_ON_TOP_OF_PRICES'] }),
+	taxName: text('tax_name'),
+	taxRateForDelivery: real('tax_rate_for_delivery'),
+	taxCategories: text('tax_categories', { mode: 'json' }).$type<TaxCategory[]>().$defaultFn(() => []),
 });
 export const selectRestaurantTaxSettingsSchema = createSelectSchema(restaurantTaxSettingsTable);
 export const insertRestaurantTaxSettingsSchema = createInsertSchema(restaurantTaxSettingsTable, {
-	taxSettings: z.custom<TaxDetails>((_val) => true),
+	taxCategories: z.array(z.custom<TaxCategory>((_val) => true)).default([]),
 });
 export const updateRestaurantTaxSettingsSchema = createUpdateSchema(restaurantTaxSettingsTable, {
-	taxSettings: z.custom<TaxDetails>((_val) => true),
+	taxCategories: z.array(z.custom<TaxCategory>((_val) => true)).default([]),
 });
 /// TAX SETTINGS TABLE END
 

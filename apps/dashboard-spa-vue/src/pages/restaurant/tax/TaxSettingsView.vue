@@ -15,7 +15,7 @@ import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
-import type { TaxDetails } from 'lib/types/restaurantTypes';
+import type { TaxCategory } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 import CurrencyWidget from './CurrencyWidget.vue';
 import SalesTaxInfoWidget from '@src/pages/restaurant/tax/SalesTaxInfoWidget.vue';
@@ -25,7 +25,7 @@ pageTitle.value = 'Tax Settings';
 
 // TODO: we may pre-populate the tax categories with some default ones from the address.
 const isLoading = ref(false);
-const getDefaultTaxCategory = () => {
+const getDefaultTaxCategory = (): TaxCategory => {
     return {
         id: crypto.randomUUID(),
         name: 'Food',
@@ -35,13 +35,22 @@ const getDefaultTaxCategory = () => {
         tableReservationRate: undefined
     }
 }
-const defaultTaxSettings = {
-    salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES',
+const defaultTaxSettings: {
+    currency?: string;
+    salesTaxType?: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';
+    taxName?: string;
+    taxRateForDelivery?: number;
+    taxCategories?: TaxCategory[];
+} = {
+    currency: 'GBP',
+    salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' as 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES',
     taxName: 'VAT',
     taxRateForDelivery: undefined,
-    taxCategories: [getDefaultTaxCategory()]
+    taxCategories: [
+        getDefaultTaxCategory()
+    ]
 }
-const taxSettings = ref<TaxDetails>(JSON.parse(JSON.stringify(defaultTaxSettings)));
+const taxSettings = ref<typeof defaultTaxSettings>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
 const selectedCurrency = ref('');
 const countryCodeHelper = ref('');
@@ -65,8 +74,11 @@ const loadData = async () => {
             json: {
                 columns: {
                     taxSettings: {
-                        taxSettings: true,
+                        taxCategories: true,
                         currency: true,
+                        salesTaxType: true,
+                        taxName: true,
+                        taxRateForDelivery: true,
                     }
                 }
             }
@@ -78,7 +90,13 @@ const loadData = async () => {
         }
 
         if (data?.taxSettings) {
-            taxSettings.value = data.taxSettings.taxSettings ?? JSON.parse(JSON.stringify(defaultTaxSettings));
+            taxSettings.value = {
+                taxCategories: data.taxSettings.taxCategories ?? defaultTaxSettings.taxCategories,
+                currency: data.taxSettings.currency ?? defaultTaxSettings.currency,
+                salesTaxType: data.taxSettings.salesTaxType ?? defaultTaxSettings.salesTaxType,
+                taxName: data.taxSettings.taxName ?? defaultTaxSettings.taxName,
+                taxRateForDelivery: data.taxSettings.taxRateForDelivery ?? defaultTaxSettings.taxRateForDelivery,
+            };
             selectedCurrency.value = data.taxSettings.currency ?? 'GBP';
         }
     } catch (err) {
@@ -99,7 +117,10 @@ const saveTaxSettings = async () => {
             json: {
                 taxSettings: {
                     currency: selectedCurrency.value,
-                    taxSettings: taxSettings.value
+                    salesTaxType: taxSettings.value.salesTaxType,
+                    taxName: taxSettings.value.taxName,
+                    taxRateForDelivery: taxSettings.value.taxRateForDelivery,
+                    taxCategories: taxSettings.value.taxCategories
                 }
             }
         })).json();
@@ -118,6 +139,9 @@ const saveTaxSettings = async () => {
 };
 
 const addTaxCategory = () => {
+    if (!taxSettings.value.taxCategories) {
+        taxSettings.value.taxCategories = [];
+    }
     taxSettings.value.taxCategories.push({
         id: crypto.randomUUID(),
         name: 'Cat ' + (taxSettings.value.taxCategories.length + 1),
@@ -129,7 +153,9 @@ const addTaxCategory = () => {
 };
 
 const removeTaxCategory = (index: number) => {
-    taxSettings.value.taxCategories.splice(index, 1);
+    if (taxSettings.value.taxCategories) {
+        taxSettings.value.taxCategories.splice(index, 1);
+    }
 };
 
 const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();

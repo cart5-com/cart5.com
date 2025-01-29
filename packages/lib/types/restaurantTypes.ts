@@ -79,18 +79,13 @@ export type PhysicalPaymentMethods = {
 
 
 /// TAX SETTINGS START
-export type TaxDetails = {
-    salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';
-    taxName: string; // VAT, HST, GST, etc
-    taxCategories: {
-        id: string;
-        name: string;
-        deliveryRate: number;
-        pickupRate: number;
-        onPremiseRate: number;
-        tableReservationRate: number;
-    }[];
-    taxRateForDelivery: number; // 13, 5, etc,
+export type TaxCategory = {
+    id?: string;
+    name?: string;
+    deliveryRate?: number;
+    pickupRate?: number;
+    onPremiseRate?: number;
+    tableReservationRate?: number;
 }
 /// TAX SETTINGS END
 
