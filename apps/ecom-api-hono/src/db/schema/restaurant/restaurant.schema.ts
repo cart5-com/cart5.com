@@ -21,7 +21,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 	defaultPhoneNumber: text("default_phone_number"),
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
-	// links: text("links", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 	ownerUserId: text("owner_user_id").notNull(),
 
