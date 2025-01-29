@@ -1,7 +1,7 @@
-import type { timeForm } from "lib/types/restaurantTypes";
+import type { TimeForm } from "lib/types/restaurantTypes";
 import type { restaurantScheduledOrdersSettingsTable } from "../restaurant.schema";
 
-export const convertToMinutes = (timeForm: timeForm) => {
+export const convertToMinutes = (timeForm: TimeForm) => {
     const { timeValue, timeUnit } = timeForm;
     const minutes = (timeValue ?? 0) * (timeUnit === 'minutes' ? 1 : timeUnit === 'hours' ? 60 : 1440);
     return minutes;

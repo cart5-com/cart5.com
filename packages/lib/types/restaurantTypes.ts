@@ -36,7 +36,7 @@ export type OpenHours = {
     close?: string;
 };
 
-export type hoursDay = {
+export type HoursDay = {
     isOpen24?: boolean;
     hours?: OpenHours[];
 };
@@ -44,13 +44,13 @@ export type hoursDay = {
 export type WeeklyHours = {
     isActive?: boolean;
     days?: {
-        "0"?: hoursDay | undefined; // sunday
-        "1"?: hoursDay | undefined; // monday
-        "2"?: hoursDay | undefined; // tuesday
-        "3"?: hoursDay | undefined; // wednesday
-        "4"?: hoursDay | undefined; // thursday
-        "5"?: hoursDay | undefined; // friday
-        "6"?: hoursDay | undefined; // saturday
+        "0"?: HoursDay | undefined; // sunday
+        "1"?: HoursDay | undefined; // monday
+        "2"?: HoursDay | undefined; // tuesday
+        "3"?: HoursDay | undefined; // wednesday
+        "4"?: HoursDay | undefined; // thursday
+        "5"?: HoursDay | undefined; // friday
+        "6"?: HoursDay | undefined; // saturday
     };
 };
 /// OPEN HOURS END
@@ -93,14 +93,14 @@ export type TaxCategory = {
 
 
 /// SCHEDULED ORDERS SETTINGS START
-export type timeForm = {
+export type TimeForm = {
     timeValue?: number;
     timeUnit?: 'minutes' | 'hours' | 'days';
 }
 export type ScheduledOrdersSettings = {
-    min?: timeForm;
-    max?: timeForm;
-    slot_interval?: timeForm;
+    min?: TimeForm;
+    max?: TimeForm;
+    slot_interval?: TimeForm;
 };
 /// SCHEDULED ORDERS SETTINGS END
 
