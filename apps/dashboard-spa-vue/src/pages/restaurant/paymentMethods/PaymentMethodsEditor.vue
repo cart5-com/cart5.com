@@ -25,7 +25,9 @@ const addCustomMethod = () => {
 };
 
 const removeCustomMethod = (index: number) => {
-    props.paymentMethods.customMethods.splice(index, 1);
+    if (props.paymentMethods.customMethods) {
+        props.paymentMethods.customMethods.splice(index, 1);
+    }
 };
 </script>
 
