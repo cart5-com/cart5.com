@@ -77,17 +77,6 @@ export type PhysicalPaymentMethods = {
 /// PAYMENT METHODS END
 
 
-/// TABLE RESERVATION SETTINGS START
-export type TableReservationSettings = {
-    minGuests: number;
-    maxGuests: number;
-    minTimeInAdvanceMinutes: number;
-    maxTimeInAdvanceDays: number;
-    lateHoldTimeMinutes: number;
-    allowPreOrder: boolean;
-}
-/// TABLE RESERVATION SETTINGS END
-
 
 /// TAX SETTINGS START
 export type TaxDetails = {

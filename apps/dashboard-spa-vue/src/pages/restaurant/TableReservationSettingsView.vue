@@ -9,7 +9,6 @@ import { Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
-import type { TableReservationSettings } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 
 pageTitle.value = 'Table Reservation Settings';
@@ -17,7 +16,7 @@ pageTitle.value = 'Table Reservation Settings';
 const isLoading = ref(false);
 const isTableReservationEnabled = ref(false);
 
-const defaultSettings: TableReservationSettings = {
+const defaultSettings = {
     minGuests: 2,
     maxGuests: 8,
     minTimeInAdvanceMinutes: 15,
@@ -26,7 +25,7 @@ const defaultSettings: TableReservationSettings = {
     allowPreOrder: false
 };
 
-const settings = ref<TableReservationSettings>(JSON.parse(JSON.stringify(defaultSettings)));
+const settings = ref<typeof defaultSettings>(JSON.parse(JSON.stringify(defaultSettings)));
 
 const loadData = async () => {
     isLoading.value = true;
@@ -39,7 +38,12 @@ const loadData = async () => {
                 columns: {
                     offersTableReservation: true,
                     tableReservationSettings: {
-                        tableReservationSettings: true,
+                        minGuests: true,
+                        maxGuests: true,
+                        minTimeInAdvanceMinutes: true,
+                        maxTimeInAdvanceDays: true,
+                        lateHoldTimeMinutes: true,
+                        allowPreOrder: true
                     }
                 }
             }
@@ -51,8 +55,14 @@ const loadData = async () => {
         }
 
         if (data?.tableReservationSettings) {
-            settings.value = data.tableReservationSettings.tableReservationSettings ??
-                JSON.parse(JSON.stringify(defaultSettings));
+            settings.value = {
+                minGuests: data.tableReservationSettings.minGuests ?? defaultSettings.minGuests,
+                maxGuests: data.tableReservationSettings.maxGuests ?? defaultSettings.maxGuests,
+                minTimeInAdvanceMinutes: data.tableReservationSettings.minTimeInAdvanceMinutes ?? defaultSettings.minTimeInAdvanceMinutes,
+                maxTimeInAdvanceDays: data.tableReservationSettings.maxTimeInAdvanceDays ?? defaultSettings.maxTimeInAdvanceDays,
+                lateHoldTimeMinutes: data.tableReservationSettings.lateHoldTimeMinutes ?? defaultSettings.lateHoldTimeMinutes,
+                allowPreOrder: data.tableReservationSettings.allowPreOrder ?? defaultSettings.allowPreOrder
+            }
         }
         isTableReservationEnabled.value = data?.offersTableReservation ?? false;
     } catch (err) {
@@ -73,7 +83,12 @@ const saveSettings = async () => {
             json: {
                 offersTableReservation: isTableReservationEnabled.value,
                 tableReservationSettings: {
-                    tableReservationSettings: settings.value
+                    minGuests: settings.value.minGuests,
+                    maxGuests: settings.value.maxGuests,
+                    minTimeInAdvanceMinutes: settings.value.minTimeInAdvanceMinutes,
+                    maxTimeInAdvanceDays: settings.value.maxTimeInAdvanceDays,
+                    lateHoldTimeMinutes: settings.value.lateHoldTimeMinutes,
+                    allowPreOrder: settings.value.allowPreOrder
                 }
             }
         })).json();
@@ -173,7 +188,8 @@ onMounted(() => {
                             Let customers order their meals when making a reservation
                         </p>
                     </div>
-                    <Switch v-model="settings.allowPreOrder" />
+                    <Switch :checked="settings.allowPreOrder"
+                            @update:checked="(checked: boolean) => settings.allowPreOrder = checked" />
                 </div>
 
                 <Button @click="saveSettings"

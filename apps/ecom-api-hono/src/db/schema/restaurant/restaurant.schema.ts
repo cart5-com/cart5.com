@@ -3,12 +3,12 @@ import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateKey } from "lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import {
-	type DeliveryZone,
-	type PhysicalPaymentMethods,
-	type ScheduledOrdersSettings,
-	type TableReservationSettings,
-	type TaxDetails, type WeeklyHours
+import type {
+	DeliveryZone,
+	PhysicalPaymentMethods,
+	ScheduledOrdersSettings,
+	TaxDetails,
+	WeeklyHours
 } from "lib/types/restaurantTypes";
 
 
@@ -148,15 +148,16 @@ export const updateRestaurantPaymentMethodsSchema = createUpdateSchema(restauran
 /// RESTAURANT TABLE RESERVATION SETTINGS START
 export const restaurantTableReservationSettingsTable = sqliteTable('restaurant_table_reservation_settings', {
 	restaurantId: text("restaurant_id").notNull().unique(),
-	tableReservationSettings: text('table_reservation_settings', { mode: 'json' }).$type<TableReservationSettings>(),
+	minGuests: integer("min_guests"),
+	maxGuests: integer("max_guests"),
+	minTimeInAdvanceMinutes: integer("min_time_in_advance_minutes"),
+	maxTimeInAdvanceDays: integer("max_time_in_advance_days"),
+	lateHoldTimeMinutes: integer("late_hold_time_minutes"),
+	allowPreOrder: integer("allow_pre_order", { mode: "boolean" }),
 });
 export const selectRestaurantTableReservationSettingsSchema = createSelectSchema(restaurantTableReservationSettingsTable);
-export const insertRestaurantTableReservationSettingsSchema = createInsertSchema(restaurantTableReservationSettingsTable, {
-	tableReservationSettings: z.custom<TableReservationSettings>((_val) => true),
-});
-export const updateRestaurantTableReservationSettingsSchema = createUpdateSchema(restaurantTableReservationSettingsTable, {
-	tableReservationSettings: z.custom<TableReservationSettings>((_val) => true),
-});
+export const insertRestaurantTableReservationSettingsSchema = createInsertSchema(restaurantTableReservationSettingsTable);
+export const updateRestaurantTableReservationSettingsSchema = createUpdateSchema(restaurantTableReservationSettingsTable);
 /// RESTAURANT TABLE RESERVATION SETTINGS END
 
 
