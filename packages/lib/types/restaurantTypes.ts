@@ -88,6 +88,7 @@ export type TaxDetails = {
         deliveryRate: number;
         pickupRate: number;
         onPremiseRate: number;
+        tableReservationRate: number;
     }[];
     taxRateForDelivery: number; // 13, 5, etc,
 }
