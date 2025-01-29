@@ -94,13 +94,13 @@ export type TaxCategory = {
 
 /// SCHEDULED ORDERS SETTINGS START
 export type timeForm = {
-    timeValue: number;
-    timeUnit: 'minutes' | 'hours' | 'days';
+    timeValue?: number;
+    timeUnit?: 'minutes' | 'hours' | 'days';
 }
 export type ScheduledOrdersSettings = {
-    min: timeForm;
-    max: timeForm;
-    slot_interval: timeForm;
+    min?: timeForm;
+    max?: timeForm;
+    slot_interval?: timeForm;
 };
 /// SCHEDULED ORDERS SETTINGS END
 

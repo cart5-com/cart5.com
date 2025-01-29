@@ -9,7 +9,6 @@ import { Loader2 } from 'lucide-vue-next';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { ScheduledOrdersSettings } from 'lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 
@@ -19,13 +18,13 @@ const isLoading = ref(false);
 const isScheduledOrdersEnabled = ref(false);
 const isOnlyScheduledOrdersAllowed = ref(false);
 
-const pickupSettings = ref<ScheduledOrdersSettings>({
+const pickupSettings = ref<Required<ScheduledOrdersSettings>>({
     min: { timeValue: 1, timeUnit: 'hours' },
     max: { timeValue: 4, timeUnit: 'days' },
     slot_interval: { timeValue: 15, timeUnit: 'minutes' }
 });
 
-const deliverySettings = ref<ScheduledOrdersSettings>({
+const deliverySettings = ref<Required<ScheduledOrdersSettings>>({
     min: { timeValue: 1, timeUnit: 'hours' },
     max: { timeValue: 4, timeUnit: 'days' },
     slot_interval: { timeValue: 15, timeUnit: 'minutes' }
@@ -59,8 +58,8 @@ const loadData = async () => {
         if (data?.scheduledOrdersSettings) {
             isScheduledOrdersEnabled.value = data.scheduledOrdersSettings.isScheduledOrdersEnabled ?? false;
             isOnlyScheduledOrdersAllowed.value = data.scheduledOrdersSettings.isOnlyScheduledOrdersAllowed ?? false;
-            pickupSettings.value = data.scheduledOrdersSettings.pickup_settings ?? pickupSettings.value;
-            deliverySettings.value = data.scheduledOrdersSettings.delivery_settings ?? deliverySettings.value;
+            pickupSettings.value = { ...pickupSettings.value, ...data.scheduledOrdersSettings.pickup_settings };
+            deliverySettings.value = { ...deliverySettings.value, ...data.scheduledOrdersSettings.delivery_settings };
         }
     } catch (err) {
         console.error('Error loading settings:', err);
@@ -121,190 +120,179 @@ const timeUnits = [
             </CardHeader>
             <CardContent class="space-y-6">
                 <!-- Enable/Disable Scheduled Orders -->
-                <div class="flex items-center justify-between space-x-2">
+                <label for="enableScheduledOrders"
+                       class="flex items-center justify-between space-x-2 cursor-pointer border rounded-lg p-4">
                     <div class="space-y-0.5">
-                        <label class="text-base font-medium">Enable Scheduled Orders</label>
+                        <div class="text-base font-medium">Enable Scheduled Orders</div>
                         <p class="text-sm text-muted-foreground">Allow customers to schedule orders for later</p>
                     </div>
-                    <Switch :checked="isScheduledOrdersEnabled"
+                    <Switch id="enableScheduledOrders"
+                            :checked="isScheduledOrdersEnabled"
                             @update:checked="isScheduledOrdersEnabled = $event" />
-                </div>
+                </label>
 
 
 
                 <!-- Settings Accordion -->
-                <Accordion v-if="isScheduledOrdersEnabled"
-                           type="multiple"
-                           collapsible>
+                <div v-if="isScheduledOrdersEnabled"
+                     class="space-y-4">
                     <!-- Pickup Settings -->
-                    <AccordionItem value="pickup">
-                        <AccordionTrigger>
-                            <h3 class="font-medium text-lg">Pickup Settings</h3>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <div class="space-y-4 p-4">
-                                <!-- Minimum Time -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Minimum Time in Advance</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="pickupSettings.min.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="pickupSettings.min.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="pickupSettings.min.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <!-- Maximum Time -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Maximum Time in Advance</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="pickupSettings.max.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="pickupSettings.max.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="pickupSettings.max.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <!-- Time Slot Interval -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Time Slot Interval</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="pickupSettings.slot_interval.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="pickupSettings.slot_interval.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="pickupSettings.slot_interval.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
+                    <h3 class="font-medium text-lg">Pickup Settings</h3>
+                    <div class="space-y-4 p-4">
+                        <!-- Minimum Time -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Minimum Time in Advance</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="pickupSettings.min.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="pickupSettings.min.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="pickupSettings.min.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                        </AccordionContent>
-                    </AccordionItem>
+                        </div>
 
-                    <!-- Delivery Settings -->
-                    <AccordionItem value="delivery">
-                        <AccordionTrigger>
-                            <h3 class="font-medium text-lg">Delivery Settings</h3>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <div class="space-y-4 p-4">
-                                <!-- Minimum Time -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Minimum Time in Advance</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="deliverySettings.min.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="deliverySettings.min.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="deliverySettings.min.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <!-- Maximum Time -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Maximum Time in Advance</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="deliverySettings.max.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="deliverySettings.max.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="deliverySettings.max.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <!-- Time Slot Interval -->
-                                <div class="grid gap-2">
-                                    <label class="text-sm font-medium">Time Slot Interval</label>
-                                    <div class="flex gap-2">
-                                        <Input type="number"
-                                               v-model="deliverySettings.slot_interval.timeValue"
-                                               class="w-24"
-                                               min="1" />
-                                        <Select v-model="deliverySettings.slot_interval.timeUnit">
-                                            <SelectTrigger class="w-32">
-                                                <SelectValue :placeholder="deliverySettings.slot_interval.timeUnit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem v-for="unit in timeUnits"
-                                                            :key="unit.value"
-                                                            :value="unit.value">
-                                                    {{ unit.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
+                        <!-- Maximum Time -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Maximum Time in Advance</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="pickupSettings.max.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="pickupSettings.max.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="pickupSettings.max.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
+                        </div>
 
+                        <!-- Time Slot Interval -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Time Slot Interval</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="pickupSettings.slot_interval.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="pickupSettings.slot_interval.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="pickupSettings.slot_interval.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t "></div>
+                    <h3 class="font-medium text-lg">Delivery Settings</h3>
+                    <div class="space-y-4 p-4">
+                        <!-- Minimum Time -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Minimum Time in Advance</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="deliverySettings.min.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="deliverySettings.min.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="deliverySettings.min.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
 
-                <div class="flex items-center justify-between space-x-2"
-                     v-if="isScheduledOrdersEnabled">
+                        <!-- Maximum Time -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Maximum Time in Advance</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="deliverySettings.max.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="deliverySettings.max.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="deliverySettings.max.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <!-- Time Slot Interval -->
+                        <div class="grid gap-2">
+                            <label class="text-sm font-medium">Time Slot Interval</label>
+                            <div class="flex gap-2">
+                                <Input type="number"
+                                       v-model="deliverySettings.slot_interval.timeValue"
+                                       class="w-24"
+                                       min="1" />
+                                <Select v-model="deliverySettings.slot_interval.timeUnit">
+                                    <SelectTrigger class="w-32">
+                                        <SelectValue :placeholder="deliverySettings.slot_interval.timeUnit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="unit in timeUnits"
+                                                    :key="unit.value"
+                                                    :value="unit.value">
+                                            {{ unit.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="onlyScheduledOrders"
+                       class="flex items-center justify-between space-x-2 cursor-pointer border rounded-lg p-4"
+                       v-if="isScheduledOrdersEnabled">
                     <div class="space-y-0.5">
-                        <label class="text-base font-medium">Only Allow Scheduled Orders</label>
+                        <div class="text-base font-medium">Only Allow Scheduled Orders</div>
                         <p class="text-sm text-muted-foreground">Disables all ASAP orders</p>
                     </div>
-                    <Switch :checked="isOnlyScheduledOrdersAllowed"
+                    <Switch id="onlyScheduledOrders"
+                            :checked="isOnlyScheduledOrdersAllowed"
                             @update:checked="isOnlyScheduledOrdersAllowed = $event" />
-                </div>
+                </label>
             </CardContent>
         </Card>
 
