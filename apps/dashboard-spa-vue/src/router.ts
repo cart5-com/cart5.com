@@ -89,6 +89,11 @@ const router = createRouter({
           name: 'restaurant-tax-settings',
           component: () => import('@src/pages/restaurant/tax/TaxSettingsView.vue')
         },
+        {
+          path: 'menu-editor',
+          name: 'restaurant-menu-editor',
+          component: () => import('@src/pages/restaurant/menu/MenuEditorView.vue'),
+        },
       ],
     },
     // {
