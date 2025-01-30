@@ -27,7 +27,7 @@ setCurrentRestaurantId(restaurantId as string);
                     </h3>
                 </div>
             </Header>
-            <main class="flex-1 lg:max-w-3xl border-r border-foreground/10 p-2">
+            <main class="flex-1 container max-w-7xl p-2">
                 <RouterView />
             </main>
         </SidebarInset>
