@@ -122,7 +122,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="space-y-16 max-w-sm mx-auto">
+    <div class="space-y-16 max-w-md mx-auto">
         <Button @click="savePaymentMethods"
                 variant="outline"
                 :disabled="isLoading">
@@ -134,11 +134,16 @@ onMounted(() => {
 
         <Card>
             <CardHeader>
-                <CardTitle>How can customers pay?</CardTitle>
+                <CardTitle>Payment methods handled by your staff/your delivery person</CardTitle>
                 <CardDescription>
                     Only in-person/physical payment methods can be configured here.
                     <br>
                     <br>
+                    <!-- All payment methods added here must be handled manually by restaurant staff.
+                    Means delivery person will handle the payment at delivery address.
+                    or staff will handle the payment at pickup counter.
+                    <br>
+                    <br> -->
                     (Online payment methods are configured in the <a class="underline"
                        href="#">Payment Gateways</a> page
                     )
