@@ -5,7 +5,7 @@ import { dateTimeProp } from './type'
 import { useVModel } from '@vueuse/core'
 import { Switch } from '@/components/ui/switch';
 import WeeklyEditor from '@/ui-plus/date-time-prop-editor/WeeklyEditor.vue';
-import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
 
 const props = defineProps<{
     modelValue?: dateTimeProp

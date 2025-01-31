@@ -80,10 +80,12 @@ const addNewCategory = () => {
                                        variant="outline">
                                     Always
                                 </Badge>
-                                <Badge v-if="
-                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'weeklySchedule' &&
-                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue
-                                "
+                                <Badge class="line-clamp-1"
+                                       :style="{ maxWidth: '10ch' }"
+                                       v-if="
+                                        menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'weeklySchedule' &&
+                                        menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue
+                                    "
                                        variant="outline">
                                     {{ WeeklyScheduleAsString(menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue) }}
                                 </Badge>
