@@ -44,13 +44,13 @@ export type HoursDay = {
 export type WeeklyHours = {
     isActive?: boolean;
     days?: {
-        "0"?: HoursDay | undefined; // sunday
-        "1"?: HoursDay | undefined; // monday
-        "2"?: HoursDay | undefined; // tuesday
-        "3"?: HoursDay | undefined; // wednesday
-        "4"?: HoursDay | undefined; // thursday
-        "5"?: HoursDay | undefined; // friday
-        "6"?: HoursDay | undefined; // saturday
+        "0"?: HoursDay; // sunday
+        "1"?: HoursDay; // monday
+        "2"?: HoursDay; // tuesday
+        "3"?: HoursDay; // wednesday
+        "4"?: HoursDay; // thursday
+        "5"?: HoursDay; // friday
+        "6"?: HoursDay; // saturday
     };
 };
 /// OPEN HOURS END
