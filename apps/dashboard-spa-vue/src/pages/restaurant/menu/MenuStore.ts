@@ -21,6 +21,10 @@ menuJSON.value = {
                 "item-2",
                 "item-3",
             ],
+            isLimitedTime: {
+                type: "always",
+                alwaysValue: false,
+            },
         },
         "cat-2": {
             catId: "cat-2",

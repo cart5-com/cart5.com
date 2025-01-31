@@ -10,10 +10,13 @@ import {
     CardFooter
 } from "@/components/ui/card";
 import { AlignJustify, ChevronDown, ChevronUp, MoveIcon, Pencil } from "lucide-vue-next";
+import { Badge } from '@/components/ui/badge'
+
 import draggable from "vuedraggable";
 import { menuJSON, currentCategoryId } from "./MenuStore";
 import CategoryDialog from "./CategoryDialog.vue";
 import { Button } from "@/components/ui/button";
+import { WeeklyScheduleAsString } from "lib/types/menuTypes";
 pageTitle.value = 'Menu Editor'
 const showCategories = ref(true);
 const categoryDialog = ref<InstanceType<typeof CategoryDialog>>();
@@ -68,7 +71,22 @@ const addNewCategory = () => {
                 <template #item="{ element: categoryId }">
                     <div class="category-container border rounded-lg mb-12 bg-background">
                         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
-                            <h1 class="text-2xl font-bold">{{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}
+                            <h1 class="text-2xl font-bold">
+                                {{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}
+                                <Badge v-if="
+                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'always' &&
+                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.alwaysValue
+                                "
+                                       variant="outline">
+                                    Always
+                                </Badge>
+                                <Badge v-if="
+                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'weeklySchedule' &&
+                                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue
+                                "
+                                       variant="outline">
+                                    {{ WeeklyScheduleAsString(menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue) }}
+                                </Badge>
                             </h1>
                             <div class="flex items-center gap-2">
                                 <AlignJustify class="cursor-pointer cat-drag-handle" />
