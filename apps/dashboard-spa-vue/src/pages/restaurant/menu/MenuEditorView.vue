@@ -11,7 +11,7 @@ import {
     Check,
     Loader2,
 } from "lucide-vue-next";
-import CategoryDialog from "./dialogs/CategoryDialog.vue";
+import CategoryDialog from "./components/CategoryDialog.vue";
 import { Button } from "@/components/ui/button";
 import type { MenuJSON } from "lib/types/menuTypes";
 import { dashboardApiClient } from "@src/lib/dashboardApiClient";
@@ -125,8 +125,6 @@ function openCategoryDialog(categoryId: string) {
             <CategoryDialog ref="categoryDialog"
                             v-if="currentCategoryId"
                             :category="menuJSON?.allCategories?.[currentCategoryId]" />
-
-
 
             <Tabs default-value="menu"
                   class="w-full">

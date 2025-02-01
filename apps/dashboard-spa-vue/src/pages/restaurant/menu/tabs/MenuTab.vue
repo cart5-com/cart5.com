@@ -6,7 +6,7 @@ import {
 import draggable from "vuedraggable";
 import { Button } from "@/components/ui/button";
 import type { MenuJSON } from "lib/types/menuTypes";
-import CategoryCard from "../cards/CategoryCard.vue";
+import CategoryCard from "../components/CategoryCard.vue";
 const showCategories = ref(true);
 
 const toggleCategories = () => {
