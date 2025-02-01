@@ -3,6 +3,7 @@ import {
     restaurantAddressTable,
     restaurantDeliveryZoneMapTable,
     restaurantOpenHoursTable,
+    restaurantMenuTable,
     restaurantTableReservationSettingsTable,
     restaurantScheduledOrdersSettingsTable,
     restaurantTaxSettingsTable,
@@ -79,6 +80,7 @@ export const updateRestaurantService = async (
     data: Partial<typeof restaurantTable.$inferInsert> & {
         address?: Partial<typeof restaurantAddressTable.$inferInsert>
         openHours?: Partial<typeof restaurantOpenHoursTable.$inferInsert>
+        menu?: Partial<typeof restaurantMenuTable.$inferInsert>
         paymentMethods?: Partial<typeof restaurantPaymentMethodsTable.$inferInsert>
         tableReservationSettings?: Partial<typeof restaurantTableReservationSettingsTable.$inferInsert>
         taxSettings?: Partial<typeof restaurantTaxSettingsTable.$inferInsert>
@@ -94,6 +96,7 @@ export const updateRestaurantService = async (
             // other restaurant tables
             address,
             openHours,
+            menu,
             paymentMethods,
             tableReservationSettings,
             scheduledOrdersSettings,
@@ -133,6 +136,18 @@ export const updateRestaurantService = async (
                     .onConflictDoUpdate({
                         target: restaurantOpenHoursTable.restaurantId,
                         set: openHoursData
+                    });
+            }
+        }
+
+        if (menu) {
+            const { restaurantId: _, ...menuData } = menu;
+            if (Object.keys(menuData).length > 0) {
+                updates[updates.length] = tx.insert(restaurantMenuTable)
+                    .values({ ...menuData, restaurantId })
+                    .onConflictDoUpdate({
+                        target: restaurantMenuTable.restaurantId,
+                        set: menuData
                     });
             }
         }
@@ -245,6 +260,7 @@ export const getRestaurantService = async (
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>> & {
         address?: Partial<Record<keyof typeof restaurantAddressTable.$inferSelect, boolean>>
         openHours?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
+        menu?: Partial<Record<keyof typeof restaurantMenuTable.$inferSelect, boolean>>
         paymentMethods?: Partial<Record<keyof typeof restaurantPaymentMethodsTable.$inferSelect, boolean>>
         tableReservationSettings?: Partial<Record<keyof typeof restaurantTableReservationSettingsTable.$inferSelect, boolean>>
         taxSettings?: Partial<Record<keyof typeof restaurantTaxSettingsTable.$inferSelect, boolean>>
@@ -264,6 +280,11 @@ export const getRestaurantService = async (
             ...(columns?.openHours && {
                 openHours: {
                     columns: columns.openHours
+                }
+            }),
+            ...(columns?.menu && {
+                menu: {
+                    columns: columns.menu
                 }
             }),
             ...(columns?.paymentMethods && {
@@ -306,6 +327,9 @@ export const getRestaurantService = async (
     type openHours = restaurantType['openHours']
     type nonEmptyOpenHours = NonEmpty<openHours>
 
+    type menu = restaurantType['menu']
+    type nonEmptyMenu = NonEmpty<menu>
+
     type paymentMethods = restaurantType['paymentMethods']
     type nonEmptyPaymentMethods = NonEmpty<paymentMethods>
 
@@ -329,6 +353,7 @@ export const getRestaurantService = async (
         > & {
             address?: nonEmptyAddress
             openHours?: nonEmptyOpenHours
+            menu?: nonEmptyMenu
             paymentMethods?: nonEmptyPaymentMethods
             tableReservationSettings?: nonEmptyTableReservationSettings
             scheduledOrdersSettings?: nonEmptyScheduledOrdersSettings

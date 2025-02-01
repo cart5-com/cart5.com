@@ -3,6 +3,7 @@ import { type Context } from 'hono';
 import {
     selectRestaurantAddressSchema,
     selectRestaurantDeliveryZoneMapSchema,
+    selectRestaurantMenuSchema,
     selectRestaurantSchema,
     selectRestaurantOpenHoursSchema,
     selectRestaurantTableReservationSettingsSchema,
@@ -29,6 +30,11 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
         openHours: z.object(
             Object.fromEntries(
                 Object.keys(selectRestaurantOpenHoursSchema.shape).map(key => [key, z.boolean().optional()])
+            )
+        ).optional(),
+        menu: z.object(
+            Object.fromEntries(
+                Object.keys(selectRestaurantMenuSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional(),
         paymentMethods: z.object(

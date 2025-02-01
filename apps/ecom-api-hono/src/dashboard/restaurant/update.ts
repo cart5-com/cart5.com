@@ -2,6 +2,7 @@ import { type Context } from 'hono';
 import {
     updateRestaurantAddressSchema,
     updateRestaurantDeliveryZoneMapSchema,
+    updateRestaurantMenuSchema,
     updateRestaurantOpenHoursSchema,
     updateRestaurantTableReservationSettingsSchema,
     updateRestaurantScheduledOrdersSettingsSchema,
@@ -27,6 +28,9 @@ export const updateRestaurantSchemaValidator = zValidator('json',
             restaurantId: true,
         }).optional(),
         openHours: updateRestaurantOpenHoursSchema.omit({
+            restaurantId: true,
+        }).optional(),
+        menu: updateRestaurantMenuSchema.omit({
             restaurantId: true,
         }).optional(),
         paymentMethods: updateRestaurantPaymentMethodsSchema.omit({

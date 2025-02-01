@@ -10,6 +10,7 @@ import type {
 	TaxCategory,
 	WeeklyHours
 } from "lib/types/restaurantTypes";
+import type { MenuJSON } from "lib/types/menuTypes";
 
 
 /// RESTAURANT TABLE START
@@ -110,6 +111,33 @@ export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpen
 	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 /// RESTAURANT HOURS TABLE END
+
+
+
+
+
+
+
+
+/// RESTAURANT MENU TABLE START
+export const restaurantMenuTable = sqliteTable('restaurant_menu', {
+	restaurantId: text("restaurant_id").notNull().unique(),
+	menuJson: text('menu_json', { mode: 'json' }).$type<MenuJSON>(),
+});
+export const selectRestaurantMenuSchema = createSelectSchema(restaurantMenuTable);
+export const insertRestaurantMenuSchema = createInsertSchema(restaurantMenuTable, {
+	menuJson: z.custom<MenuJSON>((_val) => true),
+});
+export const updateRestaurantMenuSchema = createUpdateSchema(restaurantMenuTable, {
+	menuJson: z.custom<MenuJSON>((_val) => true),
+});
+/// RESTAURANT MENU TABLE END
+
+
+
+
+
+
 
 
 
@@ -271,6 +299,12 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			restaurantOpenHoursTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantOpenHoursTable.restaurantId]
+		}),
+	menu:
+		one(
+			restaurantMenuTable, {
+			fields: [restaurantTable.id],
+			references: [restaurantMenuTable.restaurantId]
 		}),
 	paymentMethods:
 		one(
