@@ -13,14 +13,40 @@ import type { MenuJSON } from "lib/types/menuTypes";
 import ItemCard from "../cards/ItemCard.vue";
 import { Button } from "@/components/ui/button";
 
-defineProps<{
+const props = defineProps<{
     menuJSON: MenuJSON,
     categoryId: string,
     openCategoryDialog: (categoryId: string) => void,
     toggleCategories: () => void,
     showCategories: boolean,
-    addNewItem: (categoryId: string) => void
 }>()
+
+const addNewItem = (categoryId: string) => {
+    const newItemId = `item-${Date.now()}`
+    if (props.menuJSON && props.menuJSON) {
+        // Initialize allItems if it doesn't exist
+        if (!props.menuJSON.allItems) {
+            props.menuJSON.allItems = {}
+        }
+
+        // Create new item
+        props.menuJSON.allItems[newItemId] = {
+            itemId: newItemId,
+            itemLabel: 'New Item',
+            price: 0,
+            description: '',
+            itemSizes: []
+        }
+
+        // Add item to category
+        if (props.menuJSON.allCategories?.[categoryId]) {
+            if (!props.menuJSON.allCategories[categoryId].itemIds) {
+                props.menuJSON.allCategories[categoryId].itemIds = []
+            }
+            props.menuJSON.allCategories[categoryId].itemIds?.push(newItemId)
+        }
+    }
+}
 </script>
 <template>
     <div class="category-container border rounded-lg mb-12 bg-background">

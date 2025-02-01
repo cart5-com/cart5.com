@@ -13,12 +13,29 @@ const toggleCategories = () => {
     showCategories.value = !showCategories.value;
 }
 
-defineProps<{
+const props = defineProps<{
     menuJSON: MenuJSON,
     openCategoryDialog: (categoryId: string) => void,
-    addNewCategory: () => void,
-    addNewItem: (categoryId: string) => void
 }>()
+
+
+const addNewCategory = () => {
+    const newCatId = `cat-${Date.now()}`
+    if (props.menuJSON) {
+        if (!props.menuJSON.allCategories) {
+            props.menuJSON.allCategories = {}
+        }
+        props.menuJSON.allCategories[newCatId] = {
+            catId: newCatId,
+            categoryLabel: 'New Category',
+            itemIds: []
+        }
+        if (!props.menuJSON.categoryIdsOrder) {
+            props.menuJSON.categoryIdsOrder = []
+        }
+        props.menuJSON.categoryIdsOrder.push(newCatId)
+    }
+}
 </script>
 <template>
     <draggable v-if="menuJSON"
@@ -31,8 +48,7 @@ defineProps<{
                           :categoryId="categoryId"
                           :openCategoryDialog="openCategoryDialog"
                           :showCategories="showCategories"
-                          :toggleCategories="toggleCategories"
-                          :addNewItem="addNewItem" />
+                          :toggleCategories="toggleCategories" />
         </template>
     </draggable>
     <Button class="my-4"

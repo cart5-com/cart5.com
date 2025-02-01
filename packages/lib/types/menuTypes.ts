@@ -1,7 +1,5 @@
-import { type WeeklyHours } from "./restaurantTypes";
-
+// import { type WeeklyHours } from "./restaurantTypes";
 export type ItemId = string | undefined;
-
 //  if undefined or false it will be visible, if true or date timestamp it will be hidden until the date
 export type UntilToCheck = boolean | number; // boolean or date timestamp,
 

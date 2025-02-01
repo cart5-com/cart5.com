@@ -116,59 +116,6 @@ function openCategoryDialog(categoryId: string) {
         categoryDialog.value.isOpen = true
     }
 }
-
-const addNewCategory = () => {
-    const newCatId = `cat-${Date.now()}`
-    if (!menuJSON.value) {
-        menuJSON.value = {
-            allCategories: {},
-            categoryIdsOrder: [],
-            allItems: {},
-            allOptionGroups: {}
-        }
-    }
-    if (menuJSON && menuJSON.value) {
-        if (!menuJSON.value.allCategories) {
-            menuJSON.value.allCategories = {}
-        }
-        menuJSON.value.allCategories[newCatId] = {
-            catId: newCatId,
-            categoryLabel: 'New Category',
-            itemIds: []
-        }
-        if (!menuJSON.value.categoryIdsOrder) {
-            menuJSON.value.categoryIdsOrder = []
-        }
-        menuJSON.value.categoryIdsOrder.push(newCatId)
-    }
-}
-
-const addNewItem = (categoryId: string) => {
-    const newItemId = `item-${Date.now()}`
-    if (menuJSON && menuJSON.value) {
-        // Initialize allItems if it doesn't exist
-        if (!menuJSON.value.allItems) {
-            menuJSON.value.allItems = {}
-        }
-
-        // Create new item
-        menuJSON.value.allItems[newItemId] = {
-            itemId: newItemId,
-            itemLabel: 'New Item',
-            price: 0,
-            description: '',
-            itemSizes: []
-        }
-
-        // Add item to category
-        if (menuJSON.value.allCategories?.[categoryId]) {
-            if (!menuJSON.value.allCategories[categoryId].itemIds) {
-                menuJSON.value.allCategories[categoryId].itemIds = []
-            }
-            menuJSON.value.allCategories[categoryId].itemIds?.push(newItemId)
-        }
-    }
-}
 </script>
 
 
@@ -196,9 +143,7 @@ const addNewItem = (categoryId: string) => {
                 </TabsList>
                 <TabsContent value="menu">
                     <MenuTab :menuJSON="menuJSON"
-                             :openCategoryDialog="openCategoryDialog"
-                             :addNewCategory="addNewCategory"
-                             :addNewItem="addNewItem" />
+                             :openCategoryDialog="openCategoryDialog" />
                 </TabsContent>
                 <TabsContent value="items">
                     <div>Items</div>
