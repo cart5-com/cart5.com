@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import { MenuJSON } from "lib/types/menuTypes";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { MoveIcon } from "lucide-vue-next";
+
 defineProps<{
     menuJSON: MenuJSON,
     itemId: string
 }>()
+
 </script>
 
 <template>

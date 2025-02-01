@@ -6,7 +6,7 @@ import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEdit
 import { Category } from "lib/types/menuTypes"
 import { ref } from "vue"
 
-const props = defineProps<{
+defineProps<{
     category?: Category
 }>()
 

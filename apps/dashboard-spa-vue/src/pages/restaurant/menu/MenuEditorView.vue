@@ -11,13 +11,13 @@ import {
     Check,
     Loader2,
 } from "lucide-vue-next";
-import CategoryDialog from "./CategoryDialog.vue";
+import CategoryDialog from "./dialogs/CategoryDialog.vue";
 import { Button } from "@/components/ui/button";
 import type { MenuJSON } from "lib/types/menuTypes";
 import { dashboardApiClient } from "@src/lib/dashboardApiClient";
 import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from '@/ui-plus/sonner';
-import MenuTab from "./MenuTab.vue";
+import MenuTab from "./tabs/MenuTab.vue";
 
 pageTitle.value = 'Menu Editor'
 const isLoading = ref(false);
@@ -142,6 +142,33 @@ const addNewCategory = () => {
         menuJSON.value.categoryIdsOrder.push(newCatId)
     }
 }
+
+const addNewItem = (categoryId: string) => {
+    const newItemId = `item-${Date.now()}`
+    if (menuJSON && menuJSON.value) {
+        // Initialize allItems if it doesn't exist
+        if (!menuJSON.value.allItems) {
+            menuJSON.value.allItems = {}
+        }
+
+        // Create new item
+        menuJSON.value.allItems[newItemId] = {
+            itemId: newItemId,
+            itemLabel: 'New Item',
+            price: 0,
+            description: '',
+            itemSizes: []
+        }
+
+        // Add item to category
+        if (menuJSON.value.allCategories?.[categoryId]) {
+            if (!menuJSON.value.allCategories[categoryId].itemIds) {
+                menuJSON.value.allCategories[categoryId].itemIds = []
+            }
+            menuJSON.value.allCategories[categoryId].itemIds?.push(newItemId)
+        }
+    }
+}
 </script>
 
 
@@ -170,7 +197,8 @@ const addNewCategory = () => {
                 <TabsContent value="menu">
                     <MenuTab :menuJSON="menuJSON"
                              :openCategoryDialog="openCategoryDialog"
-                             :addNewCategory="addNewCategory" />
+                             :addNewCategory="addNewCategory"
+                             :addNewItem="addNewItem" />
                 </TabsContent>
                 <TabsContent value="items">
                     <div>Items</div>
