@@ -31,6 +31,9 @@ const delegatedProps = computed(() => {
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 const handleInteractOutside = (event: any) => {
+	if ((event.target as HTMLElement)?.closest('[data-sonner-toaster]')) {
+		return event.preventDefault();
+	}
 	if (!props.closeable) {
 		event.preventDefault();
 		return;
