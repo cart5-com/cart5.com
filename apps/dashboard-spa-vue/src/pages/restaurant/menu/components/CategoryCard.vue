@@ -35,7 +35,7 @@ const addNewItem = (categoryId: string) => {
         // Create new item
         props.menuJSON.allItems[newItemId] = {
             itemId: newItemId,
-            itemLabel: 'New Item',
+            itemLabel: `New Item ${Object.keys(props.menuJSON.allItems).length + 1}`,
             price: 0,
             description: '',
             itemSizes: []
