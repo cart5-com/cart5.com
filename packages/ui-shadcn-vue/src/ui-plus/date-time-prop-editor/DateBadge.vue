@@ -2,7 +2,7 @@
 import { WeeklyScheduleAsString } from "lib/types/dateTimeType";
 import type { DateTimeProp } from "lib/types/dateTimeType";
 import { Badge } from '@/components/ui/badge'
-const props = defineProps<{
+defineProps<{
     modelValue: DateTimeProp
 }>()
 </script>
@@ -13,9 +13,9 @@ const props = defineProps<{
             DEBUG:Always
         </Badge>
         <!-- line-clamp-1 -->
-        <Badge class="max-w-xs overflow-auto max-h-4"
+        <!-- :style="{ maxWidth: '100ch' }" -->
+        <Badge class="max-w-xs line-clamp-1"
                :title="WeeklyScheduleAsString(modelValue?.weeklyScheduleValue)"
-               :style="{ maxWidth: '100ch' }"
                v-if="
                 modelValue?.type === 'weeklySchedule' &&
                 modelValue?.weeklyScheduleValue
