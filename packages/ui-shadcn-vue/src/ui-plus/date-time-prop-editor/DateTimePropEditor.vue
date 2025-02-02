@@ -3,12 +3,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { useVModel } from '@vueuse/core'
 import { Switch } from '@/components/ui/switch';
-import WeeklyEditor from '@/ui-plus/date-time-prop-editor/WeeklyEditor.vue';
-import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
+import WeeklyEditor from './WeeklyEditor.vue';
+import RangeCalendarEditor from './RangeCalendarEditor.vue';
 import type { DateTimeProp } from "lib/types/dateTimeType";
-import { SettingsIcon } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import DateBadge from '@/ui-plus/date-time-prop-editor/DateBadge.vue';
+// import DateBadge from '@/ui-plus/date-time-prop-editor/DateBadge.vue';
 
 const props = defineProps<{
     modelValue?: DateTimeProp
@@ -40,7 +38,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                     modelValue.isEnabled = checked
                 }"
                 :default-checked="modelValue.isEnabled" />
-        <DateBadge v-model="modelValue" />
+        <!-- <DateBadge v-model="modelValue" /> -->
         <RadioGroup v-model="modelValue.type"
                     default-value="always"
                     v-if="modelValue.isEnabled">
@@ -54,17 +52,8 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                 <RadioGroupItem value="weeklySchedule"
                                 id="weeklySchedule" />
                 <Label for="weeklySchedule">Weekly Schedule</Label>
-                <Dialog v-if="modelValue.type === 'weeklySchedule'">
-                    <DialogTrigger>
-                        <Button variant="outline"
-                                size="icon">
-                            <SettingsIcon />
-                        </Button>
-                    </DialogTrigger>
-                    <DialogScrollContent>
-                        <WeeklyEditor v-model="modelValue.weeklyScheduleValue" />
-                    </DialogScrollContent>
-                </Dialog>
+                <WeeklyEditor v-model="modelValue.weeklyScheduleValue"
+                              v-if="modelValue.type === 'weeklySchedule'" />
             </div>
 
             <div class="flex items-center space-x-2">
@@ -72,6 +61,8 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                                 id="dateRange" />
                 <Label for="dateRange">Date Range</Label>
             </div>
+            <RangeCalendarEditor v-model="modelValue.dateRangeValue"
+                                 v-if="modelValue.type === 'dateRange'" />
         </RadioGroup>
     </div>
 </template>

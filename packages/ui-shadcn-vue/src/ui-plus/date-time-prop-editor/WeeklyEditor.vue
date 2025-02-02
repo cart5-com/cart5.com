@@ -3,6 +3,8 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { XIcon, MoreVerticalIcon, PlusIcon } from 'lucide-vue-next'
+import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
+import { SettingsIcon } from 'lucide-vue-next';
 import { useVModel } from '@vueuse/core'
 import {
     type DateTimeProp,
@@ -53,69 +55,79 @@ const applyToOtherDays = (sourceDay: string) => {
 
 </script>
 <template>
-    <div class="space-y-4">
-        <div v-for="day in DAYS"
-             :key="day.key"
-             class="border-b pb-4 last:border-b-0">
-            <div class="flex items-center justify-between mb-2">
-                <div>
-                    <h3 class="font-medium">{{ day.label }}</h3>
-                    <label :for="`default-hours-${day.key}`"
-                           class="cursor-pointer flex flex-row items-center gap-2">
-                        <Switch :id="`default-hours-${day.key}`"
-                                :checked="modelValue?.[day.key]?.isOpen24 ?? false"
-                                @update:checked="(val) => {
+    <Dialog>
+        <DialogTrigger>
+            <Button variant="outline"
+                    size="icon">
+                <SettingsIcon />
+            </Button>
+        </DialogTrigger>
+        <DialogScrollContent>
+            <div class="space-y-4">
+                <div v-for="day in DAYS"
+                     :key="day.key"
+                     class="border-b pb-4 last:border-b-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <h3 class="font-medium">{{ day.label }}</h3>
+                            <label :for="`default-hours-${day.key}`"
+                                   class="cursor-pointer flex flex-row items-center gap-2">
+                                <Switch :id="`default-hours-${day.key}`"
+                                        :checked="modelValue?.[day.key]?.isOpen24 ?? false"
+                                        @update:checked="(val) => {
+                                            if (!modelValue) modelValue = {};
+                                            if (!modelValue[day.key]) modelValue[day.key] = {};
+                                            modelValue[day.key]!.isOpen24 = val;
+                                        }" />
+                                <span class="text-muted-foreground text-xs">
+                                    24 hours</span>
+                            </label>
+                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <Button variant="ghost"
+                                        size="sm">
+                                    <MoreVerticalIcon class="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem @click="applyToOtherDays(day.key)">
+                                    Apply same hours
+                                    <br>
+                                    to all other days
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div v-if="!modelValue?.[day.key]?.isOpen24"
+                         class="space-y-2">
+                        <div v-if="modelValue?.[day.key]"
+                             v-for="(timeSlot, index) in modelValue?.[day.key]?.hours ?? []"
+                             :key="index"
+                             class="flex gap-2 items-center">
+                            <Input type="time"
+                                   v-model="timeSlot.open" />
+                            <!-- <span class="text-muted-foreground">to</span> -->
+                            <Input type="time"
+                                   v-model="timeSlot.close" />
+                            <Button variant="outline"
+                                    size="sm"
+                                    @click="modelValue?.[day.key]?.hours?.splice(index, 1)">
+                                <XIcon />
+                            </Button>
+                        </div>
+                        <Button variant="outline"
+                                size="sm"
+                                @click="() => {
                                     if (!modelValue) modelValue = {};
-                                    if (!modelValue[day.key]) modelValue[day.key] = {};
-                                    modelValue[day.key]!.isOpen24 = val;
-                                }" />
-                        <span class="text-muted-foreground text-xs">
-                            24 hours</span>
-                    </label>
-                </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                        <Button variant="ghost"
-                                size="sm">
-                            <MoreVerticalIcon class="h-4 w-4" />
+                                    modelValue[day.key]!.hours!.push({ open: '09:00', close: '20:00' });
+                                }">
+                            <PlusIcon class="h-4 w-4 mr-2" />
+                            Add Time Slot
                         </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem @click="applyToOtherDays(day.key)">
-                            Apply same hours
-                            <br>
-                            to all other days
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-            <div v-if="!modelValue?.[day.key]?.isOpen24"
-                 class="space-y-2">
-                <div v-if="modelValue?.[day.key]"
-                     v-for="(timeSlot, index) in modelValue?.[day.key]?.hours ?? []"
-                     :key="index"
-                     class="flex gap-2 items-center">
-                    <Input type="time"
-                           v-model="timeSlot.open" />
-                    <!-- <span class="text-muted-foreground">to</span> -->
-                    <Input type="time"
-                           v-model="timeSlot.close" />
-                    <Button variant="outline"
-                            size="sm"
-                            @click="modelValue?.[day.key]?.hours?.splice(index, 1)">
-                        <XIcon />
-                    </Button>
+                    </div>
                 </div>
-                <Button variant="outline"
-                        size="sm"
-                        @click="() => {
-                            if (!modelValue) modelValue = {};
-                            modelValue[day.key]!.hours!.push({ open: '09:00', close: '20:00' });
-                        }">
-                    <PlusIcon class="h-4 w-4 mr-2" />
-                    Add Time Slot
-                </Button>
             </div>
-        </div>
-    </div>
+        </DialogScrollContent>
+    </Dialog>
 </template>

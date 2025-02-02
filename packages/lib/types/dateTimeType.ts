@@ -18,13 +18,14 @@ export type WeeklySchedule = {
     "6"?: HoursDay; // saturday
 }
 
+
 export type DateTimeProp = {
     isEnabled?: boolean;
     type?: "always" | "weeklySchedule" | "dateRange";
     weeklyScheduleValue?: WeeklySchedule,
     dateRangeValue?: {
-        start?: string;
-        end?: string;
+        start?: number;
+        end?: number;
     }
 }
 
