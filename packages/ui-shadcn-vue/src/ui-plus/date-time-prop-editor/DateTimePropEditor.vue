@@ -27,6 +27,8 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     deep: props.modelValue ? false : true,
 })
 
+
+
 </script>
 
 <template>
@@ -36,11 +38,28 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                 @update:checked="(checked: boolean) => {
                     if (!modelValue) modelValue = {};
                     modelValue.isEnabled = checked
+                    if (!checked) {
+                        // clean if it is not used
+                        modelValue.type = undefined;
+                        modelValue.weeklyScheduleValue = undefined;
+                        modelValue.dateRangeValue = undefined;
+                    }
                 }"
                 :default-checked="modelValue.isEnabled" />
         <!-- <DateBadge v-model="modelValue" /> -->
         <RadioGroup v-model="modelValue.type"
                     default-value="always"
+                    @update:modelValue="(newType) => {
+                        // Clear out non-active type data
+                        // clean if it is not used
+                        if (!modelValue) return;
+                        if (newType !== 'weeklySchedule') {
+                            modelValue.weeklyScheduleValue = undefined;
+                        }
+                        if (newType !== 'dateRange') {
+                            modelValue.dateRangeValue = undefined;
+                        }
+                    }"
                     v-if="modelValue.isEnabled">
             <div class="flex items-center space-x-2">
                 <RadioGroupItem value="always"
