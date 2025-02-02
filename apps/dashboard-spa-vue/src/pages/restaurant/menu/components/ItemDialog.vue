@@ -52,16 +52,16 @@ defineExpose({
                            class="col-span-3" />
                 </div>
 
-                <div class="grid grid-cols-4 items-center gap-4">
+                <!-- <div class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Image URL</Label>
                     <Input v-model="item.imageUrl"
                            class="col-span-3" />
-                </div>
+                </div> -->
 
                 <div class="grid grid-cols-4 items-start gap-4">
-                    <Label class="text-right">Limited Time</Label>
+                    <Label class="text-right">Out of Stock</Label>
                     <div class="col-span-3">
-                        <DateTimePropEditor v-model="item.isLimitedTime" />
+                        <DateTimePropEditor v-model="item.isOutOfStock" />
                     </div>
                 </div>
 

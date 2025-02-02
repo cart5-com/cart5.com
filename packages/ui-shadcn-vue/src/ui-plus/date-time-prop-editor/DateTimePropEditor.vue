@@ -6,6 +6,9 @@ import { Switch } from '@/components/ui/switch';
 import WeeklyEditor from '@/ui-plus/date-time-prop-editor/WeeklyEditor.vue';
 import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
 import type { DateTimeProp } from "lib/types/dateTimeType";
+import { SettingsIcon } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import DateBadge from '@/ui-plus/date-time-prop-editor/DateBadge.vue';
 
 const props = defineProps<{
     modelValue?: DateTimeProp
@@ -16,10 +19,8 @@ const emits = defineEmits<{
 }>()
 
 const defaultValue: DateTimeProp = {
-    type: "always",
-    alwaysValue: false,
-    weeklyScheduleValue: undefined,
-    dateRangeValue: undefined,
+    isEnabled: false,
+    type: "always"
 }
 
 const modelValue = useVModel(props, 'modelValue', emits, {
@@ -33,59 +34,44 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 <template>
     <div class="space-y-6"
          v-if="modelValue">
+        <Switch :checked="modelValue.isEnabled"
+                @update:checked="(checked: boolean) => {
+                    if (!modelValue) modelValue = {};
+                    modelValue.isEnabled = checked
+                }"
+                :default-checked="modelValue.isEnabled" />
+        <DateBadge v-model="modelValue" />
         <RadioGroup v-model="modelValue.type"
-                    default-value="always">
-            <div class="flex items-center space-x-4">
+                    default-value="always"
+                    v-if="modelValue.isEnabled">
+            <div class="flex items-center space-x-2">
                 <RadioGroupItem value="always"
                                 id="always" />
                 <Label for="always">Always</Label>
+            </div>
 
-                <Dialog>
+            <div class="flex items-center space-x-2">
+                <RadioGroupItem value="weeklySchedule"
+                                id="weeklySchedule" />
+                <Label for="weeklySchedule">Weekly Schedule</Label>
+                <Dialog v-if="modelValue.type === 'weeklySchedule'">
                     <DialogTrigger>
-                        <RadioGroupItem value="weeklySchedule"
-                                        id="weeklySchedule" />
-                        <Label for="weeklySchedule">Weekly Schedule</Label>
+                        <Button variant="outline"
+                                size="icon">
+                            <SettingsIcon />
+                        </Button>
                     </DialogTrigger>
                     <DialogScrollContent>
                         <WeeklyEditor v-model="modelValue.weeklyScheduleValue" />
                     </DialogScrollContent>
                 </Dialog>
+            </div>
 
+            <div class="flex items-center space-x-2">
                 <RadioGroupItem value="dateRange"
                                 id="dateRange" />
                 <Label for="dateRange">Date Range</Label>
             </div>
         </RadioGroup>
-
-        <!-- Always section -->
-        <div v-if="modelValue.type === 'always'"
-             class="space-y-4">
-            <div class="flex items-center space-x-2">
-                <Switch :checked="modelValue.alwaysValue"
-                        @update:checked="(checked: boolean) => {
-                            if (!modelValue) modelValue = {};
-                            modelValue.alwaysValue = checked
-                        }"
-                        :default-checked="modelValue.alwaysValue" />
-                <Label>Enable</Label>
-            </div>
-        </div>
-        <!--
-
-        <div v-if="localValue.type === 'dateRange'"
-             class="space-y-4">
-            <div class="flex items-center space-x-4">
-                <div class="space-y-2">
-                    <Label>Start Date</Label>
-                    <Input v-model="localValue.dateRangeValue?.start"
-                           type="datetime-local" />
-                </div>
-                <div class="space-y-2">
-                    <Label>End Date</Label>
-                    <Input v-model="localValue.dateRangeValue?.end"
-                           type="datetime-local" />
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>

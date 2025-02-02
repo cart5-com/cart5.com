@@ -19,8 +19,8 @@ export type WeeklySchedule = {
 }
 
 export type DateTimeProp = {
+    isEnabled?: boolean;
     type?: "always" | "weeklySchedule" | "dateRange";
-    alwaysValue?: boolean;
     weeklyScheduleValue?: WeeklySchedule,
     dateRangeValue?: {
         start?: string;

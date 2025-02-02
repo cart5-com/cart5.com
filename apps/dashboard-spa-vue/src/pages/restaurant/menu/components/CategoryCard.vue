@@ -60,24 +60,6 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
             <h1 class="text-2xl font-bold">
                 {{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}
-                <Badge v-if="
-                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'always' &&
-                    menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.alwaysValue
-                "
-                       variant="outline">
-                    DEBUG:Always
-                </Badge>
-                <Badge class="line-clamp-1"
-                       :style="{ maxWidth: '10ch' }"
-                       v-if="
-                        menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.type === 'weeklySchedule' &&
-                        menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue
-                    "
-                       variant="outline">
-                    DEBUG: {{
-                        WeeklyScheduleAsString(menuJSON?.allCategories?.[categoryId]?.isLimitedTime?.weeklyScheduleValue)
-                    }}
-                </Badge>
             </h1>
             <div class="flex items-center gap-2">
                 <AlignJustify class="cursor-pointer cat-drag-handle" />

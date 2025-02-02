@@ -29,8 +29,8 @@ export type Item = {
     description?: string;
     price?: number;
     imageUrl?: string;
-    isOutOfStock?: UntilToCheck;
-    isHidden?: UntilToCheck;
+    isOutOfStock?: DateTimeProp;
+    isHidden?: DateTimeProp;
     isLimitedTime?: DateTimeProp
     isSpecialInstructionsHidden?: boolean;
     internalName?: string;
@@ -81,7 +81,7 @@ export const sampleMenuJSON: MenuJSON = {
             ],
             isLimitedTime: {
                 type: "always",
-                alwaysValue: false,
+                isEnabled: false,
             },
         },
         "cat-2": {
