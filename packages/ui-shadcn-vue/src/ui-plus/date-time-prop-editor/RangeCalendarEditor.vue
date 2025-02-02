@@ -60,7 +60,6 @@ const handleModelValueChange = (date: DateRange) => {
 
 <template>
     <DateRangePickerRoot v-if="modelValue"
-                         id="date-field"
                          :hour-cycle="24"
                          granularity="minute"
                          :hide-time-zone="false"
