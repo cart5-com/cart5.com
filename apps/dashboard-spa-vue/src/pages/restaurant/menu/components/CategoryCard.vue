@@ -3,6 +3,7 @@ import {
     AlignJustify,
     ChevronDown,
     ChevronUp,
+    Link,
     Pencil,
     Plus,
 } from "lucide-vue-next";
@@ -12,7 +13,7 @@ import { WeeklyScheduleAsString } from "lib/types/menuTypes";
 import type { MenuJSON } from "lib/types/menuTypes";
 import ItemCard from "../components/ItemCard.vue";
 import { Button } from "@/components/ui/button";
-
+import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 const props = defineProps<{
     menuJSON: MenuJSON,
     categoryId: string,
@@ -39,12 +40,16 @@ const addNewItem = (categoryId: string) => {
         }
 
         // Add item to category
-        if (props.menuJSON.allCategories?.[categoryId]) {
-            if (!props.menuJSON.allCategories[categoryId].itemIds) {
-                props.menuJSON.allCategories[categoryId].itemIds = []
-            }
-            props.menuJSON.allCategories[categoryId].itemIds?.push(newItemId)
+        addItemToCategory(categoryId, newItemId)
+    }
+}
+
+const addItemToCategory = (categoryId: string, itemId: string) => {
+    if (props.menuJSON.allCategories?.[categoryId]) {
+        if (!props.menuJSON.allCategories[categoryId].itemIds) {
+            props.menuJSON.allCategories[categoryId].itemIds = []
         }
+        props.menuJSON.allCategories[categoryId].itemIds?.push(itemId)
     }
 }
 </script>
@@ -95,12 +100,23 @@ const addNewItem = (categoryId: string) => {
                 </template>
             </draggable>
 
-            <div class="flex justify-center">
-                <Button variant="outline"
-                        @click="addNewItem(categoryId)">
-                    <Plus /> Add item to {{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}
-                </Button>
-            </div>
+            <Button variant="outline"
+                    @click="addNewItem(categoryId)">
+                <Plus /> Add item to '{{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}'
+            </Button>
+            <SelectWithSearch :items="Object.values(menuJSON?.allItems ?? {}).map((item) => ({
+                key: item.itemId,
+                name: item.itemLabel
+            }))"
+                              @select="(item) => {
+                                addItemToCategory(categoryId, item.key)
+                            }">
+                <template #trigger>
+                    <Button variant="outline">
+                        <Link /> Link existing item
+                    </Button>
+                </template>
+            </SelectWithSearch>
         </div>
     </div>
 </template>

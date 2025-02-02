@@ -116,6 +116,7 @@ function openCategoryDialog(categoryId: string) {
         categoryDialog.value.isOpen = true
     }
 }
+
 </script>
 
 
