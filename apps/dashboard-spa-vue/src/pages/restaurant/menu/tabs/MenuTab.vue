@@ -15,7 +15,6 @@ const toggleCategories = () => {
 
 const props = defineProps<{
     menuJSON: MenuJSON,
-    openCategoryDialog: (categoryId: string) => void,
 }>()
 
 
@@ -46,7 +45,6 @@ const addNewCategory = () => {
         <template #item="{ element: categoryId }">
             <CategoryCard :menuJSON="menuJSON"
                           :categoryId="categoryId"
-                          :openCategoryDialog="openCategoryDialog"
                           :showCategories="showCategories"
                           :toggleCategories="toggleCategories" />
         </template>

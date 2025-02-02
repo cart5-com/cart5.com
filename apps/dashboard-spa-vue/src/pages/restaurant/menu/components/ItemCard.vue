@@ -1,12 +1,29 @@
 <script lang="ts" setup>
 import { MenuJSON } from "lib/types/menuTypes";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { MoveIcon } from "lucide-vue-next";
+import { Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
+import { useMenuOperations } from '../composables/useMenuOperations';
+const { openItemDialog } = useMenuOperations()
 
-defineProps<{
+const props = defineProps<{
     menuJSON: MenuJSON,
-    itemId: string
+    itemId: string,
+    categoryId?: string,
 }>()
+
+
+const unlinkItem = () => {
+    if (!props.categoryId || !props.menuJSON.allCategories?.[props.categoryId]) return;
+
+    const category = props.menuJSON.allCategories[props.categoryId];
+    if (!category.itemIds) return;
+
+    const index = category.itemIds.indexOf(props.itemId);
+    if (index > -1) {
+        category.itemIds.splice(index, 1);
+    }
+}
 
 </script>
 
@@ -43,7 +60,17 @@ defineProps<{
                 </p>
             </CardContent>
             <CardFooter>
-                <!-- <Button class="w-full">Add to Cart</Button> -->
+                <Button variant="outline"
+                        size="sm"
+                        @click="openItemDialog(itemId)">
+                    <Pencil />
+                </Button>
+                <Button variant="destructive"
+                        size="sm"
+                        @click="unlinkItem"
+                        v-if="categoryId">
+                    <Link2Off />
+                </Button>
             </CardFooter>
         </Card>
 

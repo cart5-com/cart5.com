@@ -3,7 +3,7 @@ import {
     AlignJustify,
     ChevronDown,
     ChevronUp,
-    Link,
+    Link2,
     Pencil,
     Plus,
 } from "lucide-vue-next";
@@ -14,10 +14,12 @@ import type { MenuJSON } from "lib/types/menuTypes";
 import ItemCard from "../components/ItemCard.vue";
 import { Button } from "@/components/ui/button";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
+import { useMenuOperations } from '../composables/useMenuOperations';
+const { openCategoryDialog } = useMenuOperations()
+
 const props = defineProps<{
     menuJSON: MenuJSON,
     categoryId: string,
-    openCategoryDialog: (categoryId: string) => void,
     toggleCategories: () => void,
     showCategories: boolean,
 }>()
@@ -96,7 +98,8 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 mt-4">
                 <template #item="{ element: itemId }">
                     <ItemCard :menuJSON="menuJSON"
-                              :itemId="itemId" />
+                              :itemId="itemId"
+                              :categoryId="categoryId" />
                 </template>
             </draggable>
 
@@ -113,7 +116,7 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
                             }">
                 <template #trigger>
                     <Button variant="outline">
-                        <Link /> Link existing item
+                        <Link2 /> Link existing item
                     </Button>
                 </template>
             </SelectWithSearch>

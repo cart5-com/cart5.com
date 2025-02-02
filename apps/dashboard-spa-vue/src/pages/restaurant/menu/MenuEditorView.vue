@@ -11,6 +11,7 @@ import {
     Check,
     Loader2,
 } from "lucide-vue-next";
+import ItemDialog from "./components/ItemDialog.vue";
 import CategoryDialog from "./components/CategoryDialog.vue";
 import { Button } from "@/components/ui/button";
 import type { MenuJSON } from "lib/types/menuTypes";
@@ -18,12 +19,11 @@ import { dashboardApiClient } from "@src/lib/dashboardApiClient";
 import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from '@/ui-plus/sonner';
 import MenuTab from "./tabs/MenuTab.vue";
+import { provideMenuOperations } from './composables/useMenuOperations'
+
 
 pageTitle.value = 'Menu Editor'
 const isLoading = ref(false);
-const categoryDialog = ref<InstanceType<typeof CategoryDialog>>();
-
-const currentCategoryId = ref<string | null>(null);
 
 const defaultMenuJSON: MenuJSON = {
     categoryIdsOrder: [],
@@ -110,6 +110,18 @@ onMounted(() => {
     loadMenu();
 });
 
+
+const currentItemId = ref<string | null>(null);
+const itemDialog = ref<InstanceType<typeof ItemDialog>>();
+function openItemDialog(itemId: string) {
+    currentItemId.value = itemId
+    if (itemDialog.value) {
+        itemDialog.value.isOpen = true
+    }
+}
+
+const currentCategoryId = ref<string | null>(null);
+const categoryDialog = ref<InstanceType<typeof CategoryDialog>>();
 function openCategoryDialog(categoryId: string) {
     currentCategoryId.value = categoryId
     if (categoryDialog.value) {
@@ -117,15 +129,21 @@ function openCategoryDialog(categoryId: string) {
     }
 }
 
+provideMenuOperations({
+    openItemDialog,
+    openCategoryDialog
+})
+
 </script>
 
 
 <template>
     <div class="p-0 sm:p-2">
         <div class="mx-auto mt-4">
+            <ItemDialog ref="itemDialog"
+                        :item="currentItemId ? menuJSON?.allItems?.[currentItemId] : undefined" />
             <CategoryDialog ref="categoryDialog"
-                            v-if="currentCategoryId"
-                            :category="menuJSON?.allCategories?.[currentCategoryId]" />
+                            :category="currentCategoryId ? menuJSON?.allCategories?.[currentCategoryId] : undefined" />
 
             <Tabs default-value="menu"
                   class="w-full">
@@ -141,8 +159,7 @@ function openCategoryDialog(categoryId: string) {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="menu">
-                    <MenuTab :menuJSON="menuJSON"
-                             :openCategoryDialog="openCategoryDialog" />
+                    <MenuTab :menuJSON="menuJSON" />
                 </TabsContent>
                 <TabsContent value="items">
                     <div>Items</div>
