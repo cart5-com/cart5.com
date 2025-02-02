@@ -1,3 +1,15 @@
+import type { WeeklySchedule } from "./dateTimeType";
+/// OPEN HOURS START
+export type WeeklyHours = {
+    isActive?: boolean;
+    days?: WeeklySchedule;
+};
+/// OPEN HOURS END
+
+
+
+
+
 /// DELIVERY ZONES START
 export type Point = {
     lat?: number,
@@ -30,30 +42,7 @@ export type DeliveryZone = {
 
 
 
-/// OPEN HOURS START
-export type OpenHours = {
-    open?: string;
-    close?: string;
-};
 
-export type HoursDay = {
-    isOpen24?: boolean;
-    hours?: OpenHours[];
-};
-
-export type WeeklyHours = {
-    isActive?: boolean;
-    days?: {
-        "0"?: HoursDay; // sunday
-        "1"?: HoursDay; // monday
-        "2"?: HoursDay; // tuesday
-        "3"?: HoursDay; // wednesday
-        "4"?: HoursDay; // thursday
-        "5"?: HoursDay; // friday
-        "6"?: HoursDay; // saturday
-    };
-};
-/// OPEN HOURS END
 
 
 /// PAYMENT METHODS START
@@ -78,6 +67,8 @@ export type PhysicalPaymentMethods = {
 
 
 
+
+
 /// TAX SETTINGS START
 export type TaxCategory = {
     id?: string;
@@ -88,6 +79,9 @@ export type TaxCategory = {
     tableReservationRate?: number;
 }
 /// TAX SETTINGS END
+
+
+
 
 
 

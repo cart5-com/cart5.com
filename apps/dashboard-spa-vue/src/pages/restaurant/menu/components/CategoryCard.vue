@@ -9,7 +9,7 @@ import {
 } from "lucide-vue-next";
 import { Badge } from '@/components/ui/badge'
 import draggable from "vuedraggable";
-import { WeeklyScheduleAsString } from "lib/types/menuTypes";
+import { WeeklyScheduleAsString } from "lib/types/dateTimeType";
 import type { MenuJSON } from "lib/types/menuTypes";
 import ItemCard from "../components/ItemCard.vue";
 import { Button } from "@/components/ui/button";

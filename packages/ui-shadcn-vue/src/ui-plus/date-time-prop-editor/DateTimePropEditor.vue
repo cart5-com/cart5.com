@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { dateTimeProp } from './type'
 import { useVModel } from '@vueuse/core'
 import { Switch } from '@/components/ui/switch';
 import WeeklyEditor from '@/ui-plus/date-time-prop-editor/WeeklyEditor.vue';
 import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
+import type { DateTimeProp } from "lib/types/dateTimeType";
 
 const props = defineProps<{
-    modelValue?: dateTimeProp
+    modelValue?: DateTimeProp
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: dateTimeProp): void
+    (e: 'update:modelValue', payload: DateTimeProp): void
 }>()
 
-const defaultValue: dateTimeProp = {
+const defaultValue: DateTimeProp = {
     type: "always",
     alwaysValue: false,
     weeklyScheduleValue: undefined,

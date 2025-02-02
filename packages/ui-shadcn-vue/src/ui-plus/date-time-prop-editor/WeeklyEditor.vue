@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { XIcon, MoreVerticalIcon, PlusIcon } from 'lucide-vue-next'
 import { useVModel } from '@vueuse/core'
-import { dateTimeProp } from '@/ui-plus/date-time-prop-editor/type'
-import { WeeklyScheduleDays } from 'lib/types/menuTypes'
+import {
+    type DateTimeProp,
+    WeeklyScheduleDays
+} from "lib/types/dateTimeType";
 import { Input } from '@/components/ui/input'
 import { type Ref } from 'vue'
 
 const props = defineProps<{
-    modelValue?: dateTimeProp['weeklyScheduleValue']
+    modelValue?: DateTimeProp['weeklyScheduleValue']
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: dateTimeProp['weeklyScheduleValue']): void
+    (e: 'update:modelValue', payload: DateTimeProp['weeklyScheduleValue']): void
 }>()
 
 const DAYS = WeeklyScheduleDays;

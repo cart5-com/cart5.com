@@ -10,16 +10,9 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { WeeklyHours } from 'lib/types/restaurantTypes';
+import { WeeklyScheduleDays } from 'lib/types/dateTimeType';
 
-const DAYS = [
-    { key: '1' as const, label: 'Monday' },
-    { key: '2' as const, label: 'Tuesday' },
-    { key: '3' as const, label: 'Wednesday' },
-    { key: '4' as const, label: 'Thursday' },
-    { key: '5' as const, label: 'Friday' },
-    { key: '6' as const, label: 'Saturday' },
-    { key: '0' as const, label: 'Sunday' },
-];
+const DAYS = WeeklyScheduleDays;
 
 const props = defineProps<{
     weekHours: WeeklyHours;
