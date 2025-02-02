@@ -1,4 +1,7 @@
 {
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 80,
+  "editor.wrappingIndent": "same",
   "html.format.wrapAttributes": "force-aligned",
   "[vue]": {
     "editor.defaultFormatter": "Vue.volar",
