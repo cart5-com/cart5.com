@@ -84,6 +84,7 @@ export type Item = {
     ingredients?: string[]; // to make them removeable from the item
     allergens?: string[]; // Milk, Tree nuts, Eggs, Peanuts, Fish, Wheat, Shellfish, Soybeans
     additives?: string[]; // Artificial colours, Artificial sweeteners, Artificial flavours, Preservatives
+    optionGroupIds?: string[];
     itemSizes?: {
         itemSizeId?: string;
         label?: string;
@@ -91,7 +92,6 @@ export type Item = {
         preSelected?: boolean;
         optionGroupIds?: string[];
     }[];
-    optionGroupIds?: string[];
 };
 
 export type Category = {
@@ -100,7 +100,6 @@ export type Category = {
     isHidden?: UntilToCheck;
     isLimitedTime?: dateTimeProp
     itemIds?: string[];
-    optionGroupIds?: string[];
 };
 
 export type MenuJSON = {
