@@ -16,10 +16,8 @@ const emits = defineEmits<{
     (e: 'update:modelValue', payload: DateTimeProp): void
 }>()
 
-const defaultValue: DateTimeProp = {
-    isEnabled: false,
-    type: "always"
-}
+// isEnabled: false,
+const defaultValue: DateTimeProp = undefined;
 
 const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
@@ -27,25 +25,20 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     deep: props.modelValue ? false : true,
 })
 
-
+const isEnabled = modelValue ? true : false;
 
 </script>
 
 <template>
-    <div class="space-y-6"
-         v-if="modelValue">
-        <Switch :checked="modelValue.isEnabled"
+    <div class="space-y-6">
+        <Switch :default-checked="isEnabled"
                 @update:checked="(checked: boolean) => {
-                    if (!modelValue) modelValue = {};
-                    modelValue.isEnabled = checked
                     if (!checked) {
-                        // clean if it is not used
-                        modelValue.type = undefined;
-                        modelValue.weeklyScheduleValue = undefined;
-                        modelValue.dateRangeValue = undefined;
+                        modelValue = undefined;
+                    } else {
+                        modelValue = { type: 'always' };
                     }
-                }"
-                :default-checked="modelValue.isEnabled" />
+                }" />
         <!-- <DateBadge v-model="modelValue" /> -->
         <RadioGroup v-model="modelValue.type"
                     default-value="always"
@@ -60,7 +53,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                             modelValue.dateRangeValue = undefined;
                         }
                     }"
-                    v-if="modelValue.isEnabled">
+                    v-if="modelValue">
             <div class="flex items-center space-x-2">
                 <RadioGroupItem value="always"
                                 id="always" />

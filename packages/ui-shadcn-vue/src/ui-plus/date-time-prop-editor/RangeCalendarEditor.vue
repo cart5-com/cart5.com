@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
 import {
-    type DateTimeProp,
+    type DateRangeValueType,
 } from "lib/types/dateTimeType";
 import { type Ref } from 'vue'
 import {
@@ -34,11 +34,11 @@ import { fromDate } from '@internationalized/date';
 
 
 const props = defineProps<{
-    modelValue?: DateTimeProp['dateRangeValue']
+    modelValue?: DateRangeValueType
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: DateTimeProp['dateRangeValue']): void
+    (e: 'update:modelValue', payload: DateRangeValueType): void
 }>()
 
 const modelValue = useVModel(props, 'modelValue', emits, {

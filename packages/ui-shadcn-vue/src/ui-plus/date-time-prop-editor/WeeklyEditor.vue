@@ -5,20 +5,26 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { XIcon, MoreVerticalIcon, PlusIcon } from 'lucide-vue-next'
 import { Dialog, DialogScrollContent, DialogTrigger } from "@/components/ui/dialog"
 import { SettingsIcon } from 'lucide-vue-next';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useVModel } from '@vueuse/core'
 import {
-    type DateTimeProp,
-    WeeklyScheduleDays
+    WeeklyScheduleDays,
+    type WeeklySchedule
 } from "lib/types/dateTimeType";
 import { Input } from '@/components/ui/input'
 import { type Ref } from 'vue'
 
 const props = defineProps<{
-    modelValue?: DateTimeProp['weeklyScheduleValue']
+    modelValue?: WeeklySchedule
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: DateTimeProp['weeklyScheduleValue']): void
+    (e: 'update:modelValue', payload: WeeklySchedule): void
 }>()
 
 const DAYS = WeeklyScheduleDays;
@@ -57,10 +63,25 @@ const applyToOtherDays = (sourceDay: string) => {
 <template>
     <Dialog>
         <DialogTrigger>
-            <Button variant="outline"
-                    size="icon">
-                <SettingsIcon />
-            </Button>
+
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger as-child>
+                        <Button variant="outline"
+                                size="icon">
+                            <SettingsIcon />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Set your days and hours</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+
+
+
+
+
         </DialogTrigger>
         <DialogScrollContent>
             <div class="space-y-4">

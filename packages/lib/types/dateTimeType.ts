@@ -18,15 +18,16 @@ export type WeeklySchedule = {
     "6"?: HoursDay; // saturday
 }
 
+export type DateRangeValueType = {
+    start?: number;
+    end?: number;
+}
 
-export type DateTimeProp = {
-    isEnabled?: boolean;
+export type DateTimeProp = undefined | {
+    // isEnabled?: boolean;
     type?: "always" | "weeklySchedule" | "dateRange";
     weeklyScheduleValue?: WeeklySchedule,
-    dateRangeValue?: {
-        start?: number;
-        end?: number;
-    }
+    dateRangeValue?: DateRangeValueType
 }
 
 export const WeeklyScheduleDays = [
@@ -39,7 +40,7 @@ export const WeeklyScheduleDays = [
     { key: '0' as const, label: 'Sunday' },
 ];
 
-export const WeeklyScheduleAsString = function (weeklySchedule: DateTimeProp['weeklyScheduleValue']) {
+export const WeeklyScheduleAsString = function (weeklySchedule: WeeklySchedule) {
     if (!weeklySchedule) {
         return 'No schedule';
     }

@@ -78,10 +78,10 @@ export const sampleMenuJSON: MenuJSON = {
                 "item-2",
                 "item-3",
             ],
-            isLimitedTime: {
-                type: "always",
-                isEnabled: false,
-            },
+            // isLimitedTime: {
+            //     type: "always",
+            //     isEnabled: false,
+            // },
         },
         "cat-2": {
             catId: "cat-2",
