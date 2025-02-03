@@ -3,7 +3,6 @@ import type { DateTimeProp } from "./dateTimeType";
 // import { type WeeklyHours } from "./restaurantTypes";
 export type ItemId = string | undefined;
 //  if undefined or false it will be visible, if true or date timestamp it will be hidden until the date
-export type UntilToCheck = boolean | number; // boolean or date timestamp,
 
 
 export type OptionGroup = {
@@ -17,14 +16,15 @@ export type OptionGroup = {
         label?: string;
         price?: number;
         preSelected?: boolean;
-        isOutOfStock?: UntilToCheck; // boolean or date timestamp until to be out of stock
-        isHidden?: UntilToCheck;
+        isOutOfStock?: DateTimeProp; // boolean or date timestamp until to be out of stock
+        isHidden?: DateTimeProp;
         internalName?: string;
     } | ItemId)[];
 }
 
 export type Item = {
     itemId?: ItemId;
+    internalName?: string;
     itemLabel?: string;
     description?: string;
     price?: number;
@@ -33,7 +33,6 @@ export type Item = {
     isHidden?: DateTimeProp;
     isLimitedTime?: DateTimeProp
     isSpecialInstructionsHidden?: boolean;
-    internalName?: string;
     taxCategoryId?: string;
     itemLabels?: string[];  // Hot, Vegan, Vegetarian, Gluten-free, Halal, Dairy-free, Raw, Nut-free
     ingredients?: string[]; // to make them removeable from the item
@@ -52,7 +51,7 @@ export type Item = {
 export type Category = {
     catId?: string;
     categoryLabel?: string;
-    isHidden?: UntilToCheck;
+    isHidden?: DateTimeProp;
     isLimitedTime?: DateTimeProp
     itemIds?: string[];
 };

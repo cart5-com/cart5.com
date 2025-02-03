@@ -58,7 +58,7 @@ defineExpose({
                            class="col-span-3" />
                 </div> -->
 
-                <div class="grid grid-cols-4 items-start gap-4">
+                <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
                     <Label class="text-right">Out of Stock</Label>
                     <div class="col-span-3">
                         <DateTimePropEditor v-model="item.isOutOfStock" />
