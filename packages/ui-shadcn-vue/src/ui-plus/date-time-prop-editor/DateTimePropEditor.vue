@@ -6,7 +6,6 @@ import { Switch } from '@/components/ui/switch';
 import WeeklyEditor from './WeeklyEditor.vue';
 import RangeCalendarEditor from './RangeCalendarEditor.vue';
 import type { DateTimeProp } from "lib/types/dateTimeType";
-// import DateBadge from '@/ui-plus/date-time-prop-editor/DateBadge.vue';
 
 const props = defineProps<{
     modelValue?: DateTimeProp
