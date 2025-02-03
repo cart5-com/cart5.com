@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEditor.vue"
-import { Item } from "lib/types/menuTypes"
+import { ADDITIVES, ALLERGENS, Item, ITEM_LABELS } from "lib/types/menuTypes"
+import StringArraySelector from "@/ui-plus/string-array-selector/StringArraySelector.vue"
 import { ref } from "vue"
 
 defineProps<{
@@ -57,6 +58,24 @@ defineExpose({
                     <Input v-model="item.imageUrl"
                            class="col-span-3" />
                 </div> -->
+
+                <div class="w-full border rounded-md p-4">
+                    <StringArraySelector v-model="item.itemLabels"
+                                         :available-options="ITEM_LABELS"
+                                         placeholder="Add label" />
+                </div>
+
+                <div class="w-full border rounded-md p-4">
+                    <StringArraySelector v-model="item.allergens"
+                                         :available-options="ALLERGENS"
+                                         placeholder="Add allergen" />
+                </div>
+
+                <div class="w-full border rounded-md p-4">
+                    <StringArraySelector v-model="item.additives"
+                                         :available-options="ADDITIVES"
+                                         placeholder="Add additive" />
+                </div>
 
                 <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
                     <Label class="text-right">Out of Stock</Label>

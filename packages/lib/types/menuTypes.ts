@@ -48,6 +48,35 @@ export type Item = {
     }[];
 };
 
+export const ITEM_LABELS = [
+    "hot",
+    "vegan",
+    "vegetarian",
+    "gluten-free",
+    "halal",
+    "dairy-free",
+    "raw",
+    "nut-free",
+]
+
+export const ALLERGENS = [
+    "milk",
+    "tree nuts",
+    "eggs",
+    "peanuts",
+    "fish",
+    "wheat",
+    "shellfish",
+    "soybeans",
+]
+
+export const ADDITIVES = [
+    "artificial colours",
+    "artificial sweeteners",
+    "artificial flavours",
+    "preservatives",
+]
+
 export type Category = {
     catId?: string;
     categoryLabel?: string;
