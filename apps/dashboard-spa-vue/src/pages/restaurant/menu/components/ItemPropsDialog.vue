@@ -25,20 +25,8 @@ defineProps<{
                 <DialogTitle>Edit details for '{{ item.itemLabel }}'</DialogTitle>
             </DialogHeader>
             <Accordion type="single"
-                       collapsible>
-                <AccordionItem value="ingredients">
-                    <AccordionTrigger>Ingredients (ex: Tomato, Onion etc..)</AccordionTrigger>
-                    <AccordionContent>
-                        <StringArraySelector v-model="item.ingredients"
-                                             :available-options="[]"
-                                             placeholder="Add new ingredient" />
-                        <p class="text-sm text-muted-foreground mt-4">
-                            all ingredients will become a removeable option,
-                            for example you added "Tomato" and "Onion" to the ingredients,
-                            customer will be able to remove "Onion" from the item
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
+                       collapsible
+                       default-value="labels">
                 <AccordionItem value="labels">
                     <AccordionTrigger>Item Labels (ex: Hot, Vegan etc..)</AccordionTrigger>
                     <AccordionContent>
@@ -46,6 +34,19 @@ defineProps<{
                                              :available-options="ITEM_LABELS"
                                              placeholder="Add new label" />
 
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="ingredients">
+                    <AccordionTrigger>Ingredients (ex: Tomato, Onion etc..)</AccordionTrigger>
+                    <AccordionContent>
+                        <StringArraySelector v-model="item.removeableIngredients"
+                                             :available-options="[]"
+                                             placeholder="Add new ingredient" />
+                        <p class="text-sm text-muted-foreground mt-4">
+                            all ingredients will become a removeable option,
+                            for example you added "Tomato" and "Onion" to the ingredients,
+                            customer will be able to remove "Onion" from the item
+                        </p>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="allergens">

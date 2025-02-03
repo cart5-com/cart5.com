@@ -7,6 +7,7 @@ import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEdit
 import { Item } from "lib/types/menuTypes"
 import { ref } from "vue"
 import ItemPropsDialog from "./ItemPropsDialog.vue"
+import { Switch } from "@/components/ui/switch"
 
 defineProps<{
     item?: Item
@@ -68,15 +69,29 @@ defineExpose({
                     </div>
                 </div>
 
+                <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
+                    <Label class="text-right">Hide</Label>
+                    <div class="col-span-3">
+                        <DateTimePropEditor v-model="item.isHidden" />
+                    </div>
+                </div>
                 <ItemPropsDialog :item="item" />
-                <!-- You can add more fields here for:
-                     - itemLabels (multiselect)
-                     - ingredients (multiselect)
-                     - allergens (multiselect)
-                     - additives (multiselect)
-                     - itemSizes (complex nested form)
-                     - etc.
-                -->
+
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label class="text-right">Hide Special Instructions input</Label>
+                    <Switch :checked="item.isSpecialInstructionsHidden"
+                            @update:checked="(checked) => {
+                                if (item) {
+                                    if (checked) {
+                                        item.isSpecialInstructionsHidden = checked
+                                    } else {
+                                        item.isSpecialInstructionsHidden = undefined
+                                    }
+                                }
+                            }" />
+                </div>
+
+
             </div>
 
             <details class="mt-4">

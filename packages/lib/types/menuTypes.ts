@@ -28,16 +28,17 @@ export type Item = {
     itemLabel?: string;
     description?: string;
     price?: number;
-    imageUrl?: string;
-    isOutOfStock?: DateTimeProp;
-    isHidden?: DateTimeProp;
-    isLimitedTime?: DateTimeProp
-    isSpecialInstructionsHidden?: boolean;
-    taxCategoryId?: string;
     itemLabels?: string[];  // Hot, Vegan, Vegetarian, Gluten-free, Halal, Dairy-free, Raw, Nut-free
-    ingredients?: string[]; // to make them removeable from the item
+    removeableIngredients?: string[]; // to make them removeable from the item
     allergens?: string[]; // Milk, Tree nuts, Eggs, Peanuts, Fish, Wheat, Shellfish, Soybeans
     additives?: string[]; // Artificial colours, Artificial sweeteners, Artificial flavours, Preservatives
+    isOutOfStock?: DateTimeProp;
+    isHidden?: DateTimeProp;
+    isSpecialInstructionsHidden?: boolean;
+
+
+    taxCategoryId?: string;
+    imageUrl?: string;
     optionGroupIds?: string[];
     itemSizes?: {
         itemSizeId?: string;
@@ -81,7 +82,6 @@ export type Category = {
     catId?: string;
     categoryLabel?: string;
     isHidden?: DateTimeProp;
-    isLimitedTime?: DateTimeProp
     itemIds?: string[];
 };
 
@@ -107,10 +107,6 @@ export const sampleMenuJSON: MenuJSON = {
                 "item-2",
                 "item-3",
             ],
-            // isLimitedTime: {
-            //     type: "always",
-            //     isEnabled: false,
-            // },
         },
         "cat-2": {
             catId: "cat-2",

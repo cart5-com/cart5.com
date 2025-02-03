@@ -38,7 +38,6 @@ defineExpose({
                         <Input v-model="category.categoryLabel"
                                class="col-span-3" />
                     </div>
-                    <DateTimePropEditor v-model="category.isLimitedTime" />
                 </div>
             </div>
         </DialogScrollContent>

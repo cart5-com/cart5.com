@@ -24,13 +24,11 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     deep: props.modelValue ? false : true,
 })
 
-const isEnabled = modelValue ? true : false;
-
 </script>
 
 <template>
     <div class="space-y-6">
-        <Switch :default-checked="isEnabled"
+        <Switch :default-checked="modelValue ? true : false"
                 @update:checked="(checked: boolean) => {
                     if (!checked) {
                         modelValue = undefined;
