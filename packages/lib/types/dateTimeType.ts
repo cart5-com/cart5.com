@@ -23,8 +23,11 @@ export type DateRangeValueType = {
     end?: number;
 }
 
+// if undefined, not enabled
+// if type is always, always enabled
+// if type is weeklySchedule, weeklyScheduleValue is enabled
+// if type is dateRange, dateRangeValue is enabled
 export type DateTimeProp = undefined | {
-    // isEnabled?: boolean;
     type?: "always" | "weeklySchedule" | "dateRange";
     weeklyScheduleValue?: WeeklySchedule,
     dateRangeValue?: DateRangeValueType

@@ -87,10 +87,13 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
                     @click="addNewItem(categoryId)">
                 <Plus /> Add item to '{{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}'
             </Button>
-            <SelectWithSearch :items="Object.values(menuJSON?.allItems ?? {}).map((item) => ({
-                key: item.itemId,
-                name: item.itemLabel
-            }))"
+
+
+            <SelectWithSearch v-if="Object.keys(menuJSON?.allItems ?? {}).length > 0"
+                              :items="Object.values(menuJSON?.allItems ?? {}).map((item) => ({
+                                key: item.itemId,
+                                name: item.itemLabel
+                            }))"
                               @select="(item) => {
                                 addItemToCategory(categoryId, item.key)
                             }">

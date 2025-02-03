@@ -25,6 +25,9 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 const customValue = ref('');
 
 const addCustomValue = () => {
+    if (!modelValue.value) {
+        modelValue.value = [];
+    }
     const value = customValue.value.trim().toLowerCase();
     if (modelValue.value?.includes(value)) {
         toggleValue(value);
