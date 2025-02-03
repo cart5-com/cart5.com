@@ -2,7 +2,6 @@
 import { Dialog, DialogScrollContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEditor.vue"
 import { Category } from "lib/types/menuTypes"
 import { ref } from "vue"
 
