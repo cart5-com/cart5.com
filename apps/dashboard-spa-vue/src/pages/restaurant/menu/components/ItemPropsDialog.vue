@@ -24,9 +24,7 @@ defineProps<{
             <DialogHeader>
                 <DialogTitle>Edit details for '{{ item.itemLabel }}'</DialogTitle>
             </DialogHeader>
-            <Accordion type="single"
-                       collapsible
-                       default-value="labels">
+            <Accordion type="multiple">
                 <AccordionItem value="labels">
                     <AccordionTrigger>Item Labels (ex: Hot, Vegan etc..)</AccordionTrigger>
                     <AccordionContent>

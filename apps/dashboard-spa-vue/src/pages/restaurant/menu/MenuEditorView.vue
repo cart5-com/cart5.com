@@ -20,6 +20,7 @@ import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from '@/ui-plus/sonner';
 import MenuTab from "./tabs/MenuTab.vue";
 import { provideMenuOperations } from './composables/useMenuOperations'
+import ItemsTab from "./tabs/ItemsTab.vue";
 
 
 pageTitle.value = 'Menu Editor'
@@ -162,7 +163,7 @@ provideMenuOperations({
                     <MenuTab :menuJSON="menuJSON" />
                 </TabsContent>
                 <TabsContent value="items">
-                    <div>Items</div>
+                    <ItemsTab :menuJSON="menuJSON" />
                 </TabsContent>
                 <TabsContent value="optionGroups">
                     <div>Choices & Addons</div>

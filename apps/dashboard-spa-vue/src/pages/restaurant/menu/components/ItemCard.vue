@@ -10,6 +10,7 @@ const props = defineProps<{
     menuJSON: MenuJSON,
     itemId: string,
     categoryId?: string,
+    hideMoveIcon?: boolean,
 }>()
 
 
@@ -32,7 +33,8 @@ const unlinkItem = () => {
         <Card class="flex-grow border-none">
             <CardHeader>
                 <CardTitle class="flex items-center gap-2">
-                    <div class="item-drag-handle cursor-grab active:cursor-grabbing"
+                    <div v-if="!hideMoveIcon"
+                         class="item-drag-handle cursor-grab active:cursor-grabbing"
                          style="touch-action: none">
                         <MoveIcon />
                     </div>
