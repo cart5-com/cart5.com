@@ -188,10 +188,3 @@ provideMenuOperations({
         </div>
     </div>
 </template>
-
-<style scoped>
-.sortable-chosen {
-    /* background-color: rgba(0, 0, 0, 0.02); */
-    border: 1px dashed rgba(var(--primary));
-}
-</style>

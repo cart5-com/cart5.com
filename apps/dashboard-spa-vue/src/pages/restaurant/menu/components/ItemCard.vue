@@ -36,7 +36,7 @@ const unlinkItem = () => {
                     <div v-if="!hideMoveIcon"
                          class="item-drag-handle cursor-grab active:cursor-grabbing"
                          style="touch-action: none">
-                        <MoveIcon />
+                        <MoveIcon class="cursor-move" />
                     </div>
                     <h1 class="text-lg font-bold">
                         {{ menuJSON?.allItems?.[itemId]?.itemLabel }}

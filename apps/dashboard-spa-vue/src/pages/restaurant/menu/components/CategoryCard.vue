@@ -60,7 +60,7 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
                 {{ menuJSON?.allCategories?.[categoryId]?.categoryLabel }}
             </h1>
             <div class="flex items-center gap-2">
-                <AlignJustify class="cursor-pointer cat-drag-handle" />
+                <AlignJustify class="cat-drag-handle cursor-move" />
                 <Pencil class="cursor-pointer"
                         @click="openCategoryDialog(categoryId)" />
                 <div class="cursor-pointer"
@@ -106,3 +106,14 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.sortable-chosen {
+    border: 1px dashed rgba(var(--primary));
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+    border: 1px dashed rgba(var(--secondary));
+}
+</style>
