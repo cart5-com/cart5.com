@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 
 const props = defineProps<{
     paymentMethods: PhysicalPaymentMethods;
-    cardDetails: string;
 }>();
 
 const addCustomMethod = () => {
@@ -41,7 +40,7 @@ const removeCustomMethod = (index: number) => {
                         @update:checked="(checked) => paymentMethods.cash = checked" />
                 <label for="cash">
                     <HandCoins class="inline-block mr-2" />
-                    Cash
+                    Cash (pickup counter, delivery person, in restaurant)
                 </label>
             </div>
 
@@ -51,7 +50,7 @@ const removeCustomMethod = (index: number) => {
                         @update:checked="(checked) => paymentMethods.cardTerminal = checked" />
                 <label for="cardTerminal">
                     <CreditCard class=" inline-block mr-2" />
-                    Card {{ cardDetails }}
+                    Card (pickup counter, delivery person, in restaurant)
                 </label>
             </div>
 

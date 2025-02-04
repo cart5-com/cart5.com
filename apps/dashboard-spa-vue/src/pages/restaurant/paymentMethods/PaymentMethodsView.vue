@@ -183,8 +183,7 @@ onMounted(() => {
                 <CardDescription>Set your default payment methods</CardDescription>
             </CardHeader>
             <CardContent>
-                <PaymentMethodsEditor :payment-methods="defaultMethods"
-                                      card-details="(pickup counter, delivery person, in restaurant)" />
+                <PaymentMethodsEditor :payment-methods="defaultMethods" />
             </CardContent>
         </Card>
 
