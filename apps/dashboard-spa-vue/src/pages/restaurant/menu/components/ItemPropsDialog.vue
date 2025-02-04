@@ -29,7 +29,7 @@ defineProps<{
                 <Tooltip>
                     <TooltipTrigger as-child>
                         <Button variant="outline">
-                            <Settings /> Edit more details
+                            <Settings /> More details
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom"

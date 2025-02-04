@@ -53,7 +53,7 @@ const unlinkItem = () => {
                                                        type="text" /> -->
                 </CardTitle>
                 <CardDescription>
-                    ${{ menuJSON?.allItems?.[itemId]?.price?.toFixed(2) }}
+                    ${{ Number(menuJSON?.allItems?.[itemId]?.price || 0).toFixed(2) }}
                 </CardDescription>
             </CardHeader>
             <CardContent>

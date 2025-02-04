@@ -6,10 +6,50 @@ import { Label } from "@/components/ui/label"
 import { Item } from "lib/types/menuTypes"
 import { ref } from "vue"
 import ItemPropsDialog from "./ItemPropsDialog.vue"
+import draggable from "vuedraggable"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-vue-next"
+import ItemSizeCard from "./ItemSizeCard.vue"
 
-defineProps<{
+const props = defineProps<{
     item?: Item
 }>()
+
+
+const addNewSize = () => {
+    if (props.item) {
+        if (!props.item.itemSizes) {
+            props.item.itemSizes = []
+        }
+        props.item.itemSizes.push({
+            itemSizeId: `size-${Date.now()}`,
+            label: `Size ${props.item.itemSizes.length + 1}`,
+            price: props.item.price || 0,
+            preSelected: false
+        })
+    }
+}
+
+const makeItemSizePreSelected = (index?: number) => {
+    if (props.item?.itemSizes) {
+        props.item.itemSizes.forEach(size => {
+            size.preSelected = undefined
+        })
+        if (typeof index === 'number') {
+            props.item.itemSizes[index].preSelected = true
+        }
+    }
+}
+
+const removeSize = (index: number) => {
+    if (props.item?.itemSizes) {
+        props.item.itemSizes.splice(index, 1)
+        if (props.item.itemSizes.length === 0) {
+            props.item.itemSizes = undefined
+        }
+    }
+
+}
 
 const isOpen = ref(false);
 
@@ -35,14 +75,20 @@ defineExpose({
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Description</Label>
                     <Textarea v-model="item.description"
-                              class="col-span-3" />
+                              class="col-span-3"
+                              @update:modelValue="(value) => {
+                                if (item && value.toString().trim().length === 0) {
+                                    item.description = undefined
+                                }
+                            }" />
                 </div>
 
-                <div class="grid grid-cols-4 items-center gap-4">
+                <div v-if="!item.itemSizes || item.itemSizes.length === 0"
+                     class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Price</Label>
                     <Input v-model="item.price"
                            type="number"
-                           step="0.01"
+                           step="1"
                            class="col-span-3" />
                 </div>
 
@@ -51,6 +97,41 @@ defineExpose({
                     <Input v-model="item.imageUrl"
                            class="col-span-3" />
                 </div> -->
+
+
+
+                <div v-if="item.itemSizes && item.itemSizes.length > 0"
+                     class="border rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <Label>Sizes</Label>
+                        <Button variant="outline"
+                                size="sm"
+                                @click="addNewSize">
+                            <Plus class="w-4 h-4 mr-2" /> Add Size
+                        </Button>
+                    </div>
+
+                    <draggable v-model="item.itemSizes"
+                               group="sizes"
+                               item-key="itemSizeId"
+                               handle=".size-drag-handle"
+                               class="space-y-4">
+                        <template #item="{ element: size, index }">
+                            <ItemSizeCard :size="size"
+                                          @removeSize="removeSize(index)"
+                                          @makePreSelected="makeItemSizePreSelected(index)" />
+                        </template>
+                    </draggable>
+                </div>
+
+                <div v-else
+                     class="flex justify-end">
+                    <Button variant="outline"
+                            size="sm"
+                            @click="addNewSize">
+                        <Plus class="w-4 h-4 mr-2" /> Add Size
+                    </Button>
+                </div>
 
 
                 <ItemPropsDialog :item="item" />
@@ -67,3 +148,13 @@ defineExpose({
         </DialogScrollContent>
     </Dialog>
 </template>
+
+<style scoped>
+.sortable-chosen {
+    @apply border-primary/50;
+}
+
+.sortable-ghost {
+    @apply opacity-50 border-secondary/50;
+}
+</style>

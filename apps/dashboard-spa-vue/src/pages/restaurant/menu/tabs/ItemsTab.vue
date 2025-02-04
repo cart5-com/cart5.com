@@ -20,9 +20,7 @@ const addNewItem = () => {
         props.menuJSON.allItems[newItemId] = {
             itemId: newItemId,
             itemLabel: `New Item ${Object.keys(props.menuJSON.allItems).length + 1}`,
-            price: 0,
-            description: '',
-            itemSizes: []
+            price: 1,
         }
     }
 }

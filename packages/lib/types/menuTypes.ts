@@ -22,6 +22,14 @@ export type OptionGroup = {
     } | ItemId)[];
 }
 
+export type ItemSize = {
+    itemSizeId?: string;
+    label?: string;
+    price?: number;
+    preSelected?: boolean;
+    optionGroupIds?: string[];
+}
+
 export type Item = {
     itemId?: ItemId;
     internalName?: string;
@@ -40,13 +48,7 @@ export type Item = {
     taxCategoryId?: string;
     imageUrl?: string;
     optionGroupIds?: string[];
-    itemSizes?: {
-        itemSizeId?: string;
-        label?: string;
-        price?: number;
-        preSelected?: boolean;
-        optionGroupIds?: string[];
-    }[];
+    itemSizes?: ItemSize[];
 };
 
 export const ITEM_LABELS = [
