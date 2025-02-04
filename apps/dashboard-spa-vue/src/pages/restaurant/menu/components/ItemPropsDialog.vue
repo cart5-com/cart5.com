@@ -5,6 +5,16 @@ import StringArraySelector from "@/ui-plus/string-array-selector/StringArraySele
 import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Settings } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEditor.vue"
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 defineProps<{
     item?: Item
@@ -15,15 +25,67 @@ defineProps<{
 <template>
     <Dialog>
         <DialogTrigger>
-            <Button variant="outline">
-                <Settings /> Edit details (like ingredients, labels etc..)
-            </Button>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger as-child>
+                        <Button variant="outline">
+                            <Settings /> Edit more details
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"
+                                    class="max-w-[200px] text-left">
+                        Stock,
+                        visibility,
+                        ingredients,
+                        labels,
+                        allergens,
+                        additives etc..
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         </DialogTrigger>
         <DialogScrollContent class="sm:max-w-[625px]"
                              v-if="item">
             <DialogHeader>
                 <DialogTitle>Edit details for '{{ item.itemLabel }}'</DialogTitle>
             </DialogHeader>
+
+
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label class="text-right">Internal Name</Label>
+                <Input v-model="item.internalName"
+                       class="col-span-3" />
+            </div>
+
+
+            <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
+                <Label class="text-right">Out of Stock</Label>
+                <div class="col-span-3">
+                    <DateTimePropEditor v-model="item.isOutOfStock" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
+                <Label class="text-right">Hide</Label>
+                <div class="col-span-3">
+                    <DateTimePropEditor v-model="item.isHidden" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label class="text-right">Hide Special Instructions input</Label>
+                <Switch :checked="item.isSpecialInstructionsHidden"
+                        @update:checked="(checked) => {
+                            if (item) {
+                                if (checked) {
+                                    item.isSpecialInstructionsHidden = checked
+                                } else {
+                                    item.isSpecialInstructionsHidden = undefined
+                                }
+                            }
+                        }" />
+            </div>
+
             <Accordion type="multiple">
                 <AccordionItem value="labels">
                     <AccordionTrigger>Item Labels (ex: Hot, Vegan etc..)</AccordionTrigger>

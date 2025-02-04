@@ -3,11 +3,9 @@ import { Dialog, DialogScrollContent, DialogHeader, DialogTitle } from "@/compon
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEditor.vue"
 import { Item } from "lib/types/menuTypes"
 import { ref } from "vue"
 import ItemPropsDialog from "./ItemPropsDialog.vue"
-import { Switch } from "@/components/ui/switch"
 
 defineProps<{
     item?: Item
@@ -35,12 +33,6 @@ defineExpose({
                 </div>
 
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">Internal Name</Label>
-                    <Input v-model="item.internalName"
-                           class="col-span-3" />
-                </div>
-
-                <div class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Description</Label>
                     <Textarea v-model="item.description"
                               class="col-span-3" />
@@ -61,35 +53,9 @@ defineExpose({
                 </div> -->
 
 
-
-                <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
-                    <Label class="text-right">Out of Stock</Label>
-                    <div class="col-span-3">
-                        <DateTimePropEditor v-model="item.isOutOfStock" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-4 items-start gap-4 border rounded-md p-4">
-                    <Label class="text-right">Hide</Label>
-                    <div class="col-span-3">
-                        <DateTimePropEditor v-model="item.isHidden" />
-                    </div>
-                </div>
                 <ItemPropsDialog :item="item" />
 
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">Hide Special Instructions input</Label>
-                    <Switch :checked="item.isSpecialInstructionsHidden"
-                            @update:checked="(checked) => {
-                                if (item) {
-                                    if (checked) {
-                                        item.isSpecialInstructionsHidden = checked
-                                    } else {
-                                        item.isSpecialInstructionsHidden = undefined
-                                    }
-                                }
-                            }" />
-                </div>
+
 
 
             </div>
