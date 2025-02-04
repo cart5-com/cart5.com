@@ -3,6 +3,7 @@ import { type InjectionKey, inject, provide } from 'vue'
 interface MenuOperations {
     openItemDialog: (itemId: string) => void
     openCategoryDialog: (categoryId: string) => void
+    openOptionGroupDialog: (optionGroupId: string) => void
 }
 
 const MenuOperationsKey = Symbol() as InjectionKey<MenuOperations>

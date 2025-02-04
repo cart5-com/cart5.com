@@ -21,6 +21,8 @@ import { toast } from '@/ui-plus/sonner';
 import MenuTab from "./tabs/MenuTab.vue";
 import { provideMenuOperations } from './composables/useMenuOperations'
 import ItemsTab from "./tabs/ItemsTab.vue";
+import OptionGroupDialog from "./components/OptionGroupDialog.vue";
+import OptionGroupsTab from "@src/pages/restaurant/menu/tabs/OptionGroupsTab.vue";
 
 
 pageTitle.value = 'Menu Editor'
@@ -130,9 +132,20 @@ function openCategoryDialog(categoryId: string) {
     }
 }
 
+const currentOptionGroupId = ref<string | null>(null);
+const optionGroupDialog = ref<InstanceType<typeof OptionGroupDialog>>();
+function openOptionGroupDialog(optionGroupId: string) {
+    currentOptionGroupId.value = optionGroupId
+    if (optionGroupDialog.value) {
+        optionGroupDialog.value.isOpen = true
+    }
+}
+
+
 provideMenuOperations({
     openItemDialog,
-    openCategoryDialog
+    openCategoryDialog,
+    openOptionGroupDialog
 })
 
 </script>
@@ -145,6 +158,9 @@ provideMenuOperations({
                         :item="currentItemId ? menuJSON?.allItems?.[currentItemId] : undefined" />
             <CategoryDialog ref="categoryDialog"
                             :category="currentCategoryId ? menuJSON?.allCategories?.[currentCategoryId] : undefined" />
+
+            <OptionGroupDialog ref="optionGroupDialog"
+                               :optionGroup="currentOptionGroupId ? menuJSON?.allOptionGroups?.[currentOptionGroupId] : undefined" />
 
             <Tabs default-value="menu"
                   class="w-full">
@@ -166,7 +182,7 @@ provideMenuOperations({
                     <ItemsTab :menuJSON="menuJSON" />
                 </TabsContent>
                 <TabsContent value="optionGroups">
-                    <div>Choices & Addons</div>
+                    <OptionGroupsTab :menuJSON="menuJSON" />
                 </TabsContent>
             </Tabs>
 
