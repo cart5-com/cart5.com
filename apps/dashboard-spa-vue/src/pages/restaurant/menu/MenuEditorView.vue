@@ -90,7 +90,7 @@ const addNewOptionGroup = () => {
         }
         menuJSON.value.allOptionGroups[newOptionGroupId] = {
             optionGroupId: newOptionGroupId,
-            optionGroupLabel: `New Option Group ${Object.keys(menuJSON.value.allOptionGroups).length + 1}`,
+            optionGroupLabel: `Choose ${Object.keys(menuJSON.value.allOptionGroups).length + 1}`,
         }
     }
     return newOptionGroupId
