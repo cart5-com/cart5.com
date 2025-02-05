@@ -1,63 +1,61 @@
 <script lang="ts" setup>
-import { type LinkedItem } from "lib/types/menuTypes";
 import { Button } from "@/components/ui/button";
 import { Link2 } from "lucide-vue-next";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 import { menuJSON } from "../store";
-
+import { type LinkedItem } from "lib/types/menuTypes";
 
 const getLinkedItemsAndSizes = () => {
-    const linkedItemsAndSizes: LinkedItem[] = [];
+    const linkedItemsAndSizes: {
+        key: string;
+        name: string;
+        valueObject: LinkedItem;
+    }[] = [];
     if (menuJSON.value) {
         Object.values(menuJSON.value.allItems ?? {}).forEach((item) => {
             if (item.itemSizes && item.itemSizes.length > 0) {
                 item.itemSizes.forEach((size) => {
                     if (item.itemId && size.itemSizeId) {
                         linkedItemsAndSizes.push({
-                            itemId: item.itemId,
-                            sizeId: size.itemSizeId
+                            key: `${item.itemId}_${size.itemSizeId}`,
+                            name: `${item.itemLabel ?? "unlabelled item"}, ${size.itemSizeLabel ?? "unlabelled size"}`,
+                            valueObject: {
+                                itemId: item.itemId,
+                                sizeId: size.itemSizeId
+                            }
                         });
                     }
                 });
             } else {
                 if (item.itemId) {
-                    linkedItemsAndSizes.push(item.itemId);
+                    linkedItemsAndSizes.push({
+                        key: item.itemId,
+                        name: item.itemLabel ?? "unlabelled item",
+                        valueObject: item.itemId
+                    });
                 }
             }
         });
     }
-    return linkedItemsAndSizes.map((item) => {
-        if (!item) {
-            return undefined;
-        }
-        if (typeof item === "string") {
-            return {
-                key: item,
-                name: menuJSON.value?.allItems?.[item]?.itemLabel
-            };
-        } else {
-            return {
-                key: `ITEMID_${item.itemId}_SIZEID_${item.sizeId}`,
-                // name: menuJSON.value?.allItems?.[item.itemId]?.itemLabel + ", " + menuJSON.value?.allItems?.[item.itemId]?.itemSizes?.find((size) => size.itemSizeId === item.sizeId)?.itemSizeLabel
-                name: `${menuJSON.value?.allItems?.[item.itemId]?.itemLabel}, ${menuJSON.value?.allItems?.[item.itemId]?.itemSizes?.find((size) => size.itemSizeId === item.sizeId)?.itemSizeLabel}`,
-                itemId: item.itemId,
-                sizeId: item.sizeId
-            };
-        }
-    }).filter((item) => item !== undefined);
+    return linkedItemsAndSizes;
 }
 </script>
 <template>
-    <SelectWithSearch v-if="Object.keys(menuJSON?.allItems ?? {}).length > 0"
-                      :items="getLinkedItemsAndSizes()"
-                      @select="(item) => {
-                        // addItemToCategory(categoryId, item.key)
-                        console.log(item)
-                    }">
-        <template #trigger>
-            <Button variant="outline">
-                <Link2 /> Link item
-            </Button>
-        </template>
-    </SelectWithSearch>
+    <div>
+        <details>
+            <summary>JSON</summary>
+            <pre>{{ getLinkedItemsAndSizes() }}</pre>
+        </details>
+        <SelectWithSearch v-if="Object.keys(menuJSON?.allItems ?? {}).length > 0"
+                          :items="getLinkedItemsAndSizes()"
+                          @select="(item) => {
+                            $emit('selectedLinkedItem', item.valueObject as LinkedItem)
+                        }">
+            <template #trigger>
+                <Button variant="outline">
+                    <Link2 /> Link new item
+                </Button>
+            </template>
+        </SelectWithSearch>
+    </div>
 </template>

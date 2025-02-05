@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { ADDITIVES, ALLERGENS, Item, ITEM_LABELS } from 'lib/types/menuTypes';
+import { ADDITIVES, ALLERGENS, type Item, ITEM_LABELS } from 'lib/types/menuTypes';
 import StringArraySelector from "@/ui-plus/string-array-selector/StringArraySelector.vue"
-import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Settings } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import DateTimePropEditor from "@/ui-plus/date-time-prop-editor/DateTimePropEditor.vue"
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
     Tooltip,
     TooltipContent,
@@ -44,8 +44,7 @@ defineProps<{
                 </Tooltip>
             </TooltipProvider>
         </DialogTrigger>
-        <DialogScrollContent class="sm:max-w-[625px]"
-                             v-if="item">
+        <DialogScrollContent v-if="item">
             <DialogHeader>
                 <DialogTitle>Edit details for '{{ item.itemLabel }}'</DialogTitle>
             </DialogHeader>

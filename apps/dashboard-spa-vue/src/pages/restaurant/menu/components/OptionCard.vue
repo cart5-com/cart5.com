@@ -3,11 +3,14 @@ import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { type Option } from "lib/types/menuTypes";
-import OptionLinkedItems from "./OptionLinkedItems.vue";
+import OptionCardLinkedItemsDialog from "./OptionCardLinkedItemsDialog.vue";
 
 defineProps<{
     option: Option
 }>()
+
+
+
 </script>
 <template>
     <div class="flex gap-4 items-center p-2 border rounded-md bg-card">
@@ -19,7 +22,7 @@ defineProps<{
                    type="number"
                    step="0.01"
                    placeholder="Price" />
-            <OptionLinkedItems />
+            <OptionCardLinkedItemsDialog :option="option" />
         </div>
         <Button variant="destructive"
                 size="icon"

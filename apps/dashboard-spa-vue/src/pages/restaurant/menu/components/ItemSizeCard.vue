@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ItemSize } from "lib/types/menuTypes"
+import { type ItemSize } from "lib/types/menuTypes"
 import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
