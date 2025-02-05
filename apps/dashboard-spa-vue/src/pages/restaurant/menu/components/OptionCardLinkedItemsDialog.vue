@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AlignJustify, Link2, Link2Off } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
-import { type LinkedItem, type Option } from "lib/types/menuTypes";
+import { type LinkTypes, type Option } from "lib/types/menuTypes";
 import OptionLinkedItems from "./OptionLinkedItems.vue";
 import draggable from "vuedraggable";
 import { menuJSON } from "../store";
@@ -18,40 +18,55 @@ const props = defineProps<{
     option: Option
 }>()
 
-const getItemLabel = (linkedItem: LinkedItem) => {
+const getItemLabel = (linkedItem: LinkTypes) => {
     if (typeof linkedItem === 'string') {
         return menuJSON.value?.allItems?.[linkedItem]?.itemLabel;
     } else {
         if (
             linkedItem &&
-            linkedItem.itemId &&
-            linkedItem.sizeId
+            linkedItem.type
         ) {
-            const item = menuJSON.value?.allItems?.[linkedItem.itemId];
-            const size = item?.itemSizes?.find(s => s.itemSizeId === linkedItem.sizeId);
-            return `${size?.itemSizeLabel} | ${item?.itemLabel}`;
+            if (
+                linkedItem.type === "item" &&
+                linkedItem.itemId
+            ) {
+                return menuJSON.value?.allItems?.[linkedItem.itemId]?.itemLabel;
+            } else if (
+                linkedItem.type === "item-size" &&
+                linkedItem.itemId &&
+                linkedItem.sizeId
+            ) {
+                const item = menuJSON.value?.allItems?.[linkedItem.itemId];
+                const size = item?.itemSizes?.find(s => s.itemSizeId === linkedItem.sizeId);
+                return `${size?.itemSizeLabel} | ${item?.itemLabel}`;
+            } else if (
+                linkedItem.type === "option-group" &&
+                linkedItem.optionGroupId
+            ) {
+                return menuJSON.value?.allOptionGroups?.[linkedItem.optionGroupId]?.optionGroupLabel;
+            }
         }
     }
     return "";
 }
 
 const removeLinkedItem = (index: number) => {
-    if (props.option.linkedItems) {
-        props.option.linkedItems.splice(index, 1);
-        if (props.option.linkedItems.length === 0) {
-            props.option.linkedItems = undefined;
+    if (props.option.optionLinks) {
+        props.option.optionLinks.splice(index, 1);
+        if (props.option.optionLinks.length === 0) {
+            props.option.optionLinks = undefined;
         }
     }
 }
 
-const addLinkedItem = (linkedItem: LinkedItem) => {
+const addLinkedItem = (linkedItem: LinkTypes) => {
     console.log("linkedItem");
     console.log(linkedItem);
     // console.log(linkedItem);
-    if (!props.option.linkedItems) {
-        props.option.linkedItems = [];
+    if (!props.option.optionLinks) {
+        props.option.optionLinks = [];
     }
-    props.option.linkedItems.push(linkedItem);
+    props.option.optionLinks.push(linkedItem);
 }
 
 </script>
@@ -63,13 +78,14 @@ const addLinkedItem = (linkedItem: LinkedItem) => {
                 <Tooltip>
                     <TooltipTrigger as-child>
                         <Button variant="outline">
-                            <Link2 /> Linked items
-                            {{ option.linkedItems ? `(${option.linkedItems.length})` : "" }}
+                            <Link2 /> Linked items or option groups
+                            {{ option.optionLinks ? `(${option.optionLinks.length})` : "" }}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom"
                                     class="max-w-[200px] text-left">
-                        Link items to this option to make it a combo
+                        Link option groups to ask same choices or
+                        link items to make it a combo
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
@@ -80,11 +96,12 @@ const addLinkedItem = (linkedItem: LinkedItem) => {
                     Linked items for '{{ option.label || "unlabelled option" }}'
                 </DialogTitle>
                 <DialogDescription>
-                    Linked ones to ask choices of the linked items
+                    Link option groups to ask same choices or
+                    link items to make it a combo
                 </DialogDescription>
             </DialogHeader>
             <div>
-                <draggable v-model="option.linkedItems"
+                <draggable v-model="option.optionLinks"
                            group="linkedItems"
                            item-key="id"
                            handle=".linked-item-handle"

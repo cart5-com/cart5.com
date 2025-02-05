@@ -29,8 +29,7 @@ defineProps<{
                     <Label>Price</Label>
                     <Input placeholder="Price"
                            v-model="size.price"
-                           type="number"
-                           step="0.01" />
+                           type="number" />
                 </div>
                 <div class="flex gap-2 items-center">
                     <Label>Pre Selected</Label>

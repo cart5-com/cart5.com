@@ -25,6 +25,25 @@ const unlinkItem = () => {
     }
 }
 
+const getItemPrice = () => {
+    const item = menuJSON.value?.allItems?.[props.itemId];
+    let price = 0
+    if (
+        item &&
+        item.itemSizes &&
+        item.itemSizes.length > 0
+    ) {
+        // get preSelected size price or first size price
+        const size = item.itemSizes.find(s => s.preSelected);
+        if (size) {
+            price = size.price || 0;
+        } else {
+            price = item.itemSizes[0].price || 0;
+        }
+    }
+    return Number(price).toFixed(2);
+}
+
 </script>
 
 <template>
@@ -52,7 +71,7 @@ const unlinkItem = () => {
                                                        type="text" /> -->
                 </CardTitle>
                 <CardDescription>
-                    ${{ Number(menuJSON?.allItems?.[itemId]?.price || 0).toFixed(2) }}
+                    ${{ getItemPrice() }}
                 </CardDescription>
             </CardHeader>
             <CardContent>

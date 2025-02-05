@@ -62,9 +62,15 @@ defineExpose({
 
 const isSizesCollapsed = ref(true);
 onMounted(() => {
-    if (props.item?.itemSizes?.length) {
-        isSizesCollapsed.value = false;
-    }
+    setTimeout(() => {
+        if (
+            props.item &&
+            props.item.itemSizes &&
+            props.item.itemSizes.length > 0
+        ) {
+            isSizesCollapsed.value = false;
+        }
+    }, 100)
 })
 </script>
 
@@ -98,12 +104,8 @@ onMounted(() => {
                     <Label class="text-right">Price</Label>
                     <Input v-model="item.price"
                            type="number"
-                           step="1"
                            class="col-span-3" />
                 </div>
-
-                <OptionGroupIdsList :item="item" />
-
 
                 <!-- <div class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Image URL</Label>
@@ -160,6 +162,7 @@ onMounted(() => {
                     </draggable>
                 </div>
 
+                <OptionGroupIdsList :item="item" />
 
                 <ItemPropsDialog :item="item" />
 

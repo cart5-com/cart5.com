@@ -3,7 +3,10 @@ import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { type Option } from "lib/types/menuTypes";
-import OptionCardLinkedItemsDialog from "./OptionCardLinkedItemsDialog.vue";
+import OptionCardLinkedItemsDialog from "@src/pages/restaurant/menu/components/OptionCardLinkedItemsDialog.vue";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+
 
 defineProps<{
     option: Option
@@ -20,9 +23,20 @@ defineProps<{
                    placeholder="Option name" />
             <Input v-model="option.price"
                    type="number"
-                   step="0.01"
                    placeholder="Price" />
+            <div class="flex gap-2 items-center">
+                <Label>Pre Selected</Label>
+                <Switch :checked="option.preSelected"
+                        @update:checked="(checked: boolean) => {
+                            if (checked) {
+                                option.preSelected = true
+                            } else {
+                                option.preSelected = undefined
+                            }
+                        }" />
+            </div>
             <OptionCardLinkedItemsDialog :option="option" />
+
         </div>
         <Button variant="destructive"
                 size="icon"
