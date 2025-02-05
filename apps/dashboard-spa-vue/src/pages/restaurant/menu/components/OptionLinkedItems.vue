@@ -18,7 +18,7 @@ const getLinkedItemsAndSizes = () => {
                     if (item.itemId && size.itemSizeId) {
                         linkedItemsAndSizes.push({
                             key: `${item.itemId}_${size.itemSizeId}`,
-                            name: `${item.itemLabel ?? "unlabelled item"}, ${size.itemSizeLabel ?? "unlabelled size"}`,
+                            name: `${size.itemSizeLabel ?? "unlabelled size"} | ${item.itemLabel ?? "unlabelled item"}`,
                             valueObject: {
                                 itemId: item.itemId,
                                 sizeId: size.itemSizeId

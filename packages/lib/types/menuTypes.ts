@@ -28,8 +28,8 @@ export type OptionGroup = {
     // minOptions: 1, maxOptions: 0 -> Mandatory multi-choice
     // minOptions: 0, maxOptions: 0 -> Optional multi-choice
 
-    maxOptions?: number;
-    minOptions?: number;
+    maxOptions?: number; // 1 for single choice, >1 for multi-choice, 0 for unlimited
+    minOptions?: number; // 0 for optional, ≥1 for required
 }
 
 export type ItemSize = {

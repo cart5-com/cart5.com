@@ -102,8 +102,7 @@ onMounted(() => {
                            class="col-span-3" />
                 </div>
 
-                <OptionGroupIdsList :item="item"
-                                    :name="item.itemLabel" />
+                <OptionGroupIdsList :item="item" />
 
 
                 <!-- <div class="grid grid-cols-4 items-center gap-4">

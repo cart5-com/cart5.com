@@ -5,7 +5,7 @@ import { type LinkedItem, type Option } from "lib/types/menuTypes";
 import OptionLinkedItems from "./OptionLinkedItems.vue";
 import draggable from "vuedraggable";
 import { menuJSON } from "../store";
-import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogScrollContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import {
     Tooltip,
     TooltipContent,
@@ -29,7 +29,7 @@ const getItemLabel = (linkedItem: LinkedItem) => {
         ) {
             const item = menuJSON.value?.allItems?.[linkedItem.itemId];
             const size = item?.itemSizes?.find(s => s.itemSizeId === linkedItem.sizeId);
-            return `${item?.itemLabel}, ${size?.itemSizeLabel}`;
+            return `${size?.itemSizeLabel} | ${item?.itemLabel}`;
         }
     }
     return "";
@@ -76,7 +76,12 @@ const addLinkedItem = (linkedItem: LinkedItem) => {
         </DialogTrigger>
         <DialogScrollContent v-if="option">
             <DialogHeader>
-                <DialogTitle>Linked items for '{{ option.label || "unlabelled option" }}'</DialogTitle>
+                <DialogTitle>
+                    Linked items for '{{ option.label || "unlabelled option" }}'
+                </DialogTitle>
+                <DialogDescription>
+                    Linked ones to ask choices of the linked items
+                </DialogDescription>
             </DialogHeader>
             <div>
                 <draggable v-model="option.linkedItems"

@@ -43,8 +43,7 @@ defineProps<{
                                 }
                             }" />
                 </div>
-                <OptionGroupIdsList :item="size"
-                                    :name="size.itemSizeLabel" />
+                <OptionGroupIdsList :item="size" />
             </div>
         </div>
 
