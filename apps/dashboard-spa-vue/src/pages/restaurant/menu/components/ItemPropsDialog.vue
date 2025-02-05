@@ -29,7 +29,7 @@ defineProps<{
                 <Tooltip>
                     <TooltipTrigger as-child>
                         <Button variant="outline"
-                                class="justify-start">
+                                class="w-full">
                             <Settings /> More details
                         </Button>
                     </TooltipTrigger>

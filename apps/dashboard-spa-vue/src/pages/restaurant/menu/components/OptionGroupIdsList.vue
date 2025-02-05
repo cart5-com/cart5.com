@@ -22,6 +22,7 @@ const { openOptionGroupDialog, addNewOptionGroup } = useMenuOperations();
 
 const props = defineProps<{
     item?: Item | ItemSize;
+    name?: string;
 }>();
 
 const unlink = (index: number) => {
@@ -53,12 +54,12 @@ onMounted(() => {
 
 <template>
     <div>
-        <div v-if="isCollapsed">
-            <Button variant="outline"
-                    @click="isCollapsed = false">
-                <AlignJustify /> Choices & Addons
-            </Button>
-        </div>
+        <Button variant="outline"
+                class="w-full"
+                v-if="isCollapsed"
+                @click="isCollapsed = false">
+            <AlignJustify /> Choices & Addons {{ name ? `for ${name}` : '' }}
+        </Button>
         <div v-else
              class="border rounded-lg p-4">
             <div class="flex justify-between items-center mb-4 sm:flex-row flex-col gap-2">

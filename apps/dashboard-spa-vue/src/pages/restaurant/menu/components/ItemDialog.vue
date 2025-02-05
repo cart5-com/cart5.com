@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { type Item } from "lib/types/menuTypes"
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import ItemPropsDialog from "./ItemPropsDialog.vue"
 import draggable from "vuedraggable"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-vue-next"
+import { ChevronDownSquare, ChevronUpSquare, Plus } from "lucide-vue-next"
 import ItemSizeCard from "./ItemSizeCard.vue"
 import OptionGroupIdsList from "./OptionGroupIdsList.vue"
 
@@ -59,6 +59,13 @@ const isOpen = ref(false);
 defineExpose({
     isOpen
 })
+
+const isSizesCollapsed = ref(true);
+onMounted(() => {
+    if (props.item?.itemSizes?.length) {
+        isSizesCollapsed.value = false;
+    }
+})
 </script>
 
 <template>
@@ -95,7 +102,8 @@ defineExpose({
                            class="col-span-3" />
                 </div>
 
-                <OptionGroupIdsList :item="item" />
+                <OptionGroupIdsList :item="item"
+                                    :name="item.itemLabel" />
 
 
                 <!-- <div class="grid grid-cols-4 items-center gap-4">
@@ -106,10 +114,32 @@ defineExpose({
 
 
 
-                <div v-if="item.itemSizes && item.itemSizes.length > 0"
+                <div v-if="isSizesCollapsed">
+                    <Button variant="outline"
+                            class="w-full"
+                            v-if="item && item.itemSizes && item.itemSizes.length > 0"
+                            @click="isSizesCollapsed = false">
+                        <ChevronDownSquare />
+                        Show Sizes
+                    </Button>
+                    <Button v-else
+                            variant="outline"
+                            class="w-full"
+                            @click="() => {
+                                addNewSize()
+                                isSizesCollapsed = false
+                            }">
+                        <Plus /> Add Size
+                    </Button>
+                </div>
+                <div v-else
                      class="border rounded-lg p-4">
                     <div class="flex justify-between items-center mb-4">
-                        <Label>Sizes</Label>
+                        <Button variant="ghost"
+                                @click="isSizesCollapsed = true">
+                            Sizes
+                            <ChevronUpSquare />
+                        </Button>
                         <Button variant="outline"
                                 size="sm"
                                 @click="addNewSize">
@@ -117,7 +147,8 @@ defineExpose({
                         </Button>
                     </div>
 
-                    <draggable v-model="item.itemSizes"
+                    <draggable v-if="item && item.itemSizes"
+                               v-model="item.itemSizes"
                                group="sizes"
                                item-key="itemSizeId"
                                handle=".size-drag-handle"
@@ -128,14 +159,6 @@ defineExpose({
                                           @makePreSelected="makeItemSizePreSelected(index)" />
                         </template>
                     </draggable>
-                </div>
-
-                <div v-else
-                     class="">
-                    <Button variant="outline"
-                            @click="addNewSize">
-                        <Plus /> Add Size
-                    </Button>
                 </div>
 
 
