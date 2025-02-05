@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { menuJSON } from "../store";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
+import { Eye, Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { useMenuOperations } from '../composables/useMenuOperations';
-const { openItemDialog } = useMenuOperations()
+
+const { openItemDialog, openItemPreviewDialog } = useMenuOperations()
 
 const props = defineProps<{
     itemId: string,
@@ -90,6 +91,11 @@ const getItemPrice = () => {
                         @click="unlinkItem"
                         v-if="categoryId">
                     <Link2Off />
+                </Button>
+                <Button variant="outline"
+                        size="sm"
+                        @click="openItemPreviewDialog(itemId)">
+                    <Eye />
                 </Button>
             </CardFooter>
         </Card>

@@ -2,6 +2,7 @@ import { type InjectionKey, inject, provide } from 'vue'
 
 interface MenuOperations {
     openItemDialog: (itemId: string) => void
+    openItemPreviewDialog: (itemId: string) => void
     openCategoryDialog: (categoryId: string) => void
     openOptionGroupDialog: (optionGroupId: string) => void
     addNewOptionGroup: () => string

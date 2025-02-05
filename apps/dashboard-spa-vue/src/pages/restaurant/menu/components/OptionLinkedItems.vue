@@ -57,17 +57,23 @@ const getAvailableOptionGroups = () => {
 </script>
 <template>
     <div>
-        <SelectWithSearch v-if="Object.keys(menuJSON?.allItems ?? {}).length > 0"
-                          :items="getAvailableItemsWithSizes()"
-                          @select="(item) => {
-                            $emit('selectedLinkedItem', item.valueObject as LinkTypes)
-                        }">
-            <template #trigger>
-                <Button variant="outline">
-                    <Link2 /> Link item
-                </Button>
-            </template>
-        </SelectWithSearch>
+        <!-- 
+<SelectWithSearch v-if="Object.keys(menuJSON?.allItems ?? {}).length > 0"
+                    :items="getAvailableItemsWithSizes()"
+                    @select="(item) => {
+                    $emit('selectedLinkedItem', item.valueObject as LinkTypes)
+                }">
+    <template #trigger>
+        <Button variant="outline">
+            <Link2 /> Link item
+        </Button>
+    </template>
+</SelectWithSearch>
+-->
+        <Button variant="outline"
+                disabled>
+            <Link2 /> Link item
+        </Button>
 
         <SelectWithSearch v-if="Object.keys(menuJSON?.allOptionGroups ?? {}).length > 0"
                           :items="getAvailableOptionGroups()"

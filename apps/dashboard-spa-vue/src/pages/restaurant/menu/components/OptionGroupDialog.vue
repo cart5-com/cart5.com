@@ -46,8 +46,7 @@ defineExpose({
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogScrollContent class="sm:max-w-[625px]"
-                             v-if="optionGroup">
+        <DialogScrollContent v-if="optionGroup">
             <DialogHeader>
                 <DialogTitle>Edit Option Group</DialogTitle>
             </DialogHeader>

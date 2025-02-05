@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button"
 import { ChevronDownSquare, ChevronUpSquare, Plus } from "lucide-vue-next"
 import ItemSizeCard from "./ItemSizeCard.vue"
 import OptionGroupIdsList from "./OptionGroupIdsList.vue"
+import { useMenuOperations } from "../composables/useMenuOperations"
+
+const { openItemPreviewDialog } = useMenuOperations()
 
 const isDev = import.meta.env.DEV
 
@@ -76,8 +79,7 @@ onMounted(() => {
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogScrollContent class="sm:max-w-[625px]"
-                             v-if="item">
+        <DialogScrollContent v-if="item">
             <DialogHeader>
                 <DialogTitle>Edit Item</DialogTitle>
             </DialogHeader>
@@ -165,6 +167,12 @@ onMounted(() => {
                 <OptionGroupIdsList :item="item" />
 
                 <ItemPropsDialog :item="item" />
+
+                <Button variant="outline"
+                        v-if="item && item.itemId"
+                        @click="openItemPreviewDialog(item.itemId)">
+                    Preview Item
+                </Button>
 
 
             </div>

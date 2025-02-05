@@ -20,6 +20,7 @@ import ItemsTab from "./tabs/ItemsTab.vue";
 import OptionGroupDialog from "./components/OptionGroupDialog.vue";
 import OptionGroupsTab from "./tabs/OptionGroupsTab.vue";
 import { loadMenu, saveMenu, menuJSON, isLoading } from "./store";
+import ItemPreviewDialog from "./components/ItemPreviewDialog.vue";
 
 
 pageTitle.value = 'Menu Editor'
@@ -96,8 +97,19 @@ const addNewOptionGroup = () => {
     return newOptionGroupId
 }
 
+const currentItemPreviewId = ref<string | null>(null);
+const itemPreviewDialog = ref<InstanceType<typeof ItemPreviewDialog>>();
+function openItemPreviewDialog(itemId: string) {
+    currentItemPreviewId.value = itemId
+    if (itemPreviewDialog.value) {
+        itemPreviewDialog.value.resetAll()
+        itemPreviewDialog.value.isOpen = true
+    }
+}
+
 provideMenuOperations({
     openItemDialog,
+    openItemPreviewDialog,
     openCategoryDialog,
     openOptionGroupDialog,
     addNewOptionGroup
@@ -109,8 +121,10 @@ provideMenuOperations({
 <template>
     <div class="p-0 sm:p-2">
         <div class="mx-auto mt-4">
+
             <ItemDialog ref="itemDialog"
                         :item="currentItemId ? menuJSON?.allItems?.[currentItemId] : undefined" />
+
             <CategoryDialog ref="categoryDialog"
                             :category="currentCategoryId ? menuJSON?.allCategories?.[currentCategoryId] : undefined" />
 
@@ -158,5 +172,8 @@ provideMenuOperations({
                 <pre class="text-xs max-h-96 overflow-y-auto">{{ menuJSON }}</pre>
             </details>
         </div>
+
+        <ItemPreviewDialog ref="itemPreviewDialog"
+                           :item="currentItemPreviewId ? menuJSON?.allItems?.[currentItemPreviewId] : undefined" />
     </div>
 </template>

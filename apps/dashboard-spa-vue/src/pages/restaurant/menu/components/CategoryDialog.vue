@@ -22,8 +22,7 @@ const isDev = import.meta.env.DEV
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogScrollContent class="sm:max-w-[425px]"
-                             v-if="category">
+        <DialogScrollContent v-if="category">
             <DialogHeader>
                 <DialogTitle>Edit Category</DialogTitle>
             </DialogHeader>

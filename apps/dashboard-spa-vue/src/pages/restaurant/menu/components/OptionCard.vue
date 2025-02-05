@@ -3,7 +3,7 @@ import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { type Option } from "lib/types/menuTypes";
-import OptionCardLinkedItemsDialog from "@src/pages/restaurant/menu/components/OptionCardLinkedItemsDialog.vue";
+import OptionCardLinkedItemsDialog from "./OptionCardLinkedItemsDialog.vue";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
