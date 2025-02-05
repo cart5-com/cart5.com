@@ -23,6 +23,7 @@ import { loadMenu, saveMenu, menuJSON, isLoading } from "./store";
 
 
 pageTitle.value = 'Menu Editor'
+const isDev = import.meta.env.DEV
 
 
 let ignoreAutoSave = true;
@@ -136,7 +137,8 @@ provideMenuOperations({
                 <Check />
             </Button>
         </div>
-        <div class="mt-4">
+        <div class="mt-4"
+             v-if="isDev">
             <details>
                 <summary>menuJSON</summary>
                 <pre class="text-xs max-h-96 overflow-y-auto">{{ menuJSON }}</pre>

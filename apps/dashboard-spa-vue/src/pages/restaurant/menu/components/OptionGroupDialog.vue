@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-vue-next"
 import OptionCard from "./OptionCard.vue"
 
+const isDev = import.meta.env.DEV
+
 const props = defineProps<{
     optionGroup?: OptionGroup
 }>()
@@ -102,7 +104,8 @@ defineExpose({
                     </draggable>
                 </div>
             </div>
-            <details class="mt-4">
+            <details class="mt-4"
+                     v-if="isDev">
                 <summary>Debug: Option Group JSON</summary>
                 <pre class="text-xs">{{ optionGroup }}</pre>
             </details>

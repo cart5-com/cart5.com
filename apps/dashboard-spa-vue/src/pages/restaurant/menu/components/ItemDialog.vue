@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-vue-next"
 import ItemSizeCard from "./ItemSizeCard.vue"
 
+const isDev = import.meta.env.DEV
+
 const props = defineProps<{
     item?: Item
 }>()
@@ -141,7 +143,8 @@ defineExpose({
 
             </div>
 
-            <details class="mt-4">
+            <details class="mt-4"
+                     v-if="isDev">
                 <summary>Debug: Item JSON</summary>
                 <pre class="text-xs">{{ item }}</pre>
             </details>

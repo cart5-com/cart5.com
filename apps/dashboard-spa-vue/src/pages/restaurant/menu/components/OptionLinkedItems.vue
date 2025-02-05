@@ -39,10 +39,12 @@ const getLinkedItemsAndSizes = () => {
     }
     return linkedItemsAndSizes;
 }
+
+const isDev = import.meta.env.DEV
 </script>
 <template>
     <div>
-        <details>
+        <details v-if="isDev">
             <summary>JSON</summary>
             <pre>{{ getLinkedItemsAndSizes() }}</pre>
         </details>

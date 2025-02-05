@@ -17,6 +17,7 @@ defineExpose({
     isOpen
 })
 
+const isDev = import.meta.env.DEV
 </script>
 
 <template>
@@ -27,7 +28,7 @@ defineExpose({
                 <DialogTitle>Edit Category</DialogTitle>
             </DialogHeader>
             <div>
-                <details>
+                <details v-if="isDev">
                     <summary>JSON</summary>
                     <pre>{{ category }}</pre>
                 </details>
