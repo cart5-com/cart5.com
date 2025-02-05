@@ -103,3 +103,14 @@ const addLinkedItem = (linkedItem: LinkedItem) => {
         </DialogScrollContent>
     </Dialog>
 </template>
+
+<style scoped>
+.sortable-chosen {
+    border: 1px dashed rgba(var(--primary));
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+    border: 1px dashed rgba(var(--secondary));
+}
+</style>

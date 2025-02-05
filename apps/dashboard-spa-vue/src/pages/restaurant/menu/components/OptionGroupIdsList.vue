@@ -2,10 +2,22 @@
 import { type Item, type ItemSize } from "lib/types/menuTypes";
 import { menuJSON } from "../store";
 import { Button } from "@/components/ui/button";
-import { AlignJustify, Link2, Link2Off, Pencil, Plus } from "lucide-vue-next";
+import {
+    AlignJustify,
+    ChevronUpSquare,
+    Link2,
+    Link2Off, Pencil, Plus
+} from "lucide-vue-next";
 import draggable from "vuedraggable";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 import { useMenuOperations } from '../composables/useMenuOperations';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { onMounted, ref } from "vue";
 const { openOptionGroupDialog, addNewOptionGroup } = useMenuOperations();
 
 const props = defineProps<{
@@ -30,73 +42,103 @@ const linkOptionGroup = (optionGroupId: string) => {
         }
     }
 }
+
+const isCollapsed = ref(true);
+onMounted(() => {
+    if (props.item?.optionGroupIds?.length) {
+        isCollapsed.value = false;
+    }
+})
 </script>
 
 <template>
-    <div class="border rounded-lg p-4"
-         v-if="item">
-        <div class="flex justify-between items-center mb-4 sm:flex-row flex-col gap-2">
-            <h3 class="font-medium">Option Groups</h3>
-            <SelectWithSearch v-if="Object.keys(menuJSON?.allOptionGroups ?? {}).length > 0"
-                              :items="Object.values(menuJSON?.allOptionGroups ?? {}).map((optionGroup) => ({
-                                key: optionGroup.optionGroupId,
-                                name: optionGroup.optionGroupLabel
-                            }))"
-                              @select="linkOptionGroup($event.key)">
-                <template #trigger>
-                    <Button variant="outline"
-                            size="sm">
-                        <Link2 class="w-4 h-4 mr-2" /> Link option group
-                    </Button>
-                </template>
-            </SelectWithSearch>
-
+    <div>
+        <div v-if="isCollapsed">
             <Button variant="outline"
-                    size="sm"
-                    @click="() => {
-                        const newOptionGroupId = addNewOptionGroup()
-                        linkOptionGroup(newOptionGroupId)
-                    }">
-                <Plus class="w-4 h-4 mr-2" /> add new option group
+                    @click="isCollapsed = false">
+                <AlignJustify /> Choices & Addons
             </Button>
         </div>
+        <div v-else
+             class="border rounded-lg p-4">
+            <div class="flex justify-between items-center mb-4 sm:flex-row flex-col gap-2">
+                <Button variant="ghost"
+                        @click="isCollapsed = true">
+                    Choices & Addons
+                    <ChevronUpSquare />
+                </Button>
+                <SelectWithSearch v-if="Object.keys(menuJSON?.allOptionGroups ?? {}).length > 0"
+                                  :items="Object.values(menuJSON?.allOptionGroups ?? {}).map((optionGroup) => ({
+                                    key: optionGroup.optionGroupId,
+                                    name: optionGroup.optionGroupLabel
+                                }))"
+                                  @select="linkOptionGroup($event.key)">
+                    <template #trigger>
+                        <Button variant="outline">
+                            <Link2 /> Link existing
+                        </Button>
+                    </template>
+                </SelectWithSearch>
 
-        <draggable v-if="props.item && props.item?.optionGroupIds"
-                   v-model="props.item.optionGroupIds"
-                   group="optionGroupIds"
-                   item-key="id"
-                   handle=".option-group-drag-handle"
-                   class="space-y-2">
-            <template #item="{ element: optionGroupId, index }">
-                <div class="flex items-center justify-between bg-muted p-2 rounded-md">
-                    <span class="text-sm line-clamp-1">
-                        {{ menuJSON?.allOptionGroups?.[optionGroupId]?.optionGroupLabel }}
-                    </span>
-                    <div class="flex items-center gap-2">
-                        <Button variant="ghost"
-                                size="sm"
-                                @click="openOptionGroupDialog(optionGroupId)">
-                            <Pencil class="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost"
-                                size="sm"
-                                @click="unlink(index)">
-                            <Link2Off class="w-4 h-4" />
-                        </Button>
-                        <AlignJustify class="option-group-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+                <Button variant="outline"
+                        @click="() => {
+                            const newOptionGroupId = addNewOptionGroup()
+                            linkOptionGroup(newOptionGroupId)
+                        }">
+                    <Plus /> Add new
+                </Button>
+            </div>
+
+            <draggable v-if="item && item?.optionGroupIds"
+                       v-model="item.optionGroupIds"
+                       group="optionGroupIds"
+                       item-key="id"
+                       handle=".option-group-drag-handle"
+                       class="space-y-2">
+                <template #item="{ element: optionGroupId, index }">
+                    <div class="flex items-center justify-between bg-muted p-2 rounded-md">
+                        <span class="text-sm line-clamp-1">
+                            {{ menuJSON?.allOptionGroups?.[optionGroupId]?.optionGroupLabel }}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <Button variant="ghost"
+                                    size="sm"
+                                    @click="openOptionGroupDialog(optionGroupId)">
+                                <Pencil class="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost"
+                                    size="sm"
+                                    @click="unlink(index)">
+                                <Link2Off class="w-4 h-4" />
+                            </Button>
+
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <AlignJustify
+                                                      class="option-group-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Drag to reorder option group
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+
+                        </div>
                     </div>
-                </div>
-            </template>
-        </draggable>
+                </template>
+            </draggable>
+        </div>
     </div>
 </template>
 
 <style scoped>
 .sortable-chosen {
-    @apply border-primary/50;
+    border: 1px dashed rgba(var(--primary));
 }
 
 .sortable-ghost {
-    @apply opacity-50 border-secondary/50;
+    opacity: 0.5;
+    border: 1px dashed rgba(var(--secondary));
 }
 </style>

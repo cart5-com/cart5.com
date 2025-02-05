@@ -131,11 +131,10 @@ defineExpose({
                 </div>
 
                 <div v-else
-                     class="flex justify-end">
+                     class="">
                     <Button variant="outline"
-                            size="sm"
                             @click="addNewSize">
-                        <Plus class="w-4 h-4 mr-2" /> Add Size
+                        <Plus /> Add Size
                     </Button>
                 </div>
 
@@ -156,10 +155,11 @@ defineExpose({
 
 <style scoped>
 .sortable-chosen {
-    @apply border-primary/50;
+    border: 1px dashed rgba(var(--primary));
 }
 
 .sortable-ghost {
-    @apply opacity-50 border-secondary/50;
+    opacity: 0.5;
+    border: 1px dashed rgba(var(--secondary));
 }
 </style>

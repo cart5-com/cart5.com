@@ -24,11 +24,12 @@ defineProps<{
 
 <template>
     <Dialog>
-        <DialogTrigger>
+        <DialogTrigger class="flex justify-start">
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger as-child>
-                        <Button variant="outline">
+                        <Button variant="outline"
+                                class="justify-start">
                             <Settings /> More details
                         </Button>
                     </TooltipTrigger>
