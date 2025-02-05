@@ -3,20 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
 import OptionGroupCard from "../components/OptionGroupCard.vue";
 import { menuJSON } from "../store";
+import { useMenuOperations } from "../composables/useMenuOperations";
+const { addNewOptionGroup } = useMenuOperations();
 
-
-const addNewOptionGroup = () => {
-    const newOptionGroupId = `option-group-${Date.now()}`
-    if (menuJSON.value) {
-        if (!menuJSON.value.allOptionGroups) {
-            menuJSON.value.allOptionGroups = {}
-        }
-        menuJSON.value.allOptionGroups[newOptionGroupId] = {
-            optionGroupId: newOptionGroupId,
-            optionGroupLabel: `New Option Group`,
-        }
-    }
-}
 </script>
 
 <template>

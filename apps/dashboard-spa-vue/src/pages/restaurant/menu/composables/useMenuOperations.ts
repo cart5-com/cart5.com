@@ -4,6 +4,7 @@ interface MenuOperations {
     openItemDialog: (itemId: string) => void
     openCategoryDialog: (categoryId: string) => void
     openOptionGroupDialog: (optionGroupId: string) => void
+    addNewOptionGroup: () => string
 }
 
 const MenuOperationsKey = Symbol() as InjectionKey<MenuOperations>

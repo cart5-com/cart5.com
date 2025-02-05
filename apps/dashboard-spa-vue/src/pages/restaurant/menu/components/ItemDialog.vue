@@ -10,6 +10,7 @@ import draggable from "vuedraggable"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-vue-next"
 import ItemSizeCard from "./ItemSizeCard.vue"
+import OptionGroupIdsList from "./OptionGroupIdsList.vue"
 
 const isDev = import.meta.env.DEV
 
@@ -94,6 +95,9 @@ defineExpose({
                            class="col-span-3" />
                 </div>
 
+                <OptionGroupIdsList :item="item" />
+
+
                 <!-- <div class="grid grid-cols-4 items-center gap-4">
                     <Label class="text-right">Image URL</Label>
                     <Input v-model="item.imageUrl"
@@ -137,8 +141,6 @@ defineExpose({
 
 
                 <ItemPropsDialog :item="item" />
-
-
 
 
             </div>

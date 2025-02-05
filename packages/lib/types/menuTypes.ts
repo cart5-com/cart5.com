@@ -11,7 +11,7 @@ export type LinkedItem = ItemId | {
 
 export type Option = {
     optionId?: string;
-    label?: string;
+    label?: string; // TODO: should it override the linkedItem labels?
     price?: number; // overrides the all other prices
     linkedItems?: LinkedItem[];
 }
@@ -55,8 +55,8 @@ export type Item = {
     isSpecialInstructionsHidden?: boolean;
     itemSizes?: ItemSize[];
 
-
     optionGroupIds?: string[];
+
     taxCategoryId?: string;
     imageUrl?: string;
 };

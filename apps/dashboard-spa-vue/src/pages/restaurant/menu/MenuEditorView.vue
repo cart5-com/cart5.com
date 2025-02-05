@@ -82,11 +82,25 @@ function openOptionGroupDialog(optionGroupId: string) {
     }
 }
 
+const addNewOptionGroup = () => {
+    const newOptionGroupId = `option-group-${Date.now()}`
+    if (menuJSON.value) {
+        if (!menuJSON.value.allOptionGroups) {
+            menuJSON.value.allOptionGroups = {}
+        }
+        menuJSON.value.allOptionGroups[newOptionGroupId] = {
+            optionGroupId: newOptionGroupId,
+            optionGroupLabel: `New Option Group ${Object.keys(menuJSON.value.allOptionGroups).length + 1}`,
+        }
+    }
+    return newOptionGroupId
+}
 
 provideMenuOperations({
     openItemDialog,
     openCategoryDialog,
-    openOptionGroupDialog
+    openOptionGroupDialog,
+    addNewOptionGroup
 })
 
 </script>

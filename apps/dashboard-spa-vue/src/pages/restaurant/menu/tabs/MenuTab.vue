@@ -13,8 +13,6 @@ const toggleCategories = () => {
     showCategories.value = !showCategories.value;
 }
 
-
-
 const addNewCategory = () => {
     const newCatId = `cat-${Date.now()}`
     if (menuJSON.value) {
@@ -23,7 +21,7 @@ const addNewCategory = () => {
         }
         menuJSON.value.allCategories[newCatId] = {
             catId: newCatId,
-            categoryLabel: 'New Category',
+            categoryLabel: `New Category ${Object.keys(menuJSON.value.allCategories).length + 1}`,
             itemIds: []
         }
         if (!menuJSON.value.categoryIdsOrder) {
