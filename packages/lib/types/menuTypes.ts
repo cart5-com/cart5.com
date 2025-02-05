@@ -4,15 +4,16 @@ import type { DateTimeProp } from "./dateTimeType";
 export type ItemId = string | undefined;
 //  if undefined or false it will be visible, if true or date timestamp it will be hidden until the date
 
+export type LinkedItem = ItemId | {
+    itemId: string;
+    sizeId: string;
+}
 
 export type Option = {
     optionId?: string;
     label?: string;
     price?: number; // overrides the all other prices
-    linkedItems?: (ItemId | {
-        itemId: string;
-        sizeId: string;
-    })[];
+    linkedItems?: LinkedItem[];
 }
 
 export type OptionGroup = {
@@ -33,7 +34,7 @@ export type OptionGroup = {
 
 export type ItemSize = {
     itemSizeId?: string;
-    label?: string;
+    itemSizeLabel?: string;
     price?: number;
     preSelected?: boolean;
     optionGroupIds?: string[];

@@ -1,21 +1,17 @@
 <script lang="ts" setup>
-import type { MenuJSON } from "lib/types/menuTypes";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
 import OptionGroupCard from "../components/OptionGroupCard.vue";
+import { menuJSON } from "../store";
 
-
-const props = defineProps<{
-    menuJSON: MenuJSON,
-}>()
 
 const addNewOptionGroup = () => {
     const newOptionGroupId = `option-group-${Date.now()}`
-    if (props.menuJSON) {
-        if (!props.menuJSON.allOptionGroups) {
-            props.menuJSON.allOptionGroups = {}
+    if (menuJSON.value) {
+        if (!menuJSON.value.allOptionGroups) {
+            menuJSON.value.allOptionGroups = {}
         }
-        props.menuJSON.allOptionGroups[newOptionGroupId] = {
+        menuJSON.value.allOptionGroups[newOptionGroupId] = {
             optionGroupId: newOptionGroupId,
             optionGroupLabel: `New Option Group`,
         }

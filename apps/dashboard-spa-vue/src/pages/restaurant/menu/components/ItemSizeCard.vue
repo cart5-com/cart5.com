@@ -21,7 +21,7 @@ defineProps<{
                 <div class="flex gap-2 items-center">
                     <Label>Name</Label>
                     <Input placeholder="Size label"
-                           v-model="size.label" />
+                           v-model="size.itemSizeLabel" />
                 </div>
 
                 <div class="flex gap-2 items-center">

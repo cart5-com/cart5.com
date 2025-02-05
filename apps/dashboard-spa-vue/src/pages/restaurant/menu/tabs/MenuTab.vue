@@ -5,7 +5,7 @@ import {
 } from "lucide-vue-next";
 import draggable from "vuedraggable";
 import { Button } from "@/components/ui/button";
-import type { MenuJSON } from "lib/types/menuTypes";
+import { menuJSON } from "../store";
 import CategoryCard from "../components/CategoryCard.vue";
 const showCategories = ref(true);
 
@@ -13,26 +13,23 @@ const toggleCategories = () => {
     showCategories.value = !showCategories.value;
 }
 
-const props = defineProps<{
-    menuJSON: MenuJSON,
-}>()
 
 
 const addNewCategory = () => {
     const newCatId = `cat-${Date.now()}`
-    if (props.menuJSON) {
-        if (!props.menuJSON.allCategories) {
-            props.menuJSON.allCategories = {}
+    if (menuJSON.value) {
+        if (!menuJSON.value.allCategories) {
+            menuJSON.value.allCategories = {}
         }
-        props.menuJSON.allCategories[newCatId] = {
+        menuJSON.value.allCategories[newCatId] = {
             catId: newCatId,
             categoryLabel: 'New Category',
             itemIds: []
         }
-        if (!props.menuJSON.categoryIdsOrder) {
-            props.menuJSON.categoryIdsOrder = []
+        if (!menuJSON.value.categoryIdsOrder) {
+            menuJSON.value.categoryIdsOrder = []
         }
-        props.menuJSON.categoryIdsOrder.push(newCatId)
+        menuJSON.value.categoryIdsOrder.push(newCatId)
     }
 }
 </script>

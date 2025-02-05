@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MenuJSON } from "lib/types/menuTypes";
+import { menuJSON } from "../store";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { useMenuOperations } from '../composables/useMenuOperations';
 const { openItemDialog } = useMenuOperations()
 
 const props = defineProps<{
-    menuJSON: MenuJSON,
     itemId: string,
     categoryId?: string,
     hideMoveIcon?: boolean,
@@ -15,9 +14,9 @@ const props = defineProps<{
 
 
 const unlinkItem = () => {
-    if (!props.categoryId || !props.menuJSON.allCategories?.[props.categoryId]) return;
+    if (!props.categoryId || !menuJSON.value.allCategories?.[props.categoryId]) return;
 
-    const category = props.menuJSON.allCategories[props.categoryId];
+    const category = menuJSON.value.allCategories[props.categoryId];
     if (!category.itemIds) return;
 
     const index = category.itemIds.indexOf(props.itemId);

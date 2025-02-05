@@ -23,7 +23,7 @@ const addNewSize = () => {
         }
         props.item.itemSizes.push({
             itemSizeId: `size-${Date.now()}`,
-            label: `Size ${props.item.itemSizes.length + 1}`,
+            itemSizeLabel: `Size ${props.item.itemSizes.length + 1}`,
             price: props.item.price || 0,
             preSelected: false
         })

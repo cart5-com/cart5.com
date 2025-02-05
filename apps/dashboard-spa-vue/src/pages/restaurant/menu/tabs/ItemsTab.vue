@@ -1,25 +1,21 @@
 <script lang="ts" setup>
-import type { MenuJSON } from "lib/types/menuTypes";
 import ItemCard from "../components/ItemCard.vue";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
-
-const props = defineProps<{
-    menuJSON: MenuJSON,
-}>()
+import { menuJSON } from "../store";
 
 const addNewItem = () => {
     const newItemId = `item-${Date.now()}`
-    if (props.menuJSON) {
+    if (menuJSON.value) {
         // Initialize allItems if it doesn't exist
-        if (!props.menuJSON.allItems) {
-            props.menuJSON.allItems = {}
+        if (!menuJSON.value.allItems) {
+            menuJSON.value.allItems = {}
         }
 
         // Create new item
-        props.menuJSON.allItems[newItemId] = {
+        menuJSON.value.allItems[newItemId] = {
             itemId: newItemId,
-            itemLabel: `New Item ${Object.keys(props.menuJSON.allItems).length + 1}`,
+            itemLabel: `New Item ${Object.keys(menuJSON.value.allItems).length + 1}`,
             price: 1,
         }
     }

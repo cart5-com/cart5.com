@@ -2,7 +2,8 @@
 import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Option } from "lib/types/menuTypes";
+import { type Option } from "lib/types/menuTypes";
+import OptionLinkedItems from "./OptionLinkedItems.vue";
 
 defineProps<{
     option: Option
@@ -18,6 +19,7 @@ defineProps<{
                    type="number"
                    step="0.01"
                    placeholder="Price" />
+            <OptionLinkedItems />
         </div>
         <Button variant="destructive"
                 size="icon"

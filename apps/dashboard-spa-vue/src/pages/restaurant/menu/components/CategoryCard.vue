@@ -8,15 +8,14 @@ import {
     Plus,
 } from "lucide-vue-next";
 import draggable from "vuedraggable";
-import type { MenuJSON } from "lib/types/menuTypes";
+import { menuJSON } from "../store";
 import ItemCard from "../components/ItemCard.vue";
 import { Button } from "@/components/ui/button";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 import { useMenuOperations } from '../composables/useMenuOperations';
 const { openCategoryDialog } = useMenuOperations()
 
-const props = defineProps<{
-    menuJSON: MenuJSON,
+defineProps<{
     categoryId: string,
     toggleCategories: () => void,
     showCategories: boolean,
@@ -24,16 +23,16 @@ const props = defineProps<{
 
 const addNewItem = (categoryId: string) => {
     const newItemId = `item-${Date.now()}`
-    if (props.menuJSON && props.menuJSON) {
+    if (menuJSON.value) {
         // Initialize allItems if it doesn't exist
-        if (!props.menuJSON.allItems) {
-            props.menuJSON.allItems = {}
+        if (!menuJSON.value.allItems) {
+            menuJSON.value.allItems = {}
         }
 
         // Create new item
-        props.menuJSON.allItems[newItemId] = {
+        menuJSON.value.allItems[newItemId] = {
             itemId: newItemId,
-            itemLabel: `New Item ${Object.keys(props.menuJSON.allItems).length + 1}`,
+            itemLabel: `New Item ${Object.keys(menuJSON.value.allItems).length + 1}`,
             price: 1,
         }
 
@@ -43,11 +42,11 @@ const addNewItem = (categoryId: string) => {
 }
 
 const addItemToCategory = (categoryId: string, itemId: string) => {
-    if (props.menuJSON.allCategories?.[categoryId]) {
-        if (!props.menuJSON.allCategories[categoryId].itemIds) {
-            props.menuJSON.allCategories[categoryId].itemIds = []
+    if (menuJSON.value.allCategories?.[categoryId]) {
+        if (!menuJSON.value.allCategories[categoryId].itemIds) {
+            menuJSON.value.allCategories[categoryId].itemIds = []
         }
-        props.menuJSON.allCategories[categoryId].itemIds?.push(itemId)
+        menuJSON.value.allCategories[categoryId].itemIds?.push(itemId)
     }
 }
 </script>
@@ -97,7 +96,7 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
                             }">
                 <template #trigger>
                     <Button variant="outline">
-                        <Link2 /> Link existing item
+                        <Link2 /> Link item
                     </Button>
                 </template>
             </SelectWithSearch>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { MenuJSON } from "lib/types/menuTypes";
+import { menuJSON } from "../store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Pencil } from "lucide-vue-next"
@@ -7,7 +7,6 @@ import { useMenuOperations } from '../composables/useMenuOperations';
 const { openOptionGroupDialog } = useMenuOperations()
 
 defineProps<{
-    menuJSON: MenuJSON,
     optionGroupId: string,
 }>()
 </script>
