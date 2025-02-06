@@ -109,48 +109,48 @@ const updateNestedOptionGroup = (
 
 </script>
 <template>
-    <div class="my-10 py-2">
-        <div>
-            <span class="text-sm flex justify-between items-center">
-                <span v-if="helperText"
-                      class="text-sm">
-                    {{ helperText }}
-                </span>
-                {{ currentOptionGroup?.optionGroupLabel }}
-            </span>
-            <div v-for="option in currentOptionGroup?.options"
-                 :key="option?.optionId"
-                 class="py-2 my-1">
-                <div class="cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent"
-                     :class="[
-                        isMaxQuantity() ? 'opacity-40' : ''
-                    ]"
-                     @click="addOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
-                    {{ option?.label }} ${{ option?.price }}
-                    <Plus />
-                </div>
-                <div class="w-full flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent"
-                     v-if="modelValue?.options && modelValue?.options?.[option?.optionId!]?.quantity > 0"
-                     @click="removeOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
-                    <span class="m-2">
-                        {{ modelValue?.options?.[option?.optionId!]?.quantity }} x
-                    </span>
-                    <span class="m-2">
-                        {{ option?.label }}
-                    </span>
-                    <Minus />
-                </div>
-
+    <div class="my-24">
+        <div class="font-bold p-2 line-clamp-1"
+             v-if="helperText">
+            {{ helperText }}
+        </div>
+        <div class="font-bold p-2 line-clamp-1">
+            {{ currentOptionGroup?.optionGroupLabel }}
+        </div>
+        <div v-for="option in currentOptionGroup?.options"
+             :key="option?.optionId">
+            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent "
+                 :class="[
+                    isMaxQuantity() ? 'opacity-40' : ''
+                ]"
+                 @click="addOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
+                {{ option?.label }} ${{ option?.price }}
+                <Plus />
             </div>
+            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent mb-4"
+                 v-if="modelValue?.options && modelValue?.options?.[option?.optionId!]?.quantity > 0"
+                 @click="removeOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
+                <span class="mx-2">
+                    {{ modelValue?.options?.[option?.optionId!]?.quantity }} x
+                </span>
+                <span class="mx-2">
+                    {{ option?.label }}
+                </span>
+                <Minus />
+            </div>
+        </div>
+        <div class="text-sm p-2"
+             v-if="currentOptionGroup?.maxOptions && currentOptionGroup?.maxOptions > 0">(max:{{
+                currentOptionGroup?.maxOptions }})</div>
 
-            <div v-for="option in currentOptionGroup?.options"
-                 :key="option?.optionId">
-                <div v-if="option?.optionLinks">
-                    <template v-for="quantityRepeated in modelValue?.options?.[option?.optionId!]?.quantity"
-                              :key="`${option?.optionId}-${quantityRepeated}`">
+        <div v-for="option in currentOptionGroup?.options"
+             :key="option?.optionId">
+            <div v-if="option?.optionLinks">
+                <template v-for="quantityRepeated in modelValue?.options?.[option?.optionId!]?.quantity"
+                          :key="`${option?.optionId}-${quantityRepeated}`">
 
-                        <div class="py-2 my-8">
-                            <!-- <div class="font-bold border-b pb-2">
+                    <div class="py-2 my-8">
+                        <!-- <div class="font-bold border-b pb-2">
                                 <span v-if="modelValue?.options?.[option?.optionId!]?.quantity! > 1">
                                     (
                                     {{ quantityRepeated }} /
@@ -159,23 +159,21 @@ const updateNestedOptionGroup = (
                                 </span>
                                 {{ option?.label }}
                             </div> -->
-                            <div v-for="(linkedOption, index) in option?.optionLinks"
-                                 :key="`${linkedOption.optionGroupId}-${quantityRepeated}-${index}`">
-                                <div v-if="linkedOption.optionGroupId">
-                                    <OptionGroupPreview :optionGroupId="linkedOption.optionGroupId"
-                                                        :model-value="modelValue?.options?.[option?.optionId!]?.selectedOption_optionGroupIds?.[quantityRepeated - 1]?.[index]"
-                                                        @update:model-value="updateNestedOptionGroup(option?.optionId!, quantityRepeated - 1, index, $event)"
-                                                        :helper-text="modelValue?.options?.[option?.optionId!]?.quantity! > 1 ?
-                                                            `(${quantityRepeated}/${modelValue?.options?.[option?.optionId!]?.quantity}) ${option?.label}` :
-                                                            option?.label" />
-                                </div>
+                        <div v-for="(linkedOption, index) in option?.optionLinks"
+                             :key="`${linkedOption.optionGroupId}-${quantityRepeated}-${index}`">
+                            <div v-if="linkedOption.optionGroupId">
+                                <OptionGroupPreview :optionGroupId="linkedOption.optionGroupId"
+                                                    :model-value="modelValue?.options?.[option?.optionId!]?.selectedOption_optionGroupIds?.[quantityRepeated - 1]?.[index]"
+                                                    @update:model-value="updateNestedOptionGroup(option?.optionId!, quantityRepeated - 1, index, $event)"
+                                                    :helper-text="modelValue?.options?.[option?.optionId!]?.quantity! > 1 ?
+                                                        `(${quantityRepeated}/${modelValue?.options?.[option?.optionId!]?.quantity}) ${option?.label}` :
+                                                        option?.label" />
                             </div>
                         </div>
+                    </div>
 
-                    </template>
-                </div>
+                </template>
             </div>
         </div>
-
     </div>
 </template>

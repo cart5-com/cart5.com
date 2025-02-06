@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {
     Dialog,
-    DialogScrollContent,
+    DialogContent,
     DialogHeader,
     DialogTitle,
     DialogDescription
@@ -68,51 +68,56 @@ defineExpose({ isOpen, resetAll })
 <template>
     <Dialog v-model:open="isOpen"
             v-if="currentItem && itemId">
-        <DialogScrollContent>
+        <DialogContent class="p-2 sm:p-4">
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <Eye />
                     Preview: {{ currentItem?.itemLabel }}
                 </DialogTitle>
-                <DialogDescription>
-                    Description: {{ currentItem?.description }}
-                </DialogDescription>
             </DialogHeader>
 
-            <ItemPreviewSizes :itemId="itemId"
-                              :bucketItem="bucketItem" />
+            <div class="overflow-y-auto max-h-[90dvh]">
+                <div class="text-sm">
+                    Description: {{ currentItem?.description }}
+                </div>
+                <ItemPreviewSizes :itemId="itemId"
+                                  :bucketItem="bucketItem" />
 
-            <div v-if="currentItem?.optionGroupIds"
-                 class="my-2 py-2">
-                <div v-for="(optionGroupId, index) in currentItem?.optionGroupIds"
-                     :key="optionGroupId">
-                    <span class="text-sm">
-                        <!-- optionGroupId:{{ optionGroupId }} -->
-                        <OptionGroupPreview v-if="bucketItem.selectedItem_optionGroupIds"
-                                            :optionGroupId="optionGroupId"
-                                            v-model="bucketItem.selectedItem_optionGroupIds[index]" />
-                    </span>
+                <div v-if="currentItem?.optionGroupIds"
+                     class="my-2 py-2">
+                    <div v-for="(optionGroupId, index) in currentItem?.optionGroupIds"
+                         :key="optionGroupId">
+                        <span class="text-sm">
+                            <!-- optionGroupId:{{ optionGroupId }} -->
+                            <OptionGroupPreview v-if="bucketItem.selectedItem_optionGroupIds"
+                                                :optionGroupId="optionGroupId"
+                                                v-model="bucketItem.selectedItem_optionGroupIds[index]" />
+                        </span>
+                    </div>
+                </div>
+
+                <!-- list selected size's optionGroupIds -->
+                <div v-if="bucketItem.selectedSizeId">
+                    <div v-for="(optionGroupId, index) in currentItemSize?.optionGroupIds"
+                         :key="optionGroupId">
+                        <span class="text-sm">
+                            <!-- itemSize-optionGroupId:{{ optionGroupId }} -->
+                            <OptionGroupPreview v-if="bucketItem.selectedSize_optionGroupIds"
+                                                :optionGroupId="optionGroupId"
+                                                v-model="bucketItem.selectedSize_optionGroupIds[index]" />
+                        </span>
+                    </div>
+                </div>
+                <div v-if="isDev">
+                    <details>
+                        <summary>bucketItem</summary>
+                        <pre>{{ bucketItem }}</pre>
+                    </details>
                 </div>
             </div>
 
-            <!-- list selected size's optionGroupIds -->
-            <div v-if="bucketItem.selectedSizeId">
-                <div v-for="(optionGroupId, index) in currentItemSize?.optionGroupIds"
-                     :key="optionGroupId">
-                    <span class="text-sm">
-                        <!-- itemSize-optionGroupId:{{ optionGroupId }} -->
-                        <OptionGroupPreview v-if="bucketItem.selectedSize_optionGroupIds"
-                                            :optionGroupId="optionGroupId"
-                                            v-model="bucketItem.selectedSize_optionGroupIds[index]" />
-                    </span>
-                </div>
-            </div>
-            <div v-if="isDev">
-                <details>
-                    <summary>bucketItem</summary>
-                    <pre>{{ bucketItem }}</pre>
-                </details>
-            </div>
-        </DialogScrollContent>
+
+
+        </DialogContent>
     </Dialog>
 </template>
