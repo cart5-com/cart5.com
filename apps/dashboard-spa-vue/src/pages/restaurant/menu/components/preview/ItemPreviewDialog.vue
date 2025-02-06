@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"
 import { type BucketItem } from "lib/types/menuTypes"
 import { computed, onMounted, ref } from "vue"
-import { Eye, RefreshCcw } from "lucide-vue-next"
+import { Eye } from "lucide-vue-next"
 import { menuJSON } from "../../store"
 import OptionGroupPreview from "./OptionGroupPreview.vue"
 import ItemPreviewSizes from "./ItemPreviewSizes.vue"
@@ -71,8 +71,6 @@ defineExpose({ isOpen, resetAll })
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <Eye />
-                    <RefreshCcw class="cursor-pointer"
-                                @click="resetAll" />
                     Preview: {{ currentItem?.itemLabel }}
                 </DialogTitle>
                 <DialogDescription>

@@ -109,7 +109,7 @@ const updateNestedOptionGroup = (
 
 </script>
 <template>
-    <div class="my-10 py-2 border-b">
+    <div class="my-10 py-2 border-t border-b">
         <div>
             <span class="text-sm">
                 {{ currentOptionGroup?.optionGroupLabel }}
@@ -130,7 +130,13 @@ const updateNestedOptionGroup = (
                 </Button>
                 {{ modelValue?.options?.[option?.optionId!]?.quantity }}
 
-                <div v-if="option?.optionLinks">
+            </div>
+
+            <div v-for="option in currentOptionGroup?.options"
+                 :key="option?.optionId"
+                 class="border-l border-r border-dashed">
+                <div v-if="option?.optionLinks"
+                     class="border-t border-dashed">
                     <template v-for="quantityRepeated in modelValue?.options?.[option?.optionId!]?.quantity"
                               :key="`${option?.optionId}-${quantityRepeated}`">
 
