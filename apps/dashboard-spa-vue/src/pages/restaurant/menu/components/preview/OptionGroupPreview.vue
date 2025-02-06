@@ -53,7 +53,9 @@ const addOptionQuantity = (optionId: string | undefined) => {
     }
     if (optionId && modelValue.value?.options) {
         modelValue.value.options[optionId] = {
-            quantity: (modelValue.value.options[optionId]?.quantity || 0) + 1
+            optionId: optionId,
+            quantity: (modelValue.value.options[optionId]?.quantity || 0) + 1,
+            selectedOption_optionGroupIds: []
         };
     }
 }
@@ -72,14 +74,12 @@ const removeOptionQuantity = (optionId: string | undefined) => {
 
 onMounted(() => {
     // Initialize quantities for preselected options
-    setTimeout(() => {
-        currentOptionGroup.value?.options?.forEach(option => {
-            if (option?.optionId && option.preSelected) {
-                // optionQuantities.value[option.optionId] = 1;
-                addOptionQuantity(option.optionId)
-            }
-        });
-    }, 1000);
+    currentOptionGroup.value?.options?.forEach(option => {
+        if (option?.optionId && option.preSelected) {
+            // optionQuantities.value[option.optionId] = 1;
+            addOptionQuantity(option.optionId)
+        }
+    });
 })
 
 const isDev = import.meta.env.DEV;

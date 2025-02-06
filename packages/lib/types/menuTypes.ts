@@ -55,7 +55,7 @@ export type BucketOptionGroup = {
     options?: Record<string, {
         optionId?: string;
         quantity: number;
-        // selectedOption_optionGroupIds?: BucketOptionGroup[];
+        selectedOption_optionGroupIds?: BucketOptionGroup[];
     }>;
 }
 
