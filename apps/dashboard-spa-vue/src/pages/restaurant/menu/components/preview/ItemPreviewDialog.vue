@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription
 } from "@/components/ui/dialog"
 import { type BucketItem } from "lib/types/menuTypes"
 import { computed, onMounted, ref } from "vue"
