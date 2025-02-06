@@ -19,7 +19,7 @@ const getTotalQuantity = () => {
     return Object.values(optionQuantities.value).reduce((acc, curr) => acc + curr.quantity, 0);
 }
 
-const isMaxQuantity = () => {
+const isMaxQuantityAdded = () => {
     if (props.optionGroup?.maxOptions && props.optionGroup?.maxOptions > 0) {
         return getTotalQuantity() >= props.optionGroup?.maxOptions;
     }
@@ -27,7 +27,7 @@ const isMaxQuantity = () => {
 }
 
 const addOptionQuantity = (optionId: string | undefined) => {
-    if (isMaxQuantity()) {
+    if (isMaxQuantityAdded()) {
         return;
     }
     if (optionId) {
@@ -64,9 +64,13 @@ const isDev = import.meta.env.DEV;
             <br>
             optionGroupLabel: {{ optionGroup?.optionGroupLabel }}
             <br>
-            minOptions: {{ optionGroup?.minOptions }}
+            <span v-if="optionGroup?.minOptions && optionGroup?.minOptions > 0">
+                min {{ optionGroup?.minOptions }} selection required
+            </span>
             <br>
-            maxOptions: {{ optionGroup?.maxOptions }}
+            <span v-if="optionGroup?.maxOptions && optionGroup?.maxOptions > 0">
+                You may add up to {{ optionGroup?.maxOptions }} options
+            </span>
         </span>
         <br>
         <br>
@@ -86,7 +90,7 @@ const isDev = import.meta.env.DEV;
             quantity: {{ optionQuantities[option?.optionId!] }}
             <br>
             <Button variant="outline"
-                    :disabled="isMaxQuantity()"
+                    :disabled="isMaxQuantityAdded()"
                     @click="addOptionQuantity(option?.optionId)">
                 <Plus />
             </Button>

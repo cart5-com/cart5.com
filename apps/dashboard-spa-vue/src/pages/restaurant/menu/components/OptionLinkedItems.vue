@@ -5,7 +5,8 @@ import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 import { menuJSON } from "../store";
 import { type LinkTypes } from "lib/types/menuTypes";
 
-const getAvailableItemsWithSizes = () => {
+// @ts-ignore
+function getAvailableItemsWithSizes() {
     const linkedItemsAndSizes: {
         key: string;
         name: string;

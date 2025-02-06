@@ -4,6 +4,42 @@ import type { DateTimeProp } from "./dateTimeType";
 export type ItemId = string | undefined;
 //  if undefined or false it will be visible, if true or date timestamp it will be hidden until the date
 
+export type BucketItemOptionGroup = {
+    optionGroupId?: string;
+    selectedOptions?: {
+        optionId?: string;
+        quantity?: number;
+    }[];
+}
+
+export type BucketItem = {
+    itemId?: string;
+    sizeId?: string;
+    quantity?: number;
+    optionGroups?: BucketItemOptionGroup[];
+}
+
+export type Bucket = BucketItem[];
+
+export const sampleBucket: Bucket = [
+    {
+        itemId: "item1",
+        sizeId: "size1",
+        quantity: 1,
+        optionGroups: [
+            {
+                optionGroupId: "optionGroup1",
+                selectedOptions: [
+                    {
+                        optionId: "option1",
+                        quantity: 1,
+                    }
+                ]
+            }
+        ]
+    }
+]
+
 export type LinkTypes = {
     type: "item";
     itemId?: string;
@@ -27,6 +63,7 @@ export type Option = {
 export type OptionGroup = {
     optionGroupId?: string;
     optionGroupLabel?: string;
+    // TODO: add internal name
     options?: Option[];
 
     // minOptions: 1, maxOptions: 1 -> Mandatory single-choice

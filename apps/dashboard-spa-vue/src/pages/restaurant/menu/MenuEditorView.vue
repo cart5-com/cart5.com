@@ -20,7 +20,7 @@ import ItemsTab from "./tabs/ItemsTab.vue";
 import OptionGroupDialog from "./components/OptionGroupDialog.vue";
 import OptionGroupsTab from "./tabs/OptionGroupsTab.vue";
 import { loadMenu, saveMenu, menuJSON, isLoading } from "./store";
-import ItemPreviewDialog from "./components/ItemPreviewDialog.vue";
+import ItemPreviewDialog from "./components/preview/ItemPreviewDialog.vue";
 
 
 pageTitle.value = 'Menu Editor'
@@ -92,6 +92,8 @@ const addNewOptionGroup = () => {
         menuJSON.value.allOptionGroups[newOptionGroupId] = {
             optionGroupId: newOptionGroupId,
             optionGroupLabel: `Choose ${Object.keys(menuJSON.value.allOptionGroups).length + 1}`,
+            maxOptions: 1,
+            minOptions: 0
         }
     }
     return newOptionGroupId
