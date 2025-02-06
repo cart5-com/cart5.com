@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 import { useVModel } from '@vueuse/core'
 import { Minus, Plus } from "lucide-vue-next";
 import { computed, onMounted } from "vue";
@@ -10,6 +9,7 @@ import { type BucketOptionGroup } from "lib/types/menuTypes";
 const props = defineProps<{
     modelValue?: BucketOptionGroup;
     optionGroupId?: string;
+    helperText?: string;
 }>()
 
 const emits = defineEmits<{
@@ -111,15 +111,19 @@ const updateNestedOptionGroup = (
 <template>
     <div class="my-10 py-2">
         <div>
-            <span class="text-sm">
+            <span class="text-sm flex justify-between items-center">
                 {{ currentOptionGroup?.optionGroupLabel }}
+                <span v-if="helperText"
+                      class="text-sm">
+                    {{ helperText }}
+                </span>
             </span>
             <div v-for="option in currentOptionGroup?.options"
                  :key="option?.optionId"
                  class="py-2 my-1">
                 <div class="cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent"
                      :class="[
-                        isMaxQuantity() ? 'opacity-30' : ''
+                        isMaxQuantity() ? 'opacity-40' : ''
                     ]"
                      @click="addOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
                     {{ option?.label }} ${{ option?.price }}
@@ -147,7 +151,7 @@ const updateNestedOptionGroup = (
 
                         <div class="py-2 my-8">
                             <div class="font-bold border-b pb-2">
-                                <span v-if="modelValue?.options?.[option?.optionId!]?.quantity! > 1">
+                                <span>
                                     (
                                     {{ quantityRepeated }} /
                                     {{ modelValue?.options?.[option?.optionId!]?.quantity }}
@@ -160,7 +164,11 @@ const updateNestedOptionGroup = (
                                 <div v-if="linkedOption.optionGroupId">
                                     <OptionGroupPreview :optionGroupId="linkedOption.optionGroupId"
                                                         :model-value="modelValue?.options?.[option?.optionId!]?.selectedOption_optionGroupIds?.[quantityRepeated - 1]?.[index]"
-                                                        @update:model-value="updateNestedOptionGroup(option?.optionId!, quantityRepeated - 1, index, $event)" />
+                                                        @update:model-value="updateNestedOptionGroup(option?.optionId!, quantityRepeated - 1, index, $event)"
+                                                        :helper-text="`(
+                                    ${quantityRepeated} /
+                                    ${modelValue?.options?.[option?.optionId!]?.quantity}
+                                    ) ${option?.label}`" />
                                 </div>
                             </div>
                         </div>
