@@ -56,7 +56,9 @@ export type BucketOptionGroup = {
     options?: Record<string, {
         optionId?: string;
         quantity: number;
-        selectedOption_optionGroupIds?: BucketOptionGroup[];
+        // selection.length should reflect the quantity
+        // because it's an array of array:'BucketOptionGroup[]'
+        selectedOption_optionGroupIds?: (BucketOptionGroup[])[];
     }>;
 }
 
