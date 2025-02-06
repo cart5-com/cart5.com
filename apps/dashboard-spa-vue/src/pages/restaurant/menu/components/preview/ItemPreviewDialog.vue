@@ -84,7 +84,7 @@ defineExpose({ isOpen, resetAll })
                               :bucketItem="bucketItem" />
 
             <div v-if="currentItem?.optionGroupIds"
-                 class="border-b my-2 py-2">
+                 class="my-2 py-2">
                 <div v-for="(optionGroupId, index) in currentItem?.optionGroupIds"
                      :key="optionGroupId">
                     <span class="text-sm">

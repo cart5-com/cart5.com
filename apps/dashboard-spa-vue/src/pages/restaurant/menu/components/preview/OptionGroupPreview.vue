@@ -107,37 +107,16 @@ const updateNestedOptionGroup = (
     }
 }
 
-const isDev = import.meta.env.DEV;
 </script>
 <template>
-    <div class="my-10 border rounded-md p-2 border-dashed border-gray-300">
-        <div class="border rounded-md p-2">
+    <div class="my-10 py-2 border-b">
+        <div>
             <span class="text-sm">
                 {{ currentOptionGroup?.optionGroupLabel }}
-                <!-- optionGroupId: {{ optionGroupId }}
-                <br>
-                <br>
-                minOptions: {{ currentOptionGroup?.minOptions }}
-                <br>
-                maxOptions: {{ currentOptionGroup?.maxOptions }} -->
             </span>
-            <br>
-            <br>
             <div v-for="option in currentOptionGroup?.options"
                  :key="option?.optionId"
-                 class="border rounded-md p-2 my-1">
-                <!-- optionId: {{ option?.optionId }}
-                <br>
-                label: {{ option?.label }}
-                <br>
-                price: {{ option?.price }}
-                <br>
-                preSelected: {{ option?.preSelected }}
-                <br>
-                optionLinks: {{ option?.optionLinks }}
-                <br>
-                quantity: {{ modelValue?.options?.[option?.optionId!]?.quantity }}
-                <br> -->
+                 class="py-2 my-1">
                 {{ option?.label }} ${{ option?.price }}
                 <Button variant="outline"
                         :disabled="isMaxQuantity()"
@@ -150,16 +129,12 @@ const isDev = import.meta.env.DEV;
                     <Minus />
                 </Button>
                 {{ modelValue?.options?.[option?.optionId!]?.quantity }}
-                <br>
-                - {{ option?.optionId }} -
-                <br>
-                {{ option?.optionLinks }}
 
                 <div v-if="option?.optionLinks">
                     <template v-for="quantityRepeated in modelValue?.options?.[option?.optionId!]?.quantity"
                               :key="`${option?.optionId}-${quantityRepeated}`">
 
-                        <div class="text-xs text-muted-foreground border rounded-md p-2 border-destructive mt-16">
+                        <div class="py-2 mt-16">
                             <div>
                                 {{ option?.label }}
                                 (
@@ -170,28 +145,6 @@ const isDev = import.meta.env.DEV;
                             <div v-for="(linkedOption, index) in option?.optionLinks"
                                  :key="`${linkedOption.optionGroupId}-${quantityRepeated}-${index}`">
                                 <div v-if="linkedOption.optionGroupId">
-                                    <!-- optionGroupId: {{ linkedOption.optionGroupId }} -->
-                                    <!-- {{ menuJSON.allOptionGroups?.[linkedOption.optionGroupId].optionGroupLabel }} -->
-                                    <!-- v-model="modelValue.options[linkedOption.optionGroupId].selectedOption_optionGroupIds[quantityRepeated - 1]"  -->
-                                    <details>
-                                        <summary>modelValue.options[{{ option?.optionId }}]</summary>
-                                        <pre>{{ modelValue?.options?.[option?.optionId!] }}</pre>
-                                    </details>
-                                    <!-- :model-value="modelValue?.options?.[option?.optionId!]?.selectedOption_optionGroupIds?.[quantityRepeated - 1]?.[index]"
-                                    @update:model-value="(newVal) => {
-                                        if (
-                                            option &&
-                                            option.optionId &&
-                                            modelValue &&
-                                            modelValue.options &&
-                                            modelValue.options[option.optionId] &&
-                                            modelValue.options[option.optionId].selectedOption_optionGroupIds &&
-                                            modelValue.options[option.optionId].selectedOption_optionGroupIds[quantityRepeated - 1] &&
-                                            modelValue.options[option.optionId].selectedOption_optionGroupIds[quantityRepeated - 1][index]
-                                        ) {
-                                            modelValue.options[option.optionId].selectedOption_optionGroupIds[quantityRepeated - 1][index] = newVal;
-                                        }
-                                    }" -->
                                     <OptionGroupPreview :optionGroupId="linkedOption.optionGroupId"
                                                         :model-value="modelValue?.options?.[option?.optionId!]?.selectedOption_optionGroupIds?.[quantityRepeated - 1]?.[index]"
                                                         @update:model-value="updateNestedOptionGroup(option?.optionId!, quantityRepeated - 1, index, $event)" />
@@ -201,39 +154,8 @@ const isDev = import.meta.env.DEV;
 
                     </template>
                 </div>
-                <!-- <div v-for="
-                                                        groupId
-                                                        in
-                                                        linkedOption.linkedGroups"
-                                                        :key="`${linkedOption.optionId}-${quantityRepeated}-${groupId}`"
-                                                        class="ml-4 mt-2 border-l-2 pl-2">
-                                        <span class="text-xs text-muted-foreground">
-                                            Linked choices for
-                                            {{ currentOptionGroup?.options?.find(o => o.optionId === linkedOption.optionId)?.label }}
-                                            ({{ quantityRepeated }}/{{ linkedOption.quantity }})
-                                        </span>
-                                        :model-value="modelValue?.options?.[linkedOption.optionId]?.selectedOption_optionGroupIds?.[quantityRepeated
-                                        - 1]"
-                                        @update:model-value="(newVal) => {
-                                        ensureOptionGroupArrays(linkedOption.optionId);
-                                        if (modelValue?.options?.[linkedOption.optionId]?.selectedOption_optionGroupIds)
-                                        {
-                                        modelValue.options[linkedOption.optionId].selectedOption_optionGroupIds[quantityRepeated
-                                        - 1] = newVal;
-                                        }
-                                        }"
-                                        <OptionGroupPreview :optionGroupId="groupId" />
-                                </div> -->
-
-
             </div>
         </div>
 
-        <details v-if="isDev">
-            <summary>
-                modelValue
-            </summary>
-            <pre>{{ modelValue }}</pre>
-        </details>
     </div>
 </template>
