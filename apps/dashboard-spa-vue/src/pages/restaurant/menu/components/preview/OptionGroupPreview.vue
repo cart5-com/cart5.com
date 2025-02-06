@@ -110,11 +110,11 @@ const updateNestedOptionGroup = (
 </script>
 <template>
     <div class="my-24">
-        <div class="font-bold p-2 line-clamp-1"
+        <div class="font-bold p-2 line-clamp-1 text-3xl"
              v-if="helperText">
             {{ helperText }}
         </div>
-        <div class="font-bold p-2 line-clamp-1">
+        <div class="font-bold p-2 line-clamp-1 text-2xl">
             {{ currentOptionGroup?.optionGroupLabel }}
         </div>
         <div v-for="option in currentOptionGroup?.options"
