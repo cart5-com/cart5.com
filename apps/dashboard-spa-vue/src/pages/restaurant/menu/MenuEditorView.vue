@@ -99,7 +99,7 @@ const addNewOptionGroup = () => {
     return newOptionGroupId
 }
 
-const currentItemPreviewId = ref<string | null>(null);
+const currentItemPreviewId = ref<string | undefined>(undefined);
 const itemPreviewDialog = ref<InstanceType<typeof ItemPreviewDialog>>();
 function openItemPreviewDialog(itemId: string) {
     currentItemPreviewId.value = itemId
@@ -176,6 +176,6 @@ provideMenuOperations({
         </div>
 
         <ItemPreviewDialog ref="itemPreviewDialog"
-                           :item="currentItemPreviewId ? menuJSON?.allItems?.[currentItemPreviewId] : undefined" />
+                           :itemId="currentItemPreviewId" />
     </div>
 </template>

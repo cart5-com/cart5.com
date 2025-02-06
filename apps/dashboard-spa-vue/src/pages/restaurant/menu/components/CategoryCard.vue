@@ -68,9 +68,9 @@ const addItemToCategory = (categoryId: string, itemId: string) => {
             </div>
         </div>
         <div v-if="showCategories">
+            <!-- item-key="itemId" -->
             <draggable v-model="menuJSON.allCategories[categoryId].itemIds"
                        group="items"
-                       item-key="itemId"
                        handle=".item-drag-handle"
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 mt-4">
                 <template #item="{ element: itemId }">

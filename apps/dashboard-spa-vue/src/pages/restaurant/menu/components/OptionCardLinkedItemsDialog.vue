@@ -101,9 +101,9 @@ const addLinkedItem = (linkedItem: LinkTypes) => {
                 </DialogDescription>
             </DialogHeader>
             <div>
+                <!-- item-key="id" -->
                 <draggable v-model="option.optionLinks"
                            group="linkedItems"
-                           item-key="id"
                            handle=".linked-item-handle"
                            class="space-y-2">
                     <template #item="{ element: linkedItem, index }">

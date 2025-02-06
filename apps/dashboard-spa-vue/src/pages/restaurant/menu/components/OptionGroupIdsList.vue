@@ -89,10 +89,10 @@ onMounted(() => {
                 </Button>
             </div>
 
+            <!-- item-key="id" -->
             <draggable v-if="item && item?.optionGroupIds"
                        v-model="item.optionGroupIds"
                        group="optionGroupIds"
-                       item-key="id"
                        handle=".option-group-drag-handle"
                        class="space-y-2">
                 <template #item="{ element: optionGroupId, index }">

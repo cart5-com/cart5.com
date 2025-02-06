@@ -1,53 +1,16 @@
 import type { DateTimeProp } from "./dateTimeType";
 
-// import { type WeeklyHours } from "./restaurantTypes";
-export type ItemId = string | undefined;
-//  if undefined or false it will be visible, if true or date timestamp it will be hidden until the date
-
-export type BucketItemOptionGroup = {
-    optionGroupId?: string;
-    selectedOptions?: {
-        optionId?: string;
-        quantity?: number;
-    }[];
-}
-
-export type BucketItem = {
-    itemId?: string;
-    sizeId?: string;
-    quantity?: number;
-    optionGroups?: BucketItemOptionGroup[];
-}
-
-export type Bucket = BucketItem[];
-
-export const sampleBucket: Bucket = [
-    {
-        itemId: "item1",
-        sizeId: "size1",
-        quantity: 1,
-        optionGroups: [
-            {
-                optionGroupId: "optionGroup1",
-                selectedOptions: [
-                    {
-                        optionId: "option1",
-                        quantity: 1,
-                    }
-                ]
-            }
-        ]
-    }
-]
-
 export type LinkTypes = {
+    // not active right now
     type: "item";
     itemId?: string;
 } | {
+    // not active right now
     type: "item-size";
     itemId?: string;
     sizeId?: string;
 } | {
+    // Active ⭐️⭐️⭐️
     type: "option-group";
     optionGroupId?: string;
 }
@@ -86,7 +49,7 @@ export type ItemSize = {
 }
 
 export type Item = {
-    itemId?: ItemId;
+    itemId?: string;
     internalName?: string;
     itemLabel?: string;
     description?: string;

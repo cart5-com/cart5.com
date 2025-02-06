@@ -91,10 +91,10 @@ defineExpose({
                         </Button>
                     </div>
 
+                    <!-- item-key="optionId" -->
                     <draggable v-model="optionGroup.options"
                                group="options"
                                handle=".option-drag-handle"
-                               item-key="optionId"
                                class="space-y-4">
                         <template #item="{ element: option, index }">
                             <OptionCard :option="option"
