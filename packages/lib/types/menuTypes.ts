@@ -54,7 +54,7 @@ export type ItemSize = {
 export type BucketOptionGroup = {
     optionGroupId?: string;
     options?: Record<string, {
-        optionId?: string;
+        // optionId?: string;
         quantity: number;
         // selection.length should reflect the quantity
         // because it's an array of array:'BucketOptionGroup[]'

@@ -52,7 +52,7 @@ const addOptionQuantity = (optionId: string | undefined, hasLinkedOptions: boole
     if (optionId && modelValue.value?.options) {
         if (!modelValue.value.options[optionId]) {
             modelValue.value.options[optionId] = {
-                optionId: optionId,
+                // optionId: optionId,
                 quantity: 1,
                 selectedOption_optionGroupIds: hasLinkedOptions ? [[]] : undefined
             };
@@ -119,15 +119,15 @@ const updateNestedOptionGroup = (
         </div>
         <div v-for="option in currentOptionGroup?.options"
              :key="option?.optionId">
-            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent "
+            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent border-foreground"
                  :class="[
                     isMaxQuantity() ? 'opacity-40' : ''
                 ]"
                  @click="addOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
                 {{ option?.label }} ${{ option?.price }}
-                <Plus />
+                <Plus class="border border-foreground rounded-md" />
             </div>
-            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent mb-4"
+            <div class="text-sm cursor-pointer w-full flex justify-between items-center border rounded-md p-2 hover:bg-accent mb-4 border-foreground"
                  v-if="modelValue?.options && modelValue?.options?.[option?.optionId!]?.quantity > 0"
                  @click="removeOptionQuantity(option?.optionId, option?.optionLinks ? option?.optionLinks?.length > 0 : false)">
                 <span class="mx-2">
@@ -136,7 +136,7 @@ const updateNestedOptionGroup = (
                 <span class="mx-2">
                     {{ option?.label }}
                 </span>
-                <Minus />
+                <Minus class="border border-foreground rounded-md" />
             </div>
         </div>
         <div class="text-sm p-2"
