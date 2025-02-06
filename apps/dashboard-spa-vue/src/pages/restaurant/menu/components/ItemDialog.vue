@@ -73,7 +73,7 @@ onMounted(() => {
         ) {
             isSizesCollapsed.value = false;
         }
-    }, 100)
+    }, 1000)
 })
 </script>
 

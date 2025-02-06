@@ -3,7 +3,7 @@ export type BucketItemOptionGroup = {
     selections?: {
         optionId?: string;
         quantity?: number;
-        // optionGroups?: BucketItemOptionGroup[];
+        nestedOptionGroups?: BucketItemOptionGroup[];
     }[];
 }
 

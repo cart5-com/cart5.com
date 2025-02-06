@@ -87,6 +87,8 @@ defineExpose({ isOpen, resetAll })
                      :key="optionGroupId">
                     <span class="text-sm">
                         optionGroupId:{{ optionGroupId }}
+                        <OptionGroupPreview :optionGroupId="optionGroupId"
+                                            :parentOptionGroup="bucketItem.optionGroups?.find(s => s.optionGroupId === optionGroupId)" />
                     </span>
                 </div>
             </div>
@@ -97,8 +99,8 @@ defineExpose({ isOpen, resetAll })
                      :key="optionGroupId">
                     <span class="text-sm">
                         itemSize-optionGroupId:{{ optionGroupId }}
-                        <!-- <OptionGroupPreview :bucketItem="bucketItem"
-                                            :optionGroupId="optionGroupId" /> -->
+                        <OptionGroupPreview :optionGroupId="optionGroupId"
+                                            :parentOptionGroup="bucketItem.sizeOptionGroups?.find(s => s.optionGroupId === optionGroupId)" />
                     </span>
                 </div>
             </div>
