@@ -41,6 +41,7 @@ const currentItemSize = computed(() => {
 
 const resetAll = () => {
     bucketItem.value = JSON.parse(JSON.stringify(defaultBucketItem));
+    console.log('resetAll', props.itemId);
     if (props.itemId) {
         // set preSelected as selectedSizeId or first size if no preSelected
         const size = currentItem.value?.itemSizes?.find(s => s.preSelected);
