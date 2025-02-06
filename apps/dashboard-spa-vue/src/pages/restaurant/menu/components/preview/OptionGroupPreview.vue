@@ -82,46 +82,91 @@ onMounted(() => {
     });
 })
 
+const linkedOptionGroups = computed(() => {
+    const allOptions = Object.values(modelValue.value?.options || {});
+    const result: { optionId: string, quantity: number, linkedGroups: string[] }[] = [];
+
+    allOptions.forEach(option => {
+        const currentOption = currentOptionGroup.value?.options?.find(o => o.optionId === option.optionId);
+        if (currentOption?.optionLinks && option.quantity > 0) {
+            // Get all option group IDs from the links
+            const linkedGroupIds = currentOption.optionLinks
+                .filter(link => link.type === "option-group" && link.optionGroupId)
+                .map(link => link.optionGroupId!);
+
+            if (linkedGroupIds.length > 0) {
+                result.push({
+                    optionId: option.optionId!,
+                    quantity: option.quantity,
+                    linkedGroups: linkedGroupIds
+                });
+            }
+        }
+    });
+
+    return result;
+});
+
 const isDev = import.meta.env.DEV;
 </script>
 <template>
-    <div class="border rounded-md p-2">
-        <span class="text-sm">
-            optionGroupId: {{ optionGroupId }}
+    <div>
+        <div class="border rounded-md p-2">
+            <span class="text-sm">
+                optionGroupId: {{ optionGroupId }}
+                <br>
+                optionGroupLabel: {{ currentOptionGroup?.optionGroupLabel }}
+                <br>
+                minOptions: {{ currentOptionGroup?.minOptions }}
+                <br>
+                maxOptions: {{ currentOptionGroup?.maxOptions }}
+            </span>
             <br>
-            optionGroupLabel: {{ currentOptionGroup?.optionGroupLabel }}
             <br>
-            minOptions: {{ currentOptionGroup?.minOptions }}
-            <br>
-            maxOptions: {{ currentOptionGroup?.maxOptions }}
-        </span>
-        <br>
-        <br>
-        <div v-for="option in currentOptionGroup?.options"
-             :key="option?.optionId"
-             class="border rounded-md p-2 my-1">
-            optionId: {{ option?.optionId }}
-            <br>
-            label: {{ option?.label }}
-            <br>
-            price: {{ option?.price }}
-            <br>
-            preSelected: {{ option?.preSelected }}
-            <br>
-            optionLinks: {{ option?.optionLinks }}
-            <br>
-            quantity: {{ modelValue?.options?.[option?.optionId!]?.quantity }}
-            <br>
-            <Button variant="outline"
-                    :disabled="isMaxQuantity()"
-                    @click="addOptionQuantity(option?.optionId)">
-                <Plus />
-            </Button>
-            <Button variant="outline"
-                    v-if="modelValue?.options && modelValue?.options?.[option?.optionId!]?.quantity > 0"
-                    @click="removeOptionQuantity(option?.optionId)">
-                <Minus />
-            </Button>
+            <div v-for="option in currentOptionGroup?.options"
+                 :key="option?.optionId"
+                 class="border rounded-md p-2 my-1">
+                optionId: {{ option?.optionId }}
+                <br>
+                label: {{ option?.label }}
+                <br>
+                price: {{ option?.price }}
+                <br>
+                preSelected: {{ option?.preSelected }}
+                <br>
+                optionLinks: {{ option?.optionLinks }}
+                <br>
+                quantity: {{ modelValue?.options?.[option?.optionId!]?.quantity }}
+                <br>
+                <Button variant="outline"
+                        :disabled="isMaxQuantity()"
+                        @click="addOptionQuantity(option?.optionId)">
+                    <Plus />
+                </Button>
+                <Button variant="outline"
+                        v-if="modelValue?.options && modelValue?.options?.[option?.optionId!]?.quantity > 0"
+                        @click="removeOptionQuantity(option?.optionId)">
+                    <Minus />
+                </Button>
+            </div>
+        </div>
+
+
+        <div v-for="linkedOption in linkedOptionGroups"
+             :key="linkedOption.optionId">
+            <template v-for="quantityRepeated in linkedOption.quantity"
+                      :key="`${linkedOption.optionId}-${quantityRepeated}`">
+                <div v-for="groupId in linkedOption.linkedGroups"
+                     :key="`${linkedOption.optionId}-${quantityRepeated}-${groupId}`"
+                     class="ml-4 mt-2 border-l-2 pl-2">
+                    <span class="text-xs text-muted-foreground">
+                        Linked choices for
+                        {{ currentOptionGroup?.options?.find(o => o.optionId === linkedOption.optionId)?.label }}
+                        ({{ quantityRepeated }}/{{ linkedOption.quantity }})
+                    </span>
+                    <OptionGroupPreview :optionGroupId="groupId" />
+                </div>
+            </template>
         </div>
 
 
