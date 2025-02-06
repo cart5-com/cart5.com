@@ -1,5 +1,7 @@
 import type { DateTimeProp } from "./dateTimeType";
 
+// export type Bucket = BucketItem[];
+
 export type LinkTypes = {
     // not active right now
     type: "item";
@@ -46,6 +48,24 @@ export type ItemSize = {
     price?: number;
     preSelected?: boolean;
     optionGroupIds?: string[];
+}
+
+export type BucketOptionGroup = {
+    optionGroupId?: string;
+    options?: Record<string, {
+        optionId?: string;
+        quantity: number;
+        // selectedOption_optionGroupIds?: BucketOptionGroup[];
+    }>;
+}
+
+export type BucketItem = {
+    quantity?: number;
+    selectedItemId?: string;
+    selectedSizeId?: string;
+
+    selectedItem_optionGroupIds?: BucketOptionGroup[];
+    selectedSize_optionGroupIds?: BucketOptionGroup[];
 }
 
 export type Item = {

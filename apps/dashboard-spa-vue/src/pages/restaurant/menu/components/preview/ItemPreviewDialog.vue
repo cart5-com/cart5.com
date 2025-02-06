@@ -6,7 +6,7 @@ import {
     DialogTitle,
     DialogDescription
 } from "@/components/ui/dialog"
-import { type BucketItem } from "lib/types/bucketType"
+import { type BucketItem } from "lib/types/menuTypes"
 import { computed, onMounted, ref } from "vue"
 import { Eye, RefreshCcw } from "lucide-vue-next"
 import { menuJSON } from "../../store"
@@ -27,7 +27,8 @@ const defaultBucketItem: BucketItem = {
     quantity: 1,
     selectedItemId: props.itemId,
     selectedSizeId: undefined,
-    optionGroups: []
+    selectedItem_optionGroupIds: [],
+    selectedSize_optionGroupIds: [],
 }
 const bucketItem = ref<BucketItem>(JSON.parse(JSON.stringify(defaultBucketItem)));
 
@@ -82,25 +83,28 @@ defineExpose({ isOpen, resetAll })
             <ItemPreviewSizes :itemId="itemId"
                               :bucketItem="bucketItem" />
 
-            <div v-if="currentItem?.optionGroupIds">
-                <div v-for="optionGroupId in currentItem?.optionGroupIds"
+            <div v-if="currentItem?.optionGroupIds"
+                 class="border-b my-2 py-2">
+                <div v-for="(optionGroupId, index) in currentItem?.optionGroupIds"
                      :key="optionGroupId">
                     <span class="text-sm">
-                        optionGroupId:{{ optionGroupId }}
-                        <OptionGroupPreview :optionGroupId="optionGroupId"
-                                            :parentOptionGroup="bucketItem.optionGroups?.find(s => s.optionGroupId === optionGroupId)" />
+                        <!-- optionGroupId:{{ optionGroupId }} -->
+                        <OptionGroupPreview v-if="bucketItem.selectedItem_optionGroupIds"
+                                            :optionGroupId="optionGroupId"
+                                            v-model="bucketItem.selectedItem_optionGroupIds[index]" />
                     </span>
                 </div>
             </div>
 
             <!-- list selected size's optionGroupIds -->
             <div v-if="bucketItem.selectedSizeId">
-                <div v-for="(optionGroupId) in currentItemSize?.optionGroupIds"
+                <div v-for="(optionGroupId, index) in currentItemSize?.optionGroupIds"
                      :key="optionGroupId">
                     <span class="text-sm">
-                        itemSize-optionGroupId:{{ optionGroupId }}
-                        <OptionGroupPreview :optionGroupId="optionGroupId"
-                                            :parentOptionGroup="bucketItem.sizeOptionGroups?.find(s => s.optionGroupId === optionGroupId)" />
+                        <!-- itemSize-optionGroupId:{{ optionGroupId }} -->
+                        <OptionGroupPreview v-if="bucketItem.selectedSize_optionGroupIds"
+                                            :optionGroupId="optionGroupId"
+                                            v-model="bucketItem.selectedSize_optionGroupIds[index]" />
                     </span>
                 </div>
             </div>
