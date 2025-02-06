@@ -91,8 +91,8 @@ defineExpose({
                         </Button>
                     </div>
 
-                    <!-- item-key="optionId" -->
                     <draggable v-model="optionGroup.options"
+                               item-key="optionId"
                                group="options"
                                handle=".option-drag-handle"
                                class="space-y-4">

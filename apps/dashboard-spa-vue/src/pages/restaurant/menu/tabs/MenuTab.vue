@@ -34,9 +34,9 @@ const addNewCategory = () => {
 <template>
     <draggable v-if="menuJSON"
                v-model="menuJSON.categoryIdsOrder"
+               item-key="categoryId"
                group="categories"
                handle=".cat-drag-handle">
-        <!-- item-key="catId" -->
         <template #item="{ element: categoryId }">
             <CategoryCard :menuJSON="menuJSON"
                           :categoryId="categoryId"

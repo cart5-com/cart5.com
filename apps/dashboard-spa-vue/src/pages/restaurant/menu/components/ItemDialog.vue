@@ -150,9 +150,9 @@ onMounted(() => {
                         </Button>
                     </div>
 
-                    <!-- item-key="itemSizeId" -->
                     <draggable v-if="item && item.itemSizes"
                                v-model="item.itemSizes"
+                               item-key="itemSizeId"
                                group="sizes"
                                handle=".size-drag-handle"
                                class="space-y-4">

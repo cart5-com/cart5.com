@@ -3,16 +3,17 @@ import type { DateTimeProp } from "./dateTimeType";
 // export type Bucket = BucketItem[];
 
 export type LinkTypes = {
-    // not active right now
-    type: "item";
-    itemId?: string;
-} | {
-    // not active right now
-    type: "item-size";
-    itemId?: string;
-    sizeId?: string;
-} | {
+    //     // not active right now
+    //     type: "item";
+    //     itemId?: string;
+    // } | {
+    //     // not active right now
+    //     type: "item-size";
+    //     itemId?: string;
+    //     sizeId?: string;
+    // } | {
     // Active ⭐️⭐️⭐️
+    // <draggable v-model="option.optionLinks" item-key="optionGroupId"
     type: "option-group";
     optionGroupId?: string;
 }

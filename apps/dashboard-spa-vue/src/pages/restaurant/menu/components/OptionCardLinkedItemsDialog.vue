@@ -27,23 +27,23 @@ const getItemLabel = (linkedItem: LinkTypes) => {
             linkedItem.type
         ) {
             if (
-                linkedItem.type === "item" &&
-                linkedItem.itemId
-            ) {
-                return menuJSON.value?.allItems?.[linkedItem.itemId]?.itemLabel;
-            } else if (
-                linkedItem.type === "item-size" &&
-                linkedItem.itemId &&
-                linkedItem.sizeId
-            ) {
-                const item = menuJSON.value?.allItems?.[linkedItem.itemId];
-                const size = item?.itemSizes?.find(s => s.itemSizeId === linkedItem.sizeId);
-                return `${size?.itemSizeLabel} | ${item?.itemLabel}`;
-            } else if (
                 linkedItem.type === "option-group" &&
                 linkedItem.optionGroupId
             ) {
                 return menuJSON.value?.allOptionGroups?.[linkedItem.optionGroupId]?.optionGroupLabel;
+                // }else if (
+                //     linkedItem.type === "item" &&
+                //     linkedItem.itemId
+                // ) {
+                //     return menuJSON.value?.allItems?.[linkedItem.itemId]?.itemLabel;
+                // } else if (
+                //     linkedItem.type === "item-size" &&
+                //     linkedItem.itemId &&
+                //     linkedItem.sizeId
+                // ) {
+                //     const item = menuJSON.value?.allItems?.[linkedItem.itemId];
+                //     const size = item?.itemSizes?.find(s => s.itemSizeId === linkedItem.sizeId);
+                //     return `${size?.itemSizeLabel} | ${item?.itemLabel}`;
             }
         }
     }
@@ -101,8 +101,8 @@ const addLinkedItem = (linkedItem: LinkTypes) => {
                 </DialogDescription>
             </DialogHeader>
             <div>
-                <!-- item-key="id" -->
                 <draggable v-model="option.optionLinks"
+                           item-key="optionGroupId"
                            group="linkedItems"
                            handle=".linked-item-handle"
                            class="space-y-2">

@@ -5,45 +5,44 @@ import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
 import { menuJSON } from "../store";
 import { type LinkTypes } from "lib/types/menuTypes";
 
-// @ts-ignore
-function getAvailableItemsWithSizes() {
-    const linkedItemsAndSizes: {
-        key: string;
-        name: string;
-        valueObject: LinkTypes;
-    }[] = [];
-    if (menuJSON.value) {
-        Object.values(menuJSON.value.allItems ?? {}).forEach((item) => {
-            if (item.itemSizes && item.itemSizes.length > 0) {
-                item.itemSizes.forEach((size) => {
-                    if (item.itemId && size.itemSizeId) {
-                        linkedItemsAndSizes.push({
-                            key: `${item.itemId}_${size.itemSizeId}`,
-                            name: `${size.itemSizeLabel ?? "unlabelled size"} | ${item.itemLabel ?? "unlabelled item"}`,
-                            valueObject: {
-                                type: "item-size",
-                                itemId: item.itemId,
-                                sizeId: size.itemSizeId
-                            }
-                        });
-                    }
-                });
-            } else {
-                if (item.itemId) {
-                    linkedItemsAndSizes.push({
-                        key: item.itemId,
-                        name: item.itemLabel ?? "unlabelled item",
-                        valueObject: {
-                            type: "item",
-                            itemId: item.itemId
-                        }
-                    });
-                }
-            }
-        });
-    }
-    return linkedItemsAndSizes;
-}
+// function getAvailableItemsWithSizes() {
+//     const linkedItemsAndSizes: {
+//         key: string;
+//         name: string;
+//         valueObject: LinkTypes;
+//     }[] = [];
+//     if (menuJSON.value) {
+//         Object.values(menuJSON.value.allItems ?? {}).forEach((item) => {
+//             if (item.itemSizes && item.itemSizes.length > 0) {
+//                 item.itemSizes.forEach((size) => {
+//                     if (item.itemId && size.itemSizeId) {
+//                         linkedItemsAndSizes.push({
+//                             key: `${item.itemId}_${size.itemSizeId}`,
+//                             name: `${size.itemSizeLabel ?? "unlabelled size"} | ${item.itemLabel ?? "unlabelled item"}`,
+//                             valueObject: {
+//                                 type: "item-size",
+//                                 itemId: item.itemId,
+//                                 sizeId: size.itemSizeId
+//                             }
+//                         });
+//                     }
+//                 });
+//             } else {
+//                 if (item.itemId) {
+//                     linkedItemsAndSizes.push({
+//                         key: item.itemId,
+//                         name: item.itemLabel ?? "unlabelled item",
+//                         valueObject: {
+//                             type: "item",
+//                             itemId: item.itemId
+//                         }
+//                     });
+//                 }
+//             }
+//         });
+//     }
+//     return linkedItemsAndSizes;
+// }
 
 const getAvailableOptionGroups = () => {
     return Object.values(menuJSON.value?.allOptionGroups ?? {}).map((optionGroup) => ({

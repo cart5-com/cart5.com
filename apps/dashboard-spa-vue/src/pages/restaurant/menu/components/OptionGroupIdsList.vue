@@ -89,8 +89,8 @@ onMounted(() => {
                 </Button>
             </div>
 
-            <!-- item-key="id" -->
             <draggable v-if="item && item?.optionGroupIds"
+                       item-key="optionGroupId"
                        v-model="item.optionGroupIds"
                        group="optionGroupIds"
                        handle=".option-group-drag-handle"
