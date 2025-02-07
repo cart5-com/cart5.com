@@ -44,7 +44,10 @@ export const menu2Store = ref<RootState>({
         "burger-1": {
             itemId: "burger-1",
             itemLabel: "Burger",
-            price: 10,
+            price: 12,
+            priceOverrides: {
+                "burgers-1": 8
+            },
             children: [
                 "sides-1",
                 "drinks-1",
@@ -53,7 +56,10 @@ export const menu2Store = ref<RootState>({
         "burger-2": {
             itemId: "burger-2",
             itemLabel: "Cheeseburger",
-            price: 10,
+            price: 14,
+            priceOverrides: {
+                "burgers-1": 10
+            },
             children: [
                 "sides-1",
                 "drinks-1",

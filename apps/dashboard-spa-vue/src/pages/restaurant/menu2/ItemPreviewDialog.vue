@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { menu2Store } from "./store";
 import { type BucketItem, type ItemId } from "lib/types/menuType2";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import RecursiveChildren from "@src/pages/restaurant/menu2/RecursiveChildren.vue";
 
 const props = defineProps<{
@@ -37,6 +37,12 @@ const resetBucketItem = () => {
         childrenState: [],
     }
 }
+
+onMounted(() => {
+    setTimeout(() => {
+        resetBucketItem();
+    }, 1000)
+})
 
 defineExpose({
     isOpen, resetBucketItem

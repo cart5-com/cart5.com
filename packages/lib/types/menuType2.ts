@@ -1,11 +1,13 @@
 
 export type ItemId = string;
 
+export type ParentItemId = ItemId;
 
 export type Item = {
     itemId?: ItemId;
     itemLabel?: string;
     price?: number;
+    priceOverrides?: Record<ParentItemId, number>;
     children?: ItemId[];
 }
 

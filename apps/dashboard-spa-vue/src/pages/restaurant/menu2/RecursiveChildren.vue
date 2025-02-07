@@ -84,6 +84,17 @@ const updateNestedOptionGroup = (
     }
 }
 
+const getPrice = (itemId: ItemId) => {
+    console.log("props.itemId", props.itemId)
+    if (props.itemId) {
+        if (menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
+            return menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
+        }
+        return menu2Store.value.allItems?.[itemId]?.price
+    }
+    return undefined;
+}
+
 </script>
 
 <template>
@@ -101,22 +112,24 @@ const updateNestedOptionGroup = (
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
              :key="optionItemId">
-            <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mt-2"
-                 @click="addQuantity(optionItemId)">
-                {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
-                <span class="text-sm"
-                      v-if="menu2Store.allItems?.[optionItemId]?.price">
-                    ${{ menu2Store.allItems?.[optionItemId]?.price }}
-                </span>
-                <Plus class="border border-foreground rounded-md" />
-            </div>
-            <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mb-2"
-                 v-if="modelValue?.childrenState?.[optionItemId]?.quantity! > 0"
-                 @click="removeQuantity(optionItemId)">
-                <span class="text-sm">
-                    {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
-                </span>
-                <Minus class="border border-foreground rounded-md" />
+            <div v-if="menu2Store.allItems?.[optionItemId]">
+                <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mt-2"
+                     @click="addQuantity(optionItemId)">
+                    {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
+                    <span class="text-sm"
+                          v-if="getPrice(optionItemId)">
+                        ${{ getPrice(optionItemId) }}
+                    </span>
+                    <Plus class="border border-foreground rounded-md" />
+                </div>
+                <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mb-2"
+                     v-if="modelValue?.childrenState?.[optionItemId]?.quantity! > 0"
+                     @click="removeQuantity(optionItemId)">
+                    <span class="text-sm">
+                        {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
+                    </span>
+                    <Minus class="border border-foreground rounded-md" />
+                </div>
             </div>
         </div>
         <div v-if="currentItem?.children"
