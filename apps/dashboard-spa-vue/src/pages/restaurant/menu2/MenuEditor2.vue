@@ -23,9 +23,9 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 const previewItem = (itemId: ItemId) => {
     dialog.show<BucketItem>({
-        title: menu2Store.value.allItems?.[itemId]?.itemLabel,
+        // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
         component: ItemPreviewDialog,
-        dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]",
+        dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
         },

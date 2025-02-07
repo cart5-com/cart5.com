@@ -26,26 +26,28 @@ const bucketItem = ref<BucketItem>({
 </script>
 
 <template>
-    <div class="text-sm w-full">
-        <!-- <div class="flex flex-col">
-            <div class="text-lg font-bold">
-                {{ currentItem?.itemLabel }}
+    <div class="w-full">
+        <div class="p-4">
+            <div class="sticky top-0 bg-card">
+                <div class="text-2xl font-bold">
+                    {{ currentItem?.itemLabel }}
+                </div>
+                <div class="text-sm">
+                    ${{ currentItem?.price }}
+                </div>
             </div>
-        </div> -->
-        <div class="text-sm">
-            ${{ currentItem?.price }}
+            <div v-for="(child, index) in currentItem?.children"
+                 :key="child">
+                <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
+                <RecursiveChildren v-if="bucketItem.childrenState"
+                                   :itemId="child"
+                                   v-model="bucketItem.childrenState[index]" />
+            </div>
+            <details>
+                <summary>bucketItem</summary>
+                <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
+            </details>
         </div>
-        <div v-for="(child, index) in currentItem?.children"
-             :key="child">
-            <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
-            <RecursiveChildren v-if="bucketItem.childrenState"
-                               :itemId="child"
-                               v-model="bucketItem.childrenState[index]" />
-        </div>
-        <details>
-            <summary>bucketItem</summary>
-            <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
-        </details>
         <div class="sticky bottom-0 p-2 bg-card">
             <Button class="w-full"
                     @click="() => {

@@ -23,10 +23,10 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 			<DialogContent :closeable="dialog.options?.closeable"
 						   :class="dialog.options?.dialogContentClass">
 				<DialogHeader>
-					<DialogTitle>
+					<DialogTitle v-if="dialog.options?.title">
 						{{ dialog.options?.title || "" }}
 					</DialogTitle>
-					<DialogDescription>
+					<DialogDescription v-if="dialog.options?.description">
 						{{ dialog.options?.description || "" }}
 					</DialogDescription>
 				</DialogHeader>
