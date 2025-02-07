@@ -20,7 +20,8 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 			  :key="dialog.id">
 		<Dialog :open="dialog.isOpen"
 				@update:open="(val) => handleUpdateOpen(dialog.id, val)">
-			<DialogContent :closeable="dialog.options?.closeable">
+			<DialogContent :closeable="dialog.options?.closeable"
+						   :class="dialog.options?.dialogContentClass">
 				<DialogHeader>
 					<DialogTitle>
 						{{ dialog.options?.title || "" }}

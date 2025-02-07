@@ -7,6 +7,7 @@ export interface DialogOptions<TResult = any> {
   html?: string;
   props?: Record<string, any>;
   title?: string;
+  dialogContentClass?: string;
   description?: string;
   closeable?: boolean;
   onSuccess?: (result: TResult) => void;
