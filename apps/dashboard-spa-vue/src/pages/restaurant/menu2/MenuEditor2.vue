@@ -47,14 +47,13 @@ const previewItem = (itemId: ItemId) => {
 
 <template>
     <div>
-        <h2>Items</h2>
         <div v-for="item in modelValue?.children"
              :key="item"
-             class="border rounded-md p-4">
+             class="border rounded-md p-4 mb-4">
             <h3>{{ modelValue?.allItems?.[item]?.itemLabel }}</h3>
             <div v-for="itemId in modelValue?.allItems?.[item]?.children"
                  :key="itemId"
-                 class="border rounded-md p-2 cursor-pointer"
+                 class="border rounded-md p-4 cursor-pointer mb-4 bg-card hover:bg-accent"
                  @click="() => {
                     previewItem(itemId)
                 }">
