@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
+import { PlusCircleIcon } from "lucide-vue-next";
+import { ref } from "vue";
+
 defineProps<{
     items: Array<Record<string, any>>;
+    hasNewButton?: boolean;
 }>();
+
+const search = ref("");
 </script>
 
 <template>
@@ -19,22 +25,37 @@ defineProps<{
                 </slot>
             </PopoverTrigger>
             <PopoverContent>
-                <Command>
+                <Command v-model:searchTerm="search"
+                         class="border">
                     <CommandInput placeholder="Search" />
-                    <CommandEmpty>Empty</CommandEmpty>
+                    <CommandEmpty>not found</CommandEmpty>
                     <CommandList>
                         <CommandGroup>
                             <PopoverClose class="w-full">
-                                <CommandItem v-for="item in items"
-                                             :key="item.key"
-                                             :value="item.name + ' ' + item.key"
-                                             @select="$emit('select', item)">
-                                    {{ item.name }}
-                                </CommandItem>
+                                <slot name="items-list"
+                                      :items="items"
+                                      :emit="$emit">
+                                    <CommandItem v-for="item in items"
+                                                 :key="item.key"
+                                                 :value="item.name + ' ' + item.key"
+                                                 @select="$emit('select', item)">
+                                        {{ item.name }}
+                                    </CommandItem>
+                                </slot>
                             </PopoverClose>
                         </CommandGroup>
                     </CommandList>
                 </Command>
+                <slot name="new-button"
+                      :search="search">
+                    <PopoverClose class="w-full">
+                        <Button variant="outline"
+                                class="w-full"
+                                @click="$emit('create-new', search)">
+                            Create New
+                        </Button>
+                    </PopoverClose>
+                </slot>
             </PopoverContent>
         </Popover>
     </div>

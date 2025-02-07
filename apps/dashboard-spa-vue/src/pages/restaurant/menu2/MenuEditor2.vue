@@ -5,6 +5,16 @@ import { useVModel } from '@vueuse/core'
 import { BucketItem, type ItemId, type RootState } from 'lib/types/menuType2';
 import ItemPreviewDialog from './ItemPreviewDialog.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
+import { Button } from '@/components/ui/button';
+import SelectWithSearch from '@/ui-plus/SelectWithSearch.vue';
+import { Eye, Plus } from 'lucide-vue-next';
+import { CommandItem } from '@/components/ui/command';
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from '@/components/ui/hover-card'
+
 const dialog = useDialog();
 
 const props = defineProps<{
@@ -62,5 +72,51 @@ const previewItem = (itemId: ItemId) => {
                       v-if="modelValue?.allItems?.[itemId]?.price">${{ modelValue?.allItems?.[itemId]?.price }}</span>
             </div>
         </div>
+
+        <SelectWithSearch :items="Object.values(modelValue?.allItems ?? {}).filter(item => (item.children?.length ?? 0) > 0).map(item => ({ key: item.itemId, name: item.itemLabel }))"
+                          @select="(item) => { console.log(item) }"
+                          @create-new="(search) => { console.log('search', search) }"
+                          :has-new-button="true">
+            <!-- <template #new-button="{ search }">
+                <Button variant="outline"
+                        class="w-full"
+                        @click="() => { console.log('search', search) }">
+                    New category
+                </Button>
+            </template> -->
+            <template #items-list="{ items, emit }">
+                <CommandItem v-for="item in items"
+                             :key="item.key"
+                             :value="item.name + ' ' + item.key"
+                             @select="emit('select', item)">
+                    <div class="flex justify-between w-full">
+                        <div>
+                            {{ item.name }}
+                        </div>
+                        <div>
+                            <HoverCard>
+                                <HoverCardTrigger>
+                                    <Eye />
+                                </HoverCardTrigger>
+                                <HoverCardContent class="w-80">
+                                    <ItemPreviewDialog :item-id="item.key" />
+                                </HoverCardContent>
+                            </HoverCard>
+                        </div>
+                    </div>
+                </CommandItem>
+
+
+
+
+            </template>
+
+            <template #trigger>
+                <Button variant="outline">
+                    <Plus /> Add new category
+                </Button>
+            </template>
+        </SelectWithSearch>
+
     </div>
 </template>
