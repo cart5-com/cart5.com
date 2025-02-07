@@ -3,7 +3,7 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType2";
 import { menu2Store } from "./store";
 import { computed } from 'vue';
-import { Minus, Plus } from 'lucide-vue-next';
+import { Check, Minus, Plus } from 'lucide-vue-next';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -31,7 +31,21 @@ const currentItem = computed(() => {
     return undefined
 })
 
+const getTotalQuantity = () => {
+    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr.quantity || 0), 0);
+}
+
+const isMaxQuantity = () => {
+    if (currentItem.value?.maxQuantity && currentItem.value?.maxQuantity > 0) {
+        return getTotalQuantity() >= currentItem.value?.maxQuantity;
+    }
+    return false;
+}
+
 const addQuantity = (childId: ItemId) => {
+    if (isMaxQuantity()) {
+        return;
+    }
     let hasLinkedOptions: boolean = false;
     if (menu2Store.value.allItems?.[childId]?.children) {
         hasLinkedOptions = true;
@@ -97,7 +111,7 @@ const getPrice = (itemId: ItemId) => {
 </script>
 
 <template>
-    <div class="border rounded-md p-4 my-20">
+    <div class="border rounded-md p-4 my-20 bg-accent border-card-foreground">
         <div v-if="helperText">
             {{ helperText }}
         </div>
@@ -111,23 +125,35 @@ const getPrice = (itemId: ItemId) => {
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
              :key="optionItemId">
-            <div v-if="menu2Store.allItems?.[optionItemId]">
-                <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mt-2"
+            <!-- v-if="menu2Store.allItems?.[optionItemId] && (!isMaxQuantity() || modelValue?.childrenState?.[optionItemId]?.quantity! > 0)" -->
+            <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
+                <div class="flex justify-between items-center cursor-pointer p-2 bg-card hover:bg-background"
+                     :class="[
+                        isMaxQuantity() ? 'opacity-40' : '',
+                        modelValue?.childrenState?.[optionItemId]?.quantity! > 0 && currentItem?.maxQuantity === 1 ? 'hidden' : ''
+                    ]"
                      @click="addQuantity(optionItemId)">
                     {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
                     <span class="text-sm"
                           v-if="getPrice(optionItemId)">
                         ${{ getPrice(optionItemId) }}
                     </span>
-                    <Plus class="border border-foreground rounded-md" />
+                    <div v-if="currentItem?.maxQuantity === 1"
+                         class="border border-foreground rounded-md w-6 h-6" />
+                    <Plus v-else
+                          class="border border-foreground rounded-md" />
                 </div>
-                <div class="flex justify-between items-center cursor-pointer border rounded-md p-2 hover:bg-accent mb-2"
+                <div class="flex justify-between items-center cursor-pointer border p-2 bg-card hover:bg-background"
                      v-if="modelValue?.childrenState?.[optionItemId]?.quantity! > 0"
                      @click="removeQuantity(optionItemId)">
                     <span class="text-sm">
                         {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
+                        {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
                     </span>
-                    <Minus class="border border-foreground rounded-md" />
+                    <Check v-if="currentItem?.maxQuantity === 1"
+                           class="border border-foreground rounded-md" />
+                    <Minus v-else
+                           class="border border-foreground rounded-md" />
                 </div>
             </div>
         </div>

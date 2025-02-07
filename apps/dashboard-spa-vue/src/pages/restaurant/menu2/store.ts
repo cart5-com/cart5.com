@@ -27,6 +27,7 @@ export const menu2Store = ref<RootState>({
         "sides-1": {
             itemId: "sides-1",
             itemLabel: "Sides",
+            maxQuantity: 1,
             children: [
                 "side-1",
                 "side-2",

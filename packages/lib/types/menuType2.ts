@@ -8,6 +8,7 @@ export type Item = {
     itemLabel?: string;
     price?: number;
     priceOverrides?: Record<ParentItemId, number>;
+    maxQuantity?: number;
     children?: ItemId[];
 }
 
