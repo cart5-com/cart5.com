@@ -1,19 +1,29 @@
+
+export type ItemId = string;
+
+
 export type Item = {
-    itemId?: string;
+    itemId?: ItemId;
     itemLabel?: string;
     price?: number;
-    children?: Item[];
+    children?: ItemId[];
+}
+
+export type BucketChildrenState = {
+    itemId?: ItemId;
+    childrenState?: Record<ItemId, {
+        quantity?: number;
+        childrenState?: (BucketChildrenState[])[];
+    }>;
 }
 
 export type BucketItem = {
-    itemId?: string;
+    itemId?: ItemId;
     quantity?: number;
-    // selection.length should reflect the quantity
-    // because it's an array of array:'BucketItem[]'
-    childrenState?: (BucketItem[])[];
+    childrenState?: BucketChildrenState[];
 }
 
 export type RootState = {
-    children?: Item[];
+    children?: ItemId[];
     allItems?: Record<string, Item>;
 }

@@ -148,6 +148,14 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'restaurant-menu-editor2' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Menu Editor2
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
