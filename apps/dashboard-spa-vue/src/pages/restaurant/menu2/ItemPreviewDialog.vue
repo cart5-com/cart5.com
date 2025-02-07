@@ -27,13 +27,13 @@ const bucketItem = ref<BucketItem>({
 
 <template>
     <div class="text-sm w-full">
-        <div class="flex flex-col">
+        <!-- <div class="flex flex-col">
             <div class="text-lg font-bold">
                 {{ currentItem?.itemLabel }}
             </div>
-            <div class="text-sm">
-                ${{ currentItem?.price }}
-            </div>
+        </div> -->
+        <div class="text-sm">
+            ${{ currentItem?.price }}
         </div>
         <div v-for="(child, index) in currentItem?.children"
              :key="child">
