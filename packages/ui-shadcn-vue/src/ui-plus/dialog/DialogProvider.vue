@@ -24,10 +24,10 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 						   :class="dialog.options?.dialogContentClass">
 				<DialogHeader>
 					<DialogTitle v-if="dialog.options?.title">
-						{{ dialog.options?.title || "" }}
+						{{ dialog.options?.title }}
 					</DialogTitle>
 					<DialogDescription v-if="dialog.options?.description">
-						{{ dialog.options?.description || "" }}
+						{{ dialog.options?.description }}
 					</DialogDescription>
 				</DialogHeader>
 
