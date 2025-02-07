@@ -85,7 +85,6 @@ const updateNestedOptionGroup = (
 }
 
 const getPrice = (itemId: ItemId) => {
-    console.log("props.itemId", props.itemId)
     if (props.itemId) {
         if (menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
             return menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]

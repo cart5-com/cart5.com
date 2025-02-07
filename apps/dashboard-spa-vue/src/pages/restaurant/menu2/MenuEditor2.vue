@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { ref, type Ref } from 'vue'
+import { type Ref } from 'vue'
 import { menu2Store } from "./store";
 import { useVModel } from '@vueuse/core'
-import { type ItemId, type RootState } from 'lib/types/menuType2';
+import { BucketItem, type ItemId, type RootState } from 'lib/types/menuType2';
 import ItemPreviewDialog from './ItemPreviewDialog.vue';
+import { useDialog } from '@/ui-plus/dialog/use-dialog';
+const dialog = useDialog();
 
 const props = defineProps<{
     modelValue?: RootState;
@@ -19,14 +21,26 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     deep: props.modelValue ? false : true,
 }) as Ref<typeof props.modelValue>;
 
-const currentItemId = ref<ItemId>();
-const previewItemDialog = ref<InstanceType<typeof ItemPreviewDialog>>();
 const previewItem = (itemId: ItemId) => {
-    currentItemId.value = itemId;
-    if (previewItemDialog.value) {
-        previewItemDialog.value.resetBucketItem();
-        previewItemDialog.value.isOpen = true;
-    }
+    dialog.show<BucketItem>({
+        title: "",
+        // closeable: true,
+        component: ItemPreviewDialog,
+        props: {
+            itemId: itemId
+        },
+        onCancel: async () => {
+            console.log("cancel");
+        },
+        onSuccess: async (values) => {
+            console.log("success");
+            console.log(JSON.stringify(values, null, 2));
+        },
+        onError: async (error: any) => {
+            console.log("error");
+            console.log(error);
+        }
+    });
 }
 
 </script>
@@ -38,18 +52,16 @@ const previewItem = (itemId: ItemId) => {
              :key="item"
              class="border rounded-md p-4">
             <h3>{{ modelValue?.allItems?.[item]?.itemLabel }}</h3>
-            <div v-for="child in modelValue?.allItems?.[item]?.children"
-                 :key="child"
+            <div v-for="itemId in modelValue?.allItems?.[item]?.children"
+                 :key="itemId"
                  class="border rounded-md p-2 cursor-pointer"
                  @click="() => {
-                    previewItem(child)
+                    previewItem(itemId)
                 }">
-                <h4>{{ modelValue?.allItems?.[child]?.itemLabel }}</h4>
+                <h4>{{ modelValue?.allItems?.[itemId]?.itemLabel }}</h4>
                 <span class="text-sm"
-                      v-if="modelValue?.allItems?.[child]?.price">${{ modelValue?.allItems?.[child]?.price }}</span>
+                      v-if="modelValue?.allItems?.[itemId]?.price">${{ modelValue?.allItems?.[itemId]?.price }}</span>
             </div>
         </div>
-        <ItemPreviewDialog ref="previewItemDialog"
-                           :itemId="currentItemId" />
     </div>
 </template>
