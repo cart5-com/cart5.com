@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { menuRoot } from '../../store';
-import { AlignJustify, ChevronDown, ChevronUp, MoveIcon, Pencil, Plus } from 'lucide-vue-next';
+import { AlignJustify, ChevronDown, ChevronUp, Pencil, Plus } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
+import ItemCard from '../item/ItemCard.vue';
 
 const props = defineProps<{
     itemId: string
@@ -60,10 +61,7 @@ async function addItemToCategory(itemId: string) {
                        handle=".item-drag-handle"
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 mt-4">
                 <template #item="{ element: itemId }">
-                    <div class="border rounded-lg p-2 m-2">
-                        {{ menuRoot.allItems?.[itemId]?.itemLabel }}
-                        <MoveIcon class="item-drag-handle cursor-move" />
-                    </div>
+                    <ItemCard :itemId="itemId" />
                 </template>
             </draggable>
         </div>

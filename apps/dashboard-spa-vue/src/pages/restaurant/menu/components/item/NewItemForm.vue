@@ -4,14 +4,16 @@ import { AutoForm } from '@/ui-plus/auto-form'
 import { z } from "zod";
 
 const emit = defineEmits<{
-    close: [values: { name: string }],
+    close: [values: { name: string, price: number }],
     cancel: [];
     onError: [error: any];
 }>();
 
 const schema = z.object({
     name: z.string().max(510, { message: "max 510" }).min(2, { message: "min 2" }),
+    price: z.number(),
 })
+
 
 async function onSubmit(values: z.infer<typeof schema>) {
     emit('close', values);
