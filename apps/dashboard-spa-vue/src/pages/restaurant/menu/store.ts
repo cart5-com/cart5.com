@@ -11,10 +11,10 @@ export const defaultMenuRoot: MenuRoot = {
 
 export const menuRoot = ref<MenuRoot>(defaultMenuRoot);
 
-export const isLoading = ref(false);
+export const isMenuLoading = ref(false);
 
 export const loadMenu = async () => {
-    isLoading.value = true;
+    isMenuLoading.value = true;
     try {
         const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
             param: {
@@ -39,12 +39,12 @@ export const loadMenu = async () => {
         console.error('Error loading menu:', err);
         toast.error('Failed to load menu');
     } finally {
-        isLoading.value = false;
+        isMenuLoading.value = false;
     }
 }
 
 export const saveMenu = async () => {
-    isLoading.value = true;
+    isMenuLoading.value = true;
     try {
         const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
             param: {
@@ -66,6 +66,6 @@ export const saveMenu = async () => {
         console.error('Error saving menu:', err);
         toast.error('Failed to save menu');
     } finally {
-        isLoading.value = false;
+        isMenuLoading.value = false;
     }
 }

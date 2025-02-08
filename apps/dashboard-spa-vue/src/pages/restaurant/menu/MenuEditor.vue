@@ -1,35 +1,21 @@
 <script lang="ts" setup>
-import { type Ref } from 'vue'
-import { menuRoot } from "./store";
-import { useVModel } from '@vueuse/core'
-import { BucketItem, type ItemId, type MenuRoot } from 'lib/types/menuType2';
+import { BucketItem, type ItemId } from 'lib/types/menuType2';
 import ItemPreviewDialog from './preview/ItemPreviewDialog.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import { Button } from '@/components/ui/button';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/components/ui/tabs'
 import { provideMenuOperations } from './composables/useMenuOperations'
-import NewCategoryForm from '@src/pages/restaurant/menu/components/NewCategoryForm.vue';
-import { Plus } from 'lucide-vue-next';
+import MenuTab from './tabs/MenuTab.vue';
+
 provideMenuOperations({
     previewItem
 })
 
-
-
 const dialog = useDialog();
-
-const props = defineProps<{
-    modelValue?: MenuRoot;
-}>()
-
-const emits = defineEmits<{
-    (e: 'update:modelValue', payload: MenuRoot): void
-}>()
-
-const modelValue = useVModel(props, 'modelValue', emits, {
-    passive: true,
-    defaultValue: menuRoot.value,
-    deep: props.modelValue ? false : true,
-}) as Ref<typeof props.modelValue>;
 
 function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
@@ -46,27 +32,30 @@ function previewItem(itemId: ItemId) {
     });
 }
 
-function addNewCategory() {
-    dialog.show<{ name: string }>({
-        title: 'Add new category',
-        component: NewCategoryForm,
-        onSuccess: async (values) => {
-            const newCategoryId = `cat-${Date.now()}`
-            if (modelValue.value && modelValue.value.allItems) {
-                modelValue.value.allItems[newCategoryId] = {
-                    itemId: newCategoryId,
-                    itemLabel: values.name,
-                }
-            }
-        }
-    });
-}
+
 
 </script>
 
 <template>
     <div>
-        <div v-for="item in modelValue?.children"
+        <Tabs default-value="menu"
+              class="w-full">
+            <TabsList class="">
+                <TabsTrigger value="menu">
+                    Menu Editor
+                </TabsTrigger>
+                <TabsTrigger value="allItems">
+                    All Items
+                </TabsTrigger>
+            </TabsList>
+            <TabsContent value="menu">
+                <MenuTab />
+            </TabsContent>
+            <TabsContent value="allItems">
+                <h1>AllItemsTab</h1>
+            </TabsContent>
+        </Tabs>
+        <!-- <div v-for="item in modelValue?.children"
              :key="item"
              class="border rounded-md p-4 mb-4">
             <h3>{{ modelValue?.allItems?.[item]?.itemLabel }}</h3>
@@ -80,12 +69,6 @@ function addNewCategory() {
                 <span class="text-sm"
                       v-if="modelValue?.allItems?.[itemId]?.price">${{ modelValue?.allItems?.[itemId]?.price }}</span>
             </div>
-        </div>
-        <Button variant="outline"
-                @click="() => {
-                    addNewCategory()
-                }">
-            <Plus /> Add new category
-        </Button>
+        </div> -->
     </div>
 </template>
