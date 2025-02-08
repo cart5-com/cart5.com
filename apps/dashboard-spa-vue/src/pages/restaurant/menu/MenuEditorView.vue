@@ -43,10 +43,12 @@ async function saveNow() {
     await saveMenu();
     isChanged.value = false;
 }
+
+const isDev = import.meta.env.DEV;
 </script>
 
 <template>
-    <div>
+    <div class="p-0 md:p-4">
         <MenuTabs v-model="menuRoot" />
         <Button @click="saveNow()"
                 variant="secondary"
@@ -60,6 +62,14 @@ async function saveNow() {
             </span>
             Auto save
         </Button>
+
+        <div class="mt-4"
+             v-if="isDev">
+            <details>
+                <summary>menuRoot</summary>
+                <pre class="text-xs max-h-96 overflow-y-auto">{{ menuRoot }}</pre>
+            </details>
+        </div>
     </div>
 </template>
 
