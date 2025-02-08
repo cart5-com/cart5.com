@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { PlusCircleIcon } from "lucide-vue-next";
 import { ref } from "vue";
 
 defineProps<{
