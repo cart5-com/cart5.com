@@ -14,6 +14,12 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from '@/components/ui/hover-card'
+import { provideMenuOperations } from './composables/useMenuOperations'
+provideMenuOperations({
+    previewItem
+})
+
+
 
 const dialog = useDialog();
 
@@ -31,7 +37,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     deep: props.modelValue ? false : true,
 }) as Ref<typeof props.modelValue>;
 
-const previewItem = (itemId: ItemId) => {
+function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
         // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
         component: ItemPreviewDialog,
@@ -52,6 +58,7 @@ const previewItem = (itemId: ItemId) => {
         }
     });
 }
+
 
 </script>
 

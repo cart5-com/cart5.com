@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { defaultMenuRoot, loadMenu, menuRoot, saveMenu } from "./store";
-import MenuEditor2 from "./MenuEditor2.vue";
+import MenuEditor from "./MenuEditor.vue";
 import { pageTitle } from "@src/stores/layout.store";
 import { onMounted, onUnmounted, watch } from "vue";
-
-pageTitle.value = 'Menu Editor 2';
-
+pageTitle.value = 'Menu Editor';
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 const stopWatch = watch([menuRoot], () => {
@@ -40,8 +38,6 @@ onUnmounted(() => {
 
 <template>
     <div>
-        <div class="border rounded-md p-4">
-            <MenuEditor2 v-model="menuRoot" />
-        </div>
+        <MenuEditor v-model="menuRoot" />
     </div>
 </template>
