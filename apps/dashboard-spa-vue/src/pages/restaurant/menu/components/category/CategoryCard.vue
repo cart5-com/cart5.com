@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { menuRoot } from '../../store';
-import { AlignJustify, ChevronDown, ChevronUp, Pencil, Plus } from 'lucide-vue-next';
+import { AlignJustify, ChevronDown, ChevronUp, Pencil, Plus, Check, X } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from '../item/ItemCard.vue';
 
@@ -38,15 +39,16 @@ async function addItemToCategory(itemId: string) {
 }
 </script>
 <template>
-    <div class="category-container border rounded-lg mb-12 bg-background">
+    <div class="category-container border rounded-lg mb-12 bg-background"
+         v-if="currentItem">
         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
-            <h1 class="text-2xl font-bold">
-                {{ currentItem?.itemLabel }}
-            </h1>
+            <div class="text-2xl font-bold flex-1">
+                <Input v-model="currentItem.itemLabel"
+                       class="text-2xl font-bold h-10 focus:ring-0 border-none"
+                       autofocus />
+            </div>
             <div class="flex items-center gap-2">
                 <AlignJustify class="cat-drag-handle cursor-move" />
-                <Pencil class="cursor-pointer"
-                        @click="" />
                 <div class="cursor-pointer"
                      @click="toggleCategories">
                     <ChevronUp v-if="showCategories" />
@@ -54,7 +56,7 @@ async function addItemToCategory(itemId: string) {
                 </div>
             </div>
         </div>
-        <div v-if="showCategories && currentItem">
+        <div v-if="showCategories">
             <draggable v-model="currentItem.children"
                        item-key="itemId"
                        group="items"
@@ -65,26 +67,23 @@ async function addItemToCategory(itemId: string) {
                 </template>
             </draggable>
         </div>
-        <div>
-
-            <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                .filter(item => !menuRoot.children?.includes(item.itemId ?? ''))
-                .map(item => ({
-                    key: item.itemId,
-                    name: item.itemLabel
-                }))"
-                              @select="(item: any) => {
-                                addItemToCategory(item.key)
-                            }"
-                              @create-new="(search) => { createNewItem(search) }"
-                              :has-new-button="true"
-                              heading="Link an existing item">
-                <template #trigger>
-                    <Button variant="outline">
-                        <Plus /> Add item to '{{ currentItem?.itemLabel }}'
-                    </Button>
-                </template>
-            </SelectWithSearch>
-        </div>
+        <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+            .filter(item => !menuRoot.children?.includes(item.itemId ?? ''))
+            .map(item => ({
+                key: item.itemId,
+                name: item.itemLabel
+            }))"
+                          @select="(item: any) => {
+                            addItemToCategory(item.key)
+                        }"
+                          @create-new="(search) => { createNewItem(search) }"
+                          :has-new-button="true"
+                          heading="Link an existing item">
+            <template #trigger>
+                <Button variant="outline">
+                    <Plus /> Add item to '{{ currentItem?.itemLabel }}'
+                </Button>
+            </template>
+        </SelectWithSearch>
     </div>
 </template>
