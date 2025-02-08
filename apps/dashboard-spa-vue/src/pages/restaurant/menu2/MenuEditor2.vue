@@ -3,7 +3,7 @@ import { type Ref } from 'vue'
 import { menuRoot } from "./store";
 import { useVModel } from '@vueuse/core'
 import { BucketItem, type ItemId, type MenuRoot } from 'lib/types/menuType2';
-import ItemPreviewDialog from './ItemPreviewDialog.vue';
+import ItemPreviewDialog from './preview/ItemPreviewDialog.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch.vue';

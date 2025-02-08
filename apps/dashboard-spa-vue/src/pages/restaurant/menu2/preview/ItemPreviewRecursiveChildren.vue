@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType2";
-import { menuRoot } from "./store";
+import { menuRoot } from "../store";
 import { computed } from 'vue';
 import { Check, Minus, Plus } from 'lucide-vue-next';
 
@@ -167,12 +167,12 @@ const getPrice = (itemId: ItemId) => {
                         <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
                              :key="`${childItemId}-${quantityRepeated}-${index}`">
                             <div v-if="childItemId">
-                                <RecursiveChildren :model-value="modelValue?.childrenState?.[optionItemId]?.childrenState?.[quantityRepeated - 1]?.[index]"
-                                                   @update:model-value="updateNestedOptionGroup(optionItemId, quantityRepeated - 1, index, $event)"
-                                                   :itemId="childItemId"
-                                                   :helper-text="modelValue?.childrenState?.[optionItemId]?.quantity! > 1 ?
-                                                    `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemId]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
-                                                    menuRoot.allItems?.[optionItemId]?.itemLabel" />
+                                <ItemPreviewRecursiveChildren :model-value="modelValue?.childrenState?.[optionItemId]?.childrenState?.[quantityRepeated - 1]?.[index]"
+                                                              @update:model-value="updateNestedOptionGroup(optionItemId, quantityRepeated - 1, index, $event)"
+                                                              :itemId="childItemId"
+                                                              :helper-text="modelValue?.childrenState?.[optionItemId]?.quantity! > 1 ?
+                                                                `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemId]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
+                                                                menuRoot.allItems?.[optionItemId]?.itemLabel" />
                             </div>
                         </div>
 

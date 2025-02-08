@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { menuRoot } from "./store";
+import { menuRoot } from "../store";
 import { type BucketItem, type ItemId } from "lib/types/menuType2";
 import { computed, ref } from "vue";
-import RecursiveChildren from "@src/pages/restaurant/menu2/RecursiveChildren.vue";
+import ItemPreviewRecursiveChildren from "@src/pages/restaurant/menu2/preview/ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";
 
 const props = defineProps<{
@@ -39,9 +39,9 @@ const bucketItem = ref<BucketItem>({
             <div v-for="(child, index) in currentItem?.children"
                  :key="child">
                 <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
-                <RecursiveChildren v-if="bucketItem.childrenState"
-                                   :itemId="child"
-                                   v-model="bucketItem.childrenState[index]" />
+                <ItemPreviewRecursiveChildren v-if="bucketItem.childrenState"
+                                              :itemId="child"
+                                              v-model="bucketItem.childrenState[index]" />
             </div>
             <details>
                 <summary>bucketItem</summary>
