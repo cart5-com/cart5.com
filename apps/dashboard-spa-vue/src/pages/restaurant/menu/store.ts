@@ -18,25 +18,26 @@ export const isLoading = ref(false);
 export const loadMenu = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
-            json: {
-                columns: {
-                    menu: {
-                        menuJson: true
-                    }
-                }
-            }
-        })).json();
+        // const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+        //     param: {
+        //         restaurantId: currentRestaurantId.value ?? '',
+        //     },
+        //     json: {
+        //         columns: {
+        //             menu: {
+        //                 menuJson: true
+        //             }
+        //         }
+        //     }
+        // })).json();
 
-        if (error) {
-            toast.error('Failed to load menu');
-            return;
-        }
+        // if (error) {
+        //     toast.error('Failed to load menu');
+        //     return;
+        // }
 
-        menuJSON.value = data?.menu?.menuJson as MenuJSON || defaultMenuJSON;
+        // menuJSON.value = data?.menu?.menuJson as MenuJSON || defaultMenuJSON;
+        menuJSON.value = defaultMenuJSON;
     } catch (err) {
         console.error('Error loading menu:', err);
         toast.error('Failed to load menu');
@@ -48,22 +49,22 @@ export const loadMenu = async () => {
 export const saveMenu = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
-            json: {
-                menu: {
-                    menuJson: menuJSON.value
-                }
-            }
-        })).json();
+        // const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        //     param: {
+        //         restaurantId: currentRestaurantId.value ?? '',
+        //     },
+        //     json: {
+        //         menu: {
+        //             menuJson: menuJSON.value
+        //         }
+        //     }
+        // })).json();
 
-        if (error) {
-            toast.error('Failed to save menu');
-            return;
-        }
-        toast.success('Menu saved successfully');
+        // if (error) {
+        //     toast.error('Failed to save menu');
+        //     return;
+        // }
+        toast.warning('Menu save disabled');
     } catch (err) {
         console.error('Error saving menu:', err);
         toast.error('Failed to save menu');

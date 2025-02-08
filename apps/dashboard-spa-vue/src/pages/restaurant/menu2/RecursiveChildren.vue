@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType2";
-import { menu2Store } from "./store";
+import { menuRoot } from "./store";
 import { computed } from 'vue';
 import { Check, Minus, Plus } from 'lucide-vue-next';
 
@@ -26,7 +26,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return menu2Store.value.allItems?.[props.itemId]
+        return menuRoot.value.allItems?.[props.itemId]
     }
     return undefined
 })
@@ -47,7 +47,7 @@ const addQuantity = (childId: ItemId) => {
         return;
     }
     let hasLinkedOptions: boolean = false;
-    if (menu2Store.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.children) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -69,7 +69,7 @@ const addQuantity = (childId: ItemId) => {
 
 const removeQuantity = (childId: ItemId) => {
     let hasLinkedOptions: boolean = false;
-    if (menu2Store.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.children) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -100,10 +100,10 @@ const updateNestedOptionGroup = (
 
 const getPrice = (itemId: ItemId) => {
     if (props.itemId) {
-        if (menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
-            return menu2Store.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
+        if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
+            return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
         }
-        return menu2Store.value.allItems?.[itemId]?.price
+        return menuRoot.value.allItems?.[itemId]?.price
     }
     return undefined;
 }
@@ -133,7 +133,7 @@ const getPrice = (itemId: ItemId) => {
                         modelValue?.childrenState?.[optionItemId]?.quantity! > 0 && currentItem?.maxQuantity === 1 ? 'hidden' : ''
                     ]"
                      @click="addQuantity(optionItemId)">
-                    {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
+                    {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     <span class="text-sm"
                           v-if="getPrice(optionItemId)">
                         ${{ getPrice(optionItemId) }}
@@ -148,7 +148,7 @@ const getPrice = (itemId: ItemId) => {
                      @click="removeQuantity(optionItemId)">
                     <span class="text-sm">
                         {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
-                        {{ menu2Store.allItems?.[optionItemId]?.itemLabel }}
+                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     </span>
                     <Check v-if="currentItem?.maxQuantity === 1"
                            class="border border-foreground rounded-md" />
@@ -160,19 +160,19 @@ const getPrice = (itemId: ItemId) => {
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
              :key="optionItemId">
-            <div v-if="menu2Store.allItems?.[optionItemId]?.children">
+            <div v-if="menuRoot.allItems?.[optionItemId]?.children">
                 <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemId]?.quantity"
                           :key="`${optionItemId}-${quantityRepeated}`">
                     <div class="py-2 my-8">
-                        <div v-for="(childItemId, index) in menu2Store.allItems?.[optionItemId]?.children"
+                        <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
                              :key="`${childItemId}-${quantityRepeated}-${index}`">
                             <div v-if="childItemId">
                                 <RecursiveChildren :model-value="modelValue?.childrenState?.[optionItemId]?.childrenState?.[quantityRepeated - 1]?.[index]"
                                                    @update:model-value="updateNestedOptionGroup(optionItemId, quantityRepeated - 1, index, $event)"
                                                    :itemId="childItemId"
                                                    :helper-text="modelValue?.childrenState?.[optionItemId]?.quantity! > 1 ?
-                                                    `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemId]?.quantity}) ${menu2Store.allItems?.[optionItemId]?.itemLabel}` :
-                                                    menu2Store.allItems?.[optionItemId]?.itemLabel" />
+                                                    `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemId]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
+                                                    menuRoot.allItems?.[optionItemId]?.itemLabel" />
                             </div>
                         </div>
 

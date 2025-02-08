@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { menu2Store } from "./store";
+import { menuRoot } from "./store";
 import { type BucketItem, type ItemId } from "lib/types/menuType2";
 import { computed, ref } from "vue";
 import RecursiveChildren from "@src/pages/restaurant/menu2/RecursiveChildren.vue";
@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return menu2Store.value.allItems?.[props.itemId]
+        return menuRoot.value.allItems?.[props.itemId]
     }
     return undefined
 })

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { type Ref } from 'vue'
-import { menu2Store } from "./store";
+import { menuRoot } from "./store";
 import { useVModel } from '@vueuse/core'
-import { BucketItem, type ItemId, type RootState } from 'lib/types/menuType2';
+import { BucketItem, type ItemId, type MenuRoot } from 'lib/types/menuType2';
 import ItemPreviewDialog from './ItemPreviewDialog.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { Button } from '@/components/ui/button';
@@ -18,16 +18,16 @@ import {
 const dialog = useDialog();
 
 const props = defineProps<{
-    modelValue?: RootState;
+    modelValue?: MenuRoot;
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: RootState): void
+    (e: 'update:modelValue', payload: MenuRoot): void
 }>()
 
 const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
-    defaultValue: menu2Store.value,
+    defaultValue: menuRoot.value,
     deep: props.modelValue ? false : true,
 }) as Ref<typeof props.modelValue>;
 
@@ -72,6 +72,12 @@ const previewItem = (itemId: ItemId) => {
                       v-if="modelValue?.allItems?.[itemId]?.price">${{ modelValue?.allItems?.[itemId]?.price }}</span>
             </div>
         </div>
+        <Button variant="outline"
+                @click="() => {
+                    // addNewCategory()
+                }">
+            <Plus /> Add new category
+        </Button>
 
         <SelectWithSearch :items="Object.values(modelValue?.allItems ?? {}).filter(item => (item.children?.length ?? 0) > 0).map(item => ({ key: item.itemId, name: item.itemLabel }))"
                           @select="(item) => { console.log(item) }"
