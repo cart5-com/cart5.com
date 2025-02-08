@@ -49,19 +49,24 @@ const isDev = import.meta.env.DEV;
 
 <template>
     <div class="p-0 md:p-4">
-        <MenuTabs v-model="menuRoot" />
-        <Button @click="saveNow()"
-                variant="secondary"
-                class="mt-12"
-                :disabled="isMenuLoading">
-            <Shell class="w-4 h-4 animate-spin"
-                   v-if="isMenuLoading" />
-            <span v-else>
-                <Check v-if="isChanged === false" />
-                <Hourglass v-else />
-            </span>
-            Auto save
-        </Button>
+        <MenuTabs v-model="menuRoot">
+            <template #top-btns>
+                <span class="ml-6 align-middle">
+                    <Button @click="saveNow()"
+                            variant="secondary"
+                            size="sm"
+                            :disabled="isMenuLoading">
+                        <Shell class="w-4 h-4 animate-spin"
+                               v-if="isMenuLoading" />
+                        <span v-else>
+                            <Check v-if="isChanged === false" />
+                            <Hourglass v-else />
+                        </span>
+                        Auto save
+                    </Button>
+                </span>
+            </template>
+        </MenuTabs>
 
         <div class="mt-4"
              v-if="isDev">

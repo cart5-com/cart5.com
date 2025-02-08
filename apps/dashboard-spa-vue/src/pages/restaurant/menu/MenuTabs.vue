@@ -48,6 +48,7 @@ function previewItem(itemId: ItemId) {
                     All Items
                 </TabsTrigger>
             </TabsList>
+            <slot name="top-btns" />
             <TabsContent value="menu">
                 <MenuTab />
             </TabsContent>

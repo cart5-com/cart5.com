@@ -6,6 +6,8 @@ export type ParentItemId = ItemId;
 export type Item = {
     itemId?: ItemId;
     itemLabel?: string;
+    description?: string;
+    imageUrl?: string;
     price?: number;
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;

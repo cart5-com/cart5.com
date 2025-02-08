@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { menuRoot } from '../../store';
-import { AlignJustify, ChevronDown, ChevronUp, Pencil, Plus, Check, X } from 'lucide-vue-next';
+import { AlignJustify, ChevronDown, ChevronUp, Plus } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -61,29 +61,30 @@ async function addItemToCategory(itemId: string) {
                        item-key="itemId"
                        group="items"
                        handle=".item-drag-handle"
-                       class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 mt-4">
+                       class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 my-4">
                 <template #item="{ element: itemId }">
-                    <ItemCard :itemId="itemId" />
+                    <ItemCard :itemId="itemId"
+                              :categoryId="currentItem.itemId" />
                 </template>
             </draggable>
+            <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+                .filter(item => !menuRoot.children?.includes(item.itemId ?? ''))
+                .map(item => ({
+                    key: item.itemId,
+                    name: item.itemLabel
+                }))"
+                              @select="(item: any) => {
+                                addItemToCategory(item.key)
+                            }"
+                              @create-new="(search) => { createNewItem(search) }"
+                              :has-new-button="true"
+                              heading="Link an existing item">
+                <template #trigger>
+                    <Button variant="outline">
+                        <Plus /> Add item to '{{ currentItem?.itemLabel }}'
+                    </Button>
+                </template>
+            </SelectWithSearch>
         </div>
-        <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-            .filter(item => !menuRoot.children?.includes(item.itemId ?? ''))
-            .map(item => ({
-                key: item.itemId,
-                name: item.itemLabel
-            }))"
-                          @select="(item: any) => {
-                            addItemToCategory(item.key)
-                        }"
-                          @create-new="(search) => { createNewItem(search) }"
-                          :has-new-button="true"
-                          heading="Link an existing item">
-            <template #trigger>
-                <Button variant="outline">
-                    <Plus /> Add item to '{{ currentItem?.itemLabel }}'
-                </Button>
-            </template>
-        </SelectWithSearch>
     </div>
 </template>
