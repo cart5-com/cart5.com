@@ -6,15 +6,9 @@ import { BucketItem, type ItemId, type MenuRoot } from 'lib/types/menuType2';
 import ItemPreviewDialog from './preview/ItemPreviewDialog.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { Button } from '@/components/ui/button';
-import SelectWithSearch from '@/ui-plus/SelectWithSearch.vue';
-import { Eye, Plus } from 'lucide-vue-next';
-import { CommandItem } from '@/components/ui/command';
-import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-} from '@/components/ui/hover-card'
 import { provideMenuOperations } from './composables/useMenuOperations'
+import NewCategoryForm from '@src/pages/restaurant/menu/components/NewCategoryForm.vue';
+import { Plus } from 'lucide-vue-next';
 provideMenuOperations({
     previewItem
 })
@@ -45,20 +39,28 @@ function previewItem(itemId: ItemId) {
         props: {
             itemId: itemId
         },
-        onCancel: async () => {
-            console.log("cancel");
-        },
         onSuccess: async (values) => {
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
         },
-        onError: async (error: any) => {
-            console.log("error");
-            console.log(error);
-        }
     });
 }
 
+function addNewCategory() {
+    dialog.show<{ name: string }>({
+        title: 'Add new category',
+        component: NewCategoryForm,
+        onSuccess: async (values) => {
+            const newCategoryId = `cat-${Date.now()}`
+            if (modelValue.value && modelValue.value.allItems) {
+                modelValue.value.allItems[newCategoryId] = {
+                    itemId: newCategoryId,
+                    itemLabel: values.name,
+                }
+            }
+        }
+    });
+}
 
 </script>
 
@@ -81,55 +83,9 @@ function previewItem(itemId: ItemId) {
         </div>
         <Button variant="outline"
                 @click="() => {
-                    // addNewCategory()
+                    addNewCategory()
                 }">
             <Plus /> Add new category
         </Button>
-
-        <SelectWithSearch :items="Object.values(modelValue?.allItems ?? {}).filter(item => (item.children?.length ?? 0) > 0).map(item => ({ key: item.itemId, name: item.itemLabel }))"
-                          @select="(item) => { console.log(item) }"
-                          @create-new="(search) => { console.log('search', search) }"
-                          :has-new-button="true">
-            <!-- <template #new-button="{ search }">
-                <Button variant="outline"
-                        class="w-full"
-                        @click="() => { console.log('search', search) }">
-                    New category
-                </Button>
-            </template> -->
-            <template #items-list="{ items, emit }">
-                <CommandItem v-for="item in items"
-                             :key="item.key"
-                             :value="item.name + ' ' + item.key"
-                             @select="emit('select', item)">
-                    <div class="flex justify-between w-full">
-                        <div>
-                            {{ item.name }}
-                        </div>
-                        <div>
-                            <HoverCard>
-                                <HoverCardTrigger>
-                                    <Eye />
-                                </HoverCardTrigger>
-                                <HoverCardContent class="w-80">
-                                    <ItemPreviewDialog :item-id="item.key" />
-                                </HoverCardContent>
-                            </HoverCard>
-                        </div>
-                    </div>
-                </CommandItem>
-
-
-
-
-            </template>
-
-            <template #trigger>
-                <Button variant="outline">
-                    <Plus /> Add new category
-                </Button>
-            </template>
-        </SelectWithSearch>
-
     </div>
 </template>

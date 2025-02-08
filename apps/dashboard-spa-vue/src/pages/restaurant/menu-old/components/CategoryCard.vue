@@ -11,7 +11,7 @@ import draggable from "vuedraggable";
 import { menuJSON } from "../store";
 import ItemCard from "./ItemCard.vue";
 import { Button } from "@/components/ui/button";
-import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
+import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 import { useMenuOperations } from '../composables/useMenuOperations';
 const { openCategoryDialog } = useMenuOperations()
 

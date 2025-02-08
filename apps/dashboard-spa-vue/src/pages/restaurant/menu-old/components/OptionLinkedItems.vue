@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
 import { Link2 } from "lucide-vue-next";
-import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
+import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 import { menuJSON } from "../store";
 import { type LinkTypes } from "lib/types/menuTypes";
 

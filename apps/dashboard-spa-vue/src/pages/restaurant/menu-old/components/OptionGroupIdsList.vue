@@ -9,7 +9,7 @@ import {
     Link2Off, Pencil, Plus
 } from "lucide-vue-next";
 import draggable from "vuedraggable";
-import SelectWithSearch from "@/ui-plus/SelectWithSearch.vue";
+import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 import { useMenuOperations } from '../composables/useMenuOperations';
 import {
     Tooltip,
