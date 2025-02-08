@@ -4,7 +4,7 @@ import MenuEditor from "./MenuEditor.vue";
 import { pageTitle } from "@src/stores/layout.store";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { Button } from "@/components/ui/button";
-import { Check, Hourglass, Loader2, Shell } from "lucide-vue-next";
+import { Check, Hourglass, Shell } from "lucide-vue-next";
 
 pageTitle.value = 'Menu Editor';
 let ignoreAutoSave = true;
