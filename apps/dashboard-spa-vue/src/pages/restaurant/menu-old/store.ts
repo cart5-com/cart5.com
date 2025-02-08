@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { type MenuJSON } from "lib/types/menuTypes";
-import { dashboardApiClient } from "@src/lib/dashboardApiClient";
-import { currentRestaurantId } from "@src/stores/RestaurantStore";
+// import { dashboardApiClient } from "@src/lib/dashboardApiClient";
+// import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from '@/ui-plus/sonner';
 
 export const defaultMenuJSON: MenuJSON = {

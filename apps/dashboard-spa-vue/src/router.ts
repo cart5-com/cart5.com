@@ -97,7 +97,7 @@ const router = createRouter({
         {
           path: 'menu-editor2',
           name: 'restaurant-menu-editor2',
-          component: () => import('@src/pages/restaurant/menu2/MenuEditorView.vue'),
+          component: () => import('@src/pages/restaurant/menu/MenuEditorView.vue'),
         },
       ],
     },

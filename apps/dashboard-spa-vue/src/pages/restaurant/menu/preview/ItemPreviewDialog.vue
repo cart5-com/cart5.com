@@ -2,7 +2,7 @@
 import { menuRoot } from "../store";
 import { type BucketItem, type ItemId } from "lib/types/menuType2";
 import { computed, ref } from "vue";
-import ItemPreviewRecursiveChildren from "@src/pages/restaurant/menu2/preview/ItemPreviewRecursiveChildren.vue";
+import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";
 
 const props = defineProps<{
