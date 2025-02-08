@@ -40,7 +40,7 @@ function previewItem(itemId: ItemId) {
     <div>
         <Tabs default-value="menu"
               class="w-full">
-            <TabsList class="">
+            <TabsList class="mb-8">
                 <TabsTrigger value="menu">
                     Menu Editor
                 </TabsTrigger>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defaultMenuRoot, isMenuLoading, loadMenu, menuRoot, saveMenu } from "./store";
-import MenuEditor from "./MenuEditor.vue";
+import MenuTabs from "./MenuTabs.vue";
 import { pageTitle } from "@src/stores/layout.store";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ async function saveNow() {
 
 <template>
     <div>
-        <MenuEditor v-model="menuRoot" />
+        <MenuTabs v-model="menuRoot" />
         <Button @click="saveNow()"
                 variant="secondary"
                 class="mt-12"

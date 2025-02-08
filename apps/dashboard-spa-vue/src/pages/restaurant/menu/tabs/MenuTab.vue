@@ -2,12 +2,18 @@
 import { Button } from "@/components/ui/button";
 import { menuRoot } from "../store";
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import NewCategoryForm from '../components/NewCategoryForm.vue';
+import NewCategoryForm from '../components/category/NewCategoryForm.vue';
 import { Plus } from "lucide-vue-next";
 import draggable from "vuedraggable"
-import CategoryCard from "../components/CategoryCard.vue";
-
+import CategoryCard from "../components/category/CategoryCard.vue";
+import { ref } from "vue";
 const dialog = useDialog();
+const showCategories = ref(true);
+
+const toggleCategories = () => {
+    showCategories.value = !showCategories.value;
+}
+
 
 function addNewCategory() {
     dialog.show<{ name: string }>({
@@ -35,7 +41,9 @@ function addNewCategory() {
                    group="categories"
                    handle=".cat-drag-handle">
             <template #item="{ element: itemId }">
-                <CategoryCard :itemId="itemId" />
+                <CategoryCard :itemId="itemId"
+                              :showCategories="showCategories"
+                              :toggleCategories="toggleCategories" />
             </template>
         </draggable>
         <Button variant="outline"
