@@ -68,9 +68,10 @@ const unlinkItem = () => {
                 </Button>
                 <Button variant="destructive"
                         size="sm"
+                        title="Unlink from category"
                         @click="unlinkItem"
                         v-if="categoryId">
-                    <Link2Off /> Unlink from category
+                    <Link2Off /> Unlink
                 </Button>
             </CardFooter>
         </Card>
