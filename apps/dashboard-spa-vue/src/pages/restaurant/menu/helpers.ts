@@ -1,4 +1,4 @@
-import { type BucketItem, type ItemId } from 'lib/types/menuType';
+import { Item, type BucketItem, type ItemId } from 'lib/types/menuType';
 import ItemPreview from './preview/ItemPreview.vue';
 import ItemEdit from './components/item/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
@@ -48,10 +48,16 @@ export function editItem(itemId: ItemId) {
     });
 }
 
-export async function createNewItem(search: string, parentItemId: string | undefined) {
+export async function createNewItem(
+    search: string,
+    parentItemId: string | undefined,
+    namePrefix: string = "New item",
+    optionalProps: Partial<Item> = {}
+) {
     const newItem = {
         itemId: `item-${Date.now()}`,
-        itemLabel: search ? search : `New item ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`
+        itemLabel: search ? search : `${namePrefix} ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`,
+        ...optionalProps
     }
     if (!menuRoot.value?.allItems) {
         menuRoot.value.allItems = {}

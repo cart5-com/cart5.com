@@ -48,7 +48,7 @@ const unlink = (index: number) => {
         <div v-else
              class="border rounded-lg p-4">
 
-            <div class="flex justify-between items-center mb-4 sm:flex-row flex-col gap-2">
+            <div class="flex justify-between items-center mb-4 gap-2">
                 <Button variant="ghost"
                         @click="isCollapsed = true">
                     Choices & Addons
@@ -63,7 +63,7 @@ const unlink = (index: number) => {
                                     addChildItem(currentItem?.itemId, item.key)
                                 }"
                                   @create-new="(search) => {
-                                    createNewItem(search, currentItem?.itemId)
+                                    createNewItem(search, currentItem?.itemId, 'New choice', { maxQuantity: 1 })
                                 }"
                                   :has-new-button="true"
                                   heading="Link an existing item">

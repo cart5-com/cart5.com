@@ -73,10 +73,10 @@ async function removeCategory() {
                         key: item.itemId,
                         name: item.itemLabel
                     }))"
-                                  @select="(item) => {
-                                    addChildItem(currentItem?.itemId, item.key)
+                                  @select="(selectedItem) => {
+                                    addChildItem(currentItem?.itemId, selectedItem.key)
                                 }"
-                                  @create-new="(search) => { createNewItem(search, currentItem?.itemId) }"
+                                  @create-new="(search) => { createNewItem(search, currentItem?.itemId, 'New category') }"
                                   :has-new-button="true"
                                   heading="Link an existing item">
                     <template #trigger>

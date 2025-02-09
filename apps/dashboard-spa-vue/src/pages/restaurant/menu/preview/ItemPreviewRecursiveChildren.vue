@@ -103,7 +103,8 @@ const getPrice = (itemId: ItemId) => {
         if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
             return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
         }
-        return menuRoot.value.allItems?.[itemId]?.price
+        // return menuRoot.value.allItems?.[itemId]?.price
+        return undefined;
     }
     return undefined;
 }

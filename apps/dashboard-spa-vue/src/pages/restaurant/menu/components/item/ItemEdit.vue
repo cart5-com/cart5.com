@@ -28,5 +28,9 @@ const currentItem = computed(() => {
                    placeholder="Price" />
             <OptionSetList :item-id="props.itemId" />
         </div>
+        <details>
+            <summary>currentItem</summary>
+            <pre class="text-xs max-w-full overflow-y-auto">{{ currentItem }}</pre>
+        </details>
     </div>
 </template>
