@@ -57,7 +57,7 @@ const unlinkItem = () => {
                     {{ currentItem?.description }}
                 </p>
             </CardContent>
-            <CardFooter class="flex gap-2">
+            <CardFooter class="max-w-full gap-2 flex flex-wrap">
                 <Button variant="outline"
                         size="sm"
                         @click="editItem(itemId)">
@@ -72,7 +72,7 @@ const unlinkItem = () => {
                         size="sm"
                         @click="unlinkItem"
                         v-if="categoryId">
-                    <Link2Off /> Unlink
+                    <Link2Off /> Unlink from category
                 </Button>
             </CardFooter>
         </Card>
