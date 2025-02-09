@@ -32,12 +32,12 @@ const currentItem = computed(() => {
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="max"
                        class="text-right">
-                    Max Selectable
+                    Min Selectable
                 </Label>
-                <Input id="max"
-                       placeholder="Max"
+                <Input id="min"
+                       placeholder="Min"
                        min="0"
-                       v-model="currentItem.maxQuantity"
+                       v-model="currentItem.minQuantity"
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">
@@ -47,12 +47,12 @@ const currentItem = computed(() => {
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="max"
                        class="text-right">
-                    Min Selectable
+                    Max Selectable
                 </Label>
-                <Input id="min"
-                       placeholder="Min"
+                <Input id="max"
+                       placeholder="Max"
                        min="0"
-                       v-model="currentItem.minQuantity"
+                       v-model="currentItem.maxQuantity"
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">

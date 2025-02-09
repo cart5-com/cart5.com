@@ -3,7 +3,7 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { Check, Minus, Plus } from 'lucide-vue-next';
+import { Minus, Plus } from 'lucide-vue-next';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -40,6 +40,13 @@ const isMaxQuantity = () => {
         return getTotalQuantity() >= currentItem.value?.maxQuantity;
     }
     return false;
+}
+
+const isMinQuantityAdded = () => {
+    if (currentItem.value?.minQuantity && currentItem.value?.minQuantity > 0) {
+        return getTotalQuantity() >= currentItem.value?.minQuantity;
+    }
+    return true;
 }
 
 const addQuantity = (childId: ItemId) => {
@@ -113,60 +120,56 @@ const getPrice = (itemId: ItemId) => {
 
 <template>
     <div class="border rounded-md p-4 my-20 bg-accent border-card-foreground">
-        <div v-if="helperText">
+        <span v-if="!isMinQuantityAdded()"
+              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning">
+            Selection Required
+        </span>
+        <div v-if="helperText"
+             class="text-lg font-bold">
             {{ helperText }}
         </div>
-        <div>
+        <div class="text-lg font-bold">
             {{ currentItem?.itemLabel }}
         </div>
-        <div class="text-sm"
+        <div class="text-xs text-muted-foreground">
+            <span v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
+                Choose {{ currentItem?.minQuantity }}
+            </span>
+            <span v-if="currentItem?.maxQuantity && currentItem?.maxQuantity > 0">
+                (Up to {{ currentItem?.maxQuantity }})
+            </span>
+        </div>
+
+        <div class="text-xs"
              v-if="currentItem?.price">
             ${{ currentItem?.price }}
         </div>
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
-             :key="optionItemId">
-            <!-- v-if="menu2Store.allItems?.[optionItemId] && (!isMaxQuantity() || modelValue?.childrenState?.[optionItemId]?.quantity! > 0)" -->
+             :key="optionItemId"
+             class="text-sm">
             <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
                 <div class="flex justify-between items-center cursor-pointer p-2 bg-card hover:bg-background"
                      :class="[
-                        isMaxQuantity() ? 'opacity-40' : '',
-                        modelValue?.childrenState?.[optionItemId]?.quantity! > 0 && currentItem?.maxQuantity === 1 ? 'hidden' : ''
+                        isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                     ]"
                      @click="addQuantity(optionItemId)">
                     {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                    <span class="text-sm"
-                          v-if="getPrice(optionItemId)">
+                    <span v-if="getPrice(optionItemId)">
                         ${{ getPrice(optionItemId) }}
                     </span>
-                    <div v-if="currentItem?.maxQuantity === 1"
-                         class="border border-foreground rounded-md w-6 h-6" />
-                    <Plus v-else
-                          class="border border-foreground rounded-md" />
+                    <Plus class="border border-foreground rounded-md" />
                 </div>
-                <div class="flex justify-between items-center cursor-pointer border p-2 bg-card hover:bg-background"
+                <div class="flex justify-between items-center cursor-pointer border p-2 bg-card hover:bg-background text-sm font-bold"
                      v-if="modelValue?.childrenState?.[optionItemId]?.quantity! > 0"
                      @click="removeQuantity(optionItemId)">
-                    <span class="text-sm">
+                    <span>
                         {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
                         {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     </span>
-                    <Check v-if="currentItem?.maxQuantity === 1"
-                           class="border border-foreground rounded-md" />
-                    <Minus v-else
-                           class="border border-foreground rounded-md" />
+                    <Minus class="border border-foreground rounded-md" />
                 </div>
             </div>
-        </div>
-        <div class="text-sm">
-            <span class="rounded-md bg-destructive text-destructive-foreground p-1"
-                  v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
-                min:{{ currentItem?.minQuantity }}
-            </span>
-            <span class="rounded-md bg-destructive text-destructive-foreground p-1 ml-2"
-                  v-if="currentItem?.maxQuantity && currentItem?.maxQuantity > 0">
-                max:{{ currentItem?.maxQuantity }}
-            </span>
         </div>
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
