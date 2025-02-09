@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dialog, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogDescription } from "@/components/ui/dialog";
 import DialogScrollContent from "./DialogScrollContent.vue"; // use modified DialogContent
 import { useDialog } from "./use-dialog";
 
