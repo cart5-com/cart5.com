@@ -66,7 +66,8 @@ const handleInteractOutside = (event: any) => {
 					 v-if="props.closeable">
 					<div class="flex items-center justify-between">
 						<slot name="title" />
-						<DialogClose class="transition-colors rounded-md bg-secondary disabled:pointer-events-none">
+						<DialogClose
+									 class="transition-colors rounded-md bg-secondary disabled:pointer-events-none hover:bg-secondary/50">
 							<X class="h-8 w-8" />
 							<span class="sr-only">Close</span>
 						</DialogClose>
