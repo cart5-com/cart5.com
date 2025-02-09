@@ -17,17 +17,24 @@ const cleanEmptyProperties = (menuRoot: MenuRoot) => {
     const cleanedMenuRoot = JSON.parse(JSON.stringify(menuRoot));
     for (const itemId in cleanedMenuRoot.allItems) {
         for (const key in cleanedMenuRoot.allItems[itemId]) {
+            // ignore number because it is ""(empty string) when input has no value
+            // ignore boolean
+
+            // if null or undefined delete
+            if (cleanedMenuRoot.allItems[itemId][key as keyof Item] === null || cleanedMenuRoot.allItems[itemId][key as keyof Item] === undefined) {
+                delete cleanedMenuRoot.allItems[itemId][key as keyof Item];
+            }
+
             // if string check length
             if (typeof cleanedMenuRoot.allItems[itemId][key as keyof Item] === 'string') {
                 if (cleanedMenuRoot.allItems[itemId][key as keyof Item]?.toString().trim().length === 0) {
-                    console.log('deleting', itemId, key);
                     delete cleanedMenuRoot.allItems[itemId][key as keyof Item];
                 }
             }
+
             // if array check length
             if (Array.isArray(cleanedMenuRoot.allItems[itemId][key as keyof Item])) {
                 if (cleanedMenuRoot.allItems[itemId][key as keyof Item]?.length === 0) {
-                    console.log('deleting', itemId, key);
                     delete cleanedMenuRoot.allItems[itemId][key as keyof Item];
                 }
             }
