@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Dialog, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import DialogContent from "./DialogContent.vue"; // use modified DialogContent
+import DialogScrollContent from "./DialogScrollContent.vue"; // use modified DialogContent
 import { useDialog } from "./use-dialog";
 
 const { state, close, cancel, onError } = useDialog();
@@ -20,8 +20,8 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 			  :key="dialog.id">
 		<Dialog :open="dialog.isOpen"
 				@update:open="(val) => handleUpdateOpen(dialog.id, val)">
-			<DialogContent :closeable="dialog.options?.closeable"
-						   :class="dialog.options?.dialogContentClass">
+			<DialogScrollContent :closeable="dialog.options?.closeable"
+								 :class="dialog.options?.dialogContentClass">
 				<DialogHeader>
 					<DialogTitle v-if="dialog.options?.title">
 						{{ dialog.options?.title }}
@@ -40,7 +40,7 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 
 				<div v-if="dialog.options?.html"
 					 v-html="dialog.options.html" />
-			</DialogContent>
+			</DialogScrollContent>
 		</Dialog>
 	</template>
 </template>
