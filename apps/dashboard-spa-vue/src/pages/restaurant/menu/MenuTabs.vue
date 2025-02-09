@@ -39,7 +39,7 @@ function editItem(itemId: ItemId) {
     dialog.show<BucketItem>({
         title: menuRoot.value.allItems?.[itemId]?.itemLabel,
         component: ItemEdit,
-        dialogContentClass: "min-w-full lg:min-w-[40vw]",
+        dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
         },
