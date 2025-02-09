@@ -74,11 +74,11 @@ const unlink = (index: number) => {
             <template #item="{ element: itemId, index }">
                 <div>
                     <div class="flex items-center justify-between bg-muted p-2 rounded-md">
-                        <div class="text-sm line-clamp-1 flex-1 mr-2"
+                        <div class="text-sm line-clamp-1 flex-1 mr-2 p-1"
                              v-if="menuRoot.allItems">
                             <Input v-model="menuRoot.allItems[itemId].itemLabel" />
                             <Input type="number"
-                                   placeholder="Add/Remove Price - / +"
+                                   placeholder="Price - / +"
                                    :model-value="menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]"
                                    @update:model-value="(value) => {
                                     if (!menuRoot.allItems) return;

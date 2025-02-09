@@ -41,7 +41,7 @@ const currentItem = computed(() => {
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">
-                    0:unlimited
+                    0: unlimited
                 </span>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
@@ -56,7 +56,7 @@ const currentItem = computed(() => {
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">
-                    0:unlimited
+                    0: unlimited
                 </span>
             </div>
         </div>

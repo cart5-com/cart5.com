@@ -158,6 +158,16 @@ const getPrice = (itemId: ItemId) => {
                 </div>
             </div>
         </div>
+        <div class="text-sm">
+            <span class="rounded-md bg-destructive text-destructive-foreground p-1"
+                  v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
+                min:{{ currentItem?.minQuantity }}
+            </span>
+            <span class="rounded-md bg-destructive text-destructive-foreground p-1 ml-2"
+                  v-if="currentItem?.maxQuantity && currentItem?.maxQuantity > 0">
+                max:{{ currentItem?.maxQuantity }}
+            </span>
+        </div>
         <div v-if="currentItem?.children"
              v-for="optionItemId in currentItem?.children"
              :key="optionItemId">

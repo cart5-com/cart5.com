@@ -13,7 +13,6 @@ export type Item = {
 
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;
-    // TODO: apply minQuantity to the bucket item
     minQuantity?: number;
     imageUrl?: string;
 }

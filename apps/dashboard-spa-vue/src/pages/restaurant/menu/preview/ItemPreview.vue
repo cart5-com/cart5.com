@@ -51,6 +51,7 @@ const bucketItem = ref<BucketItem>({
         <div class="sticky bottom-0 p-2 bg-card">
             <Button class="w-full"
                     @click="() => {
+
                         $emit('close', bucketItem)
                     }">Add</Button>
         </div>
