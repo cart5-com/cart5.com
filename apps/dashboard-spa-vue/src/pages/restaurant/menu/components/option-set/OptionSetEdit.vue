@@ -1,0 +1,61 @@
+<script lang="ts" setup>
+import { type ItemId } from 'lib/types/menuType';
+import { computed } from 'vue';
+import { menuRoot } from '../../store';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+const props = defineProps<{
+    itemId: ItemId
+}>()
+
+const currentItem = computed(() => {
+    return menuRoot.value.allItems?.[props.itemId]
+})
+
+</script>
+
+<template>
+    <div v-if="currentItem">
+        <div class="grid gap-4 py-4">
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="label"
+                       class="text-right">
+                    Name
+                </Label>
+                <Input id="label"
+                       placeholder="Set Label"
+                       v-model="currentItem.itemLabel"
+                       class="col-span-3" />
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="max"
+                       class="text-right">
+                    Max Selectable
+                </Label>
+                <Input id="max"
+                       placeholder="Max"
+                       v-model="currentItem.maxQuantity"
+                       class="col-span-2"
+                       type="number" />
+                <span class="text-muted-foreground text-sm">
+                    0:unlimited
+                </span>
+            </div>
+            <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="max"
+                       class="text-right">
+                    Min Selectable
+                </Label>
+                <Input id="min"
+                       placeholder="Min"
+                       v-model="currentItem.minQuantity"
+                       class="col-span-2"
+                       type="number" />
+                <span class="text-muted-foreground text-sm">
+                    0:unlimited
+                </span>
+            </div>
+        </div>
+    </div>
+</template>

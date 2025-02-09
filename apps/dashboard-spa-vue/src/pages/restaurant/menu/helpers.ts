@@ -3,6 +3,7 @@ import ItemPreview from './preview/ItemPreview.vue';
 import ItemEdit from './components/item/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { menuRoot } from './store';
+import OptionSetEdit from './components/option-set/OptionSetEdit.vue';
 const dialog = useDialog();
 
 
@@ -17,6 +18,17 @@ export function previewItem(itemId: ItemId) {
         onSuccess: async (values) => {
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
+        },
+    });
+}
+
+export function editOptionSet(itemId: ItemId) {
+    dialog.show<BucketItem>({
+        title: "Edit Option Set",
+        component: OptionSetEdit,
+        dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
+        props: {
+            itemId: itemId
         },
     });
 }
