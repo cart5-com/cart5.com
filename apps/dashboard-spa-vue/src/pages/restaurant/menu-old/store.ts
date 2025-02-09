@@ -5,10 +5,57 @@ import { type MenuJSON } from "lib/types/menuTypes-old";
 import { toast } from '@/ui-plus/sonner';
 
 export const defaultMenuJSON: MenuJSON = {
-    categoryIdsOrder: [],
-    allCategories: {},
-    allItems: {},
-    allOptionGroups: {}
+    "categoryIdsOrder": [
+        "cat-1739078602878"
+    ],
+    "allCategories": {
+        "cat-1739078602878": {
+            "catId": "cat-1739078602878",
+            "categoryLabel": "New Category 1",
+            "itemIds": [
+                "item-1739078608289"
+            ]
+        }
+    },
+    "allItems": {
+        "item-1739078608289": {
+            "itemId": "item-1739078608289",
+            "itemLabel": "hello",
+            "price": 1,
+            "itemSizes": [
+                {
+                    "itemSizeId": "size-1739078616290",
+                    "itemSizeLabel": "Size 1",
+                    "price": 1,
+                    "preSelected": false
+                },
+                {
+                    "itemSizeId": "size-1739078695104",
+                    "itemSizeLabel": "Size 2",
+                    "price": 1,
+                    "preSelected": false
+                }
+            ],
+            "optionGroupIds": [
+                "option-group-1739078624324"
+            ]
+        }
+    },
+    "allOptionGroups": {
+        "option-group-1739078624324": {
+            "optionGroupId": "option-group-1739078624324",
+            "optionGroupLabel": "Choose 1",
+            "maxOptions": 1,
+            "minOptions": 0,
+            "options": [
+                {
+                    "optionId": "option-1739078634136",
+                    "label": "New Option 1",
+                    "price": 0
+                }
+            ]
+        }
+    }
 }
 
 export const menuJSON = ref<MenuJSON>(defaultMenuJSON);

@@ -38,7 +38,7 @@ function addNewCategory() {
         <draggable v-if="menuRoot"
                    v-model="menuRoot.children"
                    item-key="itemId"
-                   group="categories"
+                   group="main-items"
                    handle=".cat-drag-handle">
             <template #item="{ element: itemId }">
                 <CategoryCard :itemId="itemId"

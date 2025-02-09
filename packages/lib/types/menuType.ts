@@ -8,10 +8,12 @@ export type Item = {
     itemLabel?: string;
     description?: string;
     price?: number;
+
+    children?: ItemId[];
+
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;
     imageUrl?: string;
-    children?: ItemId[];
 }
 
 export type BucketChildrenState = {

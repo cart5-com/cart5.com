@@ -7,6 +7,7 @@ import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from '../item/ItemCard.vue';
+import { addChildItem, createNewItem } from '@src/pages/restaurant/menu/helpers';
 
 const props = defineProps<{
     itemId: string
@@ -17,26 +18,6 @@ const props = defineProps<{
 const currentItem = computed(() => {
     return menuRoot.value?.allItems?.[props.itemId]
 })
-
-async function createNewItem(search: string) {
-    const newItem = {
-        itemId: `item-${Date.now()}`,
-        itemLabel: search ? search : `New item ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`
-    }
-    if (!menuRoot.value?.allItems) {
-        menuRoot.value.allItems = {}
-    }
-    menuRoot.value.allItems[newItem.itemId] = newItem
-    return addItemToCategory(newItem.itemId);
-}
-
-async function addItemToCategory(itemId: string) {
-    if (currentItem.value && !currentItem.value?.children) {
-        currentItem.value.children = []
-    }
-    currentItem.value?.children?.push(itemId)
-    return itemId;
-}
 
 async function removeCategory() {
     if (!confirm('Are you sure you want to remove this category?')) return;
@@ -77,7 +58,7 @@ async function removeCategory() {
         <div v-if="showCategories">
             <draggable v-model="currentItem.children"
                        item-key="itemId"
-                       group="items"
+                       group="category-items"
                        handle=".item-drag-handle"
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 my-4">
                 <template #item="{ element: itemId }">
@@ -92,10 +73,10 @@ async function removeCategory() {
                         key: item.itemId,
                         name: item.itemLabel
                     }))"
-                                  @select="(item: any) => {
-                                    addItemToCategory(item.key)
+                                  @select="(item) => {
+                                    addChildItem(currentItem?.itemId, item.key)
                                 }"
-                                  @create-new="(search) => { createNewItem(search) }"
+                                  @create-new="(search) => { createNewItem(search, currentItem?.itemId) }"
                                   :has-new-button="true"
                                   heading="Link an existing item">
                     <template #trigger>

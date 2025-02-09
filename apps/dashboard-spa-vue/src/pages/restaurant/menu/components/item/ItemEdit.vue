@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { menuRoot } from "../../store";
 import { type ItemId } from "lib/types/menuType";
 import { computed } from "vue";
+import OptionSetList from "./OptionSetList.vue";
 
 const props = defineProps<{
     itemId: ItemId
@@ -25,6 +26,7 @@ const currentItem = computed(() => {
             <Input type="number"
                    v-model="currentItem.price"
                    placeholder="Price" />
+            <OptionSetList :item-id="props.itemId" />
         </div>
     </div>
 </template>

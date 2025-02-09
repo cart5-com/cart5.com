@@ -1,53 +1,13 @@
 <script lang="ts" setup>
-import { type BucketItem, type ItemId } from 'lib/types/menuType';
-import ItemPreview from './preview/ItemPreview.vue';
-import ItemEdit from './components/item/ItemEdit.vue';
-import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
 } from '@/components/ui/tabs'
-import { provideMenuOperations } from './composables/useMenuOperations'
 import MenuTab from './tabs/MenuTab.vue';
 
-provideMenuOperations({
-    previewItem,
-    editItem
-})
 
-const dialog = useDialog();
-
-function previewItem(itemId: ItemId) {
-    dialog.show<BucketItem>({
-        // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
-        component: ItemPreview,
-        // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
-        props: {
-            itemId: itemId
-        },
-        onSuccess: async (values) => {
-            console.log("success");
-            console.log(JSON.stringify(values, null, 2));
-        },
-    });
-}
-
-function editItem(itemId: ItemId) {
-    dialog.show<BucketItem>({
-        title: "Edit Item",
-        component: ItemEdit,
-        dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
-        props: {
-            itemId: itemId
-        },
-        // onSuccess: async (values) => {
-        //     console.log("success");
-        //     console.log(JSON.stringify(values, null, 2));
-        // },
-    });
-}
 
 </script>
 
