@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
-import { type BucketItem, type ItemId } from "lib/types/menuType2";
+import { type BucketItem, type ItemId } from "lib/types/menuType";
 import { computed, ref } from "vue";
 import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";

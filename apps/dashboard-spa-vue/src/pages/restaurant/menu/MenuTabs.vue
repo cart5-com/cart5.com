@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BucketItem, type ItemId } from 'lib/types/menuType2';
+import { BucketItem, type ItemId } from 'lib/types/menuType';
 import ItemPreview from './preview/ItemPreview.vue';
 import ItemEdit from './components/item/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';

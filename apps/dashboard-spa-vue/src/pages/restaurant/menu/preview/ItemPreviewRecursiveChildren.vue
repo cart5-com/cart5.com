@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type BucketChildrenState, type ItemId } from "lib/types/menuType2";
+import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
 import { Check, Minus, Plus } from 'lucide-vue-next';

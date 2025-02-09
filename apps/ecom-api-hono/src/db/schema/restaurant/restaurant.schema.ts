@@ -10,7 +10,7 @@ import type {
 	TaxCategory,
 	WeeklyHours
 } from "lib/types/restaurantTypes";
-import type { MenuRoot } from "lib/types/menuType2";
+import type { MenuRoot } from "lib/types/menuType";
 
 
 /// RESTAURANT TABLE START

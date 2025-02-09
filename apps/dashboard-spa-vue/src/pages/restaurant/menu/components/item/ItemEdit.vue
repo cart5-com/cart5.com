@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { menuRoot } from "../../store";
-import { type ItemId } from "lib/types/menuType2";
+import { type ItemId } from "lib/types/menuType";
 import { computed } from "vue";
 
 const props = defineProps<{
