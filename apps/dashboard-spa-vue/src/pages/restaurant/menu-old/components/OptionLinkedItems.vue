@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link2 } from "lucide-vue-next";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 import { menuJSON } from "../store";
-import { type LinkTypes } from "lib/types/menuTypes";
+import { type LinkTypes } from "lib/types/menuTypes-old";
 
 // function getAvailableItemsWithSizes() {
 //     const linkedItemsAndSizes: {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AlignJustify, Link2, Link2Off } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
-import { type LinkTypes, type Option } from "lib/types/menuTypes";
+import { type LinkTypes, type Option } from "lib/types/menuTypes-old";
 import OptionLinkedItems from "./OptionLinkedItems.vue";
 import draggable from "vuedraggable";
 import { menuJSON } from "../store";

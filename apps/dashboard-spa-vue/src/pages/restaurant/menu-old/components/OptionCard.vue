@@ -2,7 +2,7 @@
 import { MoveIcon, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { type Option } from "lib/types/menuTypes";
+import { type Option } from "lib/types/menuTypes-old";
 import OptionCardLinkedItemsDialog from "./OptionCardLinkedItemsDialog.vue";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";

@@ -5,7 +5,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { type BucketItem } from "lib/types/menuTypes"
+import { type BucketItem } from "lib/types/menuTypes-old"
 import { computed, onMounted, ref } from "vue"
 import { Eye } from "lucide-vue-next"
 import { menuJSON } from "../../store"

@@ -3,7 +3,7 @@ import { Dialog, DialogScrollContent, DialogHeader, DialogTitle } from "@/compon
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { type Item } from "lib/types/menuTypes"
+import { type Item } from "lib/types/menuTypes-old"
 import { onMounted, ref } from "vue"
 import ItemPropsDialog from "./ItemPropsDialog.vue"
 import draggable from "vuedraggable"

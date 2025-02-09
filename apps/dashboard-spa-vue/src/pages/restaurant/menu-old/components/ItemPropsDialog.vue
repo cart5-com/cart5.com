@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { ADDITIVES, ALLERGENS, type Item, ITEM_LABELS } from 'lib/types/menuTypes';
+import { ADDITIVES, ALLERGENS, type Item, ITEM_LABELS } from 'lib/types/menuTypes-old';
 import StringArraySelector from "@/ui-plus/string-array-selector/StringArraySelector.vue"
 import { Settings } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';

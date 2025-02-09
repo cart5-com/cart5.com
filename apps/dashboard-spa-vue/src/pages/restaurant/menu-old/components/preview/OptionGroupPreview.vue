@@ -4,7 +4,7 @@ import { Minus, Plus } from "lucide-vue-next";
 import { computed, onMounted } from "vue";
 import { type Ref } from 'vue'
 import { menuJSON } from "../../store";
-import { type BucketOptionGroup } from "lib/types/menuTypes";
+import { type BucketOptionGroup } from "lib/types/menuTypes-old";
 
 const props = defineProps<{
     modelValue?: BucketOptionGroup;

@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/tabs'
 import { provideMenuOperations } from './composables/useMenuOperations'
 import MenuTab from './tabs/MenuTab.vue';
-import { menuRoot } from '@src/pages/restaurant/menu/store';
 
 provideMenuOperations({
     previewItem,

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type Item, type ItemSize } from "lib/types/menuTypes";
+import { type Item, type ItemSize } from "lib/types/menuTypes-old";
 import { menuJSON } from "../store";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { type MenuJSON } from "lib/types/menuTypes";
+import { type MenuJSON } from "lib/types/menuTypes-old";
 // import { dashboardApiClient } from "@src/lib/dashboardApiClient";
 // import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from '@/ui-plus/sonner';

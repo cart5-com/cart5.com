@@ -2,7 +2,7 @@
 import { Dialog, DialogScrollContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { type Category } from "lib/types/menuTypes"
+import { type Category } from "lib/types/menuTypes-old"
 import { ref } from "vue"
 
 defineProps<{

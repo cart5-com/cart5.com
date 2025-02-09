@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuJSON } from "../../store";
-import { type BucketItem } from "lib/types/menuTypes";
+import { type BucketItem } from "lib/types/menuTypes-old";
 
 const props = defineProps<{
     itemId: string;
