@@ -1,6 +1,7 @@
 import { type InjectionKey, inject, provide } from 'vue'
 
 interface MenuOperations {
+    editItem: (itemId: string) => void
     previewItem: (itemId: string) => void
 }
 

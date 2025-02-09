@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { menuRoot } from "../store";
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import NewCategoryForm from '../components/category/NewCategoryForm.vue';
+import CategoryNewForm from '../components/category/CategoryNewForm.vue';
 import { Plus } from "lucide-vue-next";
 import draggable from "vuedraggable"
 import CategoryCard from "../components/category/CategoryCard.vue";
@@ -18,7 +18,7 @@ const toggleCategories = () => {
 function addNewCategory() {
     dialog.show<{ name: string }>({
         title: 'Add new category',
-        component: NewCategoryForm,
+        component: CategoryNewForm,
         onSuccess: async (values) => {
             const newCategoryId = `cat-${Date.now()}`
             if (menuRoot.value && menuRoot.value.allItems) {

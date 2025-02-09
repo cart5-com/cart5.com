@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { BucketItem, type ItemId } from 'lib/types/menuType2';
-import ItemPreviewDialog from './preview/ItemPreviewDialog.vue';
+import ItemPreview from './preview/ItemPreview.vue';
+import ItemEdit from './components/item/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import {
     Tabs,
@@ -12,7 +13,8 @@ import { provideMenuOperations } from './composables/useMenuOperations'
 import MenuTab from './tabs/MenuTab.vue';
 
 provideMenuOperations({
-    previewItem
+    previewItem,
+    editItem
 })
 
 const dialog = useDialog();
@@ -20,7 +22,7 @@ const dialog = useDialog();
 function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
         // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
-        component: ItemPreviewDialog,
+        component: ItemPreview,
         dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
@@ -32,7 +34,20 @@ function previewItem(itemId: ItemId) {
     });
 }
 
-
+function editItem(itemId: ItemId) {
+    dialog.show<BucketItem>({
+        // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
+        component: ItemEdit,
+        dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
+        props: {
+            itemId: itemId
+        },
+        // onSuccess: async (values) => {
+        //     console.log("success");
+        //     console.log(JSON.stringify(values, null, 2));
+        // },
+    });
+}
 
 </script>
 

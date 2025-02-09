@@ -3,10 +3,10 @@ import { menuRoot } from "../../store";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-// import { useMenuOperations } from '../../composables/useMenuOperations';
+import { useMenuOperations } from '../../composables/useMenuOperations';
 import { computed } from "vue";
 
-// const { openItemDialog, openItemPreviewDialog } = useMenuOperations()
+const { editItem, previewItem } = useMenuOperations()
 
 const props = defineProps<{
     itemId: string,
@@ -57,22 +57,22 @@ const unlinkItem = () => {
                     {{ currentItem?.description }}
                 </p>
             </CardContent>
-            <CardFooter>
+            <CardFooter class="flex gap-2">
                 <Button variant="outline"
-                        size="sm">
-                    <!-- @click="openItemDialog(itemId)" -->
-                    <Pencil />
+                        size="sm"
+                        @click="editItem(itemId)">
+                    <Pencil /> Edit
+                </Button>
+                <Button variant="outline"
+                        size="sm"
+                        @click="previewItem(itemId)">
+                    <Eye /> Preview
                 </Button>
                 <Button variant="destructive"
                         size="sm"
                         @click="unlinkItem"
                         v-if="categoryId">
-                    <Link2Off />
-                </Button>
-                <Button variant="outline"
-                        size="sm">
-                    <!-- @click="openItemPreviewDialog(itemId)" -->
-                    <Eye />
+                    <Link2Off /> Unlink
                 </Button>
             </CardFooter>
         </Card>
