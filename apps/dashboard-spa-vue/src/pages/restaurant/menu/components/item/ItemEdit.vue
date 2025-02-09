@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { menuRoot } from "@src/pages/restaurant/menu/store";
+import { menuRoot } from "../../store";
 import { type ItemId } from "lib/types/menuType2";
 import { computed } from "vue";
 
@@ -25,7 +25,6 @@ const currentItem = computed(() => {
             <Input type="number"
                    v-model="currentItem.price"
                    placeholder="Price" />
-
         </div>
     </div>
 </template>
