@@ -18,12 +18,13 @@ const currentItem = computed(() => {
 <template>
     <div v-if="currentItem">
         <div class="space-y-4">
-            <Input id="name"
-                   placeholder="Item Label"
+            <Input placeholder="Item Label"
                    v-model="currentItem.itemLabel" />
-            <Textarea id="description"
-                      v-model="currentItem.description"
+            <Textarea v-model="currentItem.description"
                       placeholder="Description" />
+            <Input type="number"
+                   v-model="currentItem.price"
+                   placeholder="Price" />
 
         </div>
     </div>

@@ -7,10 +7,10 @@ export type Item = {
     itemId?: ItemId;
     itemLabel?: string;
     description?: string;
-    imageUrl?: string;
     price?: number;
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;
+    imageUrl?: string;
     children?: ItemId[];
 }
 
