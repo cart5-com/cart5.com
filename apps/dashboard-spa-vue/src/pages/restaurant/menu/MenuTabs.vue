@@ -23,7 +23,7 @@ function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
         // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
         component: ItemPreview,
-        dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
+        // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
         },
@@ -38,7 +38,7 @@ function editItem(itemId: ItemId) {
     dialog.show<BucketItem>({
         // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
         component: ItemEdit,
-        dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
+        dialogContentClass: "min-w-full lg:min-w-[40vw]",
         props: {
             itemId: itemId
         },
