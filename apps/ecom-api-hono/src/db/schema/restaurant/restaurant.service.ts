@@ -14,6 +14,7 @@ import {
 import db from '../../drizzle';
 import { calculateScheduledOrdersMinutes } from "./updateUtils/calculateScheduledOrdersMinutes";
 import { calculateDeliveryZoneMinsMaxs } from "./updateUtils/calculateDeliveryZoneMinsMaxs";
+import { cleanEmptyProperties } from "lib/types/menuType";
 
 export const isUserRestaurantAdminService = async function (
     userId: string, restaurantId: string
@@ -143,6 +144,9 @@ export const updateRestaurantService = async (
         if (menu) {
             const { restaurantId: _, ...menuData } = menu;
             if (Object.keys(menuData).length > 0) {
+                if (menuData.menuRoot) {
+                    menuData.menuRoot = cleanEmptyProperties(menuData.menuRoot);
+                }
                 updates[updates.length] = tx.insert(restaurantMenuTable)
                     .values({ ...menuData, restaurantId })
                     .onConflictDoUpdate({
