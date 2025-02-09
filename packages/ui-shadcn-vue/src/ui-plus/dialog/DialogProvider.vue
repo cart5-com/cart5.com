@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dialog, DialogHeader, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import DialogScrollContent from "./DialogScrollContent.vue"; // use modified DialogContent
 import { useDialog } from "./use-dialog";
 
@@ -22,18 +22,19 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 				@update:open="(val) => handleUpdateOpen(dialog.id, val)">
 			<DialogScrollContent :closeable="dialog.options?.closeable"
 								 :class="dialog.options?.dialogContentClass">
-				<template #title
-						  v-if="dialog.options?.title">
-					{{ dialog.options?.title }}
+				<template #title>
+					<DialogHeader>
+						<DialogTitle class="text-xl sm:text-2xl font-bold line-clamp-1"
+									 v-if="dialog.options?.title">
+							{{ dialog.options?.title }}
+						</DialogTitle>
+						<DialogDescription class="text-sm line-clamp-2"
+										   :title="dialog.options?.description">
+							{{ dialog.options?.description }}
+						</DialogDescription>
+					</DialogHeader>
 				</template>
-				<DialogHeader>
-					<!-- <DialogTitle v-if="dialog.options?.title">
-						{{ dialog.options?.title }}
-					</DialogTitle> -->
-					<DialogDescription v-if="dialog.options?.description">
-						{{ dialog.options?.description }}
-					</DialogDescription>
-				</DialogHeader>
+
 
 				<component v-if="dialog.options?.component"
 						   :is="dialog.options.component"
