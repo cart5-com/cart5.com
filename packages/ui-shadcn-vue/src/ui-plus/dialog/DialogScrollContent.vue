@@ -61,13 +61,21 @@ const handleInteractOutside = (event: any) => {
 								event.preventDefault();
 							}
 						}">
+
+				<div class="sticky top-0 w-full bg-background z-50 p-2"
+					 v-if="props.closeable">
+					<div class="flex items-center justify-between">
+						<div class="text-xl sm:text-2xl font-bold line-clamp-1">
+							<slot name="title" />
+						</div>
+						<DialogClose class="transition-colors rounded-md bg-secondary disabled:pointer-events-none">
+							<X class="h-8 w-8" />
+							<span class="sr-only">Close</span>
+						</DialogClose>
+					</div>
+				</div>
 				<slot />
 
-				<DialogClose v-if="props.closeable"
-							 class="absolute top-3 right-3 p-0.5 transition-colors rounded-md hover:bg-secondary disabled:pointer-events-none">
-					<X class="h-8 w-8" />
-					<span class="sr-only">Close</span>
-				</DialogClose>
 			</DialogContent>
 		</DialogOverlay>
 	</DialogPortal>

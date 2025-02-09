@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/tabs'
 import { provideMenuOperations } from './composables/useMenuOperations'
 import MenuTab from './tabs/MenuTab.vue';
+import { menuRoot } from '@src/pages/restaurant/menu/store';
 
 provideMenuOperations({
     previewItem,
@@ -36,7 +37,7 @@ function previewItem(itemId: ItemId) {
 
 function editItem(itemId: ItemId) {
     dialog.show<BucketItem>({
-        // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
+        title: menuRoot.value.allItems?.[itemId]?.itemLabel,
         component: ItemEdit,
         dialogContentClass: "min-w-full lg:min-w-[40vw]",
         props: {

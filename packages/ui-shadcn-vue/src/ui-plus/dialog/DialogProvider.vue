@@ -22,10 +22,14 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 				@update:open="(val) => handleUpdateOpen(dialog.id, val)">
 			<DialogScrollContent :closeable="dialog.options?.closeable"
 								 :class="dialog.options?.dialogContentClass">
+				<template #title
+						  v-if="dialog.options?.title">
+					{{ dialog.options?.title }}
+				</template>
 				<DialogHeader>
-					<DialogTitle v-if="dialog.options?.title">
+					<!-- <DialogTitle v-if="dialog.options?.title">
 						{{ dialog.options?.title }}
-					</DialogTitle>
+					</DialogTitle> -->
 					<DialogDescription v-if="dialog.options?.description">
 						{{ dialog.options?.description }}
 					</DialogDescription>
