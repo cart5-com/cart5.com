@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { menuRoot } from "@src/pages/restaurant/menu/store";
 import { type ItemId } from "lib/types/menuType2";
 import { computed } from "vue";
@@ -16,6 +17,14 @@ const currentItem = computed(() => {
 
 <template>
     <div v-if="currentItem">
-        <Input v-model="currentItem.itemLabel" />
+        <div class="space-y-4">
+            <Input id="name"
+                   placeholder="Item Label"
+                   v-model="currentItem.itemLabel" />
+            <Textarea id="description"
+                      v-model="currentItem.description"
+                      placeholder="Description" />
+
+        </div>
     </div>
 </template>

@@ -37,7 +37,7 @@ function previewItem(itemId: ItemId) {
 
 function editItem(itemId: ItemId) {
     dialog.show<BucketItem>({
-        title: menuRoot.value.allItems?.[itemId]?.itemLabel,
+        title: "Edit Item",
         component: ItemEdit,
         dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
