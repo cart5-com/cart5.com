@@ -9,8 +9,9 @@ const dialog = useDialog();
 
 export function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
-        // title: menu2Store.value.allItems?.[itemId]?.itemLabel,
+        title: menuRoot.value.allItems?.[itemId]?.itemLabel,
         component: ItemPreview,
+        dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw] top-12 absolute",
         // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId

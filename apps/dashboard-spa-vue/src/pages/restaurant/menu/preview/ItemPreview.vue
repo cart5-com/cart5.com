@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
-import { type BucketItem, type ItemId } from "lib/types/menuType";
-import { computed, ref } from "vue";
+import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
+import { computed, ref, watch } from "vue";
 import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from '@/components/ui/number-field'
 
 const props = defineProps<{
     itemId?: ItemId
@@ -17,7 +24,6 @@ const currentItem = computed(() => {
     return undefined
 })
 
-
 const bucketItem = ref<BucketItem>({
     itemId: props.itemId,
     quantity: 1,
@@ -25,6 +31,12 @@ const bucketItem = ref<BucketItem>({
 })
 
 const randomNumber = crypto.randomUUID()
+
+const bucketTotalPrice = ref("")
+
+watch(bucketItem, () => {
+    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+}, { deep: true })
 
 const checkBucketItem = () => {
     // count .min-quantity-warning classes inside .warning-container-${randomNumber}
@@ -54,12 +66,12 @@ const checkBucketItem = () => {
 <template>
     <div class="w-full">
         <div class="p-4">
-            <div class="sticky top-0 bg-card">
-                <div class="text-2xl font-bold">
-                    {{ currentItem?.itemLabel }}
-                </div>
+            <div class="">
                 <div class="text-sm">
-                    ${{ currentItem?.price }}
+                    Base Price: ${{ currentItem?.price }}
+                </div>
+                <div class="text-lg font-bold text-primary">
+                    Total: ${{ bucketTotalPrice }}
                 </div>
             </div>
             <div :class="`warning-container-${randomNumber}`">
@@ -76,7 +88,19 @@ const checkBucketItem = () => {
                 <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
             </details>
         </div>
-        <div class="sticky bottom-0 p-2 bg-card">
+        <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
+            <NumberField id="quantity"
+                         class="w-full"
+                         v-model="bucketItem.quantity"
+                         :default-value="1"
+                         :step="1"
+                         :min="1">
+                <NumberFieldContent>
+                    <NumberFieldDecrement class="hidden sm:block bg-secondary rounded-l-md hover:bg-secondary/60" />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement class="hidden sm:block bg-secondary rounded-r-md hover:bg-secondary/60" />
+                </NumberFieldContent>
+            </NumberField>
             <Button class="w-full"
                     @click="() => {
                         if (checkBucketItem()) {
@@ -84,7 +108,10 @@ const checkBucketItem = () => {
                         } else {
                             toast.error('Please select required options')
                         }
-                    }">Add</Button>
+                    }">
+                Add {{ bucketItem.quantity }} to cart
+                (Total: ${{ bucketTotalPrice }})
+            </Button>
         </div>
 
     </div>

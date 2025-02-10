@@ -19,10 +19,15 @@ export type Item = {
 
 export type BucketChildrenState = {
     itemId?: ItemId;
-    childrenState?: Record<ItemId, {
+    childrenState?: {
+        itemId?: ItemId;
         quantity?: number;
         childrenState?: (BucketChildrenState[])[];
-    }>;
+    }[];
+    // childrenState?: Record<ItemId, {
+    //     quantity?: number;
+    //     childrenState?: (BucketChildrenState[])[];
+    // }>;
 }
 
 export type BucketItem = {
@@ -34,6 +39,57 @@ export type BucketItem = {
 export type MenuRoot = {
     children?: ItemId[];
     allItems?: Record<string, Item>;
+}
+
+export const recursiveBucketChildrenState = (optionSetState: BucketChildrenState, menuRoot: MenuRoot) => {
+    let total = 0;
+    if (optionSetState.itemId) {
+        // const item = menuRoot.allItems?.[optionSetState.itemId];
+        if (optionSetState.childrenState) {
+            for (const optionIndex in optionSetState.childrenState) {
+                if (optionSetState.childrenState[optionIndex].itemId) {
+                    const optionItem = menuRoot.allItems?.[optionSetState.childrenState[optionIndex].itemId];
+                    if (
+                        optionItem?.priceOverrides &&
+                        optionItem?.priceOverrides[optionSetState.itemId] &&
+                        optionSetState.childrenState[optionIndex].quantity
+                    ) {
+                        total += (optionItem?.priceOverrides[optionSetState.itemId] || 0) *
+                            optionSetState.childrenState[optionIndex].quantity
+                        if (optionSetState.childrenState[optionIndex].childrenState) {
+                            for (const quantityRepeatedChildStateIndex in optionSetState.childrenState[optionIndex].childrenState) {
+                                if (optionSetState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                    for (const childStateIndex in optionSetState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                        const deepOptionSetState = optionSetState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
+                                        total += recursiveBucketChildrenState(deepOptionSetState, menuRoot)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return total;
+}
+
+export const calculateBucketItemPrice = (bucketItem: BucketItem, menuRoot: MenuRoot) => {
+    // debugger;
+    let total = 0;
+    if (bucketItem.itemId) {
+        const item = menuRoot.allItems?.[bucketItem.itemId];
+        if (item) {
+            total += (item.price || 0);
+        }
+    }
+    if (bucketItem.childrenState) {
+        for (const index in bucketItem.childrenState) {
+            const optionSetState = bucketItem.childrenState[index];
+            total += recursiveBucketChildrenState(optionSetState, menuRoot)
+        }
+    }
+    return (total * (bucketItem.quantity || 1)).toFixed(2);
 }
 
 

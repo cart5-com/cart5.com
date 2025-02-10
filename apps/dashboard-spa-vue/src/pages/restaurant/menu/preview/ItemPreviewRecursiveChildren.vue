@@ -19,7 +19,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
     defaultValue: {
         itemId: props.itemId,
-        childrenState: {},
+        childrenState: [],
     },
     deep: props.modelValue ? false : true,
 })
@@ -49,7 +49,7 @@ const isMinQuantityAdded = () => {
     return true;
 }
 
-const addQuantity = (childId: ItemId) => {
+const addQuantity = (childId: ItemId, childIndex: number) => {
     if (isMaxQuantity()) {
         return;
     }
@@ -58,50 +58,52 @@ const addQuantity = (childId: ItemId) => {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
-        if (!modelValue.value.childrenState[childId]) {
-            modelValue.value.childrenState[childId] = {
+        if (!modelValue.value.childrenState[childIndex]) {
+            modelValue.value.childrenState[childIndex] = {
+                itemId: childId,
                 quantity: 1,
                 childrenState: hasLinkedOptions ? [[]] : undefined
             }
         } else {
             if (hasLinkedOptions) {
-                modelValue.value.childrenState[childId].childrenState?.push([]);
+                modelValue.value.childrenState[childIndex].childrenState?.push([]);
             }
-            if (modelValue.value.childrenState[childId].quantity) {
-                modelValue.value.childrenState[childId].quantity++;
+            if (modelValue.value.childrenState[childIndex].quantity) {
+                modelValue.value.childrenState[childIndex].quantity++;
             }
         }
     }
 }
 
-const removeQuantity = (childId: ItemId) => {
+const removeQuantity = (childId: ItemId, childIndex: number) => {
     let hasLinkedOptions: boolean = false;
     if (menuRoot.value.allItems?.[childId]?.children) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
-        if (modelValue.value.childrenState[childId].quantity) {
-            modelValue.value.childrenState[childId].quantity--;
+        if (modelValue.value.childrenState[childIndex].quantity) {
+            modelValue.value.childrenState[childIndex].quantity--;
         }
         if (hasLinkedOptions) {
-            if (modelValue.value.childrenState[childId].childrenState) {
-                modelValue.value.childrenState[childId].childrenState?.pop();
+            if (modelValue.value.childrenState[childIndex].childrenState) {
+                modelValue.value.childrenState[childIndex].childrenState?.pop();
             }
         }
-        if (modelValue.value.childrenState[childId].quantity === 0) {
-            delete modelValue.value.childrenState[childId];
+        if (modelValue.value.childrenState[childIndex].quantity === 0) {
+            delete modelValue.value.childrenState[childIndex];
         }
     }
 }
 
 const updateNestedOptionGroup = (
-    optionId: string,
+    _optionId: string,
+    optionIndex: number,
     quantityIndex: number,
     linkIndex: number,
     newValue: BucketChildrenState
 ) => {
-    if (modelValue.value?.childrenState?.[optionId]?.childrenState?.[quantityIndex]) {
-        modelValue.value.childrenState[optionId].childrenState[quantityIndex][linkIndex] = newValue;
+    if (modelValue.value?.childrenState?.[optionIndex]?.childrenState?.[quantityIndex]) {
+        modelValue.value.childrenState[optionIndex].childrenState[quantityIndex][linkIndex] = newValue;
     }
 }
 
@@ -110,10 +112,7 @@ const getPrice = (itemId: ItemId) => {
         if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
             return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
         }
-        // return menuRoot.value.allItems?.[itemId]?.price
-        return undefined;
     }
-    return undefined;
 }
 
 </script>
@@ -145,7 +144,7 @@ const getPrice = (itemId: ItemId) => {
             ${{ currentItem?.price }}
         </div>
         <div v-if="currentItem?.children"
-             v-for="optionItemId in currentItem?.children"
+             v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"
              class="text-sm">
             <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
@@ -153,18 +152,18 @@ const getPrice = (itemId: ItemId) => {
                      :class="[
                         isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                     ]"
-                     @click="addQuantity(optionItemId)">
+                     @click="addQuantity(optionItemId, optionItemIndex)">
                     {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     <span v-if="getPrice(optionItemId)">
-                        ${{ getPrice(optionItemId) }}
+                        {{ getPrice(optionItemId) }}
                     </span>
                     <Plus class="border border-foreground rounded-md" />
                 </div>
                 <div class="flex justify-between items-center cursor-pointer border p-2 bg-card hover:bg-background text-sm font-bold"
-                     v-if="modelValue?.childrenState?.[optionItemId]?.quantity! > 0"
-                     @click="removeQuantity(optionItemId)">
+                     v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
+                     @click="removeQuantity(optionItemId, optionItemIndex)">
                     <span>
-                        {{ modelValue?.childrenState?.[optionItemId]?.quantity }} x
+                        {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     </span>
                     <Minus class="border border-foreground rounded-md" />
@@ -172,20 +171,20 @@ const getPrice = (itemId: ItemId) => {
             </div>
         </div>
         <div v-if="currentItem?.children"
-             v-for="optionItemId in currentItem?.children"
+             v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId">
             <div v-if="menuRoot.allItems?.[optionItemId]?.children">
-                <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemId]?.quantity"
+                <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemIndex]?.quantity"
                           :key="`${optionItemId}-${quantityRepeated}`">
                     <div class="py-2 my-8">
                         <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
                              :key="`${childItemId}-${quantityRepeated}-${index}`">
                             <div v-if="childItemId">
-                                <ItemPreviewRecursiveChildren :model-value="modelValue?.childrenState?.[optionItemId]?.childrenState?.[quantityRepeated - 1]?.[index]"
-                                                              @update:model-value="updateNestedOptionGroup(optionItemId, quantityRepeated - 1, index, $event)"
+                                <ItemPreviewRecursiveChildren :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
+                                                              @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
                                                               :itemId="childItemId"
-                                                              :helper-text="modelValue?.childrenState?.[optionItemId]?.quantity! > 1 ?
-                                                                `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemId]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
+                                                              :helper-text="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 1 ?
+                                                                `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
                                                                 menuRoot.allItems?.[optionItemId]?.itemLabel" />
                             </div>
                         </div>
