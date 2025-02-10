@@ -34,7 +34,7 @@ const addSearchToItems = computed(() => {
                 </Button>
             </slot>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent class="p-1">
             <slot name="new-button"
                   :search="search">
                 <PopoverClose class="w-full">
@@ -48,7 +48,8 @@ const addSearchToItems = computed(() => {
             <Command v-model:searchTerm="search"
                      class="border">
                 <CommandInput :placeholder="searchPlaceholder"
-                              type="number" />
+                              type="number"
+                              @enter="$emit('select', { name: search, key: search })" />
                 <CommandList>
                     <CommandGroup>
                         <PopoverClose class="w-full">

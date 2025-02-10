@@ -6,6 +6,7 @@ import { computed } from 'vue';
 import { Minus, Plus } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -120,24 +121,25 @@ const getPrice = (itemId: ItemId) => {
 </script>
 
 <template>
-    <div class="border rounded-md p-4 my-20 bg-accent border-card-foreground">
+    <div class="border rounded-md p-4 my-20 border-card-foreground"
+         v-if="currentItem">
         <span v-if="!isMinQuantityAdded()"
               class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning">
+            {{ currentItem?.minQuantity }}
             Selection Required
         </span>
         <div v-if="helperText"
              class="text-lg font-bold">
             {{ helperText }}
         </div>
-        <div class="text-lg font-bold capitalize">
-            {{ currentItem?.itemLabel }}
-        </div>
-        <div class="text-xs flex flex-col gap-2 items-start">
+        <Input class="text-lg font-bold capitalize"
+               v-model="currentItem.itemLabel" />
+        <div class="text-xs flex flex-col gap-2 items-start my-2">
             <SelectNumber :items="Array.from({ length: 10 }, (_, i) => ({
                 key: i + 1,
                 name: String(i + 1)
             }))"
-                          :search-placeholder="`enter a number`"
+                          :search-placeholder="`Force minimum`"
                           btn-text="Make Optional"
                           @select="(value) => {
                             if (currentItem) {
@@ -145,8 +147,9 @@ const getPrice = (itemId: ItemId) => {
                             }
                         }">
                 <template #trigger>
-                    Choose min: <Badge>
-                        {{ currentItem?.minQuantity === 0 ? 'optional' : currentItem?.minQuantity }}
+                    <Badge variant="outline">
+                        Choose min:
+                        {{ (currentItem?.minQuantity === 0 || !currentItem?.minQuantity) ? 'optional' : currentItem?.minQuantity }}
                     </Badge>
                 </template>
             </SelectNumber>
@@ -154,7 +157,7 @@ const getPrice = (itemId: ItemId) => {
                 key: i + 1,
                 name: String(i + 1)
             }))"
-                          :search-placeholder="`enter a number`"
+                          :search-placeholder="`Force maximum`"
                           btn-text="Make Unlimited"
                           @select="(value) => {
                             if (currentItem) {
@@ -162,8 +165,9 @@ const getPrice = (itemId: ItemId) => {
                             }
                         }">
                 <template #trigger>
-                    Choose up to: <Badge>
-                        {{ currentItem?.maxQuantity === 0 ? 'unlimited' : currentItem?.maxQuantity }}
+                    <Badge variant="outline">
+                        Choose up to:
+                        {{ (currentItem?.maxQuantity === 0 || !currentItem?.maxQuantity) ? 'unlimited' : currentItem?.maxQuantity }}
                     </Badge>
                 </template>
             </SelectNumber>

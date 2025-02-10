@@ -23,7 +23,7 @@ const search = ref("");
                 </Button>
             </slot>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent class="p-1">
             <Command v-model:searchTerm="search"
                      class="border">
                 <CommandInput placeholder="Search" />
