@@ -6,6 +6,7 @@ import { computed } from 'vue';
 import { Minus, Plus } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
+import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import { Input } from '@/components/ui/input';
 
 const props = defineProps<{
@@ -110,13 +111,14 @@ const updateNestedOptionGroup = (
     }
 }
 
-const getPrice = (itemId: ItemId) => {
-    if (props.itemId) {
-        if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
-            return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
-        }
-    }
-}
+// const getPrice = (itemId: ItemId) => {
+//     // menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]
+//     if (props.itemId) {
+//         if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
+//             return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
+//         }
+//     }
+// }
 
 </script>
 
@@ -182,29 +184,57 @@ const getPrice = (itemId: ItemId) => {
              :key="optionItemId"
              class="text-sm">
             <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                <div class="flex justify-between items-center cursor-pointer p-2 bg-card hover:bg-background"
+                <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-6 gap-2"
                      :class="[
                         isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
-                    ]"
-                     @click="addQuantity(optionItemId, optionItemIndex)">
-                    <span class="capitalize">
-                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                    </span>
-                    <span v-if="getPrice(optionItemId)">
+                    ]">
+                    <InputInline v-if="menuRoot.allItems"
+                                 v-model="menuRoot.allItems[optionItemId].itemLabel">
+                        <template #trigger>
+                            <span class="capitalize cursor-text col-span-4">
+                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel || '----' }}
+                            </span>
+                        </template>
+                    </InputInline>
+                    <InputInline type="number"
+                                 placeholder="Price - / +"
+                                 :model-value="menuRoot.allItems[optionItemId].priceOverrides?.[itemId!]"
+                                 @update:model-value="(value) => {
+                                    if (!menuRoot.allItems) return;
+                                    if (value) {
+                                        if (!menuRoot.allItems[optionItemId].priceOverrides) {
+                                            menuRoot.allItems[optionItemId].priceOverrides = {}
+                                        }
+                                        menuRoot.allItems[optionItemId].priceOverrides[itemId!] = Number(value)
+                                    } else {
+                                        delete menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]
+                                        if (Object.keys(menuRoot.allItems[optionItemId].priceOverrides ?? {}).length === 0) {
+                                            menuRoot.allItems[optionItemId].priceOverrides = undefined
+                                        }
+                                    }
+                                }">
+                        <template #trigger>
+                            <span class="capitalize cursor-text">
+                                {{ menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!] || '$' }}
+                            </span>
+                        </template>
+                    </InputInline>
+                    <!-- <span v-if="getPrice(optionItemId)">
                         {{ getPrice(optionItemId) }}
-                    </span>
-                    <Plus class="border border-foreground rounded-md" />
+                    </span> -->
+                    <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                          @click="addQuantity(optionItemId, optionItemIndex)" />
                 </div>
-                <div class="flex justify-between items-center cursor-pointer border p-2 bg-card hover:bg-background text-sm font-bold"
-                     v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
-                     @click="removeQuantity(optionItemId, optionItemIndex)">
+                <div class="flex justify-between items-center border p-2 bg-card hover:bg-background text-sm font-bold"
+                     v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
                     <span>
                         {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         <span class="capitalize">
                             {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                         </span>
                     </span>
-                    <Minus class="border border-foreground rounded-md" />
+                    <Minus class="border border-foreground rounded-md cursor-pointer"
+                           @click="removeQuantity(optionItemId, optionItemIndex)" />
                 </div>
             </div>
         </div>

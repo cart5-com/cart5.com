@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEmpty } from "@/components/ui/command";
+import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { computed, ref } from "vue";
 
@@ -14,7 +14,7 @@ const props = defineProps<{
 const search = ref("");
 
 const addSearchToItems = computed(() => {
-    if (search.value) {
+    if (search.value && props.items.filter(item => item.name === search.value).length === 0) {
         return [...props.items, {
             name: search.value,
             key: search.value

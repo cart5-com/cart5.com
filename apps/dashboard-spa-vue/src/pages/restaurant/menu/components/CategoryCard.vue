@@ -4,10 +4,10 @@ import { menuRoot } from '../store';
 import { AlignJustify, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
-import Input from '@/components/ui/input/Input.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from './ItemCard.vue';
 import { addChildItem, createNewItem, editItem } from '@src/pages/restaurant/menu/helpers';
+import InputInline from '@/ui-plus/inline-edit/InputInline.vue';
 
 const props = defineProps<{
     itemId: string
@@ -52,9 +52,13 @@ const onClickAddNewItem = (search: string | undefined) => {
          v-if="currentItem">
         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
             <div class="text-2xl font-bold flex-1">
-                <Input v-model="currentItem.itemLabel"
-                       class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize"
-                       autofocus />
+                <InputInline v-model="currentItem.itemLabel">
+                    <template #trigger>
+                        <span class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize">
+                            {{ currentItem.itemLabel || '---' }}
+                        </span>
+                    </template>
+                </InputInline>
             </div>
             <div class="flex items-center gap-2">
                 <AlignJustify class="cat-drag-handle cursor-move" />
@@ -91,7 +95,8 @@ const onClickAddNewItem = (search: string | undefined) => {
                                   heading="Link an existing item">
                     <template #trigger>
                         <Button variant="outline">
-                            <Plus /> Add item to '<span class="capitalize">{{ currentItem?.itemLabel }}</span>'
+                            <Plus /> Add item
+                            <!-- to '<span class="capitalize">{{ currentItem?.itemLabel }}</span>' -->
                         </Button>
                     </template>
                 </SelectWithSearch>
@@ -100,7 +105,7 @@ const onClickAddNewItem = (search: string | undefined) => {
                 <Button variant="destructive"
                         class="ml-4"
                         @click="removeCategory">
-                    <Trash2 class="h-4 w-4" /> Remove category
+                    <Trash2 class="h-4 w-4" /> Remove
                 </Button>
 
             </div>
