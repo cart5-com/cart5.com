@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
 import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
@@ -38,6 +38,10 @@ watch(bucketItem, () => {
     bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
 }, { deep: true })
 
+onMounted(() => {
+    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+})
+
 const checkBucketItem = () => {
     // count .min-quantity-warning classes inside .warning-container-${randomNumber}
     const warningContainer = document.querySelector(`.warning-container-${randomNumber}`)
@@ -53,7 +57,7 @@ const checkBucketItem = () => {
                 setTimeout(() => {
                     firstWarning.parentElement?.classList.remove('headShake-animation')
                 }, 500)
-            }, 500)
+            }, 300)
         }
         return false
     } else {

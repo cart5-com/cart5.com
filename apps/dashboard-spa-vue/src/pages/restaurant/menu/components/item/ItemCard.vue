@@ -42,7 +42,7 @@ const unlinkItem = () => {
                          style="touch-action: none">
                         <MoveIcon class="cursor-move" />
                     </div>
-                    <h1 class="text-lg font-bold">
+                    <h1 class="text-lg font-bold capitalize">
                         {{ currentItem?.itemLabel }}
                     </h1>
                 </CardTitle>

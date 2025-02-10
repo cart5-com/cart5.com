@@ -19,15 +19,15 @@ const stopWatch = watch([menuRoot], () => {
     debounceTimer = setTimeout(() => {
         saveNow()
     }, 3000)
-}, { deep: true, immediate: true })
+}, { deep: true })
 
 
 onMounted(async () => {
     ignoreAutoSave = true;
     await loadMenu();
-    setTimeout(() => {
-        ignoreAutoSave = false;
-    }, 500)
+    ignoreAutoSave = false;
+    // setTimeout(() => {
+    // }, 500)
 });
 
 onUnmounted(() => {

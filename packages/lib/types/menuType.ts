@@ -8,12 +8,14 @@ export type Item = {
     itemLabel?: string;
     description?: string;
     price?: number;
-
     children?: ItemId[];
-
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;
     minQuantity?: number;
+
+    // TODO:
+    // preSelectedQuantities?: Record<ParentItemId, number>; 
+    // maxQuantityOverrides?: Record<ParentItemId, number>;
     imageUrl?: string;
 }
 

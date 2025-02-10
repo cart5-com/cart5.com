@@ -49,15 +49,16 @@ export function editItem(itemId: ItemId) {
     });
 }
 
-export async function createNewItem(
-    search: string,
+export function createNewItem(
+    search: string | undefined,
     parentItemId: string | undefined,
-    namePrefix: string = "New item",
-    optionalProps: Partial<Item> = {}
+    namePrefix: string | undefined = "New item",
+    optionalProps: Partial<Item> | undefined = {}
 ) {
     const newItem = {
         itemId: `item-${Date.now()}`,
-        itemLabel: search ? search : `${namePrefix} ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`,
+        itemLabel: search ? search :
+            `${namePrefix ?? "New item"} ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`,
         ...optionalProps
     }
     if (!menuRoot.value?.allItems) {
@@ -67,7 +68,7 @@ export async function createNewItem(
     return addChildItem(parentItemId, newItem.itemId);
 }
 
-export async function addChildItem(parentItemId: string | undefined, itemId: string) {
+export function addChildItem(parentItemId: string | undefined, itemId: string) {
     if (parentItemId) {
         if (
             menuRoot.value.allItems &&

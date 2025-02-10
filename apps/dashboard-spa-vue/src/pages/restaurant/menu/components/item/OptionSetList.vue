@@ -43,7 +43,7 @@ const unlink = (index: number) => {
                 class="w-full"
                 v-if="isCollapsed"
                 @click="isCollapsed = false">
-            <ListTodo /> Choices & Addons
+            <ListTodo /> Customizations
         </Button>
         <div v-else
              class="border rounded-lg p-4">
@@ -51,7 +51,7 @@ const unlink = (index: number) => {
             <div class="flex justify-between items-center mb-4 gap-2">
                 <Button variant="ghost"
                         @click="isCollapsed = true">
-                    Choices & Addons
+                    Customizations
                     <ChevronUpSquare />
                 </Button>
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})

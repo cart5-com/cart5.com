@@ -32,7 +32,7 @@ const currentItem = computed(() => {
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="max"
                        class="text-right">
-                    Min Selectable
+                    Minimum
                 </Label>
                 <Input id="min"
                        placeholder="Min"
@@ -47,7 +47,7 @@ const currentItem = computed(() => {
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="max"
                        class="text-right">
-                    Max Selectable
+                    Maximum
                 </Label>
                 <Input id="max"
                        placeholder="Max"

@@ -43,7 +43,7 @@ async function removeCategory() {
         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
             <div class="text-2xl font-bold flex-1">
                 <Input v-model="currentItem.itemLabel"
-                       class="text-2xl font-bold h-10 focus:ring-0 border-none"
+                       class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize"
                        autofocus />
             </div>
             <div class="flex items-center gap-2">

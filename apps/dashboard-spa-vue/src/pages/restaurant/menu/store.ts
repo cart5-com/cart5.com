@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { type MenuRoot } from "lib/types/menuType";
+import { type MenuRoot, type Item } from "lib/types/menuType";
 import { dashboardApiClient } from "@src/lib/dashboardApiClient";
 import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from "@/ui-plus/sonner";
