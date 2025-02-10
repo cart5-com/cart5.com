@@ -26,6 +26,12 @@ const unlink = (index: number) => {
         }
     }
 }
+
+const onClickAddNewOption = (search: string | undefined) => {
+    const childLen = (currentItem?.value?.children || [])?.length;
+    const itemLabel = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
+    createNewItem('option', { itemLabel }, currentItem?.value?.itemId);
+}
 </script>
 
 <template>
@@ -54,9 +60,7 @@ const unlink = (index: number) => {
                               @select="(item) => {
                                 addChildItem(currentItem?.itemId, item.key)
                             }"
-                              @create-new="(search) => {
-                                createNewItem(search, currentItem?.itemId, 'New option')
-                            }"
+                              @create-new="onClickAddNewOption"
                               :has-new-button="true"
                               heading="Link an existing item">
                 <template #trigger>

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import type { Item } from 'lib/types/menuType'
 import { menuRoot } from '../store'
 import { Eye, Pencil, Plus } from 'lucide-vue-next'
-import { createNewItem, editItem, previewItem } from '@src/pages/restaurant/menu/helpers'
+import { createNewItem, editCustomization, editItem, previewItem } from '@src/pages/restaurant/menu/helpers'
 import {
     Table,
     TableBody,
@@ -23,7 +23,7 @@ const filteredItems = computed(() => {
 
     return Object.entries(items)
         // filter root items which are categories
-        .filter(([itemId]) => !menuRoot.value.children?.includes(itemId ?? ''))
+        .filter(([_id, item]) => item.type !== 'category')
         .filter(([id, item]) => {
             const typedItem = item as Item
             return typedItem.itemLabel?.toLowerCase().includes(query) ||
@@ -32,13 +32,27 @@ const filteredItems = computed(() => {
 })
 
 const onClickAddNewItem = () => {
-    const newItemId = createNewItem('', undefined);
+    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
+    const itemLabel = `New item ${existingOnes.length + 1}`;
+    const parentItemId = undefined;
+    const newItemId = createNewItem('item', { itemLabel }, parentItemId);
     setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
     }, 500)
     setTimeout(() => {
         editItem(newItemId)
     }, 500)
+}
+
+const onClickEditItem = (item: Item) => {
+    if (!item.itemId) {
+        return
+    }
+    if (item.type === 'customization') {
+        editCustomization(item.itemId)
+    } else {
+        editItem(item.itemId)
+    }
 }
 </script>
 
@@ -67,12 +81,12 @@ const onClickAddNewItem = () => {
             <TableBody>
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
-                    <TableCell class="capitalize">{{ item.itemLabel }}</TableCell>
-                    <TableCell>${{ item.price?.toFixed(2) }}</TableCell>
+                    <TableCell class="capitalize line-clamp-1">{{ item.itemLabel }}</TableCell>
+                    <TableCell>{{ item.price?.toFixed(2) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"
                                 size="sm"
-                                @click="editItem(itemId)">
+                                @click="onClickEditItem(item)">
                             <Pencil /> Edit
                         </Button>
                         <Button variant="outline"

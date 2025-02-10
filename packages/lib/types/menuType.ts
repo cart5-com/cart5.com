@@ -13,6 +13,7 @@ export type Item = {
     maxQuantity?: number;
     minQuantity?: number;
 
+    type?: 'item' | 'category' | 'customization' | 'option';
     // TODO:
     // preSelectedQuantities?: Record<ParentItemId, number>; 
     // maxQuantityOverrides?: Record<ParentItemId, number>;

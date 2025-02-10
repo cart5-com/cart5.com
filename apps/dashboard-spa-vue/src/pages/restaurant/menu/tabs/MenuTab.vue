@@ -7,6 +7,7 @@ import { Plus } from "lucide-vue-next";
 import draggable from "vuedraggable"
 import CategoryCard from "../components/CategoryCard.vue";
 import { ref } from "vue";
+import { createNewItem } from "../helpers";
 const dialog = useDialog();
 const showCategories = ref(true);
 
@@ -14,20 +15,13 @@ const toggleCategories = () => {
     showCategories.value = !showCategories.value;
 }
 
-
 function addNewCategory() {
     dialog.show<{ name: string }>({
         title: 'Add new category',
         component: CategoryNewForm,
         onSuccess: async (values) => {
-            const newCategoryId = `cat-${Date.now()}`
-            if (menuRoot.value && menuRoot.value.allItems) {
-                menuRoot.value.allItems[newCategoryId] = {
-                    itemId: newCategoryId,
-                    itemLabel: values.name,
-                }
-                menuRoot.value.children?.push(newCategoryId)
-            }
+            const newCategoryId = createNewItem('category', { itemLabel: values.name }, undefined);
+            menuRoot.value.children?.push(newCategoryId)
         }
     });
 }

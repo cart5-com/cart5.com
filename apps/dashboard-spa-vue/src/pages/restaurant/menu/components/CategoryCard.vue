@@ -7,7 +7,7 @@ import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from './ItemCard.vue';
-import { addChildItem, createNewItem } from '@src/pages/restaurant/menu/helpers';
+import { addChildItem, createNewItem, editItem } from '@src/pages/restaurant/menu/helpers';
 
 const props = defineProps<{
     itemId: string
@@ -35,6 +35,16 @@ async function removeCategory() {
     if (menuRoot.value.allItems && currentItem.value.itemId) {
         delete menuRoot.value.allItems[currentItem.value.itemId];
     }
+}
+
+const onClickAddNewItem = (search: string | undefined) => {
+    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
+    const itemLabel = search ? search : `New item ${existingOnes.length + 1}`;
+    const parentItemId = currentItem?.value?.itemId;
+    const newItemId = createNewItem('item', { itemLabel }, parentItemId);
+    setTimeout(() => {
+        editItem(newItemId)
+    }, 500)
 }
 </script>
 <template>
@@ -68,7 +78,7 @@ async function removeCategory() {
             </draggable>
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                    .filter(item => !menuRoot.children?.includes(item.itemId ?? ''))
+                    .filter(item => item.type !== 'category')
                     .map(item => ({
                         key: item.itemId,
                         name: item.itemLabel
@@ -76,7 +86,7 @@ async function removeCategory() {
                                   @select="(selectedItem) => {
                                     addChildItem(currentItem?.itemId, selectedItem.key)
                                 }"
-                                  @create-new="(search) => { createNewItem(search, currentItem?.itemId, 'New category') }"
+                                  @create-new="onClickAddNewItem"
                                   :has-new-button="true"
                                   heading="Link an existing item">
                     <template #trigger>

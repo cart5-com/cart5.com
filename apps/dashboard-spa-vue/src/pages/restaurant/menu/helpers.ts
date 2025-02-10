@@ -50,34 +50,35 @@ export function editItem(itemId: ItemId) {
 }
 
 export function createNewItem(
-    search: string | undefined,
-    parentItemId: string | undefined,
-    namePrefix: string | undefined = "New item",
-    optionalProps: Partial<Item> | undefined = {}
+    type: Item['type'] = 'item',
+    optionalProps: Partial<Item> = {},
+    parentItemId: string | undefined
 ) {
+    optionalProps.type = type;
     const newItem = {
-        itemId: `item-${Date.now()}`,
-        itemLabel: search ? search :
-            `${namePrefix ?? "New item"} ${Object.keys(menuRoot.value?.allItems ?? {}).length + 1}`,
+        itemId: `${type}-${crypto.randomUUID()}`,
         ...optionalProps
     }
     if (!menuRoot.value?.allItems) {
         menuRoot.value.allItems = {}
     }
-    menuRoot.value.allItems[newItem.itemId] = newItem
+    menuRoot.value.allItems[newItem.itemId] = newItem;
     return addChildItem(parentItemId, newItem.itemId);
 }
 
 export function addChildItem(parentItemId: string | undefined, itemId: string) {
-    if (parentItemId) {
-        if (
-            menuRoot.value.allItems &&
-            menuRoot.value.allItems[parentItemId] &&
-            !menuRoot.value.allItems[parentItemId]?.children
-        ) {
-            menuRoot.value.allItems[parentItemId].children = []
-        }
-        menuRoot.value?.allItems?.[parentItemId]?.children?.push(itemId)
+    if (!parentItemId) {
+        return itemId;
     }
+    if (!menuRoot.value?.allItems) {
+        menuRoot.value.allItems = {}
+    }
+    if (
+        menuRoot.value.allItems[parentItemId] &&
+        !menuRoot.value.allItems[parentItemId]?.children
+    ) {
+        menuRoot.value.allItems[parentItemId].children = []
+    }
+    menuRoot.value?.allItems?.[parentItemId]?.children?.push(itemId)
     return itemId;
 }

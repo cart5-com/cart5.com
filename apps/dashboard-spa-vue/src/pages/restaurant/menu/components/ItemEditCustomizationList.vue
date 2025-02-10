@@ -35,6 +35,17 @@ const unlink = (index: number) => {
         }
     }
 }
+
+const onClickAddNewCustomization = (search: string | undefined) => {
+    const childLen = (currentItem?.value?.children || [])?.length;
+    const itemLabel = search ? search.trim() : `Customize ${currentItem?.value?.itemLabel} ` +
+        `${childLen === 0 ? '' : `(${childLen + 1})`}`;
+    const parentItemId = currentItem?.value?.itemId;
+    const newItemId = createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 0 }, parentItemId);
+    setTimeout(() => {
+        editCustomization(newItemId)
+    }, 500)
+}
 </script>
 
 <template>
@@ -55,6 +66,7 @@ const unlink = (index: number) => {
                     <ChevronUpSquare />
                 </Button>
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+                    // .filter(item => item.type !== 'category' && item.type !== 'option' && item.itemId !== currentItem?.itemId)
                     .map(item => ({
                         key: item.itemId,
                         name: item.itemLabel
@@ -62,9 +74,7 @@ const unlink = (index: number) => {
                                   @select="(item) => {
                                     addChildItem(currentItem?.itemId, item.key)
                                 }"
-                                  @create-new="(search) => {
-                                    createNewItem(search, currentItem?.itemId, 'New choice', { maxQuantity: 1 })
-                                }"
+                                  @create-new="onClickAddNewCustomization"
                                   :has-new-button="true"
                                   heading="Link an existing item">
                     <template #trigger>
