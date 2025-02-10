@@ -91,8 +91,6 @@ const checkBucketItem = () => {
                 <summary>bucketItem</summary>
                 <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
             </details>
-        </div>
-        <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
             <NumberField id="quantity"
                          class="w-full"
                          v-model="bucketItem.quantity"
@@ -105,7 +103,7 @@ const checkBucketItem = () => {
                     <NumberFieldIncrement class="hidden sm:block bg-secondary rounded-r-md hover:bg-secondary/60" />
                 </NumberFieldContent>
             </NumberField>
-            <Button class="w-full"
+            <Button class="w-full mt-8"
                     @click="() => {
                         if (checkBucketItem()) {
                             $emit('close', bucketItem)
@@ -117,6 +115,8 @@ const checkBucketItem = () => {
                 (Total: ${{ bucketTotalPrice }})
             </Button>
         </div>
+        <!-- <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
+        </div> -->
 
     </div>
 </template>

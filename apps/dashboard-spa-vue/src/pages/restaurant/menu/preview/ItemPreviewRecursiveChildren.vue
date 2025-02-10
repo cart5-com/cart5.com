@@ -127,7 +127,7 @@ const getPrice = (itemId: ItemId) => {
              class="text-lg font-bold">
             {{ helperText }}
         </div>
-        <div class="text-lg font-bold">
+        <div class="text-lg font-bold capitalize">
             {{ currentItem?.itemLabel }}
         </div>
         <div class="text-xs text-muted-foreground">
@@ -153,7 +153,9 @@ const getPrice = (itemId: ItemId) => {
                         isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                     ]"
                      @click="addQuantity(optionItemId, optionItemIndex)">
-                    {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                    <span class="capitalize">
+                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                    </span>
                     <span v-if="getPrice(optionItemId)">
                         {{ getPrice(optionItemId) }}
                     </span>
@@ -164,7 +166,9 @@ const getPrice = (itemId: ItemId) => {
                      @click="removeQuantity(optionItemId, optionItemIndex)">
                     <span>
                         {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
-                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                        <span class="capitalize">
+                            {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                        </span>
                     </span>
                     <Minus class="border border-foreground rounded-md" />
                 </div>

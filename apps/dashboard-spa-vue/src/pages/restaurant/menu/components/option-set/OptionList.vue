@@ -76,7 +76,8 @@ const unlink = (index: number) => {
                     <div class="flex items-center justify-between bg-muted p-2 rounded-md">
                         <div class="text-sm line-clamp-1 flex-1 mr-2 p-1"
                              v-if="menuRoot.allItems">
-                            <Input v-model="menuRoot.allItems[itemId].itemLabel" />
+                            <Input class="capitalize"
+                                   v-model="menuRoot.allItems[itemId].itemLabel" />
                             <Input type="number"
                                    placeholder="Price - / +"
                                    :model-value="menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]"

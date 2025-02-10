@@ -38,7 +38,9 @@ const search = ref("");
                                              :key="item.key"
                                              :value="item.name + ' ' + item.key"
                                              @select="$emit('select', item)">
-                                    {{ item.name }}
+                                    <span class="capitalize">
+                                        {{ item.name }}
+                                    </span>
                                 </CommandItem>
                             </slot>
                         </PopoverClose>

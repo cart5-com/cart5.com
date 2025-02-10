@@ -20,6 +20,7 @@ const currentItem = computed(() => {
     <div v-if="currentItem">
         <div class="space-y-4">
             <Input placeholder="Item Label"
+                   class="capitalize"
                    v-model="currentItem.itemLabel" />
             <Textarea v-model="currentItem.description"
                       placeholder="Description" />

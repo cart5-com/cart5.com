@@ -81,7 +81,7 @@ const unlink = (index: number) => {
                        class="space-y-2">
                 <template #item="{ element: itemId, index }">
                     <div class="flex items-center justify-between bg-muted p-2 rounded-md">
-                        <span class="text-sm line-clamp-1">
+                        <span class="text-sm line-clamp-1 capitalize">
                             {{ menuRoot.allItems?.[itemId]?.itemLabel }}
                         </span>
                         <div class="flex items-center gap-2">

@@ -27,7 +27,7 @@ const currentItem = computed(() => {
                 <Input id="label"
                        placeholder="Set Label"
                        v-model="currentItem.itemLabel"
-                       class="col-span-3" />
+                       class="col-span-3 capitalize" />
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="max"

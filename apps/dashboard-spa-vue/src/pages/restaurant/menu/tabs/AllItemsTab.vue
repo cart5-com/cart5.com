@@ -21,11 +21,14 @@ const filteredItems = computed(() => {
     const items = menuRoot.value.allItems || {}
     const query = searchQuery.value.toLowerCase()
 
-    return Object.entries(items).filter(([id, item]) => {
-        const typedItem = item as Item
-        return typedItem.itemLabel?.toLowerCase().includes(query) ||
-            id.toLowerCase().includes(query)
-    })
+    return Object.entries(items)
+        // filter root items which are categories
+        .filter(([itemId]) => !menuRoot.value.children?.includes(itemId ?? ''))
+        .filter(([id, item]) => {
+            const typedItem = item as Item
+            return typedItem.itemLabel?.toLowerCase().includes(query) ||
+                id.toLowerCase().includes(query)
+        })
 })
 
 const onClickAddNewItem = () => {
@@ -64,7 +67,7 @@ const onClickAddNewItem = () => {
             <TableBody>
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
-                    <TableCell>{{ item.itemLabel }}</TableCell>
+                    <TableCell class="capitalize">{{ item.itemLabel }}</TableCell>
                     <TableCell>${{ item.price?.toFixed(2) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"

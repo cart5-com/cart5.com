@@ -81,7 +81,7 @@ async function removeCategory() {
                                   heading="Link an existing item">
                     <template #trigger>
                         <Button variant="outline">
-                            <Plus /> Add item to '{{ currentItem?.itemLabel }}'
+                            <Plus /> Add item to '<span class="capitalize">{{ currentItem?.itemLabel }}</span>'
                         </Button>
                     </template>
                 </SelectWithSearch>
