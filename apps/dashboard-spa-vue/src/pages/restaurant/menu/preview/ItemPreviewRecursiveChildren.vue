@@ -132,7 +132,7 @@ const getPrice = (itemId: ItemId) => {
         </div>
         <div class="text-xs text-muted-foreground">
             <span v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
-                Choose {{ currentItem?.minQuantity }}
+                Choose min:{{ currentItem?.minQuantity }}
             </span>
             <span v-if="currentItem?.maxQuantity && currentItem?.maxQuantity > 0">
                 (Up to {{ currentItem?.maxQuantity }})
