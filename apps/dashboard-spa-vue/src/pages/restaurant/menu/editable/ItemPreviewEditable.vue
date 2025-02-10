@@ -2,7 +2,7 @@
 import { menuRoot } from "../store";
 import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
 import { computed, onMounted, ref, watch } from "vue";
-import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
+import ItemPreviewRecursiveChildrenEditable from "./ItemPreviewRecursiveChildrenEditable.vue";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import {
@@ -12,6 +12,9 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { DollarSign } from "lucide-vue-next";
 
 const props = defineProps<{
     itemId?: ItemId
@@ -34,7 +37,7 @@ const randomNumber = crypto.randomUUID()
 
 const bucketTotalPrice = ref("")
 
-watch(bucketItem, () => {
+watch([bucketItem, currentItem], () => {
     bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
 }, { deep: true })
 
@@ -68,23 +71,33 @@ const checkBucketItem = () => {
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="w-full"
+         v-if="currentItem">
         <div class="p-4">
-            <div class="">
-                <div class="text-sm">
-                    Base Price: ${{ currentItem?.price }}
-                </div>
-                <div class="text-lg font-bold text-primary">
-                    Total: ${{ bucketTotalPrice }}
+            <div class="space-y-4">
+                <Input placeholder="Item Label"
+                       class="capitalize"
+                       v-model="currentItem.itemLabel" />
+                <Textarea v-model="currentItem.description"
+                          placeholder="Description" />
+                <div class="w-full items-center relative">
+                    <Input id="price"
+                           type="number"
+                           v-model="currentItem.price"
+                           placeholder="Price"
+                           class="pl-10" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <DollarSign class="size-6 text-muted-foreground" />
+                    </span>
                 </div>
             </div>
             <div :class="`warning-container-${randomNumber}`">
                 <div v-for="(child, index) in currentItem?.children"
                      :key="child">
                     <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
-                    <ItemPreviewRecursiveChildren v-if="bucketItem.childrenState"
-                                                  :itemId="child"
-                                                  v-model="bucketItem.childrenState[index]" />
+                    <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
+                                                          :itemId="child"
+                                                          v-model="bucketItem.childrenState[index]" />
                 </div>
             </div>
             <details>

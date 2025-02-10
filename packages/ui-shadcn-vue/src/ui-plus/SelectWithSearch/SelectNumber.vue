@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEmpty } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
     items: Array<Record<string, any>>;
     searchPlaceholder?: string;
     btnText?: string;
 }>();
 
 const search = ref("");
+
+const addSearchToItems = computed(() => {
+    if (search.value) {
+        return [...props.items, {
+            name: search.value,
+            key: search.value
+        }];
+    } else {
+        return props.items
+    }
+});
 </script>
 
 <template>
@@ -24,32 +35,6 @@ const search = ref("");
             </slot>
         </PopoverTrigger>
         <PopoverContent>
-            <Command v-model:searchTerm="search"
-                     class="border">
-                <CommandInput :placeholder="searchPlaceholder"
-                              type="number" />
-                <CommandList>
-                    <CommandGroup>
-                        <PopoverClose class="w-full">
-                            <slot name="items-list"
-                                  :items="items"
-                                  :emit="$emit">
-                                <CommandItem v-for="item in items"
-                                             :key="item.key"
-                                             :value="item.name + ' ' + item.key"
-                                             @select="$emit('select', item)">
-                                    {{ item.name }}
-                                </CommandItem>
-                                <CommandItem v-if="search.length > 0"
-                                             :value="search"
-                                             @select="$emit('select', { name: search, key: search })">
-                                    {{ search }}
-                                </CommandItem>
-                            </slot>
-                        </PopoverClose>
-                    </CommandGroup>
-                </CommandList>
-            </Command>
             <slot name="new-button"
                   :search="search">
                 <PopoverClose class="w-full">
@@ -60,6 +45,27 @@ const search = ref("");
                     </Button>
                 </PopoverClose>
             </slot>
+            <Command v-model:searchTerm="search"
+                     class="border">
+                <CommandInput :placeholder="searchPlaceholder"
+                              type="number" />
+                <CommandList>
+                    <CommandGroup>
+                        <PopoverClose class="w-full">
+                            <slot name="items-list"
+                                  :items="items"
+                                  :emit="$emit">
+                                <CommandItem v-for="item in addSearchToItems"
+                                             :key="item.key"
+                                             :value="item.name + ' ' + item.key"
+                                             @select="$emit('select', item)">
+                                    {{ item.name }}
+                                </CommandItem>
+                            </slot>
+                        </PopoverClose>
+                    </CommandGroup>
+                </CommandList>
+            </Command>
         </PopoverContent>
     </Popover>
 </template>
