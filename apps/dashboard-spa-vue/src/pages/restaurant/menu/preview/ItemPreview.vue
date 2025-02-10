@@ -12,6 +12,9 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { DollarSign } from "lucide-vue-next";
 
 const props = defineProps<{
     itemId?: ItemId
@@ -34,7 +37,7 @@ const randomNumber = crypto.randomUUID()
 
 const bucketTotalPrice = ref("")
 
-watch(bucketItem, () => {
+watch([bucketItem, currentItem], () => {
     bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
 }, { deep: true })
 
@@ -68,14 +71,24 @@ const checkBucketItem = () => {
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="w-full"
+         v-if="currentItem">
         <div class="p-4">
-            <div class="">
-                <div class="text-sm">
-                    Base Price: ${{ currentItem?.price }}
-                </div>
-                <div class="text-lg font-bold text-primary">
-                    Total: ${{ bucketTotalPrice }}
+            <div class="space-y-4">
+                <Input placeholder="Item Label"
+                       class="capitalize"
+                       v-model="currentItem.itemLabel" />
+                <Textarea v-model="currentItem.description"
+                          placeholder="Description" />
+                <div class="relative w-full max-w-sm items-center">
+                    <Input id="price"
+                           type="number"
+                           v-model="currentItem.price"
+                           placeholder="Price"
+                           class="pl-10" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <DollarSign class="size-6 text-muted-foreground" />
+                    </span>
                 </div>
             </div>
             <div :class="`warning-container-${randomNumber}`">

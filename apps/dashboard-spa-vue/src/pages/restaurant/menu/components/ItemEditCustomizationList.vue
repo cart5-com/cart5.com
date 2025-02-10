@@ -86,7 +86,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
             </div>
             <draggable v-model="currentItem.children"
                        item-key="itemId"
-                       group="option-items"
+                       group="customization-items"
                        handle=".option-drag-handle"
                        class="space-y-2">
                 <template #item="{ element: itemId, index }">
