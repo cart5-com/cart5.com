@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { type ItemId } from 'lib/types/menuType';
 import { computed } from 'vue';
-import { menuRoot } from '../../store';
+import { menuRoot } from '../store';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import OptionList from './OptionList.vue';
+import CustomizationOptionList from './CustomizationOptionList.vue';
 
 const props = defineProps<{
     itemId: ItemId
@@ -60,6 +60,6 @@ const currentItem = computed(() => {
                 </span>
             </div>
         </div>
-        <OptionList :item-id="props.itemId" />
+        <CustomizationOptionList :item-id="props.itemId" />
     </div>
 </template>

@@ -6,7 +6,7 @@ import { AlignJustify, ChevronUpSquare, Link2Off, ListTodo, Pencil, Plus } from 
 import { computed, onMounted, ref } from "vue";
 import draggable from "vuedraggable";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
-import { addChildItem, createNewItem, editOptionSet } from "../../helpers";
+import { addChildItem, createNewItem, editCustomization } from "../helpers";
 
 const props = defineProps<{
     itemId: ItemId
@@ -87,7 +87,7 @@ const unlink = (index: number) => {
                         <div class="flex items-center gap-2">
                             <Button variant="ghost"
                                     @click="() => {
-                                        editOptionSet(itemId)
+                                        editCustomization(itemId)
                                     }"
                                     size="sm">
                                 <Pencil class="w-4 h-4" />

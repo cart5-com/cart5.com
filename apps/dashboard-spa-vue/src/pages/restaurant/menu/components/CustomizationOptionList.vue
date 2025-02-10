@@ -6,7 +6,7 @@ import { AlignJustify, Link2Off, Plus } from "lucide-vue-next";
 import { computed } from "vue";
 import draggable from "vuedraggable";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
-import { addChildItem, createNewItem } from "../../helpers";
+import { addChildItem, createNewItem } from "../helpers";
 import { Input } from "@/components/ui/input";
 
 const props = defineProps<{
@@ -100,7 +100,7 @@ const unlink = (index: number) => {
                             <div class="flex flex-col">
                                 <!-- <Button variant="ghost"
                                     @click="() => {
-                                        // editOptionSet(itemId)
+                                        // editCustomization(itemId)
                                     }"
                                     size="sm">
                                 <Pencil class="w-4 h-4" />

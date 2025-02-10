@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { menuRoot } from "../../store";
+import { menuRoot } from "../store";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { computed } from "vue";
-import { editItem, previewItem } from "../../helpers";
+import { editItem, previewItem } from "../helpers";
 
 const props = defineProps<{
     itemId: string,

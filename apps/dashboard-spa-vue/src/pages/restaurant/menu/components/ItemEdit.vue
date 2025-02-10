@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { menuRoot } from "../../store";
+import { menuRoot } from "../store";
 import { type ItemId } from "lib/types/menuType";
 import { computed } from "vue";
-import OptionSetList from "./OptionSetList.vue";
+import CustomizationList from "./CustomizationList.vue";
 
 const props = defineProps<{
     itemId: ItemId
@@ -27,7 +27,7 @@ const currentItem = computed(() => {
             <Input type="number"
                    v-model="currentItem.price"
                    placeholder="Price" />
-            <OptionSetList :item-id="props.itemId" />
+            <CustomizationList :item-id="props.itemId" />
         </div>
         <details>
             <summary>currentItem</summary>

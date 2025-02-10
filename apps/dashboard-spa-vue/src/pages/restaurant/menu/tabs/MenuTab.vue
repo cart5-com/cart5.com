@@ -2,10 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { menuRoot } from "../store";
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import CategoryNewForm from '../components/category/CategoryNewForm.vue';
+import CategoryNewForm from '../components/CategoryNewForm.vue';
 import { Plus } from "lucide-vue-next";
 import draggable from "vuedraggable"
-import CategoryCard from "../components/category/CategoryCard.vue";
+import CategoryCard from "../components/CategoryCard.vue";
 import { ref } from "vue";
 const dialog = useDialog();
 const showCategories = ref(true);

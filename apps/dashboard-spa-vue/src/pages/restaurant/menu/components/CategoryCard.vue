@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { menuRoot } from '../../store';
+import { menuRoot } from '../store';
 import { AlignJustify, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
-import ItemCard from '../item/ItemCard.vue';
+import ItemCard from './ItemCard.vue';
 import { addChildItem, createNewItem } from '@src/pages/restaurant/menu/helpers';
 
 const props = defineProps<{

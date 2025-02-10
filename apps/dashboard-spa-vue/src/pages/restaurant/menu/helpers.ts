@@ -1,9 +1,9 @@
 import { Item, type BucketItem, type ItemId } from 'lib/types/menuType';
 import ItemPreview from './preview/ItemPreview.vue';
-import ItemEdit from './components/item/ItemEdit.vue';
+import ItemEdit from './components/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { menuRoot } from './store';
-import OptionSetEdit from './components/option-set/OptionSetEdit.vue';
+import CustomizationEdit from './components/CustomizationEdit.vue';
 const dialog = useDialog();
 
 
@@ -23,10 +23,10 @@ export function previewItem(itemId: ItemId) {
     });
 }
 
-export function editOptionSet(itemId: ItemId) {
+export function editCustomization(itemId: ItemId) {
     dialog.show<BucketItem>({
-        title: "Edit Option Set",
-        component: OptionSetEdit,
+        title: "Edit Customization",
+        component: CustomizationEdit,
         dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
