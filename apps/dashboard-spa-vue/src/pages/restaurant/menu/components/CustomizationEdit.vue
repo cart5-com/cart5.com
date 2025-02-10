@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import { menuRoot } from '../store';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import CustomizationOptionList from './CustomizationOptionList.vue';
+import CustomizationEditOptionList from './CustomizationEditOptionList.vue';
 
 const props = defineProps<{
     itemId: ItemId
@@ -60,6 +60,6 @@ const currentItem = computed(() => {
                 </span>
             </div>
         </div>
-        <CustomizationOptionList :item-id="props.itemId" />
+        <CustomizationEditOptionList :item-id="props.itemId" />
     </div>
 </template>
