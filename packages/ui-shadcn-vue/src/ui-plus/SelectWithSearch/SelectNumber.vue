@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { ref } from "vue";
 
 defineProps<{
     items: Array<Record<string, any>>;
-    hasNewButton?: boolean;
-    heading?: string;
+    searchPlaceholder?: string;
+    btnText?: string;
 }>();
 
 const search = ref("");
@@ -26,10 +26,10 @@ const search = ref("");
         <PopoverContent>
             <Command v-model:searchTerm="search"
                      class="border">
-                <CommandInput placeholder="Search" />
-                <CommandEmpty>not found</CommandEmpty>
+                <CommandInput :placeholder="searchPlaceholder"
+                              type="number" />
                 <CommandList>
-                    <CommandGroup :heading="heading">
+                    <CommandGroup>
                         <PopoverClose class="w-full">
                             <slot name="items-list"
                                   :items="items"
@@ -38,9 +38,12 @@ const search = ref("");
                                              :key="item.key"
                                              :value="item.name + ' ' + item.key"
                                              @select="$emit('select', item)">
-                                    <span class="capitalize">
-                                        {{ item.name }}
-                                    </span>
+                                    {{ item.name }}
+                                </CommandItem>
+                                <CommandItem v-if="search.length > 0"
+                                             :value="search"
+                                             @select="$emit('select', { name: search, key: search })">
+                                    {{ search }}
                                 </CommandItem>
                             </slot>
                         </PopoverClose>
@@ -49,12 +52,11 @@ const search = ref("");
             </Command>
             <slot name="new-button"
                   :search="search">
-                <PopoverClose class="w-full"
-                              v-if="hasNewButton">
+                <PopoverClose class="w-full">
                     <Button variant="outline"
                             class="w-full"
-                            @click="$emit('create-new', search ? search.toString().trim() : undefined)">
-                        Create New
+                            @click="$emit('select', { name: btnText, key: 0 })">
+                        {{ btnText }}
                     </Button>
                 </PopoverClose>
             </slot>
