@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal, Pencil } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
@@ -63,7 +63,7 @@ const isMinQuantityAdded = () => {
 //         }
 //     }
 // }
-
+const showReorder = ref(false)
 </script>
 
 <template>
@@ -71,7 +71,7 @@ const isMinQuantityAdded = () => {
          v-if="currentItem">
 
         <div class="flex justify-between items-center mb-2">
-            <AlignJustify v-if="isDraggable"
+            <AlignJustify v-if="isDraggable && showReorder"
                           class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
             <span v-else />
             <DropdownMenu>
@@ -81,16 +81,21 @@ const isMinQuantityAdded = () => {
                 <DropdownMenuContent align="end"
                                      class="">
 
+                    <DropdownMenuItem @click="showReorder = !showReorder">
+                        <AlignJustify /> Reordering {{ showReorder ? 'Off' : 'On' }}
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem @click="previewItem(parentItemId!)"
+                                      v-if="!isDraggable">
+                        <Pencil /> Edit
+                    </DropdownMenuItem>
+
                     <!-- v-if="isDraggable" -->
                     <DropdownMenuItem @click="$emit('unlink')">
                         <Link2Off />
                         Unlink '{{ currentItem?.itemLabel }}' from
                         '{{ menuRoot.allItems?.[parentItemId!]?.itemLabel }}'
 
-                    </DropdownMenuItem>
-                    <DropdownMenuItem @click="previewItem(parentItemId!)"
-                                      v-if="!isDraggable">
-                        <Pencil /> Edit
                     </DropdownMenuItem>
 
                 </DropdownMenuContent>

@@ -183,7 +183,7 @@ const showReorder = ref(false)
                                                      class="">
 
                                     <DropdownMenuItem @click="showReorder = !showReorder">
-                                        <ArrowDownUp /> Reorder {{ showReorder ? 'Off' : 'On' }}
+                                        <ArrowDownUp /> Reordering {{ showReorder ? 'Off' : 'On' }}
                                     </DropdownMenuItem>
 
                                     <DropdownMenuItem @click="previewItem(optionItemId)">
