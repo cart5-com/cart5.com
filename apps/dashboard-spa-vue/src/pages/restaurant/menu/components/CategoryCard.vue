@@ -54,8 +54,8 @@ const onClickAddNewItem = (search: string | undefined) => {
             <div class="text-2xl font-bold flex-1">
                 <InputInline v-model="currentItem.itemLabel">
                     <template #trigger>
-                        <span class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize">
-                            {{ currentItem.itemLabel || '---' }}
+                        <span class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize cursor-text">
+                            {{ currentItem.itemLabel || 'Name:' }}
                         </span>
                     </template>
                 </InputInline>

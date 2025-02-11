@@ -125,11 +125,12 @@ const updateNestedOptionGroup = (
 <template>
     <div class="border rounded-md p-4 my-20 border-card-foreground"
          v-if="currentItem">
-        <span v-if="!isMinQuantityAdded()"
-              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning">
+        <div v-if="!isMinQuantityAdded()"
+             class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2">
             {{ currentItem?.minQuantity }}
             Selection Required
-        </span>
+        </div>
+
         <div v-if="helperText"
              class="text-lg font-bold">
             {{ helperText }}
@@ -163,7 +164,7 @@ const updateNestedOptionGroup = (
             }))"
                           placeholder="Force maximum"
                           type="number"
-                          min="1"
+                          :min="1"
                           btn-text="Make Unlimited"
                           @select="(value) => {
                             if (currentItem) {
@@ -196,7 +197,7 @@ const updateNestedOptionGroup = (
                                  v-model="menuRoot.allItems[optionItemId].itemLabel">
                         <template #trigger>
                             <span class="capitalize cursor-text col-span-4">
-                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel || '----' }}
+                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
                             </span>
                         </template>
                     </InputInline>

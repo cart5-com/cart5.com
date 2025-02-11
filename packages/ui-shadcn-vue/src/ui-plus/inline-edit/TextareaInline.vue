@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from 'vue'
 import { useVModel } from '@vueuse/core'
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const props = defineProps<{
   defaultValue?: string | number
@@ -31,9 +31,9 @@ const modelValue = useVModel(props, 'modelValue', emits, {
     </PopoverTrigger>
     <PopoverContent class="p-1"
                     align="start">
-      <Input v-model="modelValue"
-             v-bind="$attrs"
-             :class="props.class" />
+      <Textarea v-model="modelValue"
+                v-bind="$attrs"
+                :class="props.class" />
     </PopoverContent>
   </Popover>
 </template>

@@ -12,9 +12,9 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { DollarSign } from "lucide-vue-next";
+import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
+import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
 
 const props = defineProps<{
     itemId?: ItemId
@@ -75,21 +75,31 @@ const checkBucketItem = () => {
          v-if="currentItem">
         <div class="p-4">
             <div class="space-y-4">
-                <Input placeholder="Item Label"
-                       class="capitalize"
-                       v-model="currentItem.itemLabel" />
-                <Textarea v-model="currentItem.description"
-                          placeholder="Description" />
-                <div class="w-full items-center relative">
-                    <Input id="price"
-                           type="number"
-                           v-model="currentItem.price"
-                           placeholder="Price"
-                           class="pl-10" />
-                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                        <DollarSign class="size-6 text-muted-foreground" />
-                    </span>
-                </div>
+                <InputInline v-model="currentItem.itemLabel">
+                    <template #trigger>
+                        <span class="capitalize cursor-text text-2xl font-bold">
+                            {{ currentItem.itemLabel || 'Label:' }}
+                        </span>
+                    </template>
+                </InputInline>
+                <TextareaInline v-model="currentItem.description">
+                    <template #trigger>
+                        <span class="capitalize cursor-text line-clamp-3">
+                            {{ currentItem.description || 'Description:' }}
+                        </span>
+                    </template>
+                </TextareaInline>
+
+
+                <InputInline type="number"
+                             v-model="currentItem.price">
+                    <template #trigger>
+                        <div class="cursor-text flex">
+                            <DollarSign /> {{ currentItem.price || 'Price:' }}
+                        </div>
+                    </template>
+                </InputInline>
+
             </div>
             <div :class="`warning-container-${randomNumber}`">
                 <div v-for="(child, index) in currentItem?.children"
