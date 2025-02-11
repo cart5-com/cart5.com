@@ -81,8 +81,8 @@ const isMinQuantityAdded = () => {
                 <DropdownMenuContent align="end"
                                      class="">
 
-                    <DropdownMenuItem @click="$emit('unlink')"
-                                      v-if="isDraggable">
+                    <!-- v-if="isDraggable" -->
+                    <DropdownMenuItem @click="$emit('unlink')">
                         <Link2Off />
                         Unlink '{{ currentItem?.itemLabel }}' from
                         '{{ menuRoot.allItems?.[parentItemId!]?.itemLabel }}'

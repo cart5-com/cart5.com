@@ -211,7 +211,7 @@ const checkBucketItem = () => {
                 <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
             </details> -->
             <NumberField id="quantity"
-                         class="w-full mt-8"
+                         class="max-w-40 mt-8"
                          v-model="bucketItem.quantity"
                          :default-value="1"
                          :step="1"
