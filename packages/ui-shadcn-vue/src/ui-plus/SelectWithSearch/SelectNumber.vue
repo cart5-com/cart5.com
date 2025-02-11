@@ -7,14 +7,18 @@ import { computed, ref } from "vue";
 
 const props = defineProps<{
     items: Array<Record<string, any>>;
-    searchPlaceholder?: string;
     btnText?: string;
+    min?: number;
 }>();
 
 const search = ref("");
 
 const addSearchToItems = computed(() => {
-    if (search.value && props.items.filter(item => item.name === search.value).length === 0) {
+    if (
+        search.value &&
+        props.items.filter(item => item.name === search.value).length === 0 &&
+        Number(search.value) >= Number(props.min)
+    ) {
         return [...props.items, {
             name: search.value,
             key: search.value
@@ -47,8 +51,7 @@ const addSearchToItems = computed(() => {
             </slot>
             <Command v-model:searchTerm="search"
                      class="border">
-                <CommandInput :placeholder="searchPlaceholder"
-                              type="number"
+                <CommandInput v-bind="$attrs"
                               @enter="$emit('select', { name: search, key: search })" />
                 <CommandList>
                     <CommandGroup>

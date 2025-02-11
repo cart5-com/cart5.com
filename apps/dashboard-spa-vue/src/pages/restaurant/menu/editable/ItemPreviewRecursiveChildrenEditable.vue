@@ -141,7 +141,9 @@ const updateNestedOptionGroup = (
                 key: i + 1,
                 name: String(i + 1)
             }))"
-                          :search-placeholder="`Force minimum`"
+                          placeholder="Force minimum"
+                          type="number"
+                          :min="1"
                           btn-text="Make Optional"
                           @select="(value) => {
                             if (currentItem) {
@@ -159,7 +161,9 @@ const updateNestedOptionGroup = (
                 key: i + 1,
                 name: String(i + 1)
             }))"
-                          :search-placeholder="`Force maximum`"
+                          placeholder="Force maximum"
+                          type="number"
+                          min="1"
                           btn-text="Make Unlimited"
                           @select="(value) => {
                             if (currentItem) {
