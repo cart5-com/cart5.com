@@ -186,6 +186,7 @@ const checkBucketItem = () => {
                                    class="space-y-2">
                             <template #item="{ element: child, index }">
                                 <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
+                                                                      :parent-item-id="currentItem?.itemId"
                                                                       :itemId="child"
                                                                       @unlink="() => {
                                                                         unlink(index)

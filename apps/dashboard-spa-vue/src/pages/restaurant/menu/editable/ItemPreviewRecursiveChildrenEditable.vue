@@ -3,19 +3,21 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal } from 'lucide-vue-next';
+import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal, Pencil } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import RepeatEditable from './RepeatEditable.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { previewItem } from '@src/pages/restaurant/menu/helpers';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
     itemId?: ItemId
     helperText?: string
     isDraggable?: boolean
+    parentItemId?: ItemId
 }>()
 
 const emits = defineEmits<{
@@ -68,20 +70,27 @@ const isMinQuantityAdded = () => {
     <div class="border rounded-md p-4 my-6 border-card-foreground"
          v-if="currentItem">
 
-        <div v-if="isDraggable"
-             class="flex justify-between items-center mb-2">
-            <AlignJustify class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+        <div class="flex justify-between items-center mb-2">
+            <AlignJustify v-if="isDraggable"
+                          class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+            <span v-else />
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
                     <MoreHorizontal class="cursor-pointer" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start"
+                <DropdownMenuContent align="end"
                                      class="">
 
                     <DropdownMenuItem @click="$emit('unlink')"
-                                      class="">
+                                      v-if="isDraggable">
                         <Link2Off />
-                        Unlink
+                        Unlink '{{ currentItem?.itemLabel }}' from
+                        '{{ menuRoot.allItems?.[parentItemId!]?.itemLabel }}'
+
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="previewItem(parentItemId!)"
+                                      v-if="!isDraggable">
+                        <Pencil /> Edit
                     </DropdownMenuItem>
 
                 </DropdownMenuContent>

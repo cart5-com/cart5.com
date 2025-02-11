@@ -71,6 +71,8 @@ function unlink(optionItemId: ItemId, index: number) {
                                                                   :helper-text="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 1 ?
                                                                     `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
                                                                     menuRoot.allItems?.[optionItemId]?.itemLabel"
+                                                                  :parent-item-id="optionItemId"
+                                                                  :is-draggable="false"
                                                                   @unlink="() => {
                                                                     unlink(optionItemId, index)
                                                                 }" />
