@@ -168,7 +168,7 @@ const showReorder = ref(false)
                    handle=".option-drag-handle">
             <template #item="{ element: optionItemId, index: optionItemIndex }">
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-10 gap-2"
+                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-10 gap-1"
                          :class="[
                             isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                         ]">
@@ -236,15 +236,25 @@ const showReorder = ref(false)
                         <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
                               @click="addQuantity(optionItemId, optionItemIndex)" />
                     </div>
-                    <div class="flex justify-between items-center border p-2 bg-card hover:bg-background text-sm font-bold"
+                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-10 gap-1"
                          v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
-                        <span>
+                        <div>
                             {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
-                            <span class="capitalize">
-                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                            </span>
-                        </span>
-                        <Minus class="border border-foreground rounded-md cursor-pointer"
+                        </div>
+                        <div class="col-span-7 capitalize line-clamp-1">
+                            {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                        </div>
+                        <div v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
+                            ${{
+                                (
+                                    (menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!])
+                                    *
+                                    (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                ).toFixed(2)
+                            }}
+                        </div>
+                        <div v-else></div>
+                        <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
                                @click="removeQuantity(optionItemId, optionItemIndex)" />
                     </div>
                 </div>
