@@ -15,6 +15,7 @@ const props = defineProps<{
     modelValue?: BucketChildrenState
     itemId?: ItemId
     helperText?: string
+    isDraggable?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -116,9 +117,19 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
 </script>
 
 <template>
-    <div class="border rounded-md p-4 my-20 border-card-foreground"
+    <div class="border rounded-md p-4 my-6 border-card-foreground"
          v-if="currentItem">
-        <AlignJustify class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+
+        <div v-if="isDraggable"
+             class="flex justify-between items-center mb-2">
+            <AlignJustify class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+            <Button variant="destructive"
+                    @click="$emit('unlink')"
+                    size="sm">
+                <Link2Off /> Unlink
+            </Button>
+        </div>
+
         <div v-if="!isMinQuantityAdded()"
              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2">
             {{ currentItem?.minQuantity }}
@@ -130,16 +141,14 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
             {{ helperText }}
         </div>
 
-        <div class="flex items-center gap-2">
-            <Input class="text-lg font-bold capitalize"
-                   v-model="currentItem.itemLabel" />
+        <InputInline v-model="currentItem.itemLabel">
+            <template #trigger>
+                <span class="capitalize cursor-text text-lg font-bold">
+                    {{ currentItem?.itemLabel || 'Name:' }}
+                </span>
+            </template>
+        </InputInline>
 
-            <Button variant="destructive"
-                    @click="$emit('unlink')"
-                    size="sm">
-                <Link2Off />
-            </Button>
-        </div>
 
 
         <div class="text-xs flex flex-col gap-2 items-start my-2">

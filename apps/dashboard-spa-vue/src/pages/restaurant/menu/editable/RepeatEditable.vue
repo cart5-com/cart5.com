@@ -44,6 +44,15 @@ const updateNestedOptionGroup = (
     }
 }
 
+function unlink(optionItemId: ItemId, index: number) {
+    if (menuRoot.value.allItems?.[optionItemId]?.children) {
+        menuRoot.value.allItems?.[optionItemId]?.children.splice(index, 1)
+        if (menuRoot.value.allItems?.[optionItemId]?.children.length === 0) {
+            menuRoot.value.allItems[optionItemId].children = undefined
+        }
+    }
+}
+
 </script>
 <template>
     <div v-if="currentItem?.children"
@@ -63,14 +72,7 @@ const updateNestedOptionGroup = (
                                                                     `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
                                                                     menuRoot.allItems?.[optionItemId]?.itemLabel"
                                                                   @unlink="() => {
-
-                                                                    if (menuRoot.allItems?.[optionItemId]?.children) {
-                                                                        menuRoot.allItems?.[optionItemId]?.children.splice(index, 1)
-                                                                        if (menuRoot.allItems?.[optionItemId]?.children.length === 0) {
-                                                                            menuRoot.allItems[optionItemId].children = undefined
-                                                                        }
-                                                                    }
-
+                                                                    unlink(optionItemId, index)
                                                                 }" />
                         </div>
                     </div>

@@ -38,6 +38,16 @@ const bucketItem = ref<BucketItem>({
 
 const isCollapsed = ref(false);
 
+onMounted(() => {
+    setTimeout(() => {
+        if (currentItem.value?.children) {
+            isCollapsed.value = currentItem.value?.children?.length === 0
+        } else {
+            isCollapsed.value = true;
+        }
+    })
+})
+
 const unlink = (index: number) => {
     if (currentItem.value?.children) {
         currentItem.value.children.splice(index, 1)
@@ -101,14 +111,18 @@ const checkBucketItem = () => {
          v-if="currentItem">
         <div class="p-4">
             <div class="space-y-4">
-                <InputInline v-model="currentItem.itemLabel">
+
+                <InputInline v-model="currentItem.itemLabel"
+                             placeholder="Name:">
                     <template #trigger>
                         <span class="capitalize cursor-text text-2xl font-bold">
-                            {{ currentItem.itemLabel || 'Label:' }}
+                            {{ currentItem.itemLabel || 'Name:' }}
                         </span>
                     </template>
                 </InputInline>
-                <TextareaInline v-model="currentItem.description">
+
+                <TextareaInline v-model="currentItem.description"
+                                placeholder="Description">
                     <template #trigger>
                         <span class="capitalize cursor-text line-clamp-3">
                             {{ currentItem.description || 'Description:' }}
@@ -118,6 +132,7 @@ const checkBucketItem = () => {
 
 
                 <InputInline type="number"
+                             placeholder="Price: $"
                              v-model="currentItem.price">
                     <template #trigger>
                         <div class="cursor-text flex">
@@ -127,7 +142,8 @@ const checkBucketItem = () => {
                 </InputInline>
 
             </div>
-            <div :class="`warning-container-${randomNumber}`">
+            <div :class="`warning-container-${randomNumber}`"
+                 class="mt-8">
                 <div v-if="currentItem">
                     <Button variant="outline"
                             class="w-full"
@@ -174,6 +190,7 @@ const checkBucketItem = () => {
                                                                       @unlink="() => {
                                                                         unlink(index)
                                                                     }"
+                                                                      :is-draggable="true"
                                                                       v-model="bucketItem.childrenState[index]" />
                             </template>
                         </draggable>
@@ -188,12 +205,12 @@ const checkBucketItem = () => {
                                                           v-model="bucketItem.childrenState[index]" />
                 </div> -->
             </div>
-            <details>
+            <!-- <details>
                 <summary>bucketItem</summary>
                 <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
-            </details>
+            </details> -->
             <NumberField id="quantity"
-                         class="w-full"
+                         class="w-full mt-8"
                          v-model="bucketItem.quantity"
                          :default-value="1"
                          :step="1"
@@ -216,8 +233,9 @@ const checkBucketItem = () => {
                 (Total: ${{ bucketTotalPrice }})
             </Button>
         </div>
-        <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
-            (Total: ${{ bucketTotalPrice }})
+        <div
+             class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center text-xs">
+            Total: ${{ bucketTotalPrice }}
         </div>
 
     </div>
