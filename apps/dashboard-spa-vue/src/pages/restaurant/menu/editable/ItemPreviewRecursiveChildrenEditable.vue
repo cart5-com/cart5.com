@@ -3,13 +3,13 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { AlignJustify, CornerDownRight, Link2Off } from 'lucide-vue-next';
+import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
-import { Button } from '@/components/ui/button';
 import RepeatEditable from './RepeatEditable.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -71,11 +71,21 @@ const isMinQuantityAdded = () => {
         <div v-if="isDraggable"
              class="flex justify-between items-center mb-2">
             <AlignJustify class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
-            <Button variant="destructive"
-                    @click="$emit('unlink')"
-                    size="sm">
-                <Link2Off /> Unlink
-            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                    <MoreHorizontal class="cursor-pointer" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start"
+                                     class="">
+
+                    <DropdownMenuItem @click="$emit('unlink')"
+                                      class="">
+                        <Link2Off />
+                        Unlink
+                    </DropdownMenuItem>
+
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
 
         <div v-if="!isMinQuantityAdded()"
@@ -150,6 +160,7 @@ const isMinQuantityAdded = () => {
         </div> -->
 
         <ItemPreviewCustomizationOptions v-model="modelValue"
+                                         :is-draggable="isDraggable"
                                          :item-id="itemId" />
 
         <RepeatEditable v-model="modelValue"

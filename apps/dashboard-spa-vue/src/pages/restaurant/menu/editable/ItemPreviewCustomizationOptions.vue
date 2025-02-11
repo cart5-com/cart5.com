@@ -3,13 +3,19 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { AlignJustify, Link2Off, Minus, Plus } from 'lucide-vue-next';
+import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
-import { addChildItem, createNewItem } from '@src/pages/restaurant/menu/helpers';
+import { addChildItem, createNewItem, previewItem } from '@src/pages/restaurant/menu/helpers';
 import { Label } from '@/components/ui/label';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -164,16 +170,32 @@ const unlink = (index: number) => {
                          :class="[
                             isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                         ]">
-                        <AlignJustify class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
-                        <Button variant="destructive"
-                                @click="unlink(optionItemIndex)"
-                                size="sm">
-                            <Link2Off />
-                        </Button>
+                        <div class="flex flex-col gap-2">
+                            <AlignJustify class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <MoreHorizontal class="cursor-pointer" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start"
+                                                     class="">
+
+                                    <DropdownMenuItem @click="previewItem(optionItemId)">
+                                        <Pencil /> Edit
+                                    </DropdownMenuItem>
+
+                                    <DropdownMenuItem @click="unlink(optionItemIndex)"
+                                                      class="">
+                                        <Link2Off />
+                                        Unlink
+                                    </DropdownMenuItem>
+
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                         <InputInline v-if="menuRoot.allItems"
                                      v-model="menuRoot.allItems[optionItemId].itemLabel">
                             <template #trigger>
-                                <span class="capitalize cursor-text col-span-6">
+                                <span class="capitalize cursor-text col-span-7">
                                     {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
                                 </span>
                             </template>
