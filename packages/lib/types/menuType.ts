@@ -94,6 +94,9 @@ export const calculateBucketItemPrice = (bucketItem: BucketItem, menuRoot: MenuR
             total += recursiveBucketChildrenState(optionSetState, menuRoot)
         }
     }
+    if (total < 0) {
+        total = 0;
+    }
     return (total * (bucketItem.quantity || 1)).toFixed(2);
 }
 

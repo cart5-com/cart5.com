@@ -3,13 +3,12 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed, ref } from 'vue';
-import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp } from 'lucide-vue-next';
+import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import { addChildItem, createNewItem, previewItem } from '@src/pages/restaurant/menu/helpers';
-import { Label } from '@/components/ui/label';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -56,6 +55,13 @@ const isMaxQuantity = () => {
     return false;
 }
 
+const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
+    if (modelValue.value?.childrenState) {
+        modelValue.value.childrenState = []
+    }
+    addQuantity(childId, childIndex)
+}
+
 const addQuantity = (childId: ItemId, childIndex: number) => {
     if (isMaxQuantity()) {
         return;
@@ -90,6 +96,9 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
     if (modelValue.value?.childrenState) {
         if (modelValue.value.childrenState[childIndex].quantity) {
             modelValue.value.childrenState[childIndex].quantity--;
+            if (modelValue.value.childrenState[childIndex].quantity < 1) {
+                modelValue.value.childrenState[childIndex].quantity = 0;
+            }
         }
         if (hasLinkedOptions) {
             if (modelValue.value.childrenState[childIndex].childrenState) {
@@ -120,45 +129,19 @@ const unlink = (index: number) => {
 }
 
 const showReorder = ref(false)
+
+
+const isRadioMode = computed(() => {
+    return currentItem.value?.maxQuantity === 1 && currentItem.value?.minQuantity === 1
+})
+
 </script>
 
 <template>
     <div v-if="currentItem?.children"
          class="text-sm">
 
-        <div class="flex justify-between items-center mb-4 gap-2">
-            <Label>
-                Available Options
-            </Label>
-            <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                .filter(item => {
-                    // itself not allowed
-                    if (currentItem?.itemId === item.itemId) {
-                        return false
-                    }
-                    // parent is not allowed
-                    if (item.children?.includes(currentItem?.itemId ?? '')) {
-                        return false
-                    }
-                    return true
-                })
-                .map(item => ({
-                    key: item.itemId,
-                    name: item.itemLabel
-                }))"
-                              @select="(item) => {
-                                addChildItem(currentItem?.itemId, item.key)
-                            }"
-                              @create-new="onClickAddNewOption"
-                              :has-new-button="true"
-                              heading="Link an existing item">
-                <template #trigger>
-                    <Button variant="outline">
-                        <Plus />
-                    </Button>
-                </template>
-            </SelectWithSearch>
-        </div>
+
 
         <!-- <div v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"> -->
@@ -168,11 +151,11 @@ const showReorder = ref(false)
                    handle=".option-drag-handle">
             <template #item="{ element: optionItemId, index: optionItemIndex }">
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-10 gap-1"
+                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
                          :class="[
-                            isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
+                            (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
                         ]">
-                        <div class="flex flex-col gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
                             <AlignJustify v-if="showReorder"
                                           class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
                             <DropdownMenu>
@@ -202,7 +185,7 @@ const showReorder = ref(false)
                         <InputInline v-if="menuRoot.allItems"
                                      v-model="menuRoot.allItems[optionItemId].itemLabel">
                             <template #trigger>
-                                <span class="capitalize cursor-text col-span-7">
+                                <span class="capitalize cursor-text col-span-5">
                                     {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
                                 </span>
                             </template>
@@ -233,15 +216,29 @@ const showReorder = ref(false)
                         <!-- <span v-if="getPrice(optionItemId)">
                         {{ getPrice(optionItemId) }}
                     </span> -->
-                        <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
-                              @click="addQuantity(optionItemId, optionItemIndex)" />
+
+                        <template v-if="isRadioMode">
+                            <CircleCheckBig v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
+                                            @click="removeQuantity(optionItemId, optionItemIndex)"
+                                            class="cursor-pointer justify-self-end" />
+                            <Circle v-else
+                                    @click="removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)"
+                                    class="cursor-pointer justify-self-end" />
+                        </template>
+                        <template v-else>
+                            <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                                  @click="addQuantity(optionItemId, optionItemIndex)" />
+                        </template>
+
+                        <!-- <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                              @click="addQuantity(optionItemId, optionItemIndex)" /> -->
                     </div>
-                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-10 gap-1"
-                         v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
+                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1"
+                         v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
                         <div>
                             {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         </div>
-                        <div class="col-span-7 capitalize line-clamp-1">
+                        <div class="col-span-5 capitalize line-clamp-1">
                             {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                         </div>
                         <div v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
@@ -260,6 +257,36 @@ const showReorder = ref(false)
                 </div>
             </template>
         </draggable>
+
+        <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+            .filter(item => {
+                // itself not allowed
+                if (currentItem?.itemId === item.itemId) {
+                    return false
+                }
+                // parent is not allowed
+                if (item.children?.includes(currentItem?.itemId ?? '')) {
+                    return false
+                }
+                return true
+            })
+            .map(item => ({
+                key: item.itemId,
+                name: item.itemLabel
+            }))"
+                          @select="(item) => {
+                            addChildItem(currentItem?.itemId, item.key)
+                        }"
+                          @create-new="onClickAddNewOption"
+                          :has-new-button="true"
+                          heading="Link an existing item">
+            <template #trigger>
+                <Button variant="outline"
+                        size="sm">
+                    <Plus /> Available Options
+                </Button>
+            </template>
+        </SelectWithSearch>
 
     </div>
 </template>

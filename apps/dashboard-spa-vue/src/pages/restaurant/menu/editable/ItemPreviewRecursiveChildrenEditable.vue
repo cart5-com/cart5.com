@@ -67,10 +67,10 @@ const showReorder = ref(false)
 </script>
 
 <template>
-    <div class="border rounded-md p-4 my-6 border-card-foreground"
+    <div class="border rounded-md p-1 sm:p-4 my-6 border-card-foreground"
          v-if="currentItem">
 
-        <div class="flex justify-between items-center mb-2">
+        <div class="items-center mb-2 justify-self-end flex gap-2">
             <AlignJustify v-if="isDraggable && showReorder"
                           class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
             <span v-else />

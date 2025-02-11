@@ -109,7 +109,7 @@ const checkBucketItem = () => {
 <template>
     <div class="w-full"
          v-if="currentItem">
-        <div class="p-4">
+        <div class="p-1 sm:p-4">
             <div class="space-y-4">
 
                 <InputInline v-model="currentItem.itemLabel"
@@ -152,7 +152,7 @@ const checkBucketItem = () => {
                         <ListTodo /> Customizations
                     </Button>
                     <div v-else
-                         class="border rounded-lg p-4">
+                         class="border rounded-lg p-1 sm:p-4">
 
                         <div class="flex justify-between items-center mb-4 gap-2">
                             <Button variant="ghost"
