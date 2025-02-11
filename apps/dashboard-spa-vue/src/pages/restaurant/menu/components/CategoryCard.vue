@@ -6,7 +6,7 @@ import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from './ItemCard.vue';
-import { addChildItem, createNewItem, editItem } from '@src/pages/restaurant/menu/helpers';
+import { addChildItem, createNewItem, editItem } from '../helpers';
 import InputInline from '@/ui-plus/inline-edit/InputInline.vue';
 
 const props = defineProps<{

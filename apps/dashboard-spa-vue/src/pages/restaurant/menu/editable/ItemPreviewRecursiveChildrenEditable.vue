@@ -3,11 +3,13 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { Minus, Plus } from 'lucide-vue-next';
+import { AlignJustify, Link2Off, Minus, Plus } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import RepeatEditable from './RepeatEditable.vue';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -17,6 +19,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'update:modelValue', payload: BucketChildrenState): void
+    (e: 'unlink'): void
 }>()
 
 const modelValue = useVModel(props, 'modelValue', emits, {
@@ -99,17 +102,7 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
     }
 }
 
-const updateNestedOptionGroup = (
-    _optionId: string,
-    optionIndex: number,
-    quantityIndex: number,
-    linkIndex: number,
-    newValue: BucketChildrenState
-) => {
-    if (modelValue.value?.childrenState?.[optionIndex]?.childrenState?.[quantityIndex]) {
-        modelValue.value.childrenState[optionIndex].childrenState[quantityIndex][linkIndex] = newValue;
-    }
-}
+
 
 // const getPrice = (itemId: ItemId) => {
 //     // menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]
@@ -125,6 +118,7 @@ const updateNestedOptionGroup = (
 <template>
     <div class="border rounded-md p-4 my-20 border-card-foreground"
          v-if="currentItem">
+        <AlignJustify class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
         <div v-if="!isMinQuantityAdded()"
              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2">
             {{ currentItem?.minQuantity }}
@@ -135,8 +129,19 @@ const updateNestedOptionGroup = (
              class="text-lg font-bold">
             {{ helperText }}
         </div>
-        <Input class="text-lg font-bold capitalize"
-               v-model="currentItem.itemLabel" />
+
+        <div class="flex items-center gap-2">
+            <Input class="text-lg font-bold capitalize"
+                   v-model="currentItem.itemLabel" />
+
+            <Button variant="destructive"
+                    @click="$emit('unlink')"
+                    size="sm">
+                <Link2Off />
+            </Button>
+        </div>
+
+
         <div class="text-xs flex flex-col gap-2 items-start my-2">
             <SelectNumber :items="Array.from({ length: 10 }, (_, i) => ({
                 key: i + 1,
@@ -180,10 +185,11 @@ const updateNestedOptionGroup = (
             </SelectNumber>
         </div>
 
-        <div class="text-xs"
+        <!-- <div class="text-xs"
              v-if="currentItem?.price">
             ${{ currentItem?.price }}
-        </div>
+        </div> -->
+
         <div v-if="currentItem?.children"
              v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"
@@ -243,29 +249,9 @@ const updateNestedOptionGroup = (
                 </div>
             </div>
         </div>
-        <div v-if="currentItem?.children"
-             v-for="(optionItemId, optionItemIndex) in currentItem?.children"
-             :key="optionItemId">
-            <div v-if="menuRoot.allItems?.[optionItemId]?.children">
-                <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemIndex]?.quantity"
-                          :key="`${optionItemId}-${quantityRepeated}`">
-                    <div class="py-2 my-8">
-                        <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
-                             :key="`${childItemId}-${quantityRepeated}-${index}`">
-                            <div v-if="childItemId">
-                                <ItemPreviewRecursiveChildrenEditable :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
-                                                                      @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
-                                                                      :itemId="childItemId"
-                                                                      :helper-text="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 1 ?
-                                                                        `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
-                                                                        menuRoot.allItems?.[optionItemId]?.itemLabel" />
-                            </div>
-                        </div>
 
+        <RepeatEditable v-model="modelValue"
+                        :item-id="itemId" />
 
-                    </div>
-                </template>
-            </div>
-        </div>
     </div>
 </template>

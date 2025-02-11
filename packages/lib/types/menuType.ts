@@ -53,12 +53,14 @@ export const recursiveBucketChildrenState = (optionSetState: BucketChildrenState
                 if (optionSetState.childrenState[optionIndex].itemId) {
                     const optionItem = menuRoot.allItems?.[optionSetState.childrenState[optionIndex].itemId];
                     if (
-                        optionItem?.priceOverrides &&
-                        optionItem?.priceOverrides[optionSetState.itemId] &&
                         optionSetState.childrenState[optionIndex].quantity
                     ) {
-                        total += (optionItem?.priceOverrides[optionSetState.itemId] || 0) *
-                            optionSetState.childrenState[optionIndex].quantity
+                        if (optionItem?.priceOverrides &&
+                            optionItem?.priceOverrides[optionSetState.itemId]
+                        ) {
+                            total += (optionItem?.priceOverrides[optionSetState.itemId] || 0) *
+                                optionSetState.childrenState[optionIndex].quantity
+                        }
                         if (optionSetState.childrenState[optionIndex].childrenState) {
                             for (const quantityRepeatedChildStateIndex in optionSetState.childrenState[optionIndex].childrenState) {
                                 if (optionSetState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {

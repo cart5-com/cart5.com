@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import type { Item } from 'lib/types/menuType'
 import { menuRoot } from '../store'
 import { Eye, Pencil, Plus } from 'lucide-vue-next'
-import { createNewItem, editCustomization, editItem, previewItem } from '@src/pages/restaurant/menu/helpers'
+import { createNewItem, editCustomization, editItem, previewItem } from '../helpers'
 import {
     Table,
     TableBody,

@@ -5,6 +5,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import ItemPreviewRecursiveChildrenEditable from "./ItemPreviewRecursiveChildrenEditable.vue";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
+import draggable from "vuedraggable";
 import {
     NumberField,
     NumberFieldContent,
@@ -12,9 +13,11 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-import { DollarSign } from "lucide-vue-next";
+import { ChevronUpSquare, DollarSign, ListTodo, Plus } from "lucide-vue-next";
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
+import { addChildItem, createNewItem } from "../helpers";
+import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 
 const props = defineProps<{
     itemId?: ItemId
@@ -33,9 +36,31 @@ const bucketItem = ref<BucketItem>({
     childrenState: [],
 })
 
+const isCollapsed = ref(false);
+
+const unlink = (index: number) => {
+    if (currentItem.value?.children) {
+        currentItem.value.children.splice(index, 1)
+        if (currentItem.value.children.length === 0) {
+            currentItem.value.children = undefined
+        }
+    }
+}
+
+const onClickAddNewCustomization = (search: string | undefined) => {
+    const childLen = (currentItem?.value?.children || [])?.length;
+    const itemLabel = search ? search.trim() : `Customize ${currentItem?.value?.itemLabel} ` +
+        `${childLen === 0 ? '' : `(${childLen + 1})`}`;
+    const parentItemId = currentItem?.value?.itemId;
+    const newItemId = createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 0 }, parentItemId);
+    // setTimeout(() => {
+    // editCustomization(newItemId)
+    // }, 500)
+}
+
 const randomNumber = crypto.randomUUID()
 
-const bucketTotalPrice = ref("")
+const bucketTotalPrice = ref("");
 
 watch([bucketItem, currentItem], () => {
     bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
@@ -102,13 +127,65 @@ const checkBucketItem = () => {
 
             </div>
             <div :class="`warning-container-${randomNumber}`">
-                <div v-for="(child, index) in currentItem?.children"
+                <div v-if="currentItem">
+                    <Button variant="outline"
+                            class="w-full"
+                            v-if="isCollapsed"
+                            @click="isCollapsed = false">
+                        <ListTodo /> Customizations
+                    </Button>
+                    <div v-else
+                         class="border rounded-lg p-4">
+
+                        <div class="flex justify-between items-center mb-4 gap-2">
+                            <Button variant="ghost"
+                                    @click="isCollapsed = true">
+                                Customizations
+                                <ChevronUpSquare />
+                            </Button>
+                            <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+                                // .filter(item => item.type !== 'category' && item.type !== 'option' && item.itemId !== currentItem?.itemId)
+                                .map(item => ({
+                                    key: item.itemId,
+                                    name: item.itemLabel
+                                }))"
+                                              @select="(item) => {
+                                                addChildItem(currentItem?.itemId, item.key)
+                                            }"
+                                              @create-new="onClickAddNewCustomization"
+                                              :has-new-button="true"
+                                              heading="Link an existing item">
+                                <template #trigger>
+                                    <Button variant="outline">
+                                        <Plus />
+                                    </Button>
+                                </template>
+                            </SelectWithSearch>
+                        </div>
+                        <draggable v-model="currentItem.children"
+                                   item-key="itemId"
+                                   group="customization-items"
+                                   handle=".customization-drag-handle"
+                                   class="space-y-2">
+                            <template #item="{ element: child, index }">
+                                <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
+                                                                      :itemId="child"
+                                                                      @unlink="() => {
+                                                                        unlink(index)
+                                                                    }"
+                                                                      v-model="bucketItem.childrenState[index]" />
+                            </template>
+                        </draggable>
+                    </div>
+                </div>
+
+                <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
+                <!-- <div v-for="(child, index) in currentItem?.children"
                      :key="child">
-                    <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
                     <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
                                                           :itemId="child"
                                                           v-model="bucketItem.childrenState[index]" />
-                </div>
+                </div> -->
             </div>
             <details>
                 <summary>bucketItem</summary>
@@ -138,8 +215,9 @@ const checkBucketItem = () => {
                 (Total: ${{ bucketTotalPrice }})
             </Button>
         </div>
-        <!-- <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
-        </div> -->
+        <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">
+            (Total: ${{ bucketTotalPrice }})
+        </div>
 
     </div>
 </template>

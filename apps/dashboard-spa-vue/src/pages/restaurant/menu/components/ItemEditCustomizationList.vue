@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Button } from "@/components/ui/button";
-import { menuRoot } from "@src/pages/restaurant/menu/store";
+import { menuRoot } from "../store";
 import { ItemId } from "lib/types/menuType";
 import { AlignJustify, ChevronUpSquare, Link2Off, ListTodo, Pencil, Plus } from "lucide-vue-next";
 import { computed, onMounted, ref } from "vue";
