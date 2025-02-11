@@ -7,7 +7,6 @@ import { AlignJustify, Link2Off, Minus, Plus } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import RepeatEditable from './RepeatEditable.vue';
 
