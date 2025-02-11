@@ -52,7 +52,8 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     const itemLabel = search ? search.trim() : `Customize ${currentItem?.value?.itemLabel} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = currentItem?.value?.itemId;
-    const newItemId = createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 0 }, parentItemId);
+    // const newItemId =
+    createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 0 }, parentItemId);
     // setTimeout(() => {
     // editCustomization(newItemId)
     // }, 500)
