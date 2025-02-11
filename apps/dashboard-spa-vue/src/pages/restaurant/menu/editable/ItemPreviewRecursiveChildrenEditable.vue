@@ -43,13 +43,6 @@ const getTotalQuantity = () => {
     return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr.quantity || 0), 0);
 }
 
-const isMaxQuantity = () => {
-    if (currentItem.value?.maxQuantity && currentItem.value?.maxQuantity > 0) {
-        return getTotalQuantity() >= currentItem.value?.maxQuantity;
-    }
-    return false;
-}
-
 const isMinQuantityAdded = () => {
     if (currentItem.value?.minQuantity && currentItem.value?.minQuantity > 0) {
         return getTotalQuantity() >= currentItem.value?.minQuantity;
@@ -57,51 +50,6 @@ const isMinQuantityAdded = () => {
     return true;
 }
 
-const addQuantity = (childId: ItemId, childIndex: number) => {
-    if (isMaxQuantity()) {
-        return;
-    }
-    let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
-        hasLinkedOptions = true;
-    }
-    if (modelValue.value?.childrenState) {
-        if (!modelValue.value.childrenState[childIndex]) {
-            modelValue.value.childrenState[childIndex] = {
-                itemId: childId,
-                quantity: 1,
-                childrenState: hasLinkedOptions ? [[]] : undefined
-            }
-        } else {
-            if (hasLinkedOptions) {
-                modelValue.value.childrenState[childIndex].childrenState?.push([]);
-            }
-            if (modelValue.value.childrenState[childIndex].quantity) {
-                modelValue.value.childrenState[childIndex].quantity++;
-            }
-        }
-    }
-}
-
-const removeQuantity = (childId: ItemId, childIndex: number) => {
-    let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
-        hasLinkedOptions = true;
-    }
-    if (modelValue.value?.childrenState) {
-        if (modelValue.value.childrenState[childIndex].quantity) {
-            modelValue.value.childrenState[childIndex].quantity--;
-        }
-        if (hasLinkedOptions) {
-            if (modelValue.value.childrenState[childIndex].childrenState) {
-                modelValue.value.childrenState[childIndex].childrenState?.pop();
-            }
-        }
-        if (modelValue.value.childrenState[childIndex].quantity === 0) {
-            delete modelValue.value.childrenState[childIndex];
-        }
-    }
-}
 
 
 
