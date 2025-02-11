@@ -2,8 +2,8 @@
 import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
-import { computed } from 'vue';
-import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
@@ -118,6 +118,8 @@ const unlink = (index: number) => {
         }
     }
 }
+
+const showReorder = ref(false)
 </script>
 
 <template>
@@ -171,13 +173,18 @@ const unlink = (index: number) => {
                             isMaxQuantity() ? 'opacity-40 text-xs   ' : '',
                         ]">
                         <div class="flex flex-col gap-2">
-                            <AlignJustify class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+                            <AlignJustify v-if="showReorder"
+                                          class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
                                     <MoreHorizontal class="cursor-pointer" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start"
                                                      class="">
+
+                                    <DropdownMenuItem @click="showReorder = !showReorder">
+                                        <ArrowDownUp /> Reorder {{ showReorder ? 'Off' : 'On' }}
+                                    </DropdownMenuItem>
 
                                     <DropdownMenuItem @click="previewItem(optionItemId)">
                                         <Pencil /> Edit
