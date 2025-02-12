@@ -138,126 +138,129 @@ const isRadioMode = computed(() => {
 </script>
 
 <template>
-    <div v-if="currentItem?.children"
-         class="text-sm">
+    <div>
+        <div v-if="currentItem?.children"
+             class="text-sm">
 
 
 
-        <!-- <div v-for="(optionItemId, optionItemIndex) in currentItem?.children"
+            <!-- <div v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"> -->
-        <draggable v-model="currentItem.children"
-                   item-key="itemId"
-                   :group="`option-items-${randomId}`"
-                   handle=".option-drag-handle">
-            <template #item="{ element: optionItemId, index: optionItemIndex }">
-                <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
-                         :class="[
-                            (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
-                        ]">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <AlignJustify v-if="showReorder"
-                                          class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
-                            <DropdownMenu>
-                                <DropdownMenuTrigger as-child>
-                                    <MoreHorizontal class="cursor-pointer" />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start"
-                                                     class="">
+            <draggable v-model="currentItem.children"
+                       item-key="itemId"
+                       :group="`option-items-${randomId}`"
+                       handle=".option-drag-handle">
+                <template #item="{ element: optionItemId, index: optionItemIndex }">
+                    <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
+                        <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
+                             :class="[
+                                (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
+                            ]">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <AlignJustify v-if="showReorder"
+                                              class="option-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger as-child>
+                                        <MoreHorizontal class="cursor-pointer" />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start"
+                                                         class="">
 
-                                    <DropdownMenuItem @click="showReorder = !showReorder">
-                                        <ArrowDownUp /> Reordering {{ showReorder ? 'Off' : 'On' }}
-                                    </DropdownMenuItem>
+                                        <DropdownMenuItem @click="showReorder = !showReorder">
+                                            <ArrowDownUp /> Reordering {{ showReorder ? 'Off' : 'On' }}
+                                        </DropdownMenuItem>
 
-                                    <DropdownMenuItem @click="previewItem(optionItemId)">
-                                        <Pencil /> Edit
-                                    </DropdownMenuItem>
+                                        <DropdownMenuItem @click="previewItem(optionItemId)">
+                                            <Pencil /> Edit
+                                        </DropdownMenuItem>
 
-                                    <DropdownMenuItem @click="unlink(optionItemIndex)"
-                                                      class="">
-                                        <Link2Off />
-                                        Unlink
-                                    </DropdownMenuItem>
+                                        <DropdownMenuItem @click="unlink(optionItemIndex)"
+                                                          class="">
+                                            <Link2Off />
+                                            Unlink
+                                        </DropdownMenuItem>
 
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <InputInline v-if="menuRoot.allItems"
-                                     v-model="menuRoot.allItems[optionItemId].itemLabel">
-                            <template #trigger>
-                                <span class="capitalize cursor-text col-span-5">
-                                    {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
-                                </span>
-                            </template>
-                        </InputInline>
-                        <InputInline type="number"
-                                     placeholder="Price - / +"
-                                     :model-value="menuRoot.allItems[optionItemId].priceOverrides?.[itemId!]"
-                                     @update:model-value="(value) => {
-                                        if (!menuRoot.allItems) return;
-                                        if (value) {
-                                            if (!menuRoot.allItems[optionItemId].priceOverrides) {
-                                                menuRoot.allItems[optionItemId].priceOverrides = {}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            <InputInline v-if="menuRoot.allItems"
+                                         v-model="menuRoot.allItems[optionItemId].itemLabel">
+                                <template #trigger>
+                                    <span class="capitalize cursor-text col-span-5">
+                                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
+                                    </span>
+                                </template>
+                            </InputInline>
+                            <InputInline type="number"
+                                         placeholder="Price - / +"
+                                         :model-value="menuRoot.allItems[optionItemId].priceOverrides?.[itemId!]"
+                                         @update:model-value="(value) => {
+                                            if (!menuRoot.allItems) return;
+                                            if (value) {
+                                                if (!menuRoot.allItems[optionItemId].priceOverrides) {
+                                                    menuRoot.allItems[optionItemId].priceOverrides = {}
+                                                }
+                                                menuRoot.allItems[optionItemId].priceOverrides[itemId!] = Number(value)
+                                            } else {
+                                                delete menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]
+                                                if (Object.keys(menuRoot.allItems[optionItemId].priceOverrides ?? {}).length === 0) {
+                                                    menuRoot.allItems[optionItemId].priceOverrides = undefined
+                                                }
                                             }
-                                            menuRoot.allItems[optionItemId].priceOverrides[itemId!] = Number(value)
-                                        } else {
-                                            delete menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]
-                                            if (Object.keys(menuRoot.allItems[optionItemId].priceOverrides ?? {}).length === 0) {
-                                                menuRoot.allItems[optionItemId].priceOverrides = undefined
-                                            }
-                                        }
-                                    }">
-                            <template #trigger>
-                                <span class="capitalize cursor-text">
-                                    {{ menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!] || '$' }}
-                                </span>
-                            </template>
-                        </InputInline>
-                        <!-- <span v-if="getPrice(optionItemId)">
+                                        }">
+                                <template #trigger>
+                                    <span class="capitalize cursor-text">
+                                        {{ menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!] || '$' }}
+                                    </span>
+                                </template>
+                            </InputInline>
+                            <!-- <span v-if="getPrice(optionItemId)">
                         {{ getPrice(optionItemId) }}
                     </span> -->
 
-                        <template v-if="isRadioMode">
-                            <CircleCheckBig v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
-                                            @click="removeQuantity(optionItemId, optionItemIndex)"
-                                            class="cursor-pointer justify-self-end" />
-                            <Circle v-else
-                                    @click="removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)"
-                                    class="cursor-pointer justify-self-end" />
-                        </template>
-                        <template v-else>
-                            <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
-                                  @click="addQuantity(optionItemId, optionItemIndex)" />
-                        </template>
+                            <template v-if="isRadioMode">
+                                <CircleCheckBig v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
+                                                @click="removeQuantity(optionItemId, optionItemIndex)"
+                                                class="cursor-pointer justify-self-end" />
+                                <Circle v-else
+                                        @click="removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)"
+                                        class="cursor-pointer justify-self-end" />
+                            </template>
+                            <template v-else>
+                                <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                                      @click="addQuantity(optionItemId, optionItemIndex)" />
+                            </template>
 
-                        <!-- <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                            <!-- <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
                               @click="addQuantity(optionItemId, optionItemIndex)" /> -->
+                        </div>
+                        <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1"
+                             v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
+                            <div>
+                                {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
+                            </div>
+                            <div class="col-span-5 capitalize line-clamp-1">
+                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                            </div>
+                            <div v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
+                                ${{
+                                    (
+                                        (menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!])
+                                        *
+                                        (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                    ).toFixed(2)
+                                }}
+                            </div>
+                            <div v-else></div>
+                            <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                                   @click="removeQuantity(optionItemId, optionItemIndex)" />
+                        </div>
                     </div>
-                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1"
-                         v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
-                        <div>
-                            {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
-                        </div>
-                        <div class="col-span-5 capitalize line-clamp-1">
-                            {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                        </div>
-                        <div v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
-                            ${{
-                                (
-                                    (menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!])
-                                    *
-                                    (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
-                                ).toFixed(2)
-                            }}
-                        </div>
-                        <div v-else></div>
-                        <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
-                               @click="removeQuantity(optionItemId, optionItemIndex)" />
-                    </div>
-                </div>
-            </template>
-        </draggable>
+                </template>
+            </draggable>
 
+
+        </div>
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
             .filter(item => {
                 // itself not allowed
@@ -283,10 +286,9 @@ const isRadioMode = computed(() => {
             <template #trigger>
                 <Button variant="outline"
                         size="sm">
-                    <Plus /> Available Options
+                    <Plus /> Add Options
                 </Button>
             </template>
         </SelectWithSearch>
-
     </div>
 </template>

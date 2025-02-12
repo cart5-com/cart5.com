@@ -103,7 +103,7 @@ const showReorder = ref(false)
         </div>
 
         <div v-if="!isMinQuantityAdded()"
-             class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2">
+             class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2 w-fit">
             {{ currentItem?.minQuantity }}
             Selection Required
         </div>
