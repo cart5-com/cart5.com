@@ -3,7 +3,7 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed, ref } from 'vue';
-import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle } from 'lucide-vue-next';
+import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle, AlertCircle } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,12 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -135,6 +141,13 @@ const isRadioMode = computed(() => {
     return currentItem.value?.maxQuantity === 1 && currentItem.value?.minQuantity === 1
 })
 
+const convertToSingleChoice = () => {
+    if (currentItem.value) {
+        currentItem.value.maxQuantity = 1
+        currentItem.value.minQuantity = 1
+    }
+}
+
 </script>
 
 <template>
@@ -154,7 +167,7 @@ const isRadioMode = computed(() => {
                     <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
                         <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
                              :class="[
-                                (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
+                                // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
                             ]">
                             <div class="flex flex-col sm:flex-row gap-2">
                                 <AlignJustify v-if="showReorder"
@@ -209,7 +222,41 @@ const isRadioMode = computed(() => {
                                             }
                                         }">
                                 <template #trigger>
-                                    <span class="capitalize cursor-text">
+                                    <span class="capitalize cursor-text"
+                                          :class="[
+                                            menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]! < 0 && !isRadioMode
+                                                ? 'text-destructive font-bold' : ''
+                                        ]">
+                                        <div
+                                             v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]! < 0 && !isRadioMode">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger as-child>
+                                                        <AlertCircle />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p class="font-bold">
+                                                            <AlertCircle class="text-destructive" />
+                                                            Possible pricing error for multiple quantities
+                                                            <br>
+                                                            <br>
+                                                            Make sure to test total price by adding multiple quantities
+                                                            <br>
+                                                            <br>
+                                                            This is only a warning, you can ignore it.
+                                                            <br>
+                                                            <br>
+                                                            or you can
+                                                            <Button variant="outline"
+                                                                    size="sm"
+                                                                    @click="convertToSingleChoice">
+                                                                convert to single choice
+                                                            </Button>
+                                                        </p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </div>
                                         {{ menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!] || '$' }}
                                     </span>
                                 </template>
@@ -228,6 +275,9 @@ const isRadioMode = computed(() => {
                             </template>
                             <template v-else>
                                 <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                                      :class="[
+                                        (isMaxQuantity() && !isRadioMode) ? 'opacity-40' : ''
+                                    ]"
                                       @click="addQuantity(optionItemId, optionItemIndex)" />
                             </template>
 
@@ -239,10 +289,11 @@ const isRadioMode = computed(() => {
                             <div>
                                 {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                             </div>
-                            <div class="col-span-5 capitalize line-clamp-1">
+                            <!-- <div class="col-span-5 capitalize line-clamp-1">
                                 {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                            </div>
-                            <div v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
+                            </div> -->
+                            <div class="col-span-6 text-right"
+                                 v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
                                 ${{
                                     (
                                         (menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!])
@@ -251,7 +302,8 @@ const isRadioMode = computed(() => {
                                     ).toFixed(2)
                                 }}
                             </div>
-                            <div v-else></div>
+                            <div v-else
+                                 class="col-span-6"></div>
                             <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
                                    @click="removeQuantity(optionItemId, optionItemIndex)" />
                         </div>

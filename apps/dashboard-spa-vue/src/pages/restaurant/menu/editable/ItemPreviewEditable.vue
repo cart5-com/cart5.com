@@ -231,11 +231,11 @@ const checkBucketItem = () => {
                         }
                     }">
                 Add {{ bucketItem.quantity }} to cart
-                (Total: ${{ bucketTotalPrice }})
+                <!-- (Total: ${{ bucketTotalPrice }}) -->
             </Button>
         </div>
         <div
-             class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center text-xs">
+             class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
             Total: ${{ bucketTotalPrice }}
         </div>
 

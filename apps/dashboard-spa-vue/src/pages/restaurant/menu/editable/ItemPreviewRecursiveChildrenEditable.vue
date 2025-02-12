@@ -11,6 +11,7 @@ import RepeatEditable from './RepeatEditable.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { previewItem } from '@src/pages/restaurant/menu/helpers';
+import { toast } from '@/ui-plus/sonner';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -63,7 +64,6 @@ const isMinQuantityAdded = () => {
 //         }
 //     }
 // }
-const showReorder = ref(false)
 </script>
 
 <template>
@@ -71,7 +71,7 @@ const showReorder = ref(false)
          v-if="currentItem">
 
         <div class="items-center mb-2 justify-self-end flex gap-2">
-            <AlignJustify v-if="isDraggable && showReorder"
+            <AlignJustify v-if="isDraggable"
                           class="customization-drag-handle w-5 h-5 cursor-move text-muted-foreground" />
             <span v-else />
             <DropdownMenu>
@@ -80,10 +80,6 @@ const showReorder = ref(false)
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end"
                                      class="">
-
-                    <DropdownMenuItem @click="showReorder = !showReorder">
-                        <AlignJustify /> Reordering {{ showReorder ? 'Off' : 'On' }}
-                    </DropdownMenuItem>
 
                     <DropdownMenuItem @click="previewItem(parentItemId!)"
                                       v-if="!isDraggable">
@@ -104,8 +100,7 @@ const showReorder = ref(false)
 
         <div v-if="!isMinQuantityAdded()"
              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2 w-fit">
-            {{ currentItem?.minQuantity }}
-            Selection Required
+            Required
         </div>
 
         <div v-if="helperText"
@@ -137,6 +132,13 @@ const showReorder = ref(false)
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.minQuantity = Number(value.key)
+                                if (currentItem.maxQuantity &&
+                                    currentItem.maxQuantity > 0 &&
+                                    currentItem.maxQuantity < currentItem.minQuantity
+                                ) {
+                                    toast.error('Max quantity cannot be less than min quantity, matching min quantity')
+                                    currentItem.maxQuantity = currentItem.minQuantity
+                                }
                             }
                         }">
                 <template #trigger>
@@ -157,6 +159,14 @@ const showReorder = ref(false)
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.maxQuantity = Number(value.key)
+                                if (
+                                    currentItem.minQuantity &&
+                                    currentItem.maxQuantity > 0 &&
+                                    currentItem.maxQuantity < currentItem.minQuantity
+                                ) {
+                                    toast.error('Max quantity cannot be less than min quantity, matching min quantity')
+                                    currentItem.maxQuantity = currentItem.minQuantity
+                                }
                             }
                         }">
                 <template #trigger>
