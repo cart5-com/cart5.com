@@ -2,7 +2,7 @@
 import { menuRoot } from "../store";
 import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
 import { computed, onMounted, ref, watch } from "vue";
-import ItemPreviewRecursiveChildrenEditable from "./ItemPreviewRecursiveChildrenEditable.vue";
+import ItemPreviewCustomizations from "./ItemPreviewCustomizations.vue";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import draggable from "vuedraggable";
@@ -185,14 +185,14 @@ const checkBucketItem = () => {
                                    handle=".customization-drag-handle"
                                    class="space-y-2">
                             <template #item="{ element: child, index }">
-                                <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
-                                                                      :parent-item-id="currentItem?.itemId"
-                                                                      :itemId="child"
-                                                                      @unlink="() => {
-                                                                        unlink(index)
-                                                                    }"
-                                                                      :is-draggable="true"
-                                                                      v-model="bucketItem.childrenState[index]" />
+                                <ItemPreviewCustomizations v-if="bucketItem.childrenState"
+                                                           :parent-item-id="currentItem?.itemId"
+                                                           :itemId="child"
+                                                           @unlink="() => {
+                                                            unlink(index)
+                                                        }"
+                                                           :is-draggable="true"
+                                                           v-model="bucketItem.childrenState[index]" />
                             </template>
                         </draggable>
                     </div>
@@ -201,7 +201,7 @@ const checkBucketItem = () => {
                 <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
                 <!-- <div v-for="(child, index) in currentItem?.children"
                      :key="child">
-                    <ItemPreviewRecursiveChildrenEditable v-if="bucketItem.childrenState"
+                    <ItemPreviewCustomizations v-if="bucketItem.childrenState"
                                                           :itemId="child"
                                                           v-model="bucketItem.childrenState[index]" />
                 </div> -->

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ItemPreviewRecursiveChildrenEditable from './ItemPreviewRecursiveChildrenEditable.vue';
+import ItemPreviewCustomizations from './ItemPreviewCustomizations.vue';
 import { type BucketChildrenState, type ItemId } from 'lib/types/menuType';
 import { menuRoot } from '../store';
 import { computed } from 'vue';
@@ -71,15 +71,15 @@ function getHelperText(optionItemIndex: number, quantityRepeated: number, option
                     <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
                          :key="`${childItemId}-${quantityRepeated}-${index}`">
                         <div v-if="childItemId">
-                            <ItemPreviewRecursiveChildrenEditable :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
-                                                                  @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
-                                                                  :itemId="childItemId"
-                                                                  :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)"
-                                                                  :parent-item-id="optionItemId"
-                                                                  :is-draggable="false"
-                                                                  @unlink="() => {
-                                                                    unlink(optionItemId, index)
-                                                                }" />
+                            <ItemPreviewCustomizations :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
+                                                       @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
+                                                       :itemId="childItemId"
+                                                       :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)"
+                                                       :parent-item-id="optionItemId"
+                                                       :is-draggable="false"
+                                                       @unlink="() => {
+                                                        unlink(optionItemId, index)
+                                                    }" />
                         </div>
                     </div>
 

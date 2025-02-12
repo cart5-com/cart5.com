@@ -53,9 +53,6 @@ const isMinQuantityAdded = () => {
     return true;
 }
 
-
-
-
 // const getPrice = (itemId: ItemId) => {
 //     // menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]
 //     if (props.itemId) {
