@@ -17,7 +17,6 @@ const currentItem = computed(() => {
     return undefined
 })
 
-
 const emits = defineEmits<{
     (e: 'update:modelValue', payload: BucketChildrenState): void
 }>()
@@ -53,6 +52,13 @@ function unlink(optionItemId: ItemId, index: number) {
     }
 }
 
+function getHelperText(optionItemIndex: number, quantityRepeated: number, optionItemId: ItemId) {
+    return modelValue.value?.
+        childrenState?.[optionItemIndex]?.quantity! > 1 ?
+        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.value.allItems?.[optionItemId]?.itemLabel}` :
+        menuRoot.value.allItems?.[optionItemId]?.itemLabel
+}
+
 </script>
 <template>
     <div v-if="currentItem?.children"
@@ -68,9 +74,7 @@ function unlink(optionItemId: ItemId, index: number) {
                             <ItemPreviewRecursiveChildrenEditable :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
                                                                   @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
                                                                   :itemId="childItemId"
-                                                                  :helper-text="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 1 ?
-                                                                    `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
-                                                                    menuRoot.allItems?.[optionItemId]?.itemLabel"
+                                                                  :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)"
                                                                   :parent-item-id="optionItemId"
                                                                   :is-draggable="false"
                                                                   @unlink="() => {
