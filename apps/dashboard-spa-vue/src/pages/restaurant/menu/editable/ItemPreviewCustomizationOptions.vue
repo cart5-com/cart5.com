@@ -338,7 +338,7 @@ const convertToSingleChoice = () => {
             <template #trigger>
                 <Button variant="outline"
                         size="sm">
-                    <Plus /> Add Options
+                    <Plus /> Add New Option
                 </Button>
             </template>
         </SelectWithSearch>
