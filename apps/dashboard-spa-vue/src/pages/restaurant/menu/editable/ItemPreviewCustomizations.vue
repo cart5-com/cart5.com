@@ -7,7 +7,7 @@ import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal, Pencil } from 
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
-import RepeatEditable from './RepeatEditable.vue';
+import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { previewItem } from '@src/pages/restaurant/menu/helpers';
@@ -184,8 +184,8 @@ const isMinQuantityAdded = () => {
                                          :is-draggable="isDraggable"
                                          :item-id="itemId" />
 
-        <RepeatEditable v-model="modelValue"
-                        :item-id="itemId" />
+        <RecursiveCustomizations v-model="modelValue"
+                                 :item-id="itemId" />
 
     </div>
 </template>
