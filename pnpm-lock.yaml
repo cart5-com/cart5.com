@@ -120,8 +120,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
       lucide-vue-next:
-        specifier: ^0.465.0
-        version: 0.465.0(vue@3.5.13(typescript@5.7.2))
+        specifier: ^0.475.0
+        version: 0.475.0(vue@3.5.13(typescript@5.7.2))
       tailwindcss:
         specifier: ^3.4.16
         version: 3.4.16
@@ -183,8 +183,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/lib
       lucide-vue-next:
-        specifier: ^0.465.0
-        version: 0.465.0(vue@3.5.13(typescript@5.7.2))
+        specifier: ^0.475.0
+        version: 0.475.0(vue@3.5.13(typescript@5.7.2))
       tailwindcss:
         specifier: ^3.4.16
         version: 3.4.16
@@ -357,8 +357,8 @@ importers:
         specifier: ^1.11.18
         version: 1.11.18
       lucide-vue-next:
-        specifier: ^0.465.0
-        version: 0.465.0(vue@3.5.13(typescript@5.7.2))
+        specifier: ^0.475.0
+        version: 0.475.0(vue@3.5.13(typescript@5.7.2))
       radix-vue:
         specifier: ^1.9.10
         version: 1.9.10(vue@3.5.13(typescript@5.7.2))
@@ -3307,8 +3307,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lucide-vue-next@0.465.0:
-    resolution: {integrity: sha512-rI41gZkpicXHCt0KQyZ9C+u2fEc3yp53mrxxRO6cwdA0j5Qv4OX3kQHRBjHXhrKzrfideBCBKOME4ALvq9j46g==}
+  lucide-vue-next@0.475.0:
+    resolution: {integrity: sha512-xzotVZV7en58Gm3b60YHlxX2YGlFWSN4D5VMMhU/rC9D/pkeRqve21TPMJdHQsdqFdoRthnaB2HrzL0PQXdNeA==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -7482,7 +7482,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lucide-vue-next@0.465.0(vue@3.5.13(typescript@5.7.2)):
+  lucide-vue-next@0.475.0(vue@3.5.13(typescript@5.7.2)):
     dependencies:
       vue: 3.5.13(typescript@5.7.2)
 

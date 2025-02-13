@@ -3,7 +3,19 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed, ref } from 'vue';
-import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle, AlertCircle, Triangle } from 'lucide-vue-next';
+import {
+    AlignJustify,
+    Link2Off,
+    Minus,
+    MoreHorizontal,
+    Plus,
+    Pencil,
+    ArrowDownUp,
+    CircleCheckBig,
+    Circle,
+    AlertCircle,
+    TriangleDashed
+} from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
@@ -200,7 +212,7 @@ const convertToSingleChoice = () => {
                                         </DropdownMenuItem>
 
                                         <DropdownMenuItem @click="editOptionMax(itemId, optionItemId)">
-                                            <Triangle /> Limit quantity
+                                            <TriangleDashed /> Limit quantity
                                             {{ menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!] }}
                                         </DropdownMenuItem>
 
