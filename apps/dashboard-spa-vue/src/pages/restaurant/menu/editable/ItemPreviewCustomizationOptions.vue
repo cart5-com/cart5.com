@@ -69,10 +69,22 @@ const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
     addQuantity(childId, childIndex)
 }
 
+const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
+    const maxQuantityOverride = menuRoot.value.allItems?.[childId]?.maxQuantityOverrides?.[props.itemId!]
+    if (maxQuantityOverride) {
+        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > maxQuantityOverride) {
+            return true;
+        }
+    }
+}
 const addQuantity = (childId: ItemId, childIndex: number) => {
-    if (isMaxQuantity()) {
+    if (
+        isMaxQuantity() ||
+        isChildMaxQuantity(childId, childIndex)
+    ) {
         return;
     }
+
     let hasLinkedOptions: boolean = false;
     if (menuRoot.value.allItems?.[childId]?.children) {
         hasLinkedOptions = true;
