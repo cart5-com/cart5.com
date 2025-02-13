@@ -12,11 +12,11 @@ export type Item = {
     priceOverrides?: Record<ParentItemId, number>;
     maxQuantity?: number;
     minQuantity?: number;
-
     type?: 'item' | 'category' | 'customization' | 'option';
+    maxQuantityOverrides?: Record<ParentItemId, number>;
+
     // TODO:
     // preSelectedQuantities?: Record<ParentItemId, number>; 
-    // maxQuantityOverrides?: Record<ParentItemId, number>;
     imageUrl?: string;
 }
 

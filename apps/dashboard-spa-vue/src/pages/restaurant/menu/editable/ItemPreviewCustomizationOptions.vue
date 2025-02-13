@@ -3,12 +3,13 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed, ref } from 'vue';
-import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle, AlertCircle } from 'lucide-vue-next';
+import { AlignJustify, Link2Off, Minus, MoreHorizontal, Plus, Pencil, ArrowDownUp, CircleCheckBig, Circle, AlertCircle, Triangle } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
-import { addChildItem, createNewItem, previewItem } from '@src/pages/restaurant/menu/helpers';
+import { addChildItem, createNewItem, editOptionMax, previewItem } from '../helpers';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -176,8 +177,7 @@ const convertToSingleChoice = () => {
                                     <DropdownMenuTrigger as-child>
                                         <MoreHorizontal class="cursor-pointer" />
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="start"
-                                                         class="">
+                                    <DropdownMenuContent align="start">
 
                                         <DropdownMenuItem @click="showReorder = !showReorder">
                                             <ArrowDownUp /> Reordering {{ showReorder ? 'Off' : 'On' }}
@@ -185,6 +185,11 @@ const convertToSingleChoice = () => {
 
                                         <DropdownMenuItem @click="previewItem(optionItemId)">
                                             <Pencil /> Edit
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem @click="editOptionMax(itemId, optionItemId)">
+                                            <Triangle /> Limit quantity
+                                            {{ menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!] }}
                                         </DropdownMenuItem>
 
                                         <DropdownMenuItem @click="unlink(optionItemIndex)"
