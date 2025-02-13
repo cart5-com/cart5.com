@@ -10,7 +10,11 @@ defineProps<{
 <template>
     <div>
         <div class="text-sm my-4">
-            item: {{ menuRoot.allItems?.[optionItemId].itemLabel }}
+            Limit quantity of "{{ menuRoot.allItems?.[optionItemId].itemLabel }}" option
+            <br>
+            in "{{
+                menuRoot.allItems?.[itemId].itemLabel }}"
+            customization
         </div>
 
         <Input type="number"
