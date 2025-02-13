@@ -37,7 +37,7 @@ defineProps<{
                 }
             }" />
         <div class="text-xs my-4">
-            use 0 or delete input to remove limit
+            use 0 or empty input to remove limit
         </div>
     </div>
 </template>
