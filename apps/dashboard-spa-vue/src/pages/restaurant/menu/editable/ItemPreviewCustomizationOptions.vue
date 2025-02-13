@@ -243,6 +243,10 @@ const convertToSingleChoice = () => {
                                                             Make sure to test total price by adding multiple quantities
                                                             <br>
                                                             <br>
+                                                            Adding multiple negative prices may lead to unexpected
+                                                            results
+                                                            <br>
+                                                            <br>
                                                             This is only a warning, you can ignore it.
                                                             <br>
                                                             <br>

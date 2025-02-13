@@ -125,7 +125,7 @@ const isMinQuantityAdded = () => {
                           placeholder="Enter num. to force minimum"
                           type="number"
                           :min="1"
-                          btn-text="Make Optional"
+                          btn-text="Remove Requirement"
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.minQuantity = Number(value.key)
@@ -152,7 +152,7 @@ const isMinQuantityAdded = () => {
                           placeholder="Enter num. to limit"
                           type="number"
                           :min="1"
-                          btn-text="Make Unlimited"
+                          btn-text="Remove Limit"
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.maxQuantity = Number(value.key)
