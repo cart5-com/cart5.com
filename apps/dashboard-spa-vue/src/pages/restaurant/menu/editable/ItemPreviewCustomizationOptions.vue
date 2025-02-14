@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import {
     AlignJustify,
     Link2Off,
@@ -13,8 +13,7 @@ import {
     ArrowDownUp,
     CircleCheckBig,
     Circle,
-    AlertCircle,
-    TriangleDashed
+    AlertCircle
 } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
@@ -174,6 +173,19 @@ const convertToSingleChoice = () => {
         currentItem.value.minQuantity = 1
     }
 }
+
+onMounted(() => {
+    for (const [index, child] of (currentItem.value?.children || []).entries()) {
+        const childItem = menuRoot.value.allItems?.[child];
+        if (childItem?.preSelectedQuantities?.[props.itemId!]) {
+            // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
+            for (let i = 0; i < childItem?.preSelectedQuantities?.[props.itemId!]; i++) {
+                addQuantity(child, index)
+            }
+        }
+    }
+})
+
 
 </script>
 

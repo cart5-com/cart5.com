@@ -11,7 +11,6 @@ import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { previewItem } from '@src/pages/restaurant/menu/helpers';
-import { toast } from '@/ui-plus/sonner';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -133,8 +132,7 @@ const isMinQuantityAdded = () => {
                                     currentItem.maxQuantity > 0 &&
                                     currentItem.maxQuantity < currentItem.minQuantity
                                 ) {
-                                    toast.error('Max quantity cannot be less than min quantity, matching min quantity')
-                                    currentItem.maxQuantity = currentItem.minQuantity
+                                    currentItem.minQuantity = currentItem.maxQuantity
                                 }
                             }
                         }">
@@ -161,8 +159,7 @@ const isMinQuantityAdded = () => {
                                     currentItem.maxQuantity > 0 &&
                                     currentItem.maxQuantity < currentItem.minQuantity
                                 ) {
-                                    toast.error('Max quantity cannot be less than min quantity, matching min quantity')
-                                    currentItem.maxQuantity = currentItem.minQuantity
+                                    currentItem.minQuantity = currentItem.maxQuantity
                                 }
                             }
                         }">
