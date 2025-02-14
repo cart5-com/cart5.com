@@ -5,7 +5,6 @@ import ItemEdit from './components/ItemEdit.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import { menuRoot } from './store';
 import CustomizationEdit from './components/CustomizationEdit.vue';
-import EditOptionMax from './editable/EditOptionMax.vue';
 const dialog = useDialog();
 
 
@@ -33,22 +32,6 @@ export function editCustomization(itemId: ItemId) {
         dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId
-        },
-    });
-}
-
-export function editOptionMax(itemId: ItemId | undefined, optionItemId: ItemId | undefined) {
-    if (!itemId || !optionItemId) {
-        return;
-    }
-    dialog.show<BucketItem>({
-        title: "Limit Quantity",
-        description: "Limit the quantity of this item",
-        component: EditOptionMax,
-        dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
-        props: {
-            itemId: itemId,
-            optionItemId: optionItemId
         },
     });
 }

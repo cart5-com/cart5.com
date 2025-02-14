@@ -20,7 +20,7 @@ import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
-import { addChildItem, createNewItem, editOptionMax, previewItem } from '../helpers';
+import { addChildItem, createNewItem, previewItem } from '../helpers';
 
 import {
     DropdownMenu,
@@ -34,6 +34,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 
 const props = defineProps<{
     modelValue?: BucketChildrenState
@@ -211,10 +213,80 @@ const convertToSingleChoice = () => {
                                             <Pencil /> Edit
                                         </DropdownMenuItem>
 
-                                        <DropdownMenuItem @click="editOptionMax(itemId, optionItemId)">
-                                            <TriangleDashed /> Limit quantity
-                                            {{ menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!] }}
-                                        </DropdownMenuItem>
+
+                                        <div class="my-4 border-y py-2">
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides!?.[itemId!] > 0"
+                                                    @update:checked="(checked) => {
+                                                        if (!menuRoot.allItems) return;
+                                                        if (checked) {
+                                                            if (!menuRoot.allItems[optionItemId].maxQuantityOverrides) {
+                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = {}
+                                                            }
+                                                            menuRoot.allItems[optionItemId].maxQuantityOverrides![itemId!] = 1;
+                                                        } else {
+                                                            delete menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]
+                                                            if (Object.keys(menuRoot.allItems[optionItemId].maxQuantityOverrides ?? {}).length === 0) {
+                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = undefined
+                                                            }
+                                                        }
+                                                    }">
+                                            </Switch>
+                                            Limit quantity
+                                            <div
+                                                 v-if="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]">
+                                                <Input type="number"
+                                                       min="1"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]"
+                                                       @update:model-value="(value) => {
+                                                        if (!menuRoot.allItems) return;
+                                                        if (Number(value) < 1) {
+                                                            delete menuRoot.allItems[optionItemId].maxQuantityOverrides?.[itemId!]
+                                                            if (Object.keys(menuRoot.allItems[optionItemId].maxQuantityOverrides ?? {}).length === 0) {
+                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = undefined
+                                                            }
+                                                        } else {
+                                                            menuRoot.allItems[optionItemId].maxQuantityOverrides![itemId!] = Number(value)
+                                                        }
+                                                    }" />
+                                            </div>
+                                        </div>
+
+                                        <div class="my-4 border-y py-2">
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities!?.[itemId!] > 0"
+                                                    @update:checked="(checked) => {
+                                                        if (!menuRoot.allItems) return;
+                                                        if (checked) {
+                                                            if (!menuRoot.allItems[optionItemId].preSelectedQuantities) {
+                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = {}
+                                                            }
+                                                            menuRoot.allItems[optionItemId].preSelectedQuantities![itemId!] = 1;
+                                                        } else {
+                                                            delete menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]
+                                                            if (Object.keys(menuRoot.allItems[optionItemId].preSelectedQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = undefined
+                                                            }
+                                                        }
+                                                    }">
+                                            </Switch>
+                                            Pre-selected quantity
+                                            <div
+                                                 v-if="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]">
+                                                <Input type="number"
+                                                       min="1"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]"
+                                                       @update:model-value="(value) => {
+                                                        if (!menuRoot.allItems) return;
+                                                        if (Number(value) < 1) {
+                                                            delete menuRoot.allItems[optionItemId].preSelectedQuantities?.[itemId!]
+                                                            if (Object.keys(menuRoot.allItems[optionItemId].preSelectedQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = undefined
+                                                            }
+                                                        } else {
+                                                            menuRoot.allItems[optionItemId].preSelectedQuantities![itemId!] = Number(value)
+                                                        }
+                                                    }" />
+                                            </div>
+                                        </div>
 
                                         <DropdownMenuItem @click="unlink(optionItemIndex)"
                                                           class="">
@@ -290,12 +362,8 @@ const convertToSingleChoice = () => {
                                                             <hr class="my-2 border ">
                                                             or you may add a limit
                                                             <br>to prevent multiple
-                                                            negative values
-                                                            <Button variant="outline"
-                                                                    @click="editOptionMax(itemId, optionItemId)">
-                                                                <TriangleDashed /> Limit quantity
-                                                                {{ menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!] }}
-                                                            </Button>
+                                                            negative values by enabling limit quantity inside
+                                                            <MoreHorizontal /> Menu
                                                         </p>
                                                     </TooltipContent>
                                                 </Tooltip>

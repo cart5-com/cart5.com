@@ -3,7 +3,7 @@ import { useVModel } from '@vueuse/core'
 import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
-import { AlignJustify, CornerDownRight, Link2Off, MoreHorizontal, Pencil } from 'lucide-vue-next';
+import { AlignJustify, CornerDownRight, Link2Off, MoreVerticalIcon, Pencil } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";
 import { Badge } from '@/components/ui/badge';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
@@ -73,7 +73,7 @@ const isMinQuantityAdded = () => {
             <span v-else />
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                    <MoreHorizontal class="cursor-pointer" />
+                    <MoreVerticalIcon class="cursor-pointer" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end"
                                      class="">
