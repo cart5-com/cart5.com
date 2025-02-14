@@ -278,12 +278,23 @@ const convertToSingleChoice = () => {
                                                             <br>
                                                             This is only a warning, you can ignore it.
                                                             <br>
-                                                            <br>
+                                                            <hr class="my-2 border ">
                                                             or you can
                                                             <Button variant="outline"
                                                                     size="sm"
                                                                     @click="convertToSingleChoice">
                                                                 convert to single choice
+                                                            </Button>
+
+                                                            <br>
+                                                            <hr class="my-2 border ">
+                                                            or you may add a limit
+                                                            <br>to prevent multiple
+                                                            negative values
+                                                            <Button variant="outline"
+                                                                    @click="editOptionMax(itemId, optionItemId)">
+                                                                <TriangleDashed /> Limit quantity
+                                                                {{ menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!] }}
                                                             </Button>
                                                         </p>
                                                     </TooltipContent>
