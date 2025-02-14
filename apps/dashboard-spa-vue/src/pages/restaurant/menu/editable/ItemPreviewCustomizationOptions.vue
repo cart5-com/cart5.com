@@ -152,6 +152,10 @@ const onClickAddNewOption = (search: string | undefined) => {
 const randomId = crypto.randomUUID();
 
 const unlink = (index: number) => {
+    if (!confirm('Are you sure?')) {
+        return;
+    }
+
     if (currentItem.value?.children) {
         currentItem.value.children.splice(index, 1)
         if (currentItem.value.children.length === 0) {
@@ -223,6 +227,12 @@ onMounted(() => {
 
                                         <DropdownMenuItem @click="previewItem(optionItemId)">
                                             <Pencil /> Edit
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem @click="unlink(optionItemIndex)"
+                                                          class="bg-destructive text-destructive-foreground">
+                                            <Link2Off />
+                                            Unlink
                                         </DropdownMenuItem>
 
 
@@ -300,11 +310,7 @@ onMounted(() => {
                                             </div>
                                         </div>
 
-                                        <DropdownMenuItem @click="unlink(optionItemIndex)"
-                                                          class="">
-                                            <Link2Off />
-                                            Unlink
-                                        </DropdownMenuItem>
+
 
                                     </DropdownMenuContent>
                                 </DropdownMenu>

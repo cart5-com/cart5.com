@@ -27,6 +27,9 @@ onMounted(() => {
 })
 
 const unlink = (index: number) => {
+    if (!confirm('Are you sure?')) {
+        return;
+    }
     if (props.currentItem?.children) {
         props.currentItem?.children.splice(index, 1)
         if (props.currentItem?.children.length === 0) {
