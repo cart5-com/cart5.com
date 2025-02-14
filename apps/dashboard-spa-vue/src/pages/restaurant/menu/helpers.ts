@@ -7,6 +7,8 @@ import { menuRoot } from './store';
 import CustomizationEdit from './components/CustomizationEdit.vue';
 const dialog = useDialog();
 
+// TODO: remove unused componenets inside /components /preview folders
+
 
 export function previewItem(itemId: ItemId) {
     dialog.show<BucketItem>({
