@@ -129,12 +129,12 @@ const isMinQuantityAdded = () => {
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.minQuantity = Number(value.key)
-                                if (currentItem.maxQuantity &&
-                                    currentItem.maxQuantity > 0 &&
-                                    currentItem.maxQuantity < currentItem.minQuantity
-                                ) {
-                                    currentItem.minQuantity = currentItem.maxQuantity
-                                }
+                                // if (currentItem.maxQuantity &&
+                                //     currentItem.maxQuantity > 0 &&
+                                //     currentItem.maxQuantity < currentItem.minQuantity
+                                // ) {
+                                //     currentItem.minQuantity = currentItem.maxQuantity
+                                // }
                             }
                         }">
                 <template #trigger>
@@ -155,13 +155,13 @@ const isMinQuantityAdded = () => {
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.maxQuantity = Number(value.key)
-                                if (
-                                    currentItem.minQuantity &&
-                                    currentItem.maxQuantity > 0 &&
-                                    currentItem.maxQuantity < currentItem.minQuantity
-                                ) {
-                                    currentItem.minQuantity = currentItem.maxQuantity
-                                }
+                                // if (
+                                //     currentItem.minQuantity &&
+                                //     currentItem.maxQuantity > 0 &&
+                                //     currentItem.maxQuantity < currentItem.minQuantity
+                                // ) {
+                                //     currentItem.minQuantity = currentItem.maxQuantity
+                                // }
                             }
                         }">
                 <template #trigger>
