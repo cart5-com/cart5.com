@@ -83,7 +83,7 @@ const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
 }
 
 const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
-    const maxQuantityOverride = menuRoot.value.allItems?.[childId]?.maxQuantityOverrides?.[props.itemId!]
+    const maxQuantityOverride = menuRoot.value.allItems?.[props.itemId!]?.childrenOverrideMaxQuantities?.[childId]
     if (maxQuantityOverride) {
         if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > maxQuantityOverride) {
             return true;
@@ -180,10 +180,9 @@ const convertToSingleChoice = () => {
 
 onMounted(() => {
     for (const [index, child] of (currentItem.value?.children || []).entries()) {
-        const childItem = menuRoot.value.allItems?.[child];
-        if (childItem?.preSelectedQuantities?.[props.itemId!]) {
-            // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
-            for (let i = 0; i < childItem?.preSelectedQuantities?.[props.itemId!]; i++) {
+        const customizationItem = menuRoot.value.allItems?.[props.itemId!];
+        if (customizationItem?.childrenPreSelectedQuantities?.[child]) {
+            for (let i = 0; i < customizationItem?.childrenPreSelectedQuantities?.[child]; i++) {
                 addQuantity(child, index)
             }
         }
@@ -237,74 +236,74 @@ onMounted(() => {
 
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides!?.[itemId!] > 0"
+                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities!?.[optionItemId] > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            if (!menuRoot.allItems[optionItemId].maxQuantityOverrides) {
-                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = {}
+                                                            if (!menuRoot.allItems[itemId!].childrenOverrideMaxQuantities) {
+                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = {}
                                                             }
-                                                            menuRoot.allItems[optionItemId].maxQuantityOverrides![itemId!] = 1;
+                                                            menuRoot.allItems[itemId!].childrenOverrideMaxQuantities![optionItemId] = 1;
                                                         } else {
-                                                            delete menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]
-                                                            if (Object.keys(menuRoot.allItems[optionItemId].maxQuantityOverrides ?? {}).length === 0) {
-                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = undefined
+                                                            delete menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]
+                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenOverrideMaxQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = undefined
                                                             }
                                                         }
                                                     }">
                                             </Switch>
                                             Limit quantity
                                             <div
-                                                 v-if="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]">
+                                                 v-if="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[optionItemId]?.maxQuantityOverrides?.[itemId!]"
+                                                       :model-value="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems[optionItemId].maxQuantityOverrides?.[itemId!]
-                                                            if (Object.keys(menuRoot.allItems[optionItemId].maxQuantityOverrides ?? {}).length === 0) {
-                                                                menuRoot.allItems[optionItemId].maxQuantityOverrides = undefined
+                                                            delete menuRoot.allItems[itemId!].childrenOverrideMaxQuantities?.[optionItemId]
+                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenOverrideMaxQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = undefined
                                                             }
                                                         } else {
-                                                            menuRoot.allItems[optionItemId].maxQuantityOverrides![itemId!] = Number(value)
+                                                            menuRoot.allItems[itemId!].childrenOverrideMaxQuantities![optionItemId] = Number(value)
                                                         }
                                                     }" />
                                             </div>
                                         </div>
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities!?.[itemId!] > 0"
+                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities!?.[optionItemId] > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            if (!menuRoot.allItems[optionItemId].preSelectedQuantities) {
-                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = {}
+                                                            if (!menuRoot.allItems[itemId!].childrenPreSelectedQuantities) {
+                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = {}
                                                             }
-                                                            menuRoot.allItems[optionItemId].preSelectedQuantities![itemId!] = 1;
+                                                            menuRoot.allItems[itemId!].childrenPreSelectedQuantities![optionItemId] = 1;
                                                         } else {
-                                                            delete menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]
-                                                            if (Object.keys(menuRoot.allItems[optionItemId].preSelectedQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = undefined
+                                                            delete menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]
+                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenPreSelectedQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = undefined
                                                             }
                                                         }
                                                     }">
                                             </Switch>
                                             Pre-selected quantity
                                             <div
-                                                 v-if="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]">
+                                                 v-if="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[optionItemId]?.preSelectedQuantities?.[itemId!]"
+                                                       :model-value="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems[optionItemId].preSelectedQuantities?.[itemId!]
-                                                            if (Object.keys(menuRoot.allItems[optionItemId].preSelectedQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[optionItemId].preSelectedQuantities = undefined
+                                                            delete menuRoot.allItems[itemId!].childrenPreSelectedQuantities?.[optionItemId]
+                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenPreSelectedQuantities ?? {}).length === 0) {
+                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = undefined
                                                             }
                                                         } else {
-                                                            menuRoot.allItems[optionItemId].preSelectedQuantities![itemId!] = Number(value)
+                                                            menuRoot.allItems[itemId!].childrenPreSelectedQuantities![optionItemId] = Number(value)
                                                         }
                                                     }" />
                                             </div>

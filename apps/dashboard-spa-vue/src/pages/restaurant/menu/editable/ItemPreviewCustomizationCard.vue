@@ -129,6 +129,9 @@ const isMinQuantityAdded = () => {
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.minQuantity = Number(value.key)
+                                if (currentItem.minQuantity === 0) {
+                                    currentItem.minQuantity = undefined
+                                }
                                 // if (currentItem.maxQuantity &&
                                 //     currentItem.maxQuantity > 0 &&
                                 //     currentItem.maxQuantity < currentItem.minQuantity
@@ -155,6 +158,9 @@ const isMinQuantityAdded = () => {
                           @select="(value) => {
                             if (currentItem) {
                                 currentItem.maxQuantity = Number(value.key)
+                                if (currentItem.maxQuantity === 0) {
+                                    currentItem.maxQuantity = undefined
+                                }
                                 // if (
                                 //     currentItem.minQuantity &&
                                 //     currentItem.maxQuantity > 0 &&
