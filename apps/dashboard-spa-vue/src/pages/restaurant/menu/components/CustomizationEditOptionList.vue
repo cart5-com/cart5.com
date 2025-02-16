@@ -84,18 +84,18 @@ const onClickAddNewOption = (search: string | undefined) => {
                                    v-model="menuRoot.allItems[itemId].itemLabel" />
                             <Input type="number"
                                    placeholder="Price - / +"
-                                   :model-value="menuRoot.allItems[itemId].priceOverrides?.[currentItem?.itemId!]"
+                                   :model-value="menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices?.[itemId]"
                                    @update:model-value="(value) => {
                                     if (!menuRoot.allItems) return;
                                     if (value) {
-                                        if (!menuRoot.allItems[itemId].priceOverrides) {
-                                            menuRoot.allItems[itemId].priceOverrides = {}
+                                        if (!menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices) {
+                                            menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices = {}
                                         }
-                                        menuRoot.allItems[itemId].priceOverrides[currentItem?.itemId!] = Number(value)
+                                        menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices![itemId] = Number(value)
                                     } else {
-                                        delete menuRoot.allItems?.[itemId]?.priceOverrides?.[currentItem?.itemId!]
-                                        if (Object.keys(menuRoot.allItems[itemId].priceOverrides ?? {}).length === 0) {
-                                            menuRoot.allItems[itemId].priceOverrides = undefined
+                                        delete menuRoot.allItems?.[currentItem?.itemId!].childrenOverridePrices?.[itemId];
+                                        if (Object.keys(menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices ?? {}).length === 0) {
+                                            menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices = undefined
                                         }
                                     }
                                 }" />

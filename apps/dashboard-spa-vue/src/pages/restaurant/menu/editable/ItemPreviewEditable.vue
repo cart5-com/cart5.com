@@ -43,7 +43,7 @@ onMounted(() => {
     })
 })
 
-const randomNumber = crypto.randomUUID()
+
 
 const bucketTotalPrice = ref("");
 
@@ -55,6 +55,7 @@ onMounted(() => {
     bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
 })
 
+const randomNumber = crypto.randomUUID()
 const checkBucketItem = () => {
     // count .min-quantity-warning classes inside .warning-container-${randomNumber}
     const warningContainer = document.querySelector(`.warning-container-${randomNumber}`)
@@ -85,8 +86,10 @@ const checkBucketItem = () => {
          v-if="currentItem">
         <div class="p-1 sm:p-4">
             <ItemPreviewEditableHeader :current-item="currentItem" />
-            <ItemPreviewEditableCustomizations :current-item="currentItem"
-                                               :bucket-item="bucketItem" />
+            <div :class="`warning-container-${randomNumber}`">
+                <ItemPreviewEditableCustomizations :current-item="currentItem"
+                                                   :bucket-item="bucketItem" />
+            </div>
             <!-- <details>
                 <summary>bucketItem</summary>
                 <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>

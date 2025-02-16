@@ -50,14 +50,12 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     // }, 500)
 }
 
-const randomNumber = crypto.randomUUID()
 
 
 </script>
 
 <template>
-    <div :class="`warning-container-${randomNumber}`"
-         v-if="currentItem"
+    <div v-if="currentItem"
          class="mt-8">
         <div v-if="currentItem">
             <Button variant="outline"

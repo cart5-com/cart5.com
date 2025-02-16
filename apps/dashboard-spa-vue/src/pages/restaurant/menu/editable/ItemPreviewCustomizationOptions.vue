@@ -325,29 +325,29 @@ onMounted(() => {
                             </InputInline>
                             <InputInline type="number"
                                          placeholder="Price - / +"
-                                         :model-value="menuRoot.allItems[optionItemId].priceOverrides?.[itemId!]"
+                                         :model-value="menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId]"
                                          @update:model-value="(value) => {
                                             if (!menuRoot.allItems) return;
                                             if (value) {
-                                                if (!menuRoot.allItems[optionItemId].priceOverrides) {
-                                                    menuRoot.allItems[optionItemId].priceOverrides = {}
+                                                if (!menuRoot.allItems![itemId!].childrenOverridePrices) {
+                                                    menuRoot.allItems![itemId!].childrenOverridePrices = {}
                                                 }
-                                                menuRoot.allItems[optionItemId].priceOverrides[itemId!] = Number(value)
+                                                menuRoot.allItems![itemId!].childrenOverridePrices![optionItemId] = Number(value)
                                             } else {
-                                                delete menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]
-                                                if (Object.keys(menuRoot.allItems[optionItemId].priceOverrides ?? {}).length === 0) {
-                                                    menuRoot.allItems[optionItemId].priceOverrides = undefined
+                                                delete menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId]
+                                                if (Object.keys(menuRoot.allItems![itemId!].childrenOverridePrices ?? {}).length === 0) {
+                                                    menuRoot.allItems![itemId!].childrenOverridePrices = undefined
                                                 }
                                             }
                                         }">
                                 <template #trigger>
                                     <span class="capitalize cursor-text"
                                           :class="[
-                                            menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]! < 0 && !isRadioMode
+                                            menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId]! < 0 && !isRadioMode
                                                 ? 'text-destructive font-bold' : ''
                                         ]">
                                         <div
-                                             v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]! < 0 && !isRadioMode">
+                                             v-if="menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId]! < 0 && !isRadioMode">
                                             <TooltipProvider>
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
@@ -387,7 +387,7 @@ onMounted(() => {
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </div>
-                                        {{ menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!] || '$' }}
+                                        {{ menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId] || '$' }}
                                     </span>
                                 </template>
                             </InputInline>
@@ -423,10 +423,10 @@ onMounted(() => {
                                 {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                             </div> -->
                             <div class="col-span-6 text-right"
-                                 v-if="menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!]">
+                                 v-if="menuRoot.allItems![itemId!].childrenOverridePrices![optionItemId]">
                                 ${{
                                     (
-                                        (menuRoot.allItems?.[optionItemId]?.priceOverrides?.[itemId!])
+                                        (menuRoot.allItems![itemId!].childrenOverridePrices![optionItemId])
                                         *
                                         (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
                                     ).toFixed(2)

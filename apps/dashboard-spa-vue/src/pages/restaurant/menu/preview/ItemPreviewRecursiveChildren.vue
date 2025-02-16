@@ -109,8 +109,11 @@ const updateNestedOptionGroup = (
 
 const getPrice = (itemId: ItemId) => {
     if (props.itemId) {
-        if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
-            return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
+        // if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
+        //     return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
+        // }
+        if (menuRoot.value.allItems?.[props.itemId]?.childrenOverridePrices?.[itemId]) {
+            return menuRoot.value.allItems?.[props.itemId]?.childrenOverridePrices?.[itemId]
         }
     }
 }
