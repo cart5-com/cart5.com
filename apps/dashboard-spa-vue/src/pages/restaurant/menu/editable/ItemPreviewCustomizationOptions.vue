@@ -443,7 +443,7 @@ onMounted(() => {
 
         </div>
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-            .filter(item => item.type !== 'customization')
+            .filter(item => item.type === 'option' || item.type === 'item')
             .filter(item => {
                 // itself not allowed
                 if (currentItem?.itemId === item.itemId) {

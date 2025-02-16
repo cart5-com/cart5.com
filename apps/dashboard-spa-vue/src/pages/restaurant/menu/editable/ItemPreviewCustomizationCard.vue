@@ -92,11 +92,11 @@ const isMinQuantityAdded = () => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem @click="currentItem.maxQuantity = 1; currentItem.minQuantity = 1">
-                        Make Radio/Single Choice
+                        Make Radio/Single Option
                     </DropdownMenuItem>
 
                     <DropdownMenuItem @click="currentItem.maxQuantity = undefined; currentItem.minQuantity = undefined">
-                        Remove Choice Limits
+                        Remove All Option Limits
                     </DropdownMenuItem>
 
                 </DropdownMenuContent>
