@@ -236,7 +236,7 @@ onMounted(() => {
 
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities!?.[optionItemId] > 0"
+                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities!?.[optionItemId!] > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
@@ -422,7 +422,7 @@ onMounted(() => {
                                 {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                             </div> -->
                             <div class="col-span-6 text-right"
-                                 v-if="menuRoot.allItems![itemId!].childrenOverridePrices![optionItemId]">
+                                 v-if="menuRoot.allItems![itemId!].childrenOverridePrices?.[optionItemId]">
                                 ${{
                                     (
                                         (menuRoot.allItems![itemId!].childrenOverridePrices![optionItemId])
@@ -443,6 +443,7 @@ onMounted(() => {
 
         </div>
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
+            .filter(item => item.type !== 'customization')
             .filter(item => {
                 // itself not allowed
                 if (currentItem?.itemId === item.itemId) {
