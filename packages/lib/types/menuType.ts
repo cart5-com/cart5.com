@@ -12,6 +12,7 @@ export type Item = {
     children?: ItemId[];
     childrenOverridePrices?: Record<ItemId, number>;
     childrenOverrideMaxQuantities?: Record<ItemId, number>;
+    childrenChargeAboveQuantity?: Record<ItemId, number>;
     childrenPreSelectedQuantities?: Record<ItemId, number>;
 
     maxQuantity?: number;
@@ -60,8 +61,16 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                         if (customizationItem?.childrenOverridePrices &&
                             customizationItem?.childrenOverridePrices[optionItem?.itemId!]
                         ) {
-                            total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
-                                customizationState.childrenState[optionIndex].quantity
+                            if (customizationItem?.childrenChargeAboveQuantity?.[optionItem?.itemId!]) {
+                                total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
+                                    (
+                                        customizationState.childrenState[optionIndex].quantity -
+                                        customizationItem?.childrenChargeAboveQuantity?.[optionItem?.itemId!]
+                                    )
+                            } else {
+                                total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
+                                    customizationState.childrenState[optionIndex].quantity
+                            }
                         }
                         if (customizationState.childrenState[optionIndex].childrenState) {
                             for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {

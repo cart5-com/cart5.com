@@ -77,6 +77,7 @@ export type Item = {
     itemLabel?: string;
     description?: string;
     price?: number;
+    marketingLabels?: string[];  // Pupular, New, Best Seller, etc.
     itemLabels?: string[];  // Hot, Vegan, Vegetarian, Gluten-free, Halal, Dairy-free, Raw, Nut-free
     removeableIngredients?: string[]; // to make them removeable from the item
     allergens?: string[]; // Milk, Tree nuts, Eggs, Peanuts, Fish, Wheat, Shellfish, Soybeans
