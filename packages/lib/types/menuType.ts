@@ -55,31 +55,26 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
     if (customizationState.itemId) {
         if (customizationState.childrenState) {
             for (const optionIndex in customizationState.childrenState) {
+                const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex].itemId!];
                 if (customizationState.childrenState[optionIndex].itemId) {
-                    if (
-                        customizationState.childrenState[optionIndex].quantity
-                    ) {
-                        const customizationItem = menuRoot.allItems?.[customizationState.itemId];
-                        const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex].itemId];
-                        if (optionItem?.optionPrice) {
-                            if (optionItem?.chargeAboveQuantity) {
-                                total += (optionItem?.optionPrice || 0) *
-                                    (
-                                        customizationState.childrenState[optionIndex].quantity -
-                                        optionItem?.chargeAboveQuantity
-                                    )
-                            } else {
-                                total += (optionItem?.optionPrice || 0) *
-                                    customizationState.childrenState[optionIndex].quantity
-                            }
+                    const quantity = customizationState.childrenState[optionIndex].quantity || 0;
+                    if (optionItem?.optionPrice) {
+                        let chargeableQuantity = quantity;
+
+                        // Handle chargeAboveQuantity
+                        if (optionItem.chargeAboveQuantity !== undefined) {
+                            chargeableQuantity = Math.max(0, quantity - optionItem.chargeAboveQuantity);
                         }
-                        if (customizationState.childrenState[optionIndex].childrenState) {
-                            for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {
-                                if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
-                                    for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
-                                        const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
-                                        total += recursiveBucketChildrenState(deepOptionSetState, menuRoot)
-                                    }
+
+                        // Calculate base price
+                        total += (optionItem.optionPrice || 0) * chargeableQuantity;
+                    }
+                    if (customizationState.childrenState[optionIndex].childrenState) {
+                        for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {
+                            if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                    const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
+                                    total += recursiveBucketChildrenState(deepOptionSetState, menuRoot)
                                 }
                             }
                         }
