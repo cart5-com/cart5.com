@@ -83,9 +83,8 @@ const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
 }
 
 const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
-    const maxQuantityOverride = menuRoot.value.allItems?.[props.itemId!]?.childrenOverrideMaxQuantities?.[childId]
-    if (maxQuantityOverride) {
-        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > maxQuantityOverride) {
+    if (menuRoot.value.allItems?.[childId!]?.maxQuantity) {
+        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > menuRoot.value.allItems?.[childId!]?.maxQuantity!) {
             return true;
         }
     }
@@ -237,37 +236,27 @@ onMounted(() => {
 
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities!?.[optionItemId!] > 0"
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.maxQuantity! > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            if (!menuRoot.allItems[itemId!].childrenOverrideMaxQuantities) {
-                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = {}
-                                                            }
-                                                            menuRoot.allItems[itemId!].childrenOverrideMaxQuantities![optionItemId] = 1;
+                                                            menuRoot.allItems[optionItemId!].maxQuantity = 1
                                                         } else {
-                                                            delete menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]
-                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenOverrideMaxQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = undefined
-                                                            }
+                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQuantity
                                                         }
                                                     }">
                                             </Switch>
                                             Limit quantity
-                                            <div
-                                                 v-if="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]">
+                                            <div v-if="menuRoot.allItems?.[optionItemId!].maxQuantity">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[itemId!]?.childrenOverrideMaxQuantities?.[optionItemId]"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.maxQuantity"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems[itemId!].childrenOverrideMaxQuantities?.[optionItemId]
-                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenOverrideMaxQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[itemId!].childrenOverrideMaxQuantities = undefined
-                                                            }
+                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQuantity
                                                         } else {
-                                                            menuRoot.allItems[itemId!].childrenOverrideMaxQuantities![optionItemId] = Number(value)
+                                                            menuRoot.allItems[optionItemId!].maxQuantity = Number(value)
                                                         }
                                                     }" />
                                             </div>

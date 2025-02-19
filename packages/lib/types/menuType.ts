@@ -13,7 +13,6 @@ export type Item = {
 
     // TODO: move this options itself not parent item
     childrenOverridePrices?: Record<ItemId, number>;
-    childrenOverrideMaxQuantities?: Record<ItemId, number>;
 
     chargeAboveQuantity?: number;
     preSelectedQuantity?: number;
