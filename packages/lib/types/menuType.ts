@@ -10,10 +10,13 @@ export type Item = {
     price?: number;
 
     children?: ItemId[];
+
+    // TODO: move this options itself not parent item
     childrenOverridePrices?: Record<ItemId, number>;
     childrenOverrideMaxQuantities?: Record<ItemId, number>;
     childrenChargeAboveQuantity?: Record<ItemId, number>;
-    childrenPreSelectedQuantities?: Record<ItemId, number>;
+
+    preSelectedQuantity?: number;
 
     maxQuantity?: number;
     minQuantity?: number;

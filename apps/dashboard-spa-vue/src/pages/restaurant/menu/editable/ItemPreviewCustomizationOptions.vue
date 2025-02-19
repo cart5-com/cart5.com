@@ -180,9 +180,10 @@ const convertToSingleChoice = () => {
 
 onMounted(() => {
     for (const [index, child] of (currentItem.value?.children || []).entries()) {
-        const customizationItem = menuRoot.value.allItems?.[props.itemId!];
-        if (customizationItem?.childrenPreSelectedQuantities?.[child]) {
-            for (let i = 0; i < customizationItem?.childrenPreSelectedQuantities?.[child]; i++) {
+        const childItem = menuRoot.value.allItems?.[child];
+        if (childItem?.preSelectedQuantity) {
+            // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
+            for (let i = 0; i < childItem?.preSelectedQuantity; i++) {
                 addQuantity(child, index)
             }
         }
@@ -310,37 +311,29 @@ onMounted(() => {
                                         </div>
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities!?.[optionItemId] > 0"
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity! > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            if (!menuRoot.allItems[itemId!].childrenPreSelectedQuantities) {
-                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = {}
+                                                            if (!menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity!) {
+                                                                menuRoot.allItems[optionItemId!].preSelectedQuantity = 1
                                                             }
-                                                            menuRoot.allItems[itemId!].childrenPreSelectedQuantities![optionItemId] = 1;
                                                         } else {
-                                                            delete menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]
-                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenPreSelectedQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = undefined
-                                                            }
+                                                            delete menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity
                                                         }
                                                     }">
                                             </Switch>
                                             Pre-selected quantity
-                                            <div
-                                                 v-if="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]">
+                                            <div v-if="menuRoot.allItems?.[optionItemId!].preSelectedQuantity">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[itemId!]?.childrenPreSelectedQuantities?.[optionItemId]"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.preSelectedQuantity"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems[itemId!].childrenPreSelectedQuantities?.[optionItemId]
-                                                            if (Object.keys(menuRoot.allItems[itemId!].childrenPreSelectedQuantities ?? {}).length === 0) {
-                                                                menuRoot.allItems[itemId!].childrenPreSelectedQuantities = undefined
-                                                            }
+                                                            delete menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity
                                                         } else {
-                                                            menuRoot.allItems[itemId!].childrenPreSelectedQuantities![optionItemId] = Number(value)
+                                                            menuRoot.allItems[optionItemId!].preSelectedQuantity = Number(value)
                                                         }
                                                     }" />
                                             </div>
