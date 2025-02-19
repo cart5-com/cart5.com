@@ -14,8 +14,8 @@ export type Item = {
     // TODO: move this options itself not parent item
     childrenOverridePrices?: Record<ItemId, number>;
     childrenOverrideMaxQuantities?: Record<ItemId, number>;
-    childrenChargeAboveQuantity?: Record<ItemId, number>;
 
+    chargeAboveQuantity?: number;
     preSelectedQuantity?: number;
 
     maxQuantity?: number;
@@ -64,11 +64,11 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                         if (customizationItem?.childrenOverridePrices &&
                             customizationItem?.childrenOverridePrices[optionItem?.itemId!]
                         ) {
-                            if (customizationItem?.childrenChargeAboveQuantity?.[optionItem?.itemId!]) {
+                            if (optionItem?.chargeAboveQuantity) {
                                 total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
                                     (
                                         customizationState.childrenState[optionIndex].quantity -
-                                        customizationItem?.childrenChargeAboveQuantity?.[optionItem?.itemId!]
+                                        optionItem?.chargeAboveQuantity
                                     )
                             } else {
                                 total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
