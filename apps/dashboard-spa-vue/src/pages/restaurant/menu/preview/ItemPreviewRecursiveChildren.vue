@@ -107,17 +107,6 @@ const updateNestedOptionGroup = (
     }
 }
 
-const getPrice = (itemId: ItemId) => {
-    if (props.itemId) {
-        // if (menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]) {
-        //     return menuRoot.value.allItems?.[itemId]?.priceOverrides?.[props.itemId]
-        // }
-        if (menuRoot.value.allItems?.[props.itemId]?.childrenOverridePrices?.[itemId]) {
-            return menuRoot.value.allItems?.[props.itemId]?.childrenOverridePrices?.[itemId]
-        }
-    }
-}
-
 </script>
 
 <template>
@@ -159,8 +148,8 @@ const getPrice = (itemId: ItemId) => {
                     <span class="capitalize">
                         {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                     </span>
-                    <span v-if="getPrice(optionItemId)">
-                        {{ getPrice(optionItemId) }}
+                    <span v-if="menuRoot.allItems?.[optionItemId]?.optionPrice">
+                        {{ menuRoot.allItems?.[optionItemId]?.optionPrice }}
                     </span>
                     <Plus class="border border-foreground rounded-md" />
                 </div>

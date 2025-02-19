@@ -84,19 +84,13 @@ const onClickAddNewOption = (search: string | undefined) => {
                                    v-model="menuRoot.allItems[itemId].itemLabel" />
                             <Input type="number"
                                    placeholder="Price - / +"
-                                   :model-value="menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices?.[itemId]"
+                                   :model-value="menuRoot.allItems[itemId!].optionPrice"
                                    @update:model-value="(value) => {
                                     if (!menuRoot.allItems) return;
                                     if (value) {
-                                        if (!menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices) {
-                                            menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices = {}
-                                        }
-                                        menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices![itemId] = Number(value)
+                                        menuRoot.allItems[itemId!].optionPrice = Number(value)
                                     } else {
-                                        delete menuRoot.allItems?.[currentItem?.itemId!].childrenOverridePrices?.[itemId];
-                                        if (Object.keys(menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices ?? {}).length === 0) {
-                                            menuRoot.allItems[currentItem?.itemId!].childrenOverridePrices = undefined
-                                        }
+                                        delete menuRoot.allItems?.[itemId!].optionPrice;
                                     }
                                 }" />
                         </div>

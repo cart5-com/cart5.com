@@ -11,10 +11,11 @@ export type Item = {
 
     children?: ItemId[];
 
-    // TODO: move this options itself not parent item
-    childrenOverridePrices?: Record<ItemId, number>;
+    optionPrice?: number;
 
     chargeAboveQuantity?: number;
+
+
     preSelectedQuantity?: number;
 
     maxQuantity?: number;
@@ -60,17 +61,15 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                     ) {
                         const customizationItem = menuRoot.allItems?.[customizationState.itemId];
                         const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex].itemId];
-                        if (customizationItem?.childrenOverridePrices &&
-                            customizationItem?.childrenOverridePrices[optionItem?.itemId!]
-                        ) {
+                        if (optionItem?.optionPrice) {
                             if (optionItem?.chargeAboveQuantity) {
-                                total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
+                                total += (optionItem?.optionPrice || 0) *
                                     (
                                         customizationState.childrenState[optionIndex].quantity -
                                         optionItem?.chargeAboveQuantity
                                     )
                             } else {
-                                total += (customizationItem?.childrenOverridePrices[optionItem?.itemId!] || 0) *
+                                total += (optionItem?.optionPrice || 0) *
                                     customizationState.childrenState[optionIndex].quantity
                             }
                         }
