@@ -15,7 +15,7 @@ export type Item = {
 
     chrgAbvQ?: number; // charge above quantity
 
-    defQ?: number; // pre selected quantity
+    defQ?: number; // pre selected/default quantity
 
     maxQ?: number; // max quantity
     minQ?: number; // min quantity
