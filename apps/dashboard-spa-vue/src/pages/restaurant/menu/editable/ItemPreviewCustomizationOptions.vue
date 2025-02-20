@@ -180,9 +180,9 @@ const convertToSingleChoice = () => {
 onMounted(() => {
     for (const [index, child] of (currentItem.value?.children || []).entries()) {
         const childItem = menuRoot.value.allItems?.[child];
-        if (childItem?.preSelectedQuantity) {
+        if (childItem?.defQ) {
             // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
-            for (let i = 0; i < childItem?.preSelectedQuantity; i++) {
+            for (let i = 0; i < childItem?.defQ; i++) {
                 addQuantity(child, index)
             }
         }
@@ -290,27 +290,27 @@ onMounted(() => {
                                         </div>
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity! > 0"
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.defQ! > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            menuRoot.allItems[optionItemId!].preSelectedQuantity = 1
+                                                            menuRoot.allItems[optionItemId!].defQ = 1
                                                         } else {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.defQ
                                                         }
                                                     }">
                                             </Switch>
                                             Pre-selected quantity
-                                            <div v-if="menuRoot.allItems?.[optionItemId!].preSelectedQuantity">
+                                            <div v-if="menuRoot.allItems?.[optionItemId!].defQ">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[optionItemId]?.preSelectedQuantity"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.defQ"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.preSelectedQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.defQ
                                                         } else {
-                                                            menuRoot.allItems[optionItemId!].preSelectedQuantity = Number(value)
+                                                            menuRoot.allItems[optionItemId!].defQ = Number(value)
                                                         }
                                                     }" />
                                             </div>
