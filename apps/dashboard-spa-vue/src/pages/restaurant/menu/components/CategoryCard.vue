@@ -21,26 +21,26 @@ const currentItem = computed(() => {
 
 async function removeCategory() {
     if (!confirm('Are you sure you want to remove this category?')) return;
-    if (!menuRoot.value || !currentItem.value?.itemId) return;
+    if (!menuRoot.value || !currentItem.value?.id) return;
 
     // Remove from root children
     if (menuRoot.value.children) {
-        const index = menuRoot.value.children.indexOf(currentItem.value.itemId);
+        const index = menuRoot.value.children.indexOf(currentItem.value.id);
         if (index > -1) {
             menuRoot.value.children.splice(index, 1);
         }
     }
 
     // Remove from allItems
-    if (menuRoot.value.allItems && currentItem.value.itemId) {
-        delete menuRoot.value.allItems[currentItem.value.itemId];
+    if (menuRoot.value.allItems && currentItem.value.id) {
+        delete menuRoot.value.allItems[currentItem.value.id];
     }
 }
 
 const onClickAddNewItem = (search: string | undefined) => {
     const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
     const itemLabel = search ? search : `New item ${existingOnes.length + 1}`;
-    const parentItemId = currentItem?.value?.itemId;
+    const parentItemId = currentItem?.value?.id;
     const newItemId = createNewItem('item', { itemLabel }, parentItemId);
     setTimeout(() => {
         editItem(newItemId)
@@ -71,24 +71,24 @@ const onClickAddNewItem = (search: string | undefined) => {
         </div>
         <div v-if="showCategories">
             <draggable v-model="currentItem.children"
-                       item-key="itemId"
+                       item-key="id"
                        group="category-items"
                        handle=".item-drag-handle"
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 my-4">
                 <template #item="{ element: itemId }">
                     <ItemCard :itemId="itemId"
-                              :categoryId="currentItem.itemId" />
+                              :categoryId="currentItem.id" />
                 </template>
             </draggable>
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
                     .filter(item => item.type !== 'category')
                     .map(item => ({
-                        key: item.itemId,
+                        key: item.id,
                         name: item.itemLabel
                     }))"
                                   @select="(selectedItem) => {
-                                    addChildItem(currentItem?.itemId, selectedItem.key)
+                                    addChildItem(currentItem?.id, selectedItem.key)
                                 }"
                                   @create-new="onClickAddNewItem"
                                   :has-new-button="true"

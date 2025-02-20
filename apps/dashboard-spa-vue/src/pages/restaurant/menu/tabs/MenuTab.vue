@@ -31,7 +31,7 @@ function addNewCategory() {
     <div>
         <draggable v-if="menuRoot"
                    v-model="menuRoot.children"
-                   item-key="itemId"
+                   item-key="id"
                    group="root-category-items"
                    handle=".cat-drag-handle">
             <template #item="{ element: itemId }">

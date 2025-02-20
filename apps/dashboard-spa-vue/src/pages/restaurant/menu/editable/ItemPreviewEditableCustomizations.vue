@@ -42,7 +42,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     const childLen = (props.currentItem?.children || [])?.length;
     const itemLabel = search ? search.trim() : `Customize ${props.currentItem?.itemLabel} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    const parentItemId = props.currentItem?.itemId;
+    const parentItemId = props.currentItem?.id;
     // const newItemId =
     createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 1 }, parentItemId);
     // setTimeout(() => {
@@ -76,11 +76,11 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                     <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
                         .filter(item => item.type === 'customization')
                         .map(item => ({
-                            key: item.itemId,
+                            key: item.id,
                             name: item.itemLabel
                         }))"
                                       @select="(item) => {
-                                        addChildItem(currentItem?.itemId, item.key)
+                                        addChildItem(currentItem?.id, item.key)
                                     }"
                                       @create-new="onClickAddNewCustomization"
                                       :has-new-button="true"
@@ -93,13 +93,13 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                     </SelectWithSearch>
                 </div>
                 <draggable v-model="currentItem.children"
-                           item-key="itemId"
+                           item-key="id"
                            group="customization-items"
                            handle=".customization-drag-handle"
                            class="space-y-2">
                     <template #item="{ element: child, index }">
                         <ItemPreviewCustomizationCard v-if="bucketItem?.childrenState"
-                                                      :parent-item-id="currentItem?.itemId"
+                                                      :parent-item-id="currentItem?.id"
                                                       :itemId="child"
                                                       @unlink="() => {
                                                         unlink(index)

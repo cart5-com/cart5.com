@@ -145,7 +145,7 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
 const onClickAddNewOption = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
     const itemLabel = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    createNewItem('option', { itemLabel }, currentItem?.value?.itemId);
+    createNewItem('option', { itemLabel }, currentItem?.value?.id);
 }
 
 const randomId = crypto.randomUUID();
@@ -202,7 +202,7 @@ onMounted(() => {
             <!-- <div v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"> -->
             <draggable v-model="currentItem.children"
-                       item-key="itemId"
+                       item-key="id"
                        :group="`option-items-${randomId}`"
                        handle=".option-drag-handle">
                 <template #item="{ element: optionItemId, index: optionItemIndex }">
@@ -446,21 +446,21 @@ onMounted(() => {
             .filter(item => item.type === 'option' || item.type === 'item')
             .filter(item => {
                 // itself not allowed
-                if (currentItem?.itemId === item.itemId) {
+                if (currentItem?.id === item.id) {
                     return false
                 }
                 // parent is not allowed
-                if (item.children?.includes(currentItem?.itemId ?? '')) {
+                if (item.children?.includes(currentItem?.id ?? '')) {
                     return false
                 }
                 return true
             })
             .map(item => ({
-                key: item.itemId,
+                key: item.id,
                 name: item.itemLabel
             }))"
                           @select="(item) => {
-                            addChildItem(currentItem?.itemId, item.key)
+                            addChildItem(currentItem?.id, item.key)
                         }"
                           @create-new="onClickAddNewOption"
                           :has-new-button="true"

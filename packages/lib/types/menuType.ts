@@ -4,7 +4,7 @@ export type ItemId = string;
 export type ParentItemId = ItemId;
 
 export type Item = {
-    itemId?: ItemId;
+    id?: ItemId;
     itemLabel?: string;
     description?: string;
     price?: number;

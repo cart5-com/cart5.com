@@ -45,13 +45,13 @@ const onClickAddNewItem = () => {
 }
 
 const onClickEditItem = (item: Item) => {
-    if (!item.itemId) {
+    if (!item.id) {
         return
     }
     if (item.type === 'customization') {
-        editCustomization(item.itemId)
+        editCustomization(item.id)
     } else {
-        editItem(item.itemId)
+        editItem(item.id)
     }
 }
 </script>
