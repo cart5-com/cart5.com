@@ -2,7 +2,7 @@
 import { importMenuFromCSV } from 'lib/types/menuImport';
 import { menuRoot } from '../store';
 import { toast } from "@/ui-plus/sonner";
-import { CloudUpload, Download, Import, MoreHorizontal, Trash } from 'lucide-vue-next';
+import { CloudUpload, Download, MoreHorizontal, Trash } from 'lucide-vue-next';
 import {
     DropdownMenu,
     DropdownMenuContent,
