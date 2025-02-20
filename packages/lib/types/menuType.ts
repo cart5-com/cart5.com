@@ -20,7 +20,9 @@ export type Item = {
 
     maxQ?: number; // max quantity
     minQ?: number; // min quantity
-    type?: 'item' | 'category' | 'customization' | 'option';
+
+    // item, category, customization, option
+    type?: 'i' | 'ct' | 'c' | 'o'; // i, ct, c, o
 
     // TODO:
     imageUrl?: string;

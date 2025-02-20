@@ -23,7 +23,7 @@ const filteredItems = computed(() => {
 
     return Object.entries(items)
         // filter root items which are categories
-        .filter(([_id, item]) => item.type !== 'category')
+        .filter(([_id, item]) => item.type !== 'ct')
         .filter(([id, item]) => {
             const typedItem = item as Item
             return typedItem.lbl?.toLowerCase().includes(query) ||
@@ -32,10 +32,10 @@ const filteredItems = computed(() => {
 })
 
 const onClickAddNewItem = () => {
-    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
+    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'i');
     const lbl = `New item ${existingOnes.length + 1}`;
     const parentItemId = undefined;
-    const newItemId = createNewItem('item', { lbl }, parentItemId);
+    const newItemId = createNewItem('i', { lbl }, parentItemId);
     setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
     }, 500)
@@ -48,7 +48,7 @@ const onClickEditItem = (item: Item) => {
     if (!item.id) {
         return
     }
-    if (item.type === 'customization') {
+    if (item.type === 'c') {
         editCustomization(item.id)
     } else {
         editItem(item.id)

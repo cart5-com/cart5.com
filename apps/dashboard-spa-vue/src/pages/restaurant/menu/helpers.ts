@@ -54,7 +54,7 @@ export function editItem(itemId: ItemId) {
 }
 
 export function createNewItem(
-    type: Item['type'] = 'item',
+    type: Item['type'] = 'i',
     optionalProps: Partial<Item> = {},
     parentItemId: string | undefined
 ) {

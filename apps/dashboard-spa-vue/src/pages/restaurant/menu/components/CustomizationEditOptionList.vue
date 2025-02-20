@@ -30,7 +30,7 @@ const unlink = (index: number) => {
 const onClickAddNewOption = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
     const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    createNewItem('option', { lbl }, currentItem?.value?.id);
+    createNewItem('o', { lbl }, currentItem?.value?.id);
 }
 </script>
 

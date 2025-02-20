@@ -20,7 +20,7 @@ function addNewCategory() {
         title: 'Add new category',
         component: CategoryNewForm,
         onSuccess: async (values) => {
-            const newCategoryId = createNewItem('category', { lbl: values.name }, undefined);
+            const newCategoryId = createNewItem('ct', { lbl: values.name }, undefined);
             menuRoot.value.children?.push(newCategoryId)
         }
     });

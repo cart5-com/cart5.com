@@ -41,7 +41,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     const lbl = search ? search.trim() : `Customize ${currentItem?.value?.lbl} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = currentItem?.value?.id;
-    const newItemId = createNewItem('customization', { lbl, maxQ: 1, minQ: 0 }, parentItemId);
+    const newItemId = createNewItem('c', { lbl, maxQ: 1, minQ: 0 }, parentItemId);
     setTimeout(() => {
         editCustomization(newItemId)
     }, 500)

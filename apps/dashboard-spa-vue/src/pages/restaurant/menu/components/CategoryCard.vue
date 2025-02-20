@@ -38,10 +38,10 @@ async function removeCategory() {
 }
 
 const onClickAddNewItem = (search: string | undefined) => {
-    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
+    const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'i');
     const lbl = search ? search : `New item ${existingOnes.length + 1}`;
     const parentItemId = currentItem?.value?.id;
-    const newItemId = createNewItem('item', { lbl }, parentItemId);
+    const newItemId = createNewItem('i', { lbl }, parentItemId);
     setTimeout(() => {
         editItem(newItemId)
     }, 500)
@@ -82,7 +82,7 @@ const onClickAddNewItem = (search: string | undefined) => {
             </draggable>
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                    .filter(item => item.type !== 'category')
+                    .filter(item => item.type !== 'ct')
                     .map(item => ({
                         key: item.id,
                         name: item.lbl

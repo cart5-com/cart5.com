@@ -44,7 +44,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = props.currentItem?.id;
     // const newItemId =
-    createNewItem('customization', { lbl, maxQ: 1, minQ: 1 }, parentItemId);
+    createNewItem('c', { lbl, maxQ: 1, minQ: 1 }, parentItemId);
     // setTimeout(() => {
     // editCustomization(newItemId)
     // }, 500)
@@ -74,7 +74,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         <ChevronUpSquare />
                     </Button>
                     <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                        .filter(item => item.type === 'customization')
+                        .filter(item => item.type === 'c')
                         .map(item => ({
                             key: item.id,
                             name: item.lbl

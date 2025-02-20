@@ -145,7 +145,7 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
 const onClickAddNewOption = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
     const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    createNewItem('option', { lbl }, currentItem?.value?.id);
+    createNewItem('o', { lbl }, currentItem?.value?.id);
 }
 
 const randomId = crypto.randomUUID();
@@ -443,7 +443,7 @@ onMounted(() => {
 
         </div>
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-            .filter(item => item.type === 'option' || item.type === 'item')
+            .filter(item => item.type === 'o' || item.type === 'i')
             .filter(item => {
                 // itself not allowed
                 if (currentItem?.id === item.id) {
