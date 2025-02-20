@@ -331,22 +331,22 @@ onMounted(() => {
                             </InputInline>
                             <InputInline type="number"
                                          placeholder="Price - / +"
-                                         :model-value="menuRoot.allItems![optionItemId]?.optionPrice"
+                                         :model-value="menuRoot.allItems![optionItemId]?.opPrc"
                                          @update:model-value="(value) => {
                                             if (!menuRoot.allItems) return;
                                             if (value) {
-                                                menuRoot.allItems![optionItemId!].optionPrice = Number(value)
+                                                menuRoot.allItems![optionItemId!].opPrc = Number(value)
                                             } else {
-                                                delete menuRoot.allItems![optionItemId!].optionPrice
+                                                delete menuRoot.allItems![optionItemId!].opPrc
                                             }
                                         }">
                                 <template #trigger>
                                     <span class="capitalize cursor-text"
                                           :class="[
-                                            menuRoot.allItems![optionItemId!].optionPrice! < 0 && !isRadioMode
+                                            menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode
                                                 ? 'text-destructive font-bold' : ''
                                         ]">
-                                        <div v-if="menuRoot.allItems![optionItemId!].optionPrice! < 0 && !isRadioMode">
+                                        <div v-if="menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode">
                                             <TooltipProvider>
                                                 <Tooltip>
                                                     <TooltipTrigger as-child>
@@ -386,7 +386,7 @@ onMounted(() => {
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </div>
-                                        {{ menuRoot.allItems![optionItemId!].optionPrice || '$' }}
+                                        {{ menuRoot.allItems![optionItemId!].opPrc || '$' }}
                                     </span>
                                 </template>
                             </InputInline>
@@ -422,10 +422,10 @@ onMounted(() => {
                                 {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
                             </div> -->
                             <div class="col-span-6 text-right"
-                                 v-if="menuRoot.allItems?.[optionItemId!].optionPrice">
+                                 v-if="menuRoot.allItems?.[optionItemId!].opPrc">
                                 ${{
                                     (
-                                        (menuRoot.allItems?.[optionItemId!].optionPrice!)
+                                        (menuRoot.allItems?.[optionItemId!].opPrc!)
                                         *
                                         (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
                                     ).toFixed(2)

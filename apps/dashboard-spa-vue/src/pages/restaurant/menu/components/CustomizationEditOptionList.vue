@@ -84,13 +84,13 @@ const onClickAddNewOption = (search: string | undefined) => {
                                    v-model="menuRoot.allItems[itemId].lbl" />
                             <Input type="number"
                                    placeholder="Price - / +"
-                                   :model-value="menuRoot.allItems[itemId!].optionPrice"
+                                   :model-value="menuRoot.allItems[itemId!].opPrc"
                                    @update:model-value="(value) => {
                                     if (!menuRoot.allItems) return;
                                     if (value) {
-                                        menuRoot.allItems[itemId!].optionPrice = Number(value)
+                                        menuRoot.allItems[itemId!].opPrc = Number(value)
                                     } else {
-                                        delete menuRoot.allItems?.[itemId!].optionPrice;
+                                        delete menuRoot.allItems?.[itemId!].opPrc;
                                     }
                                 }" />
                         </div>

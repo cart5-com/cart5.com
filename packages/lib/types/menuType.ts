@@ -9,9 +9,9 @@ export type Item = {
     dsc?: string; // description
     prc?: number; // price
 
-    children?: ItemId[];
+    children?: ItemId[]; // children ids
 
-    optionPrice?: number;
+    opPrc?: number; // option price
 
     chargeAboveQuantity?: number;
 
@@ -58,7 +58,7 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                 const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex].itemId!];
                 if (customizationState.childrenState[optionIndex].itemId) {
                     const quantity = customizationState.childrenState[optionIndex].quantity || 0;
-                    if (optionItem?.optionPrice) {
+                    if (optionItem?.opPrc) {
                         let chargeableQuantity = quantity;
 
                         // Handle chargeAboveQuantity
@@ -67,7 +67,7 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                         }
 
                         // Calculate base price
-                        total += (optionItem.optionPrice || 0) * chargeableQuantity;
+                        total += (optionItem.opPrc || 0) * chargeableQuantity;
                     }
                     if (customizationState.childrenState[optionIndex].childrenState) {
                         for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {

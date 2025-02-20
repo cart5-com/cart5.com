@@ -148,8 +148,8 @@ const updateNestedOptionGroup = (
                     <span class="capitalize">
                         {{ menuRoot.allItems?.[optionItemId]?.lbl }}
                     </span>
-                    <span v-if="menuRoot.allItems?.[optionItemId]?.optionPrice">
-                        {{ menuRoot.allItems?.[optionItemId]?.optionPrice }}
+                    <span v-if="menuRoot.allItems?.[optionItemId]?.opPrc">
+                        {{ menuRoot.allItems?.[optionItemId]?.opPrc }}
                     </span>
                     <Plus class="border border-foreground rounded-md" />
                 </div>
