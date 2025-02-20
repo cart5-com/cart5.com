@@ -44,10 +44,10 @@ const updateNestedOptionGroup = (
 }
 
 function unlink(optionItemId: ItemId, index: number) {
-    if (menuRoot.value.allItems?.[optionItemId]?.children) {
-        menuRoot.value.allItems?.[optionItemId]?.children.splice(index, 1)
-        if (menuRoot.value.allItems?.[optionItemId]?.children.length === 0) {
-            menuRoot.value.allItems[optionItemId].children = undefined
+    if (menuRoot.value.allItems?.[optionItemId]?.cIds) {
+        menuRoot.value.allItems?.[optionItemId]?.cIds.splice(index, 1)
+        if (menuRoot.value.allItems?.[optionItemId]?.cIds.length === 0) {
+            menuRoot.value.allItems[optionItemId].cIds = undefined
         }
     }
 }
@@ -61,14 +61,14 @@ function getHelperText(optionItemIndex: number, quantityRepeated: number, option
 
 </script>
 <template>
-    <div v-if="currentItem?.children"
-         v-for="(optionItemId, optionItemIndex) in currentItem?.children"
+    <div v-if="currentItem?.cIds"
+         v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
          :key="optionItemId">
-        <div v-if="menuRoot.allItems?.[optionItemId]?.children">
+        <div v-if="menuRoot.allItems?.[optionItemId]?.cIds">
             <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemIndex]?.quantity"
                       :key="`${optionItemId}-${quantityRepeated}`">
                 <div class="py-2 my-8">
-                    <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
+                    <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.cIds"
                          :key="`${childItemId}-${quantityRepeated}-${index}`">
                         <div v-if="childItemId">
                             <ItemPreviewCustomizationCard :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"

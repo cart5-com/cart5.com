@@ -35,8 +35,8 @@ const isCollapsed = ref(false);
 
 onMounted(() => {
     setTimeout(() => {
-        if (currentItem.value?.children) {
-            isCollapsed.value = currentItem.value?.children?.length === 0
+        if (currentItem.value?.cIds) {
+            isCollapsed.value = currentItem.value?.cIds?.length === 0
         } else {
             isCollapsed.value = true;
         }
@@ -70,8 +70,8 @@ const checkBucketItem = () => {
                 firstWarning.parentElement?.classList.add('headShake-animation')
                 setTimeout(() => {
                     firstWarning.parentElement?.classList.remove('headShake-animation')
-                }, 500)
-            }, 300)
+                }, 1000)
+            }, 1000)
         }
         return false
     } else {

@@ -79,7 +79,7 @@ const checkBucketItem = () => {
                 </div>
             </div>
             <div :class="`warning-container-${randomNumber}`">
-                <div v-for="(child, index) in currentItem?.children"
+                <div v-for="(child, index) in currentItem?.cIds"
                      :key="child">
                     <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
                     <ItemPreviewRecursiveChildren v-if="bucketItem.childrenState"

@@ -54,7 +54,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
         return;
     }
     let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -77,7 +77,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
 
 const removeQuantity = (childId: ItemId, childIndex: number) => {
     let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -135,8 +135,8 @@ const updateNestedOptionGroup = (
              v-if="currentItem?.prc">
             ${{ currentItem?.prc }}
         </div>
-        <div v-if="currentItem?.children"
-             v-for="(optionItemId, optionItemIndex) in currentItem?.children"
+        <div v-if="currentItem?.cIds"
+             v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
              :key="optionItemId"
              class="text-sm">
             <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
@@ -166,14 +166,14 @@ const updateNestedOptionGroup = (
                 </div>
             </div>
         </div>
-        <div v-if="currentItem?.children"
-             v-for="(optionItemId, optionItemIndex) in currentItem?.children"
+        <div v-if="currentItem?.cIds"
+             v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
              :key="optionItemId">
-            <div v-if="menuRoot.allItems?.[optionItemId]?.children">
+            <div v-if="menuRoot.allItems?.[optionItemId]?.cIds">
                 <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemIndex]?.quantity"
                           :key="`${optionItemId}-${quantityRepeated}`">
                     <div class="py-2 my-8">
-                        <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.children"
+                        <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.cIds"
                              :key="`${childItemId}-${quantityRepeated}-${index}`">
                             <div v-if="childItemId">
                                 <ItemPreviewRecursiveChildren :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"

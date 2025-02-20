@@ -21,11 +21,11 @@ const unlinkItem = () => {
     if (!props.categoryId || !menuRoot.value?.allItems?.[props.categoryId]) return;
 
     const category = menuRoot.value?.allItems?.[props.categoryId];
-    if (!category.children) return;
+    if (!category.cIds) return;
 
-    const index = category.children.indexOf(props.itemId);
+    const index = category.cIds.indexOf(props.itemId);
     if (index > -1) {
-        category.children.splice(index, 1);
+        category.cIds.splice(index, 1);
     }
 }
 

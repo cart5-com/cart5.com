@@ -19,16 +19,16 @@ const currentItem = computed(() => {
 
 
 const unlink = (index: number) => {
-    if (currentItem.value?.children) {
-        currentItem.value.children.splice(index, 1)
-        if (currentItem.value.children.length === 0) {
-            currentItem.value.children = undefined
+    if (currentItem.value?.cIds) {
+        currentItem.value.cIds.splice(index, 1)
+        if (currentItem.value.cIds.length === 0) {
+            currentItem.value.cIds = undefined
         }
     }
 }
 
 const onClickAddNewOption = (search: string | undefined) => {
-    const childLen = (currentItem?.value?.children || [])?.length;
+    const childLen = (currentItem?.value?.cIds || [])?.length;
     const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
     createNewItem('o', { lbl }, currentItem?.value?.id);
 }
@@ -48,7 +48,7 @@ const onClickAddNewOption = (search: string | undefined) => {
                         return false
                     }
                     // parent is not allowed
-                    if (item.children?.includes(currentItem?.id ?? '')) {
+                    if (item.cIds?.includes(currentItem?.id ?? '')) {
                         return false
                     }
                     return true
@@ -70,7 +70,7 @@ const onClickAddNewOption = (search: string | undefined) => {
                 </template>
             </SelectWithSearch>
         </div>
-        <draggable v-model="currentItem.children"
+        <draggable v-model="currentItem.cIds"
                    item-key="id"
                    group="option-items"
                    handle=".option-drag-handle"

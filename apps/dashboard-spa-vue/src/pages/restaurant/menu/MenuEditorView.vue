@@ -5,6 +5,7 @@ import { pageTitle } from "@src/stores/layout.store";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { Button } from "@/components/ui/button";
 import { Check, Hourglass, Shell } from "lucide-vue-next";
+import MenuImport from "./components/MenuImport.vue";
 
 pageTitle.value = 'Menu Editor';
 let ignoreAutoSave = true;
@@ -65,6 +66,7 @@ const isDev = import.meta.env.DEV;
                         </span>
                         Auto save
                     </Button>
+                    <MenuImport />
                 </span>
             </template>
         </MenuTabs>

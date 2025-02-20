@@ -98,7 +98,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
     }
 
     let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -121,7 +121,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
 
 const removeQuantity = (childId: ItemId, childIndex: number) => {
     let hasLinkedOptions: boolean = false;
-    if (menuRoot.value.allItems?.[childId]?.children) {
+    if (menuRoot.value.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -143,7 +143,7 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
 }
 
 const onClickAddNewOption = (search: string | undefined) => {
-    const childLen = (currentItem?.value?.children || [])?.length;
+    const childLen = (currentItem?.value?.cIds || [])?.length;
     const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
     createNewItem('o', { lbl }, currentItem?.value?.id);
 }
@@ -155,10 +155,10 @@ const unlink = (index: number) => {
         return;
     }
 
-    if (currentItem.value?.children) {
-        currentItem.value.children.splice(index, 1)
-        if (currentItem.value.children.length === 0) {
-            currentItem.value.children = undefined
+    if (currentItem.value?.cIds) {
+        currentItem.value.cIds.splice(index, 1)
+        if (currentItem.value.cIds.length === 0) {
+            currentItem.value.cIds = undefined
         }
     }
 }
@@ -178,7 +178,7 @@ const convertToSingleChoice = () => {
 }
 
 onMounted(() => {
-    for (const [index, child] of (currentItem.value?.children || []).entries()) {
+    for (const [index, child] of (currentItem.value?.cIds || []).entries()) {
         const childItem = menuRoot.value.allItems?.[child];
         if (childItem?.defQ) {
             // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
@@ -194,14 +194,14 @@ onMounted(() => {
 
 <template>
     <div>
-        <div v-if="currentItem?.children"
+        <div v-if="currentItem?.cIds"
              class="text-sm">
 
 
 
             <!-- <div v-for="(optionItemId, optionItemIndex) in currentItem?.children"
              :key="optionItemId"> -->
-            <draggable v-model="currentItem.children"
+            <draggable v-model="currentItem.cIds"
                        item-key="id"
                        :group="`option-items-${randomId}`"
                        handle=".option-drag-handle">
@@ -405,7 +405,7 @@ onMounted(() => {
                             <template v-else>
                                 <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
                                       :class="[
-                                        (isMaxQuantity() && !isRadioMode) ? 'opacity-40' : ''
+                                        ((isMaxQuantity() || isChildMaxQuantity(optionItemId, optionItemIndex))) ? 'opacity-40 cursor-not-allowed' : ''
                                     ]"
                                       @click="addQuantity(optionItemId, optionItemIndex)" />
                             </template>
@@ -450,7 +450,7 @@ onMounted(() => {
                     return false
                 }
                 // parent is not allowed
-                if (item.children?.includes(currentItem?.id ?? '')) {
+                if (item.cIds?.includes(currentItem?.id ?? '')) {
                     return false
                 }
                 return true

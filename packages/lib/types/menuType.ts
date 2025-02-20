@@ -9,7 +9,7 @@ export type Item = {
     dsc?: string; // description
     prc?: number; // price
 
-    children?: ItemId[]; // children ids
+    cIds?: ItemId[]; // children ids
 
     opPrc?: number; // option price
 

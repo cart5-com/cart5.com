@@ -18,8 +18,8 @@ const isCollapsed = ref(false);
 
 onMounted(() => {
     setTimeout(() => {
-        if (props.currentItem?.children) {
-            isCollapsed.value = props.currentItem?.children?.length === 0
+        if (props.currentItem?.cIds) {
+            isCollapsed.value = props.currentItem?.cIds?.length === 0
         } else {
             isCollapsed.value = true;
         }
@@ -30,16 +30,16 @@ const unlink = (index: number) => {
     if (!confirm('Are you sure?')) {
         return;
     }
-    if (props.currentItem?.children) {
-        props.currentItem?.children.splice(index, 1)
-        if (props.currentItem?.children.length === 0) {
-            props.currentItem.children = undefined
+    if (props.currentItem?.cIds) {
+        props.currentItem?.cIds.splice(index, 1)
+        if (props.currentItem?.cIds.length === 0) {
+            props.currentItem.cIds = undefined
         }
     }
 }
 
 const onClickAddNewCustomization = (search: string | undefined) => {
-    const childLen = (props.currentItem?.children || [])?.length;
+    const childLen = (props.currentItem?.cIds || [])?.length;
     const lbl = search ? search.trim() : `Customize ${props.currentItem?.lbl} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = props.currentItem?.id;
@@ -92,7 +92,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         </template>
                     </SelectWithSearch>
                 </div>
-                <draggable v-model="currentItem.children"
+                <draggable v-model="currentItem.cIds"
                            item-key="id"
                            group="customization-items"
                            handle=".customization-drag-handle"

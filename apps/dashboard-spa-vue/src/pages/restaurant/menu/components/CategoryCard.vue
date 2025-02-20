@@ -70,7 +70,7 @@ const onClickAddNewItem = (search: string | undefined) => {
             </div>
         </div>
         <div v-if="showCategories">
-            <draggable v-model="currentItem.children"
+            <draggable v-model="currentItem.cIds"
                        item-key="id"
                        group="category-items"
                        handle=".item-drag-handle"

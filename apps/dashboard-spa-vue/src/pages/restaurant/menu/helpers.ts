@@ -79,10 +79,10 @@ export function addChildItem(parentItemId: string | undefined, itemId: string) {
     }
     if (
         menuRoot.value.allItems[parentItemId] &&
-        !menuRoot.value.allItems[parentItemId]?.children
+        !menuRoot.value.allItems[parentItemId]?.cIds
     ) {
-        menuRoot.value.allItems[parentItemId].children = []
+        menuRoot.value.allItems[parentItemId].cIds = []
     }
-    menuRoot.value?.allItems?.[parentItemId]?.children?.push(itemId)
+    menuRoot.value?.allItems?.[parentItemId]?.cIds?.push(itemId)
     return itemId;
 }
