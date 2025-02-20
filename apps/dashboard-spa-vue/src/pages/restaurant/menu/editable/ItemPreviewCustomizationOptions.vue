@@ -144,8 +144,8 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
 
 const onClickAddNewOption = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
-    const itemLabel = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    createNewItem('option', { itemLabel }, currentItem?.value?.id);
+    const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
+    createNewItem('option', { lbl }, currentItem?.value?.id);
 }
 
 const randomId = crypto.randomUUID();
@@ -322,10 +322,10 @@ onMounted(() => {
                                 </DropdownMenu>
                             </div>
                             <InputInline v-if="menuRoot.allItems"
-                                         v-model="menuRoot.allItems[optionItemId].itemLabel">
+                                         v-model="menuRoot.allItems[optionItemId].lbl">
                                 <template #trigger>
                                     <span class="capitalize cursor-text col-span-5">
-                                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel || 'Name:' }}
+                                        {{ menuRoot.allItems?.[optionItemId]?.lbl || 'Name:' }}
                                     </span>
                                 </template>
                             </InputInline>
@@ -457,7 +457,7 @@ onMounted(() => {
             })
             .map(item => ({
                 key: item.id,
-                name: item.itemLabel
+                name: item.lbl
             }))"
                           @select="(item) => {
                             addChildItem(currentItem?.id, item.key)

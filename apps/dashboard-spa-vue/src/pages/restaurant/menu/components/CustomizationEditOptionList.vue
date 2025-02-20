@@ -29,8 +29,8 @@ const unlink = (index: number) => {
 
 const onClickAddNewOption = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
-    const itemLabel = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
-    createNewItem('option', { itemLabel }, currentItem?.value?.id);
+    const lbl = search ? search : `Option ${childLen === 0 ? '' : `(${childLen + 1})`}`;
+    createNewItem('option', { lbl }, currentItem?.value?.id);
 }
 </script>
 
@@ -55,7 +55,7 @@ const onClickAddNewOption = (search: string | undefined) => {
                 })
                 .map(item => ({
                     key: item.id,
-                    name: item.itemLabel
+                    name: item.lbl
                 }))"
                               @select="(item) => {
                                 addChildItem(currentItem?.id, item.key)
@@ -81,7 +81,7 @@ const onClickAddNewOption = (search: string | undefined) => {
                         <div class="text-sm line-clamp-1 flex-1 mr-2 p-1"
                              v-if="menuRoot.allItems">
                             <Input class="capitalize"
-                                   v-model="menuRoot.allItems[itemId].itemLabel" />
+                                   v-model="menuRoot.allItems[itemId].lbl" />
                             <Input type="number"
                                    placeholder="Price - / +"
                                    :model-value="menuRoot.allItems[itemId!].optionPrice"

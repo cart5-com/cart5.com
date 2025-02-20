@@ -15,11 +15,11 @@ defineProps<{
     <div class="space-y-4"
          v-if="currentItem">
 
-        <InputInline v-model="currentItem.itemLabel"
+        <InputInline v-model="currentItem.lbl"
                      placeholder="Name:">
             <template #trigger>
                 <span class="capitalize cursor-text text-2xl font-bold">
-                    {{ currentItem.itemLabel || 'Name:' }}
+                    {{ currentItem.lbl || 'Name:' }}
                 </span>
             </template>
         </InputInline>

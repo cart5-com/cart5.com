@@ -120,7 +120,7 @@ const updateNestedOptionGroup = (
             {{ helperText }}
         </div>
         <div class="text-lg font-bold capitalize">
-            {{ currentItem?.itemLabel }}
+            {{ currentItem?.lbl }}
         </div>
         <div class="text-xs text-muted-foreground">
             <span v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
@@ -146,7 +146,7 @@ const updateNestedOptionGroup = (
                     ]"
                      @click="addQuantity(optionItemId, optionItemIndex)">
                     <span class="capitalize">
-                        {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                        {{ menuRoot.allItems?.[optionItemId]?.lbl }}
                     </span>
                     <span v-if="menuRoot.allItems?.[optionItemId]?.optionPrice">
                         {{ menuRoot.allItems?.[optionItemId]?.optionPrice }}
@@ -159,7 +159,7 @@ const updateNestedOptionGroup = (
                     <span>
                         {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         <span class="capitalize">
-                            {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                            {{ menuRoot.allItems?.[optionItemId]?.lbl }}
                         </span>
                     </span>
                     <Minus class="border border-foreground rounded-md" />
@@ -180,8 +180,8 @@ const updateNestedOptionGroup = (
                                                               @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
                                                               :itemId="childItemId"
                                                               :helper-text="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 1 ?
-                                                                `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.itemLabel}` :
-                                                                menuRoot.allItems?.[optionItemId]?.itemLabel" />
+                                                                `(${quantityRepeated}/${modelValue?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.allItems?.[optionItemId]?.lbl}` :
+                                                                menuRoot.allItems?.[optionItemId]?.lbl" />
                             </div>
                         </div>
 

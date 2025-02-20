@@ -21,7 +21,7 @@ const currentItem = computed(() => {
         <div class="space-y-4">
             <Input placeholder="Item Label"
                    class="capitalize"
-                   v-model="currentItem.itemLabel" />
+                   v-model="currentItem.lbl" />
             <Textarea v-model="currentItem.description"
                       placeholder="Description" />
             <Input type="number"

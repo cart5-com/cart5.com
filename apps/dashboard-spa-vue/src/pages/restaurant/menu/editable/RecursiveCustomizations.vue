@@ -55,8 +55,8 @@ function unlink(optionItemId: ItemId, index: number) {
 function getHelperText(optionItemIndex: number, quantityRepeated: number, optionItemId: ItemId) {
     return modelValue.value?.
         childrenState?.[optionItemIndex]?.quantity! > 1 ?
-        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.value.allItems?.[optionItemId]?.itemLabel}` :
-        menuRoot.value.allItems?.[optionItemId]?.itemLabel
+        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${menuRoot.value.allItems?.[optionItemId]?.lbl}` :
+        menuRoot.value.allItems?.[optionItemId]?.lbl
 }
 
 </script>

@@ -40,11 +40,11 @@ const unlink = (index: number) => {
 
 const onClickAddNewCustomization = (search: string | undefined) => {
     const childLen = (props.currentItem?.children || [])?.length;
-    const itemLabel = search ? search.trim() : `Customize ${props.currentItem?.itemLabel} ` +
+    const lbl = search ? search.trim() : `Customize ${props.currentItem?.lbl} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = props.currentItem?.id;
     // const newItemId =
-    createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 1 }, parentItemId);
+    createNewItem('customization', { lbl, maxQuantity: 1, minQuantity: 1 }, parentItemId);
     // setTimeout(() => {
     // editCustomization(newItemId)
     // }, 500)
@@ -77,7 +77,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         .filter(item => item.type === 'customization')
                         .map(item => ({
                             key: item.id,
-                            name: item.itemLabel
+                            name: item.lbl
                         }))"
                                       @select="(item) => {
                                         addChildItem(currentItem?.id, item.key)

@@ -86,8 +86,8 @@ const isMinQuantityAdded = () => {
                     <DropdownMenuItem @click="$emit('unlink')"
                                       class="bg-destructive text-destructive-foreground">
                         <Link2Off />
-                        Unlink '{{ currentItem?.itemLabel }}' from
-                        '{{ menuRoot.allItems?.[parentItemId!]?.itemLabel }}'
+                        Unlink '{{ currentItem?.lbl }}' from
+                        '{{ menuRoot.allItems?.[parentItemId!]?.lbl }}'
 
                     </DropdownMenuItem>
 
@@ -113,12 +113,12 @@ const isMinQuantityAdded = () => {
             {{ helperText }}
         </div>
 
-        <InputInline v-model="currentItem.itemLabel">
+        <InputInline v-model="currentItem.lbl">
             <template #trigger>
                 <span class="capitalize cursor-text text-lg">
                     <CornerDownRight v-if="helperText"
                                      class="inline-block" />
-                    {{ currentItem?.itemLabel || 'Name:' }}
+                    {{ currentItem?.lbl || 'Name:' }}
                 </span>
             </template>
         </InputInline>

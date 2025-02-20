@@ -39,9 +39,9 @@ async function removeCategory() {
 
 const onClickAddNewItem = (search: string | undefined) => {
     const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
-    const itemLabel = search ? search : `New item ${existingOnes.length + 1}`;
+    const lbl = search ? search : `New item ${existingOnes.length + 1}`;
     const parentItemId = currentItem?.value?.id;
-    const newItemId = createNewItem('item', { itemLabel }, parentItemId);
+    const newItemId = createNewItem('item', { lbl }, parentItemId);
     setTimeout(() => {
         editItem(newItemId)
     }, 500)
@@ -52,10 +52,10 @@ const onClickAddNewItem = (search: string | undefined) => {
          v-if="currentItem">
         <div class="flex justify-between items-center border-b border-muted-foreground p-2 ">
             <div class="text-2xl font-bold flex-1">
-                <InputInline v-model="currentItem.itemLabel">
+                <InputInline v-model="currentItem.lbl">
                     <template #trigger>
                         <span class="text-2xl font-bold h-10 focus:ring-0 border-none capitalize cursor-text">
-                            {{ currentItem.itemLabel || 'Name:' }}
+                            {{ currentItem.lbl || 'Name:' }}
                         </span>
                     </template>
                 </InputInline>
@@ -85,7 +85,7 @@ const onClickAddNewItem = (search: string | undefined) => {
                     .filter(item => item.type !== 'category')
                     .map(item => ({
                         key: item.id,
-                        name: item.itemLabel
+                        name: item.lbl
                     }))"
                                   @select="(selectedItem) => {
                                     addChildItem(currentItem?.id, selectedItem.key)

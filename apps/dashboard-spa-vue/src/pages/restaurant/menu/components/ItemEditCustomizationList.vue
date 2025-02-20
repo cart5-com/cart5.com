@@ -38,10 +38,10 @@ const unlink = (index: number) => {
 
 const onClickAddNewCustomization = (search: string | undefined) => {
     const childLen = (currentItem?.value?.children || [])?.length;
-    const itemLabel = search ? search.trim() : `Customize ${currentItem?.value?.itemLabel} ` +
+    const lbl = search ? search.trim() : `Customize ${currentItem?.value?.lbl} ` +
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = currentItem?.value?.id;
-    const newItemId = createNewItem('customization', { itemLabel, maxQuantity: 1, minQuantity: 0 }, parentItemId);
+    const newItemId = createNewItem('customization', { lbl, maxQuantity: 1, minQuantity: 0 }, parentItemId);
     setTimeout(() => {
         editCustomization(newItemId)
     }, 500)
@@ -69,7 +69,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                     // .filter(item => item.type !== 'category' && item.type !== 'option' && item.itemId !== currentItem?.itemId)
                     .map(item => ({
                         key: item.id,
-                        name: item.itemLabel
+                        name: item.lbl
                     }))"
                                   @select="(item) => {
                                     addChildItem(currentItem?.id, item.key)
@@ -92,7 +92,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                 <template #item="{ element: itemId, index }">
                     <div class="flex items-center justify-between bg-muted p-2 rounded-md">
                         <span class="text-sm line-clamp-1 capitalize">
-                            {{ menuRoot.allItems?.[itemId]?.itemLabel }}
+                            {{ menuRoot.allItems?.[itemId]?.lbl }}
                         </span>
                         <div class="flex items-center gap-2">
                             <Button variant="ghost"

@@ -43,7 +43,7 @@ const unlinkItem = () => {
                         <MoveIcon class="cursor-move" />
                     </div>
                     <h1 class="text-lg font-bold capitalize">
-                        {{ currentItem?.itemLabel }}
+                        {{ currentItem?.lbl }}
                     </h1>
                 </CardTitle>
                 <CardDescription>
@@ -80,7 +80,7 @@ const unlinkItem = () => {
              v-if="currentItem?.imageUrl">
             <div class="flex items-center justify-center h-full">
                 <img :src="currentItem?.imageUrl"
-                     :alt="currentItem?.itemLabel"
+                     :alt="currentItem?.lbl"
                      loading="lazy"
                      class="h-full w-48 object-cover overflow-hidden" />
             </div>

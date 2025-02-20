@@ -26,16 +26,16 @@ const filteredItems = computed(() => {
         .filter(([_id, item]) => item.type !== 'category')
         .filter(([id, item]) => {
             const typedItem = item as Item
-            return typedItem.itemLabel?.toLowerCase().includes(query) ||
+            return typedItem.lbl?.toLowerCase().includes(query) ||
                 id.toLowerCase().includes(query)
         })
 })
 
 const onClickAddNewItem = () => {
     const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.type === 'item');
-    const itemLabel = `New item ${existingOnes.length + 1}`;
+    const lbl = `New item ${existingOnes.length + 1}`;
     const parentItemId = undefined;
-    const newItemId = createNewItem('item', { itemLabel }, parentItemId);
+    const newItemId = createNewItem('item', { lbl }, parentItemId);
     setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
     }, 500)
@@ -81,7 +81,7 @@ const onClickEditItem = (item: Item) => {
             <TableBody>
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
-                    <TableCell class="capitalize line-clamp-1">{{ item.itemLabel }}</TableCell>
+                    <TableCell class="capitalize line-clamp-1">{{ item.lbl }}</TableCell>
                     <TableCell>{{ item.price?.toFixed(2) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"
