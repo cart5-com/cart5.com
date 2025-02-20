@@ -4,13 +4,13 @@ import { cn } from '@/lib/utils'
 import { useVModel } from '@vueuse/core'
 
 const props = defineProps<{
-  defaultValue?: File | string | number
-  modelValue?: File | string | number
+  defaultValue?: string | number
+  modelValue?: string | number
   class?: HTMLAttributes['class']
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', payload: File | string | number): void
+  (e: 'update:modelValue', payload: string | number): void
 }>()
 
 const modelValue = useVModel(props, 'modelValue', emits, {
