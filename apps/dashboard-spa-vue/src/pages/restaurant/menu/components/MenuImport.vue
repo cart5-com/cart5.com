@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Input } from "@/components/ui/input";
 import { importMenuFromCSV } from 'lib/types/menuImport';
 import { menuRoot } from '../store';
 import { toast } from "@/ui-plus/sonner";
+import { CloudUpload, Download, Import } from 'lucide-vue-next';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button';
 
-const fileInputModel = ref<File>();
+function createAndClickFileInput() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.style.display = 'none';
+    input.onchange = handleFileUpload;
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+}
 
 async function handleFileUpload(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -35,11 +50,6 @@ async function handleFileUpload(event: Event) {
         // Update menu
         menuRoot.value = newMenuRoot;
         toast.success('Menu imported successfully');
-
-        setTimeout(() => {
-            fileInputModel.value = undefined;
-        }, 100);
-
     } catch (error) {
         console.error('Error importing menu:', error);
         toast.error('Failed to import menu');
@@ -48,10 +58,28 @@ async function handleFileUpload(event: Event) {
 </script>
 
 <template>
-    <div class="flex items-center gap-4">
-        <Input type="file"
-               accept=".csv"
-               v-model="fileInputModel"
-               @change="handleFileUpload" />
-    </div>
+    <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+            <Button variant="outline"
+                    size="sm"
+                    class="ml-5">
+                Import/Export
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+
+            <DropdownMenuItem @click="createAndClickFileInput">
+                <CloudUpload /> Upload CSV file to import
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+                <Download /> Download CSV file to import
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+                <Download /> Download sample CSV file
+            </DropdownMenuItem>
+
+        </DropdownMenuContent>
+    </DropdownMenu>
 </template>
