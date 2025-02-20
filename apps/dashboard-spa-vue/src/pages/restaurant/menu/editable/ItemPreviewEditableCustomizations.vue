@@ -74,7 +74,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         <ChevronUpSquare />
                     </Button>
                     <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                        .filter(item => item.type === 'c')
+                        .filter(item => item.t === 'c')
                         .map(item => ({
                             key: item.id,
                             name: item.lbl

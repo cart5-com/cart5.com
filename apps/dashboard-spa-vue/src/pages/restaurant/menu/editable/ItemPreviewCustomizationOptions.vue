@@ -443,7 +443,7 @@ onMounted(() => {
 
         </div>
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-            .filter(item => item.type === 'o' || item.type === 'i')
+            .filter(item => item.t === 'o' || item.t === 'i')
             .filter(item => {
                 // itself not allowed
                 if (currentItem?.id === item.id) {

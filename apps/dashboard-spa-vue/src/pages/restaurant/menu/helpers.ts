@@ -54,11 +54,11 @@ export function editItem(itemId: ItemId) {
 }
 
 export function createNewItem(
-    type: Item['type'] = 'i',
+    type: Item['t'] = 'i',
     optionalProps: Partial<Item> = {},
     parentItemId: string | undefined
 ) {
-    optionalProps.type = type;
+    optionalProps.t = type;
     const newItem = {
         itemId: `${type}-${crypto.randomUUID()}`,
         ...optionalProps
