@@ -3,18 +3,18 @@ import type { Item, MenuRoot } from './menuType';
 // CSV column mapping type
 type CSVMenuRow = {
     id: string;
-    label: string;
+    title: string;
     type: string;
     price: string;
     description: string;
-    isSoldOut: string;
     children: string;
-    preSelectedQuantity: string;
-    optionPrice: string;
+    'default-quantity': string;
+    'price-as-option': string;
     max: string;
     min: string;
-    chargeAbove: string;
-    refundBelow: string;
+    'charge-above': string;
+    'is-sold-out': string;
+    'refund-below': string;
 }
 
 // Convert CSV type to menu item type
@@ -22,16 +22,18 @@ function convertCSVRowToMenuItem(row: CSVMenuRow): Item {
     console.log('row', row);
     return {
         id: row.id || `${row.type}-${crypto.randomUUID()}`,
-        lbl: row.label,
+        lbl: row.title,
         t: convertTypeString(row.type),
         prc: row.price ? Number(row.price) : undefined,
         dsc: row.description || undefined,
         cIds: row.children ? row.children.split(',') : undefined,
-        defQ: row.preSelectedQuantity ? Number(row.preSelectedQuantity) : undefined,
-        opPrc: row.optionPrice ? Number(row.optionPrice) : undefined,
+        defQ: row['default-quantity'] ? Number(row['default-quantity']) : undefined,
+        opPrc: row['price-as-option'] ? Number(row['price-as-option']) : undefined,
         maxQ: row.max ? Number(row.max) : undefined,
         minQ: row.min ? Number(row.min) : undefined,
-        chrgAbvQ: row.chargeAbove ? Number(row.chargeAbove) : undefined,
+        chrgAbvQ: row['charge-above'] ? Number(row['charge-above']) : undefined,
+        // isSoldOut: row['is-sold-out'] ? row['is-sold-out'] === 'true' : undefined,
+        // refundBelow: row['refund-below'] ? Number(row['refund-below']) : undefined,
     };
 }
 
@@ -91,6 +93,15 @@ export function importMenuFromCSV(csvContent: string): MenuRoot {
 }
 
 function parseCSVLines(csvContent: string): string[][] {
+    // Clean problematic control characters
+    csvContent = csvContent
+        .replace(/\r/g, '')         // Carriage return
+        .replace(/\u0000/g, '')     // Null character
+        .replace(/\ufeff/g, '')     // Byte Order Mark (BOM)
+        .replace(/[\v\f]/g, '')     // Vertical tab and Form feed
+        .replace(/\u200b/g, '');    // Zero-width space
+
+
     const lines: string[][] = [];
     let currentLine: string[] = [];
     let currentField = '';
@@ -138,11 +149,9 @@ function parseCSVLines(csvContent: string): string[][] {
 }
 
 // Helper function to validate CSV headers
-export function validateCSVHeaders(headers: string[]): boolean {
+export function validateRequiredCSVHeaders(headers: string[]): boolean {
     const requiredHeaders = [
-        'id', 'label', 'type', 'price', 'description',
-        'isSoldOut', 'children', 'preSelectedQuantity',
-        'optionPrice', 'max', 'min', 'chargeAbove', 'refundBelow'
+        'id', 'type',
     ];
 
     return requiredHeaders.every(header =>

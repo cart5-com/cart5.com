@@ -321,7 +321,7 @@ onMounted(() => {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
-                            <InputInline v-if="menuRoot.allItems"
+                            <InputInline v-if="menuRoot.allItems && menuRoot.allItems[optionItemId]"
                                          v-model="menuRoot.allItems[optionItemId].lbl">
                                 <template #trigger>
                                     <span class="capitalize cursor-text col-span-5">
