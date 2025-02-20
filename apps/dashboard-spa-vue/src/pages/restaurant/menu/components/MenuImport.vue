@@ -2,7 +2,7 @@
 import { importMenuFromCSV } from 'lib/types/menuImport';
 import { menuRoot } from '../store';
 import { toast } from "@/ui-plus/sonner";
-import { CloudUpload, Download, Import } from 'lucide-vue-next';
+import { CloudUpload, Download, Import, MoreHorizontal, Trash } from 'lucide-vue-next';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -55,6 +55,17 @@ async function handleFileUpload(event: Event) {
         toast.error('Failed to import menu');
     }
 }
+
+function deleteAllMenuItems() {
+    if (!confirm('This will delete all menu/items. Continue?')) {
+        return;
+    }
+
+    menuRoot.value = {
+        allItems: {},
+        children: [],
+    };
+}
 </script>
 
 <template>
@@ -63,7 +74,7 @@ async function handleFileUpload(event: Event) {
             <Button variant="outline"
                     size="sm"
                     class="ml-5">
-                Import/Export
+                <MoreHorizontal />
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -80,6 +91,20 @@ async function handleFileUpload(event: Event) {
                 <Download /> Download sample CSV file
             </DropdownMenuItem>
 
+            <DropdownMenuItem @click="deleteAllMenuItems"
+                              class="bg-destructive text-destructive-foreground">
+                <Trash /> Delete all menu/items
+            </DropdownMenuItem>
+
+            <div class="p-2 text-xs text-muted-foreground">
+                to export your menu from other websites
+                <br>
+                You may use <a href="https://menu-2-csv.netlify.app/"
+                   target="_blank"
+                   class="underline">
+                    menu-2-csv
+                </a> tool
+            </div>
         </DropdownMenuContent>
     </DropdownMenu>
 </template>
