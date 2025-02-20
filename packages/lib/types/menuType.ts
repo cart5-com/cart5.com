@@ -6,7 +6,7 @@ export type ParentItemId = ItemId;
 export type Item = {
     id?: ItemId;
     lbl?: string; // label, title, name
-    description?: string;
+    dsc?: string; // description
     price?: number;
 
     children?: ItemId[];

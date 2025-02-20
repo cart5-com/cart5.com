@@ -22,7 +22,7 @@ const currentItem = computed(() => {
             <Input placeholder="Item Label"
                    class="capitalize"
                    v-model="currentItem.lbl" />
-            <Textarea v-model="currentItem.description"
+            <Textarea v-model="currentItem.dsc"
                       placeholder="Description" />
             <Input type="number"
                    v-model="currentItem.price"

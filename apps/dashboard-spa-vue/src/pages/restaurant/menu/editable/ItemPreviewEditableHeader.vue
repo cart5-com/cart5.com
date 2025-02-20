@@ -24,11 +24,11 @@ defineProps<{
             </template>
         </InputInline>
 
-        <TextareaInline v-model="currentItem.description"
+        <TextareaInline v-model="currentItem.dsc"
                         placeholder="Description">
             <template #trigger>
                 <span class="capitalize cursor-text line-clamp-3">
-                    {{ currentItem.description || 'Description:' }}
+                    {{ currentItem.dsc || 'Description:' }}
                 </span>
             </template>
         </TextareaInline>

@@ -52,7 +52,7 @@ const unlinkItem = () => {
             </CardHeader>
             <CardContent>
                 <p class="text-xs line-clamp-3">
-                    {{ currentItem?.description }}
+                    {{ currentItem?.dsc }}
                 </p>
             </CardContent>
             <CardFooter class="max-w-full gap-2 flex flex-wrap">
