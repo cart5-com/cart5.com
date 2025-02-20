@@ -37,7 +37,7 @@ const currentItem = computed(() => {
                 <Input id="min"
                        placeholder="Min"
                        min="0"
-                       v-model="currentItem.minQuantity"
+                       v-model="currentItem.minQ"
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">
@@ -52,7 +52,7 @@ const currentItem = computed(() => {
                 <Input id="max"
                        placeholder="Max"
                        min="0"
-                       v-model="currentItem.maxQuantity"
+                       v-model="currentItem.maxQ"
                        class="col-span-2"
                        type="number" />
                 <span class="text-muted-foreground text-sm">

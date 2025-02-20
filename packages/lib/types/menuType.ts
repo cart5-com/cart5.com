@@ -18,8 +18,8 @@ export type Item = {
 
     defQ?: number; // pre selected quantity
 
-    maxQuantity?: number;
-    minQuantity?: number;
+    maxQ?: number; // max quantity
+    minQ?: number; // min quantity
     type?: 'item' | 'category' | 'customization' | 'option';
 
     // TODO:

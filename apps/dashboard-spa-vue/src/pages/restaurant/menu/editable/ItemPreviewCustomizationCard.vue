@@ -46,8 +46,8 @@ const getTotalQuantity = () => {
 }
 
 const isMinQuantityAdded = () => {
-    if (currentItem.value?.minQuantity && currentItem.value?.minQuantity > 0) {
-        return getTotalQuantity() >= currentItem.value?.minQuantity;
+    if (currentItem.value?.minQ && currentItem.value?.minQ > 0) {
+        return getTotalQuantity() >= currentItem.value?.minQ;
     }
     return true;
 }
@@ -91,11 +91,11 @@ const isMinQuantityAdded = () => {
 
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem @click="currentItem.maxQuantity = 1; currentItem.minQuantity = 1">
+                    <DropdownMenuItem @click="currentItem.maxQ = 1; currentItem.minQ = 1">
                         Make Radio/Single Option
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem @click="currentItem.maxQuantity = undefined; currentItem.minQuantity = undefined">
+                    <DropdownMenuItem @click="currentItem.maxQ = undefined; currentItem.minQ = undefined">
                         Remove All Option Limits
                     </DropdownMenuItem>
 
@@ -136,9 +136,9 @@ const isMinQuantityAdded = () => {
                           btn-text="Remove Requirement"
                           @select="(value) => {
                             if (currentItem) {
-                                currentItem.minQuantity = Number(value.key)
-                                if (currentItem.minQuantity === 0) {
-                                    currentItem.minQuantity = undefined
+                                currentItem.minQ = Number(value.key)
+                                if (currentItem.minQ === 0) {
+                                    currentItem.minQ = undefined
                                 }
                                 // if (currentItem.maxQuantity &&
                                 //     currentItem.maxQuantity > 0 &&
@@ -151,7 +151,7 @@ const isMinQuantityAdded = () => {
                 <template #trigger>
                     <Badge variant="outline">
                         Choose min:
-                        {{ (currentItem?.minQuantity === 0 || !currentItem?.minQuantity) ? 'optional' : currentItem?.minQuantity }}
+                        {{ (currentItem?.minQ === 0 || !currentItem?.minQ) ? 'optional' : currentItem?.minQ }}
                     </Badge>
                 </template>
             </SelectNumber>
@@ -165,9 +165,9 @@ const isMinQuantityAdded = () => {
                           btn-text="Remove Limit"
                           @select="(value) => {
                             if (currentItem) {
-                                currentItem.maxQuantity = Number(value.key)
-                                if (currentItem.maxQuantity === 0) {
-                                    currentItem.maxQuantity = undefined
+                                currentItem.maxQ = Number(value.key)
+                                if (currentItem.maxQ === 0) {
+                                    currentItem.maxQ = undefined
                                 }
                                 // if (
                                 //     currentItem.minQuantity &&
@@ -181,7 +181,7 @@ const isMinQuantityAdded = () => {
                 <template #trigger>
                     <Badge variant="outline">
                         Choose up to:
-                        {{ (currentItem?.maxQuantity === 0 || !currentItem?.maxQuantity) ? 'unlimited' : currentItem?.maxQuantity }}
+                        {{ (currentItem?.maxQ === 0 || !currentItem?.maxQ) ? 'unlimited' : currentItem?.maxQ }}
                     </Badge>
                 </template>
             </SelectNumber>

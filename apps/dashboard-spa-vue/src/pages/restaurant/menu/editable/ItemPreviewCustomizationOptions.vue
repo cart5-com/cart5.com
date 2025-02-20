@@ -69,8 +69,8 @@ const getTotalQuantity = () => {
 }
 
 const isMaxQuantity = () => {
-    if (currentItem.value?.maxQuantity && currentItem.value?.maxQuantity > 0) {
-        return getTotalQuantity() >= currentItem.value?.maxQuantity;
+    if (currentItem.value?.maxQ && currentItem.value?.maxQ > 0) {
+        return getTotalQuantity() >= currentItem.value?.maxQ;
     }
     return false;
 }
@@ -83,8 +83,8 @@ const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
 }
 
 const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
-    if (menuRoot.value.allItems?.[childId!]?.maxQuantity) {
-        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > menuRoot.value.allItems?.[childId!]?.maxQuantity!) {
+    if (menuRoot.value.allItems?.[childId!]?.maxQ) {
+        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > menuRoot.value.allItems?.[childId!]?.maxQ!) {
             return true;
         }
     }
@@ -167,13 +167,13 @@ const showReorder = ref(false)
 
 
 const isRadioMode = computed(() => {
-    return currentItem.value?.maxQuantity === 1 && currentItem.value?.minQuantity === 1
+    return currentItem.value?.maxQ === 1 && currentItem.value?.minQ === 1
 })
 
 const convertToSingleChoice = () => {
     if (currentItem.value) {
-        currentItem.value.maxQuantity = 1
-        currentItem.value.minQuantity = 1
+        currentItem.value.maxQ = 1
+        currentItem.value.minQ = 1
     }
 }
 
@@ -236,27 +236,27 @@ onMounted(() => {
 
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.maxQuantity! > 0"
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.maxQ! > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            menuRoot.allItems[optionItemId!].maxQuantity = 1
+                                                            menuRoot.allItems[optionItemId!].maxQ = 1
                                                         } else {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQ
                                                         }
                                                     }">
                                             </Switch>
                                             Limit quantity
-                                            <div v-if="menuRoot.allItems?.[optionItemId!].maxQuantity">
+                                            <div v-if="menuRoot.allItems?.[optionItemId!].maxQ">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[optionItemId]?.maxQuantity"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.maxQ"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.maxQ
                                                         } else {
-                                                            menuRoot.allItems[optionItemId!].maxQuantity = Number(value)
+                                                            menuRoot.allItems[optionItemId!].maxQ = Number(value)
                                                         }
                                                     }" />
                                             </div>

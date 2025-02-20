@@ -36,15 +36,15 @@ const getTotalQuantity = () => {
 }
 
 const isMaxQuantity = () => {
-    if (currentItem.value?.maxQuantity && currentItem.value?.maxQuantity > 0) {
-        return getTotalQuantity() >= currentItem.value?.maxQuantity;
+    if (currentItem.value?.maxQ && currentItem.value?.maxQ > 0) {
+        return getTotalQuantity() >= currentItem.value?.maxQ;
     }
     return false;
 }
 
 const isMinQuantityAdded = () => {
-    if (currentItem.value?.minQuantity && currentItem.value?.minQuantity > 0) {
-        return getTotalQuantity() >= currentItem.value?.minQuantity;
+    if (currentItem.value?.minQ && currentItem.value?.minQ > 0) {
+        return getTotalQuantity() >= currentItem.value?.minQ;
     }
     return true;
 }
@@ -123,11 +123,11 @@ const updateNestedOptionGroup = (
             {{ currentItem?.lbl }}
         </div>
         <div class="text-xs text-muted-foreground">
-            <span v-if="currentItem?.minQuantity && currentItem?.minQuantity > 0">
-                Choose min:{{ currentItem?.minQuantity }}
+            <span v-if="currentItem?.minQ && currentItem?.minQ > 0">
+                Choose min:{{ currentItem?.minQ }}
             </span>
-            <span v-if="currentItem?.maxQuantity && currentItem?.maxQuantity > 0">
-                (Up to {{ currentItem?.maxQuantity }})
+            <span v-if="currentItem?.maxQ && currentItem?.maxQ > 0">
+                (Up to {{ currentItem?.maxQ }})
             </span>
         </div>
 

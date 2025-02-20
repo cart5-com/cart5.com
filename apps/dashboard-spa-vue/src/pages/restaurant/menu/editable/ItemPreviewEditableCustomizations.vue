@@ -44,7 +44,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
         `${childLen === 0 ? '' : `(${childLen + 1})`}`;
     const parentItemId = props.currentItem?.id;
     // const newItemId =
-    createNewItem('customization', { lbl, maxQuantity: 1, minQuantity: 1 }, parentItemId);
+    createNewItem('customization', { lbl, maxQ: 1, minQ: 1 }, parentItemId);
     // setTimeout(() => {
     // editCustomization(newItemId)
     // }, 500)
