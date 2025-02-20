@@ -57,6 +57,151 @@ function convertTypeString(type: string): Item['t'] {
     }
 }
 
+// Convert type to string representation
+function convertTypeToString(type: Item['t']): string {
+    switch (type) {
+        case 'i': return 'item';
+        case 'ct': return 'category';
+        case 'c': return 'customization';
+        case 'o': return 'option';
+        default: return 'item';
+    }
+}
+
+export function getSampleMenuCSV(): string {
+    const sampleMenu: MenuRoot = {
+        children: ['cat1', 'cat2'],
+        allItems: {
+            'cat1': {
+                id: 'cat1',
+                lbl: 'Appetizers',
+                t: 'ct',
+                cIds: ['item1', 'item2']
+            },
+            'cat2': {
+                id: 'cat2',
+                lbl: 'Main Course',
+                t: 'ct',
+                cIds: ['item3']
+            },
+            'item1': {
+                id: 'item1',
+                lbl: 'Spring Rolls',
+                t: 'i',
+                prc: 5.99,
+                dsc: 'Crispy vegetable spring rolls',
+                cIds: ['custom1']
+            },
+            'item2': {
+                id: 'item2',
+                lbl: 'Salad',
+                t: 'i',
+                prc: 7.99,
+                dsc: 'Fresh garden salad'
+            },
+            'item3': {
+                id: 'item3',
+                lbl: 'Burger',
+                t: 'i',
+                prc: 12.99,
+                dsc: 'Classic beef burger',
+                cIds: ['custom2']
+            },
+            'custom1': {
+                id: 'custom1',
+                lbl: 'Dipping Sauce',
+                t: 'c',
+                cIds: ['opt1', 'opt2']
+            },
+            'custom2': {
+                id: 'custom2',
+                lbl: 'Toppings',
+                t: 'c',
+                cIds: ['opt3', 'opt4']
+            },
+            'opt1': {
+                id: 'opt1',
+                lbl: 'Sweet Chili',
+                t: 'o',
+                opPrc: 0.50,
+                chrgAbvQ: 1
+            },
+            'opt2': {
+                id: 'opt2',
+                lbl: 'Peanut Sauce',
+                t: 'o',
+                opPrc: 0.50,
+                chrgAbvQ: 1
+            },
+            'opt3': {
+                id: 'opt3',
+                lbl: 'Extra Cheese',
+                t: 'o',
+                opPrc: 1.00,
+                maxQ: 2
+            },
+            'opt4': {
+                id: 'opt4',
+                lbl: 'Bacon',
+                t: 'o',
+                opPrc: 2.00,
+                defQ: 1
+            }
+        }
+    };
+
+    return exportMenuToCSV(sampleMenu);
+}
+
+export function exportMenuToCSV(menuRoot: MenuRoot): string {
+    // Define CSV headers
+    const headers = [
+        'id',
+        'title',
+        'type',
+        'price',
+        'description',
+        'children',
+        'default-quantity',
+        'price-as-option',
+        'max',
+        'min',
+        'charge-above'
+    ];
+
+    // Create CSV rows
+    const rows: string[][] = [headers];
+
+    // Convert each item to CSV row
+    Object.values(menuRoot.allItems || {}).forEach(item => {
+        const row = [
+            item.id || '',
+            item.lbl || '',
+            convertTypeToString(item.t || 'i'),
+            item.prc?.toString() || '',
+            item.dsc || '',
+            item.cIds?.join(',') || '',
+            item.defQ?.toString() || '',
+            item.opPrc?.toString() || '',
+            item.maxQ?.toString() || '',
+            item.minQ?.toString() || '',
+            item.chrgAbvQ?.toString() || ''
+        ];
+        rows.push(row);
+    });
+
+    // Convert rows to CSV string
+    return rows.map(row =>
+        row.map(field => {
+            // Escape fields containing commas, quotes, or newlines
+            if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+                return `"${field.replace(/"/g, '""')}"`;
+            }
+            return field;
+        }).join(',')
+    ).join('\n');
+}
+
 // Parse CSV content and return MenuRoot structure
 export function importMenuFromCSV(csvContent: string): MenuRoot {
     const lines = parseCSVLines(csvContent);
@@ -149,12 +294,12 @@ function parseCSVLines(csvContent: string): string[][] {
 }
 
 // Helper function to validate CSV headers
-export function validateRequiredCSVHeaders(headers: string[]): boolean {
-    const requiredHeaders = [
-        'id', 'type',
-    ];
+// export function validateRequiredCSVHeaders(headers: string[]): boolean {
+//     const requiredHeaders = [
+//         'id', 'type',
+//     ];
 
-    return requiredHeaders.every(header =>
-        headers.includes(header)
-    );
-} 
+//     return requiredHeaders.every(header =>
+//         headers.includes(header)
+//     );
+// } 

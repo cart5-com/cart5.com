@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { importMenuFromCSV } from 'lib/types/menuImport';
+import { exportMenuToCSV, getSampleMenuCSV, importMenuFromCSV } from 'lib/types/menuImport';
 import { menuRoot } from '../store';
 import { toast } from "@/ui-plus/sonner";
-import { CloudUpload, Download, MoreHorizontal, Trash } from 'lucide-vue-next';
+import { Download, FileDown, FileUp, MoreHorizontal, Trash } from 'lucide-vue-next';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -56,6 +56,53 @@ async function handleFileUpload(event: Event) {
     }
 }
 
+function downloadMenuAsCSV() {
+    try {
+        const csvContent = exportMenuToCSV(menuRoot.value);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', `menu-${Date.now()}.csv`);
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.success('Menu exported successfully');
+    } catch (error) {
+        console.error('Error exporting menu:', error);
+        toast.error('Failed to export menu');
+    }
+}
+
+
+function downloadSampleCSV() {
+    try {
+        const csvContent = getSampleMenuCSV();
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'sample-menu.csv');
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.success('Sample menu downloaded successfully');
+    } catch (error) {
+        console.error('Error downloading sample:', error);
+        toast.error('Failed to download sample menu');
+    }
+}
+
 function deleteAllMenuItems() {
     if (!confirm('This will delete all menu/items. Continue?')) {
         return;
@@ -80,14 +127,14 @@ function deleteAllMenuItems() {
         <DropdownMenuContent align="start">
 
             <DropdownMenuItem @click="createAndClickFileInput">
-                <CloudUpload /> Upload CSV file to import
+                <FileUp /> Upload CSV file to import
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
-                <Download /> Download CSV file to import
+            <DropdownMenuItem @click="downloadMenuAsCSV">
+                <FileDown /> Export your menu as CSV
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="downloadSampleCSV">
                 <Download /> Download sample CSV file
             </DropdownMenuItem>
 
@@ -97,7 +144,7 @@ function deleteAllMenuItems() {
             </DropdownMenuItem>
 
             <div class="p-2 text-xs text-muted-foreground">
-                to export your menu from other websites
+                to download your menu from other websites
                 <br>
                 You may use <a href="https://menu-2-csv.netlify.app/"
                    target="_blank"
