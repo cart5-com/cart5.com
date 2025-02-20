@@ -263,27 +263,27 @@ onMounted(() => {
                                         </div>
 
                                         <div class="my-4 border-y py-2">
-                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.chargeAboveQuantity! > 0"
+                                            <Switch :checked="menuRoot.allItems?.[optionItemId!]?.chrgAbvQ! > 0"
                                                     @update:checked="(checked) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (checked) {
-                                                            menuRoot.allItems[optionItemId!].chargeAboveQuantity = 1
+                                                            menuRoot.allItems[optionItemId!].chrgAbvQ = 1
                                                         } else {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.chargeAboveQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.chrgAbvQ
                                                         }
                                                     }">
                                             </Switch>
                                             Charge above
-                                            <div v-if="menuRoot.allItems?.[optionItemId!].chargeAboveQuantity">
+                                            <div v-if="menuRoot.allItems?.[optionItemId!].chrgAbvQ">
                                                 <Input type="number"
                                                        min="1"
-                                                       :model-value="menuRoot.allItems?.[optionItemId]?.chargeAboveQuantity"
+                                                       :model-value="menuRoot.allItems?.[optionItemId]?.chrgAbvQ"
                                                        @update:model-value="(value) => {
                                                         if (!menuRoot.allItems) return;
                                                         if (Number(value) < 1) {
-                                                            delete menuRoot.allItems?.[optionItemId!]?.chargeAboveQuantity
+                                                            delete menuRoot.allItems?.[optionItemId!]?.chrgAbvQ
                                                         } else {
-                                                            menuRoot.allItems[optionItemId!].chargeAboveQuantity = Number(value)
+                                                            menuRoot.allItems[optionItemId!].chrgAbvQ = Number(value)
                                                         }
                                                     }" />
                                             </div>

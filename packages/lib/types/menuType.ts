@@ -13,10 +13,10 @@ export type Item = {
 
     opPrc?: number; // option price
 
-    chargeAboveQuantity?: number;
+    chrgAbvQ?: number; // charge above quantity
 
 
-    preSelectedQuantity?: number;
+    preSelectedQuantity?: number; // pre selected quantity
 
     maxQuantity?: number;
     minQuantity?: number;
@@ -62,8 +62,8 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                         let chargeableQuantity = quantity;
 
                         // Handle chargeAboveQuantity
-                        if (optionItem.chargeAboveQuantity !== undefined) {
-                            chargeableQuantity = Math.max(0, quantity - optionItem.chargeAboveQuantity);
+                        if (optionItem.chrgAbvQ !== undefined) {
+                            chargeableQuantity = Math.max(0, quantity - optionItem.chrgAbvQ);
                         }
 
                         // Calculate base price
