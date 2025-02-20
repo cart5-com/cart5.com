@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
+import { type CartChildrenItemState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
 import { AlignJustify, CornerDownRight, Link2Off, MoreVerticalIcon, Pencil } from 'lucide-vue-next';
@@ -13,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { previewItem } from '@src/pages/restaurant/menu/helpers';
 
 const props = defineProps<{
-    modelValue?: BucketChildrenState
+    modelValue?: CartChildrenItemState
     itemId?: ItemId
     helperText?: string
     isDraggable?: boolean
@@ -21,7 +21,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: BucketChildrenState): void
+    (e: 'update:modelValue', payload: CartChildrenItemState): void
     (e: 'unlink'): void
 }>()
 

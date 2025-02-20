@@ -1,4 +1,4 @@
-import { Item, type BucketItem, type ItemId } from 'lib/types/menuType';
+import { Item, type CartItem, type ItemId } from 'lib/types/menuType';
 // import ItemPreview from './preview/ItemPreview.vue';
 import ItemPreviewEditable from './editable/ItemPreviewEditable.vue';
 import ItemEdit from './components/ItemEdit.vue';
@@ -11,7 +11,7 @@ const dialog = useDialog();
 
 
 export function previewItem(itemId: ItemId) {
-    dialog.show<BucketItem>({
+    dialog.show<CartItem>({
         // title: menuRoot.value.allItems?.[itemId]?.itemLabel,
         title: 'Edit Item',
         component: ItemPreviewEditable,
@@ -28,7 +28,7 @@ export function previewItem(itemId: ItemId) {
 }
 
 export function editCustomization(itemId: ItemId) {
-    dialog.show<BucketItem>({
+    dialog.show<CartItem>({
         title: "Edit Customization",
         component: CustomizationEdit,
         dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",
@@ -39,7 +39,7 @@ export function editCustomization(itemId: ItemId) {
 }
 
 export function editItem(itemId: ItemId) {
-    dialog.show<BucketItem>({
+    dialog.show<CartItem>({
         title: "Edit Item",
         component: ItemEdit,
         dialogContentClass: "min-w-full md:min-w-[60vw] lg:min-w-[40vw]",

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
-import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
+import { calculateCartItemPrice, type CartItem, type ItemId } from "lib/types/menuType";
 import { computed, onMounted, ref, watch } from "vue";
 import ItemPreviewEditableCustomizations from "./ItemPreviewEditableCustomizations.vue";
 import ItemPreviewEditableHeader from "./ItemPreviewEditableHeader.vue";
@@ -25,7 +25,7 @@ const currentItem = computed(() => {
     return undefined
 })
 
-const bucketItem = ref<BucketItem>({
+const cartItem = ref<CartItem>({
     itemId: props.itemId,
     quantity: 1,
     childrenState: [],
@@ -45,18 +45,18 @@ onMounted(() => {
 
 
 
-const bucketTotalPrice = ref("");
+const cartItemTotalPrice = ref("");
 
-watch([bucketItem, currentItem], () => {
-    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+watch([cartItem, currentItem], () => {
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
 }, { deep: true })
 
 onMounted(() => {
-    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
 })
 
 const randomNumber = crypto.randomUUID()
-const checkBucketItem = () => {
+const checkCartItem = () => {
     // count .min-quantity-warning classes inside .warning-container-${randomNumber}
     const warningContainer = document.querySelector(`.warning-container-${randomNumber}`)
     const warningCount = warningContainer?.querySelectorAll('.min-quantity-warning').length
@@ -88,15 +88,11 @@ const checkBucketItem = () => {
             <ItemPreviewEditableHeader :current-item="currentItem" />
             <div :class="`warning-container-${randomNumber}`">
                 <ItemPreviewEditableCustomizations :current-item="currentItem"
-                                                   :bucket-item="bucketItem" />
+                                                   :cartItem="cartItem" />
             </div>
-            <!-- <details>
-                <summary>bucketItem</summary>
-                <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
-            </details> -->
             <NumberField id="quantity"
                          class="max-w-40 mt-8"
-                         v-model="bucketItem.quantity"
+                         v-model="cartItem.quantity"
                          :default-value="1"
                          :step="1"
                          :min="1">
@@ -108,19 +104,18 @@ const checkBucketItem = () => {
             </NumberField>
             <Button class="w-full mt-8"
                     @click="() => {
-                        if (checkBucketItem()) {
-                            $emit('close', bucketItem)
+                        if (checkCartItem()) {
+                            $emit('close', cartItem)
                         } else {
                             toast.error('Please select required options')
                         }
                     }">
-                Add {{ bucketItem.quantity }} to cart
-                <!-- (Total: ${{ bucketTotalPrice }}) -->
+                Add {{ cartItem.quantity }} to cart
             </Button>
         </div>
         <div
              class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
-            Total: ${{ bucketTotalPrice }}
+            Total: ${{ cartItemTotalPrice }}
         </div>
 
     </div>

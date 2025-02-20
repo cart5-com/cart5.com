@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
+import { type CartChildrenItemState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed } from 'vue';
 import { Minus, Plus } from 'lucide-vue-next';
 
 const props = defineProps<{
-    modelValue?: BucketChildrenState
+    modelValue?: CartChildrenItemState
     itemId?: ItemId
     helperText?: string
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: BucketChildrenState): void
+    (e: 'update:modelValue', payload: CartChildrenItemState): void
 }>()
 
 const modelValue = useVModel(props, 'modelValue', emits, {
@@ -100,7 +100,7 @@ const updateNestedOptionGroup = (
     optionIndex: number,
     quantityIndex: number,
     linkIndex: number,
-    newValue: BucketChildrenState
+    newValue: CartChildrenItemState
 ) => {
     if (modelValue.value?.childrenState?.[optionIndex]?.childrenState?.[quantityIndex]) {
         modelValue.value.childrenState[optionIndex].childrenState[quantityIndex][linkIndex] = newValue;

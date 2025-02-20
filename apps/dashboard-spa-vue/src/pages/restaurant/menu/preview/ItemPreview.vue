@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
-import { calculateBucketItemPrice, type BucketItem, type ItemId } from "lib/types/menuType";
+import { calculateCartItemPrice, type CartItem, type ItemId } from "lib/types/menuType";
 import { computed, onMounted, ref, watch } from "vue";
 import ItemPreviewRecursiveChildren from "./ItemPreviewRecursiveChildren.vue";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ const currentItem = computed(() => {
     return undefined
 })
 
-const bucketItem = ref<BucketItem>({
+const cartItem = ref<CartItem>({
     itemId: props.itemId,
     quantity: 1,
     childrenState: [],
@@ -32,17 +32,17 @@ const bucketItem = ref<BucketItem>({
 
 const randomNumber = crypto.randomUUID()
 
-const bucketTotalPrice = ref("")
+const cartItemTotalPrice = ref("")
 
-watch(bucketItem, () => {
-    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+watch(cartItem, () => {
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
 }, { deep: true })
 
 onMounted(() => {
-    bucketTotalPrice.value = calculateBucketItemPrice(bucketItem.value, menuRoot.value)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
 })
 
-const checkBucketItem = () => {
+const checkCartItem = () => {
     // count .min-quantity-warning classes inside .warning-container-${randomNumber}
     const warningContainer = document.querySelector(`.warning-container-${randomNumber}`)
     const warningCount = warningContainer?.querySelectorAll('.min-quantity-warning').length
@@ -75,25 +75,25 @@ const checkBucketItem = () => {
                     Base Price: ${{ currentItem?.prc }}
                 </div>
                 <div class="text-lg font-bold text-primary">
-                    Total: ${{ bucketTotalPrice }}
+                    Total: ${{ cartItemTotalPrice }}
                 </div>
             </div>
             <div :class="`warning-container-${randomNumber}`">
                 <div v-for="(child, index) in currentItem?.cIds"
                      :key="child">
                     <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
-                    <ItemPreviewRecursiveChildren v-if="bucketItem.childrenState"
+                    <ItemPreviewRecursiveChildren v-if="cartItem.childrenState"
                                                   :itemId="child"
-                                                  v-model="bucketItem.childrenState[index]" />
+                                                  v-model="cartItem.childrenState[index]" />
                 </div>
             </div>
             <details>
-                <summary>bucketItem</summary>
-                <pre class="text-xs max-w-full overflow-y-auto">{{ bucketItem }}</pre>
+                <summary>cartItem</summary>
+                <pre class="text-xs max-w-full overflow-y-auto">{{ cartItem }}</pre>
             </details>
             <NumberField id="quantity"
                          class="w-full"
-                         v-model="bucketItem.quantity"
+                         v-model="cartItem.quantity"
                          :default-value="1"
                          :step="1"
                          :min="1">
@@ -105,14 +105,14 @@ const checkBucketItem = () => {
             </NumberField>
             <Button class="w-full mt-8"
                     @click="() => {
-                        if (checkBucketItem()) {
-                            $emit('close', bucketItem)
+                        if (checkCartItem()) {
+                            $emit('close', cartItem)
                         } else {
                             toast.error('Please select required options')
                         }
                     }">
-                Add {{ bucketItem.quantity }} to cart
-                (Total: ${{ bucketTotalPrice }})
+                Add {{ cartItem.quantity }} to cart
+                (Total: ${{ cartItemTotalPrice }})
             </Button>
         </div>
         <!-- <div class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center">

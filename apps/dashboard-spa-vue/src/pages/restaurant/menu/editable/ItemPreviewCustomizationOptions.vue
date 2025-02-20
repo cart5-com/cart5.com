@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type BucketChildrenState, type ItemId } from "lib/types/menuType";
+import { type CartChildrenItemState, type ItemId } from "lib/types/menuType";
 import { menuRoot } from "../store";
 import { computed, onMounted, ref } from 'vue';
 import {
@@ -37,14 +37,14 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 
 const props = defineProps<{
-    modelValue?: BucketChildrenState
+    modelValue?: CartChildrenItemState
     itemId?: ItemId
     helperText?: string
     isDraggable?: boolean
 }>()
 
 const emits = defineEmits<{
-    (e: 'update:modelValue', payload: BucketChildrenState): void
+    (e: 'update:modelValue', payload: CartChildrenItemState): void
     (e: 'unlink'): void
 }>()
 

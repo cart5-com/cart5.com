@@ -28,23 +28,19 @@ export type Item = {
     imgUrl?: string;
 }
 
-export type BucketChildrenState = {
+export type CartChildrenItemState = {
     itemId?: ItemId;
     childrenState?: {
         itemId?: ItemId;
         quantity?: number;
-        childrenState?: (BucketChildrenState[])[];
+        childrenState?: (CartChildrenItemState[])[];
     }[];
-    // childrenState?: Record<ItemId, {
-    //     quantity?: number;
-    //     childrenState?: (BucketChildrenState[])[];
-    // }>;
 }
 
-export type BucketItem = {
+export type CartItem = {
     itemId?: ItemId;
     quantity?: number;
-    childrenState?: BucketChildrenState[];
+    childrenState?: CartChildrenItemState[];
 }
 
 export type MenuRoot = {
@@ -52,7 +48,7 @@ export type MenuRoot = {
     allItems?: Record<string, Item>;
 }
 
-export const recursiveBucketChildrenState = (customizationState: BucketChildrenState, menuRoot: MenuRoot) => {
+export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
     if (customizationState.itemId) {
         if (customizationState.childrenState) {
@@ -76,7 +72,7 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
                             if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                 for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                     const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
-                                    total += recursiveBucketChildrenState(deepOptionSetState, menuRoot)
+                                    total += recursiveCartChildrenItemState(deepOptionSetState, menuRoot)
                                 }
                             }
                         }
@@ -88,25 +84,24 @@ export const recursiveBucketChildrenState = (customizationState: BucketChildrenS
     return total;
 }
 
-export const calculateBucketItemPrice = (bucketItem: BucketItem, menuRoot: MenuRoot) => {
-    // debugger;
+export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) => {
     let total = 0;
-    if (bucketItem.itemId) {
-        const item = menuRoot.allItems?.[bucketItem.itemId];
+    if (cartItem.itemId) {
+        const item = menuRoot.allItems?.[cartItem.itemId];
         if (item) {
             total += (item.prc || 0);
         }
     }
-    if (bucketItem.childrenState) {
-        for (const index in bucketItem.childrenState) {
-            const optionSetState = bucketItem.childrenState[index];
-            total += recursiveBucketChildrenState(optionSetState, menuRoot)
+    if (cartItem.childrenState) {
+        for (const index in cartItem.childrenState) {
+            const optionSetState = cartItem.childrenState[index];
+            total += recursiveCartChildrenItemState(optionSetState, menuRoot)
         }
     }
     if (total < 0) {
         total = 0;
     }
-    return (total * (bucketItem.quantity || 1)).toFixed(2);
+    return (total * (cartItem.quantity || 1)).toFixed(2);
 }
 
 

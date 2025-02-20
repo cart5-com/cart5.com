@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../store";
-import { Item, type BucketItem } from "lib/types/menuType";
+import { Item, type CartItem } from "lib/types/menuType";
 import { onMounted, ref } from "vue";
 import ItemPreviewCustomizationCard from "./ItemPreviewCustomizationCard.vue";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
 
 const props = defineProps<{
     currentItem?: Item,
-    bucketItem?: BucketItem
+    cartItem?: CartItem
 }>()
 
 const isCollapsed = ref(false);
@@ -98,25 +98,17 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                            handle=".customization-drag-handle"
                            class="space-y-2">
                     <template #item="{ element: child, index }">
-                        <ItemPreviewCustomizationCard v-if="bucketItem?.childrenState"
+                        <ItemPreviewCustomizationCard v-if="cartItem?.childrenState"
                                                       :parent-item-id="currentItem?.id"
                                                       :itemId="child"
                                                       @unlink="() => {
                                                         unlink(index)
                                                     }"
                                                       :is-draggable="true"
-                                                      v-model="bucketItem.childrenState[index]" />
+                                                      v-model="cartItem.childrenState[index]" />
                     </template>
                 </draggable>
             </div>
         </div>
-
-        <!-- {{ menu2Store.allItems?.[child]?.itemLabel }} -->
-        <!-- <div v-for="(child, index) in currentItem?.children"
-                     :key="child">
-                    <ItemPreviewCustomizationCard v-if="bucketItem.childrenState"
-                                                          :itemId="child"
-                                                          v-model="bucketItem.childrenState[index]" />
-                </div> -->
     </div>
 </template>
