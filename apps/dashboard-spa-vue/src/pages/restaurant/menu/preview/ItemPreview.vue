@@ -72,7 +72,7 @@ const checkBucketItem = () => {
         <div class="p-4">
             <div class="">
                 <div class="text-sm">
-                    Base Price: ${{ currentItem?.price }}
+                    Base Price: ${{ currentItem?.prc }}
                 </div>
                 <div class="text-lg font-bold text-primary">
                     Total: ${{ bucketTotalPrice }}

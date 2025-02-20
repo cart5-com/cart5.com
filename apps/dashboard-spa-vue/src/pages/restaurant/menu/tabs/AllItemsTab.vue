@@ -82,7 +82,7 @@ const onClickEditItem = (item: Item) => {
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
                     <TableCell class="capitalize line-clamp-1">{{ item.lbl }}</TableCell>
-                    <TableCell>{{ item.price?.toFixed(2) }}</TableCell>
+                    <TableCell>{{ item.prc?.toFixed(2) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"
                                 size="sm"

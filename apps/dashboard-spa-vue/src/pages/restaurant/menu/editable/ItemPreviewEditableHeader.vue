@@ -36,10 +36,10 @@ defineProps<{
 
         <InputInline type="number"
                      placeholder="Price: $"
-                     v-model="currentItem.price">
+                     v-model="currentItem.prc">
             <template #trigger>
                 <div class="cursor-text flex">
-                    <DollarSign /> {{ currentItem.price || 'Price:' }}
+                    <DollarSign /> {{ currentItem.prc || 'Price:' }}
                 </div>
             </template>
         </InputInline>

@@ -7,7 +7,7 @@ export type Item = {
     id?: ItemId;
     lbl?: string; // label, title, name
     dsc?: string; // description
-    price?: number;
+    prc?: number; // price
 
     children?: ItemId[];
 
@@ -92,7 +92,7 @@ export const calculateBucketItemPrice = (bucketItem: BucketItem, menuRoot: MenuR
     if (bucketItem.itemId) {
         const item = menuRoot.allItems?.[bucketItem.itemId];
         if (item) {
-            total += (item.price || 0);
+            total += (item.prc || 0);
         }
     }
     if (bucketItem.childrenState) {

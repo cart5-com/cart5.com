@@ -25,7 +25,7 @@ const currentItem = computed(() => {
             <Textarea v-model="currentItem.dsc"
                       placeholder="Description" />
             <Input type="number"
-                   v-model="currentItem.price"
+                   v-model="currentItem.prc"
                    placeholder="Price" />
             <ItemEditCustomizationList :item-id="props.itemId" />
         </div>

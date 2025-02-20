@@ -132,8 +132,8 @@ const updateNestedOptionGroup = (
         </div>
 
         <div class="text-xs"
-             v-if="currentItem?.price">
-            ${{ currentItem?.price }}
+             v-if="currentItem?.prc">
+            ${{ currentItem?.prc }}
         </div>
         <div v-if="currentItem?.children"
              v-for="(optionItemId, optionItemIndex) in currentItem?.children"
