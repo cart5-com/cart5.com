@@ -77,9 +77,9 @@ const unlinkItem = () => {
         </Card>
 
         <div class="flex-shrink-0"
-             v-if="currentItem?.imageUrl">
+             v-if="currentItem?.imgUrl">
             <div class="flex items-center justify-center h-full">
-                <img :src="currentItem?.imageUrl"
+                <img :src="currentItem?.imgUrl"
                      :alt="currentItem?.lbl"
                      loading="lazy"
                      class="h-full w-48 object-cover overflow-hidden" />

@@ -15,7 +15,6 @@ export type Item = {
 
     chrgAbvQ?: number; // charge above quantity
 
-
     defQ?: number; // pre selected quantity
 
     maxQ?: number; // max quantity
@@ -26,7 +25,7 @@ export type Item = {
     t?: 'i' | 'ct' | 'c' | 'o'; // i, ct, c, o
 
     // TODO:
-    imageUrl?: string;
+    imgUrl?: string;
 }
 
 export type BucketChildrenState = {
