@@ -99,6 +99,6 @@ const handleInteractOutside = (event: any) => {
 .dialog-header-scroll-animation {
 	animation: scroll-animation 0.3s ease-in-out;
 	animation-timeline: scroll();
-	animation-range: 0 30%;
+	animation-range: 0 20%;
 }
 </style>
