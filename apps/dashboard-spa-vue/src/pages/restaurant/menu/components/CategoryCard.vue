@@ -6,7 +6,7 @@ import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from './ItemCard.vue';
-import { addChildItem, createNewItem, editItem } from '../helpers';
+import { addChildItem, createNewItem, previewItem } from '../helpers';
 import InputInline from '@/ui-plus/inline-edit/InputInline.vue';
 
 const props = defineProps<{
@@ -43,7 +43,7 @@ const onClickAddNewItem = (search: string | undefined) => {
     const parentItemId = currentItem?.value?.id;
     const newItemId = createNewItem('i', { lbl }, parentItemId);
     setTimeout(() => {
-        editItem(newItemId)
+        previewItem(newItemId)
     }, 500)
 }
 </script>

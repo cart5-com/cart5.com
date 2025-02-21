@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { menuRoot } from "../store";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
+import { Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { computed } from "vue";
-import { editItem, previewItem } from "../helpers";
+import { previewItem } from "../helpers";
 
 const props = defineProps<{
     itemId: string,
@@ -58,13 +58,8 @@ const unlinkItem = () => {
             <CardFooter class="max-w-full gap-2 flex flex-wrap">
                 <Button variant="outline"
                         size="sm"
-                        @click="editItem(itemId)">
-                    <Pencil /> Edit
-                </Button>
-                <Button variant="outline"
-                        size="sm"
                         @click="previewItem(itemId)">
-                    <Eye /> Preview
+                    <Pencil /> Edit
                 </Button>
                 <Button variant="destructive"
                         size="sm"

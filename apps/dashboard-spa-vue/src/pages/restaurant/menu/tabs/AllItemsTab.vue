@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import type { Item } from 'lib/types/menuType'
 import { menuRoot } from '../store'
 import { Eye, Pencil, Plus } from 'lucide-vue-next'
-import { createNewItem, editCustomization, editItem, previewItem } from '../helpers'
+import { createNewItem, previewItem } from '../helpers'
 import {
     Table,
     TableBody,
@@ -22,8 +22,10 @@ const filteredItems = computed(() => {
     const query = searchQuery.value.toLowerCase()
 
     return Object.entries(items)
-        // filter root items which are categories
+        // filter categories
         .filter(([_id, item]) => item.t !== 'ct')
+        // filter customizations
+        .filter(([_id, item]) => item.t !== 'c')
         .filter(([id, item]) => {
             const typedItem = item as Item
             return typedItem.lbl?.toLowerCase().includes(query) ||
@@ -40,7 +42,7 @@ const onClickAddNewItem = () => {
         window.scrollTo(0, document.body.scrollHeight);
     }, 500)
     setTimeout(() => {
-        editItem(newItemId)
+        previewItem(newItemId)
     }, 500)
 }
 
@@ -48,11 +50,7 @@ const onClickEditItem = (item: Item) => {
     if (!item.id) {
         return
     }
-    if (item.t === 'c') {
-        editCustomization(item.id)
-    } else {
-        editItem(item.id)
-    }
+    previewItem(item.id)
 }
 </script>
 
