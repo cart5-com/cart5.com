@@ -65,7 +65,9 @@ const handleInteractOutside = (event: any) => {
 				<div class="sticky top-0 w-full bg-background z-50 p-2"
 					 v-if="props.closeable">
 					<div class="flex items-center justify-between">
-						<slot name="title" />
+						<div class="dialog-header-scroll-animation">
+							<slot name="title" />
+						</div>
 						<DialogClose
 									 class="transition-colors rounded-md bg-secondary disabled:pointer-events-none hover:bg-secondary/50">
 							<X class="h-8 w-8" />
@@ -79,3 +81,24 @@ const handleInteractOutside = (event: any) => {
 		</DialogOverlay>
 	</DialogPortal>
 </template>
+
+
+<style>
+@keyframes scroll-animation {
+	from {
+		opacity: 0;
+		transform: translateY(-100%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.dialog-header-scroll-animation {
+	animation: scroll-animation 0.3s ease-in-out;
+	animation-timeline: scroll();
+	animation-range: 0 30%;
+}
+</style>
