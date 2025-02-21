@@ -59,15 +59,15 @@ export function createNewItem(
     parentItemId: string | undefined
 ) {
     optionalProps.t = type;
-    const newItem = {
-        itemId: `${type}-${crypto.randomUUID()}`,
+    const newItem: Item = {
+        id: `${type}-${crypto.randomUUID()}`,
         ...optionalProps
     }
     if (!menuRoot.value?.allItems) {
         menuRoot.value.allItems = {}
     }
-    menuRoot.value.allItems[newItem.itemId] = newItem;
-    return addChildItem(parentItemId, newItem.itemId);
+    menuRoot.value.allItems[newItem.id!] = newItem;
+    return addChildItem(parentItemId, newItem.id!);
 }
 
 export function addChildItem(parentItemId: string | undefined, itemId: string) {
