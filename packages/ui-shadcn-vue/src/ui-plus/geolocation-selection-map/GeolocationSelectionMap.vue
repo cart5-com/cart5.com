@@ -22,17 +22,17 @@ onMounted(() => {
 	console.log("onMounted MAP");
 	mapView.value = map(randomId);
 	mapView.value.attributionControl.setPrefix(false);
-	tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-		maxZoom: 22,
-		subdomains: ["mt0", "mt1", "mt2", "mt3"],
-		attribution:
-			"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
-	}).addTo(mapView.value);
-	// tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-	// 	attribution: "Leaflet | OpenStreetMap contributors",
-	// 	maxZoom: 18,
-	// 	subdomains: ["a", "b", "c"]
+	// tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+	// 	maxZoom: 22,
+	// 	subdomains: ["mt0", "mt1", "mt2", "mt3"],
+	// 	attribution:
+	// 		"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
 	// }).addTo(mapView.value);
+	tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		attribution: "Leaflet | OpenStreetMap contributors",
+		maxZoom: 18,
+		subdomains: ["a", "b", "c"]
+	}).addTo(mapView.value);
 	// mapView.value.fitWorld();
 });
 

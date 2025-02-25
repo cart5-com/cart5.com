@@ -148,8 +148,30 @@ const initMap = async () => {
             lng: props.restaurantLocation.lng ?? 0
         },
         zoom: 16,
+        mapTypeId: "OSM",
         mapTypeControl: false,
-    })
+    });
+
+    mapInstance.mapTypes.set("OSM", new google.maps.ImageMapType({
+        getTileUrl: function (coord, zoom) {
+            // "Wrap" x (longitude) at 180th meridian properly
+            // NB: Don't touch coord.x: because coord param is by reference, and changing its x property breaks something in Google's lib
+            var tilesPerGlobe = 1 << zoom;
+            var x = coord.x % tilesPerGlobe;
+            if (x < 0) {
+                x = tilesPerGlobe + x;
+            }
+            // Wrap y (latitude) in a like manner if you want to enable vertical infinite scrolling
+
+            // const subdomains = ["mt0", "mt1", "mt2", "mt3"];
+            // const subdomain = subdomains[Math.floor(Math.random() * subdomains.length)];
+            // return `https://${subdomain}.google.com/vt/lyrs=m&x=${x}&y=${coord.y}&z=${zoom}`
+            return "https://tile.openstreetmap.org/" + zoom + "/" + x + "/" + coord.y + ".png";
+        },
+        tileSize: new google.maps.Size(256, 256),
+        name: "OpenStreetMap",
+        maxZoom: 18
+    }));
 
 
     // Add restaurant marker
@@ -307,7 +329,8 @@ onMounted(() => {
     const script = document.querySelector('#google-maps-script')
     if (!script) {
         const script = document.createElement('script')
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_PUBLIC_GOOGLE_MAPS_JS_LIB_KEY}&libraries=drawing,geometry&v=weekly`
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=drawing,geometry&v=weekly`
+        // script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_PUBLIC_GOOGLE_MAPS_JS_LIB_KEY}&libraries=drawing,geometry&v=weekly`
         script.id = 'google-maps-script'
         document.head.appendChild(script)
     }
