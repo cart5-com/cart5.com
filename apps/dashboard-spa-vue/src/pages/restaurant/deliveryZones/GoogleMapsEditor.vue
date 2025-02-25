@@ -162,11 +162,11 @@ const initMap = async () => {
                 x = tilesPerGlobe + x;
             }
             // Wrap y (latitude) in a like manner if you want to enable vertical infinite scrolling
-
+            return `https://tile.openstreetmap.org/${zoom}/${x}/${coord.y}.png`;
+            // or we can use google maps tiles, but I am not sure about TOS
             // const subdomains = ["mt0", "mt1", "mt2", "mt3"];
             // const subdomain = subdomains[Math.floor(Math.random() * subdomains.length)];
             // return `https://${subdomain}.google.com/vt/lyrs=m&x=${x}&y=${coord.y}&z=${zoom}`
-            return "https://tile.openstreetmap.org/" + zoom + "/" + x + "/" + coord.y + ".png";
         },
         tileSize: new google.maps.Size(256, 256),
         name: "OpenStreetMap",
@@ -362,20 +362,9 @@ const clearShape = () => {
 
 <template>
     <div class="w-full h-full">
-        <!-- <div class="absolute right-24 top-1 z-[1001]">
-            <Button v-if="currentShape"
-                    type="button"
-                    variant="destructive"
-                    @click="clearShape">
-                <Eraser class="w-4 h-4" />
-                Remove Shape
-            </Button>
-        </div> -->
         <div :id="mapId"
              class="flex-1 w-full h-full">
-
         </div>
-
     </div>
 </template>
 
