@@ -6,7 +6,7 @@ import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { hashPassword } from '../utils/password';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { decryptAndVerifyJwt } from '../utils/jwt';
-import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
+import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/consts/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";

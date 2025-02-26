@@ -1,5 +1,5 @@
 import { type Context } from 'hono'
-import { SESSION_COOKIE_NAME } from "lib/auth-consts";
+import { SESSION_COOKIE_NAME } from "lib/consts/auth-consts";
 import { deleteCookie } from 'hono/cookie';
 import { type ErrorType } from 'lib/errors';
 import type { HonoVariables } from "../index";

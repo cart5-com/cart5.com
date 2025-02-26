@@ -7,7 +7,7 @@ import { verifyPasswordHash } from '../utils/password';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { signJwtAndEncrypt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
-import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
+import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/consts/auth-consts';
 import { setCookie } from 'hono/cookie';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';

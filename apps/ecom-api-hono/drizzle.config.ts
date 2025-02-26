@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { ecomApiSqlitelocalDbPath } from "lib/ecom-api-consts";
+import { ecomApiSqlitelocalDbPath } from "lib/consts/ecom-api-consts";
 
 let config: ReturnType<typeof defineConfig>;
 config = defineConfig({

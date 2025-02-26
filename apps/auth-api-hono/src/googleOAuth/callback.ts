@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeIdToken, Google, OAuth2Tokens } from 'arctic';
 import { decryptAndVerifyJwt } from '../utils/jwt';
-import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
+import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/consts/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
 import { updateUserNameService } from '../db/schema/user.service';

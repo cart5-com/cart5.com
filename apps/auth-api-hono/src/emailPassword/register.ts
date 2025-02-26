@@ -6,7 +6,7 @@ import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { verifyPasswordStrength } from '../utils/password';
 import { isEmailExistsService } from '../db/schema/user.service';
 import { signJwtAndEncrypt } from '../utils/jwt';
-import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
+import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/consts/auth-consts';
 import { setCookie } from 'hono/cookie';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { sendUserOtpEmail } from '../utils/email';

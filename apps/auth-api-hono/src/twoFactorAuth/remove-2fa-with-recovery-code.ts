@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { KNOWN_ERROR, type ErrorType } from 'lib/errors';
 import { decryptToString } from '../utils/encryption';
 import { deleteCookie, getCookie } from 'hono/cookie';
-import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/auth-consts';
+import { TWO_FACTOR_AUTH_COOKIE_NAME } from 'lib/consts/auth-consts';
 import { decryptAndVerifyJwt } from '../utils/jwt';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';

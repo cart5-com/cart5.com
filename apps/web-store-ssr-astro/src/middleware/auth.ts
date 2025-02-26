@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient'
-import { SESSION_COOKIE_NAME } from "lib/auth-consts";
+import { SESSION_COOKIE_NAME } from "lib/consts/auth-consts";
 
 /** @deprecated 
  * because global cache configured for whole ssr astro app, 

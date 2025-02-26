@@ -2,7 +2,7 @@ import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { signJwtAndEncrypt } from '../utils/jwt';
-import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/auth-consts';
+import { GOOGLE_OAUTH_COOKIE_NAME } from 'lib/consts/auth-consts';
 import { setCookie } from 'hono/cookie';
 import { KNOWN_ERROR } from 'lib/errors';
 import { getEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';

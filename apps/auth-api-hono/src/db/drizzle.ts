@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { localDbPath } from "lib/auth-consts";
+import { localDbPath } from "lib/consts/auth-consts";
 import { IS_PROD } from "lib/utils/getEnvVariable";
 import { createClient } from '@libsql/client';
 import * as authSchema from './schema/schema';

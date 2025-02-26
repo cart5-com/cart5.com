@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { generateOTPJsOnly } from '../utils/generateRandomOtp';
 import { signJwtAndEncrypt } from '../utils/jwt';
-import { OTP_COOKIE_NAME } from 'lib/auth-consts';
+import { OTP_COOKIE_NAME } from 'lib/consts/auth-consts';
 import { sendUserOtpEmail } from '../utils/email';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';
 import { setCookie } from 'hono/cookie';

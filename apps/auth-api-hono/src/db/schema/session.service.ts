@@ -1,7 +1,7 @@
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import type { Session } from "../../types/SessionType";
-import { SESSION_EXPIRES_IN } from "lib/auth-consts";
+import { SESSION_EXPIRES_IN } from "lib/consts/auth-consts";
 import { sessionTable, userTable } from "./schema";
 import db from "../drizzle";
 import { eq, lte, sql } from "drizzle-orm";

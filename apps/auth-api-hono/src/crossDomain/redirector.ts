@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { KNOWN_ERROR } from 'lib/errors';
 import { isKnownHostname } from '../utils/knownHostnames';
-import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from 'lib/auth-consts';
+import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from 'lib/consts/auth-consts';
 import { signJwtAndEncrypt } from '../utils/jwt';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { IS_PROD, getEnvVariable } from 'lib/utils/getEnvVariable';

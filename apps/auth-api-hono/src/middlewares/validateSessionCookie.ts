@@ -1,5 +1,5 @@
 import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
-import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/auth-consts";
+import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/consts/auth-consts";
 import type { Session } from "../types/SessionType";
 import type { User } from "../types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";

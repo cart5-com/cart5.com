@@ -1,6 +1,6 @@
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import { SESSION_COOKIE_NAME } from "lib/auth-consts";
+import { SESSION_COOKIE_NAME } from "lib/consts/auth-consts";
 import { ENFORCE_HOSTNAME_CHECKS } from "../enforceHostnameChecks";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
 import type { HonoVariables } from "../index";
