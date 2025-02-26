@@ -299,18 +299,72 @@ importers:
 
   packages/lib:
     dependencies:
+      '@dotenvx/dotenvx':
+        specifier: ^1.32.0
+        version: 1.32.0
+      '@hono/node-server':
+        specifier: ^1.13.7
+        version: 1.13.7(hono@4.6.12)
+      '@hono/zod-validator':
+        specifier: ^0.4.1
+        version: 0.4.1(hono@4.6.12)(zod@3.23.8)
+      '@libsql/client':
+        specifier: ^0.14.0
+        version: 0.14.0
+      '@libsql/linux-x64-gnu':
+        specifier: 0.5.0-pre.5
+        version: 0.5.0-pre.5
+      '@node-rs/argon2':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@oslojs/binary':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@oslojs/crypto':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@oslojs/encoding':
         specifier: 1.1.0
         version: 1.1.0
+      '@oslojs/otp':
+        specifier: ^1.1.0
+        version: 1.1.0
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      arctic:
+        specifier: ^2.3.0
+        version: 2.3.0
+      drizzle-kit:
+        specifier: ^0.29.1
+        version: 0.29.1
+      drizzle-orm:
+        specifier: ^0.38.3
+        version: 0.38.3(@libsql/client@0.14.0)
+      esbuild:
+        specifier: ^0.24.0
+        version: 0.24.0
       hono:
         specifier: ^4.6.12
         version: 4.6.12
+      lib:
+        specifier: workspace:*
+        version: 'link:'
       libphonenumber-js:
         specifier: ^1.11.18
         version: 1.11.18
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
+      uqr:
+        specifier: ^0.1.2
+        version: 0.1.2
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
 
   packages/ui-shadcn-vue:
     dependencies:
@@ -1487,6 +1541,7 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.5':
     resolution: {integrity: sha512-RHaxQB4+wttd3H8GXofoaFalzIpuicr8DlD7yuVN3rAy5OsOP6ny+Tu12Iz/IQrgA4vvKAFxJt3AJxqhs8Ltcg==}
+    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
