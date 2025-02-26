@@ -10,7 +10,7 @@ import { OTP_COOKIE_NAME_AFTER_REGISTER } from 'lib/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 import type { OtpTokenAfterRegisterPayload } from './register';
 import { isEmailExistsService } from '../db/schema/user.service';
 import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '../db/schema/user.service';

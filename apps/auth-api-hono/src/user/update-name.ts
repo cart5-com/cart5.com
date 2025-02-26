@@ -1,5 +1,5 @@
 import { type Context } from 'hono'
-import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import { type ValidatorContext } from 'lib/hono/types/ValidatorContext';
 import { zValidator } from '@hono/zod-validator';
 import {
     updateUserNameService

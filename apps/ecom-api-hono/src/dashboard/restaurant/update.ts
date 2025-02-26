@@ -11,7 +11,7 @@ import {
     updateRestaurantPaymentMethodsSchema
 } from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
-import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import { type ValidatorContext } from 'lib/hono/types/ValidatorContext';
 import { updateRestaurantService } from '../../db/schema/restaurant/restaurant.service';
 import { type ErrorType } from 'lib/errors';
 import { zValidator } from '@hono/zod-validator';

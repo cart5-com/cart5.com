@@ -5,7 +5,7 @@ import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetC
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import { markEmailAsVerifiedService, upsertUserService } from '../db/schema/user.service';
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 
 
 export const simulateGoogleOAuthCallbackSchemaValidator = zValidator('query', z.object({

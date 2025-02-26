@@ -9,7 +9,7 @@ import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import { getUserByEmailService } from '../db/schema/user.service';
 import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/schema/user.service';
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 
 
 export const generateNewRecoveryCodeSchemaValidator = zValidator('form', z.object({

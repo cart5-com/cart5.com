@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 
 
 

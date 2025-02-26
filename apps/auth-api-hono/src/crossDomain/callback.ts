@@ -10,7 +10,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { IS_PROD, getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 import type { CrossDomainCodePayload } from './redirector';
 
 

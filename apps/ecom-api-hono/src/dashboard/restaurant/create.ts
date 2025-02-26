@@ -3,7 +3,7 @@ import { type Context } from 'hono';
 import { insertRestaurantSchema } from '../../db/schema/restaurant/restaurant.schema';
 import type { HonoVariables } from '../../index';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
-import { type ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import { type ValidatorContext } from 'lib/hono/types/ValidatorContext';
 import { createRestaurantService } from '../../db/schema/restaurant/restaurant.service';
 import { type ErrorType } from 'lib/errors';
 import { validateTurnstile } from 'lib/utils/validateTurnstile';

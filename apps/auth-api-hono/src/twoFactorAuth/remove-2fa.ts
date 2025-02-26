@@ -8,7 +8,7 @@ import type { HonoVariables } from "../index";
 import { getUserByEmailService } from '../db/schema/user.service';
 import { updateEncryptedTwoFactorAuthKeyService } from '../db/schema/user.service';
 import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db/schema/user.service';
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 
 export const remove2FASchemaValidator = zValidator('form', z.object({
     turnstile: z.string().min(1, { message: "Verification required" }),

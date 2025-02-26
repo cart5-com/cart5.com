@@ -13,7 +13,7 @@ import { sendUserOtpEmail } from '../utils/email';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from "../index";
-import type { ValidatorContext } from 'lib/types/hono/ValidatorContext';
+import type { ValidatorContext } from 'lib/hono/types/ValidatorContext';
 
 
 export const registerEmailPasswordSchemaValidator = zValidator('form', z.object({
