@@ -367,7 +367,7 @@ onMounted(() => {
                                                             <br>
                                                             This is only a warning, you can ignore it.
                                                             <br>
-                                                            <hr class="my-2 border ">
+                                                            <span class="my-2 border block"></span>
                                                             or you can
                                                             <Button variant="outline"
                                                                     size="sm"
@@ -376,7 +376,7 @@ onMounted(() => {
                                                             </Button>
 
                                                             <br>
-                                                            <hr class="my-2 border ">
+                                                            <span class="my-2 border block"></span>
                                                             or you may add a limit
                                                             <br>to prevent multiple
                                                             negative values by enabling limit quantity inside

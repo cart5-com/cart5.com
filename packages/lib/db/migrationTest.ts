@@ -16,7 +16,7 @@ import { resolve, dirname } from "node:path";
     thanks to 'preprod:migrate' script, it will not continue to `prod:migrate`
 */
 const start = async () => {
-    const newDatabaseName = "test-db-migration-with-branching-" + Date.now();
+    const newDatabaseName = "test-db-migration-with-branching-" + crypto.randomUUID();
     let isDbDeleted = true;
     try {
         console.log("🥹 Creating a new database from production database:", newDatabaseName);

@@ -322,8 +322,8 @@ onMounted(() => {
         </div>
 
         <Dialog v-model:open="isDialogOpen">
-            <!-- class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]" -->
-            <DialogContent class="flex h-full min-h-full min-w-full flex-col p-0">
+            <DialogContent
+                           class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]">
                 <DialogHeader>
                     <DialogTitle class="flex items-center gap-2">
                         Draw/Edit Single Zone
