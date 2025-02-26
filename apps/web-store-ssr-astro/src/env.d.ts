@@ -6,6 +6,6 @@ declare namespace App {
          * because global cache configured for whole ssr astro app, 
          * /src/middleware/cacheHeaders.ts 
          * */
-        USER: import("lib/apiClients/authApiClient").User | null;
+        USER: import("lib/hono/apiClients/authApiClient").User | null;
     }
 }

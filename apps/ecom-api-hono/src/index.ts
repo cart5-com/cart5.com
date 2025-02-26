@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server'
-import type { User } from 'lib/apiClients/authApiClient';
+import type { User } from 'lib/hono/apiClients/authApiClient';
 import { Hono } from "hono";
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';

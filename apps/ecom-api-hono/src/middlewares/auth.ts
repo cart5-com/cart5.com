@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { createAuthApiClient } from 'lib/apiClients/authApiClient'
+import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient'
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 import { getCookie } from "hono/cookie";
 import type { HonoVariables } from '../index';

@@ -1,5 +1,5 @@
 import { getAuthApiClient } from "@src/lib/authApiClient";
-import { type User } from "lib/apiClients/authApiClient";
+import { type User } from "lib/hono/apiClients/authApiClient";
 import { ref } from 'vue'
 
 export const userStore = ref<User | null>(null)

@@ -28,7 +28,7 @@ import {
     FormItem,
     FormMessage,
 } from '@/components/ui/form'
-import { type predictionType } from 'lib/apiClients/ecomApiClient'
+import { type predictionType } from 'lib/hono/apiClients/ecomApiClient'
 import { autocomplete, geocode, getOpenStreetMapItems } from './utils'
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';

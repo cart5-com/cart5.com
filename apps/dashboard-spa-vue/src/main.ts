@@ -2,7 +2,7 @@ import "@/index.css";
 import { createApp } from 'vue'
 import { getLoginUrl } from "lib/clientUtils/getAuthOrigin";
 import App from './App.vue'
-import { createAuthApiClient } from 'lib/apiClients/authApiClient';
+import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient';
 import router from './router'
 
 export const getUser = async function () {

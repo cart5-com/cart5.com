@@ -1,4 +1,4 @@
-import { createAuthApiClient } from "lib/apiClients/authApiClient";
+import { createAuthApiClient } from "lib/hono/apiClients/authApiClient";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "lib/clientUtils/getAuthOrigin";
 // this only provides the hono/client with typing
 // https://hono.dev/docs/guides/rpc

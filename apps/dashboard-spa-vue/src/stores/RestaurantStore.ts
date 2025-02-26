@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { type ResType } from 'lib/apiClients/ecomApiClient'
+import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
 export type restaurantListType = ResType<

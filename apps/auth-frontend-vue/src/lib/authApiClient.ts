@@ -1,4 +1,4 @@
-import { createAuthApiClient } from "lib/apiClients/authApiClient";
+import { createAuthApiClient } from "lib/hono/apiClients/authApiClient";
 
 export const getAuthApiClient = function () {
     return createAuthApiClient(`/__p_auth/`);

@@ -1,5 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { createAuthApiClient } from 'lib/apiClients/authApiClient'
+import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient'
 import { SESSION_COOKIE_NAME } from "lib/auth-consts";
 
 /** @deprecated 

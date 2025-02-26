@@ -2,7 +2,7 @@ import type {
     EcomApiAppType,
     EcomDashboardApiAppType,
     EcomApiMapsAppType
-} from '../../../apps/ecom-api-hono/src/index'
+} from '../../../../apps/ecom-api-hono/src/index'
 import type { InferRequestType, InferResponseType } from 'hono/client'
 import { hc } from 'hono/client'
 

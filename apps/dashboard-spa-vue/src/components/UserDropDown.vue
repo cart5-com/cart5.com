@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getSettingsUrl } from "lib/clientUtils/getAuthOrigin";
-import { createAuthApiClient } from "lib/apiClients/authApiClient";
+import { createAuthApiClient } from "lib/hono/apiClients/authApiClient";
 const user = window.USER;
 function goToAccountSettings() {
     window.location.href = getSettingsUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
