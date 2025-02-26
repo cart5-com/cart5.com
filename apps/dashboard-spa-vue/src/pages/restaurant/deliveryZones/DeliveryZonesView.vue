@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GoogleMapsEditor from './GoogleMapsEditor.vue'
+import LeafletEditor from './LeafletEditor.vue'
 import ZoneCard from './ZoneCard.vue'
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +24,7 @@ import {
 import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
-import { DeliveryZone } from 'lib/types/restaurantTypes';
+import { type DeliveryZone } from 'lib/types/restaurantTypes';
 import { Check, Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { pageTitle } from '@src/stores/layout.store';
@@ -31,7 +32,8 @@ import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
 const router = useRouter();
 
-const mapComp = ref<InstanceType<typeof GoogleMapsEditor>>();
+const mapComp = ref<InstanceType<typeof LeafletEditor>>();
+const mapComp2 = ref<InstanceType<typeof GoogleMapsEditor>>();
 let restaurantLocation: { lat: number, lng: number };
 const isDialogOpen = ref(false)
 const isAlertDialogOpen = ref(false)
@@ -102,10 +104,10 @@ const loadDeliveryZones = async () => {
     }
 };
 
-const onDone = async () => {
+const onLeafletDone = () => {
     const shape = mapComp.value?.getCurrentShape();
     if (!shape) {
-        toast.error('No shape found')
+        toast.error('Please draw a shape first')
         return;
     };
 
@@ -113,27 +115,27 @@ const onDone = async () => {
     const newZone: DeliveryZone = {
         id: selectedZone.value?.id || crypto.randomUUID(),
         name: selectedZone.value?.name || `Zone ${deliveryZones.value.length + 1}`,
-        shapeType: shape instanceof google.maps.Circle ? 'circle' :
-            shape instanceof google.maps.Rectangle ? 'rectangle' : 'polygon',
+        shapeType: shape instanceof window.L.Circle ? 'circle' :
+            shape instanceof window.L.Rectangle ? 'rectangle' : 'polygon',
         isActive: true,
     }
 
     // Set shape-specific properties
-    if (shape instanceof google.maps.Circle) {
+    if (shape instanceof window.L.Circle) {
         newZone.circleArea = {
-            center: { lat: shape.getCenter()!.lat(), lng: shape.getCenter()!.lng() },
+            center: { lat: shape.getLatLng().lat, lng: shape.getLatLng().lng },
             radius: shape.getRadius()
         }
-    } else if (shape instanceof google.maps.Rectangle) {
+    } else if (shape instanceof window.L.Rectangle) {
         const bounds = shape.getBounds()!;
         newZone.rectangleArea = {
-            topLeft: { lat: bounds.getNorthEast().lat(), lng: bounds.getSouthWest().lng() },
-            bottomRight: { lat: bounds.getSouthWest().lat(), lng: bounds.getNorthEast().lng() }
+            topLeft: bounds.getNorthWest(),
+            bottomRight: bounds.getSouthEast()
         }
-    } else if (shape instanceof google.maps.Polygon) {
-        newZone.polygonArea = shape.getPath().getArray().map(point => ({
-            lat: point.lat(),
-            lng: point.lng()
+    } else if (shape instanceof window.L.Polygon) {
+        newZone.polygonArea = (shape.getLatLngs()[0] as L.LatLng[]).map(point => ({
+            lat: point.lat,
+            lng: point.lng
         }))
     }
 
@@ -148,7 +150,57 @@ const onDone = async () => {
     // await saveDeliveryZones();
     isDialogOpen.value = false
     selectedZone.value = null
+
 }
+// async function onDone() {
+//     return;
+//     const shape = mapComp2.value?.getCurrentShape();
+//     if (!shape) {
+//         toast.error('Please draw a shape first')
+//         return;
+//     };
+
+//     // Create or update zone based on shape type
+//     const newZone: DeliveryZone = {
+//         id: selectedZone.value?.id || crypto.randomUUID(),
+//         name: selectedZone.value?.name || `Zone ${deliveryZones.value.length + 1}`,
+//         shapeType: shape instanceof google.maps.Circle ? 'circle' :
+//             shape instanceof google.maps.Rectangle ? 'rectangle' : 'polygon',
+//         isActive: true,
+//     }
+
+//     // Set shape-specific properties
+//     if (shape instanceof google.maps.Circle) {
+//         newZone.circleArea = {
+//             center: { lat: shape.getCenter()!.lat(), lng: shape.getCenter()!.lng() },
+//             radius: shape.getRadius()
+//         }
+//     } else if (shape instanceof google.maps.Rectangle) {
+//         const bounds = shape.getBounds()!;
+//         newZone.rectangleArea = {
+//             topLeft: { lat: bounds.getNorthEast().lat(), lng: bounds.getSouthWest().lng() },
+//             bottomRight: { lat: bounds.getSouthWest().lat(), lng: bounds.getNorthEast().lng() }
+//         }
+//     } else if (shape instanceof google.maps.Polygon) {
+//         newZone.polygonArea = shape.getPath().getArray().map(point => ({
+//             lat: point.lat(),
+//             lng: point.lng()
+//         }))
+//     }
+
+//     // Update or add zone
+//     const existingIndex = deliveryZones.value.findIndex(z => z.id === newZone.id)
+//     if (existingIndex !== -1) {
+//         deliveryZones.value[existingIndex] = newZone
+//     } else {
+//         deliveryZones.value.push(newZone)
+//     }
+
+//     // await saveDeliveryZones();
+//     isDialogOpen.value = false
+//     selectedZone.value = null
+// }
+
 
 const openDialog = (zone?: DeliveryZone) => {
     selectedZone.value = zone || null
@@ -270,8 +322,8 @@ onMounted(() => {
         </div>
 
         <Dialog v-model:open="isDialogOpen">
-            <DialogContent
-                           class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]">
+            <!-- class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]" -->
+            <DialogContent class="flex h-full min-h-full min-w-full flex-col p-0">
                 <DialogHeader>
                     <DialogTitle class="flex items-center gap-2">
                         Draw/Edit Single Zone
@@ -282,13 +334,20 @@ onMounted(() => {
                         or edit/resize/move current shape with small dots around the edges
                     </DialogDescription>
                 </DialogHeader>
-                <GoogleMapsEditor ref="mapComp"
+
+                <LeafletEditor ref="mapComp"
+                               class="flex-1 overflow-hidden"
+                               :restaurant-location="restaurantLocation"
+                               :delivery-zones="deliveryZones"
+                               :selected-zone="selectedZone" />
+
+                <GoogleMapsEditor ref="mapComp2"
                                   class="flex-1 overflow-hidden"
                                   :restaurant-location="restaurantLocation"
                                   :delivery-zones="deliveryZones"
                                   :selected-zone="selectedZone" />
                 <DialogFooter>
-                    <Button @click="onDone"
+                    <Button @click="onLeafletDone"
                             class="w-full"
                             :disabled="isLoading"
                             type="button">
