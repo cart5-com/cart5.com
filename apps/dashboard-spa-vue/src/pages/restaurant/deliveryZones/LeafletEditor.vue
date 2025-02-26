@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import type { DeliveryZone, Point } from 'lib/types/restaurantTypes'
 import { type DrawMap } from 'leaflet';
+import { toast } from '@/ui-plus/sonner';
 
 const props = defineProps<{
     deliveryZones: DeliveryZone[]
@@ -88,6 +89,54 @@ function createShape(
     }
 }
 
+function createNewCircle() {
+    // Clear any existing shape
+    if (currentShapeRef) {
+        drawnItem?.removeLayer(currentShapeRef);
+        currentShapeRef = undefined;
+    }
+
+    // Calculate maximum radius from existing delivery zones
+    let maxRadius = 500; // default fallback
+    props.deliveryZones.forEach(zone => {
+        if (zone.shapeType === 'circle' && zone.circleArea?.radius) {
+            maxRadius = Math.max(maxRadius, zone.circleArea.radius);
+        } else if (zone.shapeType === 'polygon' && zone.polygonArea) {
+            // For polygons, calculate distance to furthest point
+            zone.polygonArea.forEach(point => {
+                const distance = window.L.latLng(props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0).distanceTo([point.lat ?? 0, point.lng ?? 0]);
+                maxRadius = Math.max(maxRadius, distance);
+            });
+        } else if (zone.shapeType === 'rectangle' && zone.rectangleArea) {
+            // For rectangles, calculate distance to corners
+            const corners = [
+                [zone.rectangleArea.topLeft?.lat ?? 0, zone.rectangleArea.topLeft?.lng ?? 0],
+                [zone.rectangleArea.topLeft?.lat ?? 0, zone.rectangleArea.bottomRight?.lng ?? 0],
+                [zone.rectangleArea.bottomRight?.lat ?? 0, zone.rectangleArea.topLeft?.lng ?? 0],
+                [zone.rectangleArea.bottomRight?.lat ?? 0, zone.rectangleArea.bottomRight?.lng ?? 0]
+            ];
+            corners.forEach(corner => {
+                const distance = window.L.latLng(props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0).distanceTo(corner);
+                maxRadius = Math.max(maxRadius, distance);
+            });
+        }
+    });
+
+    // Add 20% to the maximum radius found
+    maxRadius = maxRadius * 1.2;
+
+    // Create default circle at restaurant location with calculated radius
+    const circle = window.L.circle([props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0], {
+        radius: maxRadius,
+        ...selectedZoneOptions
+    });
+
+    currentShapeRef = circle;
+    drawnItem?.addLayer(circle);
+    showEditControl();
+    toast.info('Resize the circle to define your delivery area');
+}
+
 const initMap = async () => {
     while (!window.L || !window.L.drawVersion) {
         await new Promise(resolve => setTimeout(resolve, 500))
@@ -140,6 +189,12 @@ const initMap = async () => {
         showEditControl();
     });
 
+
+    mapInstance.on(window.L.Draw.Event.DRAWSTART, (e: any) => {
+        if (e.layerType === 'circle') {
+            createNewCircle()
+        }
+    })
 
     mapInstance.on(window.L.Draw.Event.EDITSTOP, (e: any) => {
         console.warn("EDITSTOP", e);
@@ -236,6 +291,12 @@ onMounted(async () => {
         const drawScript = document.createElement('script')
         drawScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js`
         document.head.appendChild(drawScript)
+        while (!window.L.drawVersion) {
+            await new Promise(resolve => setTimeout(resolve, 500))
+        }
+
+        window.L.drawLocal.edit.handlers.edit.tooltip.text = 'Drag handles 🔲 to edit/resize active shape';
+        window.L.drawLocal.edit.handlers.edit.tooltip.subtext = 'Click done to save changes or close to discard';
     }
     initMap()
 })
@@ -253,7 +314,7 @@ function createClearControl() {
         onAdd: function () {
             const container = window.L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             const button = window.L.DomUtil.create('a', '', container);
-            button.innerHTML = 'Remove shape';
+            button.innerHTML = 'Remove';
             button.href = '#';
             button.style.width = '50px';
             // button.style.height = '30px';
