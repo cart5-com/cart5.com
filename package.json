@@ -7,8 +7,8 @@
     "dev": "turbo dev",
     "dev:caddy": "turbo dev:caddy",
     "start": "turbo start",
-    "prod:generate:sql": "cd apps/auth-api-hono && pnpm prod:generate:sql",
-    "prod:migrate": "cd apps/auth-api-hono && pnpm prod:migrate",
+    "prod:generate:sql": "cd packages/lib && pnpm prod:generate:sql",
+    "prod:migrate": "cd packages/lib && pnpm prod:migrate",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "caddy:deploy": "cd apps/proxy-caddy && pnpm caddy:deploy"
   },
