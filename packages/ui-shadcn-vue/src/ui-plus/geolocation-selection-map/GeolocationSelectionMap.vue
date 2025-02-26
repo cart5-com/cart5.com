@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: remove leaflet imports, use CDN like LeafletEditor.vue
 import "leaflet/dist/leaflet.css";
 import { Map, map, tileLayer } from "leaflet";
 import { Loader2, LocateFixed } from "lucide-vue-next";

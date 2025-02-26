@@ -13,8 +13,8 @@ import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
-import { isEmailExistsService } from '../../db/schema/user.service';
-import { getUserByEmailService } from '../../db/schema/user.service';
+import { isEmailExistsService } from '../db-services/user.service';
+import { getUserByEmailService } from '../db-services/user.service';
 
 
 
