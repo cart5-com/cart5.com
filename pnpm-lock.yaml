@@ -347,9 +347,6 @@ importers:
       hono:
         specifier: ^4.6.12
         version: 4.6.12
-      lib:
-        specifier: workspace:*
-        version: 'link:'
       libphonenumber-js:
         specifier: ^1.11.18
         version: 1.11.18
@@ -1541,7 +1538,6 @@ packages:
 
   '@libsql/linux-x64-gnu@0.5.0-pre.5':
     resolution: {integrity: sha512-RHaxQB4+wttd3H8GXofoaFalzIpuicr8DlD7yuVN3rAy5OsOP6ny+Tu12Iz/IQrgA4vvKAFxJt3AJxqhs8Ltcg==}
-    cpu: [x64]
     os: [linux]
 
   '@libsql/linux-x64-musl@0.4.7':
