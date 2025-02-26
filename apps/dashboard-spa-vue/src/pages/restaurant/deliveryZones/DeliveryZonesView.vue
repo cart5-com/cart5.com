@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GoogleMapsEditor from './GoogleMapsEditor.vue'
+// import GoogleMapsEditor from './GoogleMapsEditor.vue'
 import LeafletEditor from './LeafletEditor.vue'
 import ZoneCard from './ZoneCard.vue'
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ import { Switch } from '@/components/ui/switch';
 const router = useRouter();
 
 const mapComp = ref<InstanceType<typeof LeafletEditor>>();
-const mapComp2 = ref<InstanceType<typeof GoogleMapsEditor>>();
+// const mapComp2 = ref<InstanceType<typeof GoogleMapsEditor>>();
 let restaurantLocation: { lat: number, lng: number };
 const isDialogOpen = ref(false)
 const isAlertDialogOpen = ref(false)
@@ -341,11 +341,11 @@ onMounted(() => {
                                :delivery-zones="deliveryZones"
                                :selected-zone="selectedZone" />
 
-                <GoogleMapsEditor ref="mapComp2"
+                <!-- <GoogleMapsEditor ref="mapComp2"
                                   class="flex-1 overflow-hidden"
                                   :restaurant-location="restaurantLocation"
                                   :delivery-zones="deliveryZones"
-                                  :selected-zone="selectedZone" />
+                                  :selected-zone="selectedZone" /> -->
                 <DialogFooter>
                     <Button @click="onLeafletDone"
                             class="w-full"

@@ -23,7 +23,6 @@ onMounted(() => {
 	mapView.value = map(randomId);
 	mapView.value.attributionControl.setPrefix(false);
 	tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-		attribution: "<a href='https://leafletjs.com/' target='_blank'>Leaflet</a> | © <a href='https://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a> contributors",
 		maxZoom: 18,
 		subdomains: ["a", "b", "c"]
 	}).addTo(mapView.value);

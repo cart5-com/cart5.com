@@ -50,10 +50,15 @@ let currentShapeRef: L.Layer | undefined;
 
 function createShape(
     zone: DeliveryZone,
-    shapeOptions: L.PolylineOptions | L.CircleMarkerOptions
+    shapeOptions: L.PolylineOptions | L.CircleMarkerOptions,
+    bounds: L.LatLngBounds
 ) {
     if (zone.shapeType === 'polygon') {
         const polygon = window.L.polygon(zone.polygonArea as L.LatLngExpression[], shapeOptions);
+        // zone.polygonArea?.forEach(point => bounds.extend([point.lat ?? 0, point.lng ?? 0]));
+        setTimeout(() => {
+            bounds.extend(polygon.getBounds());
+        }, 100)
         return polygon;
     } else if (zone.shapeType === 'circle') {
         if (zone && zone.circleArea &&
@@ -66,6 +71,20 @@ function createShape(
                 radius: zone.circleArea.radius,
                 ...shapeOptions,
             })
+            // bounds.extend([
+            //     zone.circleArea.center.lat, zone.circleArea.center.lng
+            // ]);
+            // bounds.extend([
+            //     zone.circleArea.center.lat + zone.circleArea.radius / 111000, // Convert meters to degrees
+            //     zone.circleArea.center.lng
+            // ]);
+            // bounds.extend([
+            //     zone.circleArea.center.lat - zone.circleArea.radius / 111000, // Convert meters to degrees
+            //     zone.circleArea.center.lng
+            // ]);
+            setTimeout(() => {
+                bounds.extend(circle.getBounds());
+            }, 100)
             return circle;
         }
     } else if (zone.shapeType === 'rectangle') {
@@ -84,12 +103,21 @@ function createShape(
                 [zone.rectangleArea.bottomRight.lat,
                 zone.rectangleArea.bottomRight.lng]
             ], shapeOptions)
+            // bounds.extend([
+            //     zone.rectangleArea.topLeft.lat, zone.rectangleArea.topLeft.lng
+            // ]);
+            // bounds.extend([
+            //     zone.rectangleArea.bottomRight.lat, zone.rectangleArea.bottomRight.lng
+            // ]);
+            setTimeout(() => {
+                bounds.extend(rectangle.getBounds());
+            }, 100)
             return rectangle;
         }
     }
 }
 
-function createNewCircle() {
+function createNewCircle(bounds: L.LatLngBounds) {
     // Clear any existing shape
     if (currentShapeRef) {
         drawnItem?.removeLayer(currentShapeRef);
@@ -139,6 +167,17 @@ function createNewCircle() {
     drawnItem?.addLayer(circle);
     showEditControl();
     toast.info('Resize the circle to define your delivery area');
+
+    setTimeout(() => {
+        bounds.extend(circle.getBounds());
+    }, 100)
+
+    if (bounds.isValid()) {
+        console.warn("Bounds are valid!!!", bounds);
+        setTimeout(() => {
+            mapInstance?.fitBounds(bounds);
+        }, 200)
+    }
 }
 
 const initMap = async () => {
@@ -146,14 +185,22 @@ const initMap = async () => {
         await new Promise(resolve => setTimeout(resolve, 500))
     }
 
-    mapInstance = window.L.map(mapId).setView([props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0], 13)
+    mapInstance = window.L.map(mapId, {
+        // @ts-ignore
+        fullscreenControl: true,
+        // fullscreenControlOptions: {
+        //     position: 'topleft'
+        // }
+    }).setView([props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0], 13)
 
     window.L.marker([props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0]).addTo(mapInstance)
         .bindPopup('Business Location')
 
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
-    }).addTo(mapInstance)
+    mapInstance.attributionControl.setPrefix(false);
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        subdomains: ["a", "b", "c"]
+    }).addTo(mapInstance);
 
     drawnItem = new window.L.FeatureGroup();
 
@@ -194,11 +241,6 @@ const initMap = async () => {
     });
 
 
-    mapInstance.on(window.L.Draw.Event.DRAWSTART, (e: any) => {
-        if (e.layerType === 'circle') {
-            createNewCircle()
-        }
-    })
 
     mapInstance.on(window.L.Draw.Event.EDITSTOP, (e: any) => {
         console.warn("EDITSTOP", e);
@@ -217,10 +259,20 @@ const initMap = async () => {
     });
 
 
+    const bounds = window.L.latLngBounds([
+        [props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0],
+    ]);
+
+    mapInstance.on(window.L.Draw.Event.DRAWSTART, (e: any) => {
+        if (e.layerType === 'circle') {
+            createNewCircle(bounds);
+        }
+    })
+
     props.deliveryZones
         .filter(zone => zone.id !== props.selectedZone?.id)
         .forEach(zone => {
-            const shape = createShape(zone, defaultShapeOptions);
+            const shape = createShape(zone, defaultShapeOptions, bounds);
             if (shape && mapInstance) {
                 shape.addTo(mapInstance)
             }
@@ -229,13 +281,20 @@ const initMap = async () => {
     if (props.selectedZone) {
         currentShapeRef = createShape(props.selectedZone, {
             ...selectedZoneOptions
-        });
+        }, bounds);
         if (currentShapeRef && drawnItem) {
             drawnItem.addLayer(currentShapeRef);
             showEditControl();
         }
     } else {
         showDrawControl();
+    }
+
+    if (bounds.isValid()) {
+        console.warn("Bounds are valid", bounds);
+        setTimeout(() => {
+            mapInstance?.fitBounds(bounds);
+        }, 200)
     }
 }
 
@@ -284,6 +343,7 @@ onMounted(async () => {
         script.id = 'leaflet-script'
         document.head.appendChild(script)
 
+
         const drawCss = document.createElement('link');
         drawCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css`
         drawCss.rel = 'stylesheet'
@@ -292,6 +352,15 @@ onMounted(async () => {
         while (!window.L) {
             await new Promise(resolve => setTimeout(resolve, 500))
         }
+        const fullScreenCss = document.createElement('link');
+        fullScreenCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.css`
+        fullScreenCss.rel = 'stylesheet'
+        document.head.appendChild(fullScreenCss)
+
+        const fullScreenScript = document.createElement('script')
+        fullScreenScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.min.js`
+        document.head.appendChild(fullScreenScript)
+
         const drawScript = document.createElement('script')
         drawScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js`
         document.head.appendChild(drawScript)
