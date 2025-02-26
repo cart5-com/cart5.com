@@ -4,26 +4,17 @@ import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/errors';
-import { userRoute } from './user/router';
-import { otpRoute } from './otp/router';
-import { emailPasswordRoute } from './emailPassword/router';
-import { crossDomainRoute } from './crossDomain/router';
-import { googleOAuthRoute } from './googleOAuth/router';
-import { twoFactorAuthRoute } from './twoFactorAuth/router';
+import { userRoute } from 'lib/auth/user/router';
+import { otpRoute } from 'lib/auth/otp/router';
+import { emailPasswordRoute } from 'lib/auth/emailPassword/router';
+import { crossDomainRoute } from 'lib/auth/crossDomain/router';
+import { googleOAuthRoute } from 'lib/auth/googleOAuth/router';
+import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { hostnameCheck } from './middlewares/hostnameCheck';
-import { ENFORCE_HOSTNAME_CHECKS } from './enforceHostnameChecks';
+import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
-import type { User } from './types/UserType';
-import type { Session } from './types/SessionType';
-
-export type HonoVariables = {
-	Variables: {
-		SESSION: Session | null,
-		USER: User | null,
-	}
-}
-
+import type { HonoVariables } from 'lib/hono/HonoVariables';
 const app = new Hono<HonoVariables>();
 
 app.use(hostnameCheck);

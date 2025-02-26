@@ -1,8 +1,8 @@
 import { createMiddleware } from "hono/factory";
 import { validateSessionCookie } from "./validateSessionCookie";
-import { readBearerToken } from "../utils/readBearerToken";
+import { readBearerToken } from "lib/auth/utils/readBearerToken";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
-import type { HonoVariables } from "../index";
+import type { HonoVariables } from "lib/hono/HonoVariables";
 
 /**
  * Middleware to authenticate a request using a bearer token.
