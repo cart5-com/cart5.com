@@ -116,7 +116,11 @@ function createNewCircle() {
                 [zone.rectangleArea.bottomRight?.lat ?? 0, zone.rectangleArea.bottomRight?.lng ?? 0]
             ];
             corners.forEach(corner => {
-                const distance = window.L.latLng(props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0).distanceTo(corner);
+                const distance = window.L.latLng(props.restaurantLocation.lat ?? 0, props.restaurantLocation.lng ?? 0).distanceTo(
+                    [
+                        corner[0] ?? 0,
+                        corner[1] ?? 0]
+                );
                 maxRadius = Math.max(maxRadius, distance);
             });
         }
