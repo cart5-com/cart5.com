@@ -36,11 +36,6 @@ function getCurrentShape() {
     return currentShapeRef;
 }
 
-const emit = defineEmits<{
-    cancel: void;
-    onSave: [shape: L.Layer];
-}>();
-
 const mapId = `lmap-${Math.random().toString(36).substring(2, 15)}`
 let mapInstance: DrawMap | null = null
 let drawnItem: L.FeatureGroup | null = null
@@ -173,7 +168,6 @@ function createNewCircle(bounds: L.LatLngBounds) {
     }, 100)
 
     if (bounds.isValid()) {
-        console.warn("Bounds are valid!!!", bounds);
         setTimeout(() => {
             mapInstance?.fitBounds(bounds);
         }, 200)
@@ -233,20 +227,10 @@ const initMap = async () => {
 
     // Add event handlers for draw events
     mapInstance.on(window.L.Draw.Event.CREATED, (e: any) => {
-        console.log("CREATED", e)
         const layer = e.layer;
         currentShapeRef = layer;
         drawnItem?.addLayer(layer);
         showEditControl();
-    });
-
-
-
-    mapInstance.on(window.L.Draw.Event.EDITSTOP, (e: any) => {
-        console.warn("EDITSTOP", e);
-        if (currentShapeRef) {
-            emit('onSave', currentShapeRef);
-        }
     });
 
     mapInstance.on(window.L.Draw.Event.DELETED, () => {
@@ -291,7 +275,6 @@ const initMap = async () => {
     }
 
     if (bounds.isValid()) {
-        console.warn("Bounds are valid", bounds);
         setTimeout(() => {
             mapInstance?.fitBounds(bounds);
         }, 200)

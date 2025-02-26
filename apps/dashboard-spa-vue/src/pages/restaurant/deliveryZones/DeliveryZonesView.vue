@@ -331,7 +331,7 @@ onMounted(() => {
                     <DialogDescription class="text-xs">
                         Click shape btns to draw new
                         <br>
-                        or edit/resize/move current shape with small dots around the edges
+                        or edit/resize/move current shape with small squares 🔲 around the edges
                     </DialogDescription>
                 </DialogHeader>
 
