@@ -8,7 +8,7 @@ import {
     deleteSessionService,
     updateSessionExpirationService,
     getSessionAndUserService
-} from "lib/auth/db-services/session.service";
+} from "lib/db/services/session.service";
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,

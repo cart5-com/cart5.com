@@ -9,8 +9,8 @@ import { encryptAesGcm, encryptString } from '../utils/encryption';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
-import { updateEncryptedTwoFactorAuthKeyService } from '../db-services/user.service';
-import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db-services/user.service';
+import { updateEncryptedTwoFactorAuthKeyService } from '../../db/services/user.service';
+import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../../db/services/user.service';
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
 
 

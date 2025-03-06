@@ -5,9 +5,9 @@ import { KNOWN_ERROR, type ErrorType } from '../../errors';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
-import { getUserByEmailService } from '../db-services/user.service';
-import { updateEncryptedTwoFactorAuthKeyService } from '../db-services/user.service';
-import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db-services/user.service';
+import { getUserByEmailService } from '../../db/services/user.service';
+import { updateEncryptedTwoFactorAuthKeyService } from '../../db/services/user.service';
+import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '../../db/services/user.service';
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
 
 export const remove2FASchemaValidator = zValidator('form', z.object({

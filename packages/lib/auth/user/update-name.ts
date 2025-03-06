@@ -3,11 +3,11 @@ import { type ValidatorContext } from '../../hono/types/ValidatorContext';
 import { zValidator } from '@hono/zod-validator';
 import {
     updateUserNameService
-} from '../db-services/user.service';
+} from '../../db/services/user.service';
 import { KNOWN_ERROR, type ErrorType } from '../../errors';
 import { z } from 'zod';
 import { validateTurnstile } from '../../utils/validateTurnstile';
-import { getUserByEmailService } from '../db-services/user.service';
+import { getUserByEmailService } from '../../db/services/user.service';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
 

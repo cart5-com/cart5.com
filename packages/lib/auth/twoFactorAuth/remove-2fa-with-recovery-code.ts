@@ -12,8 +12,8 @@ import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetC
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
-import { getUserByEmailService } from '../db-services/user.service';
-import { updateEncryptedTwoFactorAuthKeyService, updateEncryptedTwoFactorAuthRecoveryCodeService } from '../db-services/user.service';
+import { getUserByEmailService } from '../../db/services/user.service';
+import { updateEncryptedTwoFactorAuthKeyService, updateEncryptedTwoFactorAuthRecoveryCodeService } from '../../db/services/user.service';
 
 
 export const removeTwoFactorAuthSchemaValidator = zValidator('form', z.object({
