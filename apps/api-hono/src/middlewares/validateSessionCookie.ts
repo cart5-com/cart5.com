@@ -12,8 +12,7 @@ import {
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,
-    hostname: string,
-    ignoreUpdateSessionExpiration: boolean = false // default:do not ignore
+    hostname: string
 ): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionCookieValue)));
     const [databaseSession, databaseUser] = await getSessionAndUserService(sessionId);
@@ -40,15 +39,13 @@ export const validateSessionCookie = async (
         expiresAt: databaseSession.expiresAt,
         createdAtTs: databaseSession.createdAtTs
     };
-    if (ignoreUpdateSessionExpiration === false) {
-        const activePeriodExpirationDate = new Date(
-            databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
-        );
-        if (!isWithinExpirationDate(activePeriodExpirationDate)) {
-            session.fresh = true;
-            session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
-            await updateSessionExpirationService(databaseSession.id, session.expiresAt);
-        }
+    const activePeriodExpirationDate = new Date(
+        databaseSession.expiresAt.getTime() - SESSION_ACTIVE_PERIOD_EXPIRATION_IN
+    );
+    if (!isWithinExpirationDate(activePeriodExpirationDate)) {
+        session.fresh = true;
+        session.expiresAt = new Date(Date.now() + SESSION_EXPIRES_IN);
+        await updateSessionExpirationService(databaseSession.id, session.expiresAt);
     }
     return { user: databaseUser, session };
 }

@@ -13,13 +13,7 @@ export const authChecks = createMiddleware<HonoVariables>(async (c, next) => {
         c.set("SESSION", null);
         await next();
     } else {
-        let hostname = c.req.header()['host'];
-        const internalAuthApiKey = c.req.header()['internal-auth-api-key'] ?? null;
-        if (internalAuthApiKey === getEnvVariable('INTERNAL_AUTH_API_KEY')) {
-            // allow internal requests to bypass hostname checks
-            hostname = c.req.header()['internal-host'];
-        }
-        const { user, session } = await validateSessionCookie(cookieValue, hostname!);
+        const { user, session } = await validateSessionCookie(cookieValue, c.req.header()['host']);
         if (session && session.fresh) {
             setCookie(c, SESSION_COOKIE_NAME, cookieValue, {
                 path: "/",

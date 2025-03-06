@@ -12,7 +12,6 @@ import { googleOAuthRoute } from 'lib/auth/googleOAuth/router';
 import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
 import { restaurantRouter } from 'lib/dashboard/restaurant/router';
-import { authBearerTokenChecks } from './middlewares/authBearerToken';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
@@ -20,8 +19,6 @@ const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
 app.use(authChecks);
-// NOTE: authBearerTokenChecks must be after authChecks
-app.use(authBearerTokenChecks);
 app.use(secureHeaders());
 
 app.onError((err, c) => {
