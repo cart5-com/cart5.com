@@ -1,4 +1,3 @@
-export const ecomApiSqlitelocalDbPath = "file:./ecom-api-sqlite.db";
 
 export const ecomApiCuisines = [
     "Burger",

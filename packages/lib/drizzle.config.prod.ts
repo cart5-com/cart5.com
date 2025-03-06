@@ -1,7 +1,7 @@
 import { defineConfig } from "drizzle-kit";
 
-console.log("🔔drizzle.config.prod.ts");
-console.log("🔔process.env.NODE_ENV:", process.env.NODE_ENV);
+console.log("🔔🔔🔔drizzle.config.prod.ts");
+console.log("🔔🔔🔔process.env.NODE_ENV:", process.env.NODE_ENV);
 
 let config: ReturnType<typeof defineConfig>;
 config = defineConfig({

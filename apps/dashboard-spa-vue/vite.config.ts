@@ -19,12 +19,7 @@ export default defineConfig(({ mode }) => ({
         target: 'http://127.0.0.1:3000',
         changeOrigin: false,
         rewrite: (path) => path.replace(/^\/__p_auth/, '')
-      },
-      '/__p_ecom': {
-        target: 'http://127.0.0.1:3003',
-        changeOrigin: false,
-        rewrite: (path) => path.replace(/^\/__p_ecom/, '')
-      },
+      }
     },
   },
   css: {

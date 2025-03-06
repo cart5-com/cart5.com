@@ -5,6 +5,6 @@ config = defineConfig({
 	out: "./db/generated-sql",
 	schema: "./db/schema/**/*.schema.ts",
 	dialect: "sqlite",
-	dbCredentials: { url: "file:../../apps/auth-api-hono/auth-sqlite.db" }
+	dbCredentials: { url: "file:../../apps/api-hono/local-sqlite.db" }
 });
 export default config;

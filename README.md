@@ -42,10 +42,9 @@ Our Solution:
 
 ```
 apps/
-├── auth-api-hono/ # Authentication API service
+├── api-hono/ # Authentication and other APIs
 ├── auth-frontend-vue/ # Authentication SPA
 ├── dashboard-spa-vue/ # Dashboard SPA
-├── ecom-api-hono/ # Ecommerce API service
 ├── web-store-ssr-astro/# Demo store with SSR
 └── proxy-caddy/ # Local development proxy (optional)
 ```

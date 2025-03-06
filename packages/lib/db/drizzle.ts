@@ -3,12 +3,15 @@ import { localDbPath } from "../consts/auth-consts";
 import { IS_PROD } from "../utils/getEnvVariable";
 import { createClient } from '@libsql/client';
 import * as authSchema from './schema/auth.schema';
+import * as restaurantSchema from './schema/restaurant.schema';
 
 export const schema = {
-    ...authSchema
+    ...authSchema,
+    ...restaurantSchema
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
+    // TODO: update env names to remove AUTH etc..
     const {
         AUTHAPI_TURSO_DB_URL,
         AUTHAPI_TURSO_DB_TOKEN,

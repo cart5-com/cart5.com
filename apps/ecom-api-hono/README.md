@@ -1,1 +1,0 @@
-# ECOM API Service (Hono)
