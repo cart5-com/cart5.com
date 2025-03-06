@@ -3,6 +3,7 @@ import { KNOWN_ERROR } from '../types/errors';
 import { ENFORCE_HOSTNAME_CHECKS } from '../auth/enforceHostnameChecks';
 import { getEnvVariable } from '../utils/getEnvVariable';
 
+// move to api-hono as a middleware
 export async function authHostnameCheck(c: Context, next: Next) {
     const host = c.req.header()['host'];
     if (ENFORCE_HOSTNAME_CHECKS && host !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {

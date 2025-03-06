@@ -2,11 +2,11 @@ import "@/index.css";
 import { createApp } from 'vue'
 import { getLoginUrl } from "lib/clientUtils/getAuthOrigin";
 import App from './App.vue'
-import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient';
+import { createAuthGlobalApiClient } from 'lib/hono/apiClients/authApiClient';
 import router from './router'
 
 export const getUser = async function () {
-    const { data, error } = await (await createAuthApiClient().api_auth.user.whoami.$post()).json();
+    const { data, error } = await (await createAuthGlobalApiClient().api_auth_global.whoami.$post()).json();
     if (error) {
         console.error(error);
     }

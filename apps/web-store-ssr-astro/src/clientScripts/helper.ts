@@ -1,14 +1,13 @@
-import { createAuthApiClient } from "lib/hono/apiClients/authApiClient";
+import { createAuthGlobalApiClient } from "lib/hono/apiClients/authApiClient";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "lib/clientUtils/getAuthOrigin";
 // this only provides the hono/client with typing
 // https://hono.dev/docs/guides/rpc
 // it does not include any server code, 
 // run pnpm build to see the generated codes, (astro.config.vite.build.minify=false)
 
-const client = createAuthApiClient();
-
+const clientGlobal = createAuthGlobalApiClient();
 const whoAmI = async () => {
-    const { data, error } = await (await client.api_auth.user.whoami.$post()).json();
+    const { data, error } = await (await clientGlobal.api_auth_global.whoami.$post()).json();
     console.log(data, error);
     const whoamiResult = document.getElementById("whoami-result") as HTMLPreElement;
     whoamiResult.textContent = JSON.stringify(data, null, 2);
@@ -42,7 +41,7 @@ loginButton.addEventListener("click", async () => {
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
 logoutButton.addEventListener("click", async () => {
-    const { data, error } = await (await client.api_auth.user.logout.$post()).json();
+    const { data, error } = await (await clientGlobal.api_auth_global.logout.$post()).json();
     console.log(data, error);
     window.location.reload();
 });

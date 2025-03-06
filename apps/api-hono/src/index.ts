@@ -5,6 +5,7 @@ import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from 'lib/types/errors';
 import { userRoute } from 'lib/auth/user/router';
+import { authGlobalRoute } from 'lib/auth-global/router';
 import { otpRoute } from 'lib/auth/otp/router';
 import { emailPasswordRoute } from 'lib/auth/emailPassword/router';
 import { crossDomainRoute } from 'lib/auth/crossDomain/router';
@@ -67,6 +68,12 @@ const routes = app
 	.route('/two_factor_auth', twoFactorAuthRoute)
 
 export type AuthApiAppType = typeof routes;
+
+const authGlobalRoutes = app
+	.basePath('/api_auth_global')
+	.route('/', authGlobalRoute)
+
+export type AuthGlobalApiAppType = typeof authGlobalRoutes;
 
 const ecomApiMapsRoutes = app.basePath('/api/maps')
 	.route('/gmaps', mapsRoute);

@@ -1,4 +1,5 @@
 import type { AuthApiAppType } from '../../../../apps/api-hono/src/index'
+import type { AuthGlobalApiAppType } from '../../../../apps/api-hono/src/index'
 import type { InferRequestType, InferResponseType } from 'hono/client'
 import { hc } from 'hono/client'
 
@@ -10,6 +11,14 @@ export const createAuthApiClient = (baseUrl: string = '/__p_api/') => {
     return hcWithType(baseUrl, {})
 }
 
+export const createAuthGlobalApiClient = (baseUrl: string = '/__p_api_auth_global/') => {
+    const calculatedApiClient = hc<AuthGlobalApiAppType>(baseUrl)
+    type typeFromCalculated = typeof calculatedApiClient;
+    const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>
+        hc<AuthGlobalApiAppType>(...args)
+    return hcWithType(baseUrl, {})
+}
+
 export type ReqType<T> = InferRequestType<T>;
 export type ResType<T> = InferResponseType<T>;
-export type User = ResType<Awaited<ReturnType<typeof createAuthApiClient>['api_auth']['user']['whoami']['$post']>>['data'];
+export type User = ResType<Awaited<ReturnType<typeof createAuthGlobalApiClient>['api_auth_global']['whoami']['$post']>>['data'];

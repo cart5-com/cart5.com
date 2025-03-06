@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getSettingsUrl } from "lib/clientUtils/getAuthOrigin";
-import { createAuthApiClient } from "lib/hono/apiClients/authApiClient";
+import { createAuthGlobalApiClient } from "lib/hono/apiClients/authApiClient";
 const user = window.USER;
 function goToAccountSettings() {
     window.location.href = getSettingsUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
 }
 
 async function logout() {
-    const client = createAuthApiClient();
-    const { data, error } = await (await client.api_auth.user['logout'].$post()).json();
+    const client = createAuthGlobalApiClient();
+    const { data, error } = await (await client.api_auth_global.logout.$post()).json();
     console.log(data, error);
     window.location.href = `https://dashboard.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/after-logout.html`;
 }
