@@ -5,7 +5,7 @@ nixPkgs = ['...', 'awscli2']
 cmds = [
     '...', 
     # Purge cache on production after build
-    # 'cd apps/proxy-caddy && pnpm prod:cache:purge'
+    'cd apps/proxy-caddy && pnpm prod:cache:purge'
 ]
 
 # [start] moved to proxy-caddy start command
