@@ -1,17 +1,17 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { validateTurnstile } from '../../utils/validateTurnstile';
-import { KNOWN_ERROR } from '../../types/errors';
-import { isKnownHostname } from '../utils/knownHostnames';
-import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../../consts/auth-consts';
-import { decryptAndVerifyJwt } from '../utils/jwt';
-import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
-import { IS_PROD, getEnvVariable } from '../../utils/getEnvVariable';
-import type { HonoVariables } from "../../hono/HonoVariables";
-import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
-import type { ValidatorContext } from '../../hono/types/ValidatorContext';
-import type { CrossDomainCodePayload } from './redirector';
+import { validateTurnstile } from '../utils/validateTurnstile';
+import { KNOWN_ERROR } from '../types/errors';
+import { isKnownHostname } from '../auth/utils/knownHostnames';
+import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../consts/auth-consts';
+import { decryptAndVerifyJwt } from '../auth/utils/jwt';
+import { ENFORCE_HOSTNAME_CHECKS } from '../auth/enforceHostnameChecks';
+import { IS_PROD, getEnvVariable } from '../utils/getEnvVariable';
+import type { HonoVariables } from '../hono/HonoVariables';
+import { createUserSessionAndSetCookie } from '../auth/utils/createUserSessionAndSetCookie';
+import type { ValidatorContext } from '../hono/types/ValidatorContext';
+import type { CrossDomainCodePayload } from '../auth/crossDomain/redirector';
 
 
 // this is the callback url from the target domain, we use proxy to get the request here.
@@ -23,7 +23,7 @@ export const callbackSchemaValidator = zValidator('query', z.object({
 export const callbackRoute = async (
     c: Context<
         HonoVariables,
-        "/callback",
+        "/cross-domain-callback",
         ValidatorContext<typeof callbackSchemaValidator>
     >
 ) => {
