@@ -1,14 +1,14 @@
-import { ENFORCE_HOSTNAME_CHECKS } from "lib/auth/enforceHostnameChecks";
-import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "lib/consts/auth-consts";
-import type { Session } from "lib/auth/types/SessionType";
-import type { User } from "lib/auth/types/UserType";
+import { ENFORCE_HOSTNAME_CHECKS } from "./enforceHostnameChecks";
+import { SESSION_ACTIVE_PERIOD_EXPIRATION_IN, SESSION_EXPIRES_IN } from "../consts/auth-consts";
+import type { Session } from "./types/SessionType";
+import type { User } from "./types/UserType";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import {
     deleteSessionService,
     updateSessionExpirationService,
     getSessionAndUserService
-} from "lib/db/services/session.service";
+} from "../db/services/session.service";
 
 export const validateSessionCookie = async (
     sessionCookieValue: string,
