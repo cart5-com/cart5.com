@@ -10,6 +10,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import type { HonoVariables } from "../../hono/HonoVariables";
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
 import { generateCodeVerifier, generateState, Google } from 'arctic';
+import { IS_CADDY_DEV } from '../enforceHostnameChecks';
 
 export const redirectGoogleOAuthSchemaValidator = zValidator('query', z.object({
     redirect_uri: z.string().min(1),
@@ -28,7 +29,7 @@ export const redirectGoogleOAuthRoute = async (
         hasRequiredEnvVariables = !!(
             getEnvVariable('GOOGLE_OAUTH_CLIENT_ID') &&
             getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET') &&
-            getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
+            (IS_CADDY_DEV ? getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI_DEV_CADDY') : getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI'))
         );
     } catch (e) {
         hasRequiredEnvVariables = false;
@@ -88,7 +89,7 @@ async function getSignInUrl() {
     const google = new Google(
         getEnvVariable('GOOGLE_OAUTH_CLIENT_ID'),
         getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET'),
-        getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
+        IS_CADDY_DEV ? getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI_DEV_CADDY') : getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
     );
     const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile", "email"]);
     return { url, state, codeVerifier };

@@ -14,7 +14,7 @@ import { markEmailAsVerifiedService, upsertUserService } from '../../db/services
 import { updateUserPictureUrlService } from '../../db/services/user.service';
 import type { ValidatorContext } from '../../hono/types/ValidatorContext';
 import type { GoogleOAuthTokenPayload } from './redirect';
-import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
+import { ENFORCE_HOSTNAME_CHECKS, IS_CADDY_DEV } from '../enforceHostnameChecks';
 
 
 
@@ -112,7 +112,7 @@ async function validateAuthorizationCode(
     const google = new Google(
         getEnvVariable('GOOGLE_OAUTH_CLIENT_ID'),
         getEnvVariable('GOOGLE_OAUTH_CLIENT_SECRET'),
-        getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
+        IS_CADDY_DEV ? getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI_DEV_CADDY') : getEnvVariable('GOOGLE_OAUTH_REDIRECT_URI')
     );
     let tokens: OAuth2Tokens;
     try {
