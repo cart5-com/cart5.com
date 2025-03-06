@@ -1,7 +1,7 @@
 {
   "name": "proxy-caddy",
   "scripts": {
-    "start": "sleep 4 && echo '🟢purge with start✅' && pnpm prod:cache:purge",
+    "__start": "sleep 4 && echo '🟢purge with start✅' && pnpm prod:cache:purge",
     "dev:caddy": "pnpm format && dotenvx run -- caddy run --config ./Caddyfile_dev",
     "format": "caddy fmt ./Caddyfile_dev  --overwrite && caddy fmt ./deploy/Caddyfile_prod  --overwrite",
     "caddy:deploy": "pnpm format && dotenvx run -f .env.production --  bash -c 'cd ./deploy && ./_start.sh'",
