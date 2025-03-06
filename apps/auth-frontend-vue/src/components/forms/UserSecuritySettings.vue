@@ -18,7 +18,7 @@ async function updateName() {
         toast.error('Please enter a name');
         return;
     }
-    const { data, error } = await (await getAuthApiClient().api["user"]['update-name'].$post({
+    const { data, error } = await (await getAuthApiClient().api_auth["user"]['update-name'].$post({
         form: {
             newName,
             turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

@@ -36,7 +36,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 form.setFieldValue("verifyEmail", props.verifyEmail);
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await getAuthApiClient().api.otp.verify.$post({
+        const { data, error } = await (await getAuthApiClient().api_auth.otp.verify.$post({
             form: {
                 verifyEmail: values.verifyEmail,
                 code: values.code,

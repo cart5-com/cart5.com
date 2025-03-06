@@ -13,7 +13,6 @@ import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
 import { restaurantRouter } from 'lib/dashboard/restaurant/router';
 import { authBearerTokenChecks } from './middlewares/authBearerToken';
-import { hostnameCheck } from './middlewares/hostnameCheck';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
