@@ -36,7 +36,7 @@ const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+    const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
@@ -71,7 +71,7 @@ onMounted(() => {
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

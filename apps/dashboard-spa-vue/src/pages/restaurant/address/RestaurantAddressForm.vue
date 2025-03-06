@@ -74,7 +74,7 @@ const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+    const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
@@ -190,7 +190,7 @@ async function onMapConfirm() {
         const { lat, lng } = mapComp.value.mapView.getCenter();
         // const reverseGeocodeResult = await reverseGeocode(lat, lng);
         // console.log('reverseGeocodeResult', reverseGeocodeResult);
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

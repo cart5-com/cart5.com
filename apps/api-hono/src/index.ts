@@ -76,6 +76,7 @@ const ecomApiMapsRoutes = app.basePath('/api/maps')
 export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
 
 const dashboardRoutes = app
+	.basePath('/api_dashboard')
 	.use(async (c, next) => {
 		// all dashboard routes are protected by auth
 		const userId = c.get('USER')?.id;
@@ -84,7 +85,6 @@ const dashboardRoutes = app
 		}
 		await next();
 	})
-	.basePath('/api/dashboard')
 	.route('/restaurant', restaurantRouter);
 
 

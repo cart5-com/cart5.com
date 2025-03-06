@@ -44,7 +44,7 @@ watch([defaultMethods, deliveryMethods, pickupMethods, onPremiseMethods, tableRe
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -87,7 +87,7 @@ const loadData = async () => {
 const savePaymentMethods = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

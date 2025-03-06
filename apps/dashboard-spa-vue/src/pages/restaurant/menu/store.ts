@@ -16,7 +16,7 @@ export const isMenuLoading = ref(false);
 export const loadMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -46,7 +46,7 @@ export const loadMenu = async () => {
 export const saveMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api.dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
