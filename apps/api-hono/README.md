@@ -19,21 +19,21 @@ A secure authentication service built with Hono that provides cross-domain authe
 ## API Endpoints
 
 Authentication:
-• POST /api/email_password/login - Email/password login
-• POST /api/email_password/register - Register new account
-• POST /api/otp/request - Request one-time password
-• POST /api/otp/verify - Verify OTP code
-• POST /api/google_oauth/login - Google OAuth login
+• POST /api_auth/email_password/login - Email/password login
+• POST /api_auth/email_password/register - Register new account
+• POST /api_auth/otp/request - Request one-time password
+• POST /api_auth/otp/verify - Verify OTP code
+• POST /api_auth/google_oauth/login - Google OAuth login
 
 Session Management:
-• POST /api/user/whoami - Get current user info
-• POST /api/user/logout - Logout current user
-• POST /api/cross_domain/redirector - Handle cross-domain auth
+• POST /api_auth/user/whoami - Get current user info
+• POST /api_auth/user/logout - Logout current user
+• POST /api_auth/cross_domain/redirector - Handle cross-domain auth
 
 Two-Factor Authentication:
-• POST /api/two_factor_auth/enable - Enable 2FA
-• POST /api/two_factor_auth/verify - Verify 2FA code
-• POST /api/two_factor_auth/disable - Disable 2FA
+• POST /api_auth/two_factor_auth/enable - Enable 2FA
+• POST /api_auth/two_factor_auth/verify - Verify 2FA code
+• POST /api_auth/two_factor_auth/disable - Disable 2FA
 
 ## Database Management
 

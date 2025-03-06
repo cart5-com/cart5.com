@@ -6,10 +6,10 @@ import type { HonoVariables } from "lib/hono/HonoVariables";
 
 export const hostnameCheck = createMiddleware<HonoVariables>(async (c, next) => {
     if (
-        c.req.path === '/api/cross_domain/callback' ||
-        c.req.path === '/api/user/logout' ||
+        c.req.path === '/api_auth/cross_domain/callback' ||
+        c.req.path === '/api_auth/user/logout' ||
         // c.req.path === '/api/user/logout-all' ||
-        c.req.path === '/api/user/whoami'
+        c.req.path === '/api_auth/user/whoami'
     ) {
         // these routes are not subject to origin checks
         await next();

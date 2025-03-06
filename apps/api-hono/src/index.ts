@@ -68,6 +68,7 @@ const routes = app
 	.route('/cross_domain', crossDomainRoute)
 	.route('/google_oauth', googleOAuthRoute)
 	.route('/two_factor_auth', twoFactorAuthRoute)
+
 export type AuthApiAppType = typeof routes;
 
 const ecomApiMapsRoutes = app.basePath('/api/maps')
