@@ -22,9 +22,7 @@
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "tsconfig.json": "tsconfig.*.json, env.d.ts",
-    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
-    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, nixpacks.toml, license.md, .gitignore, .cursorignore",
+    "package.json": "turbo.json, README.md, pnpm*, tailwind.*, vite.*, drizzle.config*, astro.config*, esbuild.*, .prettier*, nixpacks.toml, license.md, .gitignore, .cursorignore, tsconfig.*.json, *.d.ts, tsconfig.json, tsconfig.*.json, components.json",
     ".env": ".env*"
   }
 }
