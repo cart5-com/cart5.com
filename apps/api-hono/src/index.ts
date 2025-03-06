@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
-import { KNOWN_ERROR } from 'lib/errors';
+import { KNOWN_ERROR } from 'lib/types/errors';
 import { userRoute } from 'lib/auth/user/router';
 import { otpRoute } from 'lib/auth/otp/router';
 import { emailPasswordRoute } from 'lib/auth/emailPassword/router';

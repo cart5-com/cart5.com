@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import type { HonoVariables } from '../../hono/HonoVariables';
 import { type Context, type Next } from 'hono';
 import { isUserRestaurantAdminService } from '../../db/services/restaurant.service';
-import { KNOWN_ERROR } from '../../errors';
+import { KNOWN_ERROR } from '../../types/errors';
 import { createRestaurant, createRestaurantSchemaValidator } from './create';
 import { updateRestaurant, updateRestaurantSchemaValidator } from './update';
 import { getRestaurant, getRestaurantSchemaValidator } from './get';

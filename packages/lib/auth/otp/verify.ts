@@ -5,7 +5,7 @@ import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../utils/jwt';
 import { OTP_COOKIE_NAME, TWO_FACTOR_AUTH_COOKIE_NAME } from '../../consts/auth-consts';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { upsertUserService, markEmailAsVerifiedService } from '../../db/services/user.service';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import type { TwoFactorAuthVerifyPayload } from '../types/UserType';

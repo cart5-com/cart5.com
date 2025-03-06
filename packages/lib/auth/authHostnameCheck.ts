@@ -1,5 +1,5 @@
 import { type Context, type Next } from 'hono';
-import { KNOWN_ERROR } from '../errors';
+import { KNOWN_ERROR } from '../types/errors';
 import { ENFORCE_HOSTNAME_CHECKS } from '../auth/enforceHostnameChecks';
 import { getEnvVariable } from '../utils/getEnvVariable';
 

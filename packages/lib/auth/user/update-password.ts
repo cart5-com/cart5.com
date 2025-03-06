@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import {
     updateUserPasswordService
 } from '../../db/services/user.service';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { z } from 'zod';
 import { hashPassword, verifyPasswordStrength } from '../utils/password';
 import { validateTurnstile } from '../../utils/validateTurnstile';

@@ -5,7 +5,7 @@ import { decodeIdToken, Google, OAuth2Tokens } from 'arctic';
 import { decryptAndVerifyJwt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from '../../consts/auth-consts';
 import { deleteCookie, getCookie } from 'hono/cookie';
-import { KNOWN_ERROR } from '../../errors';
+import { KNOWN_ERROR } from '../../types/errors';
 import { updateUserNameService } from '../../db/services/user.service';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { getEnvVariable } from '../../utils/getEnvVariable';

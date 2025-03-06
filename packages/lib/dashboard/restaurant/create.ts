@@ -5,7 +5,7 @@ import type { HonoVariables } from '../../hono/HonoVariables';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import { type ValidatorContext } from '../../hono/types/ValidatorContext';
 import { createRestaurantService } from '../../db/services/restaurant.service';
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { zValidator } from '@hono/zod-validator';
 

@@ -13,7 +13,7 @@ import {
 import type { HonoVariables } from '../../hono/HonoVariables';
 import { type ValidatorContext } from '../../hono/types/ValidatorContext';
 import { updateRestaurantService } from '../../db/services/restaurant.service';
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 import { zValidator } from '@hono/zod-validator';
 
 export const updateRestaurantSchemaValidator = zValidator('json',

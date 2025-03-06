@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { KNOWN_ERROR } from "lib/errors";
+import { KNOWN_ERROR } from "lib/types/errors";
 import { ENFORCE_HOSTNAME_CHECKS } from "lib/auth/enforceHostnameChecks";
 import { getEnvVariable } from "lib/utils/getEnvVariable";
 import type { HonoVariables } from "lib/hono/HonoVariables";

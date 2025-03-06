@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { decryptToString } from '../utils/encryption';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { TWO_FACTOR_AUTH_COOKIE_NAME } from '../../consts/auth-consts';

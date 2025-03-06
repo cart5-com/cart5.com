@@ -2,7 +2,7 @@ import { type Context } from 'hono'
 import { encodeBase64, encodeBase32NoPadding } from "@oslojs/encoding";
 import { createTOTPKeyURI } from "@oslojs/otp";
 import { renderSVG } from "uqr";
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";
 

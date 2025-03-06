@@ -1,6 +1,6 @@
 import { type Context } from 'hono';
 import { getMyRestaurantsService } from '../../db/services/restaurant.service';
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 
 export const getMyRestaurants = async (c: Context) => {
     const userId = c.get('USER')?.id!;

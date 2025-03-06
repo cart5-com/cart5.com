@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { generateRandomRecoveryCode } from '../utils/generateRandomOtp';
 import { encryptString } from '../utils/encryption';
 import { validateTurnstile } from '../../utils/validateTurnstile';

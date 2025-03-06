@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { signJwtAndEncrypt } from '../utils/jwt';
 import { GOOGLE_OAUTH_COOKIE_NAME } from '../../consts/auth-consts';
 import { setCookie } from 'hono/cookie';
-import { KNOWN_ERROR } from '../../errors';
+import { KNOWN_ERROR } from '../../types/errors';
 import { getEnvVariable, IS_PROD } from '../../utils/getEnvVariable';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import type { HonoVariables } from "../../hono/HonoVariables";

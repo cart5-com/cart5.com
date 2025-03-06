@@ -2,7 +2,7 @@ import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from '../../utils/validateTurnstile';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { verifyPasswordStrength } from '../utils/password';
 import { isEmailExistsService } from '../../db/services/user.service';
 import { signJwtAndEncrypt } from '../utils/jwt';

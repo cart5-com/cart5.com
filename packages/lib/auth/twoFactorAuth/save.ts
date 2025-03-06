@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decodeBase64 } from "@oslojs/encoding";
 import { verifyTOTPWithGracePeriod } from "@oslojs/otp";
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { generateRandomRecoveryCode } from '../utils/generateRandomOtp';
 import { encryptAesGcm, encryptString } from '../utils/encryption';
 import { validateTurnstile } from '../../utils/validateTurnstile';

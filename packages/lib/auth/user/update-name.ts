@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import {
     updateUserNameService
 } from '../../db/services/user.service';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { z } from 'zod';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { getUserByEmailService } from '../../db/services/user.service';

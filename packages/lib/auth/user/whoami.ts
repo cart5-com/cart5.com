@@ -1,5 +1,5 @@
 import { type Context } from 'hono'
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 import type { HonoVariables } from "../../hono/HonoVariables";
 
 export const whoamiRoute = async (c: Context<HonoVariables>) => {

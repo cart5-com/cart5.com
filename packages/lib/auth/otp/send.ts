@@ -7,7 +7,7 @@ import { OTP_COOKIE_NAME } from '../../consts/auth-consts';
 import { sendUserOtpEmail } from '../utils/email';
 import { validateTurnstile } from '../../utils/validateTurnstile';
 import { setCookie } from 'hono/cookie';
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 import { ENFORCE_HOSTNAME_CHECKS } from '../enforceHostnameChecks';
 import { getEnvVariable } from '../../utils/getEnvVariable';
 import type { HonoVariables } from "../../hono/HonoVariables";

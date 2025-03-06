@@ -4,7 +4,7 @@ import { Hono } from "hono";
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { type HonoVariables } from "../hono/HonoVariables";
-import { type ErrorType } from "../errors";
+import { type ErrorType } from "../types/errors";
 import { getOptionalEnvVariable, IS_PROD } from "../utils/getEnvVariable";
 import { verifyRequestOrigin } from "../utils/verifyRequestOrigin";
 

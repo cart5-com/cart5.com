@@ -2,7 +2,7 @@ import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { validateTurnstile } from '../../utils/validateTurnstile';
-import { KNOWN_ERROR, type ErrorType } from '../../errors';
+import { KNOWN_ERROR, type ErrorType } from '../../types/errors';
 import { hashPassword } from '../utils/password';
 import { createUserSessionAndSetCookie } from '../utils/createUserSessionAndSetCookie';
 import { decryptAndVerifyJwt } from '../utils/jwt';

@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { SESSION_COOKIE_NAME } from "../../consts/auth-consts";
 import { deleteCookie } from 'hono/cookie';
-import { type ErrorType } from '../../errors';
+import { type ErrorType } from '../../types/errors';
 import type { HonoVariables } from "../../hono/HonoVariables";
 import { deleteAllUserSessionsService } from '../../db/services/session.service';
 

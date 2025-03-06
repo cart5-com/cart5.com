@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { KNOWN_ERROR } from '../../errors';
+import { KNOWN_ERROR } from '../../types/errors';
 import { isKnownHostname } from '../utils/knownHostnames';
 import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../../consts/auth-consts';
 import { signJwtAndEncrypt } from '../utils/jwt';
