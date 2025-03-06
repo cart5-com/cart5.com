@@ -19,7 +19,6 @@ import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 const app = new Hono<HonoVariables>();
 
-app.use(hostnameCheck);
 app.use(csrfChecks);
 app.use(authChecks);
 // NOTE: authBearerTokenChecks must be after authChecks
@@ -62,14 +61,14 @@ app.get("/test-user", (c) => {
 });
 
 
-const routes = app.basePath('/api')
+const routes = app
+	.basePath('/api_auth')
 	.route('/user', userRoute)
 	.route('/otp', otpRoute)
 	.route('/email_password', emailPasswordRoute)
 	.route('/cross_domain', crossDomainRoute)
 	.route('/google_oauth', googleOAuthRoute)
 	.route('/two_factor_auth', twoFactorAuthRoute)
-
 export type AuthApiAppType = typeof routes;
 
 const ecomApiMapsRoutes = app.basePath('/api/maps')

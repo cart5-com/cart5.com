@@ -5,7 +5,7 @@ import { ref } from 'vue'
 export const userStore = ref<User | null>(null)
 
 export async function refreshUserData() {
-    const { data, error } = await (await getAuthApiClient().api.user.whoami.$post()).json();
+    const { data, error } = await (await getAuthApiClient().api_auth.user.whoami.$post()).json();
     if (error) {
         console.error(error);
         userStore.value = null

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { createAuthApiClient_AsUrlHelper } from "@src/lib/authApiClient";
 
 const handleGoogleClick = () => {
-	const googleRedirectUrl = createAuthApiClient_AsUrlHelper().api.google_oauth.redirect.$url();
+	const googleRedirectUrl = createAuthApiClient_AsUrlHelper().api_auth.google_oauth.redirect.$url();
 	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
 	const googleUrl = googleRedirectUrl.toString();
 	// recheck user data is required after google oauth redirects

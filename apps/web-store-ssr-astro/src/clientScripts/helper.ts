@@ -8,7 +8,7 @@ import { getLoginUrl, getSettingsUrl, getSignupUrl } from "lib/clientUtils/getAu
 const client = createAuthApiClient();
 
 const whoAmI = async () => {
-    const { data, error } = await (await client.api.user.whoami.$post()).json();
+    const { data, error } = await (await client.api_auth.user.whoami.$post()).json();
     console.log(data, error);
     const whoamiResult = document.getElementById("whoami-result") as HTMLPreElement;
     whoamiResult.textContent = JSON.stringify(data, null, 2);
@@ -42,7 +42,7 @@ loginButton.addEventListener("click", async () => {
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
 logoutButton.addEventListener("click", async () => {
-    const { data, error } = await (await client.api.user.logout.$post()).json();
+    const { data, error } = await (await client.api_auth.user.logout.$post()).json();
     console.log(data, error);
     window.location.reload();
 });

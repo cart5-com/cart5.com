@@ -4,7 +4,7 @@ import { getAuthApiClient } from "@src/lib/authApiClient";
 import { userStore } from "@src/stores/userStore";
 
 async function handleLogout() {
-	const { data, error } = await (await getAuthApiClient().api.user["logout-all"].$post()).json();
+	const { data, error } = await (await getAuthApiClient().api_auth.user["logout-all"].$post()).json();
 	console.log(data, error);
 	userStore.value = null;
 }

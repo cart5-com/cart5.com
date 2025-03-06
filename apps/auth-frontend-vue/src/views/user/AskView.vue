@@ -32,7 +32,7 @@ const redirectWithUser = async () => {
     }
     const turnstile = await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY);
     dialog.showBlockingLoadingModal();
-    const postActionUrl = createAuthApiClient_AsUrlHelper().api.cross_domain.redirector.$url();
+    const postActionUrl = createAuthApiClient_AsUrlHelper().api_auth.cross_domain.redirector.$url();
     const newForm = document.createElement("form");
     newForm.method = "POST";
     newForm.action = postActionUrl.toString();

@@ -6,7 +6,7 @@ import { createAuthApiClient } from 'lib/hono/apiClients/authApiClient';
 import router from './router'
 
 export const getUser = async function () {
-    const { data, error } = await (await createAuthApiClient().api.user.whoami.$post()).json();
+    const { data, error } = await (await createAuthApiClient().api_auth.user.whoami.$post()).json();
     if (error) {
         console.error(error);
     }

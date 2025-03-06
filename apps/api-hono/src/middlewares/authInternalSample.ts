@@ -18,7 +18,7 @@ export const authInternalSample = createMiddleware<HonoVariables>(async (c, next
         try {
             const authCookieValue = cookieValue;
             const authApiClient = createAuthApiClient(getEnvVariable("INTERNAL_AUTH_API_ORIGIN"));
-            const { data } = await (await authApiClient.api.user.whoami.$post({}, {
+            const { data } = await (await authApiClient.api_auth.user.whoami.$post({}, {
                 headers: {
                     "internal-auth-api-key": getEnvVariable("INTERNAL_AUTH_API_KEY"),
                     "internal-host": c.req.header()['host'],

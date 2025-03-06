@@ -17,7 +17,7 @@ export const authMiddleware = defineMiddleware(async (context, next) => {
         try {
             const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
             const authApiClient = createAuthApiClient(import.meta.env.INTERNAL_AUTH_API_ORIGIN);
-            const { data } = await (await authApiClient.api.user.whoami.$post({}, {
+            const { data } = await (await authApiClient.api_auth.user.whoami.$post({}, {
                 headers: {
                     "internal-auth-api-key": import.meta.env.INTERNAL_AUTH_API_KEY,
                     "internal-host": context.url.host,
@@ -41,7 +41,7 @@ export const authMiddleware = defineMiddleware(async (context, next) => {
 //     // use direct connection for auth check,
 //     // no need to go through network
 //     const authApiClient = createAuthApiClient(import.meta.env.INTERNAL_AUTH_API_ORIGIN);
-//     const whoamiUrl = authApiClient.api.user.whoami.$url();
+//     const whoamiUrl = authApiClient.api_auth.user.whoami.$url();
 //     const authCookieValue = context.cookies.get(SESSION_COOKIE_NAME)?.value;
 //     // whoamiUrl.protocol = "https";
 //     // if (import.meta.env.DEV) {

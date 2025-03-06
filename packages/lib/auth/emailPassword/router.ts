@@ -12,21 +12,24 @@ import {
     verifyEmailPasswordSchemaValidator,
     verifyEmailPasswordRoute
 } from './verify';
-
+import { authHostnameCheck } from '../authHostnameCheck';
 
 export const emailPasswordRoute = new Hono<HonoVariables>()
     .post(
         '/register',
+        authHostnameCheck,
         registerEmailPasswordSchemaValidator,
         registerEmailPasswordRoute
     )
     .post(
         '/verify',
+        authHostnameCheck,
         verifyEmailPasswordSchemaValidator,
         verifyEmailPasswordRoute
     )
     .post(
         '/login',
+        authHostnameCheck,
         loginEmailPasswordSchemaValidator,
         loginEmailPasswordRoute
     )
