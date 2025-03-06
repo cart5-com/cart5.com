@@ -8,6 +8,7 @@ import { authHostnameCheck } from '../authHostnameCheck';
 export const googleOAuthRoute = new Hono<HonoVariables>()
     .get(
         '/callback',
+        authHostnameCheck,
         callbackGoogleOAuthSchemaValidator,
         callbackGoogleOAuthRoute
     )

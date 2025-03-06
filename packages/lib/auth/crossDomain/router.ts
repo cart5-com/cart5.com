@@ -18,7 +18,7 @@ export const crossDomainRoute = new Hono<HonoVariables>()
     )
     .get(
         '/callback',
-        authHostnameCheck,
+        // authHostnameCheck, // cross domain callback does not need to check hostname
         callbackSchemaValidator,
         callbackRoute
     )
