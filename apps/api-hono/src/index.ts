@@ -17,6 +17,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
+import { mustHaveUser } from './middlewares/mustHaveUser';
 const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
@@ -83,14 +84,7 @@ export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
 
 const dashboardRoutes = app
 	.basePath('/api_dashboard')
-	.use(async (c, next) => {
-		// all dashboard routes are protected by auth
-		const userId = c.get('USER')?.id;
-		if (!userId) {
-			throw new KNOWN_ERROR("UNAUTHORIZED", "UNAUTHORIZED");
-		}
-		await next();
-	})
+	.use(mustHaveUser)
 	.route('/restaurant', restaurantRouter);
 
 
