@@ -25,7 +25,7 @@ http://127.0.0.1:5555 {
 }
 
 (api-hono-proxy) {
-	handle_path /__p_auth/* {
+	handle_path /__p_api/* {
 		#api-hono
 		reverse_proxy http://127.0.0.1:3000
 	}

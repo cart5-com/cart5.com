@@ -88,9 +88,9 @@ export const redirectorRoute = async (
 const getCrossDomainCallbackUrl = (code: string, redirectUrl: string) => {
     const url = new URL(redirectUrl);
     // import { createAuthApiClient } from '../authApiClient'
-    // const authApiClient = createAuthApiClient(`${url.origin}/__p_auth/`);
+    // const authApiClient = createAuthApiClient(`${url.origin}/__p_api/`);
     // const goToUrl = new URL(authApiClient.api.cross_domain.callback.$url());
-    const goToUrl = new URL(`${url.origin}/__p_auth/api/cross_domain/callback`);
+    const goToUrl = new URL(`${url.origin}/__p_api/api/cross_domain/callback`);
     goToUrl.searchParams.set("code", code);
     goToUrl.searchParams.set("redirectUrl", encodeURIComponent(redirectUrl));
     return goToUrl.toString();

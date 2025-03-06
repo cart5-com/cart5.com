@@ -15,10 +15,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: '0.0.0.0',
     proxy: {
-      '/__p_auth': {
+      '/__p_api': {
         target: 'http://127.0.0.1:3000',
         changeOrigin: false,
-        rewrite: (path) => path.replace(/^\/__p_auth/, '')
+        rewrite: (path) => path.replace(/^\/__p_api/, '')
       }
     },
   },

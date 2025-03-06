@@ -36,7 +36,7 @@ export const authMiddleware = defineMiddleware(async (context, next) => {
 
 // import type { APIContext } from "astro";
 // async function fetchWhoAmI(context: APIContext) {
-//     // const authApiClient = createAuthApiClient(`${context.url.origin}/__p_auth/`);
+//     // const authApiClient = createAuthApiClient(`${context.url.origin}/__p_api/`);
 
 //     // use direct connection for auth check,
 //     // no need to go through network

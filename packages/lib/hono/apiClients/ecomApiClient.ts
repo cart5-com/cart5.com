@@ -5,7 +5,7 @@ import type {
 import type { InferRequestType, InferResponseType } from 'hono/client'
 import { hc } from 'hono/client'
 
-export const createEcomDashboardApiClient = (baseUrl: string = '/__p_auth/') => {
+export const createEcomDashboardApiClient = (baseUrl: string = '/__p_api/') => {
     const calculatedApiClient = hc<EcomDashboardApiAppType>(baseUrl)
     type typeFromCalculated = typeof calculatedApiClient;
     const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>
@@ -13,7 +13,7 @@ export const createEcomDashboardApiClient = (baseUrl: string = '/__p_auth/') => 
     return hcWithType(baseUrl, {})
 }
 
-export const createEcomApiMapsClient = (baseUrl: string = '/__p_auth/') => {
+export const createEcomApiMapsClient = (baseUrl: string = '/__p_api/') => {
     const calculatedApiClient = hc<EcomApiMapsAppType>(baseUrl)
     type typeFromCalculated = typeof calculatedApiClient;
     const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>
