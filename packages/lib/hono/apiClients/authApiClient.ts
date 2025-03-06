@@ -11,7 +11,7 @@ export const createAuthApiClient = (baseUrl: string = '/__p_api/') => {
     return hcWithType(baseUrl, {})
 }
 
-export const createAuthGlobalApiClient = (baseUrl: string = '/__p_api_auth_global/') => {
+export const createAuthGlobalApiClient = (baseUrl: string = '/__p_api/') => {
     const calculatedApiClient = hc<AuthGlobalApiAppType>(baseUrl)
     type typeFromCalculated = typeof calculatedApiClient;
     const hcWithType = (...args: Parameters<typeof hc>): typeFromCalculated =>

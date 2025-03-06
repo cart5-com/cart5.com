@@ -16,6 +16,7 @@ import { restaurantRouter } from 'lib/dashboard/restaurant/router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
+import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
@@ -60,6 +61,7 @@ app.get("/test-user", (c) => {
 
 const routes = app
 	.basePath('/api_auth')
+	.use(hostMustBeAuthDomain)
 	.route('/user', userRoute)
 	.route('/otp', otpRoute)
 	.route('/email_password', emailPasswordRoute)

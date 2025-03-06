@@ -5,7 +5,7 @@ export const getAuthApiClient = function () {
 };
 
 export const getAuthGlobalApiClient = function () {
-    return createAuthGlobalApiClient(`/__p_api_auth_global/`);
+    return createAuthGlobalApiClient(`/__p_api/`);
 };
 
 export const createAuthApiClient_AsUrlHelper = function () {
