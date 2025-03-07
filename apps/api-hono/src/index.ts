@@ -129,6 +129,7 @@ process.on('SIGINT', () => {
 		}
 		// console.log('HTTP server closed');
 		// Perform any cleanup operations here (e.g., closing database connections)
+		// TODO: create a simple cron job
 		// stopCron();
 		console.log('closing db client');
 		await sendDiscordMessage(`closing db client`);
