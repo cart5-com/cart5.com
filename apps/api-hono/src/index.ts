@@ -62,6 +62,10 @@ app.get("/test-user", (c) => {
 });
 
 
+app.get("/health", (c) => {
+	return c.json({ status: "ok" });
+});
+
 const routes = app
 	.basePath('/api_auth')
 	.use(hostMustBeAuthDomain)
@@ -123,45 +127,71 @@ async function sendDiscordMessage(message: string) {
 
 let server: ReturnType<typeof serve>;
 
-async function shutdown() {
+
+const shutdown = async () => {
+	console.log('Shutdown initiated'); // Add console.log for debugging
 	await sendDiscordMessage(`Shutting down server...`);
 
 	if (server) {
+		console.log('Closing server...'); // Add console.log for debugging
 		await new Promise<void>((resolve, reject) => {
 			server.close((err) => {
 				if (err) {
+					console.error('Error closing server:', err); // Add console.error for debugging
 					sendDiscordMessage(`Error closing server: ${err}`);
 					reject(err);
 					return;
 				}
+				console.log('Server closed successfully'); // Add console.log for debugging
 				resolve();
 			});
 		});
 	}
 
-	await sendDiscordMessage(`closing db client`);
-	await db.$client.close();
-	await sendDiscordMessage(`db client closed`);
+	try {
+		console.log('Closing DB connection...'); // Add console.log for debugging
+		await db.$client.close();
+		console.log('DB connection closed'); // Add console.log for debugging
+		await sendDiscordMessage(`db client closed`);
+	} catch (err) {
+		console.error('Error closing DB:', err); // Add console.error for debugging
+		await sendDiscordMessage(`Error closing DB: ${err}`);
+	}
+
 	await sendDiscordMessage(`exiting; byeee!! 👋`);
 	process.exit(0);
 }
 
-// Set up signal handlers before starting the server
-process.on('SIGTERM', async () => {
-	await sendDiscordMessage('SIGTERM signal received');
-	await shutdown().catch((err) => {
-		sendDiscordMessage(`Error during shutdown: ${err}`);
-		process.exit(1);
+// Add more signal handlers and ensure they're properly logged
+const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
+
+signals.forEach(signal => {
+	process.on(signal, async () => {
+		console.log(`${signal} received`); // Add console.log for debugging
+		try {
+			await sendDiscordMessage(`${signal} signal received`);
+			await shutdown();
+		} catch (err) {
+			console.error(`Error during ${signal} shutdown:`, err); // Add console.error for debugging
+			await sendDiscordMessage(`Error during ${signal} shutdown: ${err}`);
+			process.exit(1);
+		}
 	});
 });
 
-process.on('SIGINT', async () => {
-	await sendDiscordMessage('SIGINT signal received');
-	await shutdown().catch((err) => {
-		sendDiscordMessage(`Error during shutdown: ${err}`);
-		process.exit(1);
-	});
+// Catch uncaught exceptions and unhandled rejections
+process.on('uncaughtException', async (err) => {
+	console.error('Uncaught exception:', err); // Add console.error for debugging
+	await sendDiscordMessage(`Uncaught exception: ${err}`);
+	await shutdown();
 });
+
+process.on('unhandledRejection', async (err) => {
+	console.error('Unhandled rejection:', err); // Add console.error for debugging
+	await sendDiscordMessage(`Unhandled rejection: ${err}`);
+	await shutdown();
+});
+
 
 const startServer = () => {
 	server = serve({
