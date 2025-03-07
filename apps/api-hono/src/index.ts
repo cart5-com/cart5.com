@@ -117,11 +117,15 @@ const startServer = () => {
 }
 
 process.on('SIGTERM', () => {
+	console.log('SIGTERM signal received: closing HTTP server');
 	sendDiscordMessage(`SIGTERM signal received: closing HTTP server`);
 	server.close(async function (err) {
 		if (err) {
+			console.error(err);
 			sendDiscordMessage(`Error closing HTTP server: ${err}`);
 		}
+		console.log('HTTP server closed');
+		await sendDiscordMessage(`HTTP server closed`);
 	});
 });
 
