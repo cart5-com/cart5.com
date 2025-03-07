@@ -14,7 +14,7 @@ async function logout() {
     const client = createAuthGlobalApiClient();
     const { data, error } = await (await client.api_auth_global.logout.$post()).json();
     console.log(data, error);
-    window.location.href = `https://dashboard.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/after-logout.html`;
+    window.location.href = `/dash/after-logout.html`;
 }
 
 </script>
