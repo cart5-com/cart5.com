@@ -38,12 +38,12 @@ app.onError((err, c) => {
 			},
 		}, 500);
 	} else {
+		sendDiscordMessage(`Index.ts onError: ${err}`);
 		// this is same with hono's own error handler. 
-		// but i like JSON
+		// but i like JSON response, not text
 		if ("getResponse" in err) {
 			return err.getResponse();
 		}
-		sendDiscordMessage(`Error: ${err}`);
 		return c.json({
 			error: {
 				message: "Internal Server Error"
