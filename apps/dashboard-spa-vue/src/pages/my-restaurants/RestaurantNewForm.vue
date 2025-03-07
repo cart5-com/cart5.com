@@ -4,11 +4,12 @@ import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from "zod";
-import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
+import { showTurnstilePopup } from 'lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { myRestaurants } from '@src/stores/RestaurantStore';
+import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -31,7 +32,10 @@ async function onSubmit(values: z.infer<typeof schema>) {
         const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant.create.$post({
             form: {
                 name: values.name,
-                turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
+                // turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
+                turnstile: (await showTurnstilePopup(
+                    getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
+                ))
             },
         })).json()
         if (error) {

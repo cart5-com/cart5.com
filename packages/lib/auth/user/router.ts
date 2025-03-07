@@ -3,6 +3,8 @@ import type { HonoVariables } from "../../hono/HonoVariables";
 import { logoutAllRoute } from './logout-all';
 import { updatePasswordRoute, updatePasswordSchemaValidator } from './update-password';
 import { updateNameRoute, updateNameSchemaValidator } from './update-name';
+import { encryptTurnstileRoute } from './encrypt-turnstile';
+import { encryptTurnstileSchemaValidator } from './encrypt-turnstile';
 
 export const userRoute = new Hono<HonoVariables>()
     .post(
@@ -18,6 +20,11 @@ export const userRoute = new Hono<HonoVariables>()
         '/update-name',
         updateNameSchemaValidator,
         updateNameRoute
+    )
+    .post(
+        '/encrypt-turnstile',
+        encryptTurnstileSchemaValidator,
+        encryptTurnstileRoute
     )
 
 

@@ -1,4 +1,12 @@
+import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../auth/utils/jwt';
 import { KNOWN_ERROR } from '../types/errors';
+import { getEnvVariable, IS_PROD } from './getEnvVariable';
+import { ENFORCE_HOSTNAME_CHECKS } from '../auth/enforceHostnameChecks';
+import { isKnownHostname } from '../auth/utils/knownHostnames';
+import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../consts/auth-consts';
+import type { Context } from 'hono';
+import type { HonoVariables } from '../hono/HonoVariables';
+
 
 export const validateTurnstile = async function (TURNSTILE_SECRET: string, token: string, remoteip?: string) {
     console.log("validateTurnstile: remoteip:", remoteip);
@@ -23,3 +31,106 @@ export const validateTurnstile = async function (TURNSTILE_SECRET: string, token
         throw new KNOWN_ERROR("Invalid verification", "INVALID_TURNSTILE_TOKEN");
     }
 }
+
+export const generateCrossDomainCode = async function (c: Context<HonoVariables>, redirectUrl: string, turnstile: string) {
+    // Security check: Verify request comes from our auth domain
+    const hostHeader = c.req.header()['host'];
+    if (!hostHeader) {
+        throw new KNOWN_ERROR("Host header not found", "HOST_HEADER_NOT_FOUND");
+    }
+
+    if (ENFORCE_HOSTNAME_CHECKS && hostHeader !== `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`) {
+        throw new KNOWN_ERROR("Invalid host", "INVALID_HOST");
+    }
+
+    // Verify user is authenticated
+    const user = c.get("USER");
+    if (!user || !user.id) {
+        throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+    }
+
+    // Validate target domain is in our allowed list
+    const url = new URL(redirectUrl);
+    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
+        throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
+    }
+
+    const payload: CrossDomainCodePayload = {
+        nonce: crypto.randomUUID(),
+        userId: user.id,
+        turnstile,
+        createdAtTimestamp: Date.now(),
+        sourceHost: hostHeader,
+        targetHost: url.hostname
+    };
+    // Create encrypted JWT containing session info
+    const code = await signJwtAndEncrypt<CrossDomainCodePayload>(
+        getEnvVariable('JWT_PRIVATE_KEY'),
+        getEnvVariable('ENCRYPTION_KEY'),
+        payload,
+        CROSS_DOMAIN_SESSION_EXPIRES_IN,
+    );
+    return code;
+}
+
+
+export const validateCrossDomainTurnstile = async function (code: string, c: Context) {
+    const {
+        userId,
+        turnstile,
+        createdAtTimestamp,
+        sourceHost,
+        targetHost
+    } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
+        getEnvVariable('JWT_PRIVATE_KEY'),
+        getEnvVariable('ENCRYPTION_KEY'),
+        code
+    );
+    if (ENFORCE_HOSTNAME_CHECKS && sourceHost !== (`auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`)) {
+        throw new KNOWN_ERROR("Invalid source host", "INVALID_SOURCE_HOST");
+    }
+
+    // Verify turnstile token is valid
+    // this will make sure it is used only one time!
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+
+    // Validate current domain is in allowed list
+    const host = c.req.header()['host'];
+    if (!host) {
+        throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
+    }
+
+    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
+        throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
+    }
+
+    // Validate payload
+    if (!userId) {
+        throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+    }
+    if (Date.now() - createdAtTimestamp > CROSS_DOMAIN_SESSION_EXPIRES_IN) {
+        throw new KNOWN_ERROR("Code expired", "CODE_EXPIRED");
+    }
+
+    if (ENFORCE_HOSTNAME_CHECKS && targetHost !== host) {
+        throw new KNOWN_ERROR("Host mismatch", "HOST_MISMATCH");
+    }
+    return {
+        userId,
+        turnstile,
+        createdAtTimestamp,
+        sourceHost,
+        targetHost
+    }
+}
+
+
+export type CrossDomainCodePayload = {
+    userId: string,
+    turnstile: string,
+    createdAtTimestamp: number,
+    nonce: string,         // Random unique value
+    sourceHost: string,    // Original requesting host
+    targetHost: string,    // Destination host
+};
+

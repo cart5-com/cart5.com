@@ -16,6 +16,11 @@ export const getLoginUrl = (PUBLIC_DOMAIN_NAME: string) => {
         }&type=ask&auth=login`;;
 }
 
+export const getTurnstileUrl = (PUBLIC_DOMAIN_NAME: string) => {
+    return `${getAuthOrigin(PUBLIC_DOMAIN_NAME)}/?next=${encodeURIComponent(window.location.href)
+        }&type=turnstile`;
+}
+
 // const returnUrl = encodeURIComponent(window.location.href);
 // window.location.href = `${getAuthOrigin(import.meta.env.PUBLIC_DOMAIN_NAME)}/?next=${returnUrl}&type=settings`;
 export const getSettingsUrl = (PUBLIC_DOMAIN_NAME: string) => {
