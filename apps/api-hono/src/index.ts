@@ -93,6 +93,7 @@ const dashboardRoutes = app
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 const port = 3000;
+// const port = 3000;
 
 // Add this function to send Discord messages
 async function sendDiscordMessage(message: string) {
