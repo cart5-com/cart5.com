@@ -23,9 +23,16 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
                 url: `file:${AUTHAPI_TURSO_EMBEDDED_DB_PATH}`,
                 authToken: AUTHAPI_TURSO_DB_TOKEN!,
                 syncUrl: AUTHAPI_TURSO_DB_URL!,
-                syncInterval: 120,
+                syncInterval: 60,
             });
-            client.sync();
+            setTimeout(() => {
+                try {
+                    client.sync();
+                } catch (err) {
+                    console.error("❌❌❌❌Error syncing db");
+                    console.error(err);
+                }
+            }, 5e3);
             return drizzle(client, { schema });
         } else {
             return drizzle({ connection: { url: AUTHAPI_TURSO_DB_URL!, authToken: AUTHAPI_TURSO_DB_TOKEN! }, schema });
