@@ -92,4 +92,3 @@ Add to /etc/hosts
 - [ ] TODO: add rate limiting for prod caddy config
 - [ ] TODO: add sentry
 - [ ] TODO: seed dev database with sample data
-- [ ] TODO: [try honohub](https://honohub.dev/quickstart)
