@@ -53,17 +53,7 @@ app.onError((err, c) => {
 })
 
 app.get("/", (c) => {
-	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "ENFORCE_HOSTNAME_CHECKS" : "NO_ENFORCE_HOSTNAME_CHECKS"}`);
-});
-
-app.get("/test-user", (c) => {
-	const USER = c.get('USER');
-	return c.html(`Hello ecom api ${IS_PROD ? "PROD" : "DEV"} ${USER ? JSON.stringify(USER) : "no user"}`);
-});
-
-
-app.get("/health", (c) => {
-	return c.json({ status: "ok" });
+	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 
 const routes = app
@@ -125,7 +115,6 @@ async function sendDiscordMessage(message: string) {
 }
 
 let server: ReturnType<typeof serve>;
-
 
 const shutdown = async () => {
 	console.log('Shutdown initiated'); // Add console.log for debugging
