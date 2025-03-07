@@ -18,6 +18,7 @@ import { IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
+import db from 'lib/db/drizzle';
 const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
@@ -91,12 +92,47 @@ const dashboardRoutes = app
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 const port = 3000;
-serve({
-	fetch: app.fetch,
-	port: port
-}, (info) => {
-	console.log(`Api hono server is running on 
-		http://127.0.0.1:${info.port} 
-		address:${info.address} 
-		family:${info.family}`);
+let server: ReturnType<typeof serve>;
+
+const startServer = () => {
+	server = serve({
+		fetch: app.fetch,
+		port: port
+	}, (info) => {
+		if (IS_PROD) {
+			console.log(`server info:${JSON.stringify(info)}`);
+		}
+		// Signal to PM2 that the app is ready
+		if (process.send) {
+			process.send('ready');
+			console.log('ready!!');
+			setTimeout(function () {
+				if (process.send) {
+					process.send('ready');
+				}
+			}, 1000);
+		}
+	});
+}
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+	// not working on windows
+	console.log('SIGINT signal received: closing HTTP server');
+	server.close(async function (err) {
+		if (err) {
+			console.error(err)
+			process.exit(1)
+		}
+		// console.log('HTTP server closed');
+		// Perform any cleanup operations here (e.g., closing database connections)
+		// stopCron();
+		console.log('closing db client');
+		await db.$client.close();
+		console.log('db client closed');
+		console.log('exiting; byeee!! 👋');
+		process.exit(0);
+	});
 });
+
+startServer();
