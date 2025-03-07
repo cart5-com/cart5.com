@@ -9,7 +9,7 @@ const BASE_POPUP_OPTIONS = {
 
 const DEFAULT_WIDTH = 500;
 const DEFAULT_HEIGHT = 600;
-const TARGET_BLANK = '_blank';
+// const TARGET_BLANK = '_blank';
 
 const FIREFOX_EMPTY_URL = 'http://localhost';
 
