@@ -116,6 +116,15 @@ const startServer = () => {
 	});
 }
 
+process.on('SIGTERM', () => {
+	sendDiscordMessage(`SIGTERM signal received: closing HTTP server`);
+	server.close(async function (err) {
+		if (err) {
+			sendDiscordMessage(`Error closing HTTP server: ${err}`);
+		}
+	});
+});
+
 // Graceful shutdown
 process.on('SIGINT', () => {
 	// not working on windows
