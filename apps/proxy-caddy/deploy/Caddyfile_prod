@@ -21,13 +21,20 @@
 
 # TODO: validate domain before SSL challenge # disable all for now
 http://127.0.0.1:5555 {
-	respond 404
+	respond 200
 }
 
 (api-hono-proxy) {
 	handle_path /__p_api/* {
 		#api-hono
 		reverse_proxy http://127.0.0.1:3000
+	}
+}
+
+(dashboard-spa-vue) {
+	handle_path /dash/* {
+		#dashboard-spa-vue
+		reverse_proxy http://127.0.0.1:3004
 	}
 }
 
@@ -48,17 +55,17 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	}
 }
 
-https://dashboard.{$PUBLIC_DOMAIN_NAME} {
-	tls {
-		on_demand
-	}
-	import api-hono-proxy
-	handle_path /* {
-		#auth-frontend-vue
-		reverse_proxy http://127.0.0.1:3004
-		cache
-	}
-}
+#	https://dashboard.{$PUBLIC_DOMAIN_NAME} {
+#		tls {
+#			on_demand
+#		}
+#		import api-hono-proxy
+#		handle_path /* {
+#			#auth-frontend-vue
+#			reverse_proxy http://127.0.0.1:3004
+#			cache
+#		}
+#	}
 
 https://{$PUBLIC_DOMAIN_NAME} {
 	redir https://www.{host}{uri}
@@ -69,6 +76,7 @@ https://{$PUBLIC_DOMAIN_NAME} {
 		on_demand
 	}
 	import api-hono-proxy
+	import dashboard-spa-vue
 	handle_path /* {
 		#web-store-ssr-astro
 		reverse_proxy http://127.0.0.1:3002
