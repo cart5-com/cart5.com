@@ -19,6 +19,7 @@ export const validateSessionCookie = async (
     if (!databaseSession) {
         return { session: null, user: null };
     }
+    // it should not delete for localhost with different ports
     if (ENFORCE_HOSTNAME_CHECKS && databaseSession.hostname !== hostname) {
         await deleteSessionService(databaseSession.id);
         return { session: null, user: null };
