@@ -14,7 +14,7 @@ import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
 import { restaurantRouter } from 'lib/dashboard/restaurant/router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
-import { IS_PROD } from 'lib/utils/getEnvVariable';
+import { getOptionalEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
@@ -102,6 +102,7 @@ const startServer = () => {
 		if (IS_PROD) {
 			console.log(`server info:${JSON.stringify(info)}`);
 		}
+		sendDiscordMessage(`PROD Server started on port ${port} (${IS_PROD ? 'PRODUCTION' : 'DEVELOPMENT'})`);
 		// Signal to PM2 that the app is ready
 		if (process.send) {
 			process.send('ready');
@@ -119,8 +120,10 @@ const startServer = () => {
 process.on('SIGINT', () => {
 	// not working on windows
 	console.log('SIGINT signal received: closing HTTP server');
+	sendDiscordMessage(`SIGINT signal received: closing HTTP server`);
 	server.close(async function (err) {
 		if (err) {
+			sendDiscordMessage(`Error closing HTTP server: ${err}`);
 			console.error(err)
 			process.exit(1)
 		}
@@ -128,11 +131,41 @@ process.on('SIGINT', () => {
 		// Perform any cleanup operations here (e.g., closing database connections)
 		// stopCron();
 		console.log('closing db client');
+		await sendDiscordMessage(`closing db client`);
 		await db.$client.close();
 		console.log('db client closed');
+		await sendDiscordMessage(`db client closed`);
 		console.log('exiting; byeee!! 👋');
+		await sendDiscordMessage(`exiting; byeee!! 👋`);
 		process.exit(0);
 	});
 });
 
 startServer();
+
+
+
+// Add this function to send Discord messages
+async function sendDiscordMessage(message: string) {
+	const webhookUrl = getOptionalEnvVariable("DISCORD_WEBHOOK_URL");
+	if (!webhookUrl) {
+		if (IS_PROD) {
+			console.log('Discord webhook URL not configured');
+		}
+		return;
+	}
+
+	try {
+		await fetch(webhookUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				content: message,
+			}),
+		});
+	} catch (error) {
+		console.error('Failed to send Discord message:', error);
+	}
+}
