@@ -61,7 +61,9 @@ export const generateCrossDomainCode = async function (c: Context<HonoVariables>
         turnstile,
         createdAtTimestamp: Date.now(),
         sourceHost: hostHeader,
-        targetHost: url.hostname
+        targetHost: url.hostname,
+        ipAddress: c.req.header()['x-forwarded-for'],
+        userAgent: c.req.header()['user-agent'],
     };
     // Create encrypted JWT containing session info
     const code = await signJwtAndEncrypt<CrossDomainCodePayload>(
@@ -80,7 +82,9 @@ export const validateCrossDomainTurnstile = async function (code: string, c: Con
         turnstile,
         createdAtTimestamp,
         sourceHost,
-        targetHost
+        targetHost,
+        ipAddress,
+        userAgent
     } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
         getEnvVariable('JWT_PRIVATE_KEY'),
         getEnvVariable('ENCRYPTION_KEY'),
@@ -88,6 +92,12 @@ export const validateCrossDomainTurnstile = async function (code: string, c: Con
     );
     if (ENFORCE_HOSTNAME_CHECKS && sourceHost !== (`auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}`)) {
         throw new KNOWN_ERROR("Invalid source host", "INVALID_SOURCE_HOST");
+    }
+
+
+    // check ip address and user agent
+    if (ipAddress !== c.req.header()['x-forwarded-for'] || userAgent !== c.req.header()['user-agent']) {
+        throw new KNOWN_ERROR("Invalid ip address or user agent", "INVALID_IP_ADDRESS_OR_USER_AGENT");
     }
 
     // Verify turnstile token is valid
@@ -132,5 +142,7 @@ export type CrossDomainCodePayload = {
     nonce: string,         // Random unique value
     sourceHost: string,    // Original requesting host
     targetHost: string,    // Destination host
+    ipAddress: string,
+    userAgent: string,
 };
 

@@ -5,6 +5,7 @@ interface QueryParams {
     type: "ask" | "settings" | "turnstile" | null;
     lang: "en" | null;
     next: string | null;
+    state: string | null;
 }
 
 export const queryParamsStore = ref<QueryParams>({
@@ -12,6 +13,7 @@ export const queryParamsStore = ref<QueryParams>({
     type: null,
     lang: null,
     next: null,
+    state: null,
 });
 
 export const getQueryParams = (): QueryParams => {
@@ -21,7 +23,8 @@ export const getQueryParams = (): QueryParams => {
         auth: (entries.auth as "login" | "signup" | "otp") || "login",
         type: (entries.type as "ask" | "settings" | "turnstile") || "settings",
         lang: (entries.lang as "en") || "en",
-        next: entries.next || `https://www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/`
+        next: entries.next || `https://www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}/`,
+        state: entries.state || null,
     };
 }
 

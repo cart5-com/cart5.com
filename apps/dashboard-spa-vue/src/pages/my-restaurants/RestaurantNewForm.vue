@@ -28,14 +28,20 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
+    const turnstile = await showTurnstilePopup(
+        getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
+    )
+    // if (import.meta.env.DEV) {
+    //     if (!confirm('are you sure create new restaurant?')) {
+    //         return;
+    //     }
+    // }
     await withSubmit(async () => {
         const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant.create.$post({
             form: {
                 name: values.name,
                 // turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
-                turnstile: (await showTurnstilePopup(
-                    getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
-                ))
+                turnstile
             },
         })).json()
         if (error) {

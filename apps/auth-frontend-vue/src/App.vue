@@ -46,6 +46,7 @@ onMounted(async () => {
         window.opener.postMessage({
           type: 'turnstile-verification',
           data: data,
+          state: queryParamsStore.value.state
         }, new URL(nextUrl).origin);
       }
     }

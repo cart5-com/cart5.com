@@ -58,7 +58,10 @@ export const showTurnstilePopup = async (url: string): Promise<string> => {
         // }
 
         const origin = new URL(url).origin;
-        const popup = window.open(url, target, optionsString);
+        const state = crypto.randomUUID();
+        const urlWithState = new URL(url);
+        urlWithState.searchParams.append('state', state);
+        const popup = window.open(urlWithState.toString(), target, optionsString);
 
         if (!popup) {
             reject(new Error('Popup blocked. Please allow popups and try again.'));
@@ -72,6 +75,11 @@ export const showTurnstilePopup = async (url: string): Promise<string> => {
 
         // Listen for message from popup
         const messageHandler = (event: MessageEvent) => {
+            // Add state verification
+            if (!popup || event.source !== popup) {
+                return;
+            }
+
             // Verify origin
             if (event.origin !== origin) {
                 return;
@@ -80,6 +88,13 @@ export const showTurnstilePopup = async (url: string): Promise<string> => {
             // Handle verification result
             if (event.data?.type === 'turnstile-verification') {
                 window.removeEventListener('message', messageHandler);
+                console.log('turnstile-verification', event.data);
+                console.log('state', state);
+                // Verify state matches
+                if (event.data.state !== state) {
+                    reject(new Error('Invalid state parameter'));
+                    return;
+                }
                 if (event.data.error) {
                     reject(new Error(event.data.error));
                 } else {
