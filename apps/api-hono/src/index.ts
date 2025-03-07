@@ -29,6 +29,7 @@ app.onError((err, c) => {
 	if (err instanceof KNOWN_ERROR) {
 		console.log("KNOWN_ERROR err:");
 		console.log(err);
+		//sendDiscordMessage(`KNOWN_ERROR err: ${JSON.stringify(err)}`);
 		c.error = undefined;
 		return c.json({
 			error: {
@@ -42,7 +43,7 @@ app.onError((err, c) => {
 		if ("getResponse" in err) {
 			return err.getResponse();
 		}
-		console.error(err);
+		sendDiscordMessage(`Error: ${err}`);
 		return c.json({
 			error: {
 				message: "Internal Server Error"
@@ -92,75 +93,10 @@ const dashboardRoutes = app
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 const port = 3000;
-let server: ReturnType<typeof serve>;
-
-const startServer = () => {
-	server = serve({
-		fetch: app.fetch,
-		port: port
-	}, (info) => {
-		if (IS_PROD) {
-			console.log(`server info:${JSON.stringify(info)}`);
-		}
-		sendDiscordMessage(`PROD Server started on port ${port} (${IS_PROD ? 'PRODUCTION' : 'DEVELOPMENT'})`);
-		// Signal to PM2 that the app is ready
-		if (process.send) {
-			process.send('ready');
-			console.log('ready!!');
-			setTimeout(function () {
-				if (process.send) {
-					process.send('ready');
-				}
-			}, 1000);
-		}
-	});
-}
-
-process.on('SIGTERM', () => {
-	console.log('SIGTERM signal received: closing HTTP server');
-	sendDiscordMessage(`SIGTERM signal received: closing HTTP server`);
-	server.close(async function (err) {
-		if (err) {
-			console.error(err);
-			sendDiscordMessage(`Error closing HTTP server: ${err}`);
-		}
-		console.log('HTTP server closed');
-		await sendDiscordMessage(`HTTP server closed`);
-	});
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-	// not working on windows
-	console.log('SIGINT signal received: closing HTTP server');
-	sendDiscordMessage(`SIGINT signal received: closing HTTP server`);
-	server.close(async function (err) {
-		if (err) {
-			sendDiscordMessage(`Error closing HTTP server: ${err}`);
-			console.error(err)
-			process.exit(1)
-		}
-		// console.log('HTTP server closed');
-		// Perform any cleanup operations here (e.g., closing database connections)
-		// TODO: create a simple cron job
-		// stopCron();
-		console.log('closing db client');
-		await sendDiscordMessage(`closing db client`);
-		await db.$client.close();
-		console.log('db client closed');
-		await sendDiscordMessage(`db client closed`);
-		console.log('exiting; byeee!! 👋');
-		await sendDiscordMessage(`exiting; byeee!! 👋`);
-		process.exit(0);
-	});
-});
-
-startServer();
-
-
 
 // Add this function to send Discord messages
 async function sendDiscordMessage(message: string) {
+	console.log('[DISCORD]', message);
 	const webhookUrl = getOptionalEnvVariable("DISCORD_WEBHOOK_URL");
 	if (!webhookUrl) {
 		if (IS_PROD) {
@@ -183,3 +119,69 @@ async function sendDiscordMessage(message: string) {
 		console.error('Failed to send Discord message:', error);
 	}
 }
+
+let server: ReturnType<typeof serve>;
+
+async function shutdown() {
+	await sendDiscordMessage(`Shutting down server...`);
+
+	if (server) {
+		await new Promise<void>((resolve, reject) => {
+			server.close((err) => {
+				if (err) {
+					sendDiscordMessage(`Error closing server: ${err}`);
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+		});
+	}
+
+	await sendDiscordMessage(`closing db client`);
+	await db.$client.close();
+	await sendDiscordMessage(`db client closed`);
+	await sendDiscordMessage(`exiting; byeee!! 👋`);
+	process.exit(0);
+}
+
+// Set up signal handlers before starting the server
+process.on('SIGTERM', async () => {
+	await sendDiscordMessage('SIGTERM signal received');
+	await shutdown().catch((err) => {
+		sendDiscordMessage(`Error during shutdown: ${err}`);
+		process.exit(1);
+	});
+});
+
+process.on('SIGINT', async () => {
+	await sendDiscordMessage('SIGINT signal received');
+	await shutdown().catch((err) => {
+		sendDiscordMessage(`Error during shutdown: ${err}`);
+		process.exit(1);
+	});
+});
+
+const startServer = () => {
+	server = serve({
+		fetch: app.fetch,
+		port: port
+	}, (info) => {
+		if (IS_PROD) {
+			sendDiscordMessage(`server info:${JSON.stringify(info)}`);
+		}
+		sendDiscordMessage(`PROD Server started on port ${port} (${IS_PROD ? 'PRODUCTION' : 'DEVELOPMENT'})`);
+
+		if (process.send) {
+			process.send('ready');
+			sendDiscordMessage('ready!!');
+			setTimeout(function () {
+				if (process.send) {
+					process.send('ready');
+				}
+			}, 1000);
+		}
+	});
+}
+
+startServer();
