@@ -29,7 +29,6 @@ app.onError((err, c) => {
 	if (err instanceof KNOWN_ERROR) {
 		console.log("KNOWN_ERROR err:");
 		console.log(err);
-		//sendDiscordMessage(`KNOWN_ERROR err: ${JSON.stringify(err)}`);
 		c.error = undefined;
 		return c.json({
 			error: {
@@ -117,7 +116,6 @@ async function sendDiscordMessage(message: string) {
 let server: ReturnType<typeof serve>;
 
 const shutdown = async () => {
-	console.log('Shutdown initiated'); // Add console.log for debugging
 	await sendDiscordMessage(`Shutting down server...`);
 
 	if (server) {
@@ -125,7 +123,6 @@ const shutdown = async () => {
 		await new Promise<void>((resolve, reject) => {
 			server.close((err) => {
 				if (err) {
-					console.error('Error closing server:', err); // Add console.error for debugging
 					sendDiscordMessage(`Error closing server: ${err}`);
 					reject(err);
 					return;
@@ -137,12 +134,10 @@ const shutdown = async () => {
 	}
 
 	try {
-		console.log('Closing DB connection...'); // Add console.log for debugging
+		await sendDiscordMessage(`db client closing...`);
 		await db.$client.close();
-		console.log('DB connection closed'); // Add console.log for debugging
 		await sendDiscordMessage(`db client closed`);
 	} catch (err) {
-		console.error('Error closing DB:', err); // Add console.error for debugging
 		await sendDiscordMessage(`Error closing DB: ${err}`);
 	}
 
@@ -169,13 +164,11 @@ signals.forEach(signal => {
 
 // Catch uncaught exceptions and unhandled rejections
 process.on('uncaughtException', async (err) => {
-	console.error('Uncaught exception:', err); // Add console.error for debugging
 	await sendDiscordMessage(`Uncaught exception: ${err}`);
 	await shutdown();
 });
 
 process.on('unhandledRejection', async (err) => {
-	console.error('Unhandled rejection:', err); // Add console.error for debugging
 	await sendDiscordMessage(`Unhandled rejection: ${err}`);
 	await shutdown();
 });
