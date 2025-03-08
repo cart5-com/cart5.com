@@ -118,29 +118,29 @@ const router = createRouter({
     //   ],
     // },
 
-    // // WEBSITE ROUTES
-    // {
-    //   path: '/website',
-    //   name: 'website',
-    //   redirect: { name: 'website-home', params: { websiteId: '1111' } },
-    // },
-    // {
-    //   path: '/website/:websiteId',
-    //   name: 'website-id',
-    //   component: () => import('@src/pages/WebsiteLayout.vue'),
-    //   children: [
-    //     {
-    //       path: '',
-    //       name: 'website-home',
-    //       component: () => import('@src/pages/website/WebsiteHomeView.vue'),
-    //     },
-    //     {
-    //       path: 'colors',
-    //       name: 'website-colors',
-    //       component: () => import('@src/pages/website/ColorsView.vue'),
-    //     },
-    //   ],
-    // },
+    // WEBSITE ROUTES
+    {
+      path: '/my-websites',
+      name: 'my-websites',
+      component: () => import('@src/pages/my-websites/MyWebsitesView.vue'),
+    },
+    {
+      path: '/website/:websiteId',
+      name: 'website',
+      component: () => import('@src/layouts/website/_Layout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'website-home',
+          component: () => import('@src/pages/website/HomeView.vue'),
+        },
+        {
+          path: 'name-domain',
+          name: 'website-name',
+          component: () => import('@src/pages/website/name/NameDomainView.vue'),
+        }
+      ],
+    },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',

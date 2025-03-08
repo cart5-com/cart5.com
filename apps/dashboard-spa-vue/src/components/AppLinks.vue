@@ -13,7 +13,8 @@ import {
 	// MenuIcon,
 	// GlobeIcon,
 	Store,
-	LayoutGrid
+	LayoutGrid,
+	Globe
 } from "lucide-vue-next";
 
 // const apps = [
@@ -47,6 +48,11 @@ import {
 					class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
 			<Store class="text-muted-foreground h-10 w-10" />
 			<span class="text-foreground mt-2 text-sm text-center">My Restaurants</span>
+		</RouterLink>
+		<RouterLink :to="{ name: 'my-websites' }"
+					class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
+			<Globe class="text-muted-foreground h-10 w-10" />
+			<span class="text-foreground mt-2 text-sm text-center">My Websites</span>
 		</RouterLink>
 		<!-- <RouterLink
 			:to="{ name: 'website' }"
