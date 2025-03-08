@@ -148,6 +148,7 @@ const shutdown = async () => {
 // Add more signal handlers and ensure they're properly logged
 const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 
+// coolify does not support graceful shutdown.
 signals.forEach(signal => {
 	process.on(signal, async () => {
 		console.log(`${signal} received`); // Add console.log for debugging

@@ -1,9 +1,9 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { localDbPath } from "../consts/auth-consts";
 import { IS_PROD } from "../utils/getEnvVariable";
-import { createClient } from '@libsql/client';
 import * as authSchema from './schema/auth.schema';
 import * as restaurantSchema from './schema/restaurant.schema';
+// import { createClient } from '@libsql/client';
 
 export const schema = {
     ...authSchema,
@@ -15,28 +15,31 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
     const {
         AUTHAPI_TURSO_DB_URL,
         AUTHAPI_TURSO_DB_TOKEN,
-        AUTHAPI_TURSO_EMBEDDED_DB_PATH
+        // AUTHAPI_TURSO_EMBEDDED_DB_PATH
     } = process.env;
     if (IS_PROD) {
-        if (AUTHAPI_TURSO_EMBEDDED_DB_PATH) {
-            const client = createClient({
-                url: `file:${AUTHAPI_TURSO_EMBEDDED_DB_PATH}`,
-                authToken: AUTHAPI_TURSO_DB_TOKEN!,
-                syncUrl: AUTHAPI_TURSO_DB_URL!,
-                syncInterval: 60,
-            });
-            setTimeout(() => {
-                try {
-                    client.sync();
-                } catch (err) {
-                    console.error("❌❌❌❌Error syncing db");
-                    console.error(err);
-                }
-            }, 5e3);
-            return drizzle(client, { schema });
-        } else {
-            return drizzle({ connection: { url: AUTHAPI_TURSO_DB_URL!, authToken: AUTHAPI_TURSO_DB_TOKEN! }, schema });
-        }
+        // DISABLED BECAUSE UNABLE TO DETECT ERROR: 
+        // libsql:: replication: replicator sync error: replication error: Injector error: SQLite error: database disk image is malformed
+        // coolify does not support graceful shutdown. I believe it's because of this.
+        // if (AUTHAPI_TURSO_EMBEDDED_DB_PATH) {
+        //     const client = createClient({
+        //         url: `file:${AUTHAPI_TURSO_EMBEDDED_DB_PATH}`,
+        //         authToken: AUTHAPI_TURSO_DB_TOKEN!,
+        //         syncUrl: AUTHAPI_TURSO_DB_URL!,
+        //         syncInterval: 60,
+        //     });
+        //     setTimeout(() => {
+        //         try {
+        //             client.sync();
+        //         } catch (err) {
+        //             console.error("❌❌❌❌Error syncing db");
+        //             console.error(err);
+        //         }
+        //     }, 5e3);
+        //     return drizzle(client, { schema });
+        // } else {
+        return drizzle({ connection: { url: AUTHAPI_TURSO_DB_URL!, authToken: AUTHAPI_TURSO_DB_TOKEN! }, schema });
+        // }
     } else {
         return drizzle(localDbPath, { schema });
     }
