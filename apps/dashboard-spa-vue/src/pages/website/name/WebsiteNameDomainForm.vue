@@ -9,8 +9,6 @@ import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { currentWebsite, currentWebsiteId, setCurrentWebsiteName } from '@src/stores/WebsiteStore';
 import { computed, onMounted, ref } from 'vue';
-import { showTurnstilePopup } from 'lib/clientUtils/showTurnstilePopup';
-import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 
 const schema = z.object({
     name: z.string().max(510, { message: "max 510" }).min(3, { message: "min 3" }),
