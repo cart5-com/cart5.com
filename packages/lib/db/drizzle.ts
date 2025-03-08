@@ -3,11 +3,13 @@ import { localDbPath } from "../consts/auth-consts";
 import { IS_PROD } from "../utils/getEnvVariable";
 import * as authSchema from './schema/auth.schema';
 import * as restaurantSchema from './schema/restaurant.schema';
+import * as websiteSchema from './schema/website.schema';
 // import { createClient } from '@libsql/client';
 
 export const schema = {
     ...authSchema,
-    ...restaurantSchema
+    ...restaurantSchema,
+    ...websiteSchema
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
