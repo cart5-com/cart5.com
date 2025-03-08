@@ -38,7 +38,7 @@ export const websiteUserAdminsMapTable = sqliteTable("website_user_admins_map", 
 ]);
 /// WEBSITE USER ADMINS MAP END
 
-export const websiteRelations = relations(websitesTable, ({ one, many }) => ({
+export const websiteRelations = relations(websitesTable, ({ many }) => ({
     domains: many(websiteDomainMapTable),
     userAdmins: many(websiteUserAdminsMapTable),
 }));
