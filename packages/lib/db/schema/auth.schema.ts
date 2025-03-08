@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, blob } from "drizzle-orm/sqlite-core";
+import { autoCreated } from "./helpers/auto-created-updated";
 
 export const userTable = sqliteTable("user", {
 	id: text("id").primaryKey(),
@@ -17,6 +18,7 @@ export const userTable = sqliteTable("user", {
 });
 
 export const sessionTable = sqliteTable("session", {
+	...autoCreated,
 	id: text("id").primaryKey(),
 	userId: text("user_id")
 		.notNull()
@@ -27,7 +29,4 @@ export const sessionTable = sqliteTable("session", {
 	// createdAt to detect is new or old. 
 	// it will be used for security validation
 	// for ex:password reset, authentication reset, etc.
-	created_at_ts: integer("created_at_ts")
-		.notNull()
-		.$defaultFn(() => Date.now()),
 });

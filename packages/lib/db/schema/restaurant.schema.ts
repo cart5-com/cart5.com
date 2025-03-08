@@ -11,10 +11,11 @@ import type {
 	WeeklyHours
 } from "../../types/restaurantTypes";
 import type { MenuRoot } from "../../types/menuType";
-
+import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
+	...autoCreatedUpdated,
 	id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('rest')),
 
 	name: text("name", { mode: 'text', length: 510 }).notNull(),
@@ -30,13 +31,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 	offersOnPremise: integer("offers_on_premise", { mode: "boolean" }).notNull().default(false),
 	offersTableReservation: integer("offers_table_reservation", { mode: "boolean" }).notNull().default(false),
 
-	created_at_ts: integer("created_at_ts")
-		.notNull()
-		.$defaultFn(() => Date.now()),
-	updated_at_ts: integer("updated_at_ts")
-		.notNull()
-		.$defaultFn(() => Date.now())
-		.$onUpdate(() => Date.now()),
 });
 
 export const selectRestaurantSchema = createSelectSchema(restaurantTable);
