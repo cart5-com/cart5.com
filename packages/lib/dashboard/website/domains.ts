@@ -27,7 +27,7 @@ export const defaultDomainSchemaValidator = zValidator('json',
 // Add a new domain to a website
 export const addDomain = async (c: Context<
     HonoVariables,
-    "/:websiteId",
+    '/:websiteId/domain',
     ValidatorContext<typeof domainSchemaValidator>
 >) => {
     const websiteId = c.req.param('websiteId');
@@ -80,7 +80,7 @@ export const removeDomain = async (c: Context<
 // Set a domain as the default for a website
 export const setDefaultDomain = async (c: Context<
     HonoVariables,
-    "/:websiteId",
+    '/:websiteId/domain/default',
     ValidatorContext<typeof defaultDomainSchemaValidator>
 >) => {
     const websiteId = c.req.param('websiteId');

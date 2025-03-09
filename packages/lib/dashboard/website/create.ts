@@ -16,7 +16,7 @@ export const createWebsiteSchemaValidator = zValidator('form', z.object({
 
 export const createWebsite = async (c: Context<
     HonoVariables,
-    "/create-website",
+    "/create",
     ValidatorContext<typeof createWebsiteSchemaValidator>
 >) => {
     const { name, turnstile } = c.req.valid('form');
