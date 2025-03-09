@@ -2,15 +2,11 @@
 
 ## Localhost, dev server
 
-- cart5dev.com
 - auth.cart5dev.com
-- dashboard.cart5dev.com
 
 ## PROD
 
-- yourdomain.com
 - auth.yourdomain.com
-- dashboard.yourdomain.com
 
 ## Widget Mode -> Managed
 
