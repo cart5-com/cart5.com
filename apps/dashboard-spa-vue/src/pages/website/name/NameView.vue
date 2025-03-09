@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import WebsiteNameDomainForm from './WebsiteNameDomainForm.vue';
+import WebsiteNameForm from './WebsiteNameForm.vue';
 import { pageTitle } from '@src/stores/layout.store';
 
 pageTitle.value = 'Name'
@@ -8,11 +8,11 @@ pageTitle.value = 'Name'
 <template>
     <div class="space-y-6">
         <div>
-            <h3 class="text-lg font-medium">Website Name & Domain</h3>
+            <h3 class="text-lg font-medium">Website Name</h3>
             <p class="text-sm text-muted-foreground">
-                Update your website name and domain settings.
+                Update your website name settings.
             </p>
         </div>
-        <WebsiteNameDomainForm />
+        <WebsiteNameForm />
     </div>
 </template>
