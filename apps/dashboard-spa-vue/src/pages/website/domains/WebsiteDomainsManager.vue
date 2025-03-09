@@ -71,7 +71,7 @@ onMounted(async () => {
         if (error) {
             errorMessage.value = error.message || 'Failed to load domains'
         } else if (data) {
-            defaultHostname.value = data.defaultHostname
+            defaultHostname.value = data.defaultHostname || ''
 
             // Map domains and mark the default one
             if (data.domains) {
@@ -182,12 +182,17 @@ async function setAsDefault(hostname: string) {
 // Remove a domain
 async function removeDomain(hostname: string) {
     if (hostname === defaultHostname.value) {
-        errorMessage.value = 'Cannot remove the default domain. Set another domain as default first.'
-        return
+        // Check if there are other domains that could be set as default
+        const otherDomains = domains.value.filter(d => d.hostname !== hostname);
+        if (otherDomains.length > 0) {
+            errorMessage.value = 'Cannot remove the default domain. Set another domain as default first.';
+            return;
+        }
+        // If this is the only domain, allow removal
     }
 
-    isRemovingDomain.value = true
-    errorMessage.value = ''
+    isRemovingDomain.value = true;
+    errorMessage.value = '';
 
     try {
         const { error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].domain[':hostname'].$delete({
@@ -198,21 +203,26 @@ async function removeDomain(hostname: string) {
         })).json()
 
         if (error) {
-            errorMessage.value = error.message || 'Failed to remove domain'
+            errorMessage.value = error.message || 'Failed to remove domain';
         } else {
             // Remove the domain from the list
-            domains.value = domains.value.filter(domain => domain.hostname !== hostname)
+            domains.value = domains.value.filter(domain => domain.hostname !== hostname);
+
+            // If we removed the default domain, clear the default hostname
+            if (hostname === defaultHostname.value) {
+                defaultHostname.value = '';
+            }
 
             toast({
                 title: 'Domain removed',
                 description: `${hostname} has been removed from your website.`
-            })
+            });
         }
     } catch (error) {
-        console.error(error)
-        errorMessage.value = 'An unexpected error occurred'
+        console.error(error);
+        errorMessage.value = 'An unexpected error occurred';
     } finally {
-        isRemovingDomain.value = false
+        isRemovingDomain.value = false;
     }
 }
 
@@ -233,6 +243,12 @@ const hasDomains = computed(() => domains.value.length > 0)
             <div v-if="errorMessage"
                  class="bg-destructive/15 text-destructive p-4 rounded-md mb-4">
                 {{ errorMessage }}
+            </div>
+
+            <!-- No default domain message -->
+            <div v-if="!defaultHostname && domains.length === 0"
+                 class="bg-warning/15 text-warning p-4 rounded-md mb-4">
+                Your website doesn't have a default domain yet. Add a domain below and set it as default.
             </div>
 
             <!-- Add new domain form -->

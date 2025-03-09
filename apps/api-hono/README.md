@@ -38,7 +38,7 @@ Two-Factor Authentication:
 ## Database Management
 
 • pnpm dev:drizzle-studio - Launch Drizzle database UI
-• pnpm prod:generate:sql - Generate production SQL
+• pnpm generate:sql - Generate production SQL
 • pnpm test:db-migration - Test database migrations with turso branching
 • pnpm prod:migrate - Run production migrations
 

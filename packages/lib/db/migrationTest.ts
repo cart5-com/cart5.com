@@ -10,7 +10,7 @@ import { resolve, dirname } from "node:path";
     if you would like test a failed migration, add a new required field without a default value in your drizzle schema
     requiredField: text("required_field").notNull(),
 
-    then run  `pnpm prod:generate:sql`
+    then run  `pnpm generate:sql`
     then run `pnpm test:db-migration`
     it will fail and you will see the error in the console, 
     thanks to 'preprod:migrate' script, it will not continue to `prod:migrate`

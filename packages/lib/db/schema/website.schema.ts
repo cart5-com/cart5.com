@@ -12,7 +12,7 @@ export const websitesTable = sqliteTable("websites", {
 
     ownerUserId: text("owner_user_id").notNull(),
 
-    defaultHostname: text("default_hostname").notNull().unique(),
+    defaultHostname: text("default_hostname").unique(),
 
 
 });

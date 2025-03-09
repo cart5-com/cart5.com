@@ -7,7 +7,7 @@
     "dev": "turbo dev",
     "dev:caddy": "turbo dev:caddy",
     "start": "turbo start",
-    "prod:generate:sql": "cd packages/lib && pnpm prod:generate:sql",
+    "generate:sql": "cd packages/lib && pnpm generate:sql",
     "prod:migrate": "cd packages/lib && pnpm prod:migrate",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "caddy:deploy": "cd apps/proxy-caddy && pnpm caddy:deploy"

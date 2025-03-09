@@ -53,24 +53,17 @@ export const getMyWebsitesService = async (userId: string) => {
 /**
  * Create a new website
  */
-export const createWebsiteService = async (userId: string, name: string, defaultHostname: string) => {
+export const createWebsiteService = async (userId: string, name: string) => {
     return await db.transaction(async (tx) => {
         const website = await tx.insert(websitesTable).values({
             name: name,
             ownerUserId: userId,
-            defaultHostname: defaultHostname
         }).returning({ id: websitesTable.id });
 
         // Add the user as an admin
         await tx.insert(websiteUserAdminsMapTable).values({
             websiteId: website[0].id,
             userId: userId,
-        });
-
-        // Add the default hostname to the domain map
-        await tx.insert(websiteDomainMapTable).values({
-            websiteId: website[0].id,
-            hostname: defaultHostname,
         });
 
         return website[0].id;
