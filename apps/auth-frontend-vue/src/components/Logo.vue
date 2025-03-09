@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AtSign } from "lucide-vue-next";
+import { User } from "lucide-vue-next";
 import { extractBaseDomain } from 'lib/utils/extractBaseDomain';
 import { queryParamsStore } from '@src/stores/queryParamsStore';
 const DOMAIN_NAME = extractBaseDomain(new URL(queryParamsStore.value.next || 'www.cart5.com').host);
@@ -7,7 +7,7 @@ const DOMAIN_NAME = extractBaseDomain(new URL(queryParamsStore.value.next || 'ww
 
 <template>
 	<div class="my-10 flex items-center justify-center text-center">
-		<AtSign class="mr-2 h-7 w-7" />
+		<User class="mr-2 h-7 w-7" />
 		<h1 class="text-2xl font-bold">{{ DOMAIN_NAME }}</h1>
 	</div>
 </template>
