@@ -23,7 +23,7 @@ export const sendUserOtpEmail = async (
     email: string,
     code: string
 ) => {
-    const from = "no-reply-otp <no-reply-otp@cart5.com>";
+    const from = `no-reply-otp <no-reply-otp@${getEnvVariable('PUBLIC_DOMAIN_NAME')}>`;
     const to = email;
     const subject = `One-Time-Password: ${code}`;
     const html = `

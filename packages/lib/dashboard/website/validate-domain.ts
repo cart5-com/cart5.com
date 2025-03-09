@@ -1,7 +1,7 @@
 import { type Context } from 'hono';
 import type { HonoVariables } from '../../hono/HonoVariables';
 import { isHostnameRegisteredService } from '../../db/services/website.service';
-
+import { getEnvVariable } from '../../utils/getEnvVariable';
 /**
  * Validates if a domain is registered in our system for Caddy's on_demand_tls
  * 
@@ -16,8 +16,8 @@ export const validateDomainForTLS = async (c: Context<HonoVariables>) => {
         // No domain provided
         return c.text('Domain parameter is required', 400);
     }
-    // www.cart5.com and cart5.com should return 200
-    if (domain === 'www.cart5.com' || domain === 'cart5.com') {
+
+    if (domain === `www.${getEnvVariable('PUBLIC_DOMAIN_NAME')}` || domain === getEnvVariable('PUBLIC_DOMAIN_NAME')) {
         return c.text('Domain is valid', 200);
     }
 

@@ -1,8 +1,18 @@
 import psl from 'psl';
 
-export const extractBaseDomain = (hostname: string): string => {
+/**
+ * Extract the base domain from a hostname
+ * 
+ * sub.domain.com -> domain.com
+ * www.domain.co.uk -> domain.co.uk
+ * 
+ * @param hostname - The hostname to extract the base domain from
+ * @param fallback - The fallback domain to use if the hostname is not valid
+ * @returns The base domain
+ */
+export const extractBaseDomain = (hostname: string, fallback?: string): string => {
     if (!hostname) {
-        return 'cart5.com';
+        return fallback || 'cart5.com';
     }
 
     // Remove any port information if present
@@ -12,5 +22,5 @@ export const extractBaseDomain = (hostname: string): string => {
     const parsed = psl.parse(hostWithoutPort);
 
     // Return the domain (sld + tld) if valid, otherwise fallback to cart5.com
-    return parsed && 'domain' in parsed && parsed.domain ? parsed.domain : 'cart5.com';
+    return parsed && 'domain' in parsed && parsed.domain ? parsed.domain : fallback || 'cart5.com';
 };
