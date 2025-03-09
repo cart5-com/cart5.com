@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import WebsiteNameDomainForm from './WebsiteNameDomainForm.vue';
+import { pageTitle } from '@src/stores/layout.store';
+
+pageTitle.value = 'Name'
 </script>
 
 <template>

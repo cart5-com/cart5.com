@@ -4,7 +4,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar'
-import Sidebar from './Sidebar.vue'
+import WebsiteSidebar from './WebsiteSidebar.vue'
 import { setCurrentWebsiteId } from '@src/stores/WebsiteStore';
 import { RouterView, useRoute } from "vue-router";
 import Header from '@src/components/Header.vue'
@@ -17,7 +17,7 @@ setCurrentWebsiteId(websiteId as string);
 
 <template>
     <SidebarProvider>
-        <Sidebar />
+        <WebsiteSidebar />
         <SidebarInset>
             <Header>
                 <div class="flex items-center gap-2 max-w-40">

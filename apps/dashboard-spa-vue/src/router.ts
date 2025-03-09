@@ -96,27 +96,6 @@ const router = createRouter({
         },
       ],
     },
-    // {
-    //   path: '/business/:businessId',
-    //   component: () => import('@src/pages/BusinessLayout.vue'),
-    //   children: [
-    //     {
-    //       path: '',
-    //       name: 'business-home',
-    //       component: () => import('@src/pages/business/BusinessHomeView.vue'),
-    //     },
-    //     {
-    //       path: 'address-form',
-    //       name: 'business-address-form',
-    //       component: () => import('@src/pages/business/BusinessNameAddress.vue'),
-    //     },
-    //     {
-    //       path: 'menu',
-    //       name: 'business-menu',
-    //       component: () => import('@src/pages/business/MenuView.vue'),
-    //     },
-    //   ],
-    // },
 
     // WEBSITE ROUTES
     {
@@ -127,7 +106,7 @@ const router = createRouter({
     {
       path: '/website/:websiteId',
       name: 'website',
-      component: () => import('@src/layouts/website/_Layout.vue'),
+      component: () => import('@src/layouts/website/WebsiteLayout.vue'),
       children: [
         {
           path: '',
