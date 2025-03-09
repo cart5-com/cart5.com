@@ -142,3 +142,105 @@ export const getWebsiteService = async (
 
     return website as newWebsiteType;
 }
+
+/**
+ * Add a domain to a website
+ */
+export const addDomainService = async (websiteId: string, hostname: string) => {
+    // Check if the website exists
+    const website = await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        columns: { id: true }
+    });
+
+    if (!website) {
+        throw new Error('Website not found');
+    }
+
+    // Check if the domain already exists
+    const existingDomain = await db.query.websiteDomainMapTable.findFirst({
+        where: eq(websiteDomainMapTable.hostname, hostname),
+        columns: { hostname: true }
+    });
+
+    if (existingDomain) {
+        throw new Error('Domain already exists');
+    }
+
+    // Add the domain
+    await db.insert(websiteDomainMapTable).values({
+        websiteId,
+        hostname
+    });
+
+    return true;
+}
+
+/**
+ * Remove a domain from a website
+ */
+export const removeDomainService = async (websiteId: string, hostname: string) => {
+    // Check if the domain is the default hostname
+    const website = await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        columns: { defaultHostname: true }
+    });
+
+    if (!website) {
+        throw new Error('Website not found');
+    }
+
+    if (website.defaultHostname === hostname) {
+        throw new Error('Cannot remove the default domain. Set another domain as default first.');
+    }
+
+    // Remove the domain
+    await db.delete(websiteDomainMapTable)
+        .where(
+            and(
+                eq(websiteDomainMapTable.websiteId, websiteId),
+                eq(websiteDomainMapTable.hostname, hostname)
+            )
+        );
+
+    return true;
+}
+
+/**
+ * Set a domain as the default for a website
+ */
+export const setDefaultDomainService = async (websiteId: string, hostname: string) => {
+    return await db.transaction(async (tx) => {
+        // Check if the domain exists and belongs to the website
+        const domain = await tx.query.websiteDomainMapTable.findFirst({
+            where: and(
+                eq(websiteDomainMapTable.websiteId, websiteId),
+                eq(websiteDomainMapTable.hostname, hostname)
+            ),
+            columns: { hostname: true }
+        });
+
+        if (!domain) {
+            throw new Error('Domain not found or does not belong to this website');
+        }
+
+        // Update the default hostname
+        await tx.update(websitesTable)
+            .set({ defaultHostname: hostname })
+            .where(eq(websitesTable.id, websiteId));
+
+        return true;
+    });
+}
+
+/**
+ * Check if a hostname is registered in the system
+ */
+export const isHostnameRegisteredService = async (hostname: string): Promise<boolean> => {
+    const existingDomain = await db.query.websiteDomainMapTable.findFirst({
+        where: eq(websiteDomainMapTable.hostname, hostname),
+        columns: { hostname: true }
+    });
+
+    return !!existingDomain;
+};

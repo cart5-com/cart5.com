@@ -1,6 +1,6 @@
 import { decryptAndVerifyJwt, signJwtAndEncrypt } from '../auth/utils/jwt';
 import { KNOWN_ERROR } from '../types/errors';
-import { getEnvVariable, IS_PROD } from './getEnvVariable';
+import { getEnvVariable } from './getEnvVariable';
 import { ENFORCE_HOSTNAME_CHECKS } from '../auth/enforceHostnameChecks';
 import { isKnownHostname } from '../auth/utils/knownHostnames';
 import { CROSS_DOMAIN_SESSION_EXPIRES_IN } from '../consts/auth-consts';
@@ -51,7 +51,7 @@ export const generateCrossDomainCode = async function (c: Context<HonoVariables>
 
     // Validate target domain is in our allowed list
     const url = new URL(redirectUrl);
-    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
+    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(url.hostname, getEnvVariable('KNOWN_DOMAINS_REGEX'))) {
         throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
     }
 
@@ -110,7 +110,7 @@ export const validateCrossDomainTurnstile = async function (code: string, c: Con
         throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
     }
 
-    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, getEnvVariable('KNOWN_DOMAINS_REGEX'), IS_PROD)) {
+    if (ENFORCE_HOSTNAME_CHECKS && !await isKnownHostname(host, getEnvVariable('KNOWN_DOMAINS_REGEX'))) {
         throw new KNOWN_ERROR("Invalid redirect URL", "INVALID_REDIRECT_URL");
     }
 

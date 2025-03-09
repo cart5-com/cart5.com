@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { myRestaurants } from '@src/stores/RestaurantStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
+import { toast } from '@/ui-plus/sonner';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -28,9 +29,16 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
-    const turnstile = await showTurnstilePopup(
-        getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
-    )
+    let turnstile;
+    try {
+        turnstile = await showTurnstilePopup(
+            getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
+        );
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        toast.error(errorMessage);
+        return;
+    }
     await withSubmit(async () => {
         const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant.create.$post({
             form: {

@@ -7,6 +7,14 @@ import { createWebsite, createWebsiteSchemaValidator } from './create';
 import { updateWebsite, updateWebsiteSchemaValidator } from './update';
 import { getWebsite, getWebsiteSchemaValidator } from './get';
 import { getMyWebsites } from "./mine";
+import {
+    addDomain,
+    removeDomain,
+    setDefaultDomain,
+    domainSchemaValidator,
+    defaultDomainSchemaValidator
+} from './domains';
+import { validateDomainForTLS } from './validate-domain';
 
 
 export const websiteRouter = new Hono<HonoVariables>()
@@ -29,6 +37,27 @@ export const websiteRouter = new Hono<HonoVariables>()
         getWebsiteSchemaValidator,
         getWebsite
     )
+    .post(
+        '/:websiteId/domain',
+        websiteRouteAdminCheck,
+        domainSchemaValidator,
+        addDomain
+    )
+    .delete(
+        '/:websiteId/domain/:hostname',
+        websiteRouteAdminCheck,
+        removeDomain
+    )
+    .patch(
+        '/:websiteId/domain/default',
+        websiteRouteAdminCheck,
+        defaultDomainSchemaValidator,
+        setDefaultDomain
+    )
+    .get(
+        '/validate-domain-tls',
+        validateDomainForTLS
+    );
 
 
 async function websiteRouteAdminCheck(c: Context, next: Next) {

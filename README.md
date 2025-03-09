@@ -75,11 +75,33 @@ Configure hosts file:
 Add to /etc/hosts
 
 ```
+# Cart5.com
+127.0.0.1 cart5dev.com
 127.0.0.1 auth.cart5dev.com
-127.0.0.1 dashboard.cart5dev.com
-127.0.0.1 sample-store-1.com
-127.0.0.1 sample-store-2.com
-127.0.0.1 unknown-store.com
+127.0.0.1 www.cart5dev.com
+
+# partner obite
+127.0.0.1 obite.cart5dev.com
+127.0.0.1 obite.com
+127.0.0.1 obite.co.uk
+127.0.0.1 www.obite.com
+127.0.0.1 www.obite.co.uk
+
+# restaurant by obite
+127.0.0.1 flames.obite.com
+127.0.0.1 flames.obite.co.uk
+127.0.0.1 flames.com
+127.0.0.1 www.flames.com
+
+# partner secondpartner
+127.0.0.1 secondpartner.cart5dev.com
+127.0.0.1 secondpartner.com
+127.0.0.1 www.secondpartner.com
+
+# restaurant by secondpartner
+127.0.0.1 pubo-restaurant.secondpartner.com
+127.0.0.1 pubo-restaurant.com
+127.0.0.1 www.pubo-restaurant.com
 ```
 
 ## [TODOS]

@@ -117,6 +117,11 @@ const router = createRouter({
           path: 'name-domain',
           name: 'website-name',
           component: () => import('@src/pages/website/name/NameDomainView.vue'),
+        },
+        {
+          path: 'domains',
+          name: 'website-domains',
+          component: () => import('@src/pages/website/domains/index.vue'),
         }
       ],
     },
