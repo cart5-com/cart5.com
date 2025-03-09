@@ -14,6 +14,15 @@ export default defineConfig(({ mode }) => ({
     : '/dash/',
   server: {
     host: '0.0.0.0',
+    hmr: {
+      protocol: 'ws',
+      host: '127.0.0.1',
+      port: 3004,
+      clientPort: 3004,
+      path: '/dash/socket',
+      timeout: 10000,
+      overlay: true,
+    }
     // proxy: {
     //   '/__p_api': {
     //     target: 'http://127.0.0.1:3000',
