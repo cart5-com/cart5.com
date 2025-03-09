@@ -2,7 +2,12 @@
 import { User } from "lucide-vue-next";
 import { extractBaseDomain } from 'lib/utils/extractBaseDomain';
 import { queryParamsStore } from '@src/stores/queryParamsStore';
-const DOMAIN_NAME = extractBaseDomain(new URL(queryParamsStore.value.next || 'www.cart5.com').host);
+const DOMAIN_NAME = extractBaseDomain(
+	new URL(
+		queryParamsStore.value.next ||
+		import.meta.env.VITE_PUBLIC_DOMAIN_NAME
+	).host
+);
 </script>
 
 <template>
