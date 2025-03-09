@@ -13,7 +13,7 @@ export const updateWebsiteSchemaValidator = zValidator('json',
         ownerUserId: true,
         created_at_ts: true,
         updated_at_ts: true
-    })
+    }).partial()
 )
 
 export const updateWebsite = async (c: Context<

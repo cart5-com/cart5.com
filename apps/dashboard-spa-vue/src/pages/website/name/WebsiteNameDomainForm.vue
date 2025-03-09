@@ -12,7 +12,6 @@ import { computed, onMounted, ref } from 'vue';
 
 const schema = z.object({
     name: z.string().max(510, { message: "max 510" }).min(3, { message: "min 3" }),
-    defaultHostname: z.string().max(510, { message: "max 510" }).min(3, { message: "min 3" }),
 })
 
 const form = useForm({
@@ -23,10 +22,9 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 const isInitialLoading = ref(true);
 
 const initialValues = computed(() => {
-    if (!currentWebsite.value) return { name: '', defaultHostname: '' };
+    if (!currentWebsite.value) return { name: '' };
     return {
         name: currentWebsite.value.name,
-        defaultHostname: currentWebsite.value.defaultHostname,
     };
 });
 
@@ -39,7 +37,6 @@ onMounted(async () => {
             json: {
                 columns: {
                     name: true,
-                    defaultHostname: true,
                 }
             }
         })).json();
@@ -49,7 +46,6 @@ onMounted(async () => {
         } else if (data) {
             form.setValues({
                 name: data.name,
-                defaultHostname: data.defaultHostname,
             });
         }
     } catch (error) {
@@ -70,7 +66,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
             param: { websiteId },
             json: {
                 name: values.name,
-                defaultHostname: values.defaultHostname,
             },
         })).json();
 
@@ -98,10 +93,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
                     name: {
                         label: 'Website Name',
                         description: 'The name of your website',
-                    },
-                    defaultHostname: {
-                        label: 'Default Hostname',
-                        description: 'The default hostname for your website',
                     },
                 }">
             <div class="text-sm font-medium text-destructive"

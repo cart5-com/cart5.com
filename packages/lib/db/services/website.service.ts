@@ -106,6 +106,7 @@ export const updateWebsiteService = async (
         return websiteId;
     });
 }
+
 export const getWebsiteService = async (
     websiteId: string,
     columns?: Partial<Record<keyof typeof websitesTable.$inferSelect, boolean>> & {
