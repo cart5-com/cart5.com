@@ -36,11 +36,10 @@ const form = useForm({
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
-const publicDomain = import.meta.env.VITE_PUBLIC_DOMAIN_NAME || 'cart5.com';
 
 watch(() => form.values.name, (newName) => {
     const newSlugifiedName = slugify(newName || '');
-    const domain = `${newSlugifiedName}.${publicDomain.value}`;
+    const domain = `${newSlugifiedName}.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME || 'cart5.com'}`;
     form.setFieldValue('defaultHostname', domain);
 });
 
