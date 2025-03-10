@@ -1,4 +1,4 @@
-import { getEnvVariable } from "./getEnvVariable";
+import { getEnvVariable, IS_PROD } from "./getEnvVariable";
 // DNS server options
 export enum DnsServer {
     CLOUDFLARE = 'cloudflare', // Cloudflare DNS over HTTPS
@@ -14,11 +14,11 @@ const DOH_ENDPOINTS = {
 // Configuration for expected DNS values
 const DNS_CONFIG = {
     // IPv4 address of the server
-    ipv4: getEnvVariable('DNS_CHECK_IPV4'),
+    ipv4: IS_PROD ? getEnvVariable('DNS_CHECK_IPV4') : '',
     // IPv6 address of the server
-    ipv6: getEnvVariable('DNS_CHECK_IPV6'),
+    ipv6: IS_PROD ? getEnvVariable('DNS_CHECK_IPV6') : '',
     // DNS pointer domain
-    dnsPointer: getEnvVariable('DNS_CHECK_POINTER')
+    dnsPointer: IS_PROD ? getEnvVariable('DNS_CHECK_POINTER') : ''
 };
 
 /**
