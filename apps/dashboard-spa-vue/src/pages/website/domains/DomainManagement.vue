@@ -14,7 +14,7 @@ pageTitle.value = 'Domains'
             <!-- 
             
             help me build Domain management page,
-            keep ui components small, simple and clean. try to keep it simple stupid (KISS)
+            keep ui all components very small, simple and clean. try to keep it simple stupid (KISS)
             Do not add any external npm libs without asking, you can recommend them.
 
             expected features:
