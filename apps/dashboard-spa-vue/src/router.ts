@@ -121,7 +121,7 @@ const router = createRouter({
         {
           path: 'domains',
           name: 'website-domains',
-          component: () => import('@src/pages/website/domains/index.vue'),
+          component: () => import('@src/pages/website/domains/DomainManagement.vue'),
         }
       ],
     },
