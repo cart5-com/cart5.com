@@ -5,14 +5,19 @@ import { type ErrorType } from '../../../types/errors';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { type ValidatorContext } from '../../../hono/types/ValidatorContext';
+import { ENFORCE_HOSTNAME_CHECKS } from '../../../auth/enforceHostnameChecks';
 
 export const addDomainSchema = z.object({
-    hostname: z.string()
-        .min(3, { message: "Domain name must be at least 3 characters" })
-        .max(255, { message: "Domain name must be less than 255 characters" })
-        .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
-            message: "Please enter a valid domain name (e.g. example.com)"
-        })
+    hostname: ENFORCE_HOSTNAME_CHECKS
+        ? z.string()
+            .min(3, { message: "Domain name must be at least 3 characters" })
+            .max(255, { message: "Domain name must be less than 255 characters" })
+            .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
+                message: "Please enter a valid domain name (e.g. example.com)"
+            })
+        : z.string()
+            .min(3, { message: "Domain name must be at least 3 characters" })
+            .max(255, { message: "Domain name must be less than 255 characters" })
 });
 
 export const addDomainSchemaValidator = zValidator('json', addDomainSchema);

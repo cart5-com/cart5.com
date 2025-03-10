@@ -19,14 +19,21 @@ import HowTo from './HowTo.vue';
 pageTitle.value = 'Add Domain'
 const router = useRouter();
 
+const isLocal = window.location.host.includes('localhost:');
 
 const schema = z.object({
-    hostname: z.string()
-        .min(3, { message: "Domain name must be at least 3 characters" })
-        .max(255, { message: "Domain name must be less than 255 characters" })
-        .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
-            message: "Please enter a valid domain name (e.g. example.com)"
-        })
+    hostname: isLocal
+        ?
+        z.string()
+            .min(3, { message: "Domain name must be at least 3 characters" })
+            .max(255, { message: "Domain name must be less than 255 characters" })
+        :
+        z.string()
+            .min(3, { message: "Domain name must be at least 3 characters" })
+            .max(255, { message: "Domain name must be less than 255 characters" })
+            .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
+                message: "Please enter a valid domain name (e.g. example.com)"
+            })
 })
 
 const form = useForm({
@@ -55,6 +62,10 @@ async function onSubmit(values: z.infer<typeof schema>) {
 const hostname = `${slugify(currentWebsite.value?.name || 'your-website')}.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`;
 async function setSubdomain() {
     form.setFieldValue('hostname', hostname);
+}
+
+async function setLocalhost() {
+    form.setFieldValue('hostname', 'localhost:3002');
 }
 </script>
 
@@ -101,6 +112,14 @@ async function setSubdomain() {
                                 @click="setSubdomain">
                             use '{{ hostname }}'
                         </Button>
+                        <template v-if="isLocal">
+                            <br><br>
+                            For local development:
+                            <Button variant="secondary"
+                                    @click="setLocalhost">
+                                use 'localhost:3002'
+                            </Button>
+                        </template>
                     </div>
 
                     <!-- DNS Setup Guide -->
