@@ -122,6 +122,11 @@ const router = createRouter({
           path: 'domains',
           name: 'website-domains',
           component: () => import('@src/pages/website/domains/DomainManagement.vue'),
+        },
+        {
+          path: 'domains/add',
+          name: 'website-domains-add',
+          component: () => import('@src/pages/website/domains/AddNew.vue'),
         }
       ],
     },

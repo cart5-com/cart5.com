@@ -6,6 +6,8 @@ import {
     websiteUserAdminsMapTable
 } from '../schema/website.schema';
 import db from '../drizzle';
+import { KNOWN_ERROR } from "../../types/errors";
+import type { NonEmptyArray } from "../../types/typeUtils";
 
 /**
  * Check if a user is an admin of a website
@@ -80,7 +82,7 @@ export const updateWebsiteService = async (
     return await db.transaction(async (tx) => {
         const {
             // unallowed fields for admins
-            id, ownerUserId, created_at_ts, updated_at_ts,
+            id, ownerUserId, created_at_ts, updated_at_ts, defaultHostname,
             // other website tables
             // allowed fields for admins
             ...websiteData
@@ -121,14 +123,16 @@ export const getWebsiteService = async (
     // this typing is to make sure typing work with hono rpc.
     // https://hono.dev/docs/guides/rpc
     // api never returns {} but drizzle adds a {} when there is no "with" query ...
-    type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
     type websiteType = NonNullable<typeof website>;
 
     type domains = websiteType['domains']
-    type nonEmptyDomains = NonEmpty<domains>
+    type nonEmptyDomains = NonEmptyArray<domains>
 
     type newWebsiteType = (
-        Omit<websiteType, 'domains'> & {
+        Omit<
+            websiteType,
+            'domains'
+        > & {
             domains?: nonEmptyDomains
         }
     ) | undefined
@@ -143,30 +147,35 @@ export const addDomainService = async (websiteId: string, hostname: string) => {
     // Check if the website exists
     const website = await db.query.websitesTable.findFirst({
         where: eq(websitesTable.id, websiteId),
-        columns: { id: true }
+        columns: { id: true, defaultHostname: true }
     });
 
     if (!website) {
-        throw new Error('Website not found');
+        throw new KNOWN_ERROR('Website not found', 'WEBSITE_NOT_FOUND');
     }
 
     // Check if the domain already exists
-    const existingDomain = await db.query.websiteDomainMapTable.findFirst({
-        where: eq(websiteDomainMapTable.hostname, hostname),
-        columns: { hostname: true }
-    });
-
-    if (existingDomain) {
-        throw new Error('Domain already exists');
+    const isRegistered = await isHostnameRegisteredService(hostname);
+    if (isRegistered) {
+        throw new KNOWN_ERROR('Domain already exists', 'DOMAIN_ALREADY_EXISTS');
     }
 
-    // Add the domain
-    await db.insert(websiteDomainMapTable).values({
-        websiteId,
-        hostname
-    });
+    return await db.transaction(async (tx) => {
+        // Add the domain
+        await tx.insert(websiteDomainMapTable).values({
+            websiteId,
+            hostname
+        });
 
-    return true;
+        // If no default hostname exists, set this one as default
+        if (!website.defaultHostname) {
+            await tx.update(websitesTable)
+                .set({ defaultHostname: hostname })
+                .where(eq(websitesTable.id, websiteId));
+        }
+
+        return true;
+    });
 }
 
 /**
@@ -180,11 +189,13 @@ export const removeDomainService = async (websiteId: string, hostname: string) =
     });
 
     if (!website) {
-        throw new Error('Website not found');
+        throw new KNOWN_ERROR('Website not found', 'WEBSITE_NOT_FOUND');
     }
 
     if (website.defaultHostname === hostname) {
-        throw new Error('Cannot remove the default domain. Set another domain as default first.');
+        await db.update(websitesTable)
+            .set({ defaultHostname: null })
+            .where(eq(websitesTable.id, websiteId));
     }
 
     // Remove the domain
@@ -214,7 +225,7 @@ export const setDefaultDomainService = async (websiteId: string, hostname: strin
         });
 
         if (!domain) {
-            throw new Error('Domain not found or does not belong to this website');
+            throw new KNOWN_ERROR('Domain not found or does not belong to this website', 'DOMAIN_NOT_FOUND_OR_DOES_NOT_BELONG_TO_THIS_WEBSITE');
         }
 
         // Update the default hostname

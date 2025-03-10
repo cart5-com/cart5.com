@@ -1,36 +1,114 @@
 <script lang="ts" setup>
+import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { pageTitle } from '@src/stores/layout.store';
+import { currentWebsiteId } from '@src/stores/WebsiteStore';
+import { onMounted, ref } from 'vue';
+import { Button } from '@/components/ui/button';
+import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+type WebsiteType = ResType<
+    typeof dashboardApiClient.api_dashboard.website[':websiteId']["$post"]
+>["data"];
 
 pageTitle.value = 'Domains'
+
+const website = ref<WebsiteType>();
+
+const loadData = async () => {
+    if (!currentWebsiteId.value) return;
+    const { data, error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].$post({
+        param: { websiteId: currentWebsiteId.value },
+        json: {
+            columns: {
+                name: true,
+                defaultHostname: true,
+                domains: {
+                    hostname: true,
+                }
+            },
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+    } else if (data) {
+        website.value = data;
+        // if (!data.defaultHostname) {
+        //     router.push({ name: 'website-domains-add' });
+        // }
+    }
+};
+
+const makeDefault = async (hostname: string) => {
+    if (!currentWebsiteId.value) return;
+    await dashboardApiClient.api_dashboard.website[':websiteId'].domain['set-default'].$post({
+        param: {
+            websiteId: currentWebsiteId.value,
+        },
+        json: {
+            hostname
+        }
+    });
+    loadData();
+};
+
+const removeDomain = async (hostname: string) => {
+    if (!currentWebsiteId.value) return;
+    await dashboardApiClient.api_dashboard.website[':websiteId'].domain['remove'].$post({
+        param: {
+            websiteId: currentWebsiteId.value,
+        },
+        json: {
+            hostname
+        }
+    });
+    loadData();
+};
+
+onMounted(async () => {
+    loadData();
+});
+
 </script>
 
 <template>
-    <div class="space-y-6">
-        <div>
-            <h3 class="text-lg font-medium">Domain management</h3>
-            <p class="text-sm text-muted-foreground">
-                Use your own domain for free.
-            </p>
-            <!-- 
-            
-            help me build Domain management page,
-            keep ui all components very small, simple and clean. try to keep it simple stupid (KISS)
-            Do not add any external npm libs without asking, you can recommend them.
+    <Card>
+        <CardHeader>
+            <CardTitle>Domain Management</CardTitle>
+            <CardDescription>Use your own domain for free.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <div class="space-y-6">
+                <div class="flex justify-end">
+                    <router-link :to="{ name: 'website-domains-add' }">
+                        <Button>Add new domain</Button>
+                    </router-link>
+                </div>
 
-            expected features:
-            - list domains
-            - add btn to add your own domain
-            - if user use own domain it should be validated with dns check.
-            - Show a new page to add domain.
-            - last domain added should be default hostname.
-            - do not allow take already taken domain.
-            - We can also offer single subdomain like name.cart5.com to make it easy to avoid dns configuration for testing,
-            slugified_name+'.'+import.meta.env.VITE_PUBLIC_DOMAIN_NAME,
-            in backend its env is PUBLIC_DOMAIN_NAME="cart5.com" ,
-            in frontend its env is VITE_PUBLIC_DOMAIN_NAME="cart5.com" ,
-            (do not allow multiple subdomains from our own domain, one subdomain per website),
-
-             -->
-        </div>
-    </div>
+                <div v-if="website?.domains"
+                     class="space-y-4">
+                    <div v-for="domain in website.domains"
+                         :key="domain.hostname"
+                         class="flex items-center justify-between p-4 border rounded-lg">
+                        <span>{{ domain.hostname }}</span>
+                        <div class="space-x-2">
+                            <span v-if="website.defaultHostname === domain.hostname"
+                                  class="text-sm text-muted-foreground">
+                                Default Domain
+                            </span>
+                            <Button v-if="website.defaultHostname !== domain.hostname"
+                                    variant="outline"
+                                    @click="makeDefault(domain.hostname)">
+                                Make Default
+                            </Button>
+                            <Button variant="destructive"
+                                    @click="removeDomain(domain.hostname)">
+                                Remove
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </CardContent>
+    </Card>
 </template>

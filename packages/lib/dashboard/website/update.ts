@@ -11,6 +11,7 @@ export const updateWebsiteSchemaValidator = zValidator('json',
         // unallowed fields for admins
         id: true,
         ownerUserId: true,
+        defaultHostname: true,
         created_at_ts: true,
         updated_at_ts: true
     }).partial()

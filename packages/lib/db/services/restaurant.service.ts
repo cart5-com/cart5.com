@@ -16,6 +16,7 @@ import { cleanEmptyProperties } from "../../types/menuType";
 import type { DeliveryZone, Point } from "../../types/restaurantTypes";
 
 import type { TimeForm } from "../../types/restaurantTypes";
+import type { NonEmpty } from "../../types/typeUtils";
 
 const convertToMinutes = (timeForm: TimeForm) => {
     const { timeValue, timeUnit } = timeForm;
@@ -438,7 +439,6 @@ export const getRestaurantService = async (
     // this typing is to make sure typing work with hono rpc.
     // https://hono.dev/docs/guides/rpc
     // api never returns {} but drizzle adds a {} when there is no "with" query ...
-    type NonEmpty<T> = T extends {} ? (T[keyof T] extends never ? never : T) : T;
     type restaurantType = NonNullable<typeof restaurant>;
 
     type address = restaurantType['address'] // this has | {}
