@@ -11,7 +11,7 @@ import { resolve, dirname } from "node:path";
     requiredField: text("required_field").notNull(),
 
     then run  `pnpm generate:sql`
-    then run `pnpm test:db-migration`
+    then run `pnpm test:prod:migrate`
     it will fail and you will see the error in the console, 
     thanks to 'preprod:migrate' script, it will not continue to `prod:migrate`
 */
