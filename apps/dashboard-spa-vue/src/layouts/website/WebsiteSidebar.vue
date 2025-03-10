@@ -38,10 +38,6 @@ const { setOpenMobile } = useSidebar()
                                     <span class="truncate font-semibold">
                                         {{ currentWebsite?.name }}
                                     </span>
-                                    <span class="truncate text-xs"
-                                          v-if="currentWebsite?.defaultHostname">
-                                        {{ currentWebsite?.defaultHostname }}
-                                    </span>
                                 </div>
                             </SidebarMenuButton>
                         </RouterLink>

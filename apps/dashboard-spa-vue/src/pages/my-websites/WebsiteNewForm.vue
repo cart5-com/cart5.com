@@ -11,8 +11,7 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { myWebsites } from '@src/stores/WebsiteStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
-import { watch } from 'vue';
-import { slugify } from 'lib/utils/slugify';
+import { insertWebsitesSchema } from 'lib/db/schema/website.schema';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -21,13 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const schema = z.object({
-    name: z.string().max(510, { message: "max 510" }).min(3, { message: "min 3" }),
-    defaultHostname: z.string()
-        .min(3, { message: "Domain must be at least 3 characters" })
-        .max(255, { message: "Domain must be less than 255 characters" })
-        .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
-            message: "Please enter a valid domain name (e.g., www.example.com)"
-        }),
+    name: insertWebsitesSchema.shape.name,
 })
 
 const form = useForm({
@@ -35,13 +28,6 @@ const form = useForm({
 })
 
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
-
-
-watch(() => form.values.name, (newName) => {
-    const newSlugifiedName = slugify(newName || '');
-    const domain = `${newSlugifiedName}.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME || 'cart5.com'}`;
-    form.setFieldValue('defaultHostname', domain);
-});
 
 async function onSubmit(values: z.infer<typeof schema>) {
     let turnstile;
@@ -58,7 +44,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
         const { data, error } = await (await dashboardApiClient.api_dashboard.website.create.$post({
             form: {
                 name: values.name,
-                defaultHostname: values.defaultHostname,
                 turnstile
             },
         })).json()
@@ -70,7 +55,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
             myWebsites.value = [...myWebsites.value, {
                 id: websiteId,
                 name: values.name,
-                defaultHostname: values.defaultHostname
             }];
             emit('close', { id: websiteId, name: values.name });
         }
@@ -88,9 +72,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
                     label: 'Name',
                     description: 'Enter a name for your website',
                 },
-                defaultHostname: {
-                    label: 'Domain',
-                }
             }">
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">

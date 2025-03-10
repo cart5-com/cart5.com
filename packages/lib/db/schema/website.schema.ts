@@ -3,7 +3,7 @@ import { generateKey } from "../../utils/generateKey";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { relations } from 'drizzle-orm';
-
+import { z } from "zod";
 export const websitesTable = sqliteTable("websites", {
     ...autoCreatedUpdated,
 
@@ -12,11 +12,13 @@ export const websitesTable = sqliteTable("websites", {
 
     ownerUserId: text("owner_user_id").notNull(),
 
-    defaultHostname: text("default_hostname").notNull().unique(),
+    defaultHostname: text("default_hostname").unique(),
 
 
 });
-export const insertWebsitesSchema = createInsertSchema(websitesTable);
+export const insertWebsitesSchema = createInsertSchema(websitesTable, {
+    name: z.string().min(1, { message: "min 1" }).max(510, { message: "max 510" }),
+});
 export const selectWebsitesSchema = createSelectSchema(websitesTable);
 export const updateWebsitesSchema = createInsertSchema(websitesTable);
 

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Loader2, Plus, Trash2, Star } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient'
 import { currentWebsiteId } from '@src/stores/WebsiteStore'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { z } from 'zod'
 import { useForm } from 'vee-validate'
@@ -15,6 +15,12 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 
 const { toast } = useToast()
+
+// watch(() => form.values.name, (newName) => {
+//     const newSlugifiedName = slugify(newName || '');
+//     const domain = `${newSlugifiedName}.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME || 'cart5.com'}`;
+//     form.setFieldValue('defaultHostname', domain);
+// });
 
 interface Domain {
     hostname: string

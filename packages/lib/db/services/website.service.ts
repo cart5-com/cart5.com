@@ -1,5 +1,5 @@
 import { and, count, eq } from "drizzle-orm";
-import { KNOWN_ERROR } from '../../types/errors';
+
 import {
     websitesTable,
     websiteDomainMapTable,
@@ -35,7 +35,6 @@ export const getMyWebsitesService = async (userId: string) => {
                 columns: {
                     id: true,
                     name: true,
-                    defaultHostname: true,
                 },
                 // with: {
                 //     domains: {
@@ -54,30 +53,17 @@ export const getMyWebsitesService = async (userId: string) => {
 /**
  * Create a new website
  */
-export const createWebsiteService = async (userId: string, name: string, defaultHostname: string) => {
+export const createWebsiteService = async (userId: string, name: string) => {
     return await db.transaction(async (tx) => {
-        // Check if the provided hostname is already taken
-        const existingDomain = await isHostnameRegisteredService(defaultHostname);
-        if (existingDomain) {
-            throw new KNOWN_ERROR("Domain already taken", "DOMAIN_ALREADY_TAKEN");
-        }
-
         const website = await tx.insert(websitesTable).values({
             name: name,
             ownerUserId: userId,
-            defaultHostname: defaultHostname,
         }).returning({ id: websitesTable.id });
 
         // Add the user as an admin
         await tx.insert(websiteUserAdminsMapTable).values({
             websiteId: website[0].id,
             userId: userId,
-        });
-
-        // Add the default hostname to the domain map
-        await tx.insert(websiteDomainMapTable).values({
-            hostname: defaultHostname,
-            websiteId: website[0].id,
         });
 
         return website[0].id;
@@ -243,6 +229,11 @@ export const setDefaultDomainService = async (websiteId: string, hostname: strin
 /**
  * Check if a hostname is registered in the system
  */
+// Check if the provided hostname is already taken
+// const existingDomain = await isHostnameRegisteredService(defaultHostname);
+// if (existingDomain) {
+//     throw new KNOWN_ERROR("Domain already taken", "DOMAIN_ALREADY_TAKEN");
+// }
 export const isHostnameRegisteredService = async (hostname: string): Promise<boolean> => {
     const existingDomain = await db.query.websiteDomainMapTable.findFirst({
         where: eq(websiteDomainMapTable.hostname, hostname),
