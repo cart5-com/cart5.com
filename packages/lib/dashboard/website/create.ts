@@ -7,6 +7,8 @@ import { createWebsiteService } from '../../db/services/website.service';
 import { type ErrorType, KNOWN_ERROR } from '../../types/errors';
 import { validateCrossDomainTurnstile } from '../../utils/validateTurnstile';
 import { zValidator } from '@hono/zod-validator';
+import { checkDns } from '../../utils/dnsCheck';
+import { IS_PROD } from '../../utils/getEnvVariable';
 
 
 export const createWebsiteSchemaValidator = zValidator('form', z.object({
@@ -26,6 +28,12 @@ export const createWebsite = async (c: Context<
     ValidatorContext<typeof createWebsiteSchemaValidator>
 >) => {
     const { name, defaultHostname, turnstile } = c.req.valid('form');
+
+    if (IS_PROD) {
+        if (!await checkDns(defaultHostname)) {
+            throw new KNOWN_ERROR("Invalid DNS", "INVALID_DNS");
+        }
+    }
 
     const { userId } = await validateCrossDomainTurnstile(turnstile, c);
     if (userId !== c.get('USER')?.id!) {

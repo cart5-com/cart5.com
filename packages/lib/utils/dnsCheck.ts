@@ -1,4 +1,4 @@
-
+import { getEnvVariable } from "./getEnvVariable";
 // DNS server options
 export enum DnsServer {
     CLOUDFLARE = 'cloudflare', // Cloudflare DNS over HTTPS
@@ -14,11 +14,11 @@ const DOH_ENDPOINTS = {
 // Configuration for expected DNS values
 const DNS_CONFIG = {
     // IPv4 address of the server
-    ipv4: '188.245.218.196',
+    ipv4: getEnvVariable('DNS_CHECK_IPV4'),
     // IPv6 address of the server
-    ipv6: '2a01:4f8:1c1b:6632::1',
+    ipv6: getEnvVariable('DNS_CHECK_IPV6'),
     // DNS pointer domain
-    dnsPointer: 'dns-pointer.cart5.com'
+    dnsPointer: getEnvVariable('DNS_CHECK_POINTER')
 };
 
 /**
