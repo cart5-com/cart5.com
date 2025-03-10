@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/toast/use-toast'
 import { z } from 'zod'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 
 const { toast } = useToast()
 
@@ -20,14 +21,9 @@ interface Domain {
     isDefault: boolean
 }
 
-const isLoading = ref(true)
 const domains = ref<Domain[]>([])
 const defaultHostname = ref('')
 const newDomain = ref('')
-const isAddingDomain = ref(false)
-const isSettingDefault = ref(false)
-const isRemovingDomain = ref(false)
-const errorMessage = ref('')
 
 // Form validation
 const schema = z.object({
@@ -46,15 +42,14 @@ const form = useForm({
     }
 })
 
-// Create a computed property for the hostname error
-const hostnameError = computed(() => {
-    return form.errors.value.hostname as string | undefined
-})
+const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form)
+
 
 // Load domains on mount
 onMounted(async () => {
     if (!currentWebsiteId.value) return
 
+    isLoading.value = true
     try {
         const { data, error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].$post({
             param: { websiteId: currentWebsiteId.value },
@@ -69,7 +64,7 @@ onMounted(async () => {
         })).json()
 
         if (error) {
-            errorMessage.value = error.message || 'Failed to load domains'
+            handleError(error, form)
         } else if (data) {
             defaultHostname.value = data.defaultHostname || ''
 
@@ -86,7 +81,7 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error(error)
-        errorMessage.value = 'An unexpected error occurred'
+        handleError(error, form)
     } finally {
         isLoading.value = false
     }
@@ -94,18 +89,13 @@ onMounted(async () => {
 
 // Add a new domain
 async function addDomain() {
-    // Validate the form
-    const { valid } = await form.validate()
-    if (!valid) return
+    await withSubmit(async () => {
+        const { valid } = await form.validate()
+        if (!valid) return
 
-    // Get the hostname value directly from form values
-    const hostname = form.values.hostname
-    if (!hostname) return
+        const hostname = form.values.hostname
+        if (!hostname) return
 
-    isAddingDomain.value = true
-    errorMessage.value = ''
-
-    try {
         const { error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].domain.$post({
             param: { websiteId: currentWebsiteId.value as string },
             json: {
@@ -114,7 +104,7 @@ async function addDomain() {
         })).json()
 
         if (error) {
-            errorMessage.value = error.message || 'Failed to add domain'
+            handleError(error, form)
         } else {
             // Add the new domain to the list
             domains.value.push({
@@ -131,22 +121,13 @@ async function addDomain() {
                 description: `${hostname} has been added to your website.`
             })
         }
-    } catch (error) {
-        console.error(error)
-        errorMessage.value = 'An unexpected error occurred'
-    } finally {
-        isAddingDomain.value = false
-    }
+    })
 }
 
 // Set a domain as default
 async function setAsDefault(hostname: string) {
     if (hostname === defaultHostname.value) return
-
-    isSettingDefault.value = true
-    errorMessage.value = ''
-
-    try {
+    await withSubmit(async () => {
         const { error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].domain.default.$patch({
             param: { websiteId: currentWebsiteId.value as string },
             json: {
@@ -155,7 +136,7 @@ async function setAsDefault(hostname: string) {
         })).json()
 
         if (error) {
-            errorMessage.value = error.message || 'Failed to set default domain'
+            handleError(error, form)
         } else {
             // Update the default domain
             defaultHostname.value = hostname
@@ -171,12 +152,7 @@ async function setAsDefault(hostname: string) {
                 description: `${hostname} is now your default domain.`
             })
         }
-    } catch (error) {
-        console.error(error)
-        errorMessage.value = 'An unexpected error occurred'
-    } finally {
-        isSettingDefault.value = false
-    }
+    })
 }
 
 // Remove a domain
@@ -185,16 +161,13 @@ async function removeDomain(hostname: string) {
         // Check if there are other domains that could be set as default
         const otherDomains = domains.value.filter(d => d.hostname !== hostname);
         if (otherDomains.length > 0) {
-            errorMessage.value = 'Cannot remove the default domain. Set another domain as default first.';
+            handleError({ message: 'Cannot remove the default domain. Set another domain as default first.' }, form)
             return;
         }
         // If this is the only domain, allow removal
     }
 
-    isRemovingDomain.value = true;
-    errorMessage.value = '';
-
-    try {
+    await withSubmit(async () => {
         const { error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].domain[':hostname'].$delete({
             param: {
                 websiteId: currentWebsiteId.value as string,
@@ -203,7 +176,7 @@ async function removeDomain(hostname: string) {
         })).json()
 
         if (error) {
-            errorMessage.value = error.message || 'Failed to remove domain';
+            handleError(error, form)
         } else {
             // Remove the domain from the list
             domains.value = domains.value.filter(domain => domain.hostname !== hostname);
@@ -218,16 +191,9 @@ async function removeDomain(hostname: string) {
                 description: `${hostname} has been removed from your website.`
             });
         }
-    } catch (error) {
-        console.error(error);
-        errorMessage.value = 'An unexpected error occurred';
-    } finally {
-        isRemovingDomain.value = false;
-    }
+    })
 }
 
-// Computed property to check if there are domains
-const hasDomains = computed(() => domains.value.length > 0)
 </script>
 
 <template>
@@ -238,12 +204,8 @@ const hasDomains = computed(() => domains.value.length > 0)
             <Loader2 class="h-8 w-8 animate-spin" />
         </div>
 
-        <div v-else>
-            <!-- Error message -->
-            <div v-if="errorMessage"
-                 class="bg-destructive/15 text-destructive p-4 rounded-md mb-4">
-                {{ errorMessage }}
-            </div>
+        <div v-else
+             class="space-y-6">
 
             <!-- No default domain message -->
             <div v-if="!defaultHostname && domains.length === 0"
@@ -265,16 +227,16 @@ const hasDomains = computed(() => domains.value.length > 0)
                         <div class="flex-1">
                             <Input v-model="newDomain"
                                    placeholder="example.com"
-                                   :disabled="isAddingDomain"
+                                   :disabled="isLoading"
                                    @update:modelValue="(val) => form.setFieldValue('hostname', String(val))" />
-                            <div v-if="hostnameError"
-                                 class="text-sm text-destructive mt-1">
-                                {{ hostnameError }}
-                            </div>
+                        </div>
+                        <div class="text-sm font-medium text-destructive"
+                             v-if="globalError">
+                            {{ globalError }}
                         </div>
                         <Button type="submit"
-                                :disabled="isAddingDomain">
-                            <Loader2 v-if="isAddingDomain"
+                                :disabled="isLoading">
+                            <Loader2 v-if="isLoading"
                                      class="mr-2 h-4 w-4 animate-spin" />
                             <Plus v-else
                                   class="mr-2 h-4 w-4" />
@@ -285,7 +247,7 @@ const hasDomains = computed(() => domains.value.length > 0)
             </Card>
 
             <!-- Domains list -->
-            <Card v-if="hasDomains">
+            <Card>
                 <CardHeader>
                     <CardTitle>Your Domains</CardTitle>
                     <CardDescription>
@@ -316,9 +278,9 @@ const hasDomains = computed(() => domains.value.length > 0)
                                         <Button v-if="!domain.isDefault"
                                                 variant="outline"
                                                 size="sm"
-                                                :disabled="isSettingDefault"
+                                                :disabled="isLoading"
                                                 @click="setAsDefault(domain.hostname)">
-                                            <Loader2 v-if="isSettingDefault"
+                                            <Loader2 v-if="isLoading"
                                                      class="mr-2 h-3 w-3 animate-spin" />
                                             <Star v-else
                                                   class="mr-2 h-3 w-3" />
@@ -327,9 +289,9 @@ const hasDomains = computed(() => domains.value.length > 0)
                                         <Button v-if="!domain.isDefault"
                                                 variant="destructive"
                                                 size="sm"
-                                                :disabled="isRemovingDomain"
+                                                :disabled="isLoading"
                                                 @click="removeDomain(domain.hostname)">
-                                            <Loader2 v-if="isRemovingDomain"
+                                            <Loader2 v-if="isLoading"
                                                      class="mr-2 h-3 w-3 animate-spin" />
                                             <Trash2 v-else
                                                     class="mr-2 h-3 w-3" />
@@ -343,15 +305,6 @@ const hasDomains = computed(() => domains.value.length > 0)
                 </CardContent>
             </Card>
 
-            <!-- No domains message -->
-            <Card v-else-if="!isLoading">
-                <CardHeader>
-                    <CardTitle>No Domains</CardTitle>
-                    <CardDescription>
-                        You haven't added any domains to your website yet. Add your first domain above.
-                    </CardDescription>
-                </CardHeader>
-            </Card>
         </div>
     </div>
 </template>
