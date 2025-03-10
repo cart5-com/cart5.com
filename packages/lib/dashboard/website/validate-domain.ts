@@ -17,7 +17,11 @@ export const validateDomainForTLS = async (c: Context<HonoVariables>) => {
         return c.text('Domain parameter is required', 400);
     }
 
-    if (domain === `www.${getEnvVariable('PUBLIC_DOMAIN_NAME')}` || domain === getEnvVariable('PUBLIC_DOMAIN_NAME')) {
+    if (
+        domain === `auth.${getEnvVariable('PUBLIC_DOMAIN_NAME')}` ||
+        domain === `www.${getEnvVariable('PUBLIC_DOMAIN_NAME')}` ||
+        domain === getEnvVariable('PUBLIC_DOMAIN_NAME')
+    ) {
         return c.text('Domain is valid', 200);
     }
 
@@ -27,10 +31,10 @@ export const validateDomainForTLS = async (c: Context<HonoVariables>) => {
 
         if (isRegistered) {
             // Domain is registered, allow TLS certificate issuance
-            return c.text('Domain is valid', 200);
+            return c.text('Domain is valid registered', 200);
         } else {
             // Domain is not registered, reject TLS certificate issuance
-            return c.text('Domain not found', 404);
+            return c.text('Domain not found, not registered', 404);
         }
     } catch (error) {
         console.error('Error validating domain for TLS:', error);

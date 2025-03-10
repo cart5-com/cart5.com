@@ -20,6 +20,8 @@ import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
 import db from 'lib/db/drizzle';
+import { validateDomainForTLS } from 'lib/dashboard/website/validate-domain';
+
 const app = new Hono<HonoVariables>();
 
 app.use(csrfChecks);
@@ -55,6 +57,12 @@ app.onError((err, c) => {
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
+
+
+app.get(
+	'/validate_tls',
+	validateDomainForTLS
+);
 
 const routes = app
 	.basePath('/api_auth')

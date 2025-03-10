@@ -14,7 +14,6 @@ import {
     domainSchemaValidator,
     defaultDomainSchemaValidator
 } from './domains';
-import { validateDomainForTLS } from './validate-domain';
 
 
 export const websiteRouter = new Hono<HonoVariables>()
@@ -54,10 +53,6 @@ export const websiteRouter = new Hono<HonoVariables>()
         defaultDomainSchemaValidator,
         setDefaultDomain
     )
-    .get(
-        '/validate-domain-tls',
-        validateDomainForTLS
-    );
 
 
 async function websiteRouteAdminCheck(c: Context, next: Next) {
