@@ -11,6 +11,12 @@ import { zValidator } from '@hono/zod-validator';
 
 export const createWebsiteSchemaValidator = zValidator('form', z.object({
     name: insertWebsitesSchema.shape.name,
+    defaultHostname: z.string()
+        .min(3, { message: "Domain must be at least 3 characters" })
+        .max(255, { message: "Domain must be less than 255 characters" })
+        .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
+            message: "Please enter a valid domain name (e.g., www.example.com)"
+        }),
     turnstile: z.string().min(1, { message: "Verification required" })
 }))
 
@@ -19,14 +25,14 @@ export const createWebsite = async (c: Context<
     "/create",
     ValidatorContext<typeof createWebsiteSchemaValidator>
 >) => {
-    const { name, turnstile } = c.req.valid('form');
+    const { name, defaultHostname, turnstile } = c.req.valid('form');
 
     const { userId } = await validateCrossDomainTurnstile(turnstile, c);
     if (userId !== c.get('USER')?.id!) {
         throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
     } else {
         return c.json({
-            data: await createWebsiteService(userId, name),
+            data: await createWebsiteService(userId, name, defaultHostname),
             error: null as ErrorType
         }, 200);
     }
