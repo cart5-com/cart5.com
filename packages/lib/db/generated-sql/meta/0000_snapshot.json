@@ -1,12 +1,19 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "3565b87e-a305-4bbc-9cf0-8ff82a973d6b",
+  "id": "78a3abf0-4330-44da-9b69-90473941af41",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "session": {
       "name": "session",
       "columns": {
+        "created_at_ts": {
+          "name": "created_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "id": {
           "name": "id",
           "type": "text",
@@ -31,13 +38,6 @@
         "hostname": {
           "name": "hostname",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at_ts": {
-          "name": "created_at_ts",
-          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -531,6 +531,20 @@
     "restaurant": {
       "name": "restaurant",
       "columns": {
+        "created_at_ts": {
+          "name": "created_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at_ts": {
+          "name": "updated_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "id": {
           "name": "id",
           "type": "text",
@@ -604,20 +618,6 @@
           "notNull": true,
           "autoincrement": false,
           "default": false
-        },
-        "created_at_ts": {
-          "name": "created_at_ts",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "updated_at_ts": {
-          "name": "updated_at_ts",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         }
       },
       "indexes": {
@@ -790,6 +790,145 @@
           "name": "restaurant_user_admins_map_restaurant_id_user_id_pk"
         }
       },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "website_domain_map": {
+      "name": "website_domain_map",
+      "columns": {
+        "hostname": {
+          "name": "hostname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "website_id": {
+          "name": "website_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "website_domain_map_hostname_unique": {
+          "name": "website_domain_map_hostname_unique",
+          "columns": [
+            "hostname"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "website_domain_map_hostname_website_id_pk": {
+          "columns": [
+            "hostname",
+            "website_id"
+          ],
+          "name": "website_domain_map_hostname_website_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "website_user_admins_map": {
+      "name": "website_user_admins_map",
+      "columns": {
+        "website_id": {
+          "name": "website_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "website_user_admins_map_website_id_user_id_pk": {
+          "columns": [
+            "website_id",
+            "user_id"
+          ],
+          "name": "website_user_admins_map_website_id_user_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "websites": {
+      "name": "websites",
+      "columns": {
+        "created_at_ts": {
+          "name": "created_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at_ts": {
+          "name": "updated_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "owner_user_id": {
+          "name": "owner_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "default_hostname": {
+          "name": "default_hostname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "websites_id_unique": {
+          "name": "websites_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        },
+        "websites_default_hostname_unique": {
+          "name": "websites_default_hostname_unique",
+          "columns": [
+            "default_hostname"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     }

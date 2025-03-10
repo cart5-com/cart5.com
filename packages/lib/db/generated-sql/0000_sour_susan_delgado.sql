@@ -1,9 +1,9 @@
 CREATE TABLE `session` (
+	`created_at_ts` integer NOT NULL,
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`expires_at` integer NOT NULL,
 	`hostname` text NOT NULL,
-	`created_at_ts` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -84,6 +84,8 @@ CREATE TABLE `restaurant_scheduled_orders_settings` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_scheduled_orders_settings_restaurant_id_unique` ON `restaurant_scheduled_orders_settings` (`restaurant_id`);--> statement-breakpoint
 CREATE TABLE `restaurant` (
+	`created_at_ts` integer NOT NULL,
+	`updated_at_ts` integer NOT NULL,
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text(510) NOT NULL,
 	`default_phone_number` text,
@@ -93,9 +95,7 @@ CREATE TABLE `restaurant` (
 	`offers_pickup` integer DEFAULT false NOT NULL,
 	`offers_delivery` integer DEFAULT false NOT NULL,
 	`offers_on_premise` integer DEFAULT false NOT NULL,
-	`offers_table_reservation` integer DEFAULT false NOT NULL,
-	`created_at_ts` integer NOT NULL,
-	`updated_at_ts` integer NOT NULL
+	`offers_table_reservation` integer DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_id_unique` ON `restaurant` (`id`);--> statement-breakpoint
@@ -125,3 +125,28 @@ CREATE TABLE `restaurant_user_admins_map` (
 	`user_id` text NOT NULL,
 	PRIMARY KEY(`restaurant_id`, `user_id`)
 );
+--> statement-breakpoint
+CREATE TABLE `website_domain_map` (
+	`hostname` text NOT NULL,
+	`website_id` text NOT NULL,
+	PRIMARY KEY(`hostname`, `website_id`)
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `website_domain_map_hostname_unique` ON `website_domain_map` (`hostname`);--> statement-breakpoint
+CREATE TABLE `website_user_admins_map` (
+	`website_id` text NOT NULL,
+	`user_id` text NOT NULL,
+	PRIMARY KEY(`website_id`, `user_id`)
+);
+--> statement-breakpoint
+CREATE TABLE `websites` (
+	`created_at_ts` integer NOT NULL,
+	`updated_at_ts` integer NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`owner_user_id` text NOT NULL,
+	`default_hostname` text
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `websites_id_unique` ON `websites` (`id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `websites_default_hostname_unique` ON `websites` (`default_hostname`);
