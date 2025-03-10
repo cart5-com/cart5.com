@@ -142,11 +142,46 @@ export const getWebsiteService = async (
     return website as newWebsiteType;
 }
 
+const reservedSubdomains = [
+    'www',
+    'api',
+    'mail',
+    'about',
+    'blog',
+    'shop',
+    'store',
+    'app',
+    'dashboard',
+    'dash',
+    'admin',
+    'auth',
+    'login',
+    'register',
+    'com',
+    'net',
+    'org',
+    'io',
+    'ai',
+    'dev',
+    'test',
+    'hello',
+    'world',
+    'example',
+    'demo',
+    'sandbox',
+];
 /**
  * Add a domain to a website
  */
 export const addDomainService = async (websiteId: string, hostname: string) => {
     const PUBLIC_DOMAIN_NAME = getEnvVariable('PUBLIC_DOMAIN_NAME');
+    // Check if trying to add a reserved subdomain
+    if (hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)) {
+        const subdomain = hostname.split(`.${PUBLIC_DOMAIN_NAME}`)[0].toLowerCase();
+        if (reservedSubdomains.includes(subdomain)) {
+            throw new KNOWN_ERROR('This subdomain is reserved', 'RESERVED_SUBDOMAIN');
+        }
+    }
     // Check if the website exists
     const website = await db.query.websitesTable.findFirst({
         where: eq(websitesTable.id, websiteId),

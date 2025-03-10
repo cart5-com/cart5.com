@@ -55,8 +55,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
 const hostname = `${slugify(currentWebsite.value?.name || 'your-website')}.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`;
 async function setSubdomain() {
     form.setFieldValue('hostname', hostname);
-    // submit the form
-    await onSubmit(form.values as z.infer<typeof schema>);
 }
 </script>
 
@@ -101,7 +99,7 @@ async function setSubdomain() {
                         Recommendation:
                         <Button variant="secondary"
                                 @click="setSubdomain">
-                            {{ hostname }}
+                            use '{{ hostname }}'
                         </Button>
                     </div>
 
