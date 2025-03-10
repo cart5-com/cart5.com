@@ -88,6 +88,12 @@ onMounted(async () => {
                         No default domain is set. Please set a default domain to make your website accessible.
                     </AlertDescription>
                 </Alert>
+                <Alert v-else-if="website?.domains && website?.domains?.length > 1">
+                    <AlertTriangle class="h-4 w-4" />
+                    <AlertDescription>
+                        All domains will be redirected to the default domain.
+                    </AlertDescription>
+                </Alert>
 
                 <div class="flex justify-end">
                     <router-link :to="{ name: 'website-domains-add' }">
