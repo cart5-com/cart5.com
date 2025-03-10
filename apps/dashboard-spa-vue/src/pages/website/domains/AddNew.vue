@@ -13,9 +13,16 @@ import { useRouter } from 'vue-router';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { pageTitle } from '@src/stores/layout.store';
 import { slugify } from 'lib/utils/slugify';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InfoIcon } from 'lucide-vue-next';
 
 pageTitle.value = 'Add Domain'
 const router = useRouter();
+
+const VITE_PUBLIC_DNS_CHECK_IPV4 = import.meta.env.VITE_PUBLIC_DNS_CHECK_IPV4;
+const VITE_PUBLIC_DNS_CHECK_IPV6 = import.meta.env.VITE_PUBLIC_DNS_CHECK_IPV6;
+const VITE_PUBLIC_DNS_CHECK_POINTER = import.meta.env.VITE_PUBLIC_DNS_CHECK_POINTER;
 
 const schema = z.object({
     hostname: z.string()
@@ -101,6 +108,92 @@ async function setSubdomain() {
                             {{ hostname }}
                         </Button>
                     </div>
+
+                    <!-- DNS Setup Guide -->
+                    <Alert class="bg-muted">
+                        <InfoIcon class="h-4 w-4" />
+                        <AlertDescription>
+                            <h3 class="font-medium mb-2">DNS Configuration Help</h3>
+                            <p class="text-sm mb-2">Before adding your domain, you must configure the DNS settings at
+                                your domain registrar. The DNS records must be properly propagated for validation to
+                                succeed.</p>
+
+                            <Accordion type="single"
+                                       collapsible
+                                       class="w-full">
+                                <AccordionItem value="option-1">
+                                    <AccordionTrigger class="text-sm font-medium">Option 1: CNAME Record (Recommended)
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div class="space-y-2 text-sm">
+                                            <p>Create a CNAME record pointing to our server:</p>
+                                            <div class="bg-background p-2 rounded border">
+                                                <div><span class="font-mono">Type:</span> CNAME</div>
+                                                <div><span class="font-mono">Host/Name:</span> www or @ (for root
+                                                    domain)</div>
+                                                <div><span class="font-mono">Value/Target:</span>
+                                                    {{ VITE_PUBLIC_DNS_CHECK_POINTER }}
+                                                </div>
+                                                <div><span class="font-mono">TTL:</span> Automatic or 3600</div>
+                                            </div>
+                                            <p class="text-xs text-muted-foreground mt-2">Note: Some registrars don't
+                                                allow CNAME records for root domains. In that case, use Option 2 or
+                                                enable CNAME flattening if available.</p>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+
+                                <AccordionItem value="option-2">
+                                    <AccordionTrigger class="text-sm font-medium">Option 2: A and AAAA Records
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div class="space-y-2 text-sm">
+                                            <p>Create A record (IPv4) and AAAA record (IPv6) pointing to our servers:
+                                            </p>
+                                            <div class="bg-background p-2 rounded border mb-2">
+                                                <div><span class="font-mono">Type:</span> A</div>
+                                                <div><span class="font-mono">Host/Name:</span> @ (for root domain) or
+                                                    subdomain</div>
+                                                <div><span class="font-mono">Value/Target:</span>
+                                                    {{ VITE_PUBLIC_DNS_CHECK_IPV4 }}
+                                                </div>
+                                                <div><span class="font-mono">TTL:</span> Automatic or 3600</div>
+                                            </div>
+                                            <div class="bg-background p-2 rounded border">
+                                                <div><span class="font-mono">Type:</span> AAAA</div>
+                                                <div><span class="font-mono">Host/Name:</span> @ (for root domain) or
+                                                    subdomain</div>
+                                                <div><span class="font-mono">Value/Target:</span>
+                                                    {{ VITE_PUBLIC_DNS_CHECK_IPV6 }}
+                                                </div>
+                                                <div><span class="font-mono">TTL:</span> Automatic or 3600</div>
+                                            </div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+
+                                <AccordionItem value="dns-propagation">
+                                    <AccordionTrigger class="text-sm font-medium">DNS Propagation Check
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div class="space-y-2 text-sm">
+                                            <p>Before attempting to add your domain:</p>
+                                            <ul class="list-disc pl-5 space-y-1">
+                                                <li>Wait for DNS changes to propagate (can take 24-48 hours)</li>
+                                                <li>Verify your DNS configuration using <a href="https://dnschecker.org"
+                                                       target="_blank"
+                                                       class="text-primary underline">dnschecker.org</a></li>
+                                                <li>Only proceed with domain addition once DNS records are properly
+                                                    propagated</li>
+                                            </ul>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                        </AlertDescription>
+                    </Alert>
+
+
                 </div>
             </CardContent>
         </Card>

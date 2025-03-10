@@ -33,7 +33,6 @@ export const websiteRouter = new Hono<HonoVariables>()
 
 
 export async function websiteRouteAdminCheck(c: Context, next: Next) {
-    console.log('websiteRouteAdminCheck🟪🟪🟪🟪');
     const userId = c.get('USER')?.id;
     const websiteId = c.req.param('websiteId');
     if (!userId || !websiteId) {

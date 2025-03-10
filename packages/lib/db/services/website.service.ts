@@ -8,6 +8,8 @@ import {
 import db from '../drizzle';
 import { KNOWN_ERROR } from "../../types/errors";
 import type { NonEmptyArray } from "../../types/typeUtils";
+import { getEnvVariable, IS_PROD } from "../../utils/getEnvVariable";
+import { checkDns } from "../../utils/dnsCheck";
 
 /**
  * Check if a user is an admin of a website
@@ -144,15 +146,42 @@ export const getWebsiteService = async (
  * Add a domain to a website
  */
 export const addDomainService = async (websiteId: string, hostname: string) => {
+    const PUBLIC_DOMAIN_NAME = getEnvVariable('PUBLIC_DOMAIN_NAME');
     // Check if the website exists
     const website = await db.query.websitesTable.findFirst({
         where: eq(websitesTable.id, websiteId),
+        with: {
+            domains: {
+                columns: {
+                    hostname: true
+                }
+            }
+        },
         columns: { id: true, defaultHostname: true }
     });
 
     if (!website) {
         throw new KNOWN_ERROR('Website not found', 'WEBSITE_NOT_FOUND');
     }
+
+    // Check if trying to add a subdomain when one already exists
+    const isRequestedHostnameSubdomain = hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`);
+    if (isRequestedHostnameSubdomain) {
+        const existingSubdomain = website.domains?.find(d =>
+            d.hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)
+        );
+        if (existingSubdomain) {
+            throw new KNOWN_ERROR('Website already has a subdomain', 'SUBDOMAIN_ALREADY_EXISTS');
+        }
+    }
+
+    if (IS_PROD) {
+        // Skip DNS check if hostname is a subdomain of PUBLIC_DOMAIN_NAME
+        if (!hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`) && !await checkDns(hostname)) {
+            throw new KNOWN_ERROR("Invalid DNS", "INVALID_DNS");
+        }
+    }
+
 
     // Check if the domain already exists
     const isRegistered = await isHostnameRegisteredService(hostname);

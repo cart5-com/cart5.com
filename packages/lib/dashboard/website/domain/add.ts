@@ -1,15 +1,18 @@
 import { type Context } from 'hono';
 import type { HonoVariables } from '../../../hono/HonoVariables';
-import { addDomainService, isHostnameRegisteredService } from '../../../db/services/website.service';
-import { KNOWN_ERROR, type ErrorType } from '../../../types/errors';
+import { addDomainService } from '../../../db/services/website.service';
+import { type ErrorType } from '../../../types/errors';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { type ValidatorContext } from '../../../hono/types/ValidatorContext';
-import { checkDns } from '../../../utils/dnsCheck';
-import { IS_PROD } from '../../../utils/getEnvVariable';
 
 export const addDomainSchema = z.object({
-    hostname: z.string().min(3).max(255),
+    hostname: z.string()
+        .min(3, { message: "Domain name must be at least 3 characters" })
+        .max(255, { message: "Domain name must be less than 255 characters" })
+        .regex(/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/, {
+            message: "Please enter a valid domain name (e.g. example.com)"
+        })
 });
 
 export const addDomainSchemaValidator = zValidator('json', addDomainSchema);
@@ -22,23 +25,9 @@ export const addDomain = async (c: Context<
     "/:websiteId/domain/add",
     ValidatorContext<typeof addDomainSchemaValidator>
 >) => {
-    const userId = c.get('USER')?.id;
     const websiteId = c.req.param('websiteId');
     const { hostname } = c.req.valid('json');
 
-    if (!userId || !websiteId) {
-        throw new KNOWN_ERROR("Unauthorized", "UNAUTHORIZED");
-    }
-    // Check if the hostname is already registered
-    const isRegistered = await isHostnameRegisteredService(hostname);
-    if (isRegistered) {
-        throw new KNOWN_ERROR("Domain already taken", "DOMAIN_ALREADY_TAKEN");
-    }
-    if (IS_PROD) {
-        if (!await checkDns(hostname)) {
-            throw new KNOWN_ERROR("Invalid DNS", "INVALID_DNS");
-        }
-    }
     return c.json({
         data: await addDomainService(websiteId, hostname),
         error: null as ErrorType
