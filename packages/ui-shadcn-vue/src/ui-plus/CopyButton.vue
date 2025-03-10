@@ -25,11 +25,10 @@ async function copyToClipboard() {
 <template>
     <Button variant="outline"
             @click="copyToClipboard">
+        <slot />
         <Check v-if="copied"
                class="h-4 w-4" />
         <Copy v-else
               class="h-4 w-4" />
-        <span class="sr-only">Copy</span>
-        <slot />
     </Button>
 </template>

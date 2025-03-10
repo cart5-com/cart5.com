@@ -6,6 +6,8 @@ import { onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-vue-next';
 
 type WebsiteType = ResType<
     typeof dashboardApiClient.api_dashboard.website[':websiteId']["$post"]
@@ -75,10 +77,18 @@ onMounted(async () => {
     <Card>
         <CardHeader>
             <CardTitle>Domain Management</CardTitle>
-            <CardDescription>Use your own domain for free.</CardDescription>
+            <CardDescription>Use your own domain.</CardDescription>
         </CardHeader>
         <CardContent>
             <div class="space-y-6">
+                <Alert variant="destructive"
+                       v-if="!website?.defaultHostname">
+                    <AlertTriangle class="h-4 w-4" />
+                    <AlertDescription>
+                        No default domain is set. Please set a default domain to make your website accessible.
+                    </AlertDescription>
+                </Alert>
+
                 <div class="flex justify-end">
                     <router-link :to="{ name: 'website-domains-add' }">
                         <Button>Add new domain</Button>
@@ -101,6 +111,7 @@ onMounted(async () => {
                                     @click="makeDefault(domain.hostname)">
                                 Make Default
                             </Button>
+                            <!-- v-if="website.defaultHostname !== domain.hostname" -->
                             <Button variant="destructive"
                                     @click="removeDomain(domain.hostname)">
                                 Remove

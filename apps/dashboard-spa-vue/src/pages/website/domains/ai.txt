@@ -7,7 +7,7 @@ expected features:
 ✅ add btn to add your own domain
 ✅ if user use own domain it should be validated with dns check.
 ✅ Show a new page to add domain.
-✅ last domain added should be default hostname.
+✅ if no default, make first default hostname.
 ✅ do not allow take already taken domain.
 ✅ We can also offer single subdomain like name.cart5.com to make it easy to avoid dns configuration for testing,
 slugified_name+'.'+import.meta.env.VITE_PUBLIC_DOMAIN_NAME,
