@@ -20,12 +20,6 @@ export async function restaurantAdminCheck(c: Context, next: Next) {
 export const isUserRestaurantAdmin = async function (
     userId: string, restaurantId: string
 ) {
-    return await isUserRestaurantAdminService(userId, restaurantId);
-}
-
-export const isUserRestaurantAdminService = async function (
-    userId: string, restaurantId: string
-) {
     return await db.select({
         count: count()
     }).from(restaurantUserAdminsMapTable).where(
