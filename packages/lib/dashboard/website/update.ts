@@ -10,10 +10,11 @@ export const updateWebsiteSchemaValidator = zValidator('json',
     updateWebsitesSchema.omit({
         // unallowed fields for admins
         id: true,
-        ownerUserId: true,
         defaultHostname: true,
         created_at_ts: true,
-        updated_at_ts: true
+        updated_at_ts: true,
+        ownerTeamId: true,
+        supportTeamId: true
     }).partial()
 )
 

@@ -6,18 +6,16 @@ import { setDefaultDomain, setDefaultDomainSchemaValidator } from './set-default
 import { websiteRouteAdminCheck } from "../router";
 
 export const domainRouter = new Hono<HonoVariables>()
+    .use(websiteRouteAdminCheck)
     .post('/add',
-        websiteRouteAdminCheck,
         addDomainSchemaValidator,
         addDomain
     )
     .post('/remove',
-        websiteRouteAdminCheck,
         removeDomainSchemaValidator,
         removeDomain
     )
     .post('/set-default',
-        websiteRouteAdminCheck,
         setDefaultDomainSchemaValidator,
         setDefaultDomain
     ); 

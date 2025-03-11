@@ -3,72 +3,68 @@ import { and, count, eq } from "drizzle-orm";
 import {
     websitesTable,
     websiteDomainMapTable,
-    websiteUserAdminsMapTable
 } from '../schema/website.schema';
 import db from '../drizzle';
 import { KNOWN_ERROR } from "../../types/errors";
 import type { NonEmptyArray } from "../../types/typeUtils";
 import { getEnvVariable, IS_PROD } from "../../utils/getEnvVariable";
 import { checkDns } from "../../utils/dnsCheck";
+import { TEAM_PERMISSIONS, teamUserMapTable } from "../schema/team.schema";
+import { teamTable } from "../schema/team.schema";
+import {
+    createTeamTransactionalService,
+    isUserHasTeamPermissionService,
+} from "./team.service";
 
-/**
- * Check if a user is an admin of a website
- */
 export const isUserWebsiteAdminService = async function (
     userId: string, websiteId: string
 ) {
-    return await db.select({
-        count: count()
-    }).from(websiteUserAdminsMapTable).where(
-        and(
-            eq(websiteUserAdminsMapTable.userId, userId),
-            eq(websiteUserAdminsMapTable.websiteId, websiteId)
-        )
-    ).then(result => result[0].count === 1);
+    // First, get the website's owner and support team IDs
+    const website = await db.select({
+        ownerTeamId: websitesTable.ownerTeamId,
+        supportTeamId: websitesTable.supportTeamId
+    })
+        .from(websitesTable)
+        .where(eq(websitesTable.id, websiteId))
+        .then(results => results[0]);
+
+    if (!website) {
+        return false;
+    }
+    if (
+        website.supportTeamId &&
+        await isUserHasTeamPermissionService(
+            userId,
+            website.supportTeamId, [
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER
+        ])
+    ) {
+        return true;
+    }
+    if (
+        await isUserHasTeamPermissionService(userId, website.ownerTeamId, [
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER
+        ])
+    ) {
+        return true;
+    }
+    return false;
 }
 
-/**
- * Get all websites that a user is an admin of
- */
-export const getMyWebsitesService = async (userId: string) => {
-    const results = await db.query.websiteUserAdminsMapTable.findMany({
-        where: eq(websiteUserAdminsMapTable.userId, userId),
-        columns: {},
-        with: {
-            website: {
-                columns: {
-                    id: true,
-                    name: true,
-                },
-                // with: {
-                //     domains: {
-                //         columns: {
-                //             hostname: true,
-                //         }
-                //     }
-                // },
-            }
-        },
-    });
-
-    return results.map(item => item.website);
-}
 
 /**
  * Create a new website
  */
 export const createWebsiteService = async (userId: string, name: string) => {
     return await db.transaction(async (tx) => {
+        const teamId = await createTeamTransactionalService(userId, `${name} Team`, tx);
+        // TODO: add support team
         const website = await tx.insert(websitesTable).values({
             name: name,
-            ownerUserId: userId,
+            ownerTeamId: teamId,
         }).returning({ id: websitesTable.id });
-
-        // Add the user as an admin
-        await tx.insert(websiteUserAdminsMapTable).values({
-            websiteId: website[0].id,
-            userId: userId,
-        });
 
         return website[0].id;
     });
@@ -84,7 +80,7 @@ export const updateWebsiteService = async (
     return await db.transaction(async (tx) => {
         const {
             // unallowed fields for admins
-            id, ownerUserId, created_at_ts, updated_at_ts, defaultHostname,
+            id, created_at_ts, updated_at_ts, defaultHostname, ownerTeamId, supportTeamId,
             // other website tables
             // allowed fields for admins
             ...websiteData
@@ -175,11 +171,13 @@ const reservedSubdomains = [
  */
 export const addDomainService = async (websiteId: string, hostname: string) => {
     const PUBLIC_DOMAIN_NAME = getEnvVariable('PUBLIC_DOMAIN_NAME');
-    // Check if trying to add a reserved subdomain
-    if (hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)) {
-        const subdomain = hostname.split(`.${PUBLIC_DOMAIN_NAME}`)[0].toLowerCase();
-        if (reservedSubdomains.includes(subdomain)) {
-            throw new KNOWN_ERROR('This subdomain is reserved', 'RESERVED_SUBDOMAIN');
+    if (IS_PROD) {
+        // Check if trying to add a reserved subdomain
+        if (hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)) {
+            const subdomain = hostname.split(`.${PUBLIC_DOMAIN_NAME}`)[0].toLowerCase();
+            if (reservedSubdomains.includes(subdomain)) {
+                throw new KNOWN_ERROR('This subdomain is reserved', 'RESERVED_SUBDOMAIN');
+            }
         }
     }
     // Check if the website exists

@@ -10,10 +10,11 @@ export const websitesTable = sqliteTable("websites", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('web')),
     name: text("name").notNull(),
 
-    ownerUserId: text("owner_user_id").notNull(),
 
     defaultHostname: text("default_hostname").unique(),
 
+    ownerTeamId: text("owner_team_id").notNull(),
+    supportTeamId: text("support_team_id"),
 
 });
 export const insertWebsitesSchema = createInsertSchema(websitesTable, {
@@ -31,30 +32,13 @@ export const websiteDomainMapTable = sqliteTable("website_domain_map", {
 export const selectWebsiteDomainMapSchema = createSelectSchema(websiteDomainMapTable);
 
 
-/// WEBSITE USER ADMINS MAP START
-export const websiteUserAdminsMapTable = sqliteTable("website_user_admins_map", {
-    websiteId: text("website_id").notNull(),
-    userId: text("user_id").notNull(),
-}, (table) => [
-    primaryKey({ columns: [table.websiteId, table.userId] }),
-]);
-/// WEBSITE USER ADMINS MAP END
-
 export const websiteRelations = relations(websitesTable, ({ many }) => ({
     domains: many(websiteDomainMapTable),
-    userAdmins: many(websiteUserAdminsMapTable),
 }));
 
 export const websiteDomainMapRelations = relations(websiteDomainMapTable, ({ one }) => ({
     website: one(websitesTable, {
         fields: [websiteDomainMapTable.websiteId],
-        references: [websitesTable.id]
-    }),
-}));
-
-export const websiteUserAdminsMapRelations = relations(websiteUserAdminsMapTable, ({ one }) => ({
-    website: one(websitesTable, {
-        fields: [websiteUserAdminsMapTable.websiteId],
         references: [websitesTable.id]
     }),
 }));
