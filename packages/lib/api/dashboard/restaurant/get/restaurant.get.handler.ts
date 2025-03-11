@@ -1,23 +1,24 @@
 import { z } from 'zod';
 import { type Context } from 'hono';
-import {
-    selectRestaurantAddressSchema,
-    selectRestaurantDeliveryZoneMapSchema,
-    selectRestaurantMenuSchema,
-    selectRestaurantSchema,
-    selectRestaurantOpenHoursSchema,
-    selectRestaurantTableReservationSettingsSchema,
-    selectRestaurantScheduledOrdersSettingsSchema,
-    selectRestaurantTaxSettingsSchema,
-    selectRestaurantPaymentMethodsSchema
-} from '../../db/schema/restaurant.schema';
-import type { HonoVariables } from '../../hono/HonoVariables';
-import { type ValidatorContext } from '../../hono/types/ValidatorContext';
-import { getRestaurantService } from '../../db/services/restaurant.service';
-import { type ErrorType } from '../../types/errors';
+import type { HonoVariables } from '../../../../hono/HonoVariables';
+import { type ValidatorContext } from '../../../../hono/types/ValidatorContext';
+import { type ErrorType } from '../../../../types/errors';
 import { zValidator } from '@hono/zod-validator';
+import { getRestaurant_Service } from './restaurant.get.service';
+import {
+    selectRestaurantSchema,
+    selectRestaurantAddressSchema,
+    selectRestaurantOpenHoursSchema,
+    selectRestaurantMenuSchema,
+    selectRestaurantPaymentMethodsSchema,
+    selectRestaurantTableReservationSettingsSchema,
+    selectRestaurantTaxSettingsSchema,
+    selectRestaurantScheduledOrdersSettingsSchema,
+    selectRestaurantDeliveryZoneMapSchema
+} from '../../../../db/schema/restaurant.schema';
 
-export const getRestaurantSchemaValidator = zValidator('json', z.object({
+// Schema validation for restaurant get
+export const getRestaurant_SchemaValidator = zValidator('json', z.object({
     columns: z.object({
         ...Object.fromEntries(
             Object.keys(selectRestaurantSchema.shape).map(key => [key, z.boolean().optional()])
@@ -62,18 +63,17 @@ export const getRestaurantSchemaValidator = zValidator('json', z.object({
                 Object.keys(selectRestaurantDeliveryZoneMapSchema.shape).map(key => [key, z.boolean().optional()])
             )
         ).optional()
-    }) as z.ZodType<Parameters<typeof getRestaurantService>[1]>
+    }) as z.ZodType<Parameters<typeof getRestaurant_Service>[1]>
 }))
-export const getRestaurant = async (c: Context<
+
+// Controller for restaurant get
+export const getRestaurant_Handler = async (c: Context<
     HonoVariables,
     "/:restaurantId",
-    ValidatorContext<typeof getRestaurantSchemaValidator>
+    ValidatorContext<typeof getRestaurant_SchemaValidator>
 >) => {
-
-    // restaurantTable._.columns
-    // columns ?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>
     return c.json({
-        data: await getRestaurantService(c.req.param('restaurantId'), c.req.valid('json').columns),
+        data: await getRestaurant_Service(c.req.param('restaurantId'), c.req.valid('json').columns),
         error: null as ErrorType
     }, 200);
-}
+} 

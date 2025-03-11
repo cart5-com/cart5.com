@@ -1,22 +1,24 @@
 import { type Context } from 'hono';
+import { updateRestaurantSchema } from '../../../../db/schema/restaurant.schema';
+import type { HonoVariables } from '../../../../hono/HonoVariables';
+import { type ValidatorContext } from '../../../../hono/types/ValidatorContext';
+import { type ErrorType } from '../../../../types/errors';
+import { zValidator } from '@hono/zod-validator';
+import { updateRestaurant_Service } from './restaurant.update.service';
 import {
     updateRestaurantAddressSchema,
-    updateRestaurantDeliveryZoneMapSchema,
-    updateRestaurantMenuSchema,
     updateRestaurantOpenHoursSchema,
+    updateRestaurantMenuSchema,
+    updateRestaurantPaymentMethodsSchema,
     updateRestaurantTableReservationSettingsSchema,
-    updateRestaurantScheduledOrdersSettingsSchema,
-    updateRestaurantSchema,
     updateRestaurantTaxSettingsSchema,
-    updateRestaurantPaymentMethodsSchema
-} from '../../db/schema/restaurant.schema';
-import type { HonoVariables } from '../../hono/HonoVariables';
-import { type ValidatorContext } from '../../hono/types/ValidatorContext';
-import { updateRestaurantService } from '../../db/services/restaurant.service';
-import { type ErrorType } from '../../types/errors';
-import { zValidator } from '@hono/zod-validator';
+    updateRestaurantScheduledOrdersSettingsSchema,
+    updateRestaurantDeliveryZoneMapSchema
+} from '../../../../db/schema/restaurant.schema';
 
-export const updateRestaurantSchemaValidator = zValidator('json',
+
+// Schema validation for restaurant update
+export const updateRestaurant_SchemaValidator = zValidator('json',
     updateRestaurantSchema.omit({
         // unallowed fields for admins
         id: true,
@@ -50,14 +52,18 @@ export const updateRestaurantSchemaValidator = zValidator('json',
         }).optional()
     })
 )
-export const updateRestaurant = async (c: Context<
+
+// Controller for restaurant update
+export const updateRestaurant_Handler = async (c: Context<
     HonoVariables,
     "/:restaurantId",
-    ValidatorContext<typeof updateRestaurantSchemaValidator>
+    ValidatorContext<typeof updateRestaurant_SchemaValidator>
 >) => {
-    const result = (await updateRestaurantService(c.req.param('restaurantId'), c.req.valid('json')));
+    const restaurantId = c.req.param('restaurantId');
+    const updateData = c.req.valid('json');
+
     return c.json({
-        data: result.length > 0 ? 'success' : 'nochange',
+        data: await updateRestaurant_Service(restaurantId, updateData),
         error: null as ErrorType
     }, 200);
-}
+} 

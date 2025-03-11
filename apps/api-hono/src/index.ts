@@ -12,7 +12,7 @@ import { crossDomainRoute } from 'lib/auth/crossDomain/router';
 import { googleOAuthRoute } from 'lib/auth/googleOAuth/router';
 import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
-import { restaurantRouter } from 'lib/dashboard/restaurant/router';
+import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
 import { websiteRouter } from 'lib/api/dashboard/website/website.router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { getOptionalEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
