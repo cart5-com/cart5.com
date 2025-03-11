@@ -1,0 +1,16 @@
+import { createTeamTransactionalService } from '../../../../db/services/team.service';
+import { websitesTable } from '../../../../db/schema/website.schema';
+import db from '../../../../db/drizzle';
+
+export const createWebsite_Service = async (userId: string, name: string) => {
+    return await db.transaction(async (tx) => {
+        const teamId = await createTeamTransactionalService(userId, `${name} Team`, tx);
+        // TODO: add support team
+        const website = await tx.insert(websitesTable).values({
+            name: name,
+            ownerTeamId: teamId,
+        }).returning({ id: websitesTable.id });
+
+        return website[0].id;
+    })
+} 

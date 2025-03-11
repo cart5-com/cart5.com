@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-vue-next';
 
 type WebsiteType = ResType<
-    typeof dashboardApiClient.api_dashboard.website[':websiteId']["$post"]
+    typeof dashboardApiClient.api_dashboard.website[':websiteId']['domain']['list']['$post']
 >["data"];
 
 pageTitle.value = 'Domains'
@@ -18,16 +18,11 @@ pageTitle.value = 'Domains'
 const website = ref<WebsiteType>();
 
 const loadData = async () => {
-    if (!currentWebsiteId.value) return;
-    const { data, error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].$post({
-        param: { websiteId: currentWebsiteId.value },
+    const { data, error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].domain.list.$post({
+        param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
-                name: true,
-                defaultHostname: true,
-                domains: {
-                    hostname: true,
-                }
+                hostname: true,
             },
         }
     })).json();
@@ -42,10 +37,9 @@ const loadData = async () => {
 };
 
 const makeDefault = async (hostname: string) => {
-    if (!currentWebsiteId.value) return;
-    await dashboardApiClient.api_dashboard.website[':websiteId'].domain['set-default'].$post({
+    await dashboardApiClient.api_dashboard.website[':websiteId'].domain['set_default'].$post({
         param: {
-            websiteId: currentWebsiteId.value,
+            websiteId: currentWebsiteId.value ?? '',
         },
         json: {
             hostname
@@ -55,10 +49,9 @@ const makeDefault = async (hostname: string) => {
 };
 
 const removeDomain = async (hostname: string) => {
-    if (!currentWebsiteId.value) return;
     await dashboardApiClient.api_dashboard.website[':websiteId'].domain['remove'].$post({
         param: {
-            websiteId: currentWebsiteId.value,
+            websiteId: currentWebsiteId.value ?? '',
         },
         json: {
             hostname

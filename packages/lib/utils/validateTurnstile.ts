@@ -76,6 +76,14 @@ export const generateCrossDomainCode = async function (c: Context<HonoVariables>
 }
 
 
+export const validateCrossDomainTurnstile_WithUserCheck = async function (code: string, c: Context) {
+    const result = await validateCrossDomainTurnstile(code, c);
+    if (result.userId !== c.get('USER')?.id!) {
+        throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
+    }
+    return result;
+}
+
 export const validateCrossDomainTurnstile = async function (code: string, c: Context) {
     const {
         userId,

@@ -1,4 +1,4 @@
-import { isHostnameRegisteredService } from "../../db/services/website.service";
+import { isHostnameRegisteredService } from "../../api/validate_domain";
 
 export function isKnownOriginRegex(host: string, KNOWN_DOMAINS_REGEX: string) {
     return new RegExp(KNOWN_DOMAINS_REGEX).test(host);

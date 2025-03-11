@@ -3,7 +3,7 @@ import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
 export type websiteListType = ResType<
-    typeof dashboardApiClient.api_dashboard.website.mine.$get
+    typeof dashboardApiClient.api_dashboard.website.my_websites.$get
 >["data"];
 
 export const myWebsites = ref<websiteListType>([]);
@@ -23,7 +23,7 @@ export const currentWebsite = computed(() => {
 
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
-    const response = await (await dashboardApiClient.api_dashboard.website.mine.$get()).json()
+    const response = await (await dashboardApiClient.api_dashboard.website.my_websites.$get()).json()
     if (response.error) {
         console.error(response.error)
         return

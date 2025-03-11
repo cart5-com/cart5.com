@@ -13,14 +13,14 @@ import { googleOAuthRoute } from 'lib/auth/googleOAuth/router';
 import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
 import { restaurantRouter } from 'lib/dashboard/restaurant/router';
-import { websiteRouter } from 'lib/dashboard/website/router';
+import { websiteRouter } from 'lib/api/dashboard/website/website.router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { getOptionalEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
 import db from 'lib/db/drizzle';
-import { validateDomainForTLS } from 'lib/dashboard/website/validate-domain';
+import { validateDomainForTLS } from 'lib/api/validate_domain';
 
 const app = new Hono<HonoVariables>();
 
@@ -64,7 +64,10 @@ app.get(
 	validateDomainForTLS
 );
 
-const routes = app
+
+
+
+const authRoutes = app
 	.basePath('/api_auth')
 	.use(hostMustBeAuthDomain)
 	.route('/user', userRoute)
@@ -73,27 +76,37 @@ const routes = app
 	.route('/cross_domain', crossDomainRoute)
 	.route('/google_oauth', googleOAuthRoute)
 	.route('/two_factor_auth', twoFactorAuthRoute)
+export type AuthApiAppType = typeof authRoutes;
 
-export type AuthApiAppType = typeof routes;
+
+
+
 
 const authGlobalRoutes = app
 	.basePath('/api_auth_global')
 	.route('/', authGlobalRoute)
-
 export type AuthGlobalApiAppType = typeof authGlobalRoutes;
+
+
+
+
 
 const ecomApiMapsRoutes = app.basePath('/api/maps')
 	.route('/gmaps', mapsRoute);
 export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
 
+
+
+
 const dashboardRoutes = app
 	.basePath('/api_dashboard')
 	.use(mustHaveUser)
 	.route('/restaurant', restaurantRouter)
-	.route('/website', websiteRouter);
-
-
+	.route('/website', websiteRouter)
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
+
+
+
 
 const port = 3000;
 

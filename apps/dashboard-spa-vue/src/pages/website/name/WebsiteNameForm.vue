@@ -36,6 +36,9 @@ onMounted(async () => {
             param: { websiteId: currentWebsiteId.value },
             json: {
                 columns: {
+                    id: true,
+                    defaultHostname: true,
+                    supportTeamId: true,
                     name: true,
                 }
             }

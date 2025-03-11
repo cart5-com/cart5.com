@@ -1,7 +1,9 @@
 import { type Context } from 'hono';
-import type { HonoVariables } from '../../hono/HonoVariables';
-import { isHostnameRegisteredService } from '../../db/services/website.service';
-import { getEnvVariable } from '../../utils/getEnvVariable';
+import type { HonoVariables } from '../hono/HonoVariables';
+import { getEnvVariable } from '../utils/getEnvVariable';
+import db from '../db/drizzle';
+import { eq } from 'drizzle-orm';
+import { websiteDomainMapTable } from '../db/schema/website.schema';
 /**
  * Validates if a domain is registered in our system for Caddy's on_demand_tls
  * 
@@ -40,4 +42,13 @@ export const validateDomainForTLS = async (c: Context<HonoVariables>) => {
         console.error('Error validating domain for TLS:', error);
         return c.text('Internal server error', 500);
     }
-}; 
+};
+
+export const isHostnameRegisteredService = async (hostname: string): Promise<boolean> => {
+    const existingDomain = await db.query.websiteDomainMapTable.findFirst({
+        where: eq(websiteDomainMapTable.hostname, hostname),
+        columns: { hostname: true }
+    });
+
+    return !!existingDomain;
+};
