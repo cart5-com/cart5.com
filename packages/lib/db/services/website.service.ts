@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import {
     websitesTable,
@@ -9,8 +9,7 @@ import { KNOWN_ERROR } from "../../types/errors";
 import type { NonEmptyArray } from "../../types/typeUtils";
 import { getEnvVariable, IS_PROD } from "../../utils/getEnvVariable";
 import { checkDns } from "../../utils/dnsCheck";
-import { TEAM_PERMISSIONS, teamUserMapTable } from "../schema/team.schema";
-import { teamTable } from "../schema/team.schema";
+import { TEAM_PERMISSIONS } from "../schema/team.schema";
 import {
     createTeamTransactionalService,
     isUserHasTeamPermissionService,

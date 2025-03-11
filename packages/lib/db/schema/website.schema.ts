@@ -4,6 +4,8 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { relations } from 'drizzle-orm';
 import { z } from "zod";
+
+
 export const websitesTable = sqliteTable("websites", {
     ...autoCreatedUpdated,
 
@@ -23,6 +25,13 @@ export const insertWebsitesSchema = createInsertSchema(websitesTable, {
 export const selectWebsitesSchema = createSelectSchema(websitesTable);
 export const updateWebsitesSchema = createInsertSchema(websitesTable);
 
+
+
+
+
+
+
+
 export const websiteDomainMapTable = sqliteTable("website_domain_map", {
     hostname: text("hostname").notNull().unique(),
     websiteId: text("website_id").notNull(),
@@ -30,6 +39,14 @@ export const websiteDomainMapTable = sqliteTable("website_domain_map", {
     primaryKey({ columns: [table.hostname, table.websiteId] })
 ]);
 export const selectWebsiteDomainMapSchema = createSelectSchema(websiteDomainMapTable);
+
+
+
+
+
+
+
+
 
 
 export const websiteRelations = relations(websitesTable, ({ many }) => ({
