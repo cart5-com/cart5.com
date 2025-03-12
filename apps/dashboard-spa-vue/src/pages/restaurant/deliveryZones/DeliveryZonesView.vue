@@ -248,29 +248,35 @@ const deleteZone = async () => {
     zoneToDelete.value = null;
 }
 
+const saveData = async () => {
+    const apiPath = dashboardApiClient.api_dashboard.restaurant[':restaurantId'];
+    const param = {
+        restaurantId: currentRestaurantId.value ?? '',
+    }
+    const [deliveryZonesResponse, offersDeliveryResponse] = await Promise.all([
+        (await apiPath.delivery_zones.update.$patch({
+            param,
+            json: {
+                zones: deliveryZones.value
+            }
+        })).json(),
+        (await apiPath.$patch({
+            param,
+            json: {
+                offersDelivery: offersDelivery.value
+            }
+        })).json(),
+    ])
+    return { deliveryZonesResponse, offersDeliveryResponse };
+}
+
 // Save delivery zones to API
 const saveDeliveryZones = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].delivery_zones.update.$patch({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
-            json: {
-                zones: deliveryZones.value
-            }
-        })).json();
-
-        const { error: offersDeliveryError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
-            json: {
-                offersDelivery: true,
-            }
-        })).json();
-
-
+        const { deliveryZonesResponse, offersDeliveryResponse } = await saveData();
+        const { error } = deliveryZonesResponse;
+        const { error: offersDeliveryError } = offersDeliveryResponse;
         if (error || offersDeliveryError) {
             toast.error('Failed to save delivery zones');
             return;
