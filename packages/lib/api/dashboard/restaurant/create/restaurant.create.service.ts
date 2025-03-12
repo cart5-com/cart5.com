@@ -1,17 +1,16 @@
 import db from '../../../../db/drizzle';
-import { restaurantUserAdminsMapTable, restaurantTable } from '../../../../db/schema/restaurant.schema';
+import { restaurantTable } from '../../../../db/schema/restaurant.schema';
+import { createTeamTransactional_Service } from '../../website/create/website.create.service';
 
 export const createRestaurant_Service = async (userId: string, name: string) => {
     return await db.transaction(async (tx) => {
+        const teamId = await createTeamTransactional_Service(userId, `${name} Team`, tx);
+
         const restaurant = await tx.insert(restaurantTable).values({
             name: name,
-            ownerUserId: userId,
+            ownerTeamId: teamId,
         }).returning({ id: restaurantTable.id });
 
-        await tx.insert(restaurantUserAdminsMapTable).values({
-            restaurantId: restaurant[0].id,
-            userId: userId,
-        });
         return restaurant[0].id;
     })
 } 

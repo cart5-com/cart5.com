@@ -1,8 +1,9 @@
 import { type Context, type Next } from 'hono'
 import { KNOWN_ERROR } from '../../../types/errors'
 import db from '../../../db/drizzle';
-import { restaurantUserAdminsMapTable } from '../../../db/schema/restaurant.schema';
-import { and, eq, count } from 'drizzle-orm';
+import { restaurantTable } from '../../../db/schema/restaurant.schema';
+import { eq } from 'drizzle-orm';
+import { isAdminCheck } from '../team/service_utils/isAdminCheck';
 
 export async function restaurantAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
@@ -20,12 +21,17 @@ export async function restaurantAdminCheck(c: Context, next: Next) {
 export const isUserRestaurantAdmin = async function (
     userId: string, restaurantId: string
 ) {
-    return await db.select({
-        count: count()
-    }).from(restaurantUserAdminsMapTable).where(
-        and(
-            eq(restaurantUserAdminsMapTable.userId, userId),
-            eq(restaurantUserAdminsMapTable.restaurantId, restaurantId)
-        )
-    ).then(result => result[0].count === 1);
+    // First, get the restaurant's owner and support team IDs
+    const restaurant = await db.select({
+        ownerTeamId: restaurantTable.ownerTeamId,
+        supportTeamId: restaurantTable.supportTeamId
+    })
+        .from(restaurantTable)
+        .where(eq(restaurantTable.id, restaurantId))
+        .then(results => results[0]);
+
+    if (!restaurant) {
+        return false;
+    }
+    return await isAdminCheck(userId, restaurant.ownerTeamId, restaurant.supportTeamId);
 }

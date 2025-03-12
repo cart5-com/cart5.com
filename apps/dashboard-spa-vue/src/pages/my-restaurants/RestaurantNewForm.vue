@@ -46,11 +46,12 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 turnstile
             },
         })).json()
+        
         if (error) {
             handleError(error, form);
         } else {
             // Success
-            myRestaurants.value = [...myRestaurants.value, { id: data, name: values.name, address: { address1: null } }];
+            myRestaurants.value = [...myRestaurants.value, { id: data, name: values.name, address1: null }];
             emit('close', { id: data, name: values.name });
         }
     })

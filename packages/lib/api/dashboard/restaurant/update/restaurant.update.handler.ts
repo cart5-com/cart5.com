@@ -11,9 +11,10 @@ export const updateRestaurant_SchemaValidator = zValidator('json',
     updateRestaurantSchema.omit({
         // unallowed fields for admins
         id: true,
-        ownerUserId: true,
         created_at_ts: true,
-        updated_at_ts: true
+        updated_at_ts: true,
+        ownerTeamId: true,
+        supportTeamId: true,
     }).partial()
 )
 

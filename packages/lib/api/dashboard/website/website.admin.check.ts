@@ -1,11 +1,9 @@
 import db from "../../../db/drizzle";
 import { websitesTable } from "../../../db/schema/website.schema";
-import { TEAM_PERMISSIONS, teamTable, teamUserMapTable } from "../../../db/schema/team.schema";
 import { type Context, type Next } from 'hono'
 import { KNOWN_ERROR } from '../../../types/errors'
-import { and, eq } from "drizzle-orm";
-
-
+import { eq } from "drizzle-orm";
+import { isAdminCheck } from "../team/service_utils/isAdminCheck";
 
 export async function websiteAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
@@ -19,6 +17,8 @@ export async function websiteAdminCheck(c: Context, next: Next) {
     }
     await next();
 }
+
+
 
 export const isUserWebsiteAdmin = async function (
     userId: string, websiteId: string
@@ -35,67 +35,8 @@ export const isUserWebsiteAdmin = async function (
     if (!website) {
         return false;
     }
-    if (
-        website.supportTeamId &&
-        await isUserHasTeamPermission_Service(
-            userId,
-            website.supportTeamId, [
-            TEAM_PERMISSIONS.FULL_ACCESS,
-            TEAM_PERMISSIONS.WEBSITE_MANAGER
-        ])
-    ) {
-        return true;
-    }
-    if (
-        await isUserHasTeamPermission_Service(userId, website.ownerTeamId, [
-            TEAM_PERMISSIONS.FULL_ACCESS,
-            TEAM_PERMISSIONS.WEBSITE_MANAGER
-        ])
-    ) {
-        return true;
-    }
-    return false;
+    return await isAdminCheck(userId, website.ownerTeamId, website.supportTeamId);
 }
 
-export const isUserHasTeamPermission_Service = async (
-    userId: string,
-    teamId: string,
-    permissions: string[]
-) => {
-    const team = await db.select({
-        ownerUserId: teamTable.ownerUserId
-    })
-        .from(teamTable)
-        .where(eq(teamTable.id, teamId))
-        .then(results => results[0]);
 
-    if (!team) {
-        return false;
-    }
 
-    if (team.ownerUserId === userId) {
-        return true;
-    }
-
-    const member = await db.select({
-        permissions: teamUserMapTable.permissions
-    })
-        .from(teamUserMapTable)
-        .where(
-            and(
-                eq(teamUserMapTable.teamId, teamId),
-                eq(teamUserMapTable.userId, userId)
-            )
-        )
-        .then(results => results[0]);
-
-    if (member && Array.isArray(member.permissions)) {
-        member.permissions.forEach(permission => {
-            if (permissions.includes(permission)) {
-                return true;
-            }
-        });
-    }
-
-    return false;
-}

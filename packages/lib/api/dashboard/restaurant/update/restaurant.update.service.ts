@@ -8,7 +8,7 @@ export const updateRestaurant_Service = async (
 ) => {
     const {
         // unallowed fields for admins
-        id, ownerUserId, created_at_ts, updated_at_ts,
+        id, created_at_ts, updated_at_ts, ownerTeamId, supportTeamId,
         // other fields
         ...data
     } = restaurantData;

@@ -1,4 +1,4 @@
-import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateKey } from "../../utils/generateKey";
@@ -24,12 +24,14 @@ export const restaurantTable = sqliteTable("restaurant", {
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
-	ownerUserId: text("owner_user_id").notNull(),
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
 	offersOnPremise: integer("offers_on_premise", { mode: "boolean" }).notNull().default(false),
 	offersTableReservation: integer("offers_table_reservation", { mode: "boolean" }).notNull().default(false),
+
+	ownerTeamId: text("owner_team_id").notNull(),
+	supportTeamId: text("support_team_id"),
 
 });
 
@@ -267,22 +269,10 @@ export const updateRestaurantDeliveryZoneMapSchema = createUpdateSchema(restaura
 
 
 
-
-
-
-/// RESTAURANT USER ADMINS MAP START
-export const restaurantUserAdminsMapTable = sqliteTable("restaurant_user_admins_map", {
-	restaurantId: text("restaurant_id").notNull(),
-	userId: text("user_id").notNull(),
-}, (table) => [
-	primaryKey({ columns: [table.restaurantId, table.userId] }),
-]);
-/// RESTAURANT USER ADMINS MAP END
-
-
-
-
-export const restaurantRelations = relations(restaurantTable, ({ one, many }) => ({
+export const restaurantRelations = relations(restaurantTable, ({
+	one,
+	// many
+}) => ({
 	address:
 		one(
 			restaurantAddressTable, {
@@ -331,15 +321,4 @@ export const restaurantRelations = relations(restaurantTable, ({ one, many }) =>
 			fields: [restaurantTable.id],
 			references: [restaurantDeliveryZoneMapTable.restaurantId]
 		}),
-	admins:
-		many(restaurantUserAdminsMapTable),
-}));
-
-
-
-export const restaurantUserAdminsMapRelations = relations(restaurantUserAdminsMapTable, ({ one }) => ({
-	restaurant: one(restaurantTable, {
-		fields: [restaurantUserAdminsMapTable.restaurantId],
-		references: [restaurantTable.id]
-	}),
 }));
