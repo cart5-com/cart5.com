@@ -57,42 +57,54 @@ watch([deliveryZones, offersDelivery], () => {
 
 pageTitle.value = 'Delivery Options'
 
-// Load delivery zones from API
-const loadDeliveryZones = async () => {
-    isLoading.value = true;
-    try {
-        // TODO: is there a way to get all the data in one request?
-        const { data: address, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.get.$post({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
+const loadData = async () => {
+    const apiPath = dashboardApiClient.api_dashboard.restaurant[':restaurantId'];
+    const param = {
+        restaurantId: currentRestaurantId.value ?? '',
+    }
+    const [
+        addressResponse,
+        offersDeliveryResponse,
+        deliveryZonesResponse
+    ] = await Promise.all([
+        (await apiPath.address.get.$post({
+            param,
             json: {
                 columns: {
                     lat: true,
                     lng: true,
                 },
             }
-        })).json();
-        const { data: offersDeliveryData, error: offersDeliveryError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
+        })).json(),
+        (await apiPath.$post({
+            param,
             json: {
                 columns: {
                     offersDelivery: true,
                 },
             }
-        })).json();
-        const { data: deliveryZonesData, error: deliveryZonesError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].delivery_zones.get.$post({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
+        })).json(),
+        (await apiPath.delivery_zones.get.$post({
+            param,
             json: {
                 columns: {
                     zones: true
                 },
             }
-        })).json();
+        })).json(),
+    ]);
+    return { addressResponse, offersDeliveryResponse, deliveryZonesResponse };
+}
+
+// Load delivery zones from API
+const loadDeliveryZones = async () => {
+    isLoading.value = true;
+    try {
+        const { addressResponse, offersDeliveryResponse, deliveryZonesResponse } = await loadData();
+
+        const { data: address, error } = addressResponse;
+        const { data: offersDeliveryData, error: offersDeliveryError } = offersDeliveryResponse;
+        const { data: deliveryZonesData, error: deliveryZonesError } = deliveryZonesResponse;
 
         if (error || offersDeliveryError || deliveryZonesError) {
             toast.error('Failed to load delivery zones');
