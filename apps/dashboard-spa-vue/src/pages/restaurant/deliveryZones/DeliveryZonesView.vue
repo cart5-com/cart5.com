@@ -61,34 +61,49 @@ pageTitle.value = 'Delivery Options'
 const loadDeliveryZones = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        // TODO: is there a way to get all the data in one request?
+        const { data: address, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.get.$post({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                columns: {
+                    lat: true,
+                    lng: true,
+                },
+            }
+        })).json();
+        const { data: offersDeliveryData, error: offersDeliveryError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
                     offersDelivery: true,
-                    address: {
-                        lat: true,
-                        lng: true,
-                    },
-                    deliveryZones: {
-                        zones: true
-                    }
+                },
+            }
+        })).json();
+        const { data: deliveryZonesData, error: deliveryZonesError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].delivery_zones.get.$post({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                columns: {
+                    zones: true
                 },
             }
         })).json();
 
-        if (error) {
+        if (error || offersDeliveryError || deliveryZonesError) {
             toast.error('Failed to load delivery zones');
             return;
         }
         restaurantLocation = {
-            lat: data?.address?.lat ?? 0,
-            lng: data?.address?.lng ?? 0,
+            lat: address?.lat ?? 0,
+            lng: address?.lng ?? 0,
         }
-        deliveryZones.value = data?.deliveryZones?.zones ?? [];
-        offersDelivery.value = data?.offersDelivery ?? false;
+        deliveryZones.value = deliveryZonesData?.zones ?? [];
+        offersDelivery.value = offersDeliveryData?.offersDelivery ?? false;
         if (restaurantLocation.lat === 0 && restaurantLocation.lng === 0) {
             toast.error('Set your address first');
             router.push({ name: 'restaurant-address' });
@@ -225,19 +240,26 @@ const deleteZone = async () => {
 const saveDeliveryZones = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].delivery_zones.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                offersDelivery: offersDelivery.value,
-                deliveryZones: {
-                    zones: deliveryZones.value
-                }
+                zones: deliveryZones.value
             }
         })).json();
 
-        if (error) {
+        const { error: offersDeliveryError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                offersDelivery: true,
+            }
+        })).json();
+
+
+        if (error || offersDeliveryError) {
             toast.error('Failed to save delivery zones');
             return;
         }

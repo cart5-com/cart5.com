@@ -74,28 +74,26 @@ const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+    const { data: address, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.get.$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
         json: {
             columns: {
-                address: {
-                    timezone: true,
-                    country: true,
-                    city: true,
-                    state: true,
-                    postalCode: true,
-                    address1: true,
-                    address2: true,
-                }
+                timezone: true,
+                country: true,
+                city: true,
+                state: true,
+                postalCode: true,
+                address1: true,
+                address2: true,
             }
         }
     })).json()
     if (error) {
         handleError(error, form);
     } else {
-        if (data && data.address) {
+        if (address) {
             // form.setFieldValue('timezone', data.address?.timezone ?? undefined);
             // form.setFieldValue('country', data.address?.country ?? undefined);
             // form.setFieldValue('address1', data.address?.address1 ?? undefined);
@@ -110,10 +108,10 @@ const loadData = async () => {
             //         form.setFieldValue(typedKey, (data.address as any)[key]);
             //     }
             // }
-            for (const key in data.address) {
+            for (const key in address) {
                 const typedKey = key as keyof typeof schema.shape;
-                if (data.address[typedKey]) {
-                    form.setFieldValue(typedKey, data.address[typedKey]);
+                if (address[typedKey]) {
+                    form.setFieldValue(typedKey, address[typedKey]);
                 }
             }
         }
@@ -190,17 +188,15 @@ async function onMapConfirm() {
         const { lat, lng } = mapComp.value.mapView.getCenter();
         // const reverseGeocodeResult = await reverseGeocode(lat, lng);
         // console.log('reverseGeocodeResult', reverseGeocodeResult);
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                address: {
-                    ...form.values,
-                    lat: lat,
-                    lng: lng,
-                    geocodeMetadata: locationMetadata ? locationMetadata : null,
-                }
+                ...form.values,
+                lat: lat,
+                lng: lng,
+                geocodeMetadata: locationMetadata ? locationMetadata : null,
             }
         })).json()
         if (error) {

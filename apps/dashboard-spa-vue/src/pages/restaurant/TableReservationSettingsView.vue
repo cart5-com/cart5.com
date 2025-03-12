@@ -30,41 +30,50 @@ const settings = ref<typeof defaultSettings>(JSON.parse(JSON.stringify(defaultSe
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        // TODO: is there a way to get all the data in one request?
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].table_reservation_settings.get.$post({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                columns: {
+                    minGuests: true,
+                    maxGuests: true,
+                    minTimeInAdvanceMinutes: true,
+                    maxTimeInAdvanceDays: true,
+                    lateHoldTimeMinutes: true,
+                    allowPreOrder: true
+                }
+            }
+        })).json();
+        // get offersTableReservation from restaurant
+        const { data: offersTableReservation, error: offersTableReservationError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
                     offersTableReservation: true,
-                    tableReservationSettings: {
-                        minGuests: true,
-                        maxGuests: true,
-                        minTimeInAdvanceMinutes: true,
-                        maxTimeInAdvanceDays: true,
-                        lateHoldTimeMinutes: true,
-                        allowPreOrder: true
-                    }
                 }
             }
         })).json();
 
-        if (error) {
+        if (error || offersTableReservationError) {
             toast.error('Failed to load settings');
             return;
         }
 
-        if (data?.tableReservationSettings) {
+        if (data) {
             settings.value = {
-                minGuests: data.tableReservationSettings.minGuests ?? defaultSettings.minGuests,
-                maxGuests: data.tableReservationSettings.maxGuests ?? defaultSettings.maxGuests,
-                minTimeInAdvanceMinutes: data.tableReservationSettings.minTimeInAdvanceMinutes ?? defaultSettings.minTimeInAdvanceMinutes,
-                maxTimeInAdvanceDays: data.tableReservationSettings.maxTimeInAdvanceDays ?? defaultSettings.maxTimeInAdvanceDays,
-                lateHoldTimeMinutes: data.tableReservationSettings.lateHoldTimeMinutes ?? defaultSettings.lateHoldTimeMinutes,
-                allowPreOrder: data.tableReservationSettings.allowPreOrder ?? defaultSettings.allowPreOrder
+                minGuests: data.minGuests ?? defaultSettings.minGuests,
+                maxGuests: data.maxGuests ?? defaultSettings.maxGuests,
+                minTimeInAdvanceMinutes: data.minTimeInAdvanceMinutes ?? defaultSettings.minTimeInAdvanceMinutes,
+                maxTimeInAdvanceDays: data.maxTimeInAdvanceDays ?? defaultSettings.maxTimeInAdvanceDays,
+                lateHoldTimeMinutes: data.lateHoldTimeMinutes ?? defaultSettings.lateHoldTimeMinutes,
+                allowPreOrder: data.allowPreOrder ?? defaultSettings.allowPreOrder
             }
         }
-        isTableReservationEnabled.value = data?.offersTableReservation ?? false;
+        isTableReservationEnabled.value = offersTableReservation?.offersTableReservation ?? false;
     } catch (err) {
         console.error('Error loading settings:', err);
         toast.error('Failed to load settings');
@@ -76,24 +85,30 @@ const loadData = async () => {
 const saveSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].table_reservation_settings.update.$patch({
+            param: {
+                restaurantId: currentRestaurantId.value ?? '',
+            },
+            json: {
+                minGuests: settings.value.minGuests,
+                maxGuests: settings.value.maxGuests,
+                minTimeInAdvanceMinutes: settings.value.minTimeInAdvanceMinutes,
+                maxTimeInAdvanceDays: settings.value.maxTimeInAdvanceDays,
+                lateHoldTimeMinutes: settings.value.lateHoldTimeMinutes,
+                allowPreOrder: settings.value.allowPreOrder
+            }
+        })).json();
+        // update offersTableReservation: isTableReservationEnabled.value,
+        const { error: offersTableReservationError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 offersTableReservation: isTableReservationEnabled.value,
-                tableReservationSettings: {
-                    minGuests: settings.value.minGuests,
-                    maxGuests: settings.value.maxGuests,
-                    minTimeInAdvanceMinutes: settings.value.minTimeInAdvanceMinutes,
-                    maxTimeInAdvanceDays: settings.value.maxTimeInAdvanceDays,
-                    lateHoldTimeMinutes: settings.value.lateHoldTimeMinutes,
-                    allowPreOrder: settings.value.allowPreOrder
-                }
             }
         })).json();
 
-        if (error) {
+        if (error || offersTableReservationError) {
             toast.error('Failed to save settings');
             return;
         }

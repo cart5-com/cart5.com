@@ -16,15 +16,13 @@ export const isMenuLoading = ref(false);
 export const loadMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].menu.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
-                    menu: {
-                        menuRoot: true
-                    }
+                    menuRoot: true
                 }
             }
         })).json();
@@ -34,7 +32,7 @@ export const loadMenu = async () => {
             return;
         }
 
-        menuRoot.value = data?.menu?.menuRoot as MenuRoot || defaultMenuRoot;
+        menuRoot.value = data?.menuRoot as MenuRoot || defaultMenuRoot;
     } catch (err) {
         console.error('Error loading menu:', err);
         toast.error('Failed to load menu');
@@ -46,14 +44,12 @@ export const loadMenu = async () => {
 export const saveMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].menu.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                menu: {
-                    menuRoot: menuRoot.value
-                }
+                menuRoot: menuRoot.value
             }
         })).json();
 

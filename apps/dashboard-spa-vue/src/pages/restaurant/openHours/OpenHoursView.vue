@@ -64,19 +64,17 @@ watch([defaultHours, deliveryHours, pickupHours, onPremiseHours, tableReservatio
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].open_hours.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
-                    openHours: {
-                        defaultOpenHours: true,
-                        deliveryHours: true,
-                        pickupHours: true,
-                        onPremiseHours: true,
-                        tableReservationHours: true,
-                    }
+                    defaultOpenHours: true,
+                    deliveryHours: true,
+                    pickupHours: true,
+                    onPremiseHours: true,
+                    tableReservationHours: true,
                 }
             }
         })).json();
@@ -86,12 +84,12 @@ const loadData = async () => {
             return;
         }
 
-        if (data?.openHours) {
-            defaultHours.value = data.openHours.defaultOpenHours || { isActive: true, days: defaultDaysData };
-            deliveryHours.value = data.openHours.deliveryHours || { isActive: false, days: defaultDaysData };
-            pickupHours.value = data.openHours.pickupHours || { isActive: false, days: defaultDaysData };
-            onPremiseHours.value = data.openHours.onPremiseHours || { isActive: false, days: defaultDaysData };
-            tableReservationHours.value = data.openHours.tableReservationHours || { isActive: false, days: defaultDaysData };
+        if (data) {
+            defaultHours.value = data.defaultOpenHours || { isActive: true, days: defaultDaysData };
+            deliveryHours.value = data.deliveryHours || { isActive: false, days: defaultDaysData };
+            pickupHours.value = data.pickupHours || { isActive: false, days: defaultDaysData };
+            onPremiseHours.value = data.onPremiseHours || { isActive: false, days: defaultDaysData };
+            tableReservationHours.value = data.tableReservationHours || { isActive: false, days: defaultDaysData };
         } else {
             defaultHours.value = { isActive: true, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             deliveryHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
@@ -113,18 +111,16 @@ const loadData = async () => {
 const saveHours = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].open_hours.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                openHours: {
-                    defaultOpenHours: defaultHours.value,
-                    deliveryHours: deliveryHours.value,
-                    pickupHours: pickupHours.value,
-                    onPremiseHours: onPremiseHours.value,
-                    tableReservationHours: tableReservationHours.value,
-                }
+                defaultOpenHours: defaultHours.value,
+                deliveryHours: deliveryHours.value,
+                pickupHours: pickupHours.value,
+                onPremiseHours: onPremiseHours.value,
+                tableReservationHours: tableReservationHours.value,
             }
         })).json();
 

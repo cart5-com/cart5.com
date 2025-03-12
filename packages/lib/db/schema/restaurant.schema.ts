@@ -250,7 +250,7 @@ export const updateRestaurantScheduledOrdersSettingsSchema = createUpdateSchema(
 export const restaurantDeliveryZoneMapTable = sqliteTable("restaurant_delivery_zone_map", {
 	restaurantId: text("restaurant_id").notNull().unique(),
 	zones: text('zones', { mode: 'json' }).$type<DeliveryZone[]>().$defaultFn(() => []),
-	minLat: real('min_lat'), // .notkNull().default(90),
+	minLat: real('min_lat'), // .notNull().default(90),
 	maxLat: real('max_lat'), // .notNull().default(90),
 	minLng: real('min_lng'), // .notNull().default(-180),
 	maxLng: real('max_lng'), // .notNull().default(-180),

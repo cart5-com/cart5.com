@@ -67,19 +67,17 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].tax_settings.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
-                    taxSettings: {
-                        taxCategories: true,
-                        currency: true,
-                        salesTaxType: true,
-                        taxName: true,
-                        taxRateForDelivery: true,
-                    }
+                    taxCategories: true,
+                    currency: true,
+                    salesTaxType: true,
+                    taxName: true,
+                    taxRateForDelivery: true,
                 }
             }
         })).json();
@@ -89,15 +87,15 @@ const loadData = async () => {
             return;
         }
 
-        if (data?.taxSettings) {
+        if (data) {
             taxSettings.value = {
-                taxCategories: data.taxSettings.taxCategories ?? defaultTaxSettings.taxCategories,
-                currency: data.taxSettings.currency ?? defaultTaxSettings.currency,
-                salesTaxType: data.taxSettings.salesTaxType ?? defaultTaxSettings.salesTaxType,
-                taxName: data.taxSettings.taxName ?? defaultTaxSettings.taxName,
-                taxRateForDelivery: data.taxSettings.taxRateForDelivery ?? defaultTaxSettings.taxRateForDelivery,
+                taxCategories: data.taxCategories ?? defaultTaxSettings.taxCategories,
+                currency: data.currency ?? defaultTaxSettings.currency,
+                salesTaxType: data.salesTaxType ?? defaultTaxSettings.salesTaxType,
+                taxName: data.taxName ?? defaultTaxSettings.taxName,
+                taxRateForDelivery: data.taxRateForDelivery ?? defaultTaxSettings.taxRateForDelivery,
             };
-            selectedCurrency.value = data.taxSettings.currency ?? 'GBP';
+            selectedCurrency.value = data.currency ?? 'GBP';
         }
     } catch (err) {
         console.error('Error loading tax settings:', err);
@@ -110,18 +108,16 @@ const loadData = async () => {
 const saveTaxSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].tax_settings.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                taxSettings: {
-                    currency: selectedCurrency.value,
-                    salesTaxType: taxSettings.value.salesTaxType,
-                    taxName: taxSettings.value.taxName,
-                    taxRateForDelivery: taxSettings.value.taxRateForDelivery,
-                    taxCategories: taxSettings.value.taxCategories
-                }
+                currency: selectedCurrency.value,
+                salesTaxType: taxSettings.value.salesTaxType,
+                taxName: taxSettings.value.taxName,
+                taxRateForDelivery: taxSettings.value.taxRateForDelivery,
+                taxCategories: taxSettings.value.taxCategories
             }
         })).json();
 

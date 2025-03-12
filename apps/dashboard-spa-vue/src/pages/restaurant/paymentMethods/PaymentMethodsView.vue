@@ -44,19 +44,17 @@ watch([defaultMethods, deliveryMethods, pickupMethods, onPremiseMethods, tableRe
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].payment_methods.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
-                    paymentMethods: {
-                        defaultPaymentMethods: true,
-                        deliveryPaymentMethods: true,
-                        pickupPaymentMethods: true,
-                        onPremisePaymentMethods: true,
-                        tableReservationPaymentMethods: true,
-                    }
+                    defaultPaymentMethods: true,
+                    deliveryPaymentMethods: true,
+                    pickupPaymentMethods: true,
+                    onPremisePaymentMethods: true,
+                    tableReservationPaymentMethods: true,
                 }
             }
         })).json();
@@ -66,12 +64,12 @@ const loadData = async () => {
             return;
         }
 
-        if (data?.paymentMethods) {
-            defaultMethods.value = data.paymentMethods.defaultPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            deliveryMethods.value = data.paymentMethods.deliveryPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            pickupMethods.value = data.paymentMethods.pickupPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            onPremiseMethods.value = data.paymentMethods.onPremisePaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            tableReservationMethods.value = data.paymentMethods.tableReservationPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+        if (data) {
+            defaultMethods.value = data.defaultPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+            deliveryMethods.value = data.deliveryPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+            pickupMethods.value = data.pickupPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+            onPremiseMethods.value = data.onPremisePaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+            tableReservationMethods.value = data.tableReservationPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
         }
     } catch (err) {
         console.error('Error loading payment methods:', err);
@@ -87,18 +85,16 @@ const loadData = async () => {
 const savePaymentMethods = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].payment_methods.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                paymentMethods: {
-                    defaultPaymentMethods: defaultMethods.value,
-                    deliveryPaymentMethods: deliveryMethods.value,
-                    pickupPaymentMethods: pickupMethods.value,
-                    onPremisePaymentMethods: onPremiseMethods.value,
-                    tableReservationPaymentMethods: tableReservationMethods.value,
-                }
+                defaultPaymentMethods: defaultMethods.value,
+                deliveryPaymentMethods: deliveryMethods.value,
+                pickupPaymentMethods: pickupMethods.value,
+                onPremisePaymentMethods: onPremiseMethods.value,
+                tableReservationPaymentMethods: tableReservationMethods.value,
             }
         })).json();
 

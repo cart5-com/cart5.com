@@ -33,18 +33,16 @@ const deliverySettings = ref<Required<ScheduledOrdersSettings>>({
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].scheduled_orders_settings.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
                 columns: {
-                    scheduledOrdersSettings: {
-                        pickup_settings: true,
-                        delivery_settings: true,
-                        isScheduledOrdersEnabled: true,
-                        isOnlyScheduledOrdersAllowed: true,
-                    }
+                    pickup_settings: true,
+                    delivery_settings: true,
+                    isScheduledOrdersEnabled: true,
+                    isOnlyScheduledOrdersAllowed: true,
                 }
             }
         })).json();
@@ -55,11 +53,11 @@ const loadData = async () => {
         }
 
         console.log('data', data);
-        if (data?.scheduledOrdersSettings) {
-            isScheduledOrdersEnabled.value = data.scheduledOrdersSettings.isScheduledOrdersEnabled ?? false;
-            isOnlyScheduledOrdersAllowed.value = data.scheduledOrdersSettings.isOnlyScheduledOrdersAllowed ?? false;
-            pickupSettings.value = { ...pickupSettings.value, ...data.scheduledOrdersSettings.pickup_settings };
-            deliverySettings.value = { ...deliverySettings.value, ...data.scheduledOrdersSettings.delivery_settings };
+        if (data) {
+            isScheduledOrdersEnabled.value = data.isScheduledOrdersEnabled ?? false;
+            isOnlyScheduledOrdersAllowed.value = data.isOnlyScheduledOrdersAllowed ?? false;
+            pickupSettings.value = { ...pickupSettings.value, ...data.pickup_settings };
+            deliverySettings.value = { ...deliverySettings.value, ...data.delivery_settings };
         }
     } catch (err) {
         console.error('Error loading settings:', err);
@@ -72,17 +70,15 @@ const loadData = async () => {
 const saveSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].scheduled_orders_settings.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
-                scheduledOrdersSettings: {
-                    isScheduledOrdersEnabled: isScheduledOrdersEnabled.value,
-                    isOnlyScheduledOrdersAllowed: isOnlyScheduledOrdersAllowed.value,
-                    pickup_settings: pickupSettings.value,
-                    delivery_settings: deliverySettings.value,
-                }
+                isScheduledOrdersEnabled: isScheduledOrdersEnabled.value,
+                isOnlyScheduledOrdersAllowed: isOnlyScheduledOrdersAllowed.value,
+                pickup_settings: pickupSettings.value,
+                delivery_settings: deliverySettings.value,
             }
         })).json();
 
