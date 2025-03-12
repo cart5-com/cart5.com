@@ -1,4 +1,4 @@
-import { TEAM_PERMISSIONS, teamTable } from "../schema/team.schema";
+import { teamTable } from "../schema/team.schema";
 
 import db from "../drizzle";
 import { teamUserMapTable } from "../schema/team.schema";
@@ -68,23 +68,4 @@ export const getUserWebsitesService = async (userId: string) => {
         );
 
     return websites;
-}
-
-export const createTeamTransactionalService = async (
-    userId: string,
-    name: string,
-    tx: Parameters<Parameters<typeof db.transaction>[0]>[0]
-) => {
-    const team = await tx.insert(teamTable).values({
-        name: `${name} Team`,
-        ownerUserId: userId
-    }).returning();
-
-    await tx.insert(teamUserMapTable).values({
-        teamId: team[0].id,
-        userId: userId,
-        permissions: [TEAM_PERMISSIONS.FULL_ACCESS]
-    });
-
-    return team[0].id;
 }
