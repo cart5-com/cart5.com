@@ -24,10 +24,10 @@ export const createEcomApiMapsClient = (baseUrl: string = '/__p_api/') => {
 export type ReqType<T> = InferRequestType<T>;
 export type ResType<T> = InferResponseType<T>;
 // export type sampleApiReqType = ReqType<Awaited<ReturnType<typeof createEcomDashboardApiClient>['api']['dashboard']['restaurant'][':restaurantId']['$patch']>>['json'];
-export type predictionType = ResType<
-    Awaited<
-        ReturnType<typeof createEcomApiMapsClient>['api']['maps']['gmaps']['autocomplete']['$get']
-    >
->['data']['predictions'][number];
+// export type predictionType = ResType<
+//     Awaited<
+//         ReturnType<typeof createEcomApiMapsClient>['api']['maps']['gmaps']['autocomplete']['$get']
+//     >
+// >['data']['predictions'][number];
 
 // export type predictionExtraType = (predictionType & { lat?: number; lng?: number });

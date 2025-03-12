@@ -10,17 +10,17 @@ export async function geocode(address: string, countryCode?: string) {
 }
 
 
-export async function autocomplete(query: string, countryCode?: string) {
-    const queryObj = {
-        input: query.trim().toLowerCase(),
-    };
-    if (countryCode) {
-        (queryObj as any).components = `country:${countryCode.toLowerCase()}`;
-    }
-    return await (await mapsApiClient.api.maps.gmaps.autocomplete.$get({
-        query: queryObj,
-    })).json()
-}
+// export async function autocomplete(query: string, countryCode?: string) {
+//     const queryObj = {
+//         input: query.trim().toLowerCase(),
+//     };
+//     if (countryCode) {
+//         (queryObj as any).components = `country:${countryCode.toLowerCase()}`;
+//     }
+//     return await (await mapsApiClient.api.maps.gmaps.autocomplete.$get({
+//         query: queryObj,
+//     })).json()
+// }
 
 export async function getOpenStreetMapItems(
     addressQuery: string,

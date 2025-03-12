@@ -8,12 +8,12 @@ import { type ErrorType } from "../types/errors";
 import { getOptionalEnvVariable, IS_PROD } from "../utils/getEnvVariable";
 import { verifyRequestOrigin } from "../utils/verifyRequestOrigin";
 
-function generateSessionToken() {
-    const fourHours = 14400000; //4 * 60 * 60 * 1000; // 4 hours in milliseconds
-    const currentTime = Date.now();
-    const result = Math.floor(currentTime / fourHours).toString(16);
-    return result + result;
-}
+// function generateSessionToken() {
+//     const fourHours = 14400000; //4 * 60 * 60 * 1000; // 4 hours in milliseconds
+//     const currentTime = Date.now();
+//     const result = Math.floor(currentTime / fourHours).toString(16);
+//     return result + result;
+// }
 
 const cacheControl = IS_PROD ? 'public, max-age=2592000, immutable' : 'no-cache'; // 30 days cache
 const REQUIRED_HEADERS = ['sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site'] as const;
@@ -47,44 +47,50 @@ export const mapsRoute = new Hono<HonoVariables>()
         await next();
     })
     // docs: https://developers.google.com/maps/documentation/places/web-service/autocomplete
-    .get(
-        '/autocomplete',
-        zValidator('query', z.object({
-            input: z.string().min(2, { message: "input required" }),
-            components: z.string().optional(),
-            language: z.string().optional(),
-            location: z.string().optional(),
-            locationbias: z.string().optional(),
-            locationrestriction: z.string().optional(),
-            offset: z.string().optional(),
-            origin: z.string().optional(),
-            radius: z.string().optional(),
-            region: z.string().optional(),
-            types: z.string().optional(),
-        })),
-        async (c) => {
-            const {
-                // input,
-                // components, language, location, locationbias,
-                // locationrestriction, offset, origin, radius,
-                // region, types
-            } = c.req.valid('query');
-            let reqUrl = new URL(c.req.url);
-            reqUrl.protocol = 'https';
-            reqUrl.hostname = 'maps.googleapis.com';
-            reqUrl.pathname = '/maps/api/place/autocomplete/json';
-            reqUrl.searchParams.delete('key');
-            reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
-            reqUrl.searchParams.delete('sessiontoken');
-            reqUrl.searchParams.append('sessiontoken', generateSessionToken());
-            const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.places.AutocompleteResponse;
+    // TODO: nobody is using this
+    // export type predictionType = ResType<
+    //     Awaited<
+    //         ReturnType<typeof createEcomApiMapsClient>['api']['maps']['gmaps']['autocomplete']['$get']
+    //     >
+    // >['data']['predictions'][number];
+    // .get(
+    //     '/autocomplete',
+    //     zValidator('query', z.object({
+    //         input: z.string().min(2, { message: "input required" }),
+    //         components: z.string().optional(),
+    //         language: z.string().optional(),
+    //         location: z.string().optional(),
+    //         locationbias: z.string().optional(),
+    //         locationrestriction: z.string().optional(),
+    //         offset: z.string().optional(),
+    //         origin: z.string().optional(),
+    //         radius: z.string().optional(),
+    //         region: z.string().optional(),
+    //         types: z.string().optional(),
+    //     })),
+    //     async (c) => {
+    //         const {
+    //             // input,
+    //             // components, language, location, locationbias,
+    //             // locationrestriction, offset, origin, radius,
+    //             // region, types
+    //         } = c.req.valid('query');
+    //         let reqUrl = new URL(c.req.url);
+    //         reqUrl.protocol = 'https';
+    //         reqUrl.hostname = 'maps.googleapis.com';
+    //         reqUrl.pathname = '/maps/api/place/autocomplete/json';
+    //         reqUrl.searchParams.delete('key');
+    //         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+    //         reqUrl.searchParams.delete('sessiontoken');
+    //         reqUrl.searchParams.append('sessiontoken', generateSessionToken());
+    //         const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.places.AutocompleteResponse;
 
-            return c.json({
-                data: response,
-                error: null as ErrorType
-            }, 200);
-        }
-    )
+    //         return c.json({
+    //             data: response,
+    //             error: null as ErrorType
+    //         }, 200);
+    //     }
+    // )
     // docs: https://developers.google.com/maps/documentation/geocoding/requests-geocoding
     .get(
         '/geocode',
