@@ -6,7 +6,6 @@ import { TEAM_PERMISSIONS } from "../../../db/schema/team.schema";
 import { type Context, type Next } from 'hono'
 import { KNOWN_ERROR } from '../../../types/errors'
 
-// TODO: move domains to 1 folder up as website_domains folder
 export async function websiteAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
     const websiteId = c.req.param('websiteId');

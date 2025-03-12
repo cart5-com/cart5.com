@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { type Context } from 'hono';
-import type { HonoVariables } from '../../../../../hono/HonoVariables';
-import { type ValidatorContext } from '../../../../../hono/types/ValidatorContext';
-import { type ErrorType } from '../../../../../types/errors';
+import type { HonoVariables } from '../../../../hono/HonoVariables';
+import { type ValidatorContext } from '../../../../hono/types/ValidatorContext';
+import { type ErrorType } from '../../../../types/errors';
 import { zValidator } from '@hono/zod-validator';
 import { listDomains_Service } from './website.domains.list.service';
-import { selectWebsiteDomainMapSchema } from '../../../../../db/schema/website.schema';
+import { selectWebsiteDomainMapSchema } from '../../../../db/schema/website.schema';
 
 export const listDomains_SchemaValidator = zValidator('json', z.object({
     columns: z.object(

@@ -4,7 +4,7 @@ import { createWebsite_Handler, createWebsite_SchemaValidator } from './create/w
 import { updateWebsite_Handler, updateWebsite_SchemaValidator } from './update/website.update.handler'
 import { getWebsite_Handler, getWebsite_SchemaValidator } from './get/website.get.handler'
 import { getMyWebsites_Handler } from "./my_websites/website.my_websites.handler"
-import { domainRouter } from "./domains/website.domains.router"
+import { domainRouter } from "../website_domains/website.domains.router"
 import { websiteAdminCheck } from "./website.admin.check"
 
 export const websiteRouter = new Hono<HonoVariables>()

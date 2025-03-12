@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import type { HonoVariables } from '../../../../hono/HonoVariables';
+import type { HonoVariables } from '../../../hono/HonoVariables';
 import { addDomain_Handler } from './add/website.domains.add.handler';
-import { websiteAdminCheck } from "../website.admin.check";
+import { websiteAdminCheck } from "../website/website.admin.check";
 import { removeDomain_Handler } from "./remove/website.domains.remove.handler";
 import { setDefaultDomain_Handler } from "./set_default/website.domains.set_default.handler";
-import { ENFORCE_HOSTNAME_CHECKS } from "../../../../auth/enforceHostnameChecks";
+import { ENFORCE_HOSTNAME_CHECKS } from "../../../auth/enforceHostnameChecks";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { listDomains_Handler, listDomains_SchemaValidator } from "./list/website.domains.list.handler";

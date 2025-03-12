@@ -1,10 +1,10 @@
 import { eq } from 'drizzle-orm';
-import db from '../../../../../db/drizzle';
-import { websiteDomainMapTable, websitesTable } from '../../../../../db/schema/website.schema';
-import { getEnvVariable, IS_PROD } from '../../../../../utils/getEnvVariable';
-import { KNOWN_ERROR } from '../../../../../types/errors';
-import { isHostnameRegisteredService } from '../../../../validate_domain';
-import { checkDns } from '../../../../../utils/dnsCheck';
+import db from '../../../../db/drizzle';
+import { websiteDomainMapTable, websitesTable } from '../../../../db/schema/website.schema';
+import { getEnvVariable, IS_PROD } from '../../../../utils/getEnvVariable';
+import { KNOWN_ERROR } from '../../../../types/errors';
+import { isHostnameRegisteredService } from '../../../validate_domain';
+import { checkDns } from '../../../../utils/dnsCheck';
 
 
 const reservedSubdomains = [

@@ -1,9 +1,9 @@
 import { type Context } from 'hono';
-import type { HonoVariables } from '../../../../../hono/HonoVariables';
-import { type ErrorType } from '../../../../../types/errors';
+import type { HonoVariables } from '../../../../hono/HonoVariables';
+import { type ErrorType } from '../../../../types/errors';
 import { setDefaultDomain_Service } from './website.domains.set_default.service';
 import type { hostname_SchemaValidator } from '../website.domains.router';
-import { type ValidatorContext } from '../../../../../hono/types/ValidatorContext';
+import { type ValidatorContext } from '../../../../hono/types/ValidatorContext';
 
 /**
  * Remove a domain from a website

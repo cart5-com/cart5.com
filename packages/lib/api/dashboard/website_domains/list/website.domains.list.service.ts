@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import db from '../../../../../db/drizzle';
-import { websiteDomainMapTable, websitesTable } from '../../../../../db/schema/website.schema';
+import db from '../../../../db/drizzle';
+import { websiteDomainMapTable, websitesTable } from '../../../../db/schema/website.schema';
 
 export const listDomains_Service = async (
     websiteId: string,

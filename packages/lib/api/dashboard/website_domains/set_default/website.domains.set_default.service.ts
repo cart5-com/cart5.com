@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
-import db from "../../../../../db/drizzle";
-import { KNOWN_ERROR } from "../../../../../types/errors";
-import { websitesTable, websiteDomainMapTable } from "../../../../../db/schema/website.schema";
+import db from "../../../../db/drizzle";
+import { KNOWN_ERROR } from "../../../../types/errors";
+import { websitesTable, websiteDomainMapTable } from "../../../../db/schema/website.schema";
 
 
 export const setDefaultDomain_Service = async (websiteId: string, hostname: string) => {
