@@ -13,8 +13,8 @@ import {
 	// MenuIcon,
 	// GlobeIcon,
 	Store,
-	LayoutGrid,
-	Globe
+	Globe,
+	Home
 } from "lucide-vue-next";
 
 // const apps = [
@@ -41,7 +41,7 @@ import {
 	<div class="grid md:grid-cols-3 gap-4 p-2 lg:p-4">
 		<RouterLink :to="{ name: 'home' }"
 					class="bg-muted hover:bg-muted/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
-			<LayoutGrid class="text-muted-foreground h-10 w-10" />
+			<Home class="text-muted-foreground h-10 w-10" />
 			<span class="text-foreground mt-2 text-sm text-center">Home</span>
 		</RouterLink>
 		<RouterLink :to="{ name: 'my-restaurants' }"
