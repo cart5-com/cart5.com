@@ -7,15 +7,15 @@ export const myTeams = ref<ResType<
     typeof dashboardApiClient.api_dashboard.team.my_teams.$get
 >["data"]>({
     myTeams: [],
-    hostnameTeam: null
+    currentTeam: null
 })
 
 export async function loadMyTeams() {
     const response = await (await dashboardApiClient.api_dashboard.team.my_teams.$get()).json()
     myTeams.value = response.data
-    if (window.location.host !== myTeams.value.hostnameTeam?.defaultHostname) {
+    if (window.location.host !== myTeams.value.currentTeam?.defaultHostname) {
         alert('Redirecting to default domain')
-        window.location.href = window.location.href.replace(window.location.host, myTeams.value.hostnameTeam?.defaultHostname!)
+        window.location.href = window.location.href.replace(window.location.host, myTeams.value.currentTeam?.defaultHostname!)
     }
     console.log(myTeams.value)
 }

@@ -14,7 +14,7 @@ import { myTeams } from '@src/stores/TeamStore';
 
 				<div>
 					<div class="p-2 border border-dashed rounded-md">
-						{{ myTeams.hostnameTeam }}
+						{{ myTeams.currentTeam }}
 					</div>
 				</div>
 

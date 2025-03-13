@@ -110,8 +110,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
                         Support Organization:
                         <Badge variant="secondary"
                                disabled>
-                            {{ myTeams.hostnameTeam?.name }}
-                            ({{ myTeams.hostnameTeam?.defaultHostname }})
+                            {{ myTeams.currentTeam?.name }}
+                            ({{ myTeams.currentTeam?.defaultHostname }})
                         </Badge>
                         <div class="text-sm text-muted-foreground">
                             This support team will be able to help you manage and maintain your new website.

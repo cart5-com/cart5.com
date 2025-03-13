@@ -40,7 +40,7 @@ export const getMyTeams_Service = async (
 
     return {
         myTeams,
-        hostnameTeam: await getTeamByHostname_Service(hostname)
+        currentTeam: await getTeamByHostname_Service(hostname)
     };
 
 } 
