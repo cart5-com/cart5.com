@@ -7,6 +7,7 @@ import { type ErrorType } from '../../../../types/errors';
 import { validateCrossDomainTurnstile_WithUserCheck } from '../../../../utils/validateTurnstile';
 import { zValidator } from '@hono/zod-validator';
 import { createWebsite_Service } from './website.create.service';
+import { getTeamByHostname_Service } from '../../website_domains/_service_utils/getTeamByHostname_Service';
 
 // Schema validation for website creation
 export const createWebsite_SchemaValidator = zValidator('form', z.object({
@@ -24,8 +25,9 @@ export const createWebsite_Handler = async (c: Context<
 
     // Validate turnstile and user
     const { userId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
+    const supportTeam = await getTeamByHostname_Service(c.req.header()['host'])
     return c.json({
-        data: await createWebsite_Service(userId, name),
+        data: await createWebsite_Service(userId, name, supportTeam?.id ?? null),
         error: null as ErrorType
     }, 200);
 } 

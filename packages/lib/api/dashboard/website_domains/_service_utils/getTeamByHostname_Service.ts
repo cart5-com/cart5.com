@@ -11,7 +11,10 @@ import { teamTable } from '../../../../db/schema/team.schema';
 export const getTeamByHostname_Service = async (hostname: string) => {
     const result = await db
         .select({
-            team: teamTable
+            id: teamTable.id,
+            name: websitesTable.name,
+            defaultHostname: websitesTable.defaultHostname,
+            ownerUserId: teamTable.ownerUserId
         })
         .from(websiteDomainMapTable)
         .innerJoin(
@@ -25,5 +28,5 @@ export const getTeamByHostname_Service = async (hostname: string) => {
         .where(eq(websiteDomainMapTable.hostname, hostname))
         .then(results => results[0] || null);
 
-    return result ? result.team : null;
+    return result ? result : null;
 }

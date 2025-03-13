@@ -12,6 +12,7 @@ import { myWebsites } from '@src/stores/WebsiteStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { insertWebsitesSchema } from 'lib/db/schema/website.schema';
+import { myTeams } from '@src/stores/TeamStore';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -76,6 +77,17 @@ async function onSubmit(values: z.infer<typeof schema>) {
         <div class="text-sm font-medium text-destructive"
              v-if="globalError">
             {{ globalError }}
+        </div>
+        <div class="flex flex-col gap-2">
+            <div>
+                Support Organization: <Button variant="secondary"
+                        disabled>
+                    {{ myTeams.hostnameTeam?.name }}
+                </Button>
+                <div class="text-sm text-muted-foreground">
+                    This support team will be able to help you manage and maintain your new website.
+                </div>
+            </div>
         </div>
         <div>
             <Button type="submit"

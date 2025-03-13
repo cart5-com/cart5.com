@@ -125,7 +125,13 @@ sudo apt install xcaddy -y
 # install caddy-ratelimit https://github.com/mholt/caddy-ratelimit
 # and cache plugin https://github.com/darkweak/souin/plugins/caddy
 # it takes a while to build ⏳🥲
-xcaddy build --with github.com/mholt/caddy-ratelimit --with github.com/darkweak/souin/plugins/caddy
+xcaddy build --with github.com/mholt/caddy-ratelimit --with github.com/darkweak/souin/plugins/caddy --with github.com/caddy-dns/cloudflare
+# TODO: configure prod caddy to use cloudflare dns for wildcard subdomains
+# https://caddyserver.com/docs/automatic-https#wildcard-certificates
+# https://caddyserver.com/docs/caddyfile/patterns#wildcard-certificates
+# https://caddyserver.com/docs/automatic-https#dns-challenge
+# https://caddy.community/t/how-to-use-dns-provider-modules-in-caddy-2/8148
+# https://github.com/caddy-dns/cloudflare
 
 # replace old caddy with new caddy
 sudo mv /usr/bin/caddy /usr/bin/caddy-old
