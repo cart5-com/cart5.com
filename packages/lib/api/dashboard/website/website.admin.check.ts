@@ -4,6 +4,7 @@ import { type Context, type Next } from 'hono'
 import { KNOWN_ERROR } from '../../../types/errors'
 import { eq } from "drizzle-orm";
 import { isAdminCheck } from "../team/service_utils/isAdminCheck";
+import { TEAM_PERMISSIONS } from "../../../db/schema/team.schema";
 
 export async function websiteAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
@@ -35,7 +36,13 @@ export const isUserWebsiteAdmin = async function (
     if (!website) {
         return false;
     }
-    return await isAdminCheck(userId, website.ownerTeamId, website.supportTeamId);
+    return await isAdminCheck(
+        userId, website.ownerTeamId, website.supportTeamId,
+        [
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER
+        ]
+    );
 }
 
 

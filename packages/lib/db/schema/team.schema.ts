@@ -18,6 +18,8 @@ export const teamUserMapTable = sqliteTable("team_user_map", {
 
 export const TEAM_PERMISSIONS = {
     FULL_ACCESS: "FULL_ACCESS",
+
     WEBSITE_MANAGER: "WEBSITE_MANAGER",
-    ORDER_MANAGER: "ORDER_MANAGER",
+
+    RESTAURANT_MANAGER: "RESTAURANT_MANAGER",
 }

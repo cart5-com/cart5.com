@@ -1,0 +1,26 @@
+I am building a saas for restaurants.
+
+My main purpose is creating a system to list every restaurants in the world.
+let call it GLOBAL_RESTAURANT_LIST_SYSTEM
+
+The website is https://www.cart5dev.com
+
+I will accept partners to create exact same website for them in a few clicks.
+
+For example they can create a website: www.obite.com it will be a copy of cart5dev.com
+
+They can add new restaurants to the GLOBAL_RESTAURANT_LIST_SYSTEM and any website can list restaurants from GLOBAL_RESTAURANT_LIST_SYSTEM.
+
+any partner can have their own team and team can have multiple users to manage their works.
+
+any restaurant can have their own team and team can have multiple users to manage their works.
+
+Any restaurant may have a partner team as their support team.
+I mean partner can assign them to a restaurant and they can give support to the restaurant.
+
+until now, I have restaurants, websites, teams, users tables in the database.
+We can assume the partner team is the website manager team.
+
+I am struggling to design dashboard for the partner and restaurant users.
+
+I want things to be simple and easy to use. but I could not find a good idea.

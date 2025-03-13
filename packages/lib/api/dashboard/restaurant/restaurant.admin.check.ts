@@ -4,7 +4,7 @@ import db from '../../../db/drizzle';
 import { restaurantTable } from '../../../db/schema/restaurant.schema';
 import { eq } from 'drizzle-orm';
 import { isAdminCheck } from '../team/service_utils/isAdminCheck';
-
+import { TEAM_PERMISSIONS } from '../../../db/schema/team.schema';
 export async function restaurantAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
     const restaurantId = c.req.param('restaurantId');
@@ -33,5 +33,10 @@ export const isUserRestaurantAdmin = async function (
     if (!restaurant) {
         return false;
     }
-    return await isAdminCheck(userId, restaurant.ownerTeamId, restaurant.supportTeamId);
+    return await isAdminCheck(userId, restaurant.ownerTeamId, restaurant.supportTeamId,
+        [
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]
+    );
 }
