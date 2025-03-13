@@ -3,27 +3,30 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
-import { myWebsitesFiltered, myWebsites, searchQuery, websiteListType } from '@src/stores/WebsiteStore'
+import { myWebsitesFiltered, myWebsites, searchQuery } from '@src/stores/WebsiteStore'
 import HeaderOnly from '@src/layouts/HeaderOnly.vue';
-import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import WebsiteNewForm from "@src/pages/my-websites/WebsiteNewForm.vue";
-const dialog = useDialog();
+// import { useDialog } from '@/ui-plus/dialog/use-dialog';
+// import WebsiteNewForm from "@src/pages/my-websites/WebsiteNewForm.vue";
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// const dialog = useDialog();
 const IS_DEV = import.meta.env.DEV;
 
 const openNewWebsiteDialog = () => {
-    dialog.show<websiteListType[number]>({
-        title: "Add New Website",
-        closeable: false,
-        component: WebsiteNewForm,
-        onSuccess: async (values) => {
-            console.log("success");
-            console.log(values);
-        },
-        onError: async (error: any) => {
-            console.log("error");
-            console.log(error);
-        }
-    });
+    router.push('/new-website');
+    // dialog.show<websiteListType[number]>({
+    //     title: "Add New Website",
+    //     closeable: false,
+    //     component: WebsiteNewForm,
+    //     onSuccess: async (values) => {
+    //         console.log("success");
+    //         console.log(values);
+    //     },
+    //     onError: async (error: any) => {
+    //         console.log("error");
+    //         console.log(error);
+    //     }
+    // });
 }
 
 </script>

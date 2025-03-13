@@ -104,6 +104,11 @@ const router = createRouter({
       component: () => import('@src/pages/my-websites/MyWebsitesView.vue'),
     },
     {
+      path: '/new-website',
+      name: 'new-website',
+      component: () => import('@src/pages/my-websites/WebsiteNewForm.vue'),
+    },
+    {
       path: '/website/:websiteId',
       name: 'website',
       component: () => import('@src/layouts/website/WebsiteLayout.vue'),
@@ -126,7 +131,7 @@ const router = createRouter({
         {
           path: 'domains/add',
           name: 'website-domains-add',
-          component: () => import('@src/pages/website/domains/AddNew.vue'),
+          component: () => import('@src/pages/website/domains/AddNewDomain.vue'),
         }
       ],
     },

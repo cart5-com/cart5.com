@@ -6,19 +6,19 @@ import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { showTurnstilePopup } from 'lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
-import { Loader2 } from 'lucide-vue-next'
+import { ArrowLeftIcon, Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { myWebsites } from '@src/stores/WebsiteStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { insertWebsitesSchema } from 'lib/db/schema/website.schema';
 import { myTeams } from '@src/stores/TeamStore';
+import HeaderOnly from '@src/layouts/HeaderOnly.vue';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-const emit = defineEmits<{
-    close: [values: { id: string, name: string }],
-    cancel: [];
-    onError: [error: any];
-}>();
 
 const schema = z.object({
     name: insertWebsitesSchema.shape.name,
@@ -57,48 +57,69 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 id: websiteId,
                 name: values.name,
             }];
-            emit('close', { id: websiteId, name: values.name });
+            // redirect to the new website
+            router.push({ name: 'website-home', params: { websiteId } });
         }
     })
 }
+
 </script>
 
 <template>
-    <AutoForm class="space-y-6"
-              :schema="schema"
-              :form="form"
-              @submit="onSubmit"
-              :field-config="{
-                name: {
-                    label: 'Name',
-                    description: 'Enter a name for your website',
-                },
-            }">
-        <div class="text-sm font-medium text-destructive"
-             v-if="globalError">
-            {{ globalError }}
-        </div>
-        <div class="flex flex-col gap-2">
-            <div>
-                Support Organization: <Button variant="secondary"
-                        disabled>
-                    {{ myTeams.hostnameTeam?.name }}
-                </Button>
-                <div class="text-sm text-muted-foreground">
-                    This support team will be able to help you manage and maintain your new website.
+    <HeaderOnly>
+        <Card class="max-w-md mx-auto">
+            <CardHeader>
+                <CardTitle>
+                    <RouterLink :to="{ name: 'my-websites' }">
+                        <Button variant="secondary"
+                                class="w-full mb-4">
+                            <ArrowLeftIcon /> Back
+                        </Button>
+                    </RouterLink>
+                    Add New Website
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <AutoForm class="space-y-6"
+                          :schema="schema"
+                          :form="form"
+                          @submit="onSubmit"
+                          :field-config="{
+                            name: {
+                                label: 'Name',
+                                description: 'Enter a name for your website',
+                            },
+                        }">
+                    <div class="text-sm font-medium text-destructive"
+                         v-if="globalError">
+                        {{ globalError }}
+                    </div>
+
+                    <div>
+                        <Button type="submit"
+                                :disabled="isLoading"
+                                class="w-full my-6">
+                            <Loader2 v-if="isLoading"
+                                     class="animate-spin" />
+                            Create
+                        </Button>
+                    </div>
+                </AutoForm>
+                <div class="flex flex-col gap-2 mb-4 border p-4 rounded-md border-foreground">
+                    <div>
+                        Support Organization:
+                        <Badge variant="secondary"
+                               disabled>
+                            {{ myTeams.hostnameTeam?.name }}
+                            ({{ myTeams.hostnameTeam?.defaultHostname }})
+                        </Badge>
+                        <div class="text-sm text-muted-foreground">
+                            This support team will be able to help you manage and maintain your new website.
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div>
-            <Button type="submit"
-                    :disabled="isLoading"
-                    class="w-full my-6">
-                <Loader2 v-if="isLoading"
-                         class="animate-spin" />
-                Create
-            </Button>
-        </div>
-    </AutoForm>
-    <Button variant="secondary"
-            @click="emit('cancel')"> Cancel </Button>
+            </CardContent>
+        </Card>
+
+    </HeaderOnly>
 </template>
