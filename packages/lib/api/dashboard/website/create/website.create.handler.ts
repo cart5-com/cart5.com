@@ -27,7 +27,7 @@ export const createWebsite_Handler = async (c: Context<
     const { userId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getTeamByHostname_Service(c.req.header()['host'])
     return c.json({
-        data: await createWebsite_Service(userId, name, supportTeam?.id ?? null),
+        data: await createWebsite_Service(userId, name, supportTeam?.teamId ?? null),
         error: null as ErrorType
     }, 200);
 } 
