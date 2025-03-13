@@ -3,7 +3,7 @@ import { generateKey } from "../../utils/generateKey";
 
 export const teamTable = sqliteTable("team", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('team')),
-    name: text("name").notNull(),
+    // name: text("name").notNull(), removed webiste name is the team name relation:team id-> websitesTable.ownerTeamId
     ownerUserId: text("owner_user_id").notNull(),
 });
 
