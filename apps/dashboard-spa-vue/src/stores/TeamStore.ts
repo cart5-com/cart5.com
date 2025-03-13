@@ -2,10 +2,11 @@ import { ref } from 'vue'
 import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
-
-export const myTeams = ref<ResType<
+export type MyTeamsType = ResType<
     typeof dashboardApiClient.api_dashboard.team.my_teams.$get
->["data"]>({
+>["data"];
+
+export const myTeams = ref<MyTeamsType>({
     myTeams: [],
     currentTeam: null
 })
