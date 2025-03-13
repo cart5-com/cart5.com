@@ -3,6 +3,7 @@ import db from '../../../../db/drizzle';
 import { teamTable, teamUserMapTable } from '../../../../db/schema/team.schema';
 import { websitesTable } from '../../../../db/schema/website.schema';
 import { getTeamByHostname_Service } from '../../website_domains/_service_utils/getTeamByHostname_Service';
+import type { Context } from 'hono';
 
 /**
  * Service to get all teams the user has access to
@@ -11,16 +12,17 @@ import { getTeamByHostname_Service } from '../../website_domains/_service_utils/
  */
 export const getMyTeams_Service = async (
     userId: string,
-    hostname: string
+    c: Context
 ) => {
+    const hostname = c.req.header()['host'];
     const myTeams = await db
         .select({
             id: teamTable.id,
             name: websitesTable.name,
             defaultHostname: websitesTable.defaultHostname,
-            ownerUserId: teamTable.ownerUserId,
-            isOwner: eq(teamTable.ownerUserId, userId),
-            permissions: teamUserMapTable.permissions
+            // ownerUserId: teamTable.ownerUserId,
+            // isOwner: eq(teamTable.ownerUserId, userId),
+            // permissions: teamUserMapTable.permissions
         })
         .from(teamTable)
         .innerJoin(

@@ -23,6 +23,9 @@ import { myTeams } from '@src/stores/TeamStore';
 					<div class="p-2 border border-dashed rounded-md">
 						{{ team.name }}
 						({{ team.defaultHostname }})
+
+						<div>{{ team }}</div>
+
 					</div>
 				</div>
 			</div>

@@ -14,7 +14,7 @@ export const getTeamByHostname_Service = async (hostname: string) => {
             id: teamTable.id,
             name: websitesTable.name,
             defaultHostname: websitesTable.defaultHostname,
-            ownerUserId: teamTable.ownerUserId
+            // ownerUserId: teamTable.ownerUserId
         })
         .from(websiteDomainMapTable)
         .innerJoin(

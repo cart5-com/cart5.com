@@ -8,7 +8,7 @@ import { getMyTeams_Service } from './team.my_teams.service';
  */
 export const getMyTeams_Handler = async (c: Context<HonoVariables>) => {
     return c.json({
-        data: await getMyTeams_Service(c.get('USER')?.id!, c.req.header()['host']),
+        data: await getMyTeams_Service(c.get('USER')?.id!, c),
         error: null as ErrorType
     }, 200);
 } 
