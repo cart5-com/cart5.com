@@ -77,19 +77,18 @@ https://{$PUBLIC_DOMAIN_NAME} {
 	redir https://www.{host}{uri}
 }
 
-# TODO: configure prod caddy to use cloudflare dns for wildcard subdomains
-#	*.{$PUBLIC_DOMAIN_NAME} {
-#		tls {
-#			dns cloudflare {$CF_API_TOKEN}
-#		}
-#		import api-hono-proxy
-#		import dashboard-spa-vue
-#		handle_path /* {
-#			#web-store-ssr-astro
-#			reverse_proxy http://127.0.0.1:3002
-#			cache
-#		}
-#	}
+*.{$PUBLIC_DOMAIN_NAME} {
+	tls {
+		dns cloudflare {$CF_API_TOKEN}
+	}
+	import api-hono-proxy
+	import dashboard-spa-vue
+	handle_path /* {
+		#web-store-ssr-astro
+		reverse_proxy http://127.0.0.1:3002
+		cache
+	}
+}
 	
 
 :443 {
