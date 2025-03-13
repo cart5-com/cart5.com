@@ -31,9 +31,9 @@ export const getMyWebsites_Service = async (userId: string, host: string) => {
         .select({
             id: websitesTable.id,
             name: websitesTable.name,
-            defaultHostname: websitesTable.defaultHostname,
-            ownerTeamId: websitesTable.ownerTeamId,
-            supportTeamId: websitesTable.supportTeamId
+            // defaultHostname: websitesTable.defaultHostname,
+            // ownerTeamId: websitesTable.ownerTeamId,
+            // supportTeamId: websitesTable.supportTeamId
         })
         .from(teamUserMapTable)
         .innerJoin(

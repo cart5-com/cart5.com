@@ -55,7 +55,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             const websiteId = data as string;
             myWebsites.value = [...myWebsites.value, {
                 id: websiteId,
-                name: values.name,
+                name: values.name
             }];
             // redirect to the new website
             router.push({ name: 'website-home', params: { websiteId } });
