@@ -3,7 +3,7 @@ import { KNOWN_ERROR } from '../../../types/errors'
 import db from '../../../db/drizzle';
 import { restaurantTable } from '../../../db/schema/restaurant.schema';
 import { eq } from 'drizzle-orm';
-import { isAdminCheck } from '../team/service_utils/isAdminCheck';
+import { isAdminCheck } from '../team/_service_utils/isAdminCheck';
 import { TEAM_PERMISSIONS } from '../../../db/schema/team.schema';
 export async function restaurantAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;

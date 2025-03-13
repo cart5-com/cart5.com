@@ -1,6 +1,6 @@
 import { websitesTable } from '../../../../db/schema/website.schema';
 import db from '../../../../db/drizzle';
-import { createTeamTransactional_Service } from '../../team/service_utils/createTeamTransactional_Service';
+import { createTeamTransactional_Service } from '../../team/_service_utils/createTeamTransactional_Service';
 
 export const createWebsite_Service = async (userId: string, name: string) => {
     return await db.transaction(async (tx) => {

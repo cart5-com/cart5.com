@@ -3,7 +3,7 @@ import { websitesTable } from "../../../db/schema/website.schema";
 import { type Context, type Next } from 'hono'
 import { KNOWN_ERROR } from '../../../types/errors'
 import { eq } from "drizzle-orm";
-import { isAdminCheck } from "../team/service_utils/isAdminCheck";
+import { isAdminCheck } from "../team/_service_utils/isAdminCheck";
 import { TEAM_PERMISSIONS } from "../../../db/schema/team.schema";
 
 export async function websiteAdminCheck(c: Context, next: Next) {
