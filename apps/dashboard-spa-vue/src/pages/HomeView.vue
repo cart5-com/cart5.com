@@ -19,7 +19,7 @@ import { myTeams } from '@src/stores/TeamStore';
 				</div>
 
 				<div v-for="team in myTeams.myTeams"
-					 :key="team.id">
+					 :key="team.teamId">
 					<div class="p-2 border border-dashed rounded-md">
 						{{ team.name }}
 						({{ team.defaultHostname }})

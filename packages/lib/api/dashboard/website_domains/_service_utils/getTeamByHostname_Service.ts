@@ -11,7 +11,8 @@ import { teamTable } from '../../../../db/schema/team.schema';
 export const getTeamByHostname_Service = async (hostname: string) => {
     const result = await db
         .select({
-            id: teamTable.id,
+            teamId: teamTable.id,
+            websiteId: websitesTable.id,
             name: websitesTable.name,
             defaultHostname: websitesTable.defaultHostname,
             // ownerUserId: teamTable.ownerUserId

@@ -17,7 +17,8 @@ export const getMyTeams_Service = async (
     const hostname = c.req.header()['host'];
     const myTeams = await db
         .select({
-            id: teamTable.id,
+            teamId: teamTable.id,
+            websiteId: websitesTable.id,
             name: websitesTable.name,
             defaultHostname: websitesTable.defaultHostname,
             // ownerUserId: teamTable.ownerUserId,
