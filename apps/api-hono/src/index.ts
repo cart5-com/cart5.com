@@ -14,6 +14,7 @@ import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
 import { mapsRoute } from 'lib/google-maps/mapsRoute';
 import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
 import { websiteRouter } from 'lib/api/dashboard/website/website.router';
+import { teamRouter } from 'lib/api/dashboard/team/team.router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
 import { getOptionalEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
@@ -103,6 +104,7 @@ const dashboardRoutes = app
 	.use(mustHaveUser)
 	.route('/restaurant', restaurantRouter)
 	.route('/website', websiteRouter)
+	.route('/team', teamRouter)
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 
