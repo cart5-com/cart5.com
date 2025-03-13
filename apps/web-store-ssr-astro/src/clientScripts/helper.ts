@@ -41,7 +41,7 @@ loginButton.addEventListener("click", async () => {
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
 logoutButton.addEventListener("click", async () => {
-    const { data, error } = await (await clientGlobal.api_auth_global.logout.$post()).json();
+    const { data, error } = await (await clientGlobal.api_auth_global['logout-all'].$post()).json();
     console.log(data, error);
     window.location.reload();
 });

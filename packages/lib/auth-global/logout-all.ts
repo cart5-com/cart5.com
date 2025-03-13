@@ -1,9 +1,9 @@
 import { type Context } from 'hono'
-import { SESSION_COOKIE_NAME } from "../../consts/auth-consts";
+import { SESSION_COOKIE_NAME } from "../consts/auth-consts";
 import { deleteCookie } from 'hono/cookie';
-import { type ErrorType } from '../../types/errors';
-import type { HonoVariables } from "../../hono/HonoVariables";
-import { deleteAllUserSessionsService } from '../../db/services/session.service';
+import { type ErrorType } from '../types/errors';
+import type { HonoVariables } from "../hono/HonoVariables";
+import { deleteAllUserSessionsService } from '../db/services/session.service';
 
 
 export const logoutAllRoute = async (c: Context<HonoVariables>) => {

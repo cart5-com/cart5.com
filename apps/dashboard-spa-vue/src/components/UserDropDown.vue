@@ -12,7 +12,7 @@ function goToAccountSettings() {
 
 async function logout() {
     const client = createAuthGlobalApiClient();
-    const { data, error } = await (await client.api_auth_global.logout.$post()).json();
+    const { data, error } = await (await client.api_auth_global['logout-all'].$post()).json();
     console.log(data, error);
     window.location.href = `/dash/after-logout.html`;
 }
