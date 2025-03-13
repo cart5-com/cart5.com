@@ -12,7 +12,8 @@ const open = ref(false);
 const onTeamSelected = (team: MyTeamsType['myTeams'][number]) => {
     if (team.defaultHostname) {
         if (window.location.host !== team.defaultHostname) {
-            window.location.href = `https://${team.defaultHostname}/dash/`;
+            // window.location.href = `https://${team.defaultHostname}/dash/`;
+            window.location.href = window.location.href.replace(window.location.host, team.defaultHostname);
         }
     } else {
         console.log('no default hostname', team);
