@@ -5,7 +5,10 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 
 export const myTeams = ref<ResType<
     typeof dashboardApiClient.api_dashboard.team.my_teams.$get
->["data"]>([])
+>["data"]>({
+    myTeams: [],
+    hostnameTeam: null
+})
 
 export async function loadMyTeams() {
     const response = await (await dashboardApiClient.api_dashboard.team.my_teams.$get()).json()

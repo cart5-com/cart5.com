@@ -11,7 +11,14 @@ import { myTeams } from '@src/stores/TeamStore';
 
 			<!-- list of teams -->
 			<div class="flex flex-col gap-2">
-				<div v-for="team in myTeams"
+
+				<div>
+					<div class="p-2 border border-dashed rounded-md">
+						{{ myTeams.hostnameTeam }}
+					</div>
+				</div>
+
+				<div v-for="team in myTeams.myTeams"
 					 :key="team.id">
 					<div class="p-2 border border-dashed rounded-md">{{ team.name }}</div>
 				</div>
