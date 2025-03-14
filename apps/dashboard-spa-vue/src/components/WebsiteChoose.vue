@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { myTeams, MyTeamsType } from '@src/stores/TeamStore';
+import { myWebsites, type websiteListType, currentDashboard } from '@src/stores/WebsiteStore';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
-
+import { toast } from '@/ui-plus/sonner';
 
 const open = ref(false);
 
-const onTeamSelected = (team: MyTeamsType['myTeams'][number]) => {
-    if (team.defaultHostname) {
-        if (window.location.host !== team.defaultHostname) {
-            // window.location.href = `https://${team.defaultHostname}/dash/`;
-            window.location.href = window.location.href.replace(window.location.host, team.defaultHostname);
+const onWebsiteSelected = (website: websiteListType[number]) => {
+    if (website.defaultHostname) {
+        if (window.location.host !== website.defaultHostname) {
+            window.location.href = window.location.href.replace(window.location.host, website.defaultHostname);
         }
     } else {
-        console.log('no default hostname', team);
+        toast.error('domain not defined for this website')
+        console.log('no default hostname', website);
     }
 }
+
 </script>
 
 <template>
     <Popover v-model:open="open">
         <PopoverTrigger asChild>
             <Button variant="outline">
-                {{ myTeams.currentTeam?.name }}
+                {{ currentDashboard?.name }}
                 <ChevronsUpDown class="opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -35,21 +36,20 @@ const onTeamSelected = (team: MyTeamsType['myTeams'][number]) => {
                 <CommandEmpty>No found.</CommandEmpty>
                 <CommandList>
                     <CommandGroup>
-                        <!-- // TODO: check there is empty row -->
-                        <CommandItem v-for="team in myTeams.myTeams"
-                                     :key="team.teamId"
-                                     :value="team.name ?? '' + ' ' + team.defaultHostname"
+                        <CommandItem v-for="website in myWebsites"
+                                     :key="website.id"
+                                     :value="website.name ?? '' + ' ' + website.defaultHostname"
                                      @select="() => {
                                         open = false;
-                                        onTeamSelected(team);
+                                        onWebsiteSelected(website);
                                     }">
                             <div class="flex flex-col gap-1 border-b pb-2 w-full">
                                 <div class="flex items-center gap-2">
-                                    <Check v-if="team.teamId === myTeams.currentTeam?.teamId" />
-                                    {{ team.name }}
+                                    <Check v-if="currentDashboard?.id === website.id" />
+                                    {{ website.name }}
                                 </div>
                                 <div class="text-sm text-muted-foreground">
-                                    {{ team.defaultHostname }}
+                                    {{ website.defaultHostname }}
                                 </div>
                             </div>
                         </CommandItem>

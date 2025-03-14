@@ -21,6 +21,8 @@ export const currentWebsite = computed(() => {
     return myWebsites.value.find(website => website.id === currentWebsiteId.value);
 });
 
+export let currentDashboard = ref<websiteListType[number] | null>(null);
+
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
     const response = await (await dashboardApiClient.api_dashboard.website.my_websites.$get()).json()
@@ -29,6 +31,7 @@ export async function loadMyWebsites() {
         return
     } else {
         myWebsites.value = response.data
+        currentDashboard.value = myWebsites.value.find(website => website.defaultHostname === window.location.host) ?? null;
     }
 }
 

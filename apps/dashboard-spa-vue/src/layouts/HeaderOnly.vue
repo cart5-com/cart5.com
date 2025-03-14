@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import Header from '@src/components/Header.vue';
-import TeamChoose from '@src/components/TeamChoose.vue';
+import WebsiteChoose from '@src/components/WebsiteChoose.vue';
 import { Home } from 'lucide-vue-next';
 </script>
 
@@ -14,7 +14,7 @@ import { Home } from 'lucide-vue-next';
                 <Home />
             </Button>
         </RouterLink>
-        <TeamChoose />
+        <WebsiteChoose />
     </Header>
     <div class="container mx-auto p-2 lg:p-6">
         <slot />

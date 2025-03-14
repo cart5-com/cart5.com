@@ -12,7 +12,6 @@ import type {
 } from "../../types/restaurantTypes";
 import type { MenuRoot } from "../../types/menuType";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
-import { websitesTable } from "./website.schema";
 
 /// RESTAURANT TABLE START
 export const restaurantTable = sqliteTable("restaurant", {
@@ -33,7 +32,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	ownerTeamId: text("owner_team_id").notNull(),
 	supportTeamId: text("support_team_id"),
-	defaultWebsiteId: text("default_website_id"),
 
 });
 
@@ -322,11 +320,5 @@ export const restaurantRelations = relations(restaurantTable, ({
 			restaurantDeliveryZoneMapTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantDeliveryZoneMapTable.restaurantId]
-		}),
-	defaultWebsite:
-		one(
-			websitesTable, {
-			fields: [restaurantTable.defaultWebsiteId],
-			references: [websitesTable.id]
 		}),
 }));

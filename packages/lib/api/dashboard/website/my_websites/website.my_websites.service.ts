@@ -1,7 +1,28 @@
-import { eq, or, and } from 'drizzle-orm';
+import { eq, or, and, desc } from 'drizzle-orm';
 import db from '../../../../db/drizzle';
 import { websiteDomainMapTable, websitesTable } from '../../../../db/schema/website.schema';
 import { teamTable, teamUserMapTable } from '../../../../db/schema/team.schema';
+
+export const getMyWebsites_Service_Old = async (userId: string) => {
+    const websites = await db.select({
+        id: websitesTable.id,
+        name: websitesTable.name,
+        defaultHostname: websitesTable.defaultHostname,
+    })
+        .from(websitesTable)
+        .innerJoin(
+            teamUserMapTable,
+            or(
+                eq(websitesTable.supportTeamId, teamUserMapTable.teamId),
+                eq(websitesTable.ownerTeamId, teamUserMapTable.teamId)
+            )
+        )
+        .where(eq(teamUserMapTable.userId, userId))
+        .orderBy(desc(websitesTable.created_at_ts))
+        .groupBy(websitesTable.id);
+
+    return websites;
+}
 
 /**
  * Service to get all websites the user has access to
