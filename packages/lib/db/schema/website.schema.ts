@@ -4,6 +4,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { relations } from 'drizzle-orm';
 import { z } from "zod";
+import { teamTable } from "./team.schema";
 
 
 export const websitesTable = sqliteTable("websites", {
@@ -49,8 +50,18 @@ export const selectWebsiteDomainMapSchema = createSelectSchema(websiteDomainMapT
 
 
 
-export const websiteRelations = relations(websitesTable, ({ many }) => ({
+export const websiteRelations = relations(websitesTable, ({ one, many }) => ({
     domains: many(websiteDomainMapTable),
+    ownerTeam: one(teamTable, {
+        fields: [websitesTable.ownerTeamId],
+        references: [teamTable.id],
+        relationName: "ownerTeam"
+    }),
+    supportTeam: one(teamTable, {
+        fields: [websitesTable.supportTeamId],
+        references: [teamTable.id],
+        relationName: "supportTeam"
+    }),
 }));
 
 export const websiteDomainMapRelations = relations(websiteDomainMapTable, ({ one }) => ({

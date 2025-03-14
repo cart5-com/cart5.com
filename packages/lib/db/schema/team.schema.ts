@@ -1,9 +1,11 @@
 import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { generateKey } from "../../utils/generateKey";
+import { relations } from "drizzle-orm";
+import { userTable } from "./auth.schema";
+import { websitesTable } from "./website.schema";
 
 export const teamTable = sqliteTable("team", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('team')),
-    // name: text("name").notNull(), removed webiste name is the team name relation:team id-> websitesTable.ownerTeamId
     ownerUserId: text("owner_user_id").notNull(),
 });
 
@@ -23,3 +25,28 @@ export const TEAM_PERMISSIONS = {
 
     RESTAURANT_MANAGER: "RESTAURANT_MANAGER",
 }
+
+export const teamRelations = relations(teamTable, ({ one, many }) => ({
+    ownerUser: one(userTable, {
+        fields: [teamTable.ownerUserId],
+        references: [userTable.id]
+    }),
+    members: many(teamUserMapTable),
+    supportWebsites: many(websitesTable, {
+        relationName: "supportTeam"
+    }),
+    ownerWebsites: many(websitesTable, {
+        relationName: "ownerTeam"
+    }),
+}));
+
+export const teamUserMapRelations = relations(teamUserMapTable, ({ one }) => ({
+    team: one(teamTable, {
+        fields: [teamUserMapTable.teamId],
+        references: [teamTable.id]
+    }),
+    user: one(userTable, {
+        fields: [teamUserMapTable.userId],
+        references: [userTable.id]
+    }),
+}));
