@@ -5,6 +5,7 @@ import { restaurantTable } from '../../../db/schema/restaurant.schema';
 import { eq } from 'drizzle-orm';
 import { isAdminCheck } from '../team/_service_utils/isAdminCheck';
 import { TEAM_PERMISSIONS } from '../../../db/schema/team.schema';
+
 export async function restaurantAdminCheck(c: Context, next: Next) {
     const userId = c.get('USER')?.id;
     const restaurantId = c.req.param('restaurantId');
