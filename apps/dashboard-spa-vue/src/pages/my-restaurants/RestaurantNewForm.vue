@@ -11,6 +11,8 @@ import { dashboardApiClient } from '@src/lib/dashboardApiClient';
 import { myRestaurants } from '@src/stores/RestaurantStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
+import { myTeams } from '@src/stores/TeamStore';
+import { Badge } from '@/components/ui/badge';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -46,7 +48,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 turnstile
             },
         })).json()
-        
+
         if (error) {
             handleError(error, form);
         } else {
@@ -85,6 +87,19 @@ async function onSubmit(values: z.infer<typeof schema>) {
             </Button>
         </div>
     </AutoForm>
+    <div class="flex flex-col gap-2 mb-4 border p-4 rounded-md border-foreground">
+        <div>
+            Support Organization:
+            <Badge variant="secondary"
+                   disabled>
+                {{ myTeams.currentTeam?.name }}
+                ({{ myTeams.currentTeam?.defaultHostname }})
+            </Badge>
+            <div class="text-sm text-muted-foreground">
+                This support team will be able to help you manage and maintain this new restaurant.
+            </div>
+        </div>
+    </div>
     <Button variant="secondary"
             @click="emit('cancel')"> Cancel </Button>
 </template>

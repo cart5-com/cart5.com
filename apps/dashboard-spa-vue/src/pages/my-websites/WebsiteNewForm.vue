@@ -114,7 +114,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
                             ({{ myTeams.currentTeam?.defaultHostname }})
                         </Badge>
                         <div class="text-sm text-muted-foreground">
-                            This support team will be able to help you manage and maintain your new website.
+                            This support team will be able to help you manage and maintain this new website.
                         </div>
                     </div>
                 </div>
