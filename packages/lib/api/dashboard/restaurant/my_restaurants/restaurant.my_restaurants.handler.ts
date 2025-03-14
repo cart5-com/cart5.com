@@ -6,7 +6,7 @@ import { getMyRestaurants_Service } from './restaurant.my_restaurants.service';
 // Controller for getting user's restaurants
 export const getMyRestaurants_Handler = async (c: Context<HonoVariables>) => {
     return c.json({
-        data: await getMyRestaurants_Service(c.get('USER')?.id!),
+        data: await getMyRestaurants_Service(c.get('USER')?.id!, c.req.header()['host']),
         error: null as ErrorType
     }, 200);
 } 

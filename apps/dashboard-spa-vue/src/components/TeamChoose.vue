@@ -35,6 +35,7 @@ const onTeamSelected = (team: MyTeamsType['myTeams'][number]) => {
                 <CommandEmpty>No found.</CommandEmpty>
                 <CommandList>
                     <CommandGroup>
+                        <!-- // TODO: check there is empty row -->
                         <CommandItem v-for="team in myTeams.myTeams"
                                      :key="team.teamId"
                                      :value="team.name ?? '' + ' ' + team.defaultHostname"
