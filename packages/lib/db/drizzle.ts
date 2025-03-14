@@ -4,12 +4,14 @@ import { IS_PROD } from "../utils/getEnvVariable";
 import * as authSchema from './schema/auth.schema';
 import * as restaurantSchema from './schema/restaurant.schema';
 import * as websiteSchema from './schema/website.schema';
+import * as teamSchema from './schema/team.schema';
 // import { createClient } from '@libsql/client';
 
 export const schema = {
     ...authSchema,
     ...restaurantSchema,
-    ...websiteSchema
+    ...websiteSchema,
+    ...teamSchema
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
