@@ -8,7 +8,7 @@ import { teamTable } from '../../../../db/schema/team.schema';
  * @param hostname - The hostname to look up
  * @returns The team object or null if not found
  */
-export const getTeamByHostname_Service = async (hostname: string) => {
+export const getSupportTeamByHostname_Service = async (hostname: string) => {
     const result = await db
         .select({
             teamId: teamTable.id,

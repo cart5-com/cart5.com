@@ -12,7 +12,7 @@ import { myRestaurants } from '@src/stores/RestaurantStore';
 import { getTurnstileUrl } from 'lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { Badge } from '@/components/ui/badge';
-
+import { hostnameSupportTeam } from '@src/stores/SupportTeam.Store';
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
     cancel: [];
@@ -57,6 +57,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         }
     })
 }
+
 </script>
 
 <template>
@@ -90,8 +91,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
         <div>
             Support Organization:
             <Badge variant="secondary">
-                <!-- TODO: ADD current website -->
-                TODO
+                {{ hostnameSupportTeam?.name }}
+                ({{ hostnameSupportTeam?.defaultHostname }})
             </Badge>
             <div class="text-sm text-muted-foreground">
                 This support team will be able to help you manage and maintain this new restaurant.

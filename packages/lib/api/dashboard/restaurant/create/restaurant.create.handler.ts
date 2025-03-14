@@ -6,7 +6,7 @@ import { type ErrorType } from '../../../../types/errors';
 import { validateCrossDomainTurnstile_WithUserCheck } from '../../../../utils/validateTurnstile';
 import { zValidator } from '@hono/zod-validator';
 import { createRestaurant_Service } from './restaurant.create.service';
-import { getTeamByHostname_Service } from '../../website_domains/_service_utils/getTeamByHostname_Service';
+import { getSupportTeamByHostname_Service } from '../../website_domains/_service_utils/getTeamByHostname_Service';
 
 // Schema validation for restaurant creation
 export const createRestaurant_SchemaValidator = zValidator('form', z.object({
@@ -24,7 +24,7 @@ export const createRestaurant_Handler = async (c: Context<
 
     // Validate turnstile and user
     const { userId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
-    const supportTeam = await getTeamByHostname_Service(c.req.header()['host'])
+    const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
     return c.json({
         data: await createRestaurant_Service(userId, name, supportTeam?.teamId ?? null),
         error: null as ErrorType

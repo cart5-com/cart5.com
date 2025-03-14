@@ -15,6 +15,7 @@ import { insertWebsitesSchema } from 'lib/db/schema/website.schema';
 import HeaderOnly from '@src/layouts/HeaderOnly.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { hostnameSupportTeam } from '@src/stores/SupportTeam.Store';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
@@ -109,8 +110,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
                     <div>
                         Support Organization:
                         <Badge variant="secondary">
-                            <!-- TODO: ADD current website -->
-                            TODO
+                            {{ hostnameSupportTeam?.name }}
+                            ({{ hostnameSupportTeam?.defaultHostname }})
                         </Badge>
                         <div class="text-sm text-muted-foreground">
                             This support team will be able to help you manage and maintain this new website.
