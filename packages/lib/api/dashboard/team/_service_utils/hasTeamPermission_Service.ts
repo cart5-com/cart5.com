@@ -35,11 +35,9 @@ export const hasTeamPermission_Service = async (
         .then(results => results[0]);
 
     if (member && Array.isArray(member.permissions)) {
-        member.permissions.forEach(permission => {
-            if (permissions.includes(permission)) {
-                return true;
-            }
-        });
+        if (member.permissions.some(permission => permissions.includes(permission))) {
+            return true;
+        }
     }
 
     return false;
