@@ -27,8 +27,8 @@ export const getMyRestaurants_Service = async (userId: string, hostname: string)
         id: restaurantTable.id,
         name: restaurantTable.name,
         address1: restaurantAddressTable.address1,
-        supportTeamId: restaurantTable.supportTeamId,
-        ownerTeamId: restaurantTable.ownerTeamId
+        // supportTeamId: restaurantTable.supportTeamId,
+        // ownerTeamId: restaurantTable.ownerTeamId
     })
         .from(restaurantTable)
         .leftJoin(
