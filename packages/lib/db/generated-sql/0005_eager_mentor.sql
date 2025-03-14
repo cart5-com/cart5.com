@@ -1,0 +1,1 @@
+ALTER TABLE `restaurant` DROP COLUMN `default_website_id`;
