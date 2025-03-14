@@ -1,0 +1,1 @@
+ALTER TABLE `restaurant` ADD `default_website_id` text;

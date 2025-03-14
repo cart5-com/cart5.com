@@ -32,6 +32,7 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	ownerTeamId: text("owner_team_id").notNull(),
 	supportTeamId: text("support_team_id"),
+	defaultWebsiteId: text("default_website_id"),
 
 });
 
