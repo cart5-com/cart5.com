@@ -43,6 +43,13 @@
       "when": 1741975483995,
       "tag": "0005_eager_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1741980575370,
+      "tag": "0006_square_doctor_spectrum",
+      "breakpoints": true
     }
   ]
 }

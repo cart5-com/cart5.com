@@ -7,11 +7,13 @@ import {
 
 export const createTeamTransactional_Service = async (
     userId: string,
+    type: 'RESTAURANT' | 'WEBSITE',
     tx: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) => {
     // add team to db
     const team = await tx.insert(teamTable).values({
-        ownerUserId: userId
+        ownerUserId: userId,
+        type: type
     }).returning();
 
     // make user a member of the new team

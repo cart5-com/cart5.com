@@ -4,7 +4,7 @@ import { createTeamTransactional_Service } from '../../team/_service_utils/creat
 
 export const createWebsite_Service = async (userId: string, name: string, supportTeamId: string | null) => {
     return await db.transaction(async (tx) => {
-        const teamId = await createTeamTransactional_Service(userId, tx);
+        const teamId = await createTeamTransactional_Service(userId, 'WEBSITE', tx);
         // TODO: add support team
         const website = await tx.insert(websitesTable).values({
             name: name,

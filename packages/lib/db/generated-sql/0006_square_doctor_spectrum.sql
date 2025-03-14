@@ -1,0 +1,1 @@
+ALTER TABLE `team` ADD `type` text NOT NULL;

@@ -4,7 +4,7 @@ import { createTeamTransactional_Service } from '../../team/_service_utils/creat
 
 export const createRestaurant_Service = async (userId: string, name: string, supportTeamId: string | null) => {
     return await db.transaction(async (tx) => {
-        const teamId = await createTeamTransactional_Service(userId, tx);
+        const teamId = await createTeamTransactional_Service(userId, 'RESTAURANT', tx);
 
         const restaurant = await tx.insert(restaurantTable).values({
             name: name,
