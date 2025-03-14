@@ -35,7 +35,7 @@ const onWebsiteSelected = (website: websiteListType[number]) => {
                 <CommandInput placeholder="Search " />
                 <CommandEmpty>No found.</CommandEmpty>
                 <CommandList>
-                    <CommandGroup>
+                    <CommandGroup heading="Your websites">
                         <CommandItem v-for="website in myWebsites"
                                      :key="website.id"
                                      :value="website.name ?? '' + ' ' + website.defaultHostname"
