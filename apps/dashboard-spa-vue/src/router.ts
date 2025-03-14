@@ -132,6 +132,11 @@ const router = createRouter({
           path: 'domains/add',
           name: 'website-domains-add',
           component: () => import('@src/pages/website/domains/AddNewDomain.vue'),
+        },
+        {
+          path: 'team',
+          name: 'website-team',
+          component: () => import('@src/pages/website/team/TeamView.vue'),
         }
       ],
     },

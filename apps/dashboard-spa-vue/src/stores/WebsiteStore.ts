@@ -6,7 +6,14 @@ export type websiteListType = ResType<
     typeof dashboardApiClient.api_dashboard.website.my_websites.$get
 >["data"];
 
-export const myWebsites = ref<websiteListType>([]);
+// Define a more specific type for website data
+export interface Website {
+    id: string;
+    name: string;
+    defaultHostname: string | null;
+}
+
+export const myWebsites = ref<Website[]>([]);
 export const searchQuery = ref('')
 export const myWebsitesFiltered = computed(() =>
     myWebsites.value.filter(website =>
@@ -21,7 +28,7 @@ export const currentWebsite = computed(() => {
     return myWebsites.value.find(website => website.id === currentWebsiteId.value);
 });
 
-export let currentDashboard = ref<websiteListType[number] | null>(null);
+export let currentDashboard = ref<Website | null>(null);
 
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
@@ -30,7 +37,7 @@ export async function loadMyWebsites() {
         console.error(response.error)
         return
     } else {
-        myWebsites.value = response.data
+        myWebsites.value = response.data as Website[];
         currentDashboard.value = myWebsites.value.find(website => website.defaultHostname === window.location.host) ?? null;
     }
 }
