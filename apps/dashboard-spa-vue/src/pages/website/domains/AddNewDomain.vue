@@ -59,10 +59,14 @@ async function onSubmit(values: z.infer<typeof schema>) {
             }
             toast.error("Failed to add domain");
         } else {
-            try {
-                (await (await fetch(`https://${values.hostname}/`)).text());
-            } catch (error) { }
-            toast.success("Domain added successfully, please wait a few minutes for SSL");
+            if (values.hostname.includes(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)) {
+                toast.success("Domain added successfully");
+            } else {
+                try {
+                    (await (await fetch(`https://${values.hostname}/`)).text());
+                } catch (error) { }
+                toast.success("Domain added successfully👍 SSL🛡️ will be activated in 5-10 minutes");
+            }
             router.push({ name: 'website-domains' });
         }
     })
