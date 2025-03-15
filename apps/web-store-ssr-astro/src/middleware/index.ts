@@ -7,5 +7,5 @@ import { websiteIdMiddleware } from "./websiteId";
 export const onRequest = sequence(
     csrfMiddleware,
     cacheHeadersMiddleware,
-    websiteIdMiddleware
+    // websiteIdMiddleware
 );
