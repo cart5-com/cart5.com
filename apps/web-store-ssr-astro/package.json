@@ -6,7 +6,8 @@
     "dev": "dotenvx run -- astro dev",
     "dev:caddy": "pnpm dev",
     "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
-    "start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'"
+    "_start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'",
+    "start": "dotenvx run -f .env.production -- node ./dist/server/entry.mjs"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
