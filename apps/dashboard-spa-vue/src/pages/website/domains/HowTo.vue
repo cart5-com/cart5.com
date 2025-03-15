@@ -11,7 +11,7 @@ const VITE_PUBLIC_DNS_CHECK_IPV6 = import.meta.env.VITE_PUBLIC_DNS_CHECK_IPV6;
 </script>
 
 <template>
-    <Alert>
+    <Alert class="how-to-connect-domain-alert">
         <InfoIcon class="h-4 w-4" />
         <AlertDescription>
             <h3 class="font-medium mb-2">How to Connect Your Domain</h3>

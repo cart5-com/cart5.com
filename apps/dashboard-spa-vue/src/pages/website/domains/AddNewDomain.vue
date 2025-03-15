@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { pageTitle } from '@src/stores/layout.store';
 import { slugify } from 'lib/utils/slugify';
 import HowTo from './HowTo.vue';
-
+import { shakeElem } from 'lib/clientUtils/shakeElem';
 
 pageTitle.value = 'Add Domain'
 const router = useRouter();
@@ -51,6 +51,12 @@ async function onSubmit(values: z.infer<typeof schema>) {
 
         if (error) {
             handleError(error, form);
+            if (error.code === "INVALID_DNS") {
+                const howToConnectDomainAlert = document.querySelector<HTMLElement>('.how-to-connect-domain-alert')
+                if (howToConnectDomainAlert) {
+                    shakeElem(howToConnectDomainAlert)
+                }
+            }
             toast.error("Failed to add domain");
         } else {
             toast.success("Domain added successfully");
