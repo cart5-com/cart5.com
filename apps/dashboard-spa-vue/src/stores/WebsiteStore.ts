@@ -42,13 +42,13 @@ export async function loadMyWebsites() {
         const currentOne = allWebsites.find(website => website.defaultHostname === window.location.host) ?? null;
         if (!currentOne) {
             toast.error('no website found for this domain, redirecting..')
-            setTimeout(() => {
-                if (allWebsites[0] && allWebsites[0].defaultHostname) {
-                    window.location.href = window.location.href.replace(window.location.host, allWebsites[0].defaultHostname);
-                } else {
-                    window.location.href = window.location.href.replace(window.location.host, `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`);
-                }
-            }, 1500)
+            // setTimeout(() => {
+            //     if (allWebsites[0] && allWebsites[0].defaultHostname) {
+            //         window.location.href = window.location.href.replace(window.location.host, allWebsites[0].defaultHostname);
+            //     } else {
+            //         window.location.href = window.location.href.replace(window.location.host, `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`);
+            //     }
+            // }, 1500)
             return
         } else {
             currentDashboard.value = currentOne;
