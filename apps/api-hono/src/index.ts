@@ -16,7 +16,7 @@ import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router
 import { websiteRouter } from 'lib/api/dashboard/website/website.router';
 import { teamRouter } from 'lib/api/dashboard/team/team.router';
 import { ENFORCE_HOSTNAME_CHECKS } from 'lib/auth/enforceHostnameChecks';
-import { getOptionalEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
+import { getEnvVariable, IS_PROD } from 'lib/utils/getEnvVariable';
 import type { HonoVariables } from 'lib/hono/HonoVariables';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
@@ -115,27 +115,23 @@ const port = 3000;
 // Add this function to send Discord messages
 async function sendDiscordMessage(message: string) {
 	console.log('[DISCORD]', message);
-	const webhookUrl = getOptionalEnvVariable("DISCORD_WEBHOOK_URL");
-	if (!webhookUrl) {
-		if (IS_PROD) {
-			console.log('Discord webhook URL not configured');
+	if (IS_PROD) {
+		const webhookUrl = getEnvVariable("DISCORD_WEBHOOK_URL");
+		try {
+			await fetch(webhookUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					content: message,
+				}),
+			});
+		} catch (error) {
+			console.error('Failed to send Discord message:', error);
 		}
-		return;
 	}
 
-	try {
-		await fetch(webhookUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				content: message,
-			}),
-		});
-	} catch (error) {
-		console.error('Failed to send Discord message:', error);
-	}
 }
 
 let server: ReturnType<typeof serve>;

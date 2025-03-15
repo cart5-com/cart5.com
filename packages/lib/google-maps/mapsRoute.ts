@@ -5,7 +5,7 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { type HonoVariables } from "../hono/HonoVariables";
 import { type ErrorType } from "../types/errors";
-import { getOptionalEnvVariable, IS_PROD } from "../utils/getEnvVariable";
+import { getEnvVariable, IS_PROD } from "../utils/getEnvVariable";
 import { verifyRequestOrigin } from "../utils/verifyRequestOrigin";
 
 // function generateSessionToken() {
@@ -80,7 +80,7 @@ export const mapsRoute = new Hono<HonoVariables>()
     //         reqUrl.hostname = 'maps.googleapis.com';
     //         reqUrl.pathname = '/maps/api/place/autocomplete/json';
     //         reqUrl.searchParams.delete('key');
-    //         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+    //         reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
     //         reqUrl.searchParams.delete('sessiontoken');
     //         reqUrl.searchParams.append('sessiontoken', generateSessionToken());
     //         const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.places.AutocompleteResponse;
@@ -110,7 +110,7 @@ export const mapsRoute = new Hono<HonoVariables>()
             reqUrl.hostname = 'maps.googleapis.com';
             reqUrl.pathname = '/maps/api/geocode/json';
             reqUrl.searchParams.delete('key');
-            reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+            reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
             const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
             // (response as any).userIp = c.req.header('caddy-user-ip') || "";
             // (response as any).dateTs = Date.now();
@@ -140,7 +140,7 @@ export const mapsRoute = new Hono<HonoVariables>()
 //         reqUrl.hostname = 'maps.googleapis.com';
 //         reqUrl.pathname = '/maps/api/geocode/json';
 //         reqUrl.searchParams.delete('key');
-//         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+//         reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
 //         const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
 //         return c.json({
 //             data: response,
@@ -174,7 +174,7 @@ export const mapsRoute = new Hono<HonoVariables>()
 //         reqUrl.hostname = 'maps.googleapis.com';
 //         reqUrl.pathname = '/maps/api/place/details/json';
 //         reqUrl.searchParams.delete('key');
-//         reqUrl.searchParams.append('key', getOptionalEnvVariable("GOOGLE_MAPS_KEY")!);
+//         reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
 //         reqUrl.searchParams.delete('sessiontoken');
 //         // reqUrl.searchParams.append('sessiontoken', generateSessionToken());
 //         const response = (await (await fetch(reqUrl.toString())).json()) as {
