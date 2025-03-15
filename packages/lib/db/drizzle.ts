@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { localDbPath } from "../consts/auth-consts";
-import { IS_PROD } from "../utils/getEnvVariable";
+import { IS_PROD, getEnvVariable } from "../utils/getEnvVariable";
 import * as authSchema from './schema/auth.schema';
 import * as restaurantSchema from './schema/restaurant.schema';
 import * as websiteSchema from './schema/website.schema';
@@ -16,11 +16,13 @@ export const schema = {
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
     // TODO: update env names to remove AUTH etc..
-    const {
-        AUTHAPI_TURSO_DB_URL,
-        AUTHAPI_TURSO_DB_TOKEN,
-        // AUTHAPI_TURSO_EMBEDDED_DB_PATH
-    } = process.env;
+    // const {
+    //     AUTHAPI_TURSO_DB_URL,
+    //     AUTHAPI_TURSO_DB_TOKEN,
+    //     // AUTHAPI_TURSO_EMBEDDED_DB_PATH
+    // } = process.env;
+    const AUTHAPI_TURSO_DB_URL = getEnvVariable("AUTHAPI_TURSO_DB_URL");
+    const AUTHAPI_TURSO_DB_TOKEN = getEnvVariable("AUTHAPI_TURSO_DB_TOKEN");
     if (IS_PROD) {
         // DISABLED BECAUSE UNABLE TO DETECT ERROR: 
         // libsql:: replication: replicator sync error: replication error: Injector error: SQLite error: database disk image is malformed
