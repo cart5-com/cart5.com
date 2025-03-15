@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { type ResType } from 'lib/hono/apiClients/ecomApiClient'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { toast } from '@/ui-plus/sonner';
 
 export type websiteListType = ResType<
     typeof dashboardApiClient.api_dashboard.website.my_websites.$get
@@ -37,8 +38,22 @@ export async function loadMyWebsites() {
         console.error(response.error)
         return
     } else {
-        myWebsites.value = response.data as Website[];
-        currentDashboard.value = myWebsites.value.find(website => website.defaultHostname === window.location.host) ?? null;
+        const allWebsites = response.data as Website[];
+        const currentOne = allWebsites.find(website => website.defaultHostname === window.location.host) ?? null;
+        if (!currentOne) {
+            toast.error('no website found for this domain, redirecting..')
+            setTimeout(() => {
+                if (allWebsites[0] && allWebsites[0].defaultHostname) {
+                    window.location.href = window.location.href.replace(window.location.host, allWebsites[0].defaultHostname);
+                } else {
+                    window.location.href = window.location.href.replace(window.location.host, `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`);
+                }
+            }, 1500)
+            return
+        } else {
+            currentDashboard.value = currentOne;
+            myWebsites.value = allWebsites;
+        }
     }
 }
 
