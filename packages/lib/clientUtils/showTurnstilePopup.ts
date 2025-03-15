@@ -88,8 +88,6 @@ export const showTurnstilePopup = async (url: string): Promise<string> => {
             // Handle verification result
             if (event.data?.type === 'turnstile-verification') {
                 window.removeEventListener('message', messageHandler);
-                console.log('turnstile-verification', event.data);
-                console.log('state', state);
                 // Verify state matches
                 if (event.data.state !== state) {
                     reject(new Error('Invalid state parameter'));

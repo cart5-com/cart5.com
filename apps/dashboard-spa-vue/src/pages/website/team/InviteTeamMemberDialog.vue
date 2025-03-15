@@ -120,7 +120,7 @@ const onDialogChange = (open: boolean) => {
                 <div class="space-y-2">
                     <Label>Permissions</Label>
                     <div class="space-y-2">
-                        <div v-for="(value, key) in TEAM_PERMISSIONS"
+                        <div v-for="(_value, key) in TEAM_PERMISSIONS"
                              :key="key"
                              class="flex items-center space-x-2">
                             <Checkbox :id="key"
