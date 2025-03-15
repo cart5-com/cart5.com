@@ -59,7 +59,10 @@ async function onSubmit(values: z.infer<typeof schema>) {
             }
             toast.error("Failed to add domain");
         } else {
-            toast.success("Domain added successfully");
+            try {
+                (await (await fetch(`https://${values.hostname}/`)).text());
+            } catch (error) { }
+            toast.success("Domain added successfully, please wait a few minutes for SSL");
             router.push({ name: 'website-domains' });
         }
     })
