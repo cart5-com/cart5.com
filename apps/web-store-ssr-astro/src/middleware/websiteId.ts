@@ -3,7 +3,10 @@ import { getWebsiteByDefaultHostname, getRedirectHostname } from "lib/db/dbUtils
 import { IS_PROD } from "lib/utils/getEnvVariable";
 
 export const websiteIdMiddleware = defineMiddleware(async (context, next) => {
-    console.log('websiteIdMiddleware', IS_PROD);
+    console.log('==============================================');
+    console.log('websiteIdMiddleware IS_PROD', IS_PROD);
+    console.log('websiteIdMiddleware PUBLIC_DOMAIN_NAME', import.meta.env.PUBLIC_DOMAIN_NAME);
+    console.log('==============================================');
     const host = context.request.headers.get("Host");
     context.locals.WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
     if (!context.locals.WEBSITE) {
