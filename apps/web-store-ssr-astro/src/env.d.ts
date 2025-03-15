@@ -2,6 +2,9 @@
 /// <reference types="astro/client" />
 declare namespace App {
     interface Locals {
-        // SAMPLE_KEY: string | null;
+        WEBSITE: {
+            id: string;
+            name: string;
+        } | null;
     }
 }

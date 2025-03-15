@@ -3,6 +3,7 @@ interface Props {
 	title: string;
 }
 const { title } = Astro.props;
+const websiteId = Astro.locals.WEBSITE?.id;
 ---
 
 <html lang="en">
@@ -45,6 +46,9 @@ const { title } = Astro.props;
 		<div>
 			💩💩💩💩cache:
 			<span class="cache-date" data-cache-date={Date.now()}></span>
+		</div>
+		<div>
+			websiteId:{websiteId}
 		</div>
 		<script>
 			import { formatDate } from "lib/utils/formatDate";
