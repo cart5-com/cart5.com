@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Shield } from 'lucide-vue-next';
@@ -19,8 +19,9 @@ defineProps<{
 
 <template>
     <Card class="max-w-lg mx-auto">
-        <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Team Members</CardTitle>
+        <CardHeader class="pb-2">
+            <p class="text-sm text-muted-foreground">Team members can access and manage this website based on their
+                permissions</p>
         </CardHeader>
         <CardContent>
             <div class="space-y-4">

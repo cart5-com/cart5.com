@@ -10,6 +10,7 @@
     "generate:sql": "cd packages/lib && pnpm generate:sql",
     "prod:migrate": "cd packages/lib && pnpm prod:migrate",
     "test:prod:migrate": "cd packages/lib && pnpm test:prod:migrate",
+    "studio": "cd packages/lib && pnpm dev:drizzle-studio",
     "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
     "caddy:deploy": "cd apps/proxy-caddy && pnpm caddy:deploy"
   },

@@ -7,6 +7,7 @@ import { getMyWebsites_Handler } from "./my_websites/website.my_websites.handler
 import { domainRouter } from "../website_domains/website.domains.router"
 import { websiteAdminCheck } from "./website.admin.check"
 import { getWebsiteTeamMembers_Handler } from "./team/website.team.handler"
+import { inviteTeamMember_Handler, inviteTeamMember_SchemaValidator } from "./team_invite/website.team_invite.handler"
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -32,6 +33,12 @@ export const websiteRouter = new Hono<HonoVariables>()
         '/:websiteId/team',
         websiteAdminCheck,
         getWebsiteTeamMembers_Handler
+    )
+    .post(
+        '/:websiteId/team_invite',
+        websiteAdminCheck,
+        inviteTeamMember_SchemaValidator,
+        inviteTeamMember_Handler
     )
     .route('/:websiteId/domain', domainRouter);
 
