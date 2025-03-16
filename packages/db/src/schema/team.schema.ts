@@ -13,17 +13,6 @@ import { autoCreatedUpdated } from "./helpers/auto-created-updated";
  */
 
 
-export const TEAM_PERMISSIONS = {
-    FULL_ACCESS: "FULL_ACCESS",
-
-    WEBSITE_MANAGER: "WEBSITE_MANAGER",
-
-    TEAM_MANAGER: "TEAM_MANAGER",
-
-    RESTAURANT_MANAGER: "RESTAURANT_MANAGER",
-}
-
-
 export const teamTable = sqliteTable("team", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('team')),
     type: text('type', { enum: ['RESTAURANT', 'WEBSITE'] }).notNull(),
