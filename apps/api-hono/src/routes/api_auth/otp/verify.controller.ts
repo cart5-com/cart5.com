@@ -14,7 +14,7 @@ import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { updateUserNameService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
-import type { OtpTokenPayload } from './send';
+import type { OtpTokenPayload } from './send.controller';
 
 
 export const verifyOtpSchemaValidator = zValidator('form', z.object({

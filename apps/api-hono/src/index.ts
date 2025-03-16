@@ -9,7 +9,7 @@ import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
 import { validateDomainForTLS } from './routes/validate_domain';
-import { apiAuth } from './routes/api_auth/router';
+import { apiAuth } from './routes/api_auth/_router';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
 

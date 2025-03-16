@@ -11,7 +11,7 @@ import { deleteCookie, getCookie } from 'hono/cookie';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
-import type { OtpTokenAfterRegisterPayload } from './register';
+import type { OtpTokenAfterRegisterPayload } from './register.controller';
 import { isEmailExistsService } from '@db/services/user.service';
 import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '@db/services/user.service';
 

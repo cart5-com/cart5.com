@@ -13,7 +13,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { markEmailAsVerifiedService, upsertUserService } from '@db/services/user.service';
 import { updateUserPictureUrlService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
-import type { GoogleOAuthTokenPayload } from './redirect';
+import type { GoogleOAuthTokenPayload } from './redirect.controller';
 import { ENFORCE_HOSTNAME_CHECKS, IS_CADDY_DEV } from '@lib/utils/enforceHostnameChecks';
 
 

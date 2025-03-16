@@ -3,15 +3,15 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import {
     loginEmailPasswordSchemaValidator,
     loginEmailPasswordRoute
-} from './login';
+} from './login.controller';
 import {
     registerEmailPasswordSchemaValidator,
     registerEmailPasswordRoute
-} from './register';
+} from './register.controller';
 import {
     verifyEmailPasswordSchemaValidator,
     verifyEmailPasswordRoute
-} from './verify';
+} from './verify.controller';
 
 export const emailPasswordRoute = new Hono<HonoVariables>()
     .post(
