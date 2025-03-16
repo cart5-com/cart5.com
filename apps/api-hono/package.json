@@ -13,6 +13,10 @@
 		"@libsql/client": "^0.14.0",
 		"@libsql/linux-x64-gnu": "0.5.0-pre.5",
 		"@node-rs/argon2": "^2.0.0",
+		"arctic": "^2.3.0",
+		"uqr": "^0.1.2",
+		"@oslojs/binary": "^1.0.0",
+		"@oslojs/otp": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "1.1.0",
 		"@types/node": "^22.10.1",
@@ -20,6 +24,8 @@
 		"hono": "^4.6.12",
 		"lib": "workspace:*",
 		"db": "workspace:*",
-		"tsx": "^4.19.2"
+		"tsx": "^4.19.2",
+		"@hono/zod-validator": "^0.4.1",
+		"zod": "^3.23.8"
 	}
 }

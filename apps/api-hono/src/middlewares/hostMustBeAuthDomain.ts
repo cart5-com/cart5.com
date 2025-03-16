@@ -2,7 +2,7 @@ import { createMiddleware } from "hono/factory";
 import { KNOWN_ERROR } from '@lib/types/errors';
 import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
-import type { HonoVariables } from "../HonoVariables";
+import type { HonoVariables } from "../types/HonoVariables";
 
 export const hostMustBeAuthDomain = createMiddleware<HonoVariables>(async (c, next) => {
     const host = c.req.header()['host'];

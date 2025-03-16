@@ -19,6 +19,9 @@
       "@db/*": [
         "../../packages/db/src/*"
       ],
+      "@api-hono/*": [
+        "./src/*"
+      ],
     }
   }
 }

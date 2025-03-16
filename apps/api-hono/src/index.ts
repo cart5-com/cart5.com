@@ -4,20 +4,20 @@ import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
 import { KNOWN_ERROR } from '@lib/types/errors';
-import type { HonoVariables } from './HonoVariables';
+import type { HonoVariables } from './types/HonoVariables';
 import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { getEnvVariable, IS_PROD } from '@lib/utils/getEnvVariable';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
 import db from '@db/drizzle';
+import { validateDomainForTLS } from './routes/validate_domain';
 
-// import { userRoute } from 'lib/auth/user/router';
-// import { authGlobalRoute } from 'lib/auth-global/router';
-// import { otpRoute } from 'lib/auth/otp/router';
-// import { emailPasswordRoute } from 'lib/auth/emailPassword/router';
-// import { crossDomainRoute } from 'lib/auth/crossDomain/router';
-// import { googleOAuthRoute } from 'lib/auth/googleOAuth/router';
-// import { twoFactorAuthRoute } from 'lib/auth/twoFactorAuth/router';
+import { userRoute } from './routes/api_auth/user/router';
+import { otpRoute } from './routes/api_auth/otp/router';
+import { emailPasswordRoute } from './routes/api_auth/email_password/router';
+import { crossDomainRoute } from './routes/api_auth/cross_domain/router';
+import { googleOAuthRoute } from './routes/api_auth/google_oauth/router';
+import { twoFactorAuthRoute } from './routes/api_auth/two_factor_auth/router';
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
 // import { websiteRouter } from 'lib/api/dashboard/website/website.router';
@@ -62,10 +62,10 @@ app.get("/", (c) => {
 });
 
 
-// app.get(
-// 	'/validate_tls',
-// 	validateDomainForTLS
-// );
+app.get(
+	'/validate_tls',
+	validateDomainForTLS
+);
 
 
 
@@ -73,13 +73,13 @@ app.get("/", (c) => {
 const authRoutes = app
 	.basePath('/api_auth')
 	.use(hostMustBeAuthDomain)
-// 	.route('/user', userRoute)
-// 	.route('/otp', otpRoute)
-// 	.route('/email_password', emailPasswordRoute)
-// 	.route('/cross_domain', crossDomainRoute)
-// 	.route('/google_oauth', googleOAuthRoute)
-// 	.route('/two_factor_auth', twoFactorAuthRoute)
-// export type AuthApiAppType = typeof authRoutes;
+	.route('/cross_domain', crossDomainRoute)
+	.route('/email_password', emailPasswordRoute)
+	.route('/google_oauth', googleOAuthRoute)
+	.route('/otp', otpRoute)
+	.route('/two_factor_auth', twoFactorAuthRoute)
+	.route('/user', userRoute)
+export type AuthApiAppType = typeof authRoutes;
 
 
 

@@ -23,3 +23,11 @@ export const getRedirectHostname = async (hostname: string) => {
     return domainMapResult[0]?.defaultHostname || null;
 };
 
+export const isHostnameRegisteredService = async (hostname: string): Promise<boolean> => {
+    const existingDomain = await db.query.websiteDomainMapTable.findFirst({
+        where: eq(websiteDomainMapTable.hostname, hostname),
+        columns: { hostname: true }
+    });
+
+    return !!existingDomain;
+};

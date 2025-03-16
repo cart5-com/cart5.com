@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import type { HonoVariables } from "../HonoVariables";
+import type { HonoVariables } from "../types/HonoVariables";
 import { KNOWN_ERROR } from "@lib/types/errors";
 
 export const mustHaveUser = createMiddleware<HonoVariables>(async (c, next) => {

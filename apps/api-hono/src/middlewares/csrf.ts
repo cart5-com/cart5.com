@@ -1,6 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import { verifyRequestOrigin } from "@lib/utils/verifyRequestOrigin";
-import type { HonoVariables } from "../HonoVariables";
+import type { HonoVariables } from "../types/HonoVariables";
 
 export const csrfChecks = createMiddleware<HonoVariables>(async (c, next) => {
 	if (c.req.method === "GET") {
