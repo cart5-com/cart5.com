@@ -1,7 +1,4 @@
 {
   "name": "lib",
-  "type": "module",
-  "dependencies": {
-    "@oslojs/encoding": "1.1.0"
-  }
+  "type": "module"
 }

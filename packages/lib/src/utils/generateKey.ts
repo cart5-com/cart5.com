@@ -1,4 +1,4 @@
-import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding } from "./encodeBase32LowerCaseNoPadding";
 
 export const generateKey = (prefix: string, size = 8) => {
     return `${prefix}_${generateIdFromEntropySize(size)}`;

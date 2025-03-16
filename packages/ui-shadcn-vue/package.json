@@ -1,0 +1,41 @@
+{
+  "name": "ui-shadcn-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "check-diff": "pnpx shadcn-vue@latest diff",
+    "download-all": "pnpx shadcn-vue@latest add -a"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.6.0",
+    "@types/geojson": "^7946.0.15",
+    "@types/leaflet": "^1.9.16",
+    "@types/node": "^22.10.1",
+    "@unovis/ts": "^1.4.5",
+    "@unovis/vue": "^1.4.5",
+    "@vee-validate/zod": "^4.14.7",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vueuse/core": "^12.0.0",
+    "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "embla-carousel-vue": "^8.5.1",
+    "leaflet": "^1.9.4",
+    "libphonenumber-js": "^1.11.18",
+    "lucide-vue-next": "^0.475.0",
+    "radix-vue": "^1.9.10",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss": "^3.4.16",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.7.2",
+    "v-calendar": "^3.1.2",
+    "vaul-vue": "^0.2.0",
+    "vee-validate": "^4.14.7",
+    "vite": "^6.0.5",
+    "vue": "^3.5.13",
+    "vue-sonner": "^1.3.0",
+    "vue-tsc": "^2.2.0",
+    "zod": "^3.23.8"
+  }
+}

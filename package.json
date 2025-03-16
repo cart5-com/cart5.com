@@ -1,5 +1,5 @@
 {
-  "name": "new.cart5.com",
+  "name": "cart5.com",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
