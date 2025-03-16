@@ -12,6 +12,7 @@ import { validateDomainForTLS } from './routes/validate_domain';
 import { apiAuth } from './routes/api_auth/_router';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
+import { authGlobalRoute } from './routes/api_auth_global/_router';
 
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
@@ -52,10 +53,10 @@ export type AuthApiAppType = typeof authRoutes;
 
 
 
-// const authGlobalRoutes = app
-// 	.basePath('/api_auth_global')
-// 	.route('/', authGlobalRoute)
-// export type AuthGlobalApiAppType = typeof authGlobalRoutes;
+const authGlobalRoutes = app
+	.basePath('/api_auth_global')
+	.route('/', authGlobalRoute)
+export type AuthGlobalApiAppType = typeof authGlobalRoutes;
 
 
 
