@@ -21,6 +21,7 @@ export const redirectorSchemaValidator = zValidator('form', z.object({
         }, { message: "Redirect URL must not be encoded" }),
     turnstile: z.string().min(1, { message: "Verification required" })
 }))
+
 export const redirectorRoute = async (
     c: Context<
         HonoVariables,

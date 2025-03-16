@@ -11,13 +11,8 @@ import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
 import db from '@db/drizzle';
 import { validateDomainForTLS } from './routes/validate_domain';
+import { apiAuth } from './routes/api_auth/router';
 
-import { userRoute } from './routes/api_auth/user/router';
-import { otpRoute } from './routes/api_auth/otp/router';
-import { emailPasswordRoute } from './routes/api_auth/email_password/router';
-import { crossDomainRoute } from './routes/api_auth/cross_domain/router';
-import { googleOAuthRoute } from './routes/api_auth/google_oauth/router';
-import { twoFactorAuthRoute } from './routes/api_auth/two_factor_auth/router';
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
 // import { websiteRouter } from 'lib/api/dashboard/website/website.router';
@@ -73,12 +68,8 @@ app.get(
 const authRoutes = app
 	.basePath('/api_auth')
 	.use(hostMustBeAuthDomain)
-	.route('/cross_domain', crossDomainRoute)
-	.route('/email_password', emailPasswordRoute)
-	.route('/google_oauth', googleOAuthRoute)
-	.route('/otp', otpRoute)
-	.route('/two_factor_auth', twoFactorAuthRoute)
-	.route('/user', userRoute)
+	.route('/', apiAuth)
+
 export type AuthApiAppType = typeof authRoutes;
 
 
