@@ -55,3 +55,4 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
 
 const db = getDrizzleDb();
 export default db;
+// await db.$client.close();

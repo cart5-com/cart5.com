@@ -3,15 +3,15 @@ import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
 import { authChecks } from './middlewares/auth';
 import { secureHeaders } from 'hono/secure-headers'
-import { KNOWN_ERROR } from '@lib/types/errors';
 import type { HonoVariables } from './types/HonoVariables';
 import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
-import { getEnvVariable, IS_PROD } from '@lib/utils/getEnvVariable';
+import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
 import { mustHaveUser } from './middlewares/mustHaveUser';
-import db from '@db/drizzle';
 import { validateDomainForTLS } from './routes/validate_domain';
 import { apiAuth } from './routes/api_auth/router';
+import { sendDiscordMessage } from './utils/logging';
+import { errorHandler } from './middlewares/errorHandler';
 
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
@@ -21,36 +21,12 @@ import { apiAuth } from './routes/api_auth/router';
 // import { validateDomainForTLS } from 'lib/api/validate_domain';
 
 const app = new Hono<HonoVariables>();
+app.onError(errorHandler);
 
 app.use(csrfChecks);
 app.use(authChecks);
 app.use(secureHeaders());
 
-app.onError((err, c) => {
-	if (err instanceof KNOWN_ERROR) {
-		console.log("KNOWN_ERROR err:");
-		console.log(err);
-		c.error = undefined;
-		return c.json({
-			error: {
-				message: err.message,
-				code: err.code
-			},
-		}, 500);
-	} else {
-		sendDiscordMessage(`Index.ts onError: ${err}`);
-		// this is same with hono's own error handler. 
-		// but i like JSON response, not text
-		if ("getResponse" in err) {
-			return err.getResponse();
-		}
-		return c.json({
-			error: {
-				message: "Internal Server Error"
-			},
-		}, 503);
-	}
-})
 
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
@@ -102,93 +78,8 @@ const dashboardRoutes = app
 
 
 
-
 const port = 3000;
-
-// Add this function to send Discord messages
-async function sendDiscordMessage(message: string) {
-	console.log('[DISCORD]', message);
-	if (IS_PROD) {
-		const webhookUrl = getEnvVariable("DISCORD_WEBHOOK_URL");
-		try {
-			await fetch(webhookUrl, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					content: message,
-				}),
-			});
-		} catch (error) {
-			console.error('Failed to send Discord message:', error);
-		}
-	}
-
-}
-
 let server: ReturnType<typeof serve>;
-
-const shutdown = async () => {
-	await sendDiscordMessage(`Shutting down server...`);
-
-	if (server) {
-		console.log('Closing server...'); // Add console.log for debugging
-		await new Promise<void>((resolve, reject) => {
-			server.close((err) => {
-				if (err) {
-					sendDiscordMessage(`Error closing server: ${err}`);
-					reject(err);
-					return;
-				}
-				console.log('Server closed successfully'); // Add console.log for debugging
-				resolve();
-			});
-		});
-	}
-
-	try {
-		await sendDiscordMessage(`db client closing...`);
-		await db.$client.close();
-		await sendDiscordMessage(`db client closed`);
-	} catch (err) {
-		await sendDiscordMessage(`Error closing DB: ${err}`);
-	}
-
-	await sendDiscordMessage(`exiting; byeee!! 👋`);
-	process.exit(0);
-}
-
-// Add more signal handlers and ensure they're properly logged
-const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
-
-// coolify does not support graceful shutdown.
-signals.forEach(signal => {
-	process.on(signal, async () => {
-		console.log(`${signal} received`); // Add console.log for debugging
-		try {
-			await sendDiscordMessage(`${signal} signal received`);
-			await shutdown();
-		} catch (err) {
-			console.error(`Error during ${signal} shutdown:`, err); // Add console.error for debugging
-			await sendDiscordMessage(`Error during ${signal} shutdown: ${err}`);
-			process.exit(1);
-		}
-	});
-});
-
-// Catch uncaught exceptions and unhandled rejections
-process.on('uncaughtException', async (err) => {
-	await sendDiscordMessage(`Uncaught exception: ${err}`);
-	await shutdown();
-});
-
-process.on('unhandledRejection', async (err) => {
-	await sendDiscordMessage(`Unhandled rejection: ${err}`);
-	await shutdown();
-});
-
-
 const startServer = () => {
 	server = serve({
 		fetch: app.fetch,
