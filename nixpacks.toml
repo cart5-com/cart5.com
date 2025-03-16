@@ -1,0 +1,25 @@
+[phases.setup]
+nixPkgs = ['...', 'awscli2']
+
+[phases.build]
+cmds = [
+    '...', 
+    # Purge cache on production after build
+    # 'cd apps/proxy-caddy && pnpm prod:cache:purge'
+]
+
+# [start] moved to proxy-caddy start command
+# cmd = 'cd apps/proxy-caddy && pnpm prod:cache:purge && cd ../../ && pnpm run start'
+
+
+# No need to repeat the whole configuration,
+# Nixpacks is smart enough to add packages without repeating the whole configuration
+# [phases.install]
+# cmds = [
+#     'npm install -g corepack@0.24.1 && corepack enable',
+#     'pnpm i --frozen-lockfile'
+# ]
+
+
+# [start]
+# cmd = 'pnpm run start'

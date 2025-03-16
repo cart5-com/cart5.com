@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "pnpm dev",
+      "name": "turbo-dev",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "pnpm dev:caddy",
+      "name": "turbo-dev:caddy",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+  ]
+}

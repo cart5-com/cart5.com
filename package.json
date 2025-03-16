@@ -1,0 +1,30 @@
+{
+  "name": "new.cart5.com",
+  "private": true,
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:caddy": "turbo dev:caddy",
+    "start": "turbo start",
+    "generate:sql": "cd packages/db && pnpm generate:sql",
+    "prod:migrate": "cd packages/db && pnpm prod:migrate",
+    "test:prod:migrate": "cd packages/db && pnpm test:prod:migrate",
+    "studio": "cd packages/db && pnpm dev:drizzle-studio",
+    "format": "prettier --write \"**/*.{ts,tsx,md,astro,vue,css}\"",
+    "caddy:deploy": "cd apps/proxy-caddy && pnpm caddy:deploy"
+  },
+  "dependencies": {
+    "@types/node": "^22.10.1",
+    "prettier": "^3.4.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "prettier-plugin-vue": "^1.1.6",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

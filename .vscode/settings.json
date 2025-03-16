@@ -1,0 +1,28 @@
+{
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 80,
+  "editor.wrappingIndent": "same",
+  "html.format.wrapAttributes": "force-aligned",
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar",
+    "editor.formatOnSave": true
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSaveMode": "file",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false, // filter: !**/node_modules/**
+  "css.validate": false,
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "javascript": "javascript"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "turbo.json, README.md, pnpm*, tailwind.*, vite.*, drizzle.config*, astro.config*, esbuild.*, .prettier*, nixpacks.toml, license.md, .gitignore, .cursorignore, tsconfig.*.json, *.d.ts, tsconfig.json, tsconfig.*.json, components.json, local-sqlite.db",
+    ".env": ".env*"
+  }
+}
