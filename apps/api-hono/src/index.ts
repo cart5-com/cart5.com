@@ -13,6 +13,7 @@ import { apiAuth } from './routes/api_auth/_router';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
 import { authGlobalRoute } from './routes/api_auth_global/_router';
+import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
 
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
@@ -62,9 +63,9 @@ export type AuthGlobalApiAppType = typeof authGlobalRoutes;
 
 
 
-// const ecomApiMapsRoutes = app.basePath('/api/maps')
-// 	.route('/gmaps', mapsRoute);
-// export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
+const ecomApiMapsRoutes = app.basePath('/api/maps')
+	.route('/', mapsRoute);
+export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
 
 
 
