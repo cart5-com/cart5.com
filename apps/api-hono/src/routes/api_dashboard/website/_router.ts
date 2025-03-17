@@ -9,11 +9,17 @@ import { inviteTeamMember_SchemaValidator } from "./team_invite.controller";
 import { inviteTeamMember_Handler } from "./team_invite.controller";
 import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.controller";
 import { getMyWebsites_Handler } from "./my_websites.controller";
+import { createWebsite_SchemaValidator, createWebsite_Handler } from "./create.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
         '/my_websites',
         getMyWebsites_Handler
+    )
+    .post(
+        '/create',
+        createWebsite_SchemaValidator,
+        createWebsite_Handler
     )
     .post(
         '/:websiteId',
@@ -23,6 +29,14 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         getWebsite_SchemaValidator,
         getWebsite_Handler
+    )
+    .patch('/:websiteId',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        updateWebsite_SchemaValidator,
+        updateWebsite_Handler
     )
     .get(
         '/:websiteId/team',
@@ -43,30 +57,5 @@ export const websiteRouter = new Hono<HonoVariables>()
         inviteTeamMember_SchemaValidator,
         inviteTeamMember_Handler
     )
-    .patch('/:websiteId',
-        checkWebsitePermissions([
-            TEAM_PERMISSIONS.FULL_ACCESS,
-            TEAM_PERMISSIONS.WEBSITE_MANAGER,
-        ]),
-        updateWebsite_SchemaValidator,
-        updateWebsite_Handler
-    )
-// .get(
-//     '/my_websites',
-// .post('/create',
-//     createWebsite_SchemaValidator,
-//     createWebsite_Handler
-// )
-// .get(
-//     '/:websiteId/team',
-//     websiteAdminCheck,
-//     getWebsiteTeamMembers_Handler
-// )
-// .post(
-//     '/:websiteId/team_invite',
-//     websiteAdminCheck,
-//     inviteTeamMember_SchemaValidator,
-//     inviteTeamMember_Handler
-// )
 // .route('/:websiteId/domain', domainRouter)
 

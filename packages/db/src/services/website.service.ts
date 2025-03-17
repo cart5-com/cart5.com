@@ -2,7 +2,7 @@ import { eq, type InferInsertModel, desc, or, inArray } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
-import { isAdminCheck } from './team.service';
+import { createTeamTransactional_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
 
 export const getWebsite_Service = async (
@@ -99,4 +99,16 @@ export const getAllWebsitesThatUserHasAccessTo = async (userId: string) => {
         );
 
     return websites;
+}
+
+export const createWebsite_Service = async (userId: string, name: string, supportTeamId: string | null) => {
+    return await db.transaction(async (tx) => {
+        const teamId = await createTeamTransactional_Service(userId, 'WEBSITE', tx);
+        const website = await tx.insert(websitesTable).values({
+            name: name,
+            ownerTeamId: teamId,
+            supportTeamId: supportTeamId,
+        }).returning({ id: websitesTable.id });
+        return website[0].id;
+    })
 }
