@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { restaurantAddressTable, restaurantTable, restaurantOpenHoursTable, restaurantMenuTable, restaurantPaymentMethodsTable } from "@db/schema/restaurant.schema";
+import { restaurantAddressTable, restaurantTable, restaurantOpenHoursTable, restaurantMenuTable, restaurantPaymentMethodsTable, restaurantTableReservationSettingsTable } from "@db/schema/restaurant.schema";
 import { createTeamTransactional_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
@@ -123,6 +123,28 @@ export const updateRestaurantPaymentMethods_Service = async (
         .values({ ...data, restaurantId: restaurantId })
         .onConflictDoUpdate({
             target: restaurantPaymentMethodsTable.restaurantId,
+            set: data
+        });
+}
+
+export const getRestaurantTableReservationSettings_Service = async (
+    restaurantId: string,
+    columns?: Partial<Record<keyof typeof restaurantTableReservationSettingsTable.$inferSelect, boolean>>
+) => {
+    return await db.query.restaurantTableReservationSettingsTable.findFirst({
+        where: eq(restaurantTableReservationSettingsTable.restaurantId, restaurantId),
+        columns: columns,
+    });
+}
+
+export const updateRestaurantTableReservationSettings_Service = async (
+    restaurantId: string,
+    data: Partial<InferInsertModel<typeof restaurantTableReservationSettingsTable>>
+) => {
+    return await db.insert(restaurantTableReservationSettingsTable)
+        .values({ ...data, restaurantId: restaurantId })
+        .onConflictDoUpdate({
+            target: restaurantTableReservationSettingsTable.restaurantId,
             set: data
         });
 }
