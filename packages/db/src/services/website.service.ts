@@ -1,6 +1,18 @@
 import { eq } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
+import { TEAM_PERMISSIONS } from '@lib/consts';
+import { isAdminCheck } from './team.service';
+
+export const getWebsite_Service = async (
+    websiteId: string,
+    columns?: Partial<Record<keyof typeof websitesTable.$inferSelect, boolean>>
+) => {
+    return await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        columns: columns,
+    });
+}
 
 export const getWebsiteByDefaultHostname = async (hostname: string) => {
     const result = await db
@@ -31,3 +43,29 @@ export const isHostnameRegisteredService = async (hostname: string): Promise<boo
 
     return !!existingDomain;
 };
+
+
+export const isUserWebsiteAdmin = async (
+    userId: string,
+    websiteId: string,
+    permissions: (typeof TEAM_PERMISSIONS)[keyof typeof TEAM_PERMISSIONS][]
+) => {
+    // First, get the restaurant's owner and support team IDs
+    const restaurant = await db.select({
+        ownerTeamId: websitesTable.ownerTeamId,
+        supportTeamId: websitesTable.supportTeamId
+    })
+        .from(websitesTable)
+        .where(eq(websitesTable.id, websiteId))
+        .then(results => results[0]);
+
+    if (!restaurant) {
+        return false;
+    }
+    return await isAdminCheck(
+        userId,
+        restaurant.ownerTeamId,
+        restaurant.supportTeamId,
+        permissions
+    );
+}

@@ -15,6 +15,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { authGlobalRoute } from './routes/api_auth_global/_router';
 import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
 import { restaurantRouter } from './routes/api_dashboard/restaurant/_router';
+import { websiteRouter } from './routes/api_dashboard/website/_router';
 
 // import { mapsRoute } from 'lib/google-maps/mapsRoute';
 // import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
@@ -75,7 +76,7 @@ const dashboardRoutes = app
 	.basePath('/api_dashboard')
 	.use(mustHaveUser)
 	.route('/restaurant', restaurantRouter)
-// 	.route('/website', websiteRouter)
+	.route('/website', websiteRouter)
 // 	.route('/team', teamRouter)
 export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
