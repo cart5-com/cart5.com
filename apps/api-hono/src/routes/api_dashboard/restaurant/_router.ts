@@ -16,6 +16,8 @@ import { getRestaurantTableReservationSettings_SchemaValidator, getRestaurantTab
 import { updateRestaurantTableReservationSettings_SchemaValidator, updateRestaurantTableReservationSettings_Handler } from "./table_reservation_settings_update.controller";
 import { getRestaurantTaxSettings_SchemaValidator, getRestaurantTaxSettings_Handler } from "./tax_settings_get.controller";
 import { updateRestaurantTaxSettings_SchemaValidator, updateRestaurantTaxSettings_Handler } from "./tax_settings_update.controller";
+import { getRestaurantScheduledOrdersSettings_SchemaValidator, getRestaurantScheduledOrdersSettings_Handler } from "./scheduled_orders_settings_get.controller";
+import { updateRestaurantScheduledOrdersSettings_SchemaValidator, updateRestaurantScheduledOrdersSettings_Handler } from "./scheduled_orders_settings_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 
@@ -139,6 +141,22 @@ export const restaurantRouter = new Hono<HonoVariables>()
         ]),
         updateRestaurantTaxSettings_SchemaValidator,
         updateRestaurantTaxSettings_Handler
+    )
+    .post('/:restaurantId/scheduled_orders_settings/get',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        getRestaurantScheduledOrdersSettings_SchemaValidator,
+        getRestaurantScheduledOrdersSettings_Handler
+    )
+    .patch('/:restaurantId/scheduled_orders_settings/update',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        updateRestaurantScheduledOrdersSettings_SchemaValidator,
+        updateRestaurantScheduledOrdersSettings_Handler
     )
 // .post(
 //     '/:restaurantId',
