@@ -13,7 +13,7 @@ import { createWebsite_SchemaValidator, createWebsite_Handler } from "./create.c
 import { addDomain_Handler } from "./domain_add.controller";
 import { hostname_SchemaValidator } from "./domain_add.controller";
 import { listDomains_Handler, listDomains_SchemaValidator } from "./domain_list.controller";
-
+import { removeDomain_Handler } from "./domain_remove.controller";
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
         '/my_websites',
@@ -78,4 +78,13 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         listDomains_SchemaValidator,
         listDomains_Handler
+    )
+    .post(
+        '/:websiteId/domain/remove',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        hostname_SchemaValidator,
+        removeDomain_Handler
     )

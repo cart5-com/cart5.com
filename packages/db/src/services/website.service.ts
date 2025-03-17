@@ -1,4 +1,4 @@
-import { eq, type InferInsertModel, desc, or, inArray, type InferSelectModel } from 'drizzle-orm';
+import { eq, type InferInsertModel, or, inArray, and } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
@@ -174,4 +174,26 @@ export const listDomains_Service = async (
     //     where: eq(websiteDomainMapTable.websiteId, websiteId),
     //     columns: columns,
     // });
+}
+
+export const deleteDomainFromWebsite_Service = async (
+    websiteId: string,
+    website: Partial<InferInsertModel<typeof websitesTable>>,
+    hostname: string
+) => {
+    return await db.transaction(async (tx) => {
+        if (website.defaultHostname === hostname) {
+            await tx.update(websitesTable)
+                .set({ defaultHostname: null })
+                .where(eq(websitesTable.id, websiteId));
+        }
+
+        await tx.delete(websiteDomainMapTable)
+            .where(
+                and(
+                    eq(websiteDomainMapTable.websiteId, websiteId),
+                    eq(websiteDomainMapTable.hostname, hostname)
+                )
+            );
+    })
 }
