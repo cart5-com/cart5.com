@@ -94,7 +94,7 @@ importers:
         version: 3.24.2
 
   apps/auth-frontend-vue:
-    dependencies:
+    devDependencies:
       '@dotenvx/dotenvx':
         specifier: ^1.32.0
         version: 1.38.5
@@ -110,6 +110,9 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
+      api-client:
+        specifier: workspace:*
+        version: link:../../packages/api-client
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.3)
@@ -151,7 +154,7 @@ importers:
         version: 3.24.2
 
   apps/dashboard-spa-vue:
-    dependencies:
+    devDependencies:
       '@dotenvx/dotenvx':
         specifier: ^1.32.0
         version: 1.38.5
@@ -179,6 +182,9 @@ importers:
       '@vueuse/core':
         specifier: ^12.0.0
         version: 12.8.2(typescript@5.7.2)
+      api-client:
+        specifier: workspace:*
+        version: link:../../packages/api-client
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.3)
@@ -223,13 +229,13 @@ importers:
         version: 3.24.2
 
   apps/proxy-caddy:
-    dependencies:
+    devDependencies:
       '@dotenvx/dotenvx':
         specifier: ^1.32.0
         version: 1.38.5
 
   apps/web-store-ssr-astro:
-    dependencies:
+    devDependencies:
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.4(prettier-plugin-astro@0.14.1)(prettier@3.4.2)(typescript@5.7.2)
@@ -257,6 +263,9 @@ importers:
 
   packages/api-client:
     devDependencies:
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       hono:
         specifier: ^4.6.12
         version: 4.7.4
