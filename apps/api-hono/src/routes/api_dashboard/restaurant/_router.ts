@@ -18,6 +18,8 @@ import { getRestaurantTaxSettings_SchemaValidator, getRestaurantTaxSettings_Hand
 import { updateRestaurantTaxSettings_SchemaValidator, updateRestaurantTaxSettings_Handler } from "./tax_settings_update.controller";
 import { getRestaurantScheduledOrdersSettings_SchemaValidator, getRestaurantScheduledOrdersSettings_Handler } from "./scheduled_orders_settings_get.controller";
 import { updateRestaurantScheduledOrdersSettings_SchemaValidator, updateRestaurantScheduledOrdersSettings_Handler } from "./scheduled_orders_settings_update.controller";
+import { getRestaurantDeliveryZones_SchemaValidator, getRestaurantDeliveryZones_Handler } from "./delivery_zones_get.controller";
+import { updateRestaurantDeliveryZones_SchemaValidator, updateRestaurantDeliveryZones_Handler } from "./delivery_zones_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 
@@ -158,20 +160,19 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantScheduledOrdersSettings_SchemaValidator,
         updateRestaurantScheduledOrdersSettings_Handler
     )
-// .post(
-//     '/:restaurantId',
-//     createAdminCheckRestraurant([
-//         TEAM_PERMISSIONS.FULL_ACCESS,
-//         TEAM_PERMISSIONS.RESTAURANT_MANAGER
-//     ]),
-//     restaurant_SchemaValidator,
-//     restaurant_Handler
-// )
-// .route('/:restaurantId/address', addressRouter)
-// .route('/:restaurantId/open_hours', openHoursRouter)
-// .route('/:restaurantId/menu', menuRouter)
-// .route('/:restaurantId/payment_methods', paymentMethodsRouter)
-// .route('/:restaurantId/table_reservation_settings', tableReservationSettingsRouter)
-// .route('/:restaurantId/tax_settings', taxSettingsRouter)
-// .route('/:restaurantId/scheduled_orders_settings', scheduledOrdersSettingsRouter)
-// .route('/:restaurantId/delivery_zones', deliveryZonesRouter); 
+    .post('/:restaurantId/delivery_zones/get',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        getRestaurantDeliveryZones_SchemaValidator,
+        getRestaurantDeliveryZones_Handler
+    )
+    .patch('/:restaurantId/delivery_zones/update',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        updateRestaurantDeliveryZones_SchemaValidator,
+        updateRestaurantDeliveryZones_Handler
+    )
