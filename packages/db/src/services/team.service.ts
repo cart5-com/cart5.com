@@ -187,7 +187,6 @@ export const isAdminCheck = async (
     return false;
 }
 
-
 export const isInvitedBefore = async (
     email: string,
     teamId: string
@@ -225,4 +224,58 @@ export const insertInvitation = async (
         })
         .returning()
         .then(results => results[0])
+}
+
+export const getTeamInvitation_Service = async (invitationId: string) => {
+    return await db.select({
+        id: teamInvitationsTable.id,
+        teamId: teamInvitationsTable.teamId,
+        teamName: teamInvitationsTable.teamName,
+        email: teamInvitationsTable.email,
+        status: teamInvitationsTable.status,
+        permissions: teamInvitationsTable.permissions,
+    })
+        .from(teamInvitationsTable)
+        .where(eq(teamInvitationsTable.id, invitationId))
+        .then(results => results[0]);
+}
+
+export const getExistingTeamMembership = async (
+    teamId: string,
+    currentUserId: string
+) => {
+    return await db.select({
+        teamId: teamUserMapTable.teamId,
+    })
+        .from(teamUserMapTable)
+        .where(
+            and(
+                eq(teamUserMapTable.teamId, teamId),
+                eq(teamUserMapTable.userId, currentUserId)
+            )
+        )
+        .then(results => results[0])
+}
+
+export const addMemberToTeam = async (
+    teamId: string,
+    currentUserId: string,
+    permissions: string[],
+    invitationId: string
+) => {
+    return await db.transaction(async (tx) => {
+        await tx.insert(teamUserMapTable)
+            .values({
+                teamId: teamId,
+                userId: currentUserId,
+                permissions: permissions
+            });
+
+        await tx.update(teamInvitationsTable)
+            .set({
+                status: "ACCEPTED",
+                acceptedAt: Date.now()
+            })
+            .where(eq(teamInvitationsTable.id, invitationId));
+    });
 }
