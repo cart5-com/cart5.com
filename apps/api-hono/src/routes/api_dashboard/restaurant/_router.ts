@@ -8,6 +8,8 @@ import { getRestaurantAddress_SchemaValidator, getRestaurantAddress_Handler } fr
 import { updateRestaurantAddress_SchemaValidator, updateRestaurantAddress_Handler } from "./address_update.controller";
 import { getRestaurantOpenHours_SchemaValidator, getRestaurantOpenHours_Handler } from "./open_hours_get.controller";
 import { updateRestaurantOpenHours_SchemaValidator, updateRestaurantOpenHours_Handler } from "./open_hours_update.controller";
+import { getRestaurantMenu_SchemaValidator, getRestaurantMenu_Handler } from "./menu_get.controller";
+import { updateRestaurantMenu_SchemaValidator, updateRestaurantMenu_Handler } from "./menu_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 
@@ -67,6 +69,22 @@ export const restaurantRouter = new Hono<HonoVariables>()
         ]),
         updateRestaurantOpenHours_SchemaValidator,
         updateRestaurantOpenHours_Handler
+    )
+    .post('/:restaurantId/menu/get',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        getRestaurantMenu_SchemaValidator,
+        getRestaurantMenu_Handler
+    )
+    .patch('/:restaurantId/menu/update',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        updateRestaurantMenu_SchemaValidator,
+        updateRestaurantMenu_Handler
     )
 // .post(
 //     '/:restaurantId',

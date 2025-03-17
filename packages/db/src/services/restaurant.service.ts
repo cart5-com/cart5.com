@@ -5,6 +5,7 @@ import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
 import { teamUserMapTable } from "@db/schema/team.schema";
 import type { InferInsertModel } from "drizzle-orm";
+import { restaurantMenuTable } from "@db/schema/restaurant.schema";
 
 export const getRestaurant_Service = async (
     restaurantId: string,
@@ -79,6 +80,28 @@ export const updateRestaurantOpenHours_Service = async (
         .values({ ...data, restaurantId: restaurantId })
         .onConflictDoUpdate({
             target: restaurantOpenHoursTable.restaurantId,
+            set: data
+        });
+}
+
+export const getRestaurantMenu_Service = async (
+    restaurantId: string,
+    columns?: Partial<Record<keyof typeof restaurantMenuTable.$inferSelect, boolean>>
+) => {
+    return await db.query.restaurantMenuTable.findFirst({
+        where: eq(restaurantMenuTable.restaurantId, restaurantId),
+        columns: columns,
+    });
+}
+
+export const updateRestaurantMenu_Service = async (
+    restaurantId: string,
+    data: Partial<InferInsertModel<typeof restaurantMenuTable>>
+) => {
+    return await db.insert(restaurantMenuTable)
+        .values({ ...data, restaurantId: restaurantId })
+        .onConflictDoUpdate({
+            target: restaurantMenuTable.restaurantId,
             set: data
         });
 }
