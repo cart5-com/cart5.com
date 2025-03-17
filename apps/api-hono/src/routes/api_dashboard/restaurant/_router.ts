@@ -14,6 +14,8 @@ import { getRestaurantPaymentMethods_SchemaValidator, getRestaurantPaymentMethod
 import { updateRestaurantPaymentMethods_SchemaValidator, updateRestaurantPaymentMethods_Handler } from "./payment_methods_update.controller";
 import { getRestaurantTableReservationSettings_SchemaValidator, getRestaurantTableReservationSettings_Handler } from "./table_reservation_settings_get.controller";
 import { updateRestaurantTableReservationSettings_SchemaValidator, updateRestaurantTableReservationSettings_Handler } from "./table_reservation_settings_update.controller";
+import { getRestaurantTaxSettings_SchemaValidator, getRestaurantTaxSettings_Handler } from "./tax_settings_get.controller";
+import { updateRestaurantTaxSettings_SchemaValidator, updateRestaurantTaxSettings_Handler } from "./tax_settings_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 
@@ -121,6 +123,22 @@ export const restaurantRouter = new Hono<HonoVariables>()
         ]),
         updateRestaurantTableReservationSettings_SchemaValidator,
         updateRestaurantTableReservationSettings_Handler
+    )
+    .post('/:restaurantId/tax_settings/get',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        getRestaurantTaxSettings_SchemaValidator,
+        getRestaurantTaxSettings_Handler
+    )
+    .patch('/:restaurantId/tax_settings/update',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        updateRestaurantTaxSettings_SchemaValidator,
+        updateRestaurantTaxSettings_Handler
     )
 // .post(
 //     '/:restaurantId',
