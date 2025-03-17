@@ -10,6 +10,9 @@ import { inviteTeamMember_Handler } from "./team_invite.controller";
 import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.controller";
 import { getMyWebsites_Handler } from "./my_websites.controller";
 import { createWebsite_SchemaValidator, createWebsite_Handler } from "./create.controller";
+import { addDomain_Handler } from "./domain_add.controller";
+import { hostname_SchemaValidator } from "./domain_add.controller";
+import { listDomains_Handler, listDomains_SchemaValidator } from "./domain_list.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -57,5 +60,22 @@ export const websiteRouter = new Hono<HonoVariables>()
         inviteTeamMember_SchemaValidator,
         inviteTeamMember_Handler
     )
-// .route('/:websiteId/domain', domainRouter)
-
+    // Domain Routes
+    .post(
+        '/:websiteId/domain/add',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        hostname_SchemaValidator,
+        addDomain_Handler
+    )
+    .get(
+        '/:websiteId/domain/list',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        listDomains_SchemaValidator,
+        listDomains_Handler
+    )

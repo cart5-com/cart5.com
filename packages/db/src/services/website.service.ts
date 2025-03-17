@@ -1,4 +1,4 @@
-import { eq, type InferInsertModel, desc, or, inArray } from 'drizzle-orm';
+import { eq, type InferInsertModel, desc, or, inArray, type InferSelectModel } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
@@ -111,4 +111,67 @@ export const createWebsite_Service = async (userId: string, name: string, suppor
         }).returning({ id: websitesTable.id });
         return website[0].id;
     })
+}
+
+
+export const addDomainToWebsite_Service = async (
+    websiteId: string,
+    website: Partial<InferInsertModel<typeof websitesTable>>,
+    hostname: string
+) => {
+    return await db.transaction(async (tx) => {
+        // Add the domain
+        await tx.insert(websiteDomainMapTable).values({
+            websiteId,
+            hostname
+        });
+
+        // If no default hostname exists, set this one as default
+        if (!website.defaultHostname) {
+            await tx.update(websitesTable)
+                .set({ defaultHostname: hostname })
+                .where(eq(websitesTable.id, websiteId));
+        }
+
+        return true;
+    })
+}
+
+export const getWebsiteWithDomains = async (websiteId: string) => {
+    return await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        with: {
+            domains: {
+                columns: {
+                    hostname: true
+                }
+            }
+        },
+        columns: {
+            id: true,
+            defaultHostname: true
+        }
+    });
+}
+
+export const listDomains_Service = async (
+    websiteId: string,
+    columns?: Partial<Record<keyof typeof websiteDomainMapTable.$inferSelect, boolean>>
+) => {
+    return await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        with: {
+            domains: {
+                columns: columns
+            }
+        },
+        columns: {
+            id: true,
+            defaultHostname: true
+        }
+    });
+    // return await db.query.websiteDomainMapTable.findMany({
+    //     where: eq(websiteDomainMapTable.websiteId, websiteId),
+    //     columns: columns,
+    // });
 }
