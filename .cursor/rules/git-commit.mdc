@@ -3,3 +3,4 @@ description: KEEP GIT COMMIT MESSAGES SUPER SHORT
 globs: 
 alwaysApply: true
 ---
+KEEP GIT COMMIT MESSAGES SUPER SHORT, max 100 chars
