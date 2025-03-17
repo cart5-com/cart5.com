@@ -8,13 +8,11 @@ import { getSupportTeamByHostname_Service } from "@db/services/team.service";
 import { createRestaurant_Service } from "@db/services/restaurant.service";
 import type { ErrorType } from "@lib/types/errors";
 
-// Schema validation for restaurant creation
 export const createRestaurant_SchemaValidator = zValidator('form', z.object({
     name: z.string().min(3, { message: "min 3" }).max(510, { message: "max 510" }),
     turnstile: z.string().min(1, { message: "Verification required" })
 }));
 
-// Controller for restaurant creation
 export const createRestaurant_Handler = async (c: Context<
     HonoVariables,
     "/create",

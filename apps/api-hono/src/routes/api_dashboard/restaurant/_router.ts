@@ -1,16 +1,17 @@
 import { Hono } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { createRestaurant_SchemaValidator, createRestaurant_Handler } from "./create.controller";
+import { getMyRestaurants_Handler } from "./my_restaurants.controller";
 
 export const restaurantRouter = new Hono<HonoVariables>()
+    .get(
+        '/my_restaurants',
+        getMyRestaurants_Handler
+    )
     .post('/create',
         createRestaurant_SchemaValidator,
         createRestaurant_Handler
     )
-// .get(
-//     '/my_restaurants',
-//     getMyRestaurants_Handler
-// )
 // .patch('/:restaurantId',
 //     createAdminCheckRestraurant([
 //         TEAM_PERMISSIONS.FULL_ACCESS,

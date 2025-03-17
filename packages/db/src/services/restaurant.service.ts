@@ -1,8 +1,9 @@
 import db from "@db/drizzle";
-import { restaurantTable } from "@db/schema/restaurant.schema";
+import { restaurantAddressTable, restaurantTable } from "@db/schema/restaurant.schema";
 import { createTeamTransactional_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
-import { eq } from "drizzle-orm";
+import { eq, or, desc, inArray } from "drizzle-orm";
+import { teamUserMapTable } from "@db/schema/team.schema";
 
 export const createRestaurant_Service = async (userId: string, name: string, supportTeamId: string | null) => {
     return await db.transaction(async (tx) => {
@@ -41,4 +42,30 @@ export const isUserRestaurantAdmin = async function (
         restaurant.supportTeamId,
         permissions
     );
+}
+
+export const getAllRestaurantsThatUserHasAccessTo = async (userId: string) => {
+    const userTeams = await db.select()
+        .from(teamUserMapTable)
+        .where(eq(teamUserMapTable.userId, userId));
+
+    const restaurants = await db.select({
+        id: restaurantTable.id,
+        name: restaurantTable.name,
+        address1: restaurantAddressTable.address1
+    })
+        .from(restaurantTable)
+        .leftJoin(
+            restaurantAddressTable,
+            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+        )
+        .where(
+            or(
+                inArray(restaurantTable.supportTeamId, userTeams.map(team => team.teamId)),
+                inArray(restaurantTable.ownerTeamId, userTeams.map(team => team.teamId))
+            )
+        )
+        .orderBy(desc(restaurantTable.created_at_ts));
+
+    return restaurants;
 }
