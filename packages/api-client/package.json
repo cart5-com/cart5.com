@@ -1,0 +1,8 @@
+{
+  "name": "api-client",
+  "type": "module",
+  "devDependencies": {
+    "@types/google.maps": "^3.58.1",
+    "hono": "^4.6.12"
+  }
+}

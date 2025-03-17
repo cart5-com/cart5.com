@@ -1,0 +1,22 @@
+{
+  "name": "web-store-ssr-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "dotenvx run -- astro dev",
+    "dev:caddy": "pnpm dev",
+    "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
+    "start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'",
+    "_start": "HOST=0.0.0.0 PORT=3002 dotenvx run -f .env.production -- node ./dist/server/entry.mjs"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/node": "^9.0.0",
+    "@libsql/client": "^0.14.0",
+    "astro": "^5.0.2",
+    "lib": "workspace:*",
+    "api-client": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

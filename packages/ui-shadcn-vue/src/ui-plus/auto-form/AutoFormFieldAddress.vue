@@ -5,7 +5,7 @@ import AutoFormLabel from './AutoFormLabel.vue'
 import { beautifyObjectName } from './utils'
 import Autocomplete from '@/ui-plus/auto-complete/Autocomplete.vue'
 import { ref } from 'vue'
-import { createEcomApiMapsClient, type predictionExtraType } from 'lib/hono/apiClients/ecomApiClient'
+import { createEcomApiMapsClient, type predictionExtraType } from '@lib/hono/apiClients/ecomApiClient'
 
 const ecomApiMapsClient = createEcomApiMapsClient();
 

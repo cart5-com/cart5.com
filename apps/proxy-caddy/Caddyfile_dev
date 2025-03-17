@@ -1,0 +1,73 @@
+(api-hono-proxy) {
+	handle_path /__p_api/* {
+		#api-hono
+		reverse_proxy http://127.0.0.1:3000
+	}
+}
+
+(dashboard-spa-vue) {
+	handle_path /dash/* {
+		#dashboard-spa-vue
+		reverse_proxy http://127.0.0.1:3004
+	}
+}
+
+# redirect to HTTPS
+:80 {
+	redir https://{host}{uri}
+}
+
+https://auth.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	import api-hono-proxy
+	handle_path /* {
+		#auth-frontend-vue
+		reverse_proxy http://127.0.0.1:3001
+	}
+}
+
+#	https://dashboard.{$PUBLIC_DOMAIN_NAME} {
+#		tls internal
+#		import api-hono-proxy
+#		handle_path /* {
+#			#auth-frontend-vue
+#			reverse_proxy http://127.0.0.1:3004
+#		}
+#	}
+
+# Cart5.com
+cart5dev.com,
+auth.cart5dev.com,
+www.cart5dev.com,
+
+# partner obite
+obite.cart5dev.com,
+obite.com,
+obite.co.uk,
+www.obite.com,
+www.obite.co.uk,
+
+# restaurant by obite
+flames.obite.com,
+flames.obite.co.uk,
+flames.com,
+www.flames.com,
+
+# partner secondpartner
+secondpartner.cart5dev.com,
+secondpartner.com,
+www.secondpartner.com,
+
+# restaurant by secondpartner
+pubo-restaurant.secondpartner.com,
+pubo-restaurant.com,
+www.pubo-restaurant.com,
+:443 {
+	tls internal
+	import api-hono-proxy
+	# import dashboard-spa-vue
+	handle_path /* {
+		#web-store-ssr-astro
+		reverse_proxy http://127.0.0.1:3002
+	}
+}

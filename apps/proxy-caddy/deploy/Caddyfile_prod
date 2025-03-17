@@ -1,0 +1,105 @@
+{
+	#debug
+	cache {
+		default_cache_control no-store
+		# to maintain server-side caching even when clients send no-cache headers
+		mode bypass_request
+		api {
+			souin # Enables the Souin API endpoint
+			basepath {$SOUIN_API_BASEPATH}
+		}
+	}
+	on_demand_tls {
+		ask http://127.0.0.1:3000/validate_tls
+		# https://caddyserver.com/docs/caddyfile/options#on-demand-tls
+		# 🟨interval and burst rate limiting options were available, but are NOT recommended. 
+		# Remove them from your config if you still have them.
+		# interval 2m
+		# burst 5
+	}
+}
+
+# TODO: validate domain before SSL challenge
+# return 404 to reject, return 200 to accept
+# http://127.0.0.1:5555 {
+# 	respond 404
+# }
+# easy ssl check: use static files to allow tls
+# http://127.0.0.1:6666 {
+# 	root * /path-to-sml-lnk/{query.domain}
+# 	file_server
+# }
+
+(api-hono-proxy) {
+	handle_path /__p_api/* {
+		#api-hono
+		reverse_proxy http://127.0.0.1:3000
+	}
+}
+
+(dashboard-spa-vue) {
+	handle_path /dash/* {
+		#dashboard-spa-vue
+		reverse_proxy http://127.0.0.1:3004
+	}
+}
+
+# redirect to HTTPS
+:80 {
+	redir https://{host}{uri}
+}
+
+https://auth.{$PUBLIC_DOMAIN_NAME} {
+	tls {
+		on_demand
+	}
+	import api-hono-proxy
+	handle_path /* {
+		#auth-frontend-vue
+		reverse_proxy http://127.0.0.1:3001
+		cache
+	}
+}
+
+#	https://dashboard.{$PUBLIC_DOMAIN_NAME} {
+#		tls {
+#			on_demand
+#		}
+#		import api-hono-proxy
+#		handle_path /* {
+#			#auth-frontend-vue
+#			reverse_proxy http://127.0.0.1:3004
+#			cache
+#		}
+#	}
+
+https://{$PUBLIC_DOMAIN_NAME} {
+	redir https://www.{host}{uri}
+}
+
+# CF_API_TOKEN permissions from cloudflare: (Zone.Zone, Zone.DNS) for All zones
+*.{$PUBLIC_DOMAIN_NAME} {
+	tls {
+		dns cloudflare {$CF_API_TOKEN}
+	}
+	import api-hono-proxy
+	import dashboard-spa-vue
+	handle_path /* {
+		#web-store-ssr-astro
+		reverse_proxy http://127.0.0.1:3002
+		cache
+	}
+}
+
+:443 {
+	tls {
+		on_demand
+	}
+	import api-hono-proxy
+	import dashboard-spa-vue
+	handle_path /* {
+		#web-store-ssr-astro
+		reverse_proxy http://127.0.0.1:3002
+		cache
+	}
+}

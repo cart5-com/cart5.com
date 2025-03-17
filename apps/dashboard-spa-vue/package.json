@@ -1,0 +1,38 @@
+{
+  "name": "dashboard-spa-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "dotenvx run -f .env -f .env.dev.secrets -- vite --port 3004",
+    "dev:caddy": "pnpm dev",
+    "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
+    "start": "http-server dist -s -p 3004 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3004?"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
+    "@types/google.maps": "^3.58.1",
+    "@types/leaflet": "^1.9.16",
+    "@types/leaflet-draw": "^1.0.11",
+    "@types/node": "^22.10.1",
+    "@vee-validate/zod": "^4.14.7",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.20",
+    "@vueuse/core": "^12.0.0",
+    "http-server": "^14.1.1",
+    "lib": "workspace:*",
+    "api-client": "workspace:*",
+    "lucide-vue-next": "^0.475.0",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "ui-shadcn-vue": "workspace:*",
+    "vee-validate": "^4.14.7",
+    "vite": "^6.0.5",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vue-tsc": "^2.2.0",
+    "vuedraggable": "^4.1.0",
+    "zod": "^3.23.8"
+  }
+}

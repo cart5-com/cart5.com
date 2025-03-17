@@ -1,0 +1,36 @@
+---
+- hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    PROXY_PRIVATE_KEY: "{{ lookup('env', 'PROXY_PRIVATE_KEY') }}"
+    SOUIN_API_BASEPATH: "{{ lookup('env', 'SOUIN_API_BASEPATH') }}"
+    CF_API_TOKEN: "{{ lookup('env', 'CF_API_TOKEN') }}"
+    PUBLIC_DOMAIN_NAME: "{{ lookup('env', 'PUBLIC_DOMAIN_NAME') }}"
+  tasks:
+    - name: Add PROXY_PRIVATE_KEY to Caddy service environment
+      ansible.builtin.blockinfile:
+        path: /lib/systemd/system/caddy.service
+        block: |
+          Environment="PROXY_PRIVATE_KEY={{ PROXY_PRIVATE_KEY }}"
+          Environment="CF_API_TOKEN={{ CF_API_TOKEN }}"
+          Environment="PUBLIC_DOMAIN_NAME={{ PUBLIC_DOMAIN_NAME }}"
+          Environment="SOUIN_API_BASEPATH={{ SOUIN_API_BASEPATH }}"
+          # Automatically restart caddy if it crashes except if the exit code was 1
+          RestartPreventExitStatus=1
+          Restart=on-failure
+          RestartSec=5s
+        insertafter: '^\[Service\]'
+        state: present
+
+    - name: copy Caddyfile
+      ansible.builtin.copy:
+        src: ./Caddyfile_prod
+        dest: /etc/caddy/Caddyfile
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: reload caddy
+      command: systemctl reload caddy

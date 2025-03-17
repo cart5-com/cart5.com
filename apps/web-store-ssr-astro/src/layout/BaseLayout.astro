@@ -1,0 +1,68 @@
+---
+interface Props {
+	title: string;
+}
+const { title } = Astro.props;
+const websiteId = Astro.locals.WEBSITE?.id;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+
+	<body>
+		<ul>
+			<li><a href="/">index.astro</a></li>
+			<li>
+				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
+			</li>
+		</ul>
+		<h4>{title}</h4>
+		<hr />
+		<button id="whoami-button">Who am I</button>
+		<pre id="whoami-result"></pre>
+		<hr />
+		<button class="hidden" id="manage-account-button">Manage Account</button>
+		<br />
+		<button class="hidden" id="logout-button">Logout</button>
+		<!-- <button class="hidden" id="logout-button">Logout</button> -->
+		<button class="hidden" id="login-button">Login</button>
+		<button class="hidden" id="register-button">Sign Up</button>
+		<script src="../clientScripts/helper.ts"></script>
+		<style>
+			.hidden {
+				display: none;
+			}
+			.cache-date {
+				border: 1px solid blue;
+				padding: 3px;
+				border-radius: 3px;
+			}
+		</style>
+		<div>
+			💩💩💩💩cache:
+			<span class="cache-date" data-cache-date={Date.now()}></span>
+		</div>
+		<div>
+			websiteId:{websiteId}
+		</div>
+		<script>
+			import { formatDate } from "@lib/utils/formatDate";
+			const cacheDateSpanElement = document.querySelector<HTMLSpanElement>(".cache-date");
+			if (cacheDateSpanElement) {
+				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
+			}
+			console.log("blue 💩💩💩💩 cacheDateSpanElement");
+			console.log(cacheDateSpanElement);
+
+			// setTimeout(() => {
+			// 	document.body.style.backgroundColor = "red";
+			// 	window.location.reload();
+			// }, 2000);
+		</script>
+	</body>
+</html>

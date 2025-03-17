@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+
+        <link rel="icon"
+              type="image/x-icon"
+              href="/favicon.ico" />
+
+        <title>Dashboard</title>
+
+        <meta name="color-scheme"
+              content="light dark" />
+        <meta name="viewport"
+              content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <!-- <meta name="format-detection"
+                    content="telephone=no, email=no, address=no, date=no" /> -->
+
+        <meta name="msapplication-tap-highlight"
+              content="no" />
+
+        <!-- add to homescreen for ios -->
+        <meta name="apple-mobile-web-app-title"
+              content="Dashboard" />
+        <meta name="apple-mobile-web-app-status-bar-style"
+              content="black" />
+        <style>
+            body {
+                background-color: black;
+                color: white;
+            }
+
+            button {
+                cursor: pointer;
+                background-color: white;
+                color: black;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-weight: bold;
+                text-transform: capitalize;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <h1>You have been logged out</h1>
+        <br>
+        <br>
+        <a href="/dash/">
+            <button>
+                open
+                dashboard
+            </button>
+        </a>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <button id="open-website"
+                style="display: none;"></button>
+        <script>
+            const url = `${window.location.hostname.replace('dashboard.', '')}`;
+            const btn = document.getElementById('open-website');
+            if (btn) {
+                btn.textContent = `open ${url}`;
+                btn.addEventListener('click', () => {
+                    window.location.href = `https://${url}`;
+                });
+                btn.style.display = 'block';
+            }
+        </script>
+    </body>
+
+</html>

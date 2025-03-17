@@ -7,7 +7,7 @@
 		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"
 	},
-	"dependencies": {
+	"devDependencies": {
 		"@dotenvx/dotenvx": "^1.32.0",
 		"@hono/node-server": "^1.13.7",
 		"@libsql/client": "^0.14.0",

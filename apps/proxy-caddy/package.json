@@ -1,0 +1,13 @@
+{
+  "name": "proxy-caddy",
+  "scripts": {
+    "start": "sleep 4 && echo '🟢purge with start✅' && pnpm prod:cache:purge",
+    "dev:caddy": "pnpm format && dotenvx run -- caddy run --config ./Caddyfile_dev",
+    "format": "caddy fmt ./Caddyfile_dev  --overwrite && caddy fmt ./deploy/Caddyfile_prod  --overwrite",
+    "caddy:deploy": "pnpm format && dotenvx run -f .env.production --  bash -c 'cd ./deploy && ./_start.sh'",
+    "prod:cache:purge": "dotenvx run -f .env.production --  bash -c 'curl -X PURGE \"https://auth.${PUBLIC_DOMAIN_NAME}/souin-api/${SOUIN_API_BASEPATH}/souin/flush\"' && echo '🚽Cache purged'"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@lib/*": [
+        "../../packages/lib/src/*"
+      ],
+      "@db/*": [
+        "../../packages/db/src/*"
+      ],
+      "@api-client/*": [
+        "../../packages/api-client/src/*"
+      ]
+    }
+  }
+}

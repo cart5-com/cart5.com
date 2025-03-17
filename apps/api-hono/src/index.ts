@@ -16,12 +16,12 @@ import { authGlobalRoute } from './routes/api_auth_global/_router';
 import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
 import { apiDashboard } from './routes/api_dashboard/_router';
 
-// import { mapsRoute } from 'lib/google-maps/mapsRoute';
-// import { restaurantRouter } from 'lib/api/dashboard/restaurant/restaurant.router';
-// import { websiteRouter } from 'lib/api/dashboard/website/website.router';
-// import { teamRouter } from 'lib/api/dashboard/team/team.router';
-// import type { HonoVariables } from 'lib/hono/HonoVariables';
-// import { validateDomainForTLS } from 'lib/api/validate_domain';
+// import { mapsRoute } from '@lib/google-maps/mapsRoute';
+// import { restaurantRouter } from '@lib/api/dashboard/restaurant/restaurant.router';
+// import { websiteRouter } from '@lib/api/dashboard/website/website.router';
+// import { teamRouter } from '@lib/api/dashboard/team/team.router';
+// import type { HonoVariables } from '@lib/hono/HonoVariables';
+// import { validateDomainForTLS } from '@lib/api/validate_domain';
 
 const app = new Hono<HonoVariables>();
 app.onError(errorHandler);
@@ -80,7 +80,7 @@ export type EcomDashboardApiAppType = typeof dashboardRoutes;
 
 
 const port = 3000;
-let server: ReturnType<typeof serve>;
+export let server: ReturnType<typeof serve>;
 const startServer = () => {
 	server = serve({
 		fetch: app.fetch,

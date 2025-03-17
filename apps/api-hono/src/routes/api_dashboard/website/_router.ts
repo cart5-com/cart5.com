@@ -72,7 +72,7 @@ export const websiteRouter = new Hono<HonoVariables>()
         hostname_SchemaValidator,
         addDomain_Handler
     )
-    .get(
+    .post(
         '/:websiteId/domain/list',
         checkWebsitePermissions([
             TEAM_PERMISSIONS.FULL_ACCESS,

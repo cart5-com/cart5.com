@@ -11,7 +11,7 @@
     "dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7022 --config=./drizzle.config.ts",
     "dev:drizzle-migrate": "dotenvx run -- drizzle-kit migrate --config=./drizzle.config.ts"
   },
-  "dependencies": {
+  "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
     "@libsql/client": "^0.14.0",
     "@libsql/linux-x64-gnu": "0.5.0",
