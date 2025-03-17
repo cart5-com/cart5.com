@@ -197,3 +197,12 @@ export const deleteDomainFromWebsite_Service = async (
             );
     })
 }
+
+export const setDefaultDomain_Service = async (websiteId: string, hostname: string) => {
+    // Update the default hostname
+    await db.update(websitesTable)
+        .set({ defaultHostname: hostname })
+        .where(eq(websitesTable.id, websiteId));
+
+    return true;
+}

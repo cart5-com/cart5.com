@@ -19,6 +19,36 @@ export const TEAM_PERMISSIONS = {
     RESTAURANT_MANAGER: "RESTAURANT_MANAGER",
 }
 
+export const RESERVED_SUBDOMAINS = [
+    'www',
+    'auth',
+    'api',
+    'mail',
+    'about',
+    'blog',
+    'shop',
+    'store',
+    'app',
+    'dashboard',
+    'dash',
+    'admin',
+    'login',
+    'register',
+    'com',
+    'ecom',
+    'ecommerce',
+    'net',
+    'org',
+    'io',
+    'ai',
+    'dev',
+    'test',
+    'hello',
+    'world',
+    'example',
+    'demo',
+    'sandbox',
+];
 
 export const ecomApiCuisines = [
     "Burger",

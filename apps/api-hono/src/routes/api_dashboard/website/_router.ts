@@ -11,9 +11,11 @@ import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.c
 import { getMyWebsites_Handler } from "./my_websites.controller";
 import { createWebsite_SchemaValidator, createWebsite_Handler } from "./create.controller";
 import { addDomain_Handler } from "./domain_add.controller";
-import { hostname_SchemaValidator } from "./domain_add.controller";
+import { hostname_SchemaValidator } from "./domain_set_default.controller";
 import { listDomains_Handler, listDomains_SchemaValidator } from "./domain_list.controller";
 import { removeDomain_Handler } from "./domain_remove.controller";
+import { setDefaultDomain_Handler } from "./domain_set_default.controller";
+
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
         '/my_websites',
@@ -87,4 +89,13 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         hostname_SchemaValidator,
         removeDomain_Handler
+    )
+    .post(
+        '/:websiteId/domain/set_default',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        hostname_SchemaValidator,
+        setDefaultDomain_Handler
     )
