@@ -1,6 +1,9 @@
 import { restaurantAddressTable, restaurantOpenHoursTable, restaurantMenuTable, restaurantPaymentMethodsTable, restaurantTableReservationSettingsTable, restaurantTaxSettingsTable, restaurantScheduledOrdersSettingsTable, restaurantDeliveryZoneMapTable } from "@db/schema/restaurant.schema";
 import db from "@db/drizzle";
 import { eq } from "drizzle-orm";
+
+// TODO: TEST THIS WITH REAL API CALLS
+
 // Define a map of all restaurant relation tables
 const relationTables = {
     address: restaurantAddressTable,
