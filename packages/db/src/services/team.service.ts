@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { teamTable, teamUserMapTable } from "@db/schema/team.schema";
+import { teamInvitationsTable, teamTable, teamUserMapTable } from "@db/schema/team.schema";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, and } from "drizzle-orm";
 import { websiteDomainMapTable, websitesTable } from "@db/schema/website.schema";
@@ -150,4 +150,44 @@ export const isAdminCheck = async (
         return true;
     }
     return false;
+}
+
+
+export const isInvitedBefore = async (
+    email: string,
+    teamId: string
+) => {
+    return await db.select({
+        id: teamInvitationsTable.id,
+        createdAt: teamInvitationsTable.created_at_ts,
+    })
+        .from(teamInvitationsTable)
+        .where(
+            and(
+                eq(teamInvitationsTable.email, email),
+                eq(teamInvitationsTable.teamId, teamId),
+                eq(teamInvitationsTable.status, "PENDING")
+            )
+        )
+        .then(results => results[0]);
+}
+
+export const insertInvitation = async (
+    email: string,
+    teamId: string,
+    permissions: string[],
+    requestingUserId: string,
+    websiteName: string
+) => {
+    return await db.insert(teamInvitationsTable)
+        .values({
+            teamId,
+            teamName: websiteName,
+            inviterId: requestingUserId,
+            email,
+            permissions,
+            status: "PENDING",
+        })
+        .returning()
+        .then(results => results[0])
 }

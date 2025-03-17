@@ -1,8 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { eq, type InferInsertModel, desc, or, inArray } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
 import { isAdminCheck } from './team.service';
+import { teamUserMapTable } from '@db/schema/team.schema';
 
 export const getWebsite_Service = async (
     websiteId: string,
@@ -12,6 +13,15 @@ export const getWebsite_Service = async (
         where: eq(websitesTable.id, websiteId),
         columns: columns,
     });
+}
+
+export const updateWebsite_Service = async (
+    websiteId: string,
+    websiteData: Partial<InferInsertModel<typeof websitesTable>>
+) => {
+    return await db.update(websitesTable)
+        .set(websiteData)
+        .where(eq(websitesTable.id, websiteId))
 }
 
 export const getWebsiteByDefaultHostname = async (hostname: string) => {
@@ -68,4 +78,25 @@ export const isUserWebsiteAdmin = async (
         restaurant.supportTeamId,
         permissions
     );
+}
+
+export const getAllWebsitesThatUserHasAccessTo = async (userId: string) => {
+    const userTeams = await db.select()
+        .from(teamUserMapTable)
+        .where(eq(teamUserMapTable.userId, userId));
+
+    const websites = await db.select({
+        id: websitesTable.id,
+        name: websitesTable.name,
+        defaultHostname: websitesTable.defaultHostname
+    })
+        .from(websitesTable)
+        .where(
+            or(
+                inArray(websitesTable.supportTeamId, userTeams.map(team => team.teamId)),
+                inArray(websitesTable.ownerTeamId, userTeams.map(team => team.teamId))
+            )
+        );
+
+    return websites;
 }

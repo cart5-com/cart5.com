@@ -5,6 +5,9 @@ import { Hono } from "hono";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { checkWebsitePermissions } from "@api-hono/utils/checkWebsitePermissions";
 import { getWebsiteTeamMembers_Handler } from "./team.controller";
+import { inviteTeamMember_SchemaValidator } from "./team_invite.controller";
+import { inviteTeamMember_Handler } from "./team_invite.controller";
+import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .post(
@@ -25,18 +28,29 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         getWebsiteTeamMembers_Handler
     )
+    .post(
+        '/:websiteId/team_invite',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        inviteTeamMember_SchemaValidator,
+        inviteTeamMember_Handler
+    )
+    .patch('/:websiteId',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+        ]),
+        updateWebsite_SchemaValidator,
+        updateWebsite_Handler
+    )
 // .get(
 //     '/my_websites',
-//     getMyWebsites_Handler
-// )
 // .post('/create',
 //     createWebsite_SchemaValidator,
 //     createWebsite_Handler
-// )
-// .patch('/:websiteId',
-//     websiteAdminCheck,
-//     updateWebsite_SchemaValidator,
-//     updateWebsite_Handler
 // )
 // .get(
 //     '/:websiteId/team',
