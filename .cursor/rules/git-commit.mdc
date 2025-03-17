@@ -1,0 +1,5 @@
+---
+description: KEEP GIT COMMIT MESSAGES SUPER SHORT
+globs: 
+alwaysApply: true
+---
