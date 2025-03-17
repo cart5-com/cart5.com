@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { restaurantAddressTable, restaurantTable } from "@db/schema/restaurant.schema";
+import { restaurantAddressTable, restaurantTable, restaurantOpenHoursTable } from "@db/schema/restaurant.schema";
 import { createTeamTransactional_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
@@ -57,6 +57,28 @@ export const updateRestaurantAddress_Service = async (
         .values({ ...data, restaurantId: restaurantId })
         .onConflictDoUpdate({
             target: restaurantAddressTable.restaurantId,
+            set: data
+        });
+}
+
+export const getRestaurantOpenHours_Service = async (
+    restaurantId: string,
+    columns?: Partial<Record<keyof typeof restaurantOpenHoursTable.$inferSelect, boolean>>
+) => {
+    return await db.query.restaurantOpenHoursTable.findFirst({
+        where: eq(restaurantOpenHoursTable.restaurantId, restaurantId),
+        columns: columns,
+    });
+}
+
+export const updateRestaurantOpenHours_Service = async (
+    restaurantId: string,
+    data: Partial<InferInsertModel<typeof restaurantOpenHoursTable>>
+) => {
+    return await db.insert(restaurantOpenHoursTable)
+        .values({ ...data, restaurantId: restaurantId })
+        .onConflictDoUpdate({
+            target: restaurantOpenHoursTable.restaurantId,
             set: data
         });
 }
