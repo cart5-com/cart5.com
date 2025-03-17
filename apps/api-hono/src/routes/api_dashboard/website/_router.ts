@@ -8,8 +8,13 @@ import { getWebsiteTeamMembers_Handler } from "./team.controller";
 import { inviteTeamMember_SchemaValidator } from "./team_invite.controller";
 import { inviteTeamMember_Handler } from "./team_invite.controller";
 import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.controller";
+import { getMyWebsites_Handler } from "./my_websites.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
+    .get(
+        '/my_websites',
+        getMyWebsites_Handler
+    )
     .post(
         '/:websiteId',
         checkWebsitePermissions([
