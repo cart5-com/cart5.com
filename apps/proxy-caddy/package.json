@@ -7,7 +7,7 @@
     "caddy:deploy": "pnpm format && dotenvx run -f .env.production --  bash -c 'cd ./deploy && ./_start.sh'",
     "prod:cache:purge": "dotenvx run -f .env.production --  bash -c 'curl -X PURGE \"https://auth.${PUBLIC_DOMAIN_NAME}/souin-api/${SOUIN_API_BASEPATH}/souin/flush\"' && echo '🚽Cache purged'"
   },
-  "dependencies": {
+  "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0"
   }
 }

@@ -9,7 +9,7 @@
     "start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'",
     "_start": "HOST=0.0.0.0 PORT=3002 dotenvx run -f .env.production -- node ./dist/server/entry.mjs"
   },
-  "dependencies": {
+  "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
     "@astrojs/check": "^0.9.4",
     "@astrojs/node": "^9.0.0",
