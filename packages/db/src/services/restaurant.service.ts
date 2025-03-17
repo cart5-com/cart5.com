@@ -4,6 +4,26 @@ import { createTeamTransactional_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
 import { teamUserMapTable } from "@db/schema/team.schema";
+import type { InferInsertModel } from "drizzle-orm";
+
+export const getRestaurant_Service = async (
+    restaurantId: string,
+    columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>
+) => {
+    return await db.query.restaurantTable.findFirst({
+        where: eq(restaurantTable.id, restaurantId),
+        columns: columns,
+    });
+}
+
+export const updateRestaurant_Service = async (
+    restaurantId: string,
+    restaurantData: Partial<InferInsertModel<typeof restaurantTable>>
+) => {
+    return await db.update(restaurantTable)
+        .set(restaurantData)
+        .where(eq(restaurantTable.id, restaurantId))
+}
 
 export const createRestaurant_Service = async (userId: string, name: string, supportTeamId: string | null) => {
     return await db.transaction(async (tx) => {
