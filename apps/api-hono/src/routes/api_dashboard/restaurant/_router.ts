@@ -4,6 +4,8 @@ import { createRestaurant_SchemaValidator, createRestaurant_Handler } from "./cr
 import { getMyRestaurants_Handler } from "./my_restaurants.controller";
 import { getRestaurant_SchemaValidator, getRestaurant_Handler } from "./get.controller";
 import { updateRestaurant_SchemaValidator, updateRestaurant_Handler } from "./update.controller";
+import { getRestaurantAddress_SchemaValidator, getRestaurantAddress_Handler } from "./address_get.controller";
+import { updateRestaurantAddress_SchemaValidator, updateRestaurantAddress_Handler } from "./address_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 
@@ -31,6 +33,22 @@ export const restaurantRouter = new Hono<HonoVariables>()
         ]),
         updateRestaurant_SchemaValidator,
         updateRestaurant_Handler
+    )
+    .post('/:restaurantId/address/get',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        getRestaurantAddress_SchemaValidator,
+        getRestaurantAddress_Handler
+    )
+    .patch('/:restaurantId/address/update',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER
+        ]),
+        updateRestaurantAddress_SchemaValidator,
+        updateRestaurantAddress_Handler
     )
 // .post(
 //     '/:restaurantId',
