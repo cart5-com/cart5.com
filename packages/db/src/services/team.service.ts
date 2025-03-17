@@ -3,6 +3,40 @@ import { teamTable, teamUserMapTable } from "@db/schema/team.schema";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, and } from "drizzle-orm";
 import { websiteDomainMapTable, websitesTable } from "@db/schema/website.schema";
+import { userTable } from "@db/schema/auth.schema";
+
+export const getTeam_Service = async (
+    teamId: string,
+    columns?: Partial<Record<keyof typeof teamTable.$inferSelect, boolean>>
+) => {
+    return await db.query.teamTable.findFirst({
+        where: eq(teamTable.id, teamId),
+        columns: columns,
+    });
+}
+
+export const getTeamMembers_Service = async (
+    teamId: string,
+    teamOwnerUserId: string
+) => {
+    return await db
+        .select({
+            userId: userTable.id,
+            name: userTable.name,
+            email: userTable.email,
+            pictureUrl: userTable.pictureUrl,
+            permissions: teamUserMapTable.permissions,
+            isOwner: eq(userTable.id, teamOwnerUserId)
+        })
+        .from(teamUserMapTable)
+        .innerJoin(
+            userTable,
+            eq(teamUserMapTable.userId, userTable.id)
+        )
+        .where(
+            eq(teamUserMapTable.teamId, teamId)
+        )
+}
 
 export const createTeamTransactional_Service = async (
     userId: string,
