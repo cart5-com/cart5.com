@@ -26,7 +26,7 @@ export const devAskEmailRoute = async (
                         <title>simulate Google OAuth dev</title>
                     </head>
                     <body>
-                        <form action="/__p_api/api_auth/google_oauth/simulate-google-oauth-callback" method="get">
+                        <form action="/__p_api/auth/google_oauth/simulate-google-oauth-callback" method="get">
                             <label for="email">Email:</label>
                         <br />
                         <input type="text" id="email" name="email" placeholder="email" />

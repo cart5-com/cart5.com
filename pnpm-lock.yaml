@@ -68,6 +68,9 @@ importers:
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
+      api-client:
+        specifier: workspace:*
+        version: link:../../packages/api-client
       arctic:
         specifier: ^2.3.0
         version: 2.3.4

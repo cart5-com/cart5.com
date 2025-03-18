@@ -46,7 +46,7 @@ export const callbackGoogleOAuthRoute = async (
 
     const url = new URL(c.req.url);
     // Check if this is the Google OAuth callback request
-    const isGoogleCallback = url.pathname === '/api_auth/google_oauth/callback' &&
+    const isGoogleCallback = url.pathname === '/auth/google_oauth/callback' &&
         url.searchParams.has('state') &&
         url.searchParams.has('code') &&
         url.searchParams.has('scope');

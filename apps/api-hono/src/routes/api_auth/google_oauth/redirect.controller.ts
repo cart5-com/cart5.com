@@ -69,7 +69,7 @@ export const redirectGoogleOAuthRoute = async (
         return c.redirect(url.toString());
     } else if (!IS_PROD) {
         // simulate a redirect to the google oauth page
-        return c.redirect(`/__p_api/api_auth/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
+        return c.redirect(`/__p_api/auth/google_oauth/dev-ask-email?redirect_uri=${redirect_uri}`);
     } else {
         throw new KNOWN_ERROR("Google OAuth credentials not found", "GOOGLE_OAUTH_CREDENTIALS_NOT_FOUND");
     }

@@ -24,6 +24,7 @@
 		"esbuild": "^0.24.0",
 		"hono": "^4.6.12",
 		"lib": "workspace:*",
+		"api-client": "workspace:*",
 		"db": "workspace:*",
 		"tsx": "^4.19.2",
 		"@hono/zod-validator": "^0.4.1",

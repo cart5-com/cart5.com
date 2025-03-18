@@ -21,6 +21,9 @@
       ],
       "@api-hono/*": [
         "./src/*"
+      ],
+      "@api-client/*": [
+        "../../packages/api-client/src/*"
       ]
     }
   }
