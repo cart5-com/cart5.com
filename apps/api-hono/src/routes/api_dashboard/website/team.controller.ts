@@ -17,7 +17,7 @@ export const getWebsiteTeamMembers_Handler = async (c: Context<
     const team = await getTeam_Service(website?.ownerTeamId ?? '', {
         ownerUserId: true
     });
-    const teamMembers = (await getTeamMembers_Service(team?.id ?? '', team?.ownerUserId ?? ''))
+    const teamMembers = (await getTeamMembers_Service(website?.ownerTeamId ?? '', team?.ownerUserId ?? ''))
         .map(member => ({
             ...member,
             email: redactEmail(member.email)
