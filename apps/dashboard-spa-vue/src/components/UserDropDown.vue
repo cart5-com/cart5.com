@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getSettingsUrl } from "@lib/clientUtils/getAuthOrigin";
 import { apiClient } from "@api-client/index";
-
+import DarkModeToggleSubMenu from "@/ui-plus/DarkModeToggleSubMenu.vue";
 const user = window.USER;
 function goToAccountSettings() {
     window.location.href = getSettingsUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
@@ -45,6 +45,8 @@ async function logout() {
                     </div>
                 </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DarkModeToggleSubMenu />
             <DropdownMenuSeparator />
             <DropdownMenuItem @click="goToAccountSettings">
                 Account Settings

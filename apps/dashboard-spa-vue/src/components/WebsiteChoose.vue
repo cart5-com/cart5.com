@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
+import { hostnameSupportTeam } from '@src/stores/SupportTeam.Store';
 
 const open = ref(false);
 
@@ -26,6 +27,7 @@ const onWebsiteSelected = (website: websiteListType[number]) => {
     <Popover v-model:open="open">
         <PopoverTrigger asChild>
             <Button variant="outline">
+                {{ hostnameSupportTeam?.name }}
                 <ChevronsUpDown class="opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -44,7 +46,7 @@ const onWebsiteSelected = (website: websiteListType[number]) => {
                                     }">
                             <div class="flex flex-col gap-1 border-b pb-2 w-full">
                                 <div class="flex items-center gap-2">
-                                    <Check />
+                                    <Check v-if="website.id === hostnameSupportTeam?.websiteId" />
                                     {{ website.name }}
                                 </div>
                                 <div class="text-sm text-muted-foreground">

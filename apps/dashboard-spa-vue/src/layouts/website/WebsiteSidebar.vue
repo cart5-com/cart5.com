@@ -13,9 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { currentWebsite } from '@src/stores/WebsiteStore';
 import { Store } from "lucide-vue-next";
-import DarkModeToggle from '@/ui-plus/DarkModeToggle.vue';
 import { useSidebar } from "@/components/ui/sidebar"
-import AppChoose from "@src/components/AppChoose.vue";
 
 const { setOpenMobile } = useSidebar()
 
@@ -77,10 +75,10 @@ const { setOpenMobile } = useSidebar()
                 </SidebarGroup>
             </SidebarContent>
             <SidebarFooter>
-                <div class="flex justify-center items-center gap-4">
+                <!-- <div class="flex justify-center items-center gap-4">
                     <DarkModeToggle />
                     <AppChoose />
-                </div>
+                </div> -->
             </SidebarFooter>
             <SidebarRail />
         </div>

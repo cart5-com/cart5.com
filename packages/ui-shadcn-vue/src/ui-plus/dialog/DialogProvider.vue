@@ -35,7 +35,7 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 					</DialogHeader>
 				</template>
 
-				<DialogHeader>
+				<!-- <DialogHeader>
 					<DialogTitle class="text-2xl sm:text-3xl font-bold"
 								 v-if="dialog.options?.title">
 						{{ dialog.options?.title }}
@@ -44,7 +44,7 @@ const handleUpdateOpen = (dialogId: string, val: boolean) => {
 									   :title="dialog.options?.description">
 						{{ dialog.options?.description }}
 					</DialogDescription>
-				</DialogHeader>
+				</DialogHeader> -->
 
 
 				<component v-if="dialog.options?.component"

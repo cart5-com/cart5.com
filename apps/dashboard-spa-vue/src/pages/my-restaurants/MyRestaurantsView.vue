@@ -13,7 +13,7 @@ const IS_DEV = import.meta.env.DEV;
 const openNewRestaurantDialog = () => {
     dialog.show<restaurantListType[number]>({
         title: "Add New Restaurant",
-        closeable: false,
+        closeable: true,
         component: RestaurantNewForm,
         onSuccess: async (values) => {
             console.log("success");

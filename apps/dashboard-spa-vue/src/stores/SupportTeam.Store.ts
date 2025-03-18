@@ -6,15 +6,21 @@ export type hostnameSupportTeamType = ResType<
     typeof apiClient.dashboard.team.my_teams.$get
 >["data"];
 
-export const hostnameSupportTeam = ref<hostnameSupportTeamType['hostnameSupportTeam'] | null>(null);
+export const hostnameSupportTeam = ref<hostnameSupportTeamType | null>(null);
 
-export const loadSupportTem = async () => {
+export const loadSupportTeam = async () => {
     const { data, error } = await (await apiClient.dashboard.team.my_teams.$get()).json()
     if (error) {
         console.error(error)
     }
-    console.log(data)
-    hostnameSupportTeam.value = data.hostnameSupportTeam
+    if (data) {
+        hostnameSupportTeam.value = data
+    } else {
+        const publicDomain = `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`
+        if (window.location.host !== publicDomain) {
+            window.location.href = window.location.href.replace(window.location.host, publicDomain)
+        }
+    }
 }
 
-loadSupportTem()
+loadSupportTeam()

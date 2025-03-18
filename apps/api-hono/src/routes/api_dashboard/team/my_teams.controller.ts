@@ -15,10 +15,11 @@ export const getMyTeams_Handler = async (c: Context<
     HonoVariables
 >) => {
     return c.json({
-        data: {
-            myTeams: await getUserTeams_Service(c.get('USER')?.id!),
-            hostnameSupportTeam: await getSupportTeamByHostname_Service(c.req.header()['host'])
-        },
+        // data: {
+        //     myTeams: await getUserTeams_Service(c.get('USER')?.id!),
+        //     hostnameSupportTeam:
+        // },
+        data: await getSupportTeamByHostname_Service(c.req.header()['host']),
         error: null as ErrorType
     }, 200);
 }
