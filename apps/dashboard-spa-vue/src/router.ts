@@ -100,6 +100,11 @@ const router = createRouter({
           name: 'restaurant-menu-editor',
           component: () => import('@src/pages/restaurant/menu/MenuEditorView.vue'),
         },
+        {
+          path: 'team',
+          name: 'restaurant-team',
+          component: () => import('@src/pages/restaurant/team/TeamView.vue'),
+        }
       ],
     },
 
