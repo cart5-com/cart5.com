@@ -174,11 +174,20 @@ function createNewCircle(bounds: L.LatLngBounds) {
     }
 }
 
+let isLeafletInitialized = false;
+
 const initMap = async () => {
+
+    setTimeout(() => {
+        if (isLeafletInitialized === false) {
+            toast.error('Map failed! please refresh the page');
+        }
+    }, 3e3);
+
     while (!window.L || !window.L.drawVersion) {
         await new Promise(resolve => setTimeout(resolve, 500))
     }
-
+    isLeafletInitialized = true;
     mapInstance = window.L.map(mapId, {
         // @ts-ignore
         fullscreenControl: true,
