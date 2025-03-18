@@ -7,9 +7,7 @@ import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
-type Member = ResType<
-    typeof apiPath
->["data"];
+type Member = ResType<typeof apiPath>["data"];
 
 defineProps<{
     members: Member;

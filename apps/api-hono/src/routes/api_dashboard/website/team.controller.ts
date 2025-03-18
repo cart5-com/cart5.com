@@ -4,6 +4,7 @@ import type { ErrorType } from "@lib/types/errors";
 import { getTeam_Service, getTeamMembers_Service } from "@db/services/team.service";
 import { getWebsite_Service } from "@db/services/website.service";
 import { redactEmail } from "@lib/utils/redactEmail";
+
 export const getWebsiteTeamMembers_Handler = async (c: Context<
     HonoVariables,
     "/:websiteId/team"

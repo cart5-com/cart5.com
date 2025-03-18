@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import {
     Dialog,
     DialogContent,
@@ -26,6 +26,7 @@ const error = ref('');
 // Create reactive permission states based on TEAM_PERMISSIONS
 const permissionStates = ref<Record<string, boolean>>({});
 
+const emit = defineEmits(['invitation-sent']);
 
 const resetForm = () => {
     email.value = '';
@@ -56,7 +57,7 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     try {
-        const response = await apiClient.dashboard.website[':websiteId'].team_invite.$post({
+        const { error: apiError } = await (await apiClient.dashboard.website[':websiteId'].team_invite.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },
@@ -64,9 +65,7 @@ const handleSubmit = async () => {
                 email: email.value,
                 permissions
             }
-        });
-
-        const { error: apiError } = await response.json();
+        })).json();
 
         if (apiError) {
             error.value = apiError.message || 'Failed to send invitation';
@@ -75,6 +74,7 @@ const handleSubmit = async () => {
             toast.success('Team invitation sent successfully');
             isOpen.value = false;
             resetForm();
+            emit('invitation-sent');
         }
     } catch (e) {
         error.value = 'An error occurred while sending the invitation';

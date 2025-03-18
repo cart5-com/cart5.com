@@ -15,6 +15,7 @@ import { hostname_SchemaValidator } from "./domain_set_default.controller";
 import { listDomains_Handler, listDomains_SchemaValidator } from "./domain_list.controller";
 import { removeDomain_Handler } from "./domain_remove.controller";
 import { setDefaultDomain_Handler } from "./domain_set_default.controller";
+import { getTeamInvitations_Handler } from "./team_invitations.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -51,6 +52,15 @@ export const websiteRouter = new Hono<HonoVariables>()
             TEAM_PERMISSIONS.TEAM_MANAGER
         ]),
         getWebsiteTeamMembers_Handler
+    )
+    .get(
+        '/:websiteId/team_invitations',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.WEBSITE_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        getTeamInvitations_Handler
     )
     .post(
         '/:websiteId/team_invite',
