@@ -4,9 +4,9 @@ import { getWebsite_SchemaValidator } from "./get.controller";
 import { Hono } from "hono";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { checkWebsitePermissions } from "@api-hono/utils/checkWebsitePermissions";
-import { getWebsiteTeamMembers_Handler } from "./team.controller";
-import { inviteTeamMember_SchemaValidator } from "./team_invite.controller";
-import { inviteTeamMember_Handler } from "./team_invite.controller";
+import { getWebsiteTeamMembers_Handler } from "./team/team.controller";
+import { inviteTeamMember_SchemaValidator } from "./team/team_invite.controller";
+import { inviteTeamMember_Handler } from "./team/team_invite.controller";
 import { updateWebsite_Handler, updateWebsite_SchemaValidator } from "./update.controller";
 import { getMyWebsites_Handler } from "./my_websites.controller";
 import { createWebsite_SchemaValidator, createWebsite_Handler } from "./create.controller";
@@ -15,11 +15,11 @@ import { hostname_SchemaValidator } from "./domain_set_default.controller";
 import { listDomains_Handler, listDomains_SchemaValidator } from "./domain_list.controller";
 import { removeDomain_Handler } from "./domain_remove.controller";
 import { setDefaultDomain_Handler } from "./domain_set_default.controller";
-import { getTeamInvitations_Handler } from "./team_invitations.controller";
-import { cancelTeamInvitation_Handler, cancelTeamInvitation_SchemaValidator } from "./team_invite_cancel.controller";
-import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } from "./team_transfer_ownership.controller";
-import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./team_remove_member.controller";
-import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team_update_permissions.controller";
+import { getTeamInvitations_Handler } from "./team/team_invitations.controller";
+import { cancelTeamInvitation_Handler, cancelTeamInvitation_SchemaValidator } from "./team/team_invite_cancel.controller";
+import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } from "./team/team_transfer_ownership.controller";
+import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./team/team_remove_member.controller";
+import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team/team_update_permissions.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(

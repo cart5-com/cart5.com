@@ -7,7 +7,7 @@ import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { validateCrossDomainTurnstile_WithUserCheck } from "@api-hono/utils/validateTurnstile";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { decryptAndVerifyJwt } from "@api-hono/utils/jwt";
-import type { InvitationLinkPayload } from "../website/team_invite.controller";
+import type { InvitationLinkPayload } from "../website/team/team_invite.controller";
 import {
     getTeamInvitation_Service,
     getExistingTeamMembership,

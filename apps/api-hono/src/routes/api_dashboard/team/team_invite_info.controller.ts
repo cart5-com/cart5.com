@@ -9,7 +9,7 @@ import { KNOWN_ERROR } from "@lib/types/errors";
 import { redactEmail } from "@lib/utils/redactEmail";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { decryptAndVerifyJwt } from "@api-hono/utils/jwt";
-import type { InvitationLinkPayload } from "../website/team_invite.controller";
+import type { InvitationLinkPayload } from "../website/team/team_invite.controller";
 
 export const teamInviteToken_Schema = z.object({
     token: z.string().min(1, { message: 'Token is required' }),
