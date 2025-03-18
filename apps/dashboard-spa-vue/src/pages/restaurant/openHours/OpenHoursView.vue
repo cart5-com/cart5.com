@@ -153,17 +153,19 @@ const copyFromDefault2Pickup = () => {
     toast.success('Copied hours from pickup schedule');
 };
 
-const copyFromDefault2OnPremise = () => {
-    onPremiseHours.value = JSON.parse(JSON.stringify(defaultHours.value));
-    onPremiseHours.value.isActive = true;
-    toast.success('Copied hours from on-premise schedule');
-};
+// ON_PREMISE_DISABLED_FOR_NOW
+// const copyFromDefault2OnPremise = () => {
+//     onPremiseHours.value = JSON.parse(JSON.stringify(defaultHours.value));
+//     onPremiseHours.value.isActive = true;
+//     toast.success('Copied hours from on-premise schedule');
+// };
 
-const copyFromDefault2TableReservation = () => {
-    tableReservationHours.value = JSON.parse(JSON.stringify(defaultHours.value));
-    tableReservationHours.value.isActive = true;
-    toast.success('Copied hours from table reservation schedule');
-};
+// TABLE_RESERVATION_DISABLED_FOR_NOW
+// const copyFromDefault2TableReservation = () => {
+//     tableReservationHours.value = JSON.parse(JSON.stringify(defaultHours.value));
+//     tableReservationHours.value.isActive = true;
+//     toast.success('Copied hours from table reservation schedule');
+// };
 
 </script>
 
