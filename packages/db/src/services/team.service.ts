@@ -280,7 +280,7 @@ export const addMemberToTeam = async (
     });
 }
 
-export const getPendingTeamInvitations_Service = async (teamId: string) => {
+export const getTeamInvitations_Service = async (teamId: string) => {
     return await db.select({
         id: teamInvitationsTable.id,
         email: teamInvitationsTable.email,
@@ -297,10 +297,26 @@ export const getPendingTeamInvitations_Service = async (teamId: string) => {
             eq(teamInvitationsTable.inviterId, userTable.id)
         )
         .where(
+            eq(teamInvitationsTable.teamId, teamId),
+            // and(
+            //     eq(teamInvitationsTable.status, "PENDING")
+            // )
+        )
+        .orderBy(teamInvitationsTable.created_at_ts);
+}
+
+export const cancelTeamInvitation_Service = async (invitationId: string, teamId: string) => {
+    return await db.update(teamInvitationsTable)
+        .set({
+            status: "CANCELLED",
+        })
+        .where(
             and(
+                eq(teamInvitationsTable.id, invitationId),
                 eq(teamInvitationsTable.teamId, teamId),
                 eq(teamInvitationsTable.status, "PENDING")
             )
         )
-        .orderBy(teamInvitationsTable.created_at_ts);
+        .returning({ id: teamInvitationsTable.id })
+        .then(results => results[0] || null);
 }

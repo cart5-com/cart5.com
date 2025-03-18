@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Clock, User } from 'lucide-vue-next';
+import { Mail, Clock, User, X } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
 import { formatDate } from '@lib/utils/formatDate';
+import { ref } from 'vue';
+import { currentWebsiteId } from '@src/stores/WebsiteStore';
+import { toast } from '@/ui-plus/sonner';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team_invitations.$get;
 type Invitation = ResType<typeof apiPath>["data"][0];
 
-defineProps<{
+const props = defineProps<{
     invitations: Invitation[];
 }>();
+
+const emit = defineEmits(['invitation-cancelled']);
+
+// Track which invitations are being cancelled
+const cancellingInvitations = ref<Record<string, boolean>>({});
 
 // Format timestamp to relative time (e.g., 2 hours ago)
 const formatTime = (timestamp: number) => {
@@ -22,12 +31,45 @@ const formatTime = (timestamp: number) => {
 const formatPermissions = (permissions: string[]) => {
     return permissions.map(p => p.replace(/_/g, ' ')).join(', ');
 };
+
+// Cancel an invitation
+const cancelInvitation = async (invitationId: string) => {
+    if (cancellingInvitations.value[invitationId]) return;
+
+    cancellingInvitations.value[invitationId] = true;
+
+    try {
+        const response = await apiClient.dashboard.website[':websiteId'].team_invite_cancel.$post({
+            param: {
+                websiteId: currentWebsiteId.value ?? ''
+            },
+            json: {
+                invitationId
+            }
+        });
+
+        const { error } = await response.json();
+
+        if (error) {
+            console.error(error);
+            toast.error(error.message || 'Failed to cancel invitation');
+        } else {
+            toast.success('Invitation cancelled successfully');
+            emit('invitation-cancelled');
+        }
+    } catch (e) {
+        console.error(e);
+        toast.error('An error occurred while cancelling the invitation');
+    } finally {
+        cancellingInvitations.value[invitationId] = false;
+    }
+};
 </script>
 
 <template>
     <Card class="max-w-lg mx-auto mt-6">
         <CardHeader class="pb-2">
-            <h3 class="text-lg font-medium">Pending Invitations</h3>
+            <h3 class="text-lg font-medium">Invitations</h3>
             <p class="text-sm text-muted-foreground">
                 These invitations are waiting for users to accept
             </p>
@@ -35,7 +77,7 @@ const formatPermissions = (permissions: string[]) => {
         <CardContent>
             <div v-if="invitations.length === 0"
                  class="text-center py-4 text-muted-foreground">
-                No pending invitations
+                No invitations
             </div>
             <div v-else
                  class="space-y-4">
@@ -48,6 +90,7 @@ const formatPermissions = (permissions: string[]) => {
                             {{ invitation.email }}
                         </div>
                         <Badge variant="outline"
+                               :class="invitation.status === 'EXPIRED' ? 'text-destructive border-destructive/50' : ''"
                                class="ml-2">{{ invitation.status }}</Badge>
                     </div>
 
@@ -61,16 +104,22 @@ const formatPermissions = (permissions: string[]) => {
                         Invited by {{ invitation.inviterName }}
                     </div>
 
-                    <div class="text-sm">
+                    <div class="text-sm mb-3">
                         <span class="text-muted-foreground">Permissions:</span>
                         <span class="ml-1">{{ formatPermissions(invitation.permissions ?? []) }}</span>
                     </div>
 
-                    <!-- Add buttons for resend/cancel if needed -->
-                    <!-- <div class="flex gap-2 mt-3">
-            <Button variant="outline" size="sm">Resend</Button>
-            <Button variant="destructive" size="sm">Cancel</Button>
-          </div> -->
+                    <div class="flex justify-end">
+                        <Button v-if="invitation.status === 'PENDING'"
+                                variant="destructive"
+                                size="sm"
+                                :disabled="cancellingInvitations[invitation.id]"
+                                @click="cancelInvitation(invitation.id)"
+                                class="flex items-center gap-1">
+                            <X class="h-3.5 w-3.5" />
+                            {{ cancellingInvitations[invitation.id] ? 'Cancelling...' : 'Cancel Invitation' }}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </CardContent>

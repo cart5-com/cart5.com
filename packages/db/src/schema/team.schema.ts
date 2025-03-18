@@ -37,11 +37,6 @@ export const teamUserMapTable = sqliteTable("team_user_map", {
 
 
 
-
-/**
- * Schema for team invitations
- * This table tracks pending invitations to join teams
- */
 export const teamInvitationsTable = sqliteTable("team_invitations", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('t_inv')),
     teamId: text("team_id").notNull(),

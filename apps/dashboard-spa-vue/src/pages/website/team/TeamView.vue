@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import TeamMembersList from './TeamMembersList.vue';
-import PendingInvitationsList from './PendingInvitationsList.vue';
+import InvitationsList from './InvitationsList.vue';
 import InviteTeamMemberDialog from './InviteTeamMemberDialog.vue';
 import { currentWebsiteId } from '@src/stores/WebsiteStore';
 import { apiClient } from '@api-client/index';
@@ -43,7 +43,6 @@ const loadData = async () => {
             members.value = membersRes.data;
         }
 
-        // Load pending invitations
         const invitationsRes = await (await apiClient.dashboard.website[':websiteId'].team_invitations.$get({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
@@ -95,7 +94,8 @@ onMounted(() => {
 
         <div v-else>
             <TeamMembersList :members="members" />
-            <PendingInvitationsList :invitations="invitations" />
+            <InvitationsList :invitations="invitations"
+                             @invitation-cancelled="loadData" />
         </div>
     </div>
 </template>
