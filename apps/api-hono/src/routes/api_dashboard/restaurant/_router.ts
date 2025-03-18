@@ -20,7 +20,7 @@ import { getRestaurantScheduledOrdersSettings_SchemaValidator, getRestaurantSche
 import { updateRestaurantScheduledOrdersSettings_SchemaValidator, updateRestaurantScheduledOrdersSettings_Handler } from "./scheduled_orders_settings/scheduled_orders_settings_update.controller";
 import { getRestaurantDeliveryZones_SchemaValidator, getRestaurantDeliveryZones_Handler } from "./delivery_zones/delivery_zones_get.controller";
 import { updateRestaurantDeliveryZones_SchemaValidator, updateRestaurantDeliveryZones_Handler } from "./delivery_zones/delivery_zones_update.controller";
-import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
+import { createAdminCheckRestaurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { getRestaurantTeamMembers_Handler } from "./team/team.controller";
 import { getRestaurantTeamInvitations_Handler } from "./team/team_invitations.controller";
@@ -40,7 +40,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         createRestaurant_Handler
     )
     .post('/:restaurantId',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -48,7 +48,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurant_Handler
     )
     .patch('/:restaurantId',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -57,7 +57,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .get(
         '/:restaurantId/team',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER,
             TEAM_PERMISSIONS.TEAM_MANAGER
@@ -66,7 +66,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .get(
         '/:restaurantId/team_invitations',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER,
             TEAM_PERMISSIONS.TEAM_MANAGER
@@ -75,7 +75,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .post(
         '/:restaurantId/team_invite',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER,
             TEAM_PERMISSIONS.TEAM_MANAGER
@@ -85,7 +85,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .post(
         '/:restaurantId/team_invite_cancel',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER,
             TEAM_PERMISSIONS.TEAM_MANAGER
@@ -95,7 +95,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .post(
         '/:restaurantId/team_transfer_ownership',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS
         ]),
         transferRestaurantTeamOwnership_SchemaValidator,
@@ -103,7 +103,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .post(
         '/:restaurantId/team_remove_member',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.TEAM_MANAGER
         ]),
@@ -112,7 +112,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
     )
     .post(
         '/:restaurantId/team_update_permissions',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.TEAM_MANAGER
         ]),
@@ -120,7 +120,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantTeamMemberPermissions_Handler
     )
     .post('/:restaurantId/address/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -128,7 +128,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantAddress_Handler
     )
     .patch('/:restaurantId/address/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -136,7 +136,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantAddress_Handler
     )
     .post('/:restaurantId/open_hours/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -144,7 +144,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantOpenHours_Handler
     )
     .patch('/:restaurantId/open_hours/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -152,7 +152,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantOpenHours_Handler
     )
     .post('/:restaurantId/menu/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -160,7 +160,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantMenu_Handler
     )
     .patch('/:restaurantId/menu/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -168,7 +168,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantMenu_Handler
     )
     .post('/:restaurantId/payment_methods/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -176,7 +176,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantPaymentMethods_Handler
     )
     .patch('/:restaurantId/payment_methods/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -184,7 +184,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantPaymentMethods_Handler
     )
     .post('/:restaurantId/table_reservation_settings/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -192,7 +192,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantTableReservationSettings_Handler
     )
     .patch('/:restaurantId/table_reservation_settings/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -200,7 +200,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantTableReservationSettings_Handler
     )
     .post('/:restaurantId/tax_settings/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -208,7 +208,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantTaxSettings_Handler
     )
     .patch('/:restaurantId/tax_settings/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -216,7 +216,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantTaxSettings_Handler
     )
     .post('/:restaurantId/scheduled_orders_settings/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -224,7 +224,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantScheduledOrdersSettings_Handler
     )
     .patch('/:restaurantId/scheduled_orders_settings/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -232,7 +232,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         updateRestaurantScheduledOrdersSettings_Handler
     )
     .post('/:restaurantId/delivery_zones/get',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),
@@ -240,7 +240,7 @@ export const restaurantRouter = new Hono<HonoVariables>()
         getRestaurantDeliveryZones_Handler
     )
     .patch('/:restaurantId/delivery_zones/update',
-        createAdminCheckRestraurant([
+        createAdminCheckRestaurant([
             TEAM_PERMISSIONS.FULL_ACCESS,
             TEAM_PERMISSIONS.RESTAURANT_MANAGER
         ]),

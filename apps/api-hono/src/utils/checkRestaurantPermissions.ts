@@ -4,8 +4,7 @@ import type { Next } from "hono";
 import { KNOWN_ERROR } from "@lib/types/errors";
 import { isUserRestaurantAdmin } from "@db/services/restaurant.service";
 
-// TODO: rename to createAdminCheckRestaurant
-export function createAdminCheckRestraurant(
+export function createAdminCheckRestaurant(
     permissions: (typeof TEAM_PERMISSIONS)[keyof typeof TEAM_PERMISSIONS][]
 ) {
     return async function (c: Context, next: Next) {
