@@ -1,4 +1,3 @@
-import { getUserTeams_Service } from "@db/services/team.service"
 import { zValidator } from "@hono/zod-validator";
 import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
