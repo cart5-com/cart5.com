@@ -21,6 +21,7 @@
     "strings": true
   },
   "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "package.json": "turbo.json, README.md, pnpm*, tailwind.*, vite.*, drizzle.config*, astro.config*, esbuild.*, .prettier*, nixpacks.toml, license.md, .gitignore, .cursorignore, tsconfig.*.json, *.d.ts, tsconfig.json, tsconfig.*.json, components.json, local-sqlite.db, .cursorrules",
     ".env": ".env*"
