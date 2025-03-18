@@ -22,6 +22,13 @@ import { getRestaurantDeliveryZones_SchemaValidator, getRestaurantDeliveryZones_
 import { updateRestaurantDeliveryZones_SchemaValidator, updateRestaurantDeliveryZones_Handler } from "./delivery_zones/delivery_zones_update.controller";
 import { createAdminCheckRestraurant } from "@api-hono/utils/checkRestaurantPermissions";
 import { TEAM_PERMISSIONS } from "@lib/consts";
+import { getRestaurantTeamMembers_Handler } from "./team/team.controller";
+import { getRestaurantTeamInvitations_Handler } from "./team/team_invitations.controller";
+import { inviteRestaurantTeamMember_SchemaValidator, inviteRestaurantTeamMember_Handler } from "./team/team_invite.controller";
+import { cancelRestaurantTeamInvitation_SchemaValidator, cancelRestaurantTeamInvitation_Handler } from "./team/team_invite_cancel.controller";
+import { transferRestaurantTeamOwnership_SchemaValidator, transferRestaurantTeamOwnership_Handler } from "./team/team_transfer_ownership.controller";
+import { removeRestaurantTeamMember_SchemaValidator, removeRestaurantTeamMember_Handler } from "./team/team_remove_member.controller";
+import { updateRestaurantTeamMemberPermissions_SchemaValidator, updateRestaurantTeamMemberPermissions_Handler } from "./team/team_update_permissions.controller";
 
 export const restaurantRouter = new Hono<HonoVariables>()
     .get(
@@ -47,6 +54,70 @@ export const restaurantRouter = new Hono<HonoVariables>()
         ]),
         updateRestaurant_SchemaValidator,
         updateRestaurant_Handler
+    )
+    .get(
+        '/:restaurantId/team',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        getRestaurantTeamMembers_Handler
+    )
+    .get(
+        '/:restaurantId/team_invitations',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        getRestaurantTeamInvitations_Handler
+    )
+    .post(
+        '/:restaurantId/team_invite',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        inviteRestaurantTeamMember_SchemaValidator,
+        inviteRestaurantTeamMember_Handler
+    )
+    .post(
+        '/:restaurantId/team_invite_cancel',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.RESTAURANT_MANAGER,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        cancelRestaurantTeamInvitation_SchemaValidator,
+        cancelRestaurantTeamInvitation_Handler
+    )
+    .post(
+        '/:restaurantId/team_transfer_ownership',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS
+        ]),
+        transferRestaurantTeamOwnership_SchemaValidator,
+        transferRestaurantTeamOwnership_Handler
+    )
+    .post(
+        '/:restaurantId/team_remove_member',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        removeRestaurantTeamMember_SchemaValidator,
+        removeRestaurantTeamMember_Handler
+    )
+    .post(
+        '/:restaurantId/team_update_permissions',
+        createAdminCheckRestraurant([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        updateRestaurantTeamMemberPermissions_SchemaValidator,
+        updateRestaurantTeamMemberPermissions_Handler
     )
     .post('/:restaurantId/address/get',
         createAdminCheckRestraurant([
