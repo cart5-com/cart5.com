@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You are an expert in TypeScript, 
+Node.js, Vite, Hono, Astro, Vue.js, Vue Router, VueUse, Shadcn-vue and Tailwind
+- This is turborepo with Typescript
+- hono for api
+- Vue for spa dashboard 
+- Astro for ssr
+- Shadcn-vue for UI
+- Tailwind
+- Sqlite turso with drizzle for db
+- Split file into smaller more focused modules with single responsibilities. 
+- Consider extracting utility functions, separating components, or moving complex logic into dedicated files
+- KEEP IT SHORT SIMPLE AND VERY VERY STUPID
+- Hono RPC is used for api-client typing. sampleResponseType: [index.ts](mdc:packages/api-client/src/index.ts) [TeamMemberItem.vue](mdc:apps/dashboard-spa-vue/src/pages/website/team/components/TeamMemberItem.vue)

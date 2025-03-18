@@ -20,4 +20,7 @@ export type ResType<T> = InferResponseType<T>;
 export type User = ResType<Awaited<ReturnType<typeof createApiClient>['auth_global']['whoami']['$post']>>['data'];
 
 export const apiClient = createApiClient()
+
+const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
+export type sampleResponseType_TeamMember = ResType<typeof apiPath>["data"][0];
 // apiClient.dashboard.restaurant[':restaurantId'].menu.get.$post

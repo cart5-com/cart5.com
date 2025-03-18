@@ -1,0 +1,21 @@
+---
+description: Vue
+globs: *.vue
+alwaysApply: false
+---
+You are an expert in TypeScript, Node.js, Vite, Vue.js, Vue Router, VueUse, Shadcn-vue and Tailwind
+
+UI and Styling
+- Use Shadcn-vue, and Tailwind for components and styling.
+- Avoid using tailwind colors, use Shadcn-vue css variables [index.css](mdc:packages/ui-shadcn-vue/src/index.css)
+- Optimize images with lazy loading
+
+Performance Optimization
+- Leverage VueUse functions where applicable to enhance reactivity and performance.
+
+Code Style and Structure
+- Always keep components as small as possible. 
+- try to keep ts script less than 200 lines.
+
+TypeScript Usage
+- Use TypeScript for all code; prefer types.
