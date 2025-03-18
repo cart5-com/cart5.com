@@ -17,6 +17,7 @@ import { removeDomain_Handler } from "./domain_remove.controller";
 import { setDefaultDomain_Handler } from "./domain_set_default.controller";
 import { getTeamInvitations_Handler } from "./team_invitations.controller";
 import { cancelTeamInvitation_Handler, cancelTeamInvitation_SchemaValidator } from "./team_invite_cancel.controller";
+import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } from "./team_transfer_ownership.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -82,6 +83,14 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         cancelTeamInvitation_SchemaValidator,
         cancelTeamInvitation_Handler
+    )
+    .post(
+        '/:websiteId/team_transfer_ownership',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS
+        ]),
+        transferTeamOwnership_SchemaValidator,
+        transferTeamOwnership_Handler
     )
     // Domain Routes
     .post(

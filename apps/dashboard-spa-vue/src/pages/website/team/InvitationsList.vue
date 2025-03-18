@@ -13,7 +13,7 @@ import { toast } from '@/ui-plus/sonner';
 const apiPath = apiClient.dashboard.website[':websiteId'].team_invitations.$get;
 type Invitation = ResType<typeof apiPath>["data"][0];
 
-const props = defineProps<{
+defineProps<{
     invitations: Invitation[];
 }>();
 

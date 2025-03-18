@@ -320,3 +320,48 @@ export const cancelTeamInvitation_Service = async (invitationId: string, teamId:
         .returning({ id: teamInvitationsTable.id })
         .then(results => results[0] || null);
 }
+
+export const transferTeamOwnership_Service = async (
+    teamId: string,
+    currentOwnerId: string,
+    newOwnerId: string
+) => {
+    // Check if new owner is a member of the team
+    const isMember = await db.select({ userId: teamUserMapTable.userId })
+        .from(teamUserMapTable)
+        .where(
+            and(
+                eq(teamUserMapTable.teamId, teamId),
+                eq(teamUserMapTable.userId, newOwnerId)
+            )
+        )
+        .then(results => results.length > 0);
+
+    if (!isMember) {
+        return null;
+    }
+
+    return await db.transaction(async (tx) => {
+        // Update team owner
+        await tx.update(teamTable)
+            .set({ ownerUserId: newOwnerId })
+            .where(
+                and(
+                    eq(teamTable.id, teamId),
+                    eq(teamTable.ownerUserId, currentOwnerId)
+                )
+            );
+
+        // Ensure new owner has FULL_ACCESS permission
+        await tx.update(teamUserMapTable)
+            .set({ permissions: [TEAM_PERMISSIONS.FULL_ACCESS] })
+            .where(
+                and(
+                    eq(teamUserMapTable.teamId, teamId),
+                    eq(teamUserMapTable.userId, newOwnerId)
+                )
+            );
+
+        return { success: true };
+    });
+}

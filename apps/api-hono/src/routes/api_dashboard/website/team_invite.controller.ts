@@ -38,8 +38,8 @@ export const inviteTeamMember_Handler = async (c: Context<
     );
     if (isInvited) {
         throw new KNOWN_ERROR(
-            'EMAIL_ALREADY_INVITED',
-            'The email has already been invited to the team'
+            'The email has already been invited to the team',
+            'EMAIL_ALREADY_INVITED'
         );
     }
     const invitation = await insertInvitation(

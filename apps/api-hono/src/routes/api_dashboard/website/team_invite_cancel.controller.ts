@@ -33,8 +33,8 @@ export const cancelTeamInvitation_Handler = async (c: Context<
 
     if (!result) {
         throw new KNOWN_ERROR(
-            'INVITATION_NOT_FOUND_OR_ALREADY_PROCESSED',
-            'The invitation was not found or has already been processed'
+            'The invitation was not found or has already been processed',
+            'INVITATION_NOT_FOUND_OR_ALREADY_PROCESSED'
         );
     }
 

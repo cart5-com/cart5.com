@@ -1,7 +1,6 @@
 import { ref, computed } from 'vue'
 import { type ResType } from '@api-client/index'
 import { apiClient } from '@api-client/index';
-import { toast } from '@/ui-plus/sonner';
 
 export type websiteListType = ResType<
     typeof apiClient.dashboard.website.my_websites.$get
