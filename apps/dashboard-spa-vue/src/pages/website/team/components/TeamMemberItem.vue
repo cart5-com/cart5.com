@@ -9,7 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { apiClient, type ResType } from '@api-client';
+import { apiClient, type ResType } from '@api-client/index';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"][0];
