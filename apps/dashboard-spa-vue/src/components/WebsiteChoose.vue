@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { myWebsites, type websiteListType, currentDashboard } from '@src/stores/WebsiteStore';
+import { myWebsites, type websiteListType } from '@src/stores/WebsiteStore';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -26,7 +26,6 @@ const onWebsiteSelected = (website: websiteListType[number]) => {
     <Popover v-model:open="open">
         <PopoverTrigger asChild>
             <Button variant="outline">
-                {{ currentDashboard?.name }}
                 <ChevronsUpDown class="opacity-50" />
             </Button>
         </PopoverTrigger>
@@ -45,7 +44,7 @@ const onWebsiteSelected = (website: websiteListType[number]) => {
                                     }">
                             <div class="flex flex-col gap-1 border-b pb-2 w-full">
                                 <div class="flex items-center gap-2">
-                                    <Check v-if="currentDashboard?.id === website.id" />
+                                    <Check />
                                     {{ website.name }}
                                 </div>
                                 <div class="text-sm text-muted-foreground">

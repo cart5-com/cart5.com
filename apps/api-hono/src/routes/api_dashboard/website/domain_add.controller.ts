@@ -21,13 +21,11 @@ export const addDomain_Handler = async (c: Context<
     const { hostname } = c.req.valid('json');
 
     const PUBLIC_DOMAIN_NAME = getEnvVariable('PUBLIC_DOMAIN_NAME');
-    if (IS_PROD) {
-        // Check if trying to add a reserved subdomain
-        if (hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)) {
-            const subdomain = hostname.split(`.${PUBLIC_DOMAIN_NAME}`)[0].toLowerCase();
-            if (RESERVED_SUBDOMAINS.includes(subdomain)) {
-                throw new KNOWN_ERROR('This subdomain is reserved', 'RESERVED_SUBDOMAIN');
-            }
+    // Check if trying to add a reserved subdomain
+    if (hostname.endsWith(`.${PUBLIC_DOMAIN_NAME}`)) {
+        const subdomain = hostname.split(`.${PUBLIC_DOMAIN_NAME}`)[0].toLowerCase();
+        if (RESERVED_SUBDOMAINS.includes(subdomain)) {
+            throw new KNOWN_ERROR('This subdomain is reserved', 'RESERVED_SUBDOMAIN');
         }
     }
     const website = await getWebsiteWithDomains(websiteId);

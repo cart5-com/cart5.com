@@ -29,31 +29,15 @@ export const currentWebsite = computed(() => {
     return myWebsites.value.find(website => website.id === currentWebsiteId.value);
 });
 
-export let currentDashboard = ref<Website | null>(null);
 
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
-    const response = await (await apiClient.dashboard.website.my_websites.$get()).json()
-    if (response.error) {
-        console.error(response.error)
+    const { data, error } = await (await apiClient.dashboard.website.my_websites.$get()).json()
+    if (error) {
+        console.error(error)
         return
     } else {
-        const allWebsites = response.data as Website[];
-        const currentOne = allWebsites.find(website => website.defaultHostname === window.location.host) ?? null;
-        if (!currentOne) {
-            toast.error('no website found for this domain, redirecting..')
-            // setTimeout(() => {
-            //     if (allWebsites[0] && allWebsites[0].defaultHostname) {
-            //         window.location.href = window.location.href.replace(window.location.host, allWebsites[0].defaultHostname);
-            //     } else {
-            //         window.location.href = window.location.href.replace(window.location.host, `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`);
-            //     }
-            // }, 1500)
-            return
-        } else {
-            currentDashboard.value = currentOne;
-            myWebsites.value = allWebsites;
-        }
+        myWebsites.value = data;
     }
 }
 
