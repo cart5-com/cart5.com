@@ -3,7 +3,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
-import { dashboardApiClient } from '@src/lib/dashboardApiClient'
+import { apiClient } from '@api-client/index'
 import { currentRestaurantId } from '@src/stores/RestaurantStore'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,7 +15,7 @@ const offersPickup = ref(false)
 const loadData = async () => {
     isLoading.value = true
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -42,7 +42,7 @@ const loadData = async () => {
 const savePickupOption = async () => {
     isLoading.value = true
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error } = await (await apiClient.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

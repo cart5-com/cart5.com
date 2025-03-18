@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { pageTitle } from '@src/stores/layout.store';
 
@@ -31,7 +31,7 @@ const loadData = async () => {
     isLoading.value = true;
     try {
         // TODO: is there a way to get all the data in one request?
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].table_reservation_settings.get.$post({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].table_reservation_settings.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -47,7 +47,7 @@ const loadData = async () => {
             }
         })).json();
         // get offersTableReservation from restaurant
-        const { data: offersTableReservation, error: offersTableReservationError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+        const { data: offersTableReservation, error: offersTableReservationError } = await (await apiClient.dashboard.restaurant[':restaurantId'].$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -85,7 +85,7 @@ const loadData = async () => {
 const saveSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].table_reservation_settings.update.$patch({
+        const { error } = await (await apiClient.dashboard.restaurant[':restaurantId'].table_reservation_settings.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -99,7 +99,7 @@ const saveSettings = async () => {
             }
         })).json();
         // update offersTableReservation: isTableReservationEnabled.value,
-        const { error: offersTableReservationError } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { error: offersTableReservationError } = await (await apiClient.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

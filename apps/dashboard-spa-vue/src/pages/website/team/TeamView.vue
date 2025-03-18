@@ -3,15 +3,15 @@ import { onMounted, ref } from 'vue';
 import TeamMembersList from './TeamMembersList.vue';
 import InviteTeamMemberDialog from './InviteTeamMemberDialog.vue';
 import { currentWebsiteId } from '@src/stores/WebsiteStore';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 import { pageTitle } from '@src/stores/layout.store';
 import { Loader2 } from 'lucide-vue-next';
-import { type ResType } from '@api-client/ecomApiClient';
+import { type ResType } from '@api-client/index';
 // Set page title
 pageTitle.value = 'Team Management';
 
-const apiPath = dashboardApiClient.api_dashboard.website[':websiteId'].team.$get
+const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<
     typeof apiPath
 >["data"];
@@ -21,7 +21,7 @@ const loading = ref(true);
 const errorBanner = ref<string | null>(null);
 
 const loadData = async () => {
-    const { data, error } = await (await dashboardApiClient.api_dashboard.website[':websiteId'].team.$get({
+    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].team.$get({
         param: {
             websiteId: currentWebsiteId.value ?? ''
         }

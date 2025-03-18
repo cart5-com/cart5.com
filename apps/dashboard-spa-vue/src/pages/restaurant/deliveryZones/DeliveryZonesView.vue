@@ -22,7 +22,7 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from '@/ui-plus/sonner';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { type DeliveryZone } from '@lib/types/restaurantTypes';
 import { Check, Loader2, Plus } from 'lucide-vue-next';
@@ -58,7 +58,7 @@ watch([deliveryZones, offersDelivery], () => {
 pageTitle.value = 'Delivery Options'
 
 const loadData = async () => {
-    const apiPath = dashboardApiClient.api_dashboard.restaurant[':restaurantId'];
+    const apiPath = apiClient.dashboard.restaurant[':restaurantId'];
     const param = {
         restaurantId: currentRestaurantId.value ?? '',
     }
@@ -249,7 +249,7 @@ const deleteZone = async () => {
 }
 
 const saveData = async () => {
-    const apiPath = dashboardApiClient.api_dashboard.restaurant[':restaurantId'];
+    const apiPath = apiClient.dashboard.restaurant[':restaurantId'];
     const param = {
         restaurantId: currentRestaurantId.value ?? '',
     }

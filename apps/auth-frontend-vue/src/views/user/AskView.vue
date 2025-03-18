@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { createAuthApiClient_AsUrlHelper } from "@src/lib/authApiClient";
+import { createApiClient_AsUrlHelper } from "@api-client/index";
 import { getNextUrl, getNextHostname } from "@src/lib/queryHelpers";
 
 const dialog = useDialog();
@@ -32,7 +32,7 @@ const redirectWithUser = async () => {
     }
     const turnstile = await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY);
     dialog.showBlockingLoadingModal();
-    const postActionUrl = createAuthApiClient_AsUrlHelper().api_auth.cross_domain.redirector.$url();
+    const postActionUrl = createApiClient_AsUrlHelper().auth.cross_domain.redirector.$url();
     const newForm = document.createElement("form");
     newForm.method = "POST";
     newForm.action = postActionUrl.toString();

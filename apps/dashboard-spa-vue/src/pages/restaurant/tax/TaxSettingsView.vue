@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import type { TaxCategory } from '@lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
@@ -67,7 +67,7 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].tax_settings.get.$post({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].tax_settings.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -108,7 +108,7 @@ const loadData = async () => {
 const saveTaxSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].tax_settings.update.$patch({
+        const { error } = await (await apiClient.dashboard.restaurant[':restaurantId'].tax_settings.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

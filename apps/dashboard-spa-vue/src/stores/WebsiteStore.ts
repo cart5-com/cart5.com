@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
-import { type ResType } from '@api-client/ecomApiClient'
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { type ResType } from '@api-client/index'
+import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 
 export type websiteListType = ResType<
-    typeof dashboardApiClient.api_dashboard.website.my_websites.$get
+    typeof apiClient.dashboard.website.my_websites.$get
 >["data"];
 
 // Define a more specific type for website data
@@ -33,7 +33,7 @@ export let currentDashboard = ref<Website | null>(null);
 
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
-    const response = await (await dashboardApiClient.api_dashboard.website.my_websites.$get()).json()
+    const response = await (await apiClient.dashboard.website.my_websites.$get()).json()
     if (response.error) {
         console.error(response.error)
         return

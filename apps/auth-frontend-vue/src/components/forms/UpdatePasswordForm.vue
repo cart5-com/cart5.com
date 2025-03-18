@@ -4,7 +4,7 @@ import { AutoForm } from '@/ui-plus/auto-form'
 import { toast } from '@/ui-plus/sonner'
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
-import { getAuthApiClient } from "@src/lib/authApiClient";
+import { apiClient } from "@api-client/index";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 import { Loader2 } from 'lucide-vue-next';
@@ -38,7 +38,7 @@ form.setFieldValue("email", userStore.value?.email || "");
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { error } = await (await getAuthApiClient().api_auth.user['update-password'].$post({
+        const { error } = await (await apiClient.auth.user['update-password'].$post({
             form: {
                 password: values.password,
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

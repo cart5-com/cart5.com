@@ -6,7 +6,7 @@ import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2, PlusIcon } from 'lucide-vue-next'
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { currentRestaurantId, setCurrentRestaurantName } from '@src/stores/RestaurantStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
 import { onMounted, ref, watch } from 'vue';
@@ -36,7 +36,7 @@ const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+    const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
@@ -71,7 +71,7 @@ onMounted(() => {
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

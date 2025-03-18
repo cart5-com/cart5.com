@@ -6,8 +6,10 @@ import { otpRoute } from './otp/_router';
 import { userRoute } from './user/_router';
 import { crossDomainRoute } from './cross_domain/_router';
 import { twoFactorAuthRoute } from './two_factor_auth/_router';
+import { hostMustBeAuthDomain } from '@api-hono/middlewares/hostMustBeAuthDomain';
 
 export const apiAuth = new Hono<HonoVariables>()
+    .use(hostMustBeAuthDomain)
     .route('/cross_domain', crossDomainRoute)
     .route('/email_password', emailPasswordRoute)
     .route('/google_oauth', googleOAuthRoute)

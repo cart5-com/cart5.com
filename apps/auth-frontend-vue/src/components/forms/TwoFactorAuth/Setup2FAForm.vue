@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AutoForm } from '@/ui-plus/auto-form'
 import { z } from "zod";
-import { getAuthApiClient } from '@src/lib/authApiClient';
+import { apiClient } from '@api-client/index';
 import { onMounted, ref } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
 import Separator from '@/ui-plus/separator/Separator.vue';
@@ -50,7 +50,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await getAuthApiClient().api_auth["two_factor_auth"].save.$post({
+        const { data, error } = await (await apiClient.auth.two_factor_auth.save.$post({
             form: {
                 ...values,
                 encodedTOTPKey: props.encodedTOTPKey,

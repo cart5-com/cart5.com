@@ -2,7 +2,7 @@
 import Button from '@/components/ui/button/Button.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import Setup2FAForm from './Setup2FAForm.vue';
-import { getAuthApiClient } from '@src/lib/authApiClient';
+import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@src/components/forms/TwoFactorAuth/RecoveryCodeDialog.vue';
@@ -12,7 +12,7 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 const dialog = useDialog();
 const setupTwoFactorAuthentication = async () => {
     const loadingDialogId = dialog.showBlockingLoadingModal();
-    const { data, error } = await (await getAuthApiClient().api_auth["two_factor_auth"].new.$post()).json();
+    const { data, error } = await (await apiClient.auth.two_factor_auth.new.$post()).json();
     dialog.cancel(loadingDialogId);
     if (error) {
         console.error(error);
@@ -50,7 +50,7 @@ const showRecoveryCodeDialog = (recoveryCode: string) => {
 }
 
 const getRecoveryCode = async () => {
-    const { data, error } = await (await getAuthApiClient().api_auth["two_factor_auth"]["get-recovery-code"].$post({
+    const { data, error } = await (await apiClient.auth.two_factor_auth["get-recovery-code"].$post({
         form: {
             turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
         }
@@ -64,7 +64,7 @@ const getRecoveryCode = async () => {
 }
 
 const generateNewRecoveryCode = async () => {
-    const { data, error } = await (await getAuthApiClient().api_auth["two_factor_auth"]["generate-new-recovery-code"].$post({
+    const { data, error } = await (await apiClient.auth.two_factor_auth["generate-new-recovery-code"].$post({
         form: {
             turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
         }
@@ -79,7 +79,7 @@ const generateNewRecoveryCode = async () => {
 
 const removeTwoFactorAuthentication = async () => {
     if (confirm("Are you sure you want to remove two factor authentication?")) {
-        const { data, error } = await (await getAuthApiClient().api_auth["two_factor_auth"]["remove-2fa"].$post({
+        const { data, error } = await (await apiClient.auth.two_factor_auth["remove-2fa"].$post({
             form: {
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
             }

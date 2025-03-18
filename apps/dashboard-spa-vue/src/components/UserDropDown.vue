@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getSettingsUrl } from "@lib/clientUtils/getAuthOrigin";
-import { createAuthGlobalApiClient } from "@api-client/authApiClient";
+import { apiClient } from "@api-client/index";
+
 const user = window.USER;
 function goToAccountSettings() {
     window.location.href = getSettingsUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME)
 }
 
 async function logout() {
-    const client = createAuthGlobalApiClient();
-    const { data, error } = await (await client.api_auth_global['logout-all'].$post()).json();
+    const { data, error } = await (await apiClient.auth_global['logout-all'].$post()).json();
     console.log(data, error);
     window.location.href = `/dash/after-logout.html`;
 }

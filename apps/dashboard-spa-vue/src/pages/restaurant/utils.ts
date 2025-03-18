@@ -1,7 +1,7 @@
-import { mapsApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 
 export async function geocode(address: string, countryCode?: string) {
-    return await (await mapsApiClient.api.maps.geocode.$get({
+    return await (await apiClient.gmaps.geocode.$get({
         query: {
             address: address.trim().toLowerCase(),
             components: countryCode ? `country:${countryCode}` : undefined,

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { getAuthGlobalApiClient } from "@src/lib/authApiClient";
+import { apiClient } from "@api-client/index";
 import { userStore } from "@src/stores/userStore";
 
 async function handleLogout() {
-	const { data, error } = await (await getAuthGlobalApiClient().api_auth_global["logout-all"].$post()).json();
+	const { data, error } = await (await apiClient.auth_global["logout-all"].$post()).json();
 	console.log(data, error);
 	userStore.value = null;
 }

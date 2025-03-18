@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-vue-next';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
 import type { ScheduledOrdersSettings } from '@lib/types/restaurantTypes';
@@ -33,7 +33,7 @@ const deliverySettings = ref<Required<ScheduledOrdersSettings>>({
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].scheduled_orders_settings.get.$post({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].scheduled_orders_settings.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -70,7 +70,7 @@ const loadData = async () => {
 const saveSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].scheduled_orders_settings.update.$patch({
+        const { error } = await (await apiClient.dashboard.restaurant[':restaurantId'].scheduled_orders_settings.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

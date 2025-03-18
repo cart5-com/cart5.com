@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import HeaderOnly from '@src/layouts/HeaderOnly.vue';
 import { toast } from '@/ui-plus/sonner';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';
 import { getTurnstileUrl } from '@lib/clientUtils/getAuthOrigin';
 
@@ -20,7 +20,7 @@ const loadData = async () => {
         return;
     }
     isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.api_dashboard.team.team_invite_info.$post({
+    const { data, error } = await (await apiClient.dashboard.team.team_invite_info.$post({
         json: { token: token }
     })).json();
     if (error) {
@@ -49,7 +49,7 @@ const acceptInvitation = async () => {
         return;
     }
     isLoading.value = true;
-    const { error } = await (await dashboardApiClient.api_dashboard.team.team_invite_accept.$post({
+    const { error } = await (await apiClient.dashboard.team.team_invite_accept.$post({
         json: {
             token: token,
             turnstile

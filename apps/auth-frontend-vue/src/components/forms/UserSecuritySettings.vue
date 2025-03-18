@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 import { toast } from '@/ui-plus/sonner'
-import { getAuthApiClient } from '@src/lib/authApiClient';
+import { apiClient } from '@api-client/index';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import UpdatePasswordForm from '@src/components/forms/UpdatePasswordForm.vue';
@@ -18,7 +18,7 @@ async function updateName() {
         toast.error('Please enter a name');
         return;
     }
-    const { data, error } = await (await getAuthApiClient().api_auth["user"]['update-name'].$post({
+    const { data, error } = await (await apiClient.auth.user['update-name'].$post({
         form: {
             newName,
             turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

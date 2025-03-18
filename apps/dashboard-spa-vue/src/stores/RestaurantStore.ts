@@ -1,9 +1,9 @@
 import { ref, computed } from 'vue'
-import { type ResType } from '@api-client/ecomApiClient'
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { type ResType } from '@api-client/index'
+import { apiClient } from '@api-client/index';
 
 export type restaurantListType = ResType<
-    typeof dashboardApiClient.api_dashboard.restaurant.my_restaurants.$get
+    typeof apiClient.dashboard.restaurant.my_restaurants.$get
 >["data"];
 
 
@@ -24,7 +24,7 @@ export const currentRestaurant = computed(() => {
 
 export async function loadMyRestaurants() {
     console.log('loadMyRestaurants');
-    const response = await (await dashboardApiClient.api_dashboard.restaurant.my_restaurants.$get()).json()
+    const response = await (await apiClient.dashboard.restaurant.my_restaurants.$get()).json()
     if (response.error) {
         console.error(response.error)
         return

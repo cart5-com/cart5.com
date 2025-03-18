@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Shield } from 'lucide-vue-next';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { type ResType } from '@api-client/ecomApiClient';
+import { apiClient } from '@api-client/index';
+import { type ResType } from '@api-client/index';
 
-const apiPath = dashboardApiClient.api_dashboard.website[':websiteId'].team.$get
+const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<
     typeof apiPath
 >["data"];

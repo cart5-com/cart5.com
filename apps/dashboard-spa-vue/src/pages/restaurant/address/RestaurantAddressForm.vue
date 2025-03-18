@@ -22,7 +22,7 @@ import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { geocode, getOpenStreetMapItems } from '../utils'
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
 const schema = z.object({
@@ -74,7 +74,7 @@ const loadData = async () => {
     console.log('loadData', currentRestaurantId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data: address, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.get.$post({
+    const { data: address, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.get.$post({
         param: {
             restaurantId: currentRestaurantId.value ?? '',
         },
@@ -188,7 +188,7 @@ async function onMapConfirm() {
         const { lat, lng } = mapComp.value.mapView.getCenter();
         // const reverseGeocodeResult = await reverseGeocode(lat, lng);
         // console.log('reverseGeocodeResult', reverseGeocodeResult);
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].address.update.$patch({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

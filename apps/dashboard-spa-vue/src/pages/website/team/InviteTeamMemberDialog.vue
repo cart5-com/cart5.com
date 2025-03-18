@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { currentWebsiteId } from '@src/stores/WebsiteStore';
-import { dashboardApiClient } from '@src/lib/dashboardApiClient';
+import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 import { UserPlus } from 'lucide-vue-next';
 import { TEAM_PERMISSIONS } from '@lib/consts';
@@ -56,7 +56,7 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     try {
-        const response = await dashboardApiClient.api_dashboard.website[':websiteId'].team_invite.$post({
+        const response = await apiClient.dashboard.website[':websiteId'].team_invite.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },

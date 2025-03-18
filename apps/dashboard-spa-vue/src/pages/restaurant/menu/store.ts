@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { type MenuRoot } from "@lib/types/menuType";
-import { dashboardApiClient } from "@src/lib/dashboardApiClient";
+import { apiClient } from "@api-client/index";
 import { currentRestaurantId } from "@src/stores/RestaurantStore";
 import { toast } from "@/ui-plus/sonner";
 
@@ -16,7 +16,7 @@ export const isMenuLoading = ref(false);
 export const loadMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].menu.get.$post({
+        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].menu.get.$post({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },
@@ -44,7 +44,7 @@ export const loadMenu = async () => {
 export const saveMenu = async () => {
     isMenuLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].menu.update.$patch({
+        const { error } = await (await apiClient.dashboard.restaurant[':restaurantId'].menu.update.$patch({
             param: {
                 restaurantId: currentRestaurantId.value ?? '',
             },

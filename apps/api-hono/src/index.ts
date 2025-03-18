@@ -6,22 +6,9 @@ import { secureHeaders } from 'hono/secure-headers'
 import type { HonoVariables } from './types/HonoVariables';
 import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { IS_PROD } from '@lib/utils/getEnvVariable';
-import { hostMustBeAuthDomain } from './middlewares/hostMustBeAuthDomain';
-import { mustHaveUser } from './middlewares/mustHaveUser';
-import { validateDomainForTLS } from './routes/validate_domain';
-import { apiAuth } from './routes/api_auth/_router';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
-import { authGlobalRoute } from './routes/api_auth_global/_router';
-import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
-import { apiDashboard } from './routes/api_dashboard/_router';
-
-// import { mapsRoute } from '@lib/google-maps/mapsRoute';
-// import { restaurantRouter } from '@lib/api/dashboard/restaurant/restaurant.router';
-// import { websiteRouter } from '@lib/api/dashboard/website/website.router';
-// import { teamRouter } from '@lib/api/dashboard/team/team.router';
-// import type { HonoVariables } from '@lib/hono/HonoVariables';
-// import { validateDomainForTLS } from '@lib/api/validate_domain';
+import { apiRouter } from './routes/router';
 
 const app = new Hono<HonoVariables>();
 app.onError(errorHandler);
@@ -35,47 +22,10 @@ app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 
+const apiRoutes = app
+	.route('/', apiRouter)
 
-app.get(
-	'/validate_tls',
-	validateDomainForTLS
-);
-
-
-
-
-const authRoutes = app
-	.basePath('/api_auth')
-	.use(hostMustBeAuthDomain)
-	.route('/', apiAuth)
-
-export type AuthApiAppType = typeof authRoutes;
-
-
-
-
-
-const authGlobalRoutes = app
-	.basePath('/api_auth_global')
-	.route('/', authGlobalRoute)
-export type AuthGlobalApiAppType = typeof authGlobalRoutes;
-
-
-
-
-
-const ecomApiMapsRoutes = app.basePath('/api/maps')
-	.route('/', mapsRoute);
-export type EcomApiMapsAppType = typeof ecomApiMapsRoutes;
-
-
-
-
-const dashboardRoutes = app
-	.basePath('/api_dashboard')
-	.use(mustHaveUser)
-	.route('/', apiDashboard)
-export type EcomDashboardApiAppType = typeof dashboardRoutes;
+export type ApiAppType = typeof apiRoutes;
 
 
 
