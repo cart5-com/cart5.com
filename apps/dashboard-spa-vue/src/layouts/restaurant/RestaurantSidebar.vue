@@ -98,22 +98,26 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
+
+                        <!-- ON_PREMISE_DISABLED_FOR_NOW -->
+                        <!-- <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-on-premise' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
                                     On Premise
                                 </SidebarMenuButton>
                             </RouterLink>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
+                        </SidebarMenuItem>-->
+
+                        <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
+                        <!-- <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-table-reservation-settings' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
                                     Table Reservation
                                 </SidebarMenuButton>
                             </RouterLink>
-                        </SidebarMenuItem>
+                        </SidebarMenuItem> -->
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-open-hours' }"
                                         @click="setOpenMobile(false)">
@@ -122,14 +126,14 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
+                        <!-- <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-scheduled-orders' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
                                     Scheduled Orders
                                 </SidebarMenuButton>
                             </RouterLink>
-                        </SidebarMenuItem>
+                        </SidebarMenuItem> -->
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'restaurant-tax-settings' }"
                                         @click="setOpenMobile(false)">

@@ -253,18 +253,22 @@ const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
                                        type="number"
                                        step="1" />
                             </div>
-                            <div class="space-y-2">
+
+                            <!-- ON_PREMISE_DISABLED_FOR_NOW -->
+                            <!-- <div class="space-y-2">
                                 <Label>On Premise Rate (%)</Label>
                                 <Input v-model="category.onPremiseRate"
                                        type="number"
                                        step="1" />
-                            </div>
-                            <div class="space-y-2">
+                            </div> -->
+
+                            <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
+                            <!-- <div class="space-y-2">
                                 <Label>Table Reservation Rate (%)</Label>
                                 <Input v-model="category.tableReservationRate"
                                        type="number"
                                        step="1" />
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

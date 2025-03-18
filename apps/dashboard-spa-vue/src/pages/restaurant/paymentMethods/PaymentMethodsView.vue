@@ -233,7 +233,8 @@ onMounted(() => {
             </CardContent>
         </Card>
 
-        <Card>
+        <!-- ON_PREMISE_DISABLED_FOR_NOW -->
+        <!-- <Card>
             <CardHeader>
                 <CardTitle>On premise payment methods</CardTitle>
                 <CardDescription>
@@ -253,9 +254,10 @@ onMounted(() => {
                 <PaymentMethodsEditor :payment-methods="onPremiseMethods"
                                       card-details="(in restaurant)" />
             </CardContent>
-        </Card>
+        </Card> -->
 
-        <Card>
+        <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
+        <!-- <Card>
             <CardHeader>
                 <CardTitle>Table reservation payment methods</CardTitle>
                 <CardDescription>
@@ -275,7 +277,7 @@ onMounted(() => {
                 <PaymentMethodsEditor :payment-methods="tableReservationMethods"
                                       card-details="(in restaurant)" />
             </CardContent>
-        </Card>
+        </Card> -->
 
         <Button @click="savePaymentMethods"
                 :disabled="isLoading"

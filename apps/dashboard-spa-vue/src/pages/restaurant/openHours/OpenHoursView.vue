@@ -251,7 +251,8 @@ const copyFromDefault2TableReservation = () => {
             </CardContent>
         </Card>
 
-        <Card>
+        <!-- ON_PREMISE_DISABLED_FOR_NOW -->
+        <!-- <Card>
             <CardHeader>
                 <CardTitle>
                     On Premise Hours
@@ -279,9 +280,10 @@ const copyFromDefault2TableReservation = () => {
                 <WeekEditor v-if="onPremiseHours.isActive"
                             :weekHours="onPremiseHours" />
             </CardContent>
-        </Card>
+        </Card>-->
 
-        <Card>
+        <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
+        <!-- <Card>
             <CardHeader>
                 <CardTitle>
                     Table Reservation Hours
@@ -309,7 +311,7 @@ const copyFromDefault2TableReservation = () => {
                 <WeekEditor v-if="tableReservationHours.isActive"
                             :weekHours="tableReservationHours" />
             </CardContent>
-        </Card>
+        </Card> -->
 
 
         <Button @click="saveHours"
