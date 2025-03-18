@@ -21,7 +21,7 @@ defineProps<{
     isOwner: boolean;
 }>();
 
-const emit = defineEmits(['transfer-ownership', 'remove-member']);
+const emit = defineEmits(['transfer-ownership', 'remove-member', 'edit-permissions']);
 </script>
 
 <template>
@@ -71,6 +71,14 @@ const emit = defineEmits(['transfer-ownership', 'remove-member']);
                                           class="flex items-center gap-2">
                             <Crown class="h-4 w-4" />
                             Make Owner
+                        </DropdownMenuItem>
+
+                        <!-- Edit permissions option -->
+                        <DropdownMenuItem v-if="canManageTeam && !member.isOwner"
+                                          @click="emit('edit-permissions', member)"
+                                          class="flex items-center gap-2">
+                            <Shield class="h-4 w-4" />
+                            Edit Permissions
                         </DropdownMenuItem>
 
                         <!-- Remove member option -->

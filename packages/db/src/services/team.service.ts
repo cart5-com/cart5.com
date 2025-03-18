@@ -386,3 +386,29 @@ export const removeTeamMember_Service = async (
         .returning({ userId: teamUserMapTable.userId })
         .then(results => results[0] || null);
 }
+
+export const updateTeamMemberPermissions_Service = async (
+    teamId: string,
+    userId: string,
+    ownerUserId: string,
+    permissions: string[]
+) => {
+    // Don't allow changing the owner's permissions
+    if (userId === ownerUserId) {
+        return null;
+    }
+
+    return await db.update(teamUserMapTable)
+        .set({ permissions })
+        .where(
+            and(
+                eq(teamUserMapTable.teamId, teamId),
+                eq(teamUserMapTable.userId, userId)
+            )
+        )
+        .returning({
+            userId: teamUserMapTable.userId,
+            permissions: teamUserMapTable.permissions
+        })
+        .then(results => results[0] || null);
+}

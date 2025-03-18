@@ -19,6 +19,7 @@ import { getTeamInvitations_Handler } from "./team_invitations.controller";
 import { cancelTeamInvitation_Handler, cancelTeamInvitation_SchemaValidator } from "./team_invite_cancel.controller";
 import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } from "./team_transfer_ownership.controller";
 import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./team_remove_member.controller";
+import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team_update_permissions.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -101,6 +102,15 @@ export const websiteRouter = new Hono<HonoVariables>()
         ]),
         removeTeamMember_SchemaValidator,
         removeTeamMember_Handler
+    )
+    .post(
+        '/:websiteId/team_update_permissions',
+        checkWebsitePermissions([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.TEAM_MANAGER
+        ]),
+        updateTeamMemberPermissions_SchemaValidator,
+        updateTeamMemberPermissions_Handler
     )
     // Domain Routes
     .post(

@@ -95,7 +95,8 @@ onMounted(() => {
         <div v-else>
             <TeamMembersList :members="members"
                              @ownership-transferred="loadData"
-                             @member-removed="loadData" />
+                             @member-removed="loadData"
+                             @team-updated="loadData" />
             <InvitationsList :invitations="invitations"
                              @invitation-cancelled="loadData" />
         </div>

@@ -7,6 +7,7 @@ import { currentWebsiteId } from '@src/stores/WebsiteStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
 import RemoveMemberDialog from './components/RemoveMemberDialog.vue';
+import EditPermissionsDialog from './components/EditPermissionsDialog.vue';
 import { toast } from '@/ui-plus/sonner';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
@@ -16,13 +17,15 @@ const props = defineProps<{
     members: Array<Member>;
 }>();
 
-const emit = defineEmits(['ownership-transferred', 'member-removed']);
+const emit = defineEmits(['ownership-transferred', 'member-removed', 'team-updated']);
 
 const isTransferOwnershipDialogOpen = ref(false);
 const isRemoveMemberDialogOpen = ref(false);
+const isEditPermissionsDialogOpen = ref(false);
 const selectedMember = ref<Member | null>(null);
 const isTransferring = ref(false);
 const isRemoving = ref(false);
+const isUpdatingPermissions = ref(false);
 
 // Get the current user's ID from the members
 const currentUserMember = computed(() =>
@@ -51,6 +54,11 @@ const showTransferDialog = (member: Member) => {
 const showRemoveDialog = (member: Member) => {
     selectedMember.value = member;
     isRemoveMemberDialogOpen.value = true;
+};
+
+const showEditPermissionsDialog = (member: Member) => {
+    selectedMember.value = member;
+    isEditPermissionsDialogOpen.value = true;
 };
 
 const transferOwnership = async () => {
@@ -118,6 +126,38 @@ const removeMember = async () => {
         isRemoving.value = false;
     }
 };
+
+const updatePermissions = async (permissions: string[]) => {
+    if (!selectedMember.value) return;
+
+    isUpdatingPermissions.value = true;
+
+    try {
+        const { error } = await (await apiClient.dashboard.website[':websiteId'].team_update_permissions.$post({
+            param: {
+                websiteId: currentWebsiteId.value ?? ''
+            },
+            json: {
+                memberId: selectedMember.value.userId,
+                permissions
+            }
+        })).json();
+
+        if (error) {
+            console.error(error);
+            toast.error(error.message || 'Failed to update permissions');
+        } else {
+            toast.success('Permissions updated successfully');
+            isEditPermissionsDialogOpen.value = false;
+            emit('team-updated');
+        }
+    } catch (e) {
+        console.error(e);
+        toast.error('An error occurred while updating permissions');
+    } finally {
+        isUpdatingPermissions.value = false;
+    }
+};
 </script>
 
 <template>
@@ -135,7 +175,8 @@ const removeMember = async () => {
                                 :can-manage-team="canManageTeam ?? false"
                                 :is-owner="currentUserMember?.isOwner ?? false"
                                 @transfer-ownership="showTransferDialog"
-                                @remove-member="showRemoveDialog" />
+                                @remove-member="showRemoveDialog"
+                                @edit-permissions="showEditPermissionsDialog" />
             </div>
         </CardContent>
     </Card>
@@ -153,4 +194,11 @@ const removeMember = async () => {
                         :is-removing="isRemoving"
                         @confirm="removeMember"
                         @cancel="isRemoveMemberDialogOpen = false" />
+
+    <!-- Edit Permissions Dialog -->
+    <EditPermissionsDialog v-model:open="isEditPermissionsDialogOpen"
+                           :member="selectedMember"
+                           :is-updating="isUpdatingPermissions"
+                           @confirm="updatePermissions"
+                           @cancel="isEditPermissionsDialogOpen = false" />
 </template>
