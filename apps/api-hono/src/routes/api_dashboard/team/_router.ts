@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { getMyTeams_Handler } from "./my_teams.controller";
+import { getTeamByHostname_Handler } from "./get_team_by_hostname.controller";
 import {
     teamInviteInfo_Handler,
     teamInviteToken_SchemaValidator
@@ -12,8 +12,8 @@ import {
 
 export const teamRouter = new Hono<HonoVariables>()
     .get(
-        '/my_teams',
-        getMyTeams_Handler
+        '/get_team_by_hostname',
+        getTeamByHostname_Handler
     )
     .post(
         '/team_invite_info',

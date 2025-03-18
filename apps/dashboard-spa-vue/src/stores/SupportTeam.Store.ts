@@ -3,13 +3,13 @@ import { type ResType } from "@api-client/index";
 import { ref } from "vue";
 
 export type hostnameSupportTeamType = ResType<
-    typeof apiClient.dashboard.team.my_teams.$get
+    typeof apiClient.dashboard.team.get_team_by_hostname.$get
 >["data"];
 
 export const hostnameSupportTeam = ref<hostnameSupportTeamType | null>(null);
 
 export const loadSupportTeam = async () => {
-    const { data, error } = await (await apiClient.dashboard.team.my_teams.$get()).json()
+    const { data, error } = await (await apiClient.dashboard.team.get_team_by_hostname.$get()).json()
     if (error) {
         console.error(error)
     }
