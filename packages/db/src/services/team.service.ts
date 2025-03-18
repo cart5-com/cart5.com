@@ -365,3 +365,24 @@ export const transferTeamOwnership_Service = async (
         return { success: true };
     });
 }
+
+export const removeTeamMember_Service = async (
+    teamId: string,
+    userId: string,
+    ownerUserId: string
+) => {
+    // Don't allow removing the owner
+    if (userId === ownerUserId) {
+        return null;
+    }
+
+    return await db.delete(teamUserMapTable)
+        .where(
+            and(
+                eq(teamUserMapTable.teamId, teamId),
+                eq(teamUserMapTable.userId, userId)
+            )
+        )
+        .returning({ userId: teamUserMapTable.userId })
+        .then(results => results[0] || null);
+}
