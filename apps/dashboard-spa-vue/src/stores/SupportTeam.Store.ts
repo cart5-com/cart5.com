@@ -15,6 +15,11 @@ export const loadSupportTeam = async () => {
     }
     if (data) {
         hostnameSupportTeam.value = data
+        if (data.defaultHostname) {
+            if (window.location.host !== data.defaultHostname) {
+                window.location.href = window.location.href.replace(window.location.host, data.defaultHostname)
+            }
+        }
     } else {
         const publicDomain = `www.${import.meta.env.VITE_PUBLIC_DOMAIN_NAME}`
         if (window.location.host !== publicDomain) {

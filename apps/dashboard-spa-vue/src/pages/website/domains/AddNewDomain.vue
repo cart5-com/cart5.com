@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { currentWebsiteId, currentWebsite } from '@src/stores/WebsiteStore';
+import { currentWebsiteId, currentWebsite, loadMyWebsites } from '@src/stores/WebsiteStore';
 import { toast } from '@/ui-plus/sonner';
 import { useRouter } from 'vue-router';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import { pageTitle } from '@src/stores/layout.store';
 import { slugify } from '@lib/utils/slugify';
 import HowTo from './HowTo.vue';
 import { shakeElem } from '@lib/clientUtils/shakeElem';
+import { loadSupportTeam } from '@src/stores/SupportTeam.Store';
 
 pageTitle.value = 'Add Domain'
 const router = useRouter();
@@ -67,6 +68,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 } catch (error) { }
                 toast.success("Domain added successfully👍 SSL🛡️ will be activated in 5-10 minutes");
             }
+            loadSupportTeam();
+            loadMyWebsites();
             router.push({ name: 'website-domains' });
         }
     })

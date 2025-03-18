@@ -10,6 +10,7 @@ export const getMyTeams_SchemaValidator = zValidator('json', z.object({
     hostname: z.string(),
 }))
 
+// TODO: rename to get my support team by hostname
 export const getMyTeams_Handler = async (c: Context<
     HonoVariables
 >) => {
