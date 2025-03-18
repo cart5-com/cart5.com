@@ -5,6 +5,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { generateCrossDomainCode } from '@api-hono/utils/validateTurnstile';
 import { KNOWN_ERROR } from '@lib/types/errors';
+import { createApiClient } from '@api-client/index';
 
 // Validate the form data - redirectUrl must not be pre-encoded and turnstile token required
 export const redirectorSchemaValidator = zValidator('form', z.object({
@@ -52,10 +53,12 @@ export const redirectorRoute = async (
  */
 const getCrossDomainCallbackUrl = (code: string, redirectUrl: string) => {
     const url = new URL(redirectUrl);
-    // import { createAuthApiClient } from '../authApiClient'
-    // const authApiClient = createAuthApiClient(`${url.origin}/__p_auth/`);
-    // const goToUrl = new URL(authApiClient.api_auth.cross_domain.callback.$url());
-    const goToUrl = new URL(`${url.origin}/__p_api/api_auth_global/cross-domain-callback`);
+
+    const callbackUrl: string = createApiClient(
+        `${url.origin}/__p_api/`
+    ).auth_global['cross-domain-callback'].$url().toString()
+
+    const goToUrl = new URL(callbackUrl)
     goToUrl.searchParams.set("code", code);
     goToUrl.searchParams.set("redirectUrl", encodeURIComponent(redirectUrl));
     return goToUrl.toString();
