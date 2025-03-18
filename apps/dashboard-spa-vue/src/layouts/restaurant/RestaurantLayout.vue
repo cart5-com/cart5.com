@@ -4,7 +4,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar'
-import Sidebar from './Sidebar.vue'
+import RestaurantSidebar from './RestaurantSidebar.vue'
 import { setCurrentRestaurantId } from '@src/stores/RestaurantStore';
 import { RouterView, useRoute } from "vue-router";
 import Header from '@src/components/Header.vue'
@@ -17,7 +17,7 @@ setCurrentRestaurantId(restaurantId as string);
 
 <template>
     <SidebarProvider>
-        <Sidebar />
+        <RestaurantSidebar />
         <SidebarInset>
             <Header>
                 <div class="flex items-center gap-2 max-w-40">

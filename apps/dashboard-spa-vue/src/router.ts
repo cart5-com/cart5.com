@@ -33,7 +33,7 @@ const router = createRouter({
     {
       path: '/restaurant/:restaurantId',
       name: 'restaurant',
-      component: () => import('@src/layouts/restaurant/_Layout.vue'),
+      component: () => import('@src/layouts/restaurant/RestaurantLayout.vue'),
       children: [
         {
           path: '',
