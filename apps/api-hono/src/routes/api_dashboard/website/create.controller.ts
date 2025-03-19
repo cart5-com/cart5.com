@@ -25,7 +25,10 @@ export const createWebsite_Handler = async (c: Context<
     const { name, turnstile } = c.req.valid('form');
     const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
-    const isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+    let isUserMemberOfSupportTeam = false;
+    if (supportTeam) {
+        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+    }
     return c.json({
         data: await createWebsite_Service(ownerUserId, name, supportTeam?.teamId ?? null, isUserMemberOfSupportTeam),
         error: null as ErrorType

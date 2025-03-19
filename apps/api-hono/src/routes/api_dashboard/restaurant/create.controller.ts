@@ -23,7 +23,10 @@ export const createRestaurant_Handler = async (c: Context<
     // Validate turnstile and user
     const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
-    const isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+    let isUserMemberOfSupportTeam = false;
+    if (supportTeam) {
+        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+    }
     return c.json({
         data: await createRestaurant_Service(
             ownerUserId, name,
