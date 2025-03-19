@@ -105,8 +105,9 @@ export function getCountriesList(
 }
 
 export async function fetchCountryCode() {
-    // alternative: https://workers.cloudflare.com/cf.json
+    // alternative: https://workers.cloudflare.com/cf.json // nope it is not working, CORS errors
     // alternative: https://ip2c.org/self
+    // alternative: https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location
     try {
         const reponse = await fetch('https://ipwho.is')
         const { country_code } = (await reponse.json()) as IpWhoResponse
