@@ -22,7 +22,9 @@ export type Item = {
 
     // type
     // item, category, customization, option
-    t?: 'i' | 'ct' | 'c' | 'o'; // i, ct, c, o
+    // item:i, category:ct, customization:c, option:o
+    // i, ct, c, o
+    t?: 'i' | 'ct' | 'c' | 'o';
 
     // TODO:
     imgUrl?: string;
