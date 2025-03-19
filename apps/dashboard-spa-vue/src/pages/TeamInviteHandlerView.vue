@@ -60,7 +60,7 @@ const acceptInvitation = async () => {
     } else {
         toast.success('You have successfully joined the team!, will reload in 1 second');
         setTimeout(() => {
-            window.location.href = '/dash/';
+            window.location.href = '/dashboard/';
         }, 1000);
     }
     isLoading.value = false;

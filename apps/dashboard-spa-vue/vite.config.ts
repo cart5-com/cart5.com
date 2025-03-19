@@ -10,8 +10,8 @@ console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 export default defineConfig(({ mode }) => ({
   base: mode === 'production'
     // ? 'https://cdn.mydomain.com/auth-frontend-vue/'
-    ? '/dash/'
-    : '/dash/',
+    ? '/dashboard/'
+    : '/dashboard/',
   server: {
     allowedHosts: [
       "www.cart5dev.com",
@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => ({
       host: '127.0.0.1',
       port: 3004,
       clientPort: 3004,
-      path: '/dash/socket',
+      path: '/dashboard/socket',
       timeout: 10000,
       overlay: true,
     }

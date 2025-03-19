@@ -38,7 +38,7 @@
 }
 
 (dashboard-spa-vue) {
-	handle_path /dash/* {
+	handle_path /dashboard/* {
 		#dashboard-spa-vue
 		reverse_proxy http://127.0.0.1:3004
 	}
@@ -77,11 +77,7 @@ https://{$PUBLIC_DOMAIN_NAME} {
 	redir https://www.{host}{uri}
 }
 
-# CF_API_TOKEN permissions from cloudflare: (Zone.Zone, Zone.DNS) for All zones
-*.{$PUBLIC_DOMAIN_NAME} {
-	tls {
-		dns cloudflare {$CF_API_TOKEN}
-	}
+(ssr-handles) {
 	import api-hono-proxy
 	import dashboard-spa-vue
 	handle_path /* {
@@ -91,15 +87,19 @@ https://{$PUBLIC_DOMAIN_NAME} {
 	}
 }
 
+# our domains
+*.{$PUBLIC_DOMAIN_NAME} {
+	tls {
+		dns cloudflare {$CF_API_TOKEN}
+		# CF_API_TOKEN permissions from cloudflare: (Zone.Zone, Zone.DNS) for All zones
+	}
+	import ssr-handles
+}
+
+# third-party-domains
 :443 {
 	tls {
 		on_demand
 	}
-	import api-hono-proxy
-	import dashboard-spa-vue
-	handle_path /* {
-		#web-store-ssr-astro
-		reverse_proxy http://127.0.0.1:3002
-		cache
-	}
+	import ssr-handles
 }

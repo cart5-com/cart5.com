@@ -67,9 +67,8 @@ export const generateInvitationLink = async (invitationId: string, host: string)
         },
         100800 // 1 week in minutes
     );
-    // TODO: convert all /dash/... to /dashboard/
     const protocol = ENFORCE_HOSTNAME_CHECKS ? 'https' : 'http';
-    return `${protocol}://${host}/dash/team_invite_handler?token=${token}`;
+    return `${protocol}://${host}/dashboard/team_invite_handler?token=${token}`;
 };
 
 export type InvitationLinkPayload = {

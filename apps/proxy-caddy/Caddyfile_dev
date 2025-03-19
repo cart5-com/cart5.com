@@ -6,7 +6,7 @@
 }
 
 (dashboard-spa-vue) {
-	handle_path /dash/* {
+	handle_path /dashboard/* {
 		#dashboard-spa-vue
 		reverse_proxy http://127.0.0.1:3004
 	}
