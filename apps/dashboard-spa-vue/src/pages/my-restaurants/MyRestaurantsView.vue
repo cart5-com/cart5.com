@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
@@ -56,6 +56,7 @@ const openNewRestaurantDialog = () => {
                 <Card class="bg-muted hover:bg-muted/20 h-24 transition-colors">
                     <CardHeader>
                         <CardTitle class="text-lg"> {{ restaurant.name }}</CardTitle>
+                        <CardDescription>{{ restaurant.address1 }}</CardDescription>
                     </CardHeader>
                 </Card>
             </RouterLink>

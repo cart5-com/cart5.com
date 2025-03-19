@@ -11,7 +11,8 @@ export const myRestaurants = ref<restaurantListType>([]);
 export const searchQuery = ref('')
 export const myRestaurantsFiltered = computed(() =>
     myRestaurants.value.filter(restaurant =>
-        restaurant.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        restaurant.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        restaurant.address1?.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 )
 
