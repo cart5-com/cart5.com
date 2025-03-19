@@ -9,7 +9,7 @@
     "prod:migrate": "dotenvx run -f .env.production -- drizzle-kit migrate --config=drizzle.config.prod.ts",
     "test:prod:migrate": "dotenvx run -f .env.turso-migration -- tsx ./src/migrationTest.ts",
     "dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7022 --config=./drizzle.config.ts",
-    "dev:drizzle-migrate": "dotenvx run -- drizzle-kit migrate --config=./drizzle.config.ts",
+    "dev:drizzle-migrate": "rm -rf ../../local-sqlite.db && dotenvx run -- drizzle-kit migrate --config=./drizzle.config.ts && pnpm dev:seed",
     "dev:seed": "dotenvx run -f .env -- tsx ./src/seed/startSeed.ts",
     "prod:drop-all-tables": "dotenvx run -f .env.production -- tsx ./src/prodDropAllTables.ts"
   },
