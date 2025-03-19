@@ -1,1 +1,1 @@
-# Dashboard SPA
+# Dashboard SPA Vue

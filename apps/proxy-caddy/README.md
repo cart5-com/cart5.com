@@ -12,5 +12,5 @@ Caddy proxy configuration for local development, enabling cross-domain testing.
 See `Caddyfile_dev` for routing rules:
 
 - Auth API: `/__p_api/*`
-- Auth Client: `auth.{$PUBLIC_DOMAIN_NAME}/*`
+- Auth SPA: `auth.{$PUBLIC_DOMAIN_NAME}/*`
 - Web Store: `* all other domains`
