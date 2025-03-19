@@ -109,7 +109,7 @@ export const createWebsite_Service = async (userId: string, name: string, suppor
             ownerTeamId: teamId,
             supportTeamId: supportTeamId,
         }).returning({ id: websitesTable.id });
-        return website[0].id;
+        return website[0];
     })
 }
 

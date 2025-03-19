@@ -52,7 +52,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             handleError(error, form);
         } else {
             // Success
-            const websiteId = data as string;
+            const websiteId = data.id;
             myWebsites.value = [...myWebsites.value, {
                 id: websiteId,
                 name: values.name,
