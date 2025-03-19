@@ -20,10 +20,11 @@ export const createWebsite_Handler = async (c: Context<
     ValidatorContext<typeof createWebsite_SchemaValidator>
 >) => {
     const { name, turnstile } = c.req.valid('form');
-    const { userId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
+    const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
+    // TODO: if current user is in the support team, we do not need to add user inside the owner team
     return c.json({
-        data: await createWebsite_Service(userId, name, supportTeam?.teamId ?? null),
+        data: await createWebsite_Service(ownerUserId, name, supportTeam?.teamId ?? null),
         error: null as ErrorType
     }, 200);
 } 

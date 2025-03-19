@@ -101,14 +101,17 @@ export const getAllWebsitesThatUserHasAccessTo = async (userId: string) => {
     return websites;
 }
 
-export const createWebsite_Service = async (userId: string, name: string, supportTeamId: string | null) => {
+export const createWebsite_Service = async (ownerUserId: string, name: string, supportTeamId: string | null) => {
     return await db.transaction(async (tx) => {
-        const teamId = await createTeamTransactional_Service(userId, 'WEBSITE', tx);
+        const teamId = await createTeamTransactional_Service(ownerUserId, 'WEBSITE', tx);
         const website = await tx.insert(websitesTable).values({
             name: name,
             ownerTeamId: teamId,
             supportTeamId: supportTeamId,
-        }).returning({ id: websitesTable.id });
+        }).returning({
+            id: websitesTable.id,
+            ownerTeamId: websitesTable.ownerTeamId
+        });
         return website[0];
     })
 }
