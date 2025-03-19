@@ -25,20 +25,17 @@ export const validateTurnstile = async function (TURNSTILE_SECRET: string, token
         }
     });
 
-    console.log("fetch:", url, {
-        body: JSON.stringify(body),
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-
-    const outcome = await result.json() as { success: boolean };
-    console.log("validateTurnstile: outcome:", outcome);
-    const outcomeText = await result.text();
-    console.log("validateTurnstile: outcomeText:", outcomeText);
+    const outcome = await result.json() as {
+        success: boolean
+        'error-codes': string[],
+        challenge_ts: string,
+        hostname: string,
+        action: string,
+        cdata: string,
+        metadata: { interactive: boolean }
+    };
     if (!outcome.success) {
+        console.log("validateTurnstile: outcome:", outcome);
         throw new KNOWN_ERROR("Invalid verification", "INVALID_TURNSTILE_TOKEN");
     }
 }
