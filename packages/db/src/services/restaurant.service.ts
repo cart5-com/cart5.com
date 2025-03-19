@@ -1,6 +1,6 @@
 import db from "@db/drizzle";
 import { restaurantAddressTable, restaurantTable, restaurantOpenHoursTable, restaurantMenuTable, restaurantPaymentMethodsTable, restaurantTableReservationSettingsTable, restaurantTaxSettingsTable, restaurantScheduledOrdersSettingsTable, restaurantDeliveryZoneMapTable } from "@db/schema/restaurant.schema";
-import { createTeamTransactional_Service, isAdminCheck } from "./team.service";
+import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
 import { teamUserMapTable } from "@db/schema/team.schema";
@@ -224,9 +224,13 @@ export const updateRestaurant_Service = async (
         .where(eq(restaurantTable.id, restaurantId))
 }
 
-export const createRestaurant_Service = async (userId: string, name: string, supportTeamId: string | null) => {
+export const createRestaurant_Service = async (
+    userId: string, name: string, supportTeamId: string | null, isUserMemberOfSupportTeam: boolean) => {
     return await db.transaction(async (tx) => {
-        const teamId = await createTeamTransactional_Service(userId, 'RESTAURANT', tx);
+
+        const teamId = isUserMemberOfSupportTeam
+            ? await createTeamWithoutOwner_Service('RESTAURANT', tx)
+            : await createTeamTransactional_Service(userId, 'RESTAURANT', tx);
 
         const restaurant = await tx.insert(restaurantTable).values({
             name: name,

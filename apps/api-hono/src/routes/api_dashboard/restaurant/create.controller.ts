@@ -4,7 +4,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { validateCrossDomainTurnstile_WithUserCheck } from "@api-hono/utils/validateTurnstile";
 import type { Context } from "hono";
-import { getSupportTeamByHostname_Service } from "@db/services/team.service";
+import { getSupportTeamByHostname_Service, isUserMemberOfTeam_Service } from "@db/services/team.service";
 import { createRestaurant_Service } from "@db/services/restaurant.service";
 import type { ErrorType } from "@lib/types/errors";
 
@@ -21,10 +21,14 @@ export const createRestaurant_Handler = async (c: Context<
     const { name, turnstile } = c.req.valid('form');
 
     // Validate turnstile and user
-    const { userId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
+    const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
+    const isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
     return c.json({
-        data: await createRestaurant_Service(userId, name, supportTeam?.teamId ?? null),
+        data: await createRestaurant_Service(
+            ownerUserId, name,
+            supportTeam?.teamId ?? null,
+            isUserMemberOfSupportTeam),
         error: null as ErrorType
     }, 200);
 } 
