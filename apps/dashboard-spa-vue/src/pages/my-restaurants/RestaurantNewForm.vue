@@ -8,7 +8,7 @@ import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { loadMyRestaurants, myRestaurants } from '@src/stores/RestaurantStore';
+import { loadMyRestaurants } from '@src/stores/RestaurantStore';
 import { getTurnstileUrl } from '@lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { Badge } from '@/components/ui/badge';
