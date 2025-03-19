@@ -2,7 +2,7 @@ import { eq, type InferInsertModel, or, inArray, and } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
-import { createTeamTransactional_Service, isAdminCheck } from './team.service';
+import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
 
 export const getWebsite_Service = async (
@@ -101,16 +101,19 @@ export const getAllWebsitesThatUserHasAccessTo = async (userId: string) => {
     return websites;
 }
 
-export const createWebsite_Service = async (ownerUserId: string, name: string, supportTeamId: string | null) => {
+export const createWebsite_Service = async (ownerUserId: string, name: string, supportTeamId: string | null, isUserMemberOfSupportTeam: boolean) => {
     return await db.transaction(async (tx) => {
-        const teamId = await createTeamTransactional_Service(ownerUserId, 'WEBSITE', tx);
+        const teamId = isUserMemberOfSupportTeam
+            ? await createTeamWithoutOwner_Service('WEBSITE', tx)
+            : await createTeamTransactional_Service(ownerUserId, 'WEBSITE', tx);
         const website = await tx.insert(websitesTable).values({
             name: name,
             ownerTeamId: teamId,
             supportTeamId: supportTeamId,
         }).returning({
             id: websitesTable.id,
-            ownerTeamId: websitesTable.ownerTeamId
+            ownerTeamId: websitesTable.ownerTeamId,
+            name: websitesTable.name
         });
         return website[0];
     })

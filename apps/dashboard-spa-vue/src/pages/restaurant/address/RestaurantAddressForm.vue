@@ -21,7 +21,7 @@ import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { geocode, getOpenStreetMapItems } from '../utils'
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurantId, loadMyRestaurants } from '@src/stores/RestaurantStore';
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
@@ -209,6 +209,7 @@ async function onMapConfirm() {
         // await new Promise(resolve => setTimeout(resolve, 1000));
         toast.success(`Saved`);
         isLoading.value = false;
+        await loadMyRestaurants();
     };
 }
 

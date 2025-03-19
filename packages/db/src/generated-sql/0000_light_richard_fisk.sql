@@ -138,7 +138,7 @@ CREATE UNIQUE INDEX `team_invitations_id_unique` ON `team_invitations` (`id`);--
 CREATE TABLE `team` (
 	`id` text PRIMARY KEY NOT NULL,
 	`type` text NOT NULL,
-	`owner_user_id` text NOT NULL
+	`owner_user_id` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `team_id_unique` ON `team` (`id`);--> statement-breakpoint

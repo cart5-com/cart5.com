@@ -16,7 +16,7 @@ import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 export const teamTable = sqliteTable("team", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('team')),
     type: text('type', { enum: ['RESTAURANT', 'WEBSITE'] }).notNull(),
-    ownerUserId: text("owner_user_id").notNull(),
+    ownerUserId: text("owner_user_id"),
 });
 
 

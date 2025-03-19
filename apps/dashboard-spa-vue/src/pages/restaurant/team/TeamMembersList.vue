@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ref, computed } from 'vue';
 import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurant, currentRestaurantId } from '@src/stores/RestaurantStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
 import RemoveMemberDialog from './components/RemoveMemberDialog.vue';
 import EditPermissionsDialog from './components/EditPermissionsDialog.vue';
 import { toast } from '@/ui-plus/sonner';
+import { Store } from 'lucide-vue-next';
 
 const apiPath = apiClient.dashboard.restaurant[':restaurantId'].team.$get
 type Member = ResType<typeof apiPath>["data"][0];
@@ -163,8 +164,15 @@ const updatePermissions = async (permissions: string[]) => {
 <template>
     <Card class="max-w-lg mx-auto">
         <CardHeader class="pb-2">
-            <p class="text-sm text-muted-foreground">Team members can access and manage this restaurant based on their
-                permissions</p>
+            <p class="text-sm text-muted-foreground">
+                <Store class="inline-block mr-1" />
+                <strong>Restaurant:</strong> <span class="font-medium">{{ currentRestaurant?.name }}</span>
+                <span v-if="currentRestaurant?.address1"
+                      class="text-muted-foreground ml-1">({{ currentRestaurant?.address1 }})</span>
+                <br>
+                <span class="mt-1 block">Team members can access and manage this restaurant based on their assigned
+                    permissions.</span>
+            </p>
         </CardHeader>
         <CardContent>
             <div class="space-y-4">

@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ref, computed } from 'vue';
 import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
-import { currentWebsiteId } from '@src/stores/WebsiteStore';
+import { currentWebsite, currentWebsiteId } from '@src/stores/WebsiteStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
 import RemoveMemberDialog from './components/RemoveMemberDialog.vue';
 import EditPermissionsDialog from './components/EditPermissionsDialog.vue';
 import { toast } from '@/ui-plus/sonner';
+import { Globe } from 'lucide-vue-next';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"][0];
@@ -163,8 +164,14 @@ const updatePermissions = async (permissions: string[]) => {
 <template>
     <Card class="max-w-lg mx-auto">
         <CardHeader class="pb-2">
-            <p class="text-sm text-muted-foreground">Team members can access and manage this website based on their
-                permissions</p>
+            <p class="text-sm text-muted-foreground">
+                <Globe class="inline-block mr-1" />
+                <strong>Website:</strong> <span class="font-medium">{{ currentWebsite?.name }}</span>
+                <span class="text-muted-foreground ml-1">({{ currentWebsite?.defaultHostname }})</span>
+                <br>
+                <span class="mt-1 block">Team members can access and manage this website based on their assigned
+                    permissions.</span>
+            </p>
         </CardHeader>
         <CardContent>
             <div class="space-y-4">

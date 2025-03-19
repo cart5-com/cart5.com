@@ -12,7 +12,7 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { currentWebsite } from '@src/stores/WebsiteStore';
-import { Store } from "lucide-vue-next";
+import { Globe } from "lucide-vue-next";
 import { useSidebar } from "@/components/ui/sidebar"
 
 const { setOpenMobile } = useSidebar()
@@ -30,11 +30,14 @@ const { setOpenMobile } = useSidebar()
                             <SidebarMenuButton size="lg"
                                                class="">
                                 <div class="flex aspect-square size-8 items-center justify-center rounded-lg">
-                                    <Store class="size-8" />
+                                    <Globe class="size-8" />
                                 </div>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-semibold">
                                         {{ currentWebsite?.name }}
+                                    </span>
+                                    <span class="truncate text-xs">
+                                        {{ currentWebsite?.defaultHostname ?? '❌No domain defined' }}
                                     </span>
                                 </div>
                             </SidebarMenuButton>

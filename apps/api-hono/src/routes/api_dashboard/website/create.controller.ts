@@ -6,7 +6,10 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { type ErrorType } from "@lib/types/errors";
 import { validateCrossDomainTurnstile_WithUserCheck } from "@api-hono/utils/validateTurnstile";
-import { getSupportTeamByHostname_Service } from "@db/services/team.service";
+import {
+    getSupportTeamByHostname_Service,
+    isUserMemberOfTeam_Service
+} from "@db/services/team.service";
 import { createWebsite_Service } from "@db/services/website.service";
 
 export const createWebsite_SchemaValidator = zValidator('form', z.object({
@@ -22,9 +25,9 @@ export const createWebsite_Handler = async (c: Context<
     const { name, turnstile } = c.req.valid('form');
     const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
-    // TODO: if current user is in the support team, we do not need to add user inside the owner team
+    const isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
     return c.json({
-        data: await createWebsite_Service(ownerUserId, name, supportTeam?.teamId ?? null),
+        data: await createWebsite_Service(ownerUserId, name, supportTeam?.teamId ?? null, isUserMemberOfSupportTeam),
         error: null as ErrorType
     }, 200);
 } 

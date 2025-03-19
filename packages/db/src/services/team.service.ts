@@ -73,6 +73,20 @@ export const getTeamMembers_Service = async (
         )
 }
 
+export const createTeamWithoutOwner_Service = async (
+    type: 'RESTAURANT' | 'WEBSITE',
+    tx: Parameters<Parameters<typeof db.transaction>[0]>[0]
+) => {
+    // Add team to db without an owner
+    const team = await tx.insert(teamTable).values({
+        // Use null for ownerUserId to indicate pending ownership
+        ownerUserId: null,
+        type: type
+    }).returning();
+
+    return team[0].id;
+}
+
 export const createTeamTransactional_Service = async (
     ownerUserId: string,
     type: 'RESTAURANT' | 'WEBSITE',
@@ -116,6 +130,21 @@ export const getSupportTeamByHostname_Service = async (hostname: string) => {
         .then(results => results[0] || null);
 
     return result ? result : null;
+}
+
+export const isUserMemberOfTeam_Service = async (
+    userId: string,
+    teamId: string
+) => {
+    const result = await db.select({ userId: teamUserMapTable.userId })
+        .from(teamUserMapTable)
+        .where(
+            and(
+                eq(teamUserMapTable.teamId, teamId),
+                eq(teamUserMapTable.userId, userId)
+            )
+        );
+    return result.length > 0;
 }
 
 export const hasTeamPermission_Service = async (
@@ -264,6 +293,25 @@ export const addMemberToTeam = async (
     invitationId: string
 ) => {
     return await db.transaction(async (tx) => {
+
+        // Check if team has no owner
+        const team = await tx.select({
+            ownerUserId: teamTable.ownerUserId
+        })
+            .from(teamTable)
+            .where(eq(teamTable.id, teamId))
+            .then(results => results[0]);
+
+        // If no owner, make this user the owner
+        if (team && team.ownerUserId === null) {
+            await tx.update(teamTable)
+                .set({ ownerUserId: currentUserId })
+                .where(eq(teamTable.id, teamId));
+
+            // Ensure FULL_ACCESS permission
+            permissions = [...new Set([...permissions, TEAM_PERMISSIONS.FULL_ACCESS])];
+        }
+
         await tx.insert(teamUserMapTable)
             .values({
                 teamId: teamId,
@@ -369,8 +417,11 @@ export const transferTeamOwnership_Service = async (
 export const removeTeamMember_Service = async (
     teamId: string,
     userId: string,
-    ownerUserId: string
+    ownerUserId: string | null
 ) => {
+    if (ownerUserId === null) {
+        return null;
+    }
     // Don't allow removing the owner
     if (userId === ownerUserId) {
         return null;
@@ -390,9 +441,12 @@ export const removeTeamMember_Service = async (
 export const updateTeamMemberPermissions_Service = async (
     teamId: string,
     userId: string,
-    ownerUserId: string,
+    ownerUserId: string | null,
     permissions: string[]
 ) => {
+    if (ownerUserId === null) {
+        return null;
+    }
     // Don't allow changing the owner's permissions
     if (userId === ownerUserId) {
         return null;
