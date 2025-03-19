@@ -35,6 +35,9 @@
       ],
       "@lib/*": [
         "../lib/src/*"
+      ],
+      "@api-hono/*": [
+        "../../apps/api-hono/src/*"
       ]
     }
   }
