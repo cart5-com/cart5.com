@@ -5,12 +5,13 @@
     "dev": "pnpm dev:drizzle-migrate && pnpm dev:drizzle-studio",
     "dev:caddy": "pnpm dev:drizzle-migrate && pnpm dev:drizzle-studio",
     "generate:sql": "dotenvx run -- drizzle-kit generate --config=drizzle.config.prod.ts",
-    "preprod:migrate": "read -p 'did you run test:prod:migrate first?(Yes/any) ' answer && [ \"$answer\" = \"Yes\" ] || { echo 'Exiting...'; exit 1; } && pnpm test:prod:migrate",
+    "preprod:migrate": "read -p 'have you run test?\n\n\t\tpnpm test:prod:migrate \n\n(Yes/any) ' answer && [ \"$answer\" = \"Yes\" ] || { echo 'Exiting...'; exit 1; } && pnpm test:prod:migrate",
     "prod:migrate": "dotenvx run -f .env.production -- drizzle-kit migrate --config=drizzle.config.prod.ts",
-    "test:prod:migrate": "dotenvx run -f .env.turso-migration -- tsx ./db/migrationTest.ts",
+    "test:prod:migrate": "dotenvx run -f .env.turso-migration -- tsx ./src/migrationTest.ts",
     "dev:drizzle-studio": "dotenvx run -- drizzle-kit studio --port=7022 --config=./drizzle.config.ts",
     "dev:drizzle-migrate": "dotenvx run -- drizzle-kit migrate --config=./drizzle.config.ts",
-    "dev:seed": "dotenvx run -f .env -- tsx ./src/seed/startSeed.ts"
+    "dev:seed": "dotenvx run -f .env -- tsx ./src/seed/startSeed.ts",
+    "prod:drop-all-tables": "dotenvx run -f .env.production -- tsx ./src/prodDropAllTables.ts"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
