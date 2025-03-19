@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { apiClient } from '@api-client/index';
 import { pageTitle } from '@src/stores/layout.store';
-import { currentWebsiteId } from '@src/stores/WebsiteStore';
+import { currentWebsiteId, loadMyWebsites } from '@src/stores/WebsiteStore';
 import { onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { type ResType } from '@api-client/index'
@@ -46,6 +46,7 @@ const makeDefault = async (hostname: string) => {
         }
     });
     loadData();
+    loadMyWebsites();
 };
 
 const removeDomain = async (hostname: string) => {
@@ -58,6 +59,7 @@ const removeDomain = async (hostname: string) => {
         }
     });
     loadData();
+    loadMyWebsites();
 };
 
 onMounted(async () => {

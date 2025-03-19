@@ -37,7 +37,7 @@ const { setOpenMobile } = useSidebar()
                                         {{ currentWebsite?.name }}
                                     </span>
                                     <span class="truncate text-xs">
-                                        {{ currentWebsite?.defaultHostname ?? '❌No domain defined' }}
+                                        {{ currentWebsite?.defaultHostname ?? '❌Domain required' }}
                                     </span>
                                 </div>
                             </SidebarMenuButton>
@@ -63,6 +63,10 @@ const { setOpenMobile } = useSidebar()
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
                                     Domains
+                                    <span v-if="!currentWebsite?.defaultHostname"
+                                          class="text-xs text-muted-foreground">
+                                        ❌Domain required
+                                    </span>
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
