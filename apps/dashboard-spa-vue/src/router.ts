@@ -61,16 +61,6 @@ const router = createRouter({
           component: () => import('@dashboard-spa-vue/pages/restaurant/PickupView.vue'),
         },
         {
-          path: 'on-premise',
-          name: 'restaurant-on-premise',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/OnPremiseView.vue'),
-        },
-        {
-          path: 'table-reservation-settings',
-          name: 'restaurant-table-reservation-settings',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/TableReservationSettingsView.vue')
-        },
-        {
           path: 'delivery-options',
           name: 'restaurant-delivery-options',
           component: () => import('@dashboard-spa-vue/pages/restaurant/deliveryZones/DeliveryZonesView.vue'),
@@ -84,11 +74,6 @@ const router = createRouter({
           path: 'payment-methods',
           name: 'restaurant-payment-methods',
           component: () => import('@dashboard-spa-vue/pages/restaurant/paymentMethods/PaymentMethodsView.vue')
-        },
-        {
-          path: 'scheduled-orders',
-          name: 'restaurant-scheduled-orders',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/ScheduledOrdersView.vue')
         },
         {
           path: 'tax-settings',

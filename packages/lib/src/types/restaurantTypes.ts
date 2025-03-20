@@ -65,26 +65,9 @@ export type TaxCategory = {
     name?: string;
     deliveryRate?: number;
     pickupRate?: number;
-    onPremiseRate?: number;
-    tableReservationRate?: number;
 }
 /// TAX SETTINGS END
 
 
 
-
-
-
-
-/// SCHEDULED ORDERS SETTINGS START
-export type TimeForm = {
-    timeValue?: number;
-    timeUnit?: 'minutes' | 'hours' | 'days';
-}
-export type ScheduledOrdersSettings = {
-    min?: TimeForm;
-    max?: TimeForm;
-    slot_interval?: TimeForm;
-};
-/// SCHEDULED ORDERS SETTINGS END
 

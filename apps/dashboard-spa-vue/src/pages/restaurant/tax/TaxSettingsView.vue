@@ -31,8 +31,6 @@ const getDefaultTaxCategory = (): TaxCategory => {
         name: 'Food',
         deliveryRate: undefined,
         pickupRate: undefined,
-        onPremiseRate: undefined,
-        tableReservationRate: undefined
     }
 }
 const defaultTaxSettings: {
@@ -143,8 +141,6 @@ const addTaxCategory = () => {
         name: 'Cat ' + (taxSettings.value.taxCategories.length + 1),
         deliveryRate: 0,
         pickupRate: 0,
-        onPremiseRate: 0,
-        tableReservationRate: 0
     });
 };
 
@@ -253,22 +249,6 @@ const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
                                        type="number"
                                        step="1" />
                             </div>
-
-                            <!-- ON_PREMISE_DISABLED_FOR_NOW -->
-                            <!-- <div class="space-y-2">
-                                <Label>On Premise Rate (%)</Label>
-                                <Input v-model="category.onPremiseRate"
-                                       type="number"
-                                       step="1" />
-                            </div> -->
-
-                            <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
-                            <!-- <div class="space-y-2">
-                                <Label>Table Reservation Rate (%)</Label>
-                                <Input v-model="category.tableReservationRate"
-                                       type="number"
-                                       step="1" />
-                            </div> -->
                         </div>
                     </div>
                 </div>

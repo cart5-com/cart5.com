@@ -25,13 +25,11 @@ const isLoading = ref(false);
 const defaultMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify(defaultPaymentMethods)));
 const deliveryMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
 const pickupMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
-const onPremiseMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
-const tableReservationMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
 
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-watch([defaultMethods, deliveryMethods, pickupMethods, onPremiseMethods, tableReservationMethods], () => {
+watch([defaultMethods, deliveryMethods, pickupMethods], () => {
     if (ignoreAutoSave) return;
     if (debounceTimer) {
         clearTimeout(debounceTimer);
@@ -53,8 +51,6 @@ const loadData = async () => {
                     defaultPaymentMethods: true,
                     deliveryPaymentMethods: true,
                     pickupPaymentMethods: true,
-                    onPremisePaymentMethods: true,
-                    tableReservationPaymentMethods: true,
                 }
             }
         })).json();
@@ -68,8 +64,6 @@ const loadData = async () => {
             defaultMethods.value = data.defaultPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
             deliveryMethods.value = data.deliveryPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
             pickupMethods.value = data.pickupPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            onPremiseMethods.value = data.onPremisePaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            tableReservationMethods.value = data.tableReservationPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
         }
     } catch (err) {
         console.error('Error loading payment methods:', err);
@@ -93,8 +87,6 @@ const savePaymentMethods = async () => {
                 defaultPaymentMethods: defaultMethods.value,
                 deliveryPaymentMethods: deliveryMethods.value,
                 pickupPaymentMethods: pickupMethods.value,
-                onPremisePaymentMethods: onPremiseMethods.value,
-                tableReservationPaymentMethods: tableReservationMethods.value,
             }
         })).json();
 
@@ -183,12 +175,6 @@ onMounted(() => {
             </CardContent>
         </Card>
 
-        <!-- v-for="(methods, key) in {
-        delivery: deliveryMethods,
-        pickup: pickupMethods,
-        onPremise: onPremiseMethods,
-        tableReservation: tableReservationMethods
-        }" -->
         <Card>
             <CardHeader>
                 <CardTitle>Delivery payment methods</CardTitle>
@@ -232,52 +218,6 @@ onMounted(() => {
                                       card-details="(in restaurant)" />
             </CardContent>
         </Card>
-
-        <!-- ON_PREMISE_DISABLED_FOR_NOW -->
-        <!-- <Card>
-            <CardHeader>
-                <CardTitle>On premise payment methods</CardTitle>
-                <CardDescription>
-                    {{ onPremiseMethods.isActive ? `(Custom on premise payment methods)` : '(Uses same methods as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="isActive"
-                            :checked="onPremiseMethods.isActive"
-                            @update:checked="(checked) => onPremiseMethods.isActive = checked" />
-                    <label for="isActive"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Use Custom Payment Methods
-                    </label>
-                </div>
-                <PaymentMethodsEditor :payment-methods="onPremiseMethods"
-                                      card-details="(in restaurant)" />
-            </CardContent>
-        </Card> -->
-
-        <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
-        <!-- <Card>
-            <CardHeader>
-                <CardTitle>Table reservation payment methods</CardTitle>
-                <CardDescription>
-                    {{ tableReservationMethods.isActive ? `(Custom table reservation payment methods)` : '(Uses same methods as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="isActive"
-                            :checked="tableReservationMethods.isActive"
-                            @update:checked="(checked) => tableReservationMethods.isActive = checked" />
-                    <label for="isActive"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Use Custom Payment Methods
-                    </label>
-                </div>
-                <PaymentMethodsEditor :payment-methods="tableReservationMethods"
-                                      card-details="(in restaurant)" />
-            </CardContent>
-        </Card> -->
 
         <Button @click="savePaymentMethods"
                 :disabled="isLoading"

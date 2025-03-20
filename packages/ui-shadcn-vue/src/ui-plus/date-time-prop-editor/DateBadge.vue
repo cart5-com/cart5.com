@@ -7,9 +7,8 @@ defineProps<{
 }>()
 </script>
 <template>
-    <div v-if="modelValue?.isEnabled">
-        <Badge v-if="modelValue?.type === 'always'"
-               variant="outline">
+    <div v-if="modelValue?.type">
+        <Badge variant="outline">
             DEBUG:Always
         </Badge>
         <!-- line-clamp-1 -->

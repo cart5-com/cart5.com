@@ -55,24 +55,12 @@ const pickupHours = ref<WeeklyHours>({
     days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
-const onPremiseHours = ref<WeeklyHours>({
-    isActive: false,
-    days: JSON.parse(JSON.stringify(defaultDaysData))
-});
-
-const tableReservationHours = ref<WeeklyHours>({
-    isActive: false,
-    days: JSON.parse(JSON.stringify(defaultDaysData))
-});
-
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 watch([
     defaultHours,
     deliveryHours,
     pickupHours,
-    onPremiseHours,
-    tableReservationHours,
     timezone
 ], () => {
     if (ignoreAutoSave) return;
@@ -98,8 +86,6 @@ const loadData = async () => {
                     defaultOpenHours: true,
                     deliveryHours: true,
                     pickupHours: true,
-                    onPremiseHours: true,
-                    tableReservationHours: true,
                 }
             }
         })).json();
@@ -113,15 +99,11 @@ const loadData = async () => {
             defaultHours.value = data.defaultOpenHours || { isActive: true, days: defaultDaysData };
             deliveryHours.value = data.deliveryHours || { isActive: false, days: defaultDaysData };
             pickupHours.value = data.pickupHours || { isActive: false, days: defaultDaysData };
-            onPremiseHours.value = data.onPremiseHours || { isActive: false, days: defaultDaysData };
-            tableReservationHours.value = data.tableReservationHours || { isActive: false, days: defaultDaysData };
             timezone.value = data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
         } else {
             defaultHours.value = { isActive: true, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             deliveryHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             pickupHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
-            onPremiseHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
-            tableReservationHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
             saveHours()
         }
@@ -148,8 +130,6 @@ const saveHours = async () => {
                 defaultOpenHours: defaultHours.value,
                 deliveryHours: deliveryHours.value,
                 pickupHours: pickupHours.value,
-                onPremiseHours: onPremiseHours.value,
-                tableReservationHours: tableReservationHours.value,
             }
         })).json();
 
@@ -181,20 +161,6 @@ const copyFromDefault2Pickup = () => {
     pickupHours.value.isActive = true;
     toast.success('Copied hours from pickup schedule');
 };
-
-// ON_PREMISE_DISABLED_FOR_NOW
-// const copyFromDefault2OnPremise = () => {
-//     onPremiseHours.value = JSON.parse(JSON.stringify(defaultHours.value));
-//     onPremiseHours.value.isActive = true;
-//     toast.success('Copied hours from on-premise schedule');
-// };
-
-// TABLE_RESERVATION_DISABLED_FOR_NOW
-// const copyFromDefault2TableReservation = () => {
-//     tableReservationHours.value = JSON.parse(JSON.stringify(defaultHours.value));
-//     tableReservationHours.value.isActive = true;
-//     toast.success('Copied hours from table reservation schedule');
-// };
 
 </script>
 
@@ -290,69 +256,6 @@ const copyFromDefault2Pickup = () => {
                             :weekHours="pickupHours" />
             </CardContent>
         </Card>
-
-        <!-- ON_PREMISE_DISABLED_FOR_NOW -->
-        <!-- <Card>
-            <CardHeader>
-                <CardTitle>
-                    On Premise Hours
-                </CardTitle>
-                <CardDescription>
-                    {{ onPremiseHours.isActive ? '(Custom on-premise hours)' : '(Uses same hours as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="p-2 pt-0">
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="onPremiseHours"
-                            :checked="onPremiseHours.isActive"
-                            @update:checked="onPremiseHours.isActive = $event" />
-                    <label for="onPremiseHours"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Custom "On Premise Hours"
-                    </label>
-                </div>
-                <Button class="mb-4"
-                        variant="outline"
-                        v-if="onPremiseHours.isActive"
-                        @click="copyFromDefault2OnPremise">
-                    Copy from Default Hours
-                </Button>
-                <WeekEditor v-if="onPremiseHours.isActive"
-                            :weekHours="onPremiseHours" />
-            </CardContent>
-        </Card>-->
-
-        <!-- TABLE_RESERVATION_DISABLED_FOR_NOW -->
-        <!-- <Card>
-            <CardHeader>
-                <CardTitle>
-                    Table Reservation Hours
-                </CardTitle>
-                <CardDescription>
-                    {{ tableReservationHours.isActive ? '(Custom table reservation hours)' : '(Uses same hours as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="p-2 pt-0">
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="tableReservationHours"
-                            :checked="tableReservationHours.isActive"
-                            @update:checked="tableReservationHours.isActive = $event" />
-                    <label for="tableReservationHours"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Custom "Table Reservation Hours"
-                    </label>
-                </div>
-                <Button class="mb-4"
-                        variant="outline"
-                        v-if="tableReservationHours.isActive"
-                        @click="copyFromDefault2TableReservation">
-                    Copy from Default Hours
-                </Button>
-                <WeekEditor v-if="tableReservationHours.isActive"
-                            :weekHours="tableReservationHours" />
-            </CardContent>
-        </Card> -->
-
 
         <Button @click="saveHours"
                 :disabled="isLoading"

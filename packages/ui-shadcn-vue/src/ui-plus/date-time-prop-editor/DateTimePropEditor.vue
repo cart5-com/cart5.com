@@ -36,7 +36,6 @@ const modelValue = useVModel(props, 'modelValue', emits, {
                         modelValue = { type: 'always' };
                     }
                 }" />
-        <!-- <DateBadge v-model="modelValue" /> -->
         <RadioGroup v-model="modelValue.type"
                     default-value="always"
                     @update:modelValue="(newType) => {

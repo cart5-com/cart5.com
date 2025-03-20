@@ -6,7 +6,6 @@ import { createInsertSchema, createSelectSchema, createUpdateSchema } from "driz
 import type {
 	DeliveryZone,
 	PhysicalPaymentMethods,
-	ScheduledOrdersSettings,
 	TaxCategory
 } from "@lib/types/restaurantTypes";
 import type { WeeklyHours } from "@lib/types/dateTimeType";
@@ -27,8 +26,6 @@ export const restaurantTable = sqliteTable("restaurant", {
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
-	offersOnPremise: integer("offers_on_premise", { mode: "boolean" }).notNull().default(false),
-	offersTableReservation: integer("offers_table_reservation", { mode: "boolean" }).notNull().default(false),
 
 	ownerTeamId: text("owner_team_id").notNull(),
 	supportTeamId: text("support_team_id"),
@@ -88,23 +85,17 @@ export const restaurantOpenHoursTable = sqliteTable('restaurant_open_hours', {
 	defaultOpenHours: text('open_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	deliveryHours: text('delivery_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	pickupHours: text('pickup_hours', { mode: 'json' }).$type<WeeklyHours>(),
-	onPremiseHours: text('on_premise_hours', { mode: 'json' }).$type<WeeklyHours>(),
-	tableReservationHours: text('table_reservation_hours', { mode: 'json' }).$type<WeeklyHours>(),
 });
 export const selectRestaurantOpenHoursSchema = createSelectSchema(restaurantOpenHoursTable);
 export const insertRestaurantOpenHoursSchema = createInsertSchema(restaurantOpenHoursTable, {
 	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
 	deliveryHours: z.custom<WeeklyHours>((_val) => true),
 	pickupHours: z.custom<WeeklyHours>((_val) => true),
-	onPremiseHours: z.custom<WeeklyHours>((_val) => true),
-	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 export const updateRestaurantOpenHoursSchema = createUpdateSchema(restaurantOpenHoursTable, {
 	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
 	deliveryHours: z.custom<WeeklyHours>((_val) => true),
 	pickupHours: z.custom<WeeklyHours>((_val) => true),
-	onPremiseHours: z.custom<WeeklyHours>((_val) => true),
-	tableReservationHours: z.custom<WeeklyHours>((_val) => true),
 });
 /// RESTAURANT HOURS TABLE END
 
@@ -144,8 +135,6 @@ export const restaurantPaymentMethodsTable = sqliteTable('restaurant_payment_met
 	defaultPaymentMethods: text('default_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
 	deliveryPaymentMethods: text('delivery_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
 	pickupPaymentMethods: text('pickup_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
-	onPremisePaymentMethods: text('on_premise_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
-	tableReservationPaymentMethods: text('table_reservation_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
 });
 
 export const selectRestaurantPaymentMethodsSchema = createSelectSchema(restaurantPaymentMethodsTable);
@@ -153,35 +142,14 @@ export const insertRestaurantPaymentMethodsSchema = createInsertSchema(restauran
 	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	onPremisePaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	tableReservationPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 });
 export const updateRestaurantPaymentMethodsSchema = createUpdateSchema(restaurantPaymentMethodsTable, {
 	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	onPremisePaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	tableReservationPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
 });
 /// RESTAURANT PAYMENT METHODS TABLE END
 
-
-
-
-/// RESTAURANT TABLE RESERVATION SETTINGS START
-export const restaurantTableReservationSettingsTable = sqliteTable('restaurant_table_reservation_settings', {
-	restaurantId: text("restaurant_id").notNull().unique(),
-	minGuests: integer("min_guests"),
-	maxGuests: integer("max_guests"),
-	minTimeInAdvanceMinutes: integer("min_time_in_advance_minutes"),
-	maxTimeInAdvanceDays: integer("max_time_in_advance_days"),
-	lateHoldTimeMinutes: integer("late_hold_time_minutes"),
-	allowPreOrder: integer("allow_pre_order", { mode: "boolean" }),
-});
-export const selectRestaurantTableReservationSettingsSchema = createSelectSchema(restaurantTableReservationSettingsTable);
-export const insertRestaurantTableReservationSettingsSchema = createInsertSchema(restaurantTableReservationSettingsTable);
-export const updateRestaurantTableReservationSettingsSchema = createUpdateSchema(restaurantTableReservationSettingsTable);
-/// RESTAURANT TABLE RESERVATION SETTINGS END
 
 
 
@@ -206,42 +174,6 @@ export const updateRestaurantTaxSettingsSchema = createUpdateSchema(restaurantTa
 	taxCategories: z.array(z.custom<TaxCategory>((_val) => true)).default([]),
 });
 /// TAX SETTINGS TABLE END
-
-
-
-
-
-
-
-/// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE START
-export const restaurantScheduledOrdersSettingsTable = sqliteTable('restaurant_scheduled_orders_settings', {
-	restaurantId: text("restaurant_id").notNull().unique(),
-	isScheduledOrdersEnabled: integer("is_scheduled_orders_enabled", { mode: "boolean" }).default(false),
-	isOnlyScheduledOrdersAllowed: integer("is_only_scheduled_orders_allowed", { mode: "boolean" }).default(false), // if true, ASAP delivery&pickup are disabled
-
-	// on update will be calculated from pickup_settings
-	pickup_minTimeInAdvance_minutes: integer("pickup_min_time_in_advance_minutes", { mode: "number" }),
-	pickup_maxTimeInAdvance_minutes: integer("pickup_max_time_in_advance_minutes", { mode: "number" }),
-
-	// on update will be calculated from delivery_settings
-	delivery_minTimeInAdvance_minutes: integer("delivery_min_time_in_advance_minutes", { mode: "number" }),
-	delivery_maxTimeInAdvance_minutes: integer("delivery_max_time_in_advance_minutes", { mode: "number" }),
-
-	pickup_settings: text('pickup_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper
-	delivery_settings: text('delivery_settings', { mode: 'json' }).$type<ScheduledOrdersSettings>(), // form helper 
-});
-export const selectRestaurantScheduledOrdersSettingsSchema = createSelectSchema(restaurantScheduledOrdersSettingsTable);
-export const insertRestaurantScheduledOrdersSettingsSchema = createInsertSchema(restaurantScheduledOrdersSettingsTable, {
-	pickup_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
-	delivery_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
-});
-export const updateRestaurantScheduledOrdersSettingsSchema = createUpdateSchema(restaurantScheduledOrdersSettingsTable, {
-	pickup_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
-	delivery_settings: z.custom<ScheduledOrdersSettings>((_val) => true),
-});
-/// RESTAURANT SCHEDULED ORDERS SETTINGS TABLE END
-
-
 
 
 
@@ -297,23 +229,11 @@ export const restaurantRelations = relations(restaurantTable, ({
 			fields: [restaurantTable.id],
 			references: [restaurantPaymentMethodsTable.restaurantId]
 		}),
-	tableReservationSettings:
-		one(
-			restaurantTableReservationSettingsTable, {
-			fields: [restaurantTable.id],
-			references: [restaurantTableReservationSettingsTable.restaurantId]
-		}),
 	taxSettings:
 		one(
 			restaurantTaxSettingsTable, {
 			fields: [restaurantTable.id],
 			references: [restaurantTaxSettingsTable.restaurantId]
-		}),
-	scheduledOrdersSettings:
-		one(
-			restaurantScheduledOrdersSettingsTable, {
-			fields: [restaurantTable.id],
-			references: [restaurantScheduledOrdersSettingsTable.restaurantId]
 		}),
 	deliveryZones:
 		one(
