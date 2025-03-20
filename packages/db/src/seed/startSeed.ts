@@ -9,7 +9,8 @@ import { TEAM_PERMISSIONS } from "@lib/consts";
 import {
     createRestaurant_Service,
     updateRestaurant_Service,
-    updateRestaurantAddress_Service
+    updateRestaurantAddress_Service,
+    updateRestaurantOpenHours_Service
 } from "@db/services/restaurant.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
@@ -125,6 +126,74 @@ export const startSeed = async () => {
     await updateRestaurantAddress_Service(realFlamesRestaurant.id, {
         lat: baseLat,
         lng: baseLng
+    })
+    await updateRestaurantOpenHours_Service(realFlamesRestaurant.id, {
+        timezone: cfRaw.timezone,
+        defaultOpenHours: {
+            isActive: true,
+            days: {
+                "0": {
+                    // Sunday closed
+                    isOpen24: false,
+                    hours: []
+                },
+                "1": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+                "2": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+                "3": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+                "4": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+                "5": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+                "6": {
+                    isOpen24: false,
+                    hours: [
+                        {
+                            open: "09:00",
+                            close: "23:00"
+                        }
+                    ]
+                },
+
+            }
+        }
     })
     // invite flames admin to Real Flames restaurant
     const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(

@@ -24,11 +24,26 @@ const defaultDaysData = {
     "6": { isOpen24: false, hours: [] },
 }
 
+onUnmounted(() => {
+    if (interval) {
+        clearInterval(interval);
+    }
+});
+
+const timezone = ref<string | null>(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
 const isLoading = ref(false);
 const defaultHours = ref<WeeklyHours>({
     isActive: true,
     days: JSON.parse(JSON.stringify(defaultDaysData))
 });
+
+const businessTimeNow = ref(getBusinessTimeNow(timezone.value));
+const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
+const interval: ReturnType<typeof setInterval> = setInterval(() => {
+    businessTimeNow.value = getBusinessTimeNow(timezone.value);
+    isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
+}, 3000);
 
 const deliveryHours = ref<WeeklyHours>({
     isActive: false,
@@ -52,7 +67,14 @@ const tableReservationHours = ref<WeeklyHours>({
 
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
-watch([defaultHours, deliveryHours, pickupHours, onPremiseHours, tableReservationHours], () => {
+watch([
+    defaultHours,
+    deliveryHours,
+    pickupHours,
+    onPremiseHours,
+    tableReservationHours,
+    timezone
+], () => {
     if (ignoreAutoSave) return;
     if (debounceTimer) {
         clearTimeout(debounceTimer)
@@ -72,6 +94,7 @@ const loadData = async () => {
             },
             json: {
                 columns: {
+                    timezone: true,
                     defaultOpenHours: true,
                     deliveryHours: true,
                     pickupHours: true,
@@ -92,12 +115,15 @@ const loadData = async () => {
             pickupHours.value = data.pickupHours || { isActive: false, days: defaultDaysData };
             onPremiseHours.value = data.onPremiseHours || { isActive: false, days: defaultDaysData };
             tableReservationHours.value = data.tableReservationHours || { isActive: false, days: defaultDaysData };
+            timezone.value = data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
         } else {
             defaultHours.value = { isActive: true, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             deliveryHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             pickupHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             onPremiseHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
             tableReservationHours.value = { isActive: false, days: JSON.parse(JSON.stringify(defaultDaysData)) };
+            timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            saveHours()
         }
     } catch (err) {
         console.error('Error loading hours:', err);
@@ -118,6 +144,7 @@ const saveHours = async () => {
                 restaurantId: currentRestaurantId.value ?? '',
             },
             json: {
+                timezone: timezone.value,
                 defaultOpenHours: defaultHours.value,
                 deliveryHours: deliveryHours.value,
                 pickupHours: pickupHours.value,
@@ -140,44 +167,8 @@ const saveHours = async () => {
 };
 
 onMounted(() => {
-    loadTimezone();
     loadData();
 });
-
-
-onUnmounted(() => {
-    if (interval) {
-        clearInterval(interval);
-    }
-});
-
-const timezone = ref<string | null>(Intl.DateTimeFormat().resolvedOptions().timeZone);
-const businessTimeNow = ref(getBusinessTimeNow(timezone.value));
-const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
-const interval: ReturnType<typeof setInterval> = setInterval(() => {
-    businessTimeNow.value = getBusinessTimeNow(timezone.value);
-    isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
-}, 3000);
-
-const loadTimezone = async () => {
-    const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.get.$post({
-        param: {
-            restaurantId: currentRestaurantId.value ?? '',
-        },
-        json: {
-            columns: {
-                timezone: true,
-            }
-        }
-    })).json()
-    if (error) {
-        toast.error('Failed to load timezone');
-        return;
-    }
-    if (data) {
-        timezone.value = data.timezone;
-    }
-}
 
 const copyFromDefault = () => {
     deliveryHours.value = JSON.parse(JSON.stringify(defaultHours.value));
@@ -219,10 +210,6 @@ const copyFromDefault2Pickup = () => {
         <div>
             Restaurant time zone:
             <TimeZoneSelect v-model="timezone" />
-            <br>
-            Time now: {{ businessTimeNow.toFormat('HH:mm:ss') }}
-            <br>
-            Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
         </div>
         <Card>
             <CardHeader>
@@ -230,6 +217,11 @@ const copyFromDefault2Pickup = () => {
                 <CardDescription>Set your regular business hours</CardDescription>
             </CardHeader>
             <CardContent class="p-2 pt-0">
+                <div class="text-sm text-muted-foreground mb-4 border-b border-t py-4">
+                    Time now: {{ businessTimeNow.toFormat('EEEE, HH:mm:ss') }}
+                    <br>
+                    Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
+                </div>
                 <WeekEditor :weekHours="defaultHours" />
             </CardContent>
         </Card>

@@ -67,7 +67,6 @@ export const restaurantAddressTable = sqliteTable("restaurant_address", {
 	lat: real('lat'), //.notNull().default(90), // North Pole latitude
 	lng: real('lng'), //.notNull().default(-180), // North Pole longitude
 	geocodeMetadata: text('geocode_metadata', { mode: 'json' }).$type<any>(),
-	timezone: text('timezone'),
 });
 export const selectRestaurantAddressSchema = createSelectSchema(restaurantAddressTable);
 export const insertRestaurantAddressSchema = createInsertSchema(restaurantAddressTable, {
@@ -85,6 +84,7 @@ export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddres
 /// RESTAURANT HOURS TABLE START
 export const restaurantOpenHoursTable = sqliteTable('restaurant_open_hours', {
 	restaurantId: text("restaurant_id").notNull().unique(),
+	timezone: text('timezone'),
 	defaultOpenHours: text('open_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	deliveryHours: text('delivery_hours', { mode: 'json' }).$type<WeeklyHours>(),
 	pickupHours: text('pickup_hours', { mode: 'json' }).$type<WeeklyHours>(),

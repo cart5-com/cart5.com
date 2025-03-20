@@ -75,12 +75,12 @@ export const updateRestaurantOpenHours_Service = async (
     restaurantId: string,
     data: Partial<InferInsertModel<typeof restaurantOpenHoursTable>>
 ) => {
-    return await db.insert(restaurantOpenHoursTable)
+    return (await db.insert(restaurantOpenHoursTable)
         .values({ ...data, restaurantId: restaurantId })
         .onConflictDoUpdate({
             target: restaurantOpenHoursTable.restaurantId,
             set: data
-        });
+        }));
 }
 
 export const getRestaurantMenu_Service = async (

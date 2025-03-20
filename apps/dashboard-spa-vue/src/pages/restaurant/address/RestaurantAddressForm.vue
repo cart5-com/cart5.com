@@ -16,7 +16,6 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
-import AutoFormFieldTimezone from '@/ui-plus/auto-form/AutoFormFieldTimezone.vue'
 import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
@@ -27,7 +26,6 @@ import { DependencyType } from '@/ui-plus/auto-form/interface';
 
 const schema = z.object({
     country: z.string().min(1, 'Address is required'),
-    timezone: z.string().min(1, 'Timezone is required'),
     address1: z.string().min(1, 'Address is required'),
     address2: z.string().optional(),
     city: z.string().optional(),
@@ -80,7 +78,6 @@ const loadData = async () => {
         },
         json: {
             columns: {
-                timezone: true,
                 country: true,
                 city: true,
                 state: true,
@@ -94,7 +91,6 @@ const loadData = async () => {
         handleError(error, form);
     } else {
         if (address) {
-            // form.setFieldValue('timezone', data.address?.timezone ?? undefined);
             // form.setFieldValue('country', data.address?.country ?? undefined);
             // form.setFieldValue('address1', data.address?.address1 ?? undefined);
             // form.setFieldValue('address2', data.address?.address2 ?? undefined);
@@ -120,7 +116,6 @@ const loadData = async () => {
 }
 
 onMounted(() => {
-    form.setFieldValue('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
     fetchCountryCode().then(countryCode => {
         form.setFieldValue('country', countryCode);
         loadData();
@@ -312,10 +307,6 @@ watch(() => form.values.country, (newCountry) => {
                     inputProps: {
                         // disabled: true,
                     },
-                },
-                timezone: {
-                    component: AutoFormFieldTimezone,
-                    label: 'Timezone',
                 },
                 address1: {
                     // component: AutoFormFieldAddress,
