@@ -1,4 +1,8 @@
 {
   "name": "lib",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "luxon": "^3.5.0"
+  }
 }

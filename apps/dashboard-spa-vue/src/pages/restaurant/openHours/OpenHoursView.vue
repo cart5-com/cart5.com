@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-vue-next';
@@ -10,6 +10,8 @@ import type { WeeklyHours } from '@lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';
+import { getBusinessTimeNow, isOpenNow } from '@lib/utils/isOpenNow';
+import TimeZoneSelect from '@/ui-plus/TimeZoneSelect.vue';
 pageTitle.value = 'Operating Hours';
 
 const defaultDaysData = {
@@ -138,8 +140,44 @@ const saveHours = async () => {
 };
 
 onMounted(() => {
+    loadTimezone();
     loadData();
 });
+
+
+onUnmounted(() => {
+    if (interval) {
+        clearInterval(interval);
+    }
+});
+
+const timezone = ref<string | null>(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const businessTimeNow = ref(getBusinessTimeNow(timezone.value));
+const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
+const interval: ReturnType<typeof setInterval> = setInterval(() => {
+    businessTimeNow.value = getBusinessTimeNow(timezone.value);
+    isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
+}, 3000);
+
+const loadTimezone = async () => {
+    const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.get.$post({
+        param: {
+            restaurantId: currentRestaurantId.value ?? '',
+        },
+        json: {
+            columns: {
+                timezone: true,
+            }
+        }
+    })).json()
+    if (error) {
+        toast.error('Failed to load timezone');
+        return;
+    }
+    if (data) {
+        timezone.value = data.timezone;
+    }
+}
 
 const copyFromDefault = () => {
     deliveryHours.value = JSON.parse(JSON.stringify(defaultHours.value));
@@ -178,6 +216,14 @@ const copyFromDefault2Pickup = () => {
                      v-if="isLoading" />Auto save
             <Check />
         </Button>
+        <div>
+            Restaurant time zone:
+            <TimeZoneSelect v-model="timezone" />
+            <br>
+            Time now: {{ businessTimeNow.toFormat('HH:mm:ss') }}
+            <br>
+            Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
+        </div>
         <Card>
             <CardHeader>
                 <CardTitle>Default Operating Hours</CardTitle>
