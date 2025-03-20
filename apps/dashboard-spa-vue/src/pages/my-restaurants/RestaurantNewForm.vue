@@ -53,7 +53,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         } else {
             // Success
             await loadMyRestaurants();
-            emit('close', { id: data, name: values.name });
+            emit('close', { id: data.id, name: values.name });
         }
     })
 }

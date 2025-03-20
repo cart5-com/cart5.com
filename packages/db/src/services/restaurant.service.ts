@@ -225,7 +225,11 @@ export const updateRestaurant_Service = async (
 }
 
 export const createRestaurant_Service = async (
-    userId: string, name: string, supportTeamId: string | null, isUserMemberOfSupportTeam: boolean) => {
+    userId: string,
+    name: string,
+    supportTeamId: string | null,
+    isUserMemberOfSupportTeam: boolean
+) => {
     return await db.transaction(async (tx) => {
 
         const teamId = isUserMemberOfSupportTeam
@@ -236,9 +240,13 @@ export const createRestaurant_Service = async (
             name: name,
             ownerTeamId: teamId,
             supportTeamId: supportTeamId
-        }).returning({ id: restaurantTable.id });
+        }).returning({
+            id: restaurantTable.id,
+            ownerTeamId: restaurantTable.ownerTeamId,
+            name: restaurantTable.name
+        });
 
-        return restaurant[0].id;
+        return restaurant[0];
     })
 }
 

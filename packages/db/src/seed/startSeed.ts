@@ -49,23 +49,51 @@ const startSeed = async () => {
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "www.flames.com"); // default domain
 
     const flamesRestaurantAdminUser = await createSeedUser("flames_admin@flames.com", password, "Flames Admin");
-    const invitationForFlamesRestaurantAdminUser = await insertInvitation(flamesRestaurantAdminUser?.email!, flamesWebsite.ownerTeamId, [TEAM_PERMISSIONS.FULL_ACCESS], thushObite?.id!, flamesWebsite.name);
+    const invitationForFlamesRestaurantAdminUser = await insertInvitation(
+        flamesRestaurantAdminUser?.email!,
+        flamesWebsite.ownerTeamId,
+        [TEAM_PERMISSIONS.FULL_ACCESS],
+        thushObite?.id!,
+        flamesWebsite.name
+    );
     await addMemberToTeam(flamesWebsite.ownerTeamId, flamesRestaurantAdminUser?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitationForFlamesRestaurantAdminUser.id);
 
+    // create 300 restaurants with 5th one being real flames restaurant
     const restaurantsByThush = [];
-    const restaurantName = "FLAMES";
+    let realFlamesRestaurant;
+    const flamesIndex = 5;
     for (let i = 0; i < 300; i++) {
-        restaurantsByThush.push(
-            await createRestaurant_Service(
-                thushObite?.id!,
-                `${i + 1} ${restaurantName}`,
-                obiteTeam_asSupportTeam?.teamId!,
-                true
-            )
-        )
+        let name = i === flamesIndex ? "Real Flames" : `${i + 1} FLAMES`;
+
+        const rest = await createRestaurant_Service(
+            thushObite?.id!,
+            name,
+            obiteTeam_asSupportTeam?.teamId!,
+            true
+        );
+
+        if (i === flamesIndex) {
+            realFlamesRestaurant = rest;
+        } else {
+            restaurantsByThush.push(rest);
+        }
     }
+
+    // invite flames admin to Real Flames restaurant
+    const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(
+        flamesRestaurantAdminUser?.email!,
+        realFlamesRestaurant?.ownerTeamId!,
+        [TEAM_PERMISSIONS.FULL_ACCESS],
+        thushObite?.id!,
+        realFlamesRestaurant?.name!
+    );
+    await addMemberToTeam(
+        realFlamesRestaurant?.ownerTeamId!,
+        flamesRestaurantAdminUser?.id!,
+        [TEAM_PERMISSIONS.FULL_ACCESS],
+        invitationForFlamesRestaurantAdminUserRes.id
+    );
+
 }
-
-
 
 startSeed()
