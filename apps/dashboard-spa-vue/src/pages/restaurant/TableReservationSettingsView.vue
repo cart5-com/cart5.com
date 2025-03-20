@@ -8,8 +8,8 @@ import { Switch } from '@/components/ui/switch';
 import { Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
-import { pageTitle } from '@src/stores/layout.store';
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 
 pageTitle.value = 'Table Reservation Settings';
 

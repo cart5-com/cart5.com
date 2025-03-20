@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
 import type { WeeklyHours } from '@lib/types/dateTimeType';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';
 import { getCurrentTimeNow, isOpenNow } from '@lib/utils/isOpenNow';

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Button } from '@/components/ui/button';
-import RestaurantNamePhoneForm from '@src/pages/restaurant/name/RestaurantNamePhoneForm.vue';
+import RestaurantNamePhoneForm from '@dashboard-spa-vue/pages/restaurant/name/RestaurantNamePhoneForm.vue';
 import { ArrowRightIcon } from 'lucide-vue-next';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 pageTitle.value = 'Name & Phone'

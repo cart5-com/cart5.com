@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { currentWebsiteId, setCurrentWebsiteName } from '@src/stores/WebsiteStore';
+import { currentWebsiteId, setCurrentWebsiteName } from '@dashboard-spa-vue/stores/WebsiteStore';
 import { onMounted } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 

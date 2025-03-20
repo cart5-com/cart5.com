@@ -14,11 +14,11 @@ import {
 import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import type { TaxCategory } from '@lib/types/restaurantTypes';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import CurrencyWidget from './CurrencyWidget.vue';
-import SalesTaxInfoWidget from '@src/pages/restaurant/tax/SalesTaxInfoWidget.vue';
+import SalesTaxInfoWidget from '@dashboard-spa-vue/pages/restaurant/tax/SalesTaxInfoWidget.vue';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { currencies } from '@lib/utils/currencies';
 pageTitle.value = 'Tax Settings';

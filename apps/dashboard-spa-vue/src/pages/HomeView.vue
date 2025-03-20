@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import HeaderOnly from '@src/layouts/HeaderOnly.vue';
-import AppLinks from '@src/components/AppLinks.vue';
+import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
+import AppLinks from '@dashboard-spa-vue/components/AppLinks.vue';
 
 </script>
 

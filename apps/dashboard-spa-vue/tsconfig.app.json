@@ -29,8 +29,7 @@
       "@/*": [
         "../../packages/ui-shadcn-vue/src/*"
       ],
-      // TODO: rename to @dashboard-spa-vue
-      "@src/*": [
+      "@dashboard-spa-vue/*": [
         "./src/*"
       ],
       "@lib/*": [

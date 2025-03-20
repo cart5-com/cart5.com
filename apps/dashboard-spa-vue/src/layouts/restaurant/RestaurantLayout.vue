@@ -5,10 +5,10 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar'
 import RestaurantSidebar from './RestaurantSidebar.vue'
-import { setCurrentRestaurantId } from '@src/stores/RestaurantStore';
+import { setCurrentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { RouterView, useRoute } from "vue-router";
-import Header from '@src/components/Header.vue'
-import { pageTitle } from '@src/stores/layout.store';
+import Header from '@dashboard-spa-vue/components/Header.vue'
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 const route = useRoute();
 const restaurantId = route.params.restaurantId;
 setCurrentRestaurantId(restaurantId as string);

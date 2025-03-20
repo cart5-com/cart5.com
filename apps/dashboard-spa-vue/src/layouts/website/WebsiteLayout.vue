@@ -5,10 +5,10 @@ import {
     SidebarTrigger,
 } from '@/components/ui/sidebar'
 import WebsiteSidebar from './WebsiteSidebar.vue'
-import { setCurrentWebsiteId } from '@src/stores/WebsiteStore';
+import { setCurrentWebsiteId } from '@dashboard-spa-vue/stores/WebsiteStore';
 import { RouterView, useRoute } from "vue-router";
-import Header from '@src/components/Header.vue'
-import { pageTitle } from '@src/stores/layout.store';
+import Header from '@dashboard-spa-vue/components/Header.vue'
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 const route = useRoute();
 const websiteId = route.params.websiteId;
 setCurrentWebsiteId(websiteId as string);

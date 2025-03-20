@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
       "@": fileURLToPath(
         new URL("../../packages/ui-shadcn-vue/src", import.meta.url),
       ),
-      "@src": fileURLToPath(
+      "@dashboard-spa-vue": fileURLToPath(
         new URL("./src", import.meta.url),
       ),
       "@lib": fileURLToPath(

@@ -3,10 +3,10 @@ import { onMounted, ref } from 'vue';
 import TeamMembersList from './TeamMembersList.vue';
 import InvitationsList from './InvitationsList.vue';
 import InviteTeamMemberDialog from './InviteTeamMemberDialog.vue';
-import { currentWebsiteId } from '@src/stores/WebsiteStore';
+import { currentWebsiteId } from '@dashboard-spa-vue/stores/WebsiteStore';
 import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { Loader2 } from 'lucide-vue-next';
 import { type ResType } from '@api-client/index';
 // Set page title

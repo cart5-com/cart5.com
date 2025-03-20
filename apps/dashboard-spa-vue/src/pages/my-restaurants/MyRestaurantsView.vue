@@ -3,10 +3,10 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon } from "lucide-vue-next";
-import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from '@src/stores/RestaurantStore'
-import HeaderOnly from '@src/layouts/HeaderOnly.vue';
+import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from '@dashboard-spa-vue/stores/RestaurantStore'
+import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import RestaurantNewForm from "@src/pages/my-restaurants/RestaurantNewForm.vue";
+import RestaurantNewForm from "@dashboard-spa-vue/pages/my-restaurants/RestaurantNewForm.vue";
 const dialog = useDialog();
 const IS_DEV = import.meta.env.DEV;
 

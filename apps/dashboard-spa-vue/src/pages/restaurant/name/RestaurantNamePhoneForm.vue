@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2, PlusIcon } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId, setCurrentRestaurantName } from '@src/stores/RestaurantStore';
+import { currentRestaurantId, setCurrentRestaurantName } from '@dashboard-spa-vue/stores/RestaurantStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
 import { onMounted, ref, watch } from 'vue';
 import {

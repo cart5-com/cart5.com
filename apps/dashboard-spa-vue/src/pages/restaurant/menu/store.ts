@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { type MenuRoot } from "@lib/types/menuType";
 import { apiClient } from "@api-client/index";
-import { currentRestaurantId } from "@src/stores/RestaurantStore";
+import { currentRestaurantId } from "@dashboard-spa-vue/stores/RestaurantStore";
 import { toast } from "@/ui-plus/sonner";
 
 export const defaultMenuRoot: MenuRoot = {

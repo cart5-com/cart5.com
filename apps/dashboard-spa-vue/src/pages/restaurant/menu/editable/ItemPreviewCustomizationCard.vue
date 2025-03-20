@@ -10,7 +10,7 @@ import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { previewItem } from '@src/pages/restaurant/menu/helpers';
+import { previewItem } from '@dashboard-spa-vue/pages/restaurant/menu/helpers';
 
 const props = defineProps<{
     modelValue?: CartChildrenItemState

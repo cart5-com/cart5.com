@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 import { apiClient } from '@api-client/index'
-import { currentRestaurantId } from '@src/stores/RestaurantStore'
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { pageTitle } from '@src/stores/layout.store'
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store'
 
 const isLoading = ref(false)
 const offersOnPremise = ref(false)

@@ -7,10 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
 import type { ScheduledOrdersSettings } from '@lib/types/restaurantTypes';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 
 pageTitle.value = 'Scheduled Orders';
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppChoose from '@src/components/AppChoose.vue';
-import UserDropDown from '@src/components/UserDropDown.vue';
+import AppChoose from '@dashboard-spa-vue/components/AppChoose.vue';
+import UserDropDown from '@dashboard-spa-vue/components/UserDropDown.vue';
 
 </script>
 

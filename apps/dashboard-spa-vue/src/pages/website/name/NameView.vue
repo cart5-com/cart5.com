@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import WebsiteNameForm from './WebsiteNameForm.vue';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 pageTitle.value = 'Website Name'

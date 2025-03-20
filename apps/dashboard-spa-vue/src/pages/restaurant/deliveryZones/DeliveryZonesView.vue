@@ -23,11 +23,11 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
-import { currentRestaurantId } from '@src/stores/RestaurantStore';
+import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { type DeliveryZone } from '@lib/types/restaurantTypes';
 import { Check, Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
-import { pageTitle } from '@src/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
 const router = useRouter();

@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { currentRestaurant } from '@src/stores/RestaurantStore';
+import { currentRestaurant } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { Store } from "lucide-vue-next";
 import { useSidebar } from "@/components/ui/sidebar"
 

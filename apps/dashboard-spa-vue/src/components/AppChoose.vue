@@ -2,7 +2,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid } from "lucide-vue-next";
-import AppLinks from "@src/components/AppLinks.vue";
+import AppLinks from "@dashboard-spa-vue/components/AppLinks.vue";
 </script>
 
 <template>

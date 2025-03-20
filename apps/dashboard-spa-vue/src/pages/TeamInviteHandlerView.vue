@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import HeaderOnly from '@src/layouts/HeaderOnly.vue';
+import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
 import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';

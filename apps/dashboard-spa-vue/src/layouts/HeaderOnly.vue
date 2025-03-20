@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import Header from '@src/components/Header.vue';
-import WebsiteChoose from '@src/components/WebsiteChoose.vue';
+import Header from '@dashboard-spa-vue/components/Header.vue';
+import WebsiteChoose from '@dashboard-spa-vue/components/WebsiteChoose.vue';
 import { Home } from 'lucide-vue-next';
 </script>
 
