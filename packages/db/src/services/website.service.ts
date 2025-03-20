@@ -1,4 +1,4 @@
-import { eq, type InferInsertModel, or, inArray, and, sql, like, count } from 'drizzle-orm';
+import { eq, type InferInsertModel, or, inArray, and, sql, like, count, desc } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { websitesTable, websiteDomainMapTable, websiteRestaurantMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
@@ -241,6 +241,7 @@ export const listRestaurantsForWebsite_Service = async (
                 WHEN ${websiteRestaurantMapTable.restaurantId} IS NOT NULL THEN 1 
                 ELSE 0 
             END`,
+            // priority for user's restaurants
             isUserRestaurant: sql<boolean>`CASE 
                 WHEN ${restaurantTable.id} IN (${userRestaurantIds.length > 0 ? userRestaurantIds.join(',') : 'NULL'}) THEN 1
                 ELSE 0
@@ -267,8 +268,12 @@ export const listRestaurantsForWebsite_Service = async (
         .limit(limit)
         .offset(offset)
         .orderBy(
-            sql`isUserRestaurant DESC`,
-            restaurantTable.name
+            // priority for user's restaurants
+            desc(sql<number>`CASE 
+                WHEN ${restaurantTable.id} IN (${userRestaurantIds.length > 0 ? userRestaurantIds.join(',') : 'NULL'}) THEN 1
+                ELSE 0
+            END`),
+            restaurantTable.created_at_ts
         );
 
     // Count total restaurants for pagination
