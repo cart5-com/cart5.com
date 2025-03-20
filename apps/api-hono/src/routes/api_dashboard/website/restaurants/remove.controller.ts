@@ -4,8 +4,6 @@ import { type ErrorType } from '@lib/types/errors';
 import { z } from 'zod';
 import { removeRestaurantFromWebsite_Service } from '@db/services/website.service';
 import { zValidator } from '@hono/zod-validator';
-import { TEAM_PERMISSIONS } from '@lib/consts';
-import { checkWebsitePermissions } from '@api-hono/utils/checkWebsitePermissions';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 
 const removeRestaurantSchema = z.object({
