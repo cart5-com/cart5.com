@@ -148,6 +148,11 @@ const router = createRouter({
           path: 'team',
           name: 'website-team',
           component: () => import('@src/pages/website/team/TeamView.vue'),
+        },
+        {
+          path: 'restaurants',
+          name: 'website-restaurants',
+          component: () => import('@src/pages/website/restaurants/WebsiteRestaurantsListView.vue'),
         }
       ],
     },
