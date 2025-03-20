@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SignupForm from '@src/components/forms/auth-forms/signup/SignupForm.vue';
-import GoogleButton from "@src/components/GoogleButton.vue";
+import SignupForm from '@auth-frontend-vue/components/forms/auth-forms/signup/SignupForm.vue';
+import GoogleButton from "@auth-frontend-vue/components/GoogleButton.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import Separator from "@/ui-plus/separator/Separator.vue";
 </script>

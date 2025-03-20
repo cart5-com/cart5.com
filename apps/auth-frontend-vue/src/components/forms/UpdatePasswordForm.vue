@@ -9,7 +9,7 @@ import { useForm } from "vee-validate";
 import { z } from "zod";
 import { Loader2 } from 'lucide-vue-next';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
-import { refreshUserData, userStore } from '@src/stores/userStore';
+import { refreshUserData, userStore } from '@auth-frontend-vue/stores/userStore';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 

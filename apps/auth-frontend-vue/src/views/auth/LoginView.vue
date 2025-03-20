@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import LoginForm from '@src/components/forms/auth-forms/LoginForm.vue';
-import GoogleButton from "@src/components/GoogleButton.vue";
+import LoginForm from '@auth-frontend-vue/components/forms/auth-forms/LoginForm.vue';
+import GoogleButton from "@auth-frontend-vue/components/GoogleButton.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import Separator from "@/ui-plus/separator/Separator.vue";
-import { queryParamsStore, getQueryParams } from '@src/stores/queryParamsStore'
+import { queryParamsStore, getQueryParams } from '@auth-frontend-vue/stores/queryParamsStore'
 
 const onForgotPasswordClick = () => {
     const queryParams = getQueryParams();

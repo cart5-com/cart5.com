@@ -4,14 +4,14 @@ import { AutoForm } from "@/ui-plus/auto-form";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
-import { LOCAL_STORAGE_KEYS } from "@src/const";
+import { LOCAL_STORAGE_KEYS } from "@auth-frontend-vue/const";
 import { apiClient } from "@api-client/index";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
-import TwoFactorForm from "@src/components/forms/auth-forms/TwoFactorForm.vue";
+import TwoFactorForm from "@auth-frontend-vue/components/forms/auth-forms/TwoFactorForm.vue";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { refreshUserData } from "@src/stores/userStore";
+import { refreshUserData } from "@auth-frontend-vue/stores/userStore";
 const dialog = useDialog();
 
 const schema = z.object({

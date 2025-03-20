@@ -7,17 +7,17 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
-import Logo from '@src/components/Logo.vue';
-import { queryParamsStore } from '@src/stores/queryParamsStore'
-import { userStore } from '@src/stores/userStore'
-import SettingsView from '@src/views/user/SettingsView.vue';
-import LoginView from '@src/views/auth/LoginView.vue';
-import SignupView from '@src/views/auth/SignupView.vue';
-import OtpView from '@src/views/auth/OtpView.vue';
-import AskView from '@src/views/user/AskView.vue';
+import Logo from '@auth-frontend-vue/components/Logo.vue';
+import { queryParamsStore } from '@auth-frontend-vue/stores/queryParamsStore'
+import { userStore } from '@auth-frontend-vue/stores/userStore'
+import SettingsView from '@auth-frontend-vue/views/user/SettingsView.vue';
+import LoginView from '@auth-frontend-vue/views/auth/LoginView.vue';
+import SignupView from '@auth-frontend-vue/views/auth/SignupView.vue';
+import OtpView from '@auth-frontend-vue/views/auth/OtpView.vue';
+import AskView from '@auth-frontend-vue/views/user/AskView.vue';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { onMounted } from 'vue';
-import { getNextUrl } from '@src/lib/queryHelpers';
+import { getNextUrl } from '@auth-frontend-vue/lib/queryHelpers';
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner'

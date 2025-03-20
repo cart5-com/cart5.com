@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Separator from '@/ui-plus/separator/Separator.vue';
-import Setup2FAButton from '@src/components/forms/TwoFactorAuth/Setup2FAButton.vue';
-import { userStore, refreshUserData } from '@src/stores/userStore';
+import Setup2FAButton from '@auth-frontend-vue/components/forms/TwoFactorAuth/Setup2FAButton.vue';
+import { userStore, refreshUserData } from '@auth-frontend-vue/stores/userStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Lock, LockOpen, ShieldCheck } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
@@ -9,7 +9,7 @@ import { toast } from '@/ui-plus/sonner'
 import { apiClient } from '@api-client/index';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import UpdatePasswordForm from '@src/components/forms/UpdatePasswordForm.vue';
+import UpdatePasswordForm from '@auth-frontend-vue/components/forms/UpdatePasswordForm.vue';
 const dialog = useDialog();
 
 async function updateName() {

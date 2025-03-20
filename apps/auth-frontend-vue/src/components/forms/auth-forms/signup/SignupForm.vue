@@ -5,12 +5,12 @@ import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
-import { LOCAL_STORAGE_KEYS } from "@src/const";
+import { LOCAL_STORAGE_KEYS } from "@auth-frontend-vue/const";
 import { apiClient } from "@api-client/index";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { Loader2 } from "lucide-vue-next";
-import SignupVerifyForm from "@src/components/forms/auth-forms/signup/SignupVerifyForm.vue";
+import SignupVerifyForm from "@auth-frontend-vue/components/forms/auth-forms/signup/SignupVerifyForm.vue";
 
 const dialog = useDialog();
 

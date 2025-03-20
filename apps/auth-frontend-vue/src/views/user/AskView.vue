@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { Card, CardContent } from "@/components/ui/card";
-import UserDetails from "@src/components/forms/UserDetails.vue";
+import UserDetails from "@auth-frontend-vue/components/forms/UserDetails.vue";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { createApiClient_AsUrlHelper } from "@api-client/index";
-import { getNextUrl, getNextHostname } from "@src/lib/queryHelpers";
+import { getNextUrl, getNextHostname } from "@auth-frontend-vue/lib/queryHelpers";
 
 const dialog = useDialog();
 const crossDomainHostname = getNextHostname();

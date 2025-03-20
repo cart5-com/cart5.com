@@ -8,7 +8,7 @@ import { apiClient } from "@api-client/index";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import { refreshUserData } from '@src/stores/userStore';
+import { refreshUserData } from '@auth-frontend-vue/stores/userStore';
 
 const props = defineProps<{
     verifyEmail: string

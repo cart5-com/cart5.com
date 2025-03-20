@@ -9,7 +9,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
 import { toast } from "@/ui-plus/sonner";
-import { refreshUserData } from "@src/stores/userStore";
+import { refreshUserData } from "@auth-frontend-vue/stores/userStore";
 
 const emit = defineEmits<{
     close: [values: z.infer<typeof schema>],

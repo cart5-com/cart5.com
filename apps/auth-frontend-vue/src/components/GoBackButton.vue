@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-vue-next";
-import { getNextUrl, getNextHostname } from "@src/lib/queryHelpers";
+import { getNextUrl, getNextHostname } from "@auth-frontend-vue/lib/queryHelpers";
 import { onMounted, ref } from 'vue';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();

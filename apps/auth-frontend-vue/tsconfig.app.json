@@ -29,8 +29,7 @@
       "@/*": [
         "../../packages/ui-shadcn-vue/src/*"
       ],
-      // TODO: rename to @auth-frontend-vue
-      "@src/*": [
+      "@auth-frontend-vue/*": [
         "./src/*"
       ],
       "@lib/*": [

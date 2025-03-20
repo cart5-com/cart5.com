@@ -2,7 +2,7 @@ import "@/index.css";
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
-import { refreshUserData } from '@src/stores/userStore';
+import { refreshUserData } from '@auth-frontend-vue/stores/userStore';
 import { getQueryParams, queryParamsStore } from "./stores/queryParamsStore";
 
 const queryParams = getQueryParams();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@api-client/index";
-import { userStore } from "@src/stores/userStore";
+import { userStore } from "@auth-frontend-vue/stores/userStore";
 
 async function handleLogout() {
 	const { data, error } = await (await apiClient.auth_global["logout-all"].$post()).json();

@@ -6,12 +6,12 @@ import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
-import { LOCAL_STORAGE_KEYS } from "@src/const";
+import { LOCAL_STORAGE_KEYS } from "@auth-frontend-vue/const";
 import { apiClient } from "@api-client/index";
 import OTPVerifyForm from "./OTPVerifyForm.vue";
 import { Loader2 } from "lucide-vue-next";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
-import TwoFactorForm from "@src/components/forms/auth-forms/TwoFactorForm.vue";
+import TwoFactorForm from "@auth-frontend-vue/components/forms/auth-forms/TwoFactorForm.vue";
 const dialog = useDialog();
 
 const schema = z.object({

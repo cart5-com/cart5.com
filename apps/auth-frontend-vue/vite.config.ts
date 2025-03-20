@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => ({
       "@": fileURLToPath(
         new URL("../../packages/ui-shadcn-vue/src", import.meta.url),
       ),
-      "@src": fileURLToPath(
+      "@auth-frontend-vue": fileURLToPath(
         new URL("./src", import.meta.url),
       ),
       "@lib": fileURLToPath(
