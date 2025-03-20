@@ -1,5 +1,4 @@
 
-// const cfRaw: CloudflareObjectType = (await (await fetch("https://workers.cloudflare.com/cf.json")).json());
 export type CloudflareObjectType = {
     clientTcpRtt: number;
     requestHeaderNames: Record<string, unknown>;

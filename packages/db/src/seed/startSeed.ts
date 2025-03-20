@@ -6,7 +6,14 @@ import {
 } from "../services/website.service";
 import { addMemberToTeam, getSupportTeamByHostname_Service, insertInvitation } from "@db/services/team.service";
 import { TEAM_PERMISSIONS } from "@lib/consts";
-import { createRestaurant_Service } from "@db/services/restaurant.service";
+import {
+    createRestaurant_Service,
+    updateRestaurant_Service,
+    updateRestaurantAddress_Service
+} from "@db/services/restaurant.service";
+import type { CloudflareObjectType } from "./CloudflareObjectType";
+import { faker } from '@faker-js/faker';
+
 
 
 const startSeed = async () => {
@@ -57,13 +64,14 @@ const startSeed = async () => {
         flamesWebsite.name
     );
     await addMemberToTeam(flamesWebsite.ownerTeamId, flamesRestaurantAdminUser?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitationForFlamesRestaurantAdminUser.id);
-
+    const cfRaw: CloudflareObjectType = (await (await fetch("https://workers.cloudflare.com/cf.json")).json());
     // create 300 restaurants with 5th one being real flames restaurant
     const restaurantsByThush = [];
-    let realFlamesRestaurant;
-    const flamesIndex = 5;
+    const baseLat = parseFloat(cfRaw.latitude);
+    const baseLng = parseFloat(cfRaw.longitude);
+
     for (let i = 0; i < 300; i++) {
-        let name = i === flamesIndex ? "Real Flames" : `${i + 1} FLAMES`;
+        let name = faker.company.name();
 
         const rest = await createRestaurant_Service(
             thushObite?.id!,
@@ -72,13 +80,46 @@ const startSeed = async () => {
             true
         );
 
-        if (i === flamesIndex) {
-            realFlamesRestaurant = rest;
+        // Use Cloudflare data as a base for more realistic locations
+        // For non-flame restaurants, spread them around the base location
+        let lat, lng, city, state, postalCode;
+
+        // Generate locations within reasonable distance from base
+        lat = faker.location.latitude({ min: baseLat - 0.1, max: baseLat + 0.1, precision: 6 });
+        lng = faker.location.longitude({ min: baseLng - 0.1, max: baseLng + 0.1, precision: 6 });
+
+        // Sometimes use the same city as base location
+        if (faker.number.int({ min: 1, max: 10 }) <= 7) {
+            city = cfRaw.city;
+            state = cfRaw.regionCode;
+            postalCode = cfRaw.postalCode;
         } else {
-            restaurantsByThush.push(rest);
+            city = faker.location.city();
+            state = faker.location.state({ abbreviated: true });
+            postalCode = faker.location.zipCode();
         }
+
+        const streetNumber = faker.number.int({ min: 1, max: 9999 });
+        const streetName = faker.location.street();
+        const address2 = faker.helpers.maybe(() => `Apt ${faker.number.int({ min: 1, max: 999 })}`, { probability: 0.7 });
+
+        await updateRestaurantAddress_Service(rest.id, {
+            address1: `${streetNumber} ${streetName}`,
+            address2: address2 || "",
+            city: city,
+            state: state,
+            postalCode: postalCode,
+            lat: lat,
+            lng: lng
+        });
+
+        restaurantsByThush.push(rest);
     }
 
+    const realFlamesRestaurant = restaurantsByThush[4];
+    await updateRestaurant_Service(realFlamesRestaurant.id, {
+        name: "Flames Restaurant",
+    })
     // invite flames admin to Real Flames restaurant
     const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(
         flamesRestaurantAdminUser?.email!,
