@@ -228,7 +228,8 @@ export const createRestaurant_Service = async (
     userId: string,
     name: string,
     supportTeamId: string | null,
-    isUserMemberOfSupportTeam: boolean
+    isUserMemberOfSupportTeam: boolean,
+    restaurantId?: string
 ) => {
     return await db.transaction(async (tx) => {
 
@@ -236,15 +237,21 @@ export const createRestaurant_Service = async (
             ? await createTeamWithoutOwner_Service('RESTAURANT', tx)
             : await createTeamTransactional_Service(userId, 'RESTAURANT', tx);
 
-        const restaurant = await tx.insert(restaurantTable).values({
+        const values = {
             name: name,
             ownerTeamId: teamId,
             supportTeamId: supportTeamId
-        }).returning({
-            id: restaurantTable.id,
-            ownerTeamId: restaurantTable.ownerTeamId,
-            name: restaurantTable.name
-        });
+        }
+        if (restaurantId) {
+            (values as any).id = restaurantId;
+        }
+        const restaurant = await tx.insert(restaurantTable)
+            .values(values)
+            .returning({
+                id: restaurantTable.id,
+                ownerTeamId: restaurantTable.ownerTeamId,
+                name: restaurantTable.name
+            });
 
         return restaurant[0];
     })

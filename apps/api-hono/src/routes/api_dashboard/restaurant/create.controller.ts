@@ -31,7 +31,9 @@ export const createRestaurant_Handler = async (c: Context<
         data: await createRestaurant_Service(
             ownerUserId, name,
             supportTeam?.teamId ?? null,
-            isUserMemberOfSupportTeam),
+            isUserMemberOfSupportTeam,
+            // restaurantId not allowed here
+        ),
         error: null as ErrorType
     }, 200);
 } 

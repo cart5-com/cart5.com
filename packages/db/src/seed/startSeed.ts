@@ -78,7 +78,8 @@ export const startSeed = async () => {
             thushObite?.id!,
             name,
             obiteTeam_asSupportTeam?.teamId!,
-            true
+            true,
+            `rest_${i}_${i}_${i}`
         );
 
         // Use Cloudflare data as a base for more realistic locations
