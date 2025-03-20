@@ -23,33 +23,26 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
     isLoading.value = true;
-    if (!currentWebsiteId.value) return;
-
-    try {
-        const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$post({
-            param: { websiteId: currentWebsiteId.value },
-            json: {
-                columns: {
-                    id: true,
-                    defaultHostname: true,
-                    supportTeamId: true,
-                    name: true,
-                }
+    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$post({
+        param: { websiteId: currentWebsiteId.value ?? '' },
+        json: {
+            columns: {
+                id: true,
+                defaultHostname: true,
+                supportTeamId: true,
+                name: true,
             }
-        })).json();
-
-        if (error) {
-            handleError(error, form);
-        } else if (data) {
-            form.setValues({
-                name: data.name,
-            });
         }
-    } catch (error) {
-        console.error(error);
-    } finally {
-        isLoading.value = false;
+    })).json();
+
+    if (error) {
+        handleError(error, form);
+    } else if (data) {
+        form.setValues({
+            name: data.name,
+        });
     }
+    isLoading.value = false;
 };
 
 onMounted(() => {

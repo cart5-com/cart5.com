@@ -5,6 +5,7 @@ import { currentWebsiteId } from '@src/stores/WebsiteStore';
 import { onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import {
     Pagination,
@@ -104,18 +105,73 @@ const handlePageChange = (page: number) => {
     loadRestaurants();
 };
 
-onMounted(() => {
+
+
+onMounted(async () => {
+    loadMarketplaceMode();
     loadRestaurants();
 });
+
+const isMarketplaceMode = ref(false);
+const loadMarketplaceMode = async () => {
+    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$post({
+        param: { websiteId: currentWebsiteId.value ?? '' },
+        json: {
+            columns: {
+                isMarketplace: true,
+            }
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+        toast.error('Failed to load marketplace mode');
+    } else if (data) {
+        isMarketplaceMode.value = data.isMarketplace;
+    }
+}
+
+const onMarketplaceModeChange = async (checked: boolean) => {
+    isMarketplaceMode.value = checked;
+    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$patch({
+        param: { websiteId: currentWebsiteId.value ?? '' },
+        json: {
+            isMarketplace: checked,
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+        toast.error('Failed to update marketplace mode');
+    } else if (data) {
+        toast.success('Marketplace mode updated');
+    }
+}
 </script>
 
 <template>
     <div class="max-w-3xl mx-auto">
+        <label for="marketplaceMode"
+               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer max-w-sm mx-auto mb-4">
+            <div class="space-y-0.5">
+                <h3 class="text-lg font-medium">Marketplace mode</h3>
+                <p class="text-muted-foreground">Do you want to allow all available restaurants to be listed on your
+                    website?</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <Switch id="marketplaceMode"
+                        :checked="isMarketplaceMode"
+                        @update:checked="onMarketplaceModeChange"
+                        class="scale-125">
+                </Switch>
+                <span class="font-medium">{{ isMarketplaceMode ? 'Yes' : 'No' }}</span>
+            </div>
+        </label>
+
         <Card>
             <CardHeader>
                 <CardTitle>Restaurant Management</CardTitle>
                 <CardDescription>
-                    Add or remove restaurants to your website. Only listed restaurants will appear on your website.
+                    Manage which restaurants appear on your website. Only restaurants you add to this list will be
+                    visible to your website visitors.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -147,7 +203,7 @@ onMounted(() => {
                                 </span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span v-if="restaurant.isListed"
+                                <span v-if="restaurant.isListed || isMarketplaceMode"
                                       class="text-sm text-primary flex items-center mr-2">
                                     <Check class="h-4 w-4 mr-1" />
                                     Listed
@@ -158,19 +214,21 @@ onMounted(() => {
                                     Not Listed
                                 </span>
 
-                                <Button v-if="!restaurant.isListed"
-                                        size="sm"
-                                        @click="addRestaurant(restaurant.id)">
-                                    <Plus class="h-4 w-4 mr-1" />
-                                    Add
-                                </Button>
-                                <Button v-else
-                                        size="sm"
-                                        variant="destructive"
-                                        @click="removeRestaurant(restaurant.id)">
-                                    <X class="h-4 w-4 mr-1" />
-                                    Remove
-                                </Button>
+                                <div v-if="!isMarketplaceMode">
+                                    <Button v-if="!restaurant.isListed"
+                                            size="sm"
+                                            @click="addRestaurant(restaurant.id)">
+                                        <Plus class="h-4 w-4 mr-1" />
+                                        Add
+                                    </Button>
+                                    <Button v-else
+                                            size="sm"
+                                            variant="destructive"
+                                            @click="removeRestaurant(restaurant.id)">
+                                        <X class="h-4 w-4 mr-1" />
+                                        Remove
+                                    </Button>
+                                </div>
                             </div>
                         </div>
 

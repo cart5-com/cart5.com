@@ -1,4 +1,4 @@
-import { sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, primaryKey, integer } from "drizzle-orm/sqlite-core";
 import { generateKey } from "@lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
@@ -20,7 +20,8 @@ export const websitesTable = sqliteTable("websites", {
     ownerTeamId: text("owner_team_id").notNull(),
     supportTeamId: text("support_team_id"),
 
-    marketplaceMode: text("marketplace_mode", { enum: ["AUTO_ALLOW_ALL", "SELECTED_ONLY"] }).notNull().$defaultFn(() => "SELECTED_ONLY"),
+    // if false, the website will use websiteRestaurantMapTable  to show selected restaurants
+    isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
 
 });
 export const insertWebsitesSchema = createInsertSchema(websitesTable, {
@@ -34,7 +35,7 @@ export const updateWebsitesSchema = createInsertSchema(websitesTable);
 
 
 
-/// used by marketplaceMode: "SELECTED_ONLY" websites
+/// used by isMarketplace: false websites
 /// WEBSITE RESTAURANT MAP START
 export const websiteRestaurantMapTable = sqliteTable("website_restaurant_map", {
     websiteId: text("website_id").notNull(),
