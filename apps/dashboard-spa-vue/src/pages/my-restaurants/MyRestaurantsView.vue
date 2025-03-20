@@ -45,7 +45,7 @@ const openNewRestaurantDialog = () => {
         <div class="mb-4"
              v-if="myRestaurants.length > 3 || IS_DEV">
             <Input v-model="searchQuery"
-                   placeholder="Search"
+                   placeholder="Search by name or address"
                    class="max-w-sm" />
         </div>
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -17,7 +17,8 @@ export const myWebsites = ref<Website[]>([]);
 export const searchQuery = ref('')
 export const myWebsitesFiltered = computed(() =>
     myWebsites.value.filter(website =>
-        website.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        website.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        website.defaultHostname?.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 )
 
