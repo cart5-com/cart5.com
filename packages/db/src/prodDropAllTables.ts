@@ -39,6 +39,6 @@ const intervalRef = setInterval(() => {
 setTimeout(() => {
   clearInterval(intervalRef);
   // @ts-ignore
-  remoteDropAllTables(); // ❌❌❌❌do not fix and do not run this 
+  remoteDropAllTables22(); // ❌❌❌❌do not fix and do not run this 
   // unless you are 100% sure what is the next step!!!❌❌❌❌
 }, totalSeconds * 1000);

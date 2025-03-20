@@ -33,7 +33,6 @@ Our Solution:
 - **Auth Frontend**: Vue (SPA)
 - **Auth Backend**: Hono (TypeScript)
 - **Dashboard Frontend**: Vue (SPA)
-- **Ecom Backend**: Hono (TypeScript)
 - **Store Frontend**: Astro (SSR-Node)
 - **Database**: SQLite with Drizzle ORM, TURSO for Production
 - **Optionel Proxy**: Caddy for local development (yes, I do not like dealing with CORS issues)
@@ -106,11 +105,5 @@ Add to /etc/hosts
 
 ## [TODOS]
 
-- [DONE]: make caddy optional for development
-- [DONE] create simple ecom api
-- [DONE] create empty dashboard page
-- [ ] TODO: use s3/r2 for static assets
-- [ ] TODO: start a simple blog
 - [ ] TODO: add rate limiting for prod caddy config
 - [ ] TODO: add sentry
-- [ ] TODO: seed dev database with sample data

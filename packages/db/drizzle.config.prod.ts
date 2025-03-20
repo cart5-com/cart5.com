@@ -9,8 +9,8 @@ config = defineConfig({
 	schema: "./src/**/*.schema.ts",
 	dialect: "turso",
 	dbCredentials: {
-		url: process.env.AUTHAPI_TURSO_DB_URL!,
-		authToken: process.env.AUTHAPI_TURSO_DB_TOKEN!
+		url: process.env.TURSO_DB_URL!,
+		authToken: process.env.TURSO_DB_TOKEN!
 	}
 });
 export default config;
