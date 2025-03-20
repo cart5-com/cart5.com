@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1ebfb2ee-0019-4edf-8fb9-4007ed58852b",
+  "id": "dc7ead72-9364-4cce-884d-a4f675ae247a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "session": {
@@ -210,13 +210,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "timezone": {
-          "name": "timezone",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {
@@ -335,6 +328,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "open_hours": {
           "name": "open_hours",
           "type": "text",
@@ -351,20 +351,6 @@
         },
         "pickup_hours": {
           "name": "pickup_hours",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "on_premise_hours": {
-          "name": "on_premise_hours",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "table_reservation_hours": {
-          "name": "table_reservation_hours",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -415,108 +401,11 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "on_premise_payment_methods": {
-          "name": "on_premise_payment_methods",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "table_reservation_payment_methods": {
-          "name": "table_reservation_payment_methods",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {
         "restaurant_payment_methods_restaurant_id_unique": {
           "name": "restaurant_payment_methods_restaurant_id_unique",
-          "columns": [
-            "restaurant_id"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "restaurant_scheduled_orders_settings": {
-      "name": "restaurant_scheduled_orders_settings",
-      "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "is_scheduled_orders_enabled": {
-          "name": "is_scheduled_orders_enabled",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
-        },
-        "is_only_scheduled_orders_allowed": {
-          "name": "is_only_scheduled_orders_allowed",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
-        },
-        "pickup_min_time_in_advance_minutes": {
-          "name": "pickup_min_time_in_advance_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "pickup_max_time_in_advance_minutes": {
-          "name": "pickup_max_time_in_advance_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "delivery_min_time_in_advance_minutes": {
-          "name": "delivery_min_time_in_advance_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "delivery_max_time_in_advance_minutes": {
-          "name": "delivery_max_time_in_advance_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "pickup_settings": {
-          "name": "pickup_settings",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "delivery_settings": {
-          "name": "delivery_settings",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "restaurant_scheduled_orders_settings_restaurant_id_unique": {
-          "name": "restaurant_scheduled_orders_settings_restaurant_id_unique",
           "columns": [
             "restaurant_id"
           ],
@@ -596,22 +485,6 @@
           "autoincrement": false,
           "default": false
         },
-        "offers_on_premise": {
-          "name": "offers_on_premise",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "offers_table_reservation": {
-          "name": "offers_table_reservation",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
         "owner_team_id": {
           "name": "owner_team_id",
           "type": "text",
@@ -632,73 +505,6 @@
           "name": "restaurant_id_unique",
           "columns": [
             "id"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "restaurant_table_reservation_settings": {
-      "name": "restaurant_table_reservation_settings",
-      "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "min_guests": {
-          "name": "min_guests",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "max_guests": {
-          "name": "max_guests",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "min_time_in_advance_minutes": {
-          "name": "min_time_in_advance_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "max_time_in_advance_days": {
-          "name": "max_time_in_advance_days",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "late_hold_time_minutes": {
-          "name": "late_hold_time_minutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "allow_pre_order": {
-          "name": "allow_pre_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "restaurant_table_reservation_settings_restaurant_id_unique": {
-          "name": "restaurant_table_reservation_settings_restaurant_id_unique",
-          "columns": [
-            "restaurant_id"
           ],
           "isUnique": true
         }
@@ -974,6 +780,38 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "website_restaurant_map": {
+      "name": "website_restaurant_map",
+      "columns": {
+        "website_id": {
+          "name": "website_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "restaurant_id": {
+          "name": "restaurant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "website_restaurant_map_website_id_restaurant_id_pk": {
+          "columns": [
+            "website_id",
+            "restaurant_id"
+          ],
+          "name": "website_restaurant_map_website_id_restaurant_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "websites": {
       "name": "websites",
       "columns": {
@@ -1025,6 +863,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "is_marketplace": {
+          "name": "is_marketplace",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
         }
       },
       "indexes": {

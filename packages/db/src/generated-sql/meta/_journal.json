@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1742412411433,
-      "tag": "0000_light_richard_fisk",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1742431484654,
-      "tag": "0001_late_leopardon",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1742443663997,
-      "tag": "0002_low_morph",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1742501651422,
-      "tag": "0003_hot_the_hood",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1742514270092,
-      "tag": "0004_lush_hairball",
+      "when": 1742514469355,
+      "tag": "0000_unknown_strong_guy",
       "breakpoints": true
     }
   ]

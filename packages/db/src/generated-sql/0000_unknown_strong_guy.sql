@@ -29,8 +29,7 @@ CREATE TABLE `restaurant_address` (
 	`country` text,
 	`lat` real,
 	`lng` real,
-	`geocode_metadata` text,
-	`timezone` text
+	`geocode_metadata` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_address_restaurant_id_unique` ON `restaurant_address` (`restaurant_id`);--> statement-breakpoint
@@ -52,11 +51,10 @@ CREATE TABLE `restaurant_menu` (
 CREATE UNIQUE INDEX `restaurant_menu_restaurant_id_unique` ON `restaurant_menu` (`restaurant_id`);--> statement-breakpoint
 CREATE TABLE `restaurant_open_hours` (
 	`restaurant_id` text NOT NULL,
+	`timezone` text,
 	`open_hours` text,
 	`delivery_hours` text,
-	`pickup_hours` text,
-	`on_premise_hours` text,
-	`table_reservation_hours` text
+	`pickup_hours` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_open_hours_restaurant_id_unique` ON `restaurant_open_hours` (`restaurant_id`);--> statement-breakpoint
@@ -64,25 +62,10 @@ CREATE TABLE `restaurant_payment_methods` (
 	`restaurant_id` text NOT NULL,
 	`default_payment_methods` text,
 	`delivery_payment_methods` text,
-	`pickup_payment_methods` text,
-	`on_premise_payment_methods` text,
-	`table_reservation_payment_methods` text
+	`pickup_payment_methods` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_payment_methods_restaurant_id_unique` ON `restaurant_payment_methods` (`restaurant_id`);--> statement-breakpoint
-CREATE TABLE `restaurant_scheduled_orders_settings` (
-	`restaurant_id` text NOT NULL,
-	`is_scheduled_orders_enabled` integer DEFAULT false,
-	`is_only_scheduled_orders_allowed` integer DEFAULT false,
-	`pickup_min_time_in_advance_minutes` integer,
-	`pickup_max_time_in_advance_minutes` integer,
-	`delivery_min_time_in_advance_minutes` integer,
-	`delivery_max_time_in_advance_minutes` integer,
-	`pickup_settings` text,
-	`delivery_settings` text
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `restaurant_scheduled_orders_settings_restaurant_id_unique` ON `restaurant_scheduled_orders_settings` (`restaurant_id`);--> statement-breakpoint
 CREATE TABLE `restaurant` (
 	`created_at_ts` integer NOT NULL,
 	`updated_at_ts` integer NOT NULL,
@@ -93,24 +76,11 @@ CREATE TABLE `restaurant` (
 	`cuisines` text,
 	`offers_pickup` integer DEFAULT false NOT NULL,
 	`offers_delivery` integer DEFAULT false NOT NULL,
-	`offers_on_premise` integer DEFAULT false NOT NULL,
-	`offers_table_reservation` integer DEFAULT false NOT NULL,
 	`owner_team_id` text NOT NULL,
 	`support_team_id` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_id_unique` ON `restaurant` (`id`);--> statement-breakpoint
-CREATE TABLE `restaurant_table_reservation_settings` (
-	`restaurant_id` text NOT NULL,
-	`min_guests` integer,
-	`max_guests` integer,
-	`min_time_in_advance_minutes` integer,
-	`max_time_in_advance_days` integer,
-	`late_hold_time_minutes` integer,
-	`allow_pre_order` integer
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `restaurant_table_reservation_settings_restaurant_id_unique` ON `restaurant_table_reservation_settings` (`restaurant_id`);--> statement-breakpoint
 CREATE TABLE `restaurant_tax_settings` (
 	`restaurant_id` text NOT NULL,
 	`currency` text,
@@ -156,6 +126,12 @@ CREATE TABLE `website_domain_map` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `website_domain_map_hostname_unique` ON `website_domain_map` (`hostname`);--> statement-breakpoint
+CREATE TABLE `website_restaurant_map` (
+	`website_id` text NOT NULL,
+	`restaurant_id` text NOT NULL,
+	PRIMARY KEY(`website_id`, `restaurant_id`)
+);
+--> statement-breakpoint
 CREATE TABLE `websites` (
 	`created_at_ts` integer NOT NULL,
 	`updated_at_ts` integer NOT NULL,
@@ -163,7 +139,8 @@ CREATE TABLE `websites` (
 	`name` text NOT NULL,
 	`default_hostname` text,
 	`owner_team_id` text NOT NULL,
-	`support_team_id` text
+	`support_team_id` text,
+	`is_marketplace` integer DEFAULT true NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `websites_id_unique` ON `websites` (`id`);--> statement-breakpoint
