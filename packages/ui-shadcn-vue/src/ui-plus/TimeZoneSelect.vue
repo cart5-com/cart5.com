@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { ChevronsUpDown } from 'lucide-vue-next';
 import { useVModel } from '@vueuse/core'
-import { getBusinessTimeNow } from '@lib/utils/isOpenNow';
+import { getCurrentTimeNow } from '@lib/utils/isOpenNow';
 
 const props = defineProps<{
   modelValue: string | null;
@@ -81,7 +81,7 @@ function formatTimezone(timezone: string) {
                           open = false;
                         }">
               <span class="flex-1 text-sm">{{ option.name }}</span>
-              <span class="text-foreground/50 text-sm">({{ getBusinessTimeNow(option.name).toFormat('HH:mm') }}){{
+              <span class="text-foreground/50 text-sm">({{ getCurrentTimeNow(option.name).toFormat('HH:mm') }}){{
                 option.formatted }}</span>
             </CommandItem>
           </CommandGroup>

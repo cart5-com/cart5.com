@@ -10,7 +10,7 @@ import type { WeeklyHours } from '@lib/types/restaurantTypes';
 import { pageTitle } from '@src/stores/layout.store';
 import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';
-import { getBusinessTimeNow, isOpenNow } from '@lib/utils/isOpenNow';
+import { getCurrentTimeNow, isOpenNow } from '@lib/utils/isOpenNow';
 import TimeZoneSelect from '@/ui-plus/TimeZoneSelect.vue';
 pageTitle.value = 'Operating Hours';
 
@@ -38,10 +38,10 @@ const defaultHours = ref<WeeklyHours>({
     days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
-const businessTimeNow = ref(getBusinessTimeNow(timezone.value));
+const businessTimeNow = ref(getCurrentTimeNow(timezone.value));
 const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
 const interval: ReturnType<typeof setInterval> = setInterval(() => {
-    businessTimeNow.value = getBusinessTimeNow(timezone.value);
+    businessTimeNow.value = getCurrentTimeNow(timezone.value);
     isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
 }, 3000);
 
