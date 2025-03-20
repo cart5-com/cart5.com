@@ -20,6 +20,7 @@ import { cancelTeamInvitation_Handler, cancelTeamInvitation_SchemaValidator } fr
 import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } from "./team/team_transfer_ownership.controller";
 import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./team/team_remove_member.controller";
 import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team/team_update_permissions.controller";
+import { restaurantsRouter } from "./restaurants/_router";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -149,3 +150,4 @@ export const websiteRouter = new Hono<HonoVariables>()
         hostname_SchemaValidator,
         setDefaultDomain_Handler
     )
+    .route('/:websiteId/restaurants', restaurantsRouter)

@@ -1,9 +1,10 @@
-import { eq, type InferInsertModel, or, inArray, and } from 'drizzle-orm';
+import { eq, type InferInsertModel, or, inArray, and, sql, like, count } from 'drizzle-orm';
 import db from '@db/drizzle';
-import { websitesTable, websiteDomainMapTable } from '@db/schema/website.schema';
+import { websitesTable, websiteDomainMapTable, websiteRestaurantMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
+import { restaurantTable, restaurantAddressTable } from '@db/schema/restaurant.schema';
 
 export const getWebsite_Service = async (
     websiteId: string,
@@ -210,5 +211,104 @@ export const setDefaultDomain_Service = async (websiteId: string, hostname: stri
         .set({ defaultHostname: hostname })
         .where(eq(websitesTable.id, websiteId));
 
+    return true;
+}
+
+export const listRestaurantsForWebsite_Service = async (
+    websiteId: string,
+    limit: number = 10,
+    offset: number = 0,
+    search?: string
+) => {
+    const query = search ? `%${search}%` : '%';
+
+    // Get all restaurants that match the search criteria
+    const allRestaurants = await db
+        .select({
+            id: restaurantTable.id,
+            name: restaurantTable.name,
+            address1: restaurantAddressTable.address1,
+            isListed: sql<boolean>`CASE 
+                WHEN ${websiteRestaurantMapTable.restaurantId} IS NOT NULL THEN 1 
+                ELSE 0 
+            END`,
+        })
+        .from(restaurantTable)
+        .leftJoin(
+            restaurantAddressTable,
+            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+        )
+        .leftJoin(
+            websiteRestaurantMapTable,
+            and(
+                eq(websiteRestaurantMapTable.restaurantId, restaurantTable.id),
+                eq(websiteRestaurantMapTable.websiteId, websiteId)
+            )
+        )
+        .where(
+            or(
+                like(restaurantTable.name, query),
+                like(restaurantAddressTable.address1, query)
+            )
+        )
+        .limit(limit)
+        .offset(offset)
+        .orderBy(restaurantTable.name);
+
+    // Count total restaurants for pagination
+    const totalCount = await db
+        .select({
+            count: count()
+        })
+        .from(restaurantTable)
+        .leftJoin(
+            restaurantAddressTable,
+            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+        )
+        .where(
+            or(
+                like(restaurantTable.name, query),
+                like(restaurantAddressTable.address1, query)
+            )
+        );
+
+    return {
+        restaurants: allRestaurants,
+        pagination: {
+            total: totalCount[0]?.count || 0,
+            limit,
+            offset
+        }
+    };
+}
+
+export const addRestaurantToWebsite_Service = async (
+    websiteId: string,
+    restaurantId: string
+) => {
+    // Insert into map table (will fail if already exists due to primary key constraint)
+    try {
+        await db.insert(websiteRestaurantMapTable).values({
+            websiteId,
+            restaurantId
+        });
+        return true;
+    } catch (error) {
+        // Record likely already exists
+        return false;
+    }
+}
+
+export const removeRestaurantFromWebsite_Service = async (
+    websiteId: string,
+    restaurantId: string
+) => {
+    await db.delete(websiteRestaurantMapTable)
+        .where(
+            and(
+                eq(websiteRestaurantMapTable.websiteId, websiteId),
+                eq(websiteRestaurantMapTable.restaurantId, restaurantId)
+            )
+        );
     return true;
 }

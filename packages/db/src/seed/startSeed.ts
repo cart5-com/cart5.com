@@ -6,6 +6,7 @@ import {
 } from "../services/website.service";
 import { addMemberToTeam, getSupportTeamByHostname_Service, insertInvitation } from "@db/services/team.service";
 import { TEAM_PERMISSIONS } from "@lib/consts";
+import { createRestaurant_Service } from "@db/services/restaurant.service";
 
 
 const startSeed = async () => {
@@ -50,6 +51,19 @@ const startSeed = async () => {
     const flamesRestaurantAdminUser = await createSeedUser("flames_admin@flames.com", password, "Flames Admin");
     const invitationForFlamesRestaurantAdminUser = await insertInvitation(flamesRestaurantAdminUser?.email!, flamesWebsite.ownerTeamId, [TEAM_PERMISSIONS.FULL_ACCESS], thushObite?.id!, flamesWebsite.name);
     await addMemberToTeam(flamesWebsite.ownerTeamId, flamesRestaurantAdminUser?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitationForFlamesRestaurantAdminUser.id);
+
+    const restaurantsByThush = [];
+    const restaurantName = "FLAMES";
+    for (let i = 0; i < 300; i++) {
+        restaurantsByThush.push(
+            await createRestaurant_Service(
+                thushObite?.id!,
+                `${i + 1} ${restaurantName}`,
+                obiteTeam_asSupportTeam?.teamId!,
+                true
+            )
+        )
+    }
 }
 
 
