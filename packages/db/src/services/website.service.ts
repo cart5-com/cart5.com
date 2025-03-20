@@ -5,6 +5,7 @@ import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
 import { restaurantTable, restaurantAddressTable } from '@db/schema/restaurant.schema';
+import { getAllRestaurantsThatUserHasAccessTo } from './restaurant.service';
 
 export const getWebsite_Service = async (
     websiteId: string,
@@ -218,9 +219,17 @@ export const listRestaurantsForWebsite_Service = async (
     websiteId: string,
     limit: number = 10,
     offset: number = 0,
-    search?: string
+    search?: string,
+    userId?: string
 ) => {
     const query = search ? `%${search}%` : '%';
+
+    // Get user's restaurants if userId is provided
+    let userRestaurantIds: string[] = [];
+    if (userId) {
+        const userRestaurants = await getAllRestaurantsThatUserHasAccessTo(userId);
+        userRestaurantIds = userRestaurants.map((restaurant: { id: string }) => restaurant.id);
+    }
 
     // Get all restaurants that match the search criteria
     const allRestaurants = await db
@@ -231,6 +240,10 @@ export const listRestaurantsForWebsite_Service = async (
             isListed: sql<boolean>`CASE 
                 WHEN ${websiteRestaurantMapTable.restaurantId} IS NOT NULL THEN 1 
                 ELSE 0 
+            END`,
+            isUserRestaurant: sql<boolean>`CASE 
+                WHEN ${restaurantTable.id} IN (${userRestaurantIds.length > 0 ? userRestaurantIds.join(',') : 'NULL'}) THEN 1
+                ELSE 0
             END`,
         })
         .from(restaurantTable)
@@ -253,7 +266,10 @@ export const listRestaurantsForWebsite_Service = async (
         )
         .limit(limit)
         .offset(offset)
-        .orderBy(restaurantTable.name);
+        .orderBy(
+            sql`isUserRestaurant DESC`,
+            restaurantTable.name
+        );
 
     // Count total restaurants for pagination
     const totalCount = await db

@@ -21,12 +21,15 @@ export const listRestaurants_Handler = async (c: Context<
 >) => {
     const { limit, offset, search } = c.req.valid('query');
     const websiteId = c.req.param('websiteId');
+    const userId = c.get('USER')?.id;
+
     return c.json({
         data: await listRestaurantsForWebsite_Service(
             websiteId,
             limit,
             offset,
-            search
+            search,
+            userId
         ),
         error: null as ErrorType
     }, 200);
