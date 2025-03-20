@@ -6,7 +6,7 @@ import { Check, Loader2 } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
 import { currentRestaurantId } from '@src/stores/RestaurantStore';
 import { toast } from '@/ui-plus/sonner';
-import type { WeeklyHours } from '@lib/types/restaurantTypes';
+import type { WeeklyHours } from '@lib/types/dateTimeType';
 import { pageTitle } from '@src/stores/layout.store';
 import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';

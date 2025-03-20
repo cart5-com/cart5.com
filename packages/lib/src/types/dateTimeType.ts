@@ -8,6 +8,12 @@ export type HoursDay = {
     hours?: OpenHours[];
 };
 
+export type WeeklyHours = {
+    isActive?: boolean;
+    days?: WeeklySchedule;
+};
+
+
 export type WeeklySchedule = {
     "0"?: HoursDay; // sunday
     "1"?: HoursDay; // monday

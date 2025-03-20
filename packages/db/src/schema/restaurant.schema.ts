@@ -7,9 +7,9 @@ import type {
 	DeliveryZone,
 	PhysicalPaymentMethods,
 	ScheduledOrdersSettings,
-	TaxCategory,
-	WeeklyHours
+	TaxCategory
 } from "@lib/types/restaurantTypes";
+import type { WeeklyHours } from "@lib/types/dateTimeType";
 import type { MenuRoot } from "@lib/types/menuType";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 

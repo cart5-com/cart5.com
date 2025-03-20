@@ -1,13 +1,3 @@
-import type { WeeklySchedule } from "./dateTimeType";
-/// OPEN HOURS START
-export type WeeklyHours = {
-    isActive?: boolean;
-    days?: WeeklySchedule;
-};
-/// OPEN HOURS END
-
-
-
 
 
 /// DELIVERY ZONES START

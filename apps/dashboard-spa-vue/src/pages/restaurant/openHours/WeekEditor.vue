@@ -9,8 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { WeeklyHours } from '@lib/types/restaurantTypes';
-import { WeeklyScheduleDays } from '@lib/types/dateTimeType';
+import { type WeeklyHours, WeeklyScheduleDays } from '@lib/types/dateTimeType';
 
 const DAYS = WeeklyScheduleDays;
 

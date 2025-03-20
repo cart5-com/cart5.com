@@ -1,5 +1,4 @@
-import { type WeeklyHours } from '@lib/types/restaurantTypes'
-import type { WeeklySchedule, OpenHours } from '@lib/types/dateTimeType'
+import type { WeeklySchedule, OpenHours, WeeklyHours } from '@lib/types/dateTimeType'
 import { DateTime } from 'luxon'
 
 export const getCurrentTimeNow = function (
