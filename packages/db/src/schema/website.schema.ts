@@ -5,6 +5,7 @@ import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { relations } from 'drizzle-orm';
 import { z } from "zod";
 import { teamTable } from "./team.schema";
+import { restaurantTable } from "./restaurant.schema";
 
 
 export const websitesTable = sqliteTable("websites", {
@@ -19,6 +20,8 @@ export const websitesTable = sqliteTable("websites", {
     ownerTeamId: text("owner_team_id").notNull(),
     supportTeamId: text("support_team_id"),
 
+    marketplaceMode: text("marketplace_mode", { enum: ["AUTO_ALLOW_ALL", "SELECTED_ONLY"] }).notNull().$defaultFn(() => "SELECTED_ONLY"),
+
 });
 export const insertWebsitesSchema = createInsertSchema(websitesTable, {
     name: z.string().min(1, { message: "min 1" }).max(510, { message: "max 510" }),
@@ -28,6 +31,18 @@ export const updateWebsitesSchema = createInsertSchema(websitesTable);
 
 
 
+
+
+
+/// used by marketplaceMode: "SELECTED_ONLY" websites
+/// WEBSITE RESTAURANT MAP START
+export const websiteRestaurantMapTable = sqliteTable("website_restaurant_map", {
+    websiteId: text("website_id").notNull(),
+    restaurantId: text("restaurant_id").notNull(),
+}, (table) => [
+    primaryKey({ columns: [table.websiteId, table.restaurantId] })
+]);
+/// WEBSITE RESTAURANT MAP END
 
 
 
@@ -48,8 +63,6 @@ export const selectWebsiteDomainMapSchema = createSelectSchema(websiteDomainMapT
 
 
 
-
-
 export const websiteRelations = relations(websitesTable, ({ one, many }) => ({
     domains: many(websiteDomainMapTable),
     ownerTeam: one(teamTable, {
@@ -62,11 +75,24 @@ export const websiteRelations = relations(websitesTable, ({ one, many }) => ({
         references: [teamTable.id],
         relationName: "supportTeam"
     }),
+    restaurantMappings: many(websiteRestaurantMapTable),
 }));
+
 
 export const websiteDomainMapRelations = relations(websiteDomainMapTable, ({ one }) => ({
     website: one(websitesTable, {
         fields: [websiteDomainMapTable.websiteId],
         references: [websitesTable.id]
+    }),
+}));
+
+export const websiteRestaurantMapRelations = relations(websiteRestaurantMapTable, ({ one }) => ({
+    website: one(websitesTable, {
+        fields: [websiteRestaurantMapTable.websiteId],
+        references: [websitesTable.id]
+    }),
+    restaurant: one(restaurantTable, {
+        fields: [websiteRestaurantMapTable.restaurantId],
+        references: [restaurantTable.id]
     }),
 }));
