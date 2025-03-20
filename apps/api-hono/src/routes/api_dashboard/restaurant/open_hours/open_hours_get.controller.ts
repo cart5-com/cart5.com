@@ -23,9 +23,9 @@ export const getRestaurantOpenHours_Handler = async (c: Context<
     ValidatorContext<typeof getRestaurantOpenHours_SchemaValidator>
 >) => {
     let data = await getRestaurantOpenHours_Service(c.req.param('restaurantId'), c.req.valid('json').columns)
-    const isNowOpen = isOpenNow(data?.timezone ?? null, data?.defaultOpenHours ?? null);
-    // @ts-ignore
-    data.isNowOpenServerTime = isNowOpen;
+    if (data) {
+        (data as any).isNowOpenServerTime = isOpenNow(data?.timezone ?? null, data?.defaultOpenHours ?? null);
+    }
     return c.json({
         data: data,
         error: null as ErrorType

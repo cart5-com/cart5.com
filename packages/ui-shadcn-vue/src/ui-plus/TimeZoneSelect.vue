@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { ChevronsUpDown } from 'lucide-vue-next';
 import { useVModel } from '@vueuse/core'
+import { getBusinessTimeNow } from '@lib/utils/isOpenNow';
 
 const props = defineProps<{
   modelValue: string | null;
@@ -56,7 +57,9 @@ function formatTimezone(timezone: string) {
 <template>
   <Popover v-model:open="open">
     <PopoverTrigger class="flex w-full">
-      <Button type="button" class="flex w-full" variant="outline">
+      <Button type="button"
+              class="flex w-full"
+              variant="outline">
         <span class="flex-1 text-sm text-left">
           {{ model || 'Select timezone' }}
         </span>
@@ -69,18 +72,17 @@ function formatTimezone(timezone: string) {
         <CommandEmpty>No timezone found.</CommandEmpty>
         <CommandList>
           <CommandGroup>
-            <CommandItem 
-              v-for="option in getTimezones()"
-              :key="option.name"
-              :value="option.name + ' ' + option.formatted"
-              class="gap-2"
-              @select="() => {
-                model = option.name;
-                open = false;
-              }"
-            >
+            <CommandItem v-for="option in getTimezones()"
+                         :key="option.name"
+                         :value="option.name + ' ' + option.formatted"
+                         class="gap-2"
+                         @select="() => {
+                          model = option.name;
+                          open = false;
+                        }">
               <span class="flex-1 text-sm">{{ option.name }}</span>
-              <span class="text-foreground/50 text-sm">{{ option.formatted }}</span>
+              <span class="text-foreground/50 text-sm">({{ getBusinessTimeNow(option.name).toFormat('HH:mm') }}){{
+                option.formatted }}</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
