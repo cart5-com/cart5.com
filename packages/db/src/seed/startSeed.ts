@@ -13,10 +13,11 @@ import {
 } from "@db/services/restaurant.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
+import { getNearbyRestaurants } from "@db/services/distance.service";
 
 
 
-const startSeed = async () => {
+export const startSeed = async () => {
     if (IS_PROD) {
         console.log("❌❌❌ SEED NOT ALLOWED IN PROD MODE ❌❌❌");
         return;
@@ -120,6 +121,10 @@ const startSeed = async () => {
     await updateRestaurant_Service(realFlamesRestaurant.id, {
         name: "Flames Restaurant",
     })
+    await updateRestaurantAddress_Service(realFlamesRestaurant.id, {
+        lat: baseLat,
+        lng: baseLng
+    })
     // invite flames admin to Real Flames restaurant
     const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(
         flamesRestaurantAdminUser?.email!,
@@ -135,6 +140,19 @@ const startSeed = async () => {
         invitationForFlamesRestaurantAdminUserRes.id
     );
 
+
+    const nearbyRestaurants = await getNearbyRestaurants(
+        baseLat,
+        baseLng,
+        null,
+        "km",
+        10,
+        1,
+        1,
+        "delivery",
+        "distance_asc"
+    );
+    console.log(nearbyRestaurants);
 }
 
 startSeed()
