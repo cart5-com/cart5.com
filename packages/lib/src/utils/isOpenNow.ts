@@ -14,8 +14,11 @@ export const getBusinessTimeNow = function (
 
 export const isOpenNow = function (
     timezone: string | null,
-    weeklyHours: WeeklyHours
+    weeklyHours: WeeklyHours | null
 ) {
+    if (!weeklyHours) {
+        return false;
+    }
     const businessTimeNow = getBusinessTimeNow(timezone);
     const dayOfWeek = businessTimeNow.weekday.toString();
     // const currentHour = businessTimeNow.toFormat("HH:mm"); // 24 hour format
