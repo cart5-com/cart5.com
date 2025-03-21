@@ -28,8 +28,7 @@ CREATE TABLE `restaurant_address` (
 	`postal_code` text,
 	`country` text,
 	`lat` real,
-	`lng` real,
-	`geocode_metadata` text
+	`lng` real
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurant_address_restaurant_id_unique` ON `restaurant_address` (`restaurant_id`);--> statement-breakpoint

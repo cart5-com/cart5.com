@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dc7ead72-9364-4cce-884d-a4f675ae247a",
+  "id": "be3ff905-c8a8-41f9-9ee3-2deff9004329",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "session": {
@@ -200,13 +200,6 @@
         "lng": {
           "name": "lng",
           "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "geocode_metadata": {
-          "name": "geocode_metadata",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

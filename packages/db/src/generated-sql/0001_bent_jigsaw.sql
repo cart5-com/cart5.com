@@ -1,1 +1,0 @@
-ALTER TABLE `restaurant_address` DROP COLUMN `geocode_metadata`;
