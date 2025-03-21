@@ -4,8 +4,8 @@ import { zValidator } from "@hono/zod-validator";
 import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
-import { type ErrorType } from "@lib/types/errors";
-import { validateCrossDomainTurnstile_WithUserCheck } from "@api-hono/utils/validateTurnstile";
+import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
+import { validateCrossDomainTurnstile } from "@api-hono/utils/validateTurnstile";
 import {
     getSupportTeamByHostname_Service,
     isUserMemberOfTeam_Service
@@ -23,7 +23,15 @@ export const createWebsite_Handler = async (c: Context<
     ValidatorContext<typeof createWebsite_SchemaValidator>
 >) => {
     const { name, turnstile } = c.req.valid('form');
-    const { userId: ownerUserId } = await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
+    const { userId: ownerUserId } = await validateCrossDomainTurnstile(
+        turnstile,
+        c.req.header()['x-forwarded-for'],
+        c.req.header()['user-agent'],
+        c.req.header()['host']
+    );
+    if (ownerUserId !== c.get('USER')?.id!) {
+        throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
+    }
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
     let isUserMemberOfSupportTeam = false;
     if (supportTeam) {

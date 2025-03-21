@@ -28,7 +28,16 @@ export const encryptTurnstileRoute = async (
     >
 ) => {
     const { redirectUrl, turnstile } = c.req.valid('form');
-    const code = await generateCrossDomainCode(c, redirectUrl, turnstile);
+    const ipAddress = c.req.header()['x-forwarded-for'];
+    const userAgent = c.req.header()['user-agent'];
+    const hostHeader = c.req.header()['host'];
+    const code = await generateCrossDomainCode(
+        redirectUrl,
+        turnstile,
+        hostHeader,
+        ipAddress,
+        userAgent,
+        c.get("USER")?.id);
     return c.json({
         data: code,
         error: null as ErrorType

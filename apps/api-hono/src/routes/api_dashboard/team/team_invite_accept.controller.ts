@@ -4,7 +4,7 @@ import { type Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { validateCrossDomainTurnstile_WithUserCheck } from "@api-hono/utils/validateTurnstile";
+import { validateCrossDomainTurnstile } from "@api-hono/utils/validateTurnstile";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { decryptAndVerifyJwt } from "@api-hono/utils/jwt";
 import type { InvitationLinkPayload } from "../website/team/team_invite.controller";
@@ -27,7 +27,15 @@ export const teamInviteAccept_Handler = async (c: Context<
     ValidatorContext<typeof teamInviteAccept_SchemaValidator>
 >) => {
     const turnstile = c.req.valid('json').turnstile;
-    await validateCrossDomainTurnstile_WithUserCheck(turnstile, c);
+    const { userId } = await validateCrossDomainTurnstile(
+        turnstile,
+        c.req.header()['x-forwarded-for'],
+        c.req.header()['user-agent'],
+        c.req.header()['host']
+    );
+    if (userId !== c.get('USER')?.id!) {
+        throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
+    }
 
     // c.req.valid('json').token,
     // c.get('USER')?.email!,

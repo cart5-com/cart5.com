@@ -36,9 +36,10 @@ export const redirectorRoute = async (
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
     }
-    // const ipAddress = c.req.header()['x-forwarded-for'];
-    // const userAgent = c.req.header()['user-agent'];
-    const code = await generateCrossDomainCode(c, redirectUrl, turnstile);
+    const ipAddress = c.req.header()['x-forwarded-for'];
+    const userAgent = c.req.header()['user-agent'];
+    const hostHeader = c.req.header()['host'];
+    const code = await generateCrossDomainCode(redirectUrl, turnstile, hostHeader, ipAddress, userAgent, user.id);
     // Redirect to callback URL on target domain
     return c.redirect(getCrossDomainCallbackUrl(code, redirectUrl));
 }
