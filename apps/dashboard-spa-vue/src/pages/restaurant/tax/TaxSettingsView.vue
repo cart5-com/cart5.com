@@ -25,7 +25,6 @@ import { AlertCircle } from 'lucide-vue-next'
 
 pageTitle.value = 'Tax Settings';
 
-// TODO: we may pre-populate the tax categories with some default ones from the address.
 const isLoading = ref(false);
 const getDefaultTaxCategory = (): TaxCategory => {
     return {
@@ -55,7 +54,6 @@ const defaultTaxSettings: {
 const taxSettings = ref<typeof defaultTaxSettings>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
 const selectedCurrency = ref('');
-const countryCodeHelper = ref('');
 
 onMounted(() => {
     loadData();
