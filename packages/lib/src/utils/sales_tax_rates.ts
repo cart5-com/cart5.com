@@ -1,6 +1,13 @@
 import salesTaxRatesJson from 'sales-tax/res/sales_tax_rates.json';
 import currencySymbolMap from 'currency-symbol-map';
 
+// @ts-ignore
+// salesTaxRatesJson["US"].states["DE"] = {
+//     "rate": 0.0,
+//     "type": ""
+// }
+// salesTaxRatesJson["TR"].type = "KDV"
+
 export const salesTaxRates: Record<string, {
     type: string;
     currency: string;

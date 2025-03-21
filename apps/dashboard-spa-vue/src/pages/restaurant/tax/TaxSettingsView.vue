@@ -22,6 +22,7 @@ import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 import { getSalesTaxRate } from '@lib/utils/sales_tax_rates';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
+import TaxHelperDialog from './TaxHelperDialog.vue';
 
 pageTitle.value = 'Tax Settings';
 
@@ -57,11 +58,6 @@ const selectedCurrency = ref('');
 
 onMounted(() => {
     loadData();
-    // fetchCountryCode().then(countryCode => {
-    //     salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
-    //     countryCodeHelper.value = countryCode ?? 'GB';
-    //     selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
-    // });
 });
 
 const loadData = async () => {
@@ -112,24 +108,32 @@ const loadData = async () => {
 const saveWithIpWhois = async () => {
     console.log('saveWithIpWhois');
     const ipWhoisResult = await ipwhois();
-    const salesTaxRate = getSalesTaxRate(
-        ipWhoisResult.country_code ?? '',
-        ipWhoisResult.region_code ?? ''
-    );
+    populateTaxSettingsFromLocation(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
+    // saveTaxSettings();
+}
+
+const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string) => {
+    const salesTaxRate = getSalesTaxRate(countryCode, regionCode);
+    // const salesTaxRate = getSalesTaxRate("GB", "BY");
     selectedCurrency.value = salesTaxRate?.currency;
     taxSettings.value.currencySymbol = salesTaxRate?.currencySymbol;
     taxSettings.value.currency = salesTaxRate?.currency;
-    taxSettings.value.taxName = salesTaxRate?.type.toUpperCase();
+    if (salesTaxRate?.type === 'none') {
+        taxSettings.value.taxName = '';
+    } else {
+        taxSettings.value.taxName = salesTaxRate?.type.toUpperCase();
+    }
     taxSettings.value.taxRateForDelivery = salesTaxRate?.rate * 100;
     if (salesTaxRate?.currentState) {
         taxSettings.value.taxRateForDelivery += salesTaxRate?.currentState?.rate * 100;
-        taxSettings.value.taxName += `-` + salesTaxRate?.currentState?.type.toUpperCase();
+        taxSettings.value.taxName +=
+            ((taxSettings.value.taxName.length > 0) ? `-` : '') +
+            salesTaxRate?.currentState?.type.toUpperCase();
     }
     taxSettings.value.taxCategories?.forEach(category => {
         category.deliveryRate = taxSettings.value.taxRateForDelivery;
         category.pickupRate = taxSettings.value.taxRateForDelivery;
     });
-    saveTaxSettings();
 }
 
 const saveTaxSettings = async () => {
@@ -206,8 +210,12 @@ const removeTaxCategory = (index: number) => {
                         displayed here is intended solely for demonstration purposes.
                     </AlertDescription>
                 </Alert>
+
                 <div class="space-y-2">
-                    <Label>Currency</Label>
+                    <div class="flex justify-between items-center">
+                        <Label>Currency</Label>
+                        <TaxHelperDialog @tax-location-selected="populateTaxSettingsFromLocation" />
+                    </div>
                     <CurrencyWidget v-model="selectedCurrency" />
                 </div>
 
