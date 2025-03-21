@@ -130,18 +130,20 @@ async function loadHelperBtns() {
 		searchOpenStreetMap(model.value.address, model.value.country?.toLowerCase()),
 		ipwhois()
 	]);
-	if (geocodeResult && geocodeResult.data.results.length > 0) {
-		setCenter(
-			geocodeResult.data.results[0].geometry.location.lat,
-			geocodeResult.data.results[0].geometry.location.lng
-		);
-	} else if (openStreetMapItems.length > 0) {
-		setCenter(
-			openStreetMapItems[0].lat,
-			openStreetMapItems[0].lng
-		);
-	} else {
-		handleGpsClick()
+	if (!model.value.lat || !model.value.lng) {
+		if (geocodeResult && geocodeResult.data.results.length > 0) {
+			setCenter(
+				geocodeResult.data.results[0].geometry.location.lat,
+				geocodeResult.data.results[0].geometry.location.lng
+			);
+		} else if (openStreetMapItems.length > 0) {
+			setCenter(
+				openStreetMapItems[0].lat,
+				openStreetMapItems[0].lng
+			);
+		} else {
+			handleGpsClick()
+		}
 	}
 	const newBtns = [
 		...(
