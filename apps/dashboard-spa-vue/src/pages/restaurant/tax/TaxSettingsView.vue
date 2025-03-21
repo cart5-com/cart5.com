@@ -109,7 +109,7 @@ const saveWithIpWhois = async () => {
     console.log('saveWithIpWhois');
     const ipWhoisResult = await ipwhois();
     populateTaxSettingsFromLocation(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
-    // saveTaxSettings();
+    saveTaxSettings();
 }
 
 const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string) => {
