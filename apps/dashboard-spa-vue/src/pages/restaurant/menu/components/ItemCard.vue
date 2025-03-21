@@ -71,7 +71,7 @@ const unlinkItem = () => {
             </CardFooter>
         </Card>
 
-        <div class="flex-shrink-0"
+        <!-- <div class="flex-shrink-0"
              v-if="currentItem?.imgUrl">
             <div class="flex items-center justify-center h-full">
                 <img :src="currentItem?.imgUrl"
@@ -79,6 +79,6 @@ const unlinkItem = () => {
                      loading="lazy"
                      class="h-full w-48 object-cover overflow-hidden" />
             </div>
-        </div>
+        </div> -->
     </div>
 </template>

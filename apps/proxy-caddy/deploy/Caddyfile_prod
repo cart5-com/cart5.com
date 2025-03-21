@@ -19,7 +19,6 @@
 	}
 }
 
-# TODO: validate domain before SSL challenge
 # return 404 to reject, return 200 to accept
 # http://127.0.0.1:5555 {
 # 	respond 404

@@ -127,7 +127,7 @@ sudo apt install xcaddy -y
 # it takes a while to build ⏳🥲
 xcaddy build --with github.com/mholt/caddy-ratelimit --with github.com/darkweak/souin/plugins/caddy --with github.com/caddy-dns/cloudflare
 # # CF_API_TOKEN permissions from cloudflare: (Zone.Zone, Zone.DNS) for All zones
-# TODO: configure prod caddy to use cloudflare dns for wildcard subdomains
+# configure prod caddy to use cloudflare dns for wildcard subdomains
 # https://caddyserver.com/docs/automatic-https#wildcard-certificates
 # https://caddyserver.com/docs/caddyfile/patterns#wildcard-certificates
 # https://caddyserver.com/docs/automatic-https#dns-challenge

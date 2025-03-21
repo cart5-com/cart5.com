@@ -3,9 +3,6 @@ import db from '@db/drizzle';
 import { restaurantTable, restaurantAddressTable, restaurantDeliveryZoneMapTable } from '@db/schema/restaurant.schema';
 import { websiteRestaurantMapTable } from '@db/schema/website.schema';
 
-// TODO: add open hours filter for current week day and time
-// it is not crucial because we are caching results, we will double check on the client side
-// but it is good to have it
 export const getNearbyRestaurants = async (
     lat: number,
     lng: number,

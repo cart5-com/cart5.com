@@ -26,8 +26,7 @@ export type Item = {
     // i, ct, c, o
     t?: 'i' | 'ct' | 'c' | 'o';
 
-    // TODO:
-    imgUrl?: string;
+    // imgUrl?: string;
 }
 
 export type CartChildrenItemState = {

@@ -16,7 +16,6 @@ export const schema = {
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
-    // TODO: update env names to remove AUTH etc..
     // const {
     //     TURSO_DB_URL,
     //     TURSO_DB_TOKEN,
