@@ -2,7 +2,7 @@
 import type { GeoLocation, HelperBtns } from "./types";
 import { useVModel } from "@vueuse/core";
 import { loadLeafletCDN } from "./loadLeafletCDN";
-import { HelpCircle, Loader2, LocateFixed } from "lucide-vue-next";
+import { Loader2, LocateFixed } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { onMounted, onUnmounted, ref } from "vue";
@@ -62,6 +62,7 @@ onMounted(async () => {
 
 	if (model.value.lat && model.value.lng) {
 		setCenter(model.value.lat, model.value.lng)
+		loadHelperBtns()
 	} else if (model.value.address) {
 		loadHelperBtns()
 	} else {
@@ -116,12 +117,10 @@ async function handleGpsClick() {
 	}
 }
 
-const isHelperLoaded = ref(false);
 async function loadHelperBtns() {
 	if (!model.value.address) {
 		return;
 	}
-	isHelperLoaded.value = true;
 	const [
 		geocodeResult,
 		openStreetMapItems,
@@ -191,7 +190,6 @@ function setCenter(lat: number, lng: number) {
 		<div class="flex h-full flex-col">
 			<p class="address-value border p-1 text-sm font-extrabold shrink-0">
 				{{ model.address || "" }}
-				({{ model.lat }}, {{ model.lng }})
 			</p>
 
 			<div :id="randomId"
@@ -217,21 +215,6 @@ function setCenter(lat: number, lng: number) {
 					</Tooltip>
 				</TooltipProvider>
 
-				<TooltipProvider v-if="!isHelperLoaded">
-					<Tooltip>
-						<TooltipTrigger as-child>
-							<Button type="button"
-									variant="outline"
-									class="rubberBand-animation absolute left-1 bottom-1 z-[1001]"
-									@click="loadHelperBtns">
-								<HelpCircle />
-							</Button>
-						</TooltipTrigger>
-						<TooltipContent side="right">
-							<p>Click to show address shortcuts</p>
-						</TooltipContent>
-					</Tooltip>
-				</TooltipProvider>
 			</div>
 
 
@@ -276,7 +259,7 @@ function setCenter(lat: number, lng: number) {
 	left: 50%;
 	border-left: 7px solid transparent;
 	border-right: 7px solid transparent;
-	border-top: 13px solid red;
+	border-top: 9px solid red;
 	transform: translateX(-50%);
 }
 
