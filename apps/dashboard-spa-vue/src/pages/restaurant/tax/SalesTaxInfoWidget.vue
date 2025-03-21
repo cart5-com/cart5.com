@@ -6,8 +6,6 @@ import { ref } from 'vue'
 import FlagComponent from '@/ui-plus/PhoneNumber/FlagComponent.vue';
 import { getBrowserLocale, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { ChevronsUpDown, HelpCircle } from 'lucide-vue-next';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-vue-next'
 import { salesTaxRates } from '@lib/utils/sales_tax_rates';
 import {
     Table,
@@ -152,27 +150,9 @@ defineExpose({
                     </div>
                 </div>
 
-                <Alert variant="destructive"
-                       class="my-4">
-                    <AlertCircle class="w-4 h-4" />
-                    <AlertTitle>Important</AlertTitle>
-                    <AlertDescription>
-                        You are responsible for verifying the accuracy of all currency and tax information for your
-                        specific
-                        jurisdiction. While we provide these information as a convenience, we do not accept any
-                        responsibility
-                        regarding the accuracy of currency and tax information, nor for the proper collection or
-                        remittance of
-                        such taxes in connection with our products and services. All currency and tax-related
-                        information
-                        displayed here is intended solely for demonstration purposes.
-                    </AlertDescription>
-                </Alert>
 
 
             </CollapsibleContent>
         </Collapsible>
-
-
     </div>
 </template>

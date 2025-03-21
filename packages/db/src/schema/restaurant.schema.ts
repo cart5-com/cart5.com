@@ -157,7 +157,7 @@ export const updateRestaurantPaymentMethodsSchema = createUpdateSchema(restauran
 export const restaurantTaxSettingsTable = sqliteTable('restaurant_tax_settings', {
 	restaurantId: text("restaurant_id").notNull().unique(),
 	currency: text('currency'),
-	// TODO: ADD currencySymbol: text('currency_symbol'),
+	currencySymbol: text('currency_symbol'),
 	salesTaxType: text('sales_tax_type', { enum: ['ITEMS_PRICES_ALREADY_INCLUDE_TAXES', 'APPLY_TAX_ON_TOP_OF_PRICES'] }),
 	taxName: text('tax_name'),
 	taxRateForDelivery: real('tax_rate_for_delivery'),

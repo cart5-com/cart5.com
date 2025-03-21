@@ -18,9 +18,11 @@ import { currentRestaurantId } from '@dashboard-spa-vue/stores/RestaurantStore';
 import type { TaxCategory } from '@lib/types/restaurantTypes';
 import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import CurrencyWidget from './CurrencyWidget.vue';
-import SalesTaxInfoWidget from '@dashboard-spa-vue/pages/restaurant/tax/SalesTaxInfoWidget.vue';
-import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-import { currencies } from '@lib/utils/currencies';
+import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
+import { getSalesTaxRate } from '@lib/utils/sales_tax_rates';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { AlertCircle } from 'lucide-vue-next'
+
 pageTitle.value = 'Tax Settings';
 
 // TODO: we may pre-populate the tax categories with some default ones from the address.
@@ -36,12 +38,14 @@ const getDefaultTaxCategory = (): TaxCategory => {
 const defaultTaxSettings: {
     currency?: string;
     salesTaxType?: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';
+    currencySymbol?: string;
     taxName?: string;
     taxRateForDelivery?: number;
     taxCategories?: TaxCategory[];
 } = {
     currency: 'GBP',
     salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' as 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES',
+    currencySymbol: '£',
     taxName: 'VAT',
     taxRateForDelivery: undefined,
     taxCategories: [
@@ -54,12 +58,12 @@ const selectedCurrency = ref('');
 const countryCodeHelper = ref('');
 
 onMounted(() => {
-    fetchCountryCode().then(countryCode => {
-        salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
-        countryCodeHelper.value = countryCode ?? 'GB';
-        selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
-        loadData();
-    });
+    loadData();
+    // fetchCountryCode().then(countryCode => {
+    //     salesTaxInfoWidget.value?.setCountry(countryCode ?? 'GB');
+    //     countryCodeHelper.value = countryCode ?? 'GB';
+    //     selectedCurrency.value = currencies[countryCode ?? 'GB']?.currency ?? 'GBP';
+    // });
 });
 
 const loadData = async () => {
@@ -73,6 +77,7 @@ const loadData = async () => {
                 columns: {
                     taxCategories: true,
                     currency: true,
+                    currencySymbol: true,
                     salesTaxType: true,
                     taxName: true,
                     taxRateForDelivery: true,
@@ -89,11 +94,14 @@ const loadData = async () => {
             taxSettings.value = {
                 taxCategories: data.taxCategories ?? defaultTaxSettings.taxCategories,
                 currency: data.currency ?? defaultTaxSettings.currency,
+                currencySymbol: data.currencySymbol ?? defaultTaxSettings.currencySymbol,
                 salesTaxType: data.salesTaxType ?? defaultTaxSettings.salesTaxType,
                 taxName: data.taxName ?? defaultTaxSettings.taxName,
                 taxRateForDelivery: data.taxRateForDelivery ?? defaultTaxSettings.taxRateForDelivery,
             };
             selectedCurrency.value = data.currency ?? 'GBP';
+        } else {
+            saveWithIpWhois();
         }
     } catch (err) {
         console.error('Error loading tax settings:', err);
@@ -102,6 +110,29 @@ const loadData = async () => {
         isLoading.value = false;
     }
 };
+
+const saveWithIpWhois = async () => {
+    console.log('saveWithIpWhois');
+    const ipWhoisResult = await ipwhois();
+    const salesTaxRate = getSalesTaxRate(
+        ipWhoisResult.country_code ?? '',
+        ipWhoisResult.region_code ?? ''
+    );
+    selectedCurrency.value = salesTaxRate?.currency;
+    taxSettings.value.currencySymbol = salesTaxRate?.currencySymbol;
+    taxSettings.value.currency = salesTaxRate?.currency;
+    taxSettings.value.taxName = salesTaxRate?.type.toUpperCase();
+    taxSettings.value.taxRateForDelivery = salesTaxRate?.rate * 100;
+    if (salesTaxRate?.currentState) {
+        taxSettings.value.taxRateForDelivery += salesTaxRate?.currentState?.rate * 100;
+        taxSettings.value.taxName += `-` + salesTaxRate?.currentState?.type.toUpperCase();
+    }
+    taxSettings.value.taxCategories?.forEach(category => {
+        category.deliveryRate = taxSettings.value.taxRateForDelivery;
+        category.pickupRate = taxSettings.value.taxRateForDelivery;
+    });
+    saveTaxSettings();
+}
 
 const saveTaxSettings = async () => {
     isLoading.value = true;
@@ -112,6 +143,7 @@ const saveTaxSettings = async () => {
             },
             json: {
                 currency: selectedCurrency.value,
+                currencySymbol: taxSettings.value.currencySymbol,
                 salesTaxType: taxSettings.value.salesTaxType,
                 taxName: taxSettings.value.taxName,
                 taxRateForDelivery: taxSettings.value.taxRateForDelivery,
@@ -150,8 +182,6 @@ const removeTaxCategory = (index: number) => {
     }
 };
 
-const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
-
 </script>
 
 <template>
@@ -162,25 +192,25 @@ const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
                 <CardDescription>Configure your restaurant's tax settings</CardDescription>
             </CardHeader>
             <CardContent class="space-y-6">
-                <!-- Currency Selection -->
-                <!--  -->
-                <SalesTaxInfoWidget ref="salesTaxInfoWidget"
-                                    :countryCodeHelper="countryCodeHelper" />
+                <Alert variant="destructive"
+                       class="my-4">
+                    <AlertCircle class="w-4 h-4" />
+                    <AlertTitle>Important</AlertTitle>
+                    <AlertDescription>
+                        You are responsible for verifying the accuracy of all currency and tax information for your
+                        specific
+                        jurisdiction. While we provide these information as a convenience, we do not accept any
+                        responsibility
+                        regarding the accuracy of currency and tax information, nor for the proper collection or
+                        remittance of
+                        such taxes in connection with our products and services. All currency and tax-related
+                        information
+                        displayed here is intended solely for demonstration purposes.
+                    </AlertDescription>
+                </Alert>
                 <div class="space-y-2">
                     <Label>Currency</Label>
                     <CurrencyWidget v-model="selectedCurrency" />
-                    <!-- <Select v-model="selectedCurrency">
-                        <SelectTrigger>
-                            <SelectValue :placeholder="selectedCurrency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="currency in currencies"
-                                        :key="currency"
-                                        :value="currency">
-                                {{ currency }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select> -->
                 </div>
 
                 <!-- Tax Type Selection -->
@@ -209,6 +239,12 @@ const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
                     <Label>Tax Name</Label>
                     <Input v-model="taxSettings.taxName"
                            placeholder="e.g., VAT, GST, HST" />
+                </div>
+
+                <div class="space-y-2">
+                    <Label>Currency Symbol</Label>
+                    <Input v-model="taxSettings.currencySymbol"
+                           placeholder="e.g., £, $" />
                 </div>
 
                 <!-- Tax Categories -->
@@ -254,7 +290,7 @@ const salesTaxInfoWidget = ref<InstanceType<typeof SalesTaxInfoWidget>>();
                 </div>
 
                 <div class="space-y-2">
-                    <Label>Tax Rate for Delivery (%)</Label>
+                    <Label>Tax Rate for Delivery fees(%)</Label>
                     <Input v-model="taxSettings.taxRateForDelivery"
                            type="number"
                            step="1" />
