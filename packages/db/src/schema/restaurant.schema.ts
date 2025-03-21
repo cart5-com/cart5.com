@@ -63,14 +63,11 @@ export const restaurantAddressTable = sqliteTable("restaurant_address", {
 	country: text("country"),
 	lat: real('lat'), //.notNull().default(90), // North Pole latitude
 	lng: real('lng'), //.notNull().default(-180), // North Pole longitude
-	geocodeMetadata: text('geocode_metadata', { mode: 'json' }).$type<any>(),
 });
 export const selectRestaurantAddressSchema = createSelectSchema(restaurantAddressTable);
 export const insertRestaurantAddressSchema = createInsertSchema(restaurantAddressTable, {
-	geocodeMetadata: z.any(),
 });
 export const updateRestaurantAddressSchema = createUpdateSchema(restaurantAddressTable, {
-	geocodeMetadata: z.any(),
 });
 /// RESTAURANT ADDRESS TABLE END
 

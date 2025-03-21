@@ -8,6 +8,13 @@
       "when": 1742514469355,
       "tag": "0000_unknown_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1742532986955,
+      "tag": "0001_bent_jigsaw",
+      "breakpoints": true
     }
   ]
 }
