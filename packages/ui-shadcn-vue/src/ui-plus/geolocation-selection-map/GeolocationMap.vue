@@ -22,26 +22,36 @@ const model = useVModel(props, "modelValue", emit);
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
 const helperBtns = ref<HelperBtns[]>([]);
 let mapView: L.Map | null = null;
-// let marker: L.Marker | null = null;
+let marker: L.Marker | null = null;
 
 const mapMoveListener = () => {
 	model.value.lat = mapView?.getCenter().lat ?? 0;
 	model.value.lng = mapView?.getCenter().lng ?? 0;
-	// marker?.setLatLng([model.value.lat, model.value.lng])
+	marker?.setLatLng([model.value.lat, model.value.lng])
 }
 
 onUnmounted(() => {
 	console.log('unmounted')
 	mapView?.off('move', mapMoveListener)
+	mapView?.off('resize', mapMoveListener)
 })
+
+function setCenter(lat: number, lng: number) {
+	mapView?.setView([Number(lat), Number(lng)]);
+	model.value.lat = lat;
+	model.value.lng = lng;
+	marker?.setLatLng([model.value.lat, model.value.lng])
+}
 
 onMounted(async () => {
 	await loadLeafletCDN();
-
 	mapView = window.L.map(randomId);
-	// marker = window.L.marker([model.value.lat, model.value.lng]).addTo(mapView)
+	marker = window.L.marker([model.value.lat ?? 0, model.value.lng ?? 0]).addTo(mapView)
+	marker.setOpacity(0.8)
 	mapView?.on('move', mapMoveListener)
+	mapView?.on('resize', mapMoveListener)
 	mapView.attributionControl.setPrefix(false);
+	mapView.setZoom(18);
 	// mapView.addLayer(
 	// 	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	// 		maxZoom: 18,
@@ -117,74 +127,91 @@ async function handleGpsClick() {
 	}
 }
 
-async function loadHelperBtns() {
+const addGecodeHelperBtn = async () => {
 	if (!model.value.address) {
 		return;
 	}
-	const [
-		geocodeResult,
-		openStreetMapItems,
-		ipwho
-	] = await Promise.all([
-		geocode(model.value.address, model.value.country?.toLowerCase()),
-		searchOpenStreetMap(model.value.address, model.value.country?.toLowerCase()),
-		ipwhois()
-	]);
-	if (!model.value.lat || !model.value.lng) {
-		if (geocodeResult && geocodeResult.data.results.length > 0) {
-			setCenter(
-				geocodeResult.data.results[0].geometry.location.lat,
-				geocodeResult.data.results[0].geometry.location.lng
-			);
-		} else if (openStreetMapItems.length > 0) {
-			setCenter(
-				openStreetMapItems[0].lat,
-				openStreetMapItems[0].lng
-			);
-		} else {
-			handleGpsClick()
-		}
+	const gecodeResult = await geocode(model.value.address, model.value.country?.toLowerCase())
+	// Check if a button with the same address, lat, and lng already exists
+	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
+		btn.label === model.value.address &&
+		btn.lat === gecodeResult?.data.results[0]?.geometry.location.lat &&
+		btn.lng === gecodeResult?.data.results[0]?.geometry.location.lng
+	);
+	if (isAddBeforeCurrentLocation) {
+		return;
 	}
-	const newBtns = [
-		...(
-			geocodeResult &&
-				geocodeResult.data.results.length > 0 ?
-				geocodeResult.data.results.map(item => ({
-					label: item.formatted_address,
-					lat: item.geometry.location.lat,
-					lng: item.geometry.location.lng
-				})) :
-				[]
-		),
-		...openStreetMapItems.map(item => ({
-			label: item.label,
-			lat: item.lat,
-			lng: item.lng
-		})),
-		...(ipwho.latitude && ipwho.longitude ? [{
-			label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
-			lat: ipwho.latitude,
-			lng: ipwho.longitude
-		}] : [])
+	helperBtns.value = [
+		...helperBtns.value,
+		{
+			label: model.value.address,
+			lat: gecodeResult?.data.results[0]?.geometry.location.lat,
+			lng: gecodeResult?.data.results[0]?.geometry.location.lng
+		}
 	];
-	const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
-	if (currentLocationExists) {
-		helperBtns.value = [
-			...helperBtns.value,
-			...newBtns,
-		];
-	} else {
-		helperBtns.value = [
-			...newBtns,
-		];
+	return 1;
+}
+
+const addOpenStreetMapHelperBtn = async () => {
+	if (!model.value.address) {
+		return;
+	}
+	const openStreetMapItems = await searchOpenStreetMap(model.value.address, model.value.country?.toLowerCase())
+	if (openStreetMapItems.length === 0) {
+		return;
+	}
+	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
+		btn.label === model.value.address &&
+		btn.lat === openStreetMapItems[0].lat &&
+		btn.lng === openStreetMapItems[0].lng
+	);
+	if (isAddBeforeCurrentLocation) {
+		return;
+	}
+	helperBtns.value = [
+		...helperBtns.value,
+		{
+			label: openStreetMapItems[0].label,
+			lat: openStreetMapItems[0].lat,
+			lng: openStreetMapItems[0].lng
+		}
+	];
+	return 1;
+}
+
+const addIpwhoHelperBtn = async () => {
+	const ipwho = await ipwhois()
+	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
+		btn.label === ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip &&
+		btn.lat === ipwho.latitude &&
+		btn.lng === ipwho.longitude
+	);
+	if (isAddBeforeCurrentLocation) {
+		return;
+	}
+	helperBtns.value = [
+		...helperBtns.value,
+		{
+			label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
+			lat: ipwho.latitude ?? 0,
+			lng: ipwho.longitude ?? 0
+		}
+	];
+	return 1;
+}
+
+async function loadHelperBtns() {
+	await addGecodeHelperBtn()
+	await addOpenStreetMapHelperBtn()
+	if (helperBtns.value.length === 0) {
+		await addIpwhoHelperBtn()
+	}
+	// if there is a help and initial lat and lng is not set
+	if (!model.value.lat || !model.value.lng && helperBtns.value.length > 0) {
+		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
 	}
 }
 
-function setCenter(lat: number, lng: number) {
-	mapView?.setView([Number(lat), Number(lng)], 18);
-	model.value.lat = lat;
-	model.value.lng = lng;
-}
 </script>
 
 <template>
@@ -196,7 +223,6 @@ function setCenter(lat: number, lng: number) {
 
 			<div :id="randomId"
 				 class="relative flex-1 min-h-0">
-				<div id="map-marker"></div>
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger as-child>
@@ -237,34 +263,6 @@ function setCenter(lat: number, lng: number) {
 </template>
 
 <style scoped>
-#map-marker {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 20px;
-	height: 20px;
-	opacity: 0.8;
-	background-color: red;
-	border-radius: 50%;
-	transform: translate(-46%, -16%);
-	/*/
-		transform: translate(-50%, -50%);
-		/*/
-	z-index: 1001;
-	pointer-events: none;
-}
-
-#map-marker::after {
-	content: "";
-	position: absolute;
-	bottom: -6px;
-	left: 50%;
-	border-left: 7px solid transparent;
-	border-right: 7px solid transparent;
-	border-top: 9px solid red;
-	transform: translateX(-50%);
-}
-
 #gps-btn-container {
 	position: absolute;
 	top: 10px;

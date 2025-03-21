@@ -13,8 +13,8 @@ export const ipwhois = async (): Promise<IpWhoResponse> => {
         if (cachedResult) {
             try {
                 const { data, timestamp } = JSON.parse(cachedResult) as { data: IpWhoResponse, timestamp: number };
-                // Check if the cache is still valid (10 minutes = 600000 ms)
-                if (Date.now() - timestamp < 600_000) {
+                // Check if the cache is still valid (3 hours = 10800000 ms)
+                if (Date.now() - timestamp < 10_800_000) {
                     return data;
                 }
             } catch (error) {
