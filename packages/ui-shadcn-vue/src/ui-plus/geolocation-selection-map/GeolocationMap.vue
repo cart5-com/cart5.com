@@ -1,62 +1,48 @@
 <script setup lang="ts">
-import { Loader2, LocateFixed } from "lucide-vue-next";
+import type { GeoLocation, HelperBtns } from "./types";
+import { useVModel } from "@vueuse/core";
+import { loadLeafletCDN } from "./loadLeafletCDN";
+import { HelpCircle, Loader2, LocateFixed } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { onMounted, ref } from "vue";
-import { defineExpose } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { toast } from '@/ui-plus/sonner';
+import { geocode } from "./geocode";
+import { searchOpenStreetMap } from "./searchOpenStreetMap";
+import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 
-interface HelperBtns {
-	label: string;
-	lat: number;
-	lng: number;
-}
+const props = defineProps<{
+	modelValue: GeoLocation;
+}>();
+const emit = defineEmits<{
+	(e: "update:modelValue", value: GeoLocation): void;
+}>();
+const model = useVModel(props, "modelValue", emit);
+
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
-const mapView = ref<L.Map | null>(null);
 const helperBtns = ref<HelperBtns[]>([]);
-const address = ref<string>('');
+let mapView: L.Map | null = null;
+// let marker: L.Marker | null = null;
 
-async function loadLeaflet() {
-	const script = document.querySelector('#leaflet-script')
-	if (!script) {
-		try {
-			// Load Leaflet CSS
-			const css = document.createElement('link');
-			css.href = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`;
-			css.rel = 'stylesheet';
-			document.head.appendChild(css);
-
-			// Load Leaflet JS with a Promise
-			await new Promise((resolve, reject) => {
-				const script = document.createElement('script');
-				script.src = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js`;
-				script.id = 'leaflet-script';
-				script.onload = resolve;
-				script.onerror = reject;
-				document.head.appendChild(script);
-			});
-
-			// Verify Leaflet loaded correctly
-			if (!window.L) {
-				throw new Error('Leaflet failed to load properly');
-			}
-
-		} catch (error) {
-			console.error('Error loading Leaflet dependencies:', error);
-			toast.error('Failed to load map. Please refresh the page.');
-			return false;
-		}
-	}
-	return true;
+const mapMoveListener = () => {
+	model.value.lat = mapView?.getCenter().lat ?? 0;
+	model.value.lng = mapView?.getCenter().lng ?? 0;
+	// marker?.setLatLng([model.value.lat, model.value.lng])
 }
+
+onUnmounted(() => {
+	console.log('unmounted')
+	mapView?.off('move', mapMoveListener)
+})
 
 onMounted(async () => {
-	console.log("onMounted MAP");
-	await loadLeaflet();
+	await loadLeafletCDN();
 
-	mapView.value = window.L.map(randomId);
-	mapView.value!.attributionControl.setPrefix(false);
-	// mapView.value.addLayer(
+	mapView = window.L.map(randomId);
+	// marker = window.L.marker([model.value.lat, model.value.lng]).addTo(mapView)
+	mapView?.on('move', mapMoveListener)
+	mapView.attributionControl.setPrefix(false);
+	// mapView.addLayer(
 	// 	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	// 		maxZoom: 18,
 	// 		subdomains: ["a", "b", "c"],
@@ -64,7 +50,7 @@ onMounted(async () => {
 	// 			"<a href='https://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
 	// 	})
 	// );
-	mapView.value.addLayer(
+	mapView.addLayer(
 		window.L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
 			maxZoom: 22,
 			subdomains: ["mt0", "mt1", "mt2", "mt3"],
@@ -72,12 +58,16 @@ onMounted(async () => {
 				"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
 		})
 	);
-	// mapView.value.fitWorld();
-});
+	// mapView.fitWorld();
 
-function setCenter(lat: number, lng: number) {
-	mapView.value?.setView([Number(lat), Number(lng)], 18);
-}
+	if (model.value.lat && model.value.lng) {
+		setCenter(model.value.lat, model.value.lng)
+	} else if (model.value.address) {
+		loadHelperBtns()
+	} else {
+		handleGpsClick()
+	}
+});
 
 const isGpsLoading = ref(false);
 async function handleGpsClick() {
@@ -87,7 +77,7 @@ async function handleGpsClick() {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				isGpsLoading.value = false;
-				mapView.value?.setView([position.coords.latitude, position.coords.longitude], 18);
+				mapView?.setView([position.coords.latitude, position.coords.longitude], 18);
 
 				// Check if Current Location already exists in helperBtns
 				const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
@@ -126,18 +116,82 @@ async function handleGpsClick() {
 	}
 }
 
-defineExpose({
-	mapView,
-	helperBtns,
-	address
-});
+const isHelperLoaded = ref(false);
+async function loadHelperBtns() {
+	if (!model.value.address) {
+		return;
+	}
+	isHelperLoaded.value = true;
+	const [
+		geocodeResult,
+		openStreetMapItems,
+		ipwho
+	] = await Promise.all([
+		geocode(model.value.address, model.value.country?.toLowerCase()),
+		searchOpenStreetMap(model.value.address, model.value.country?.toLowerCase()),
+		ipwhois()
+	]);
+	if (geocodeResult && geocodeResult.data.results.length > 0) {
+		setCenter(
+			geocodeResult.data.results[0].geometry.location.lat,
+			geocodeResult.data.results[0].geometry.location.lng
+		);
+	} else if (openStreetMapItems.length > 0) {
+		setCenter(
+			openStreetMapItems[0].lat,
+			openStreetMapItems[0].lng
+		);
+	} else {
+		handleGpsClick()
+	}
+	const newBtns = [
+		...(
+			geocodeResult &&
+				geocodeResult.data.results.length > 0 ?
+				geocodeResult.data.results.map(item => ({
+					label: item.formatted_address,
+					lat: item.geometry.location.lat,
+					lng: item.geometry.location.lng
+				})) :
+				[]
+		),
+		...openStreetMapItems.map(item => ({
+			label: item.label,
+			lat: item.lat,
+			lng: item.lng
+		})),
+		...(ipwho.latitude && ipwho.longitude ? [{
+			label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
+			lat: ipwho.latitude,
+			lng: ipwho.longitude
+		}] : [])
+	];
+	const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
+	if (currentLocationExists) {
+		helperBtns.value = [
+			...helperBtns.value,
+			...newBtns,
+		];
+	} else {
+		helperBtns.value = [
+			...newBtns,
+		];
+	}
+}
+
+function setCenter(lat: number, lng: number) {
+	mapView?.setView([Number(lat), Number(lng)], 18);
+	model.value.lat = lat;
+	model.value.lng = lng;
+}
 </script>
 
 <template>
 	<div class="h-full">
 		<div class="flex h-full flex-col">
 			<p class="address-value border p-1 text-sm font-extrabold shrink-0">
-				{{ address || "" }}
+				{{ model.address || "" }}
+				({{ model.lat }}, {{ model.lng }})
 			</p>
 
 			<div :id="randomId"
@@ -159,6 +213,22 @@ defineExpose({
 						</TooltipTrigger>
 						<TooltipContent side="left">
 							<p>Find Your Location</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+
+				<TooltipProvider v-if="!isHelperLoaded">
+					<Tooltip>
+						<TooltipTrigger as-child>
+							<Button type="button"
+									variant="outline"
+									class="rubberBand-animation absolute left-1 bottom-1 z-[1001]"
+									@click="loadHelperBtns">
+								<HelpCircle />
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side="right">
+							<p>Click to show address shortcuts</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
@@ -188,6 +258,7 @@ defineExpose({
 	left: 50%;
 	width: 20px;
 	height: 20px;
+	opacity: 0.8;
 	background-color: red;
 	border-radius: 50%;
 	transform: translate(-46%, -16%);

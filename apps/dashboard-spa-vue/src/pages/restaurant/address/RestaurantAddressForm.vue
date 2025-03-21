@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GeolocationSelectionMap from '@/ui-plus/geolocation-selection-map/GeolocationSelectionMap.vue';
+import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -8,7 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { DoorOpen } from "lucide-vue-next";
+import { DoorOpen, MapPin } from "lucide-vue-next";
 import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
@@ -19,10 +19,10 @@ import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
 import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-import { geocode, getOpenStreetMapItems } from '../utils'
 import { currentRestaurantId, loadMyRestaurants } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
+import { GeoLocation } from '@/ui-plus/geolocation-selection-map/types';
 
 const schema = z.object({
     country: z.string().min(1, 'Address is required'),
@@ -84,6 +84,8 @@ const loadData = async () => {
                 postalCode: true,
                 address1: true,
                 address2: true,
+                lat: true,
+                lng: true,
             }
         }
     })).json()
@@ -110,117 +112,72 @@ const loadData = async () => {
                     form.setFieldValue(typedKey, address[typedKey]);
                 }
             }
+            if (address?.lat && address?.lng) {
+                mapLocation.value.lat = address.lat;
+                mapLocation.value.lng = address.lng;
+            }
+        }
+        if (!address || !address.country) {
+            fetchCountryCode().then(countryCode => {
+                form.setFieldValue('country', countryCode);
+            });
         }
     }
     isLoading.value = false;
 }
 
 onMounted(() => {
-    fetchCountryCode().then(countryCode => {
-        form.setFieldValue('country', countryCode);
-        loadData();
-    });
+    loadData();
 })
 
 
 
 const isDialogOpen = ref(false);
-let mapComp: InstanceType<typeof GeolocationSelectionMap> | null = null;
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
-let locationMetadata: any = null;
+const mapLocation = ref<GeoLocation>({
+    lat: undefined,
+    lng: undefined,
+    address: undefined,
+    country: undefined,
+});
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        isLoading.value = true;
-        console.log('values', values);
-        const [geocodeResult, openStreetMapItems] = await Promise.all([
-            geocode(values.address1, form.values.country?.toLowerCase()),
-            getOpenStreetMapItems(values.address1, form.values.country?.toLowerCase())
-        ]);
-        locationMetadata = geocodeResult;
-        console.log('openStreetMapItems', openStreetMapItems);
         isDialogOpen.value = true;
-        await new Promise(resolve => setTimeout(resolve, 500));
-        // Wait for mapComp.mapView to be defined
-        let waitAttempts = 0;
-        const maxWaitAttempts = 10;
-        while (!mapComp?.mapView && waitAttempts < maxWaitAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            waitAttempts++;
-        }
-
-        if (!mapComp?.mapView && waitAttempts >= maxWaitAttempts) {
-            toast.error('Map failed to initialize after multiple attempts. Please try again.');
-            isLoading.value = false;
-            return;
-        }
-        if (mapComp && mapComp.mapView) {
-            mapComp.address = values.address1 + (values.address2 ? `, ${values.address2}` : "");
-            // 43.646294506256936, -79.38741027876338
-            if (geocodeResult && geocodeResult.data.results.length > 0) {
-                mapComp.mapView.setView([
-                    geocodeResult.data.results[0].geometry.location.lat,
-                    geocodeResult.data.results[0].geometry.location.lng
-                ], 18);
-            } else {
-                mapComp.mapView.setView([openStreetMapItems[0].lat, openStreetMapItems[0].lng], 18);
-            }
-            mapComp.helperBtns = [
-                ...(
-                    geocodeResult &&
-                        geocodeResult.data.results.length > 0 ?
-                        geocodeResult.data.results.map(item => ({
-                            label: item.formatted_address,
-                            lat: item.geometry.location.lat,
-                            lng: item.geometry.location.lng
-                        })) :
-                        []
-                ),
-                ...openStreetMapItems.map(item => ({
-                    label: item.label,
-                    lat: item.lat,
-                    lng: item.lng
-                }))
-            ];
-        } else {
-            toast.error('mapComp && mapComp.mapView is FALSE');
-        }
-        setTimeout(() => {
-            isLoading.value = false;
-        }, 500);
+        console.log('values', values);
+        // values.address1, form.values.country?.toLowerCase()
+        mapLocation.value.address = values.address1;
+        mapLocation.value.country = values.country.toLowerCase();
     })
 }
 
 async function onMapConfirm() {
     isDialogOpen.value = false;
-    if (mapComp && mapComp.mapView) {
-        isLoading.value = true;
-        const { lat, lng } = mapComp.mapView.getCenter();
-        // const reverseGeocodeResult = await reverseGeocode(lat, lng);
-        // console.log('reverseGeocodeResult', reverseGeocodeResult);
-        const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.update.$patch({
-            param: {
-                restaurantId: currentRestaurantId.value ?? '',
-            },
-            json: {
-                ...form.values,
-                lat: lat,
-                lng: lng,
-                geocodeMetadata: locationMetadata ? locationMetadata : null,
-            }
-        })).json()
-        if (error) {
-            handleError(error, form);
-        } else {
-            // Success
-            console.log('data', data);
+    // console.log('mapLocation', mapLocation.value);
+    isLoading.value = true;
+    // const reverseGeocodeResult = await reverseGeocode(lat, lng);
+    // console.log('reverseGeocodeResult', reverseGeocodeResult);
+    const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.update.$patch({
+        param: {
+            restaurantId: currentRestaurantId.value ?? '',
+        },
+        json: {
+            ...form.values,
+            lat: mapLocation.value.lat,
+            lng: mapLocation.value.lng,
         }
-        // wait 1 second
-        // await new Promise(resolve => setTimeout(resolve, 1000));
-        toast.success(`Saved`);
-        isLoading.value = false;
-        await loadMyRestaurants();
-    };
+    })).json()
+    if (error) {
+        handleError(error, form);
+    } else {
+        // Success
+        console.log('data', data);
+    }
+    // wait 1 second
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    toast.success(`Saved`);
+    isLoading.value = false;
+    await loadMyRestaurants();
 }
 
 const address1Label = ref('Street address or P.O. Box (Address 1)');
@@ -263,6 +220,7 @@ watch(() => form.values.country, (newCountry) => {
 });
 
 
+
 </script>
 
 <template>
@@ -279,8 +237,8 @@ watch(() => form.values.country, (newCountry) => {
                     Move the map to your entrance/door and click Confirm
                 </DialogDescription> -->
             </DialogHeader>
-            <GeolocationSelectionMap ref="mapComp"
-                                     class="flex-1 overflow-hidden" />
+            <GeolocationMap v-model="mapLocation"
+                            class="flex-1 overflow-hidden" />
             <!-- <div class="grid gap-4 py-4">
                      <div class="grid grid-cols-4 items-center gap-4">
                          <Label for="name" class="text-right"> Name </Label>
@@ -299,7 +257,7 @@ watch(() => form.values.country, (newCountry) => {
                         class="w-full my-6">
                     <Loader2 v-if="isLoading"
                              class="animate-spin" />
-                    Confirm
+                    Save
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -372,7 +330,8 @@ watch(() => form.values.country, (newCountry) => {
                     class="w-full my-6">
                 <Loader2 v-if="isLoading"
                          class="animate-spin" />
-                Save
+                Set location
+                <MapPin />
             </Button>
         </div>
     </AutoForm>
