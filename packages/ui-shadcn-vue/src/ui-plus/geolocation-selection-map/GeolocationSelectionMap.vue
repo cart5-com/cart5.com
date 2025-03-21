@@ -12,10 +12,9 @@ interface HelperBtns {
 	lng: number;
 }
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
-const mapView = ref<any | null>(null);
+const mapView = ref<L.Map | null>(null);
 const helperBtns = ref<HelperBtns[]>([]);
 const address = ref<string>('');
-let isLeafletInitialized = false;
 
 async function loadLeaflet() {
 	const script = document.querySelector('#leaflet-script')
@@ -42,7 +41,6 @@ async function loadLeaflet() {
 				throw new Error('Leaflet failed to load properly');
 			}
 
-			isLeafletInitialized = true;
 		} catch (error) {
 			console.error('Error loading Leaflet dependencies:', error);
 			toast.error('Failed to load map. Please refresh the page.');
@@ -56,23 +54,24 @@ onMounted(async () => {
 	console.log("onMounted MAP");
 	await loadLeaflet();
 
-	if (!isLeafletInitialized) {
-		toast.error("Map failed to load! Please refresh the page.");
-		return;
-	}
-
 	mapView.value = window.L.map(randomId);
 	mapView.value!.attributionControl.setPrefix(false);
-	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-		maxZoom: 18,
-		subdomains: ["a", "b", "c"]
-	}).addTo(mapView.value!);
-	// window.L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
-	// 	maxZoom: 22,
-	// 	subdomains: ["mt0", "mt1", "mt2", "mt3"],
-	// 	attribution:
-	// 		"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
-	// }).addTo(mapView.value);
+	// mapView.value.addLayer(
+	// 	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+	// 		maxZoom: 18,
+	// 		subdomains: ["a", "b", "c"],
+	// 		attribution:
+	// 			"<a href='https://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
+	// 	})
+	// );
+	mapView.value.addLayer(
+		window.L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+			maxZoom: 22,
+			subdomains: ["mt0", "mt1", "mt2", "mt3"],
+			attribution:
+				"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
+		})
+	);
 	// mapView.value.fitWorld();
 });
 

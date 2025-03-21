@@ -125,7 +125,7 @@ onMounted(() => {
 
 
 const isDialogOpen = ref(false);
-const mapComp = ref<InstanceType<typeof GeolocationSelectionMap>>();
+let mapComp: InstanceType<typeof GeolocationSelectionMap> | null = null;
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 let locationMetadata: any = null;
 
@@ -141,18 +141,31 @@ async function onSubmit(values: z.infer<typeof schema>) {
         console.log('openStreetMapItems', openStreetMapItems);
         isDialogOpen.value = true;
         await new Promise(resolve => setTimeout(resolve, 500));
-        if (mapComp && mapComp.value && mapComp.value.mapView) {
-            mapComp.value.address = values.address1 + (values.address2 ? `, ${values.address2}` : "");
+        // Wait for mapComp.mapView to be defined
+        let waitAttempts = 0;
+        const maxWaitAttempts = 10;
+        while (!mapComp?.mapView && waitAttempts < maxWaitAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            waitAttempts++;
+        }
+
+        if (!mapComp?.mapView && waitAttempts >= maxWaitAttempts) {
+            toast.error('Map failed to initialize after multiple attempts. Please try again.');
+            isLoading.value = false;
+            return;
+        }
+        if (mapComp && mapComp.mapView) {
+            mapComp.address = values.address1 + (values.address2 ? `, ${values.address2}` : "");
             // 43.646294506256936, -79.38741027876338
             if (geocodeResult && geocodeResult.data.results.length > 0) {
-                mapComp.value.mapView.setView([
+                mapComp.mapView.setView([
                     geocodeResult.data.results[0].geometry.location.lat,
                     geocodeResult.data.results[0].geometry.location.lng
                 ], 18);
             } else {
-                mapComp.value.mapView.setView([openStreetMapItems[0].lat, openStreetMapItems[0].lng], 18);
+                mapComp.mapView.setView([openStreetMapItems[0].lat, openStreetMapItems[0].lng], 18);
             }
-            mapComp.value.helperBtns = [
+            mapComp.helperBtns = [
                 ...(
                     geocodeResult &&
                         geocodeResult.data.results.length > 0 ?
@@ -169,6 +182,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
                     lng: item.lng
                 }))
             ];
+        } else {
+            toast.error('mapComp && mapComp.mapView is FALSE');
         }
         setTimeout(() => {
             isLoading.value = false;
@@ -178,9 +193,9 @@ async function onSubmit(values: z.infer<typeof schema>) {
 
 async function onMapConfirm() {
     isDialogOpen.value = false;
-    if (mapComp && mapComp.value && mapComp.value.mapView) {
+    if (mapComp && mapComp.mapView) {
         isLoading.value = true;
-        const { lat, lng } = mapComp.value.mapView.getCenter();
+        const { lat, lng } = mapComp.mapView.getCenter();
         // const reverseGeocodeResult = await reverseGeocode(lat, lng);
         // console.log('reverseGeocodeResult', reverseGeocodeResult);
         const { data, error } = await (await apiClient.dashboard.restaurant[':restaurantId'].address.update.$patch({

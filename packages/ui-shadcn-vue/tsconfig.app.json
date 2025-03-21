@@ -30,6 +30,9 @@
       ],
       "@lib/*": [
         "../lib/src/*"
+      ],
+      "@api-client/*": [
+        "../api-client/src/*"
       ]
     }
   },
