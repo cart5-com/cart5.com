@@ -25,6 +25,7 @@ import { toast } from '@/ui-plus/sonner'
 const dialog = useDialog();
 
 onMounted(async () => {
+  // TODO: if there is no user session for auth.domain.com, turnstile may fail
   if (queryParamsStore.value.type === 'turnstile') {
     if (window.opener) {
       const result = await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY);

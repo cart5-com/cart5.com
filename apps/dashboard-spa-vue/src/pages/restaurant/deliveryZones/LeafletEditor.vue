@@ -182,11 +182,19 @@ const initMap = async () => {
         if (isLeafletInitialized === false) {
             toast.error('Map failed! please refresh the page');
         }
-    }, 3e3);
+    }, 10e3);
 
+    let checkAttempts = 0;
     while (!window.L || !window.L.drawVersion) {
         await new Promise(resolve => setTimeout(resolve, 500))
+        checkAttempts++;
+        if (checkAttempts > 20) {
+            console.error('Failed to load Leaflet after multiple attempts');
+            toast.error('after multiple attempts, map failed! please refresh the page');
+            return;
+        }
     }
+
     isLeafletInitialized = true;
     mapInstance = window.L.map(mapId, {
         // @ts-ignore
@@ -323,48 +331,87 @@ function showDrawControl() {
 }
 
 onMounted(async () => {
-    const script = document.querySelector('#leaflet-script')
-    if (!script) {
-        const css = document.createElement('link');
-        css.href = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`
-        css.rel = 'stylesheet'
-        document.head.appendChild(css)
-
-        const script = document.createElement('script')
-        script.src = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js`
-        script.id = 'leaflet-script'
-        document.head.appendChild(script)
-
-
-        const drawCss = document.createElement('link');
-        drawCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css`
-        drawCss.rel = 'stylesheet'
-        document.head.appendChild(drawCss)
-
-        while (!window.L) {
-            await new Promise(resolve => setTimeout(resolve, 500))
-        }
-        const fullScreenCss = document.createElement('link');
-        fullScreenCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.css`
-        fullScreenCss.rel = 'stylesheet'
-        document.head.appendChild(fullScreenCss)
-
-        const fullScreenScript = document.createElement('script')
-        fullScreenScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.min.js`
-        document.head.appendChild(fullScreenScript)
-
-        const drawScript = document.createElement('script')
-        drawScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js`
-        document.head.appendChild(drawScript)
-        while (!window.L.drawVersion) {
-            await new Promise(resolve => setTimeout(resolve, 500))
-        }
-
-        window.L.drawLocal.edit.handlers.edit.tooltip.text = 'Drag handles 🔲 to edit/resize active shape';
-        window.L.drawLocal.edit.handlers.edit.tooltip.subtext = 'Click done to save changes or close to discard';
-    }
+    await loadLeaflet()
     initMap()
 })
+
+async function loadLeaflet() {
+    const script = document.querySelector('#leaflet-script')
+    if (!script) {
+        // Load all dependencies with proper sequencing and error handling
+        try {
+            // Load Leaflet CSS
+            const css = document.createElement('link');
+            css.href = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`;
+            css.rel = 'stylesheet';
+            document.head.appendChild(css);
+
+            // Load Leaflet JS with a Promise
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js`;
+                script.id = 'leaflet-script';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+
+            // Verify Leaflet loaded correctly
+            if (!window.L) {
+                throw new Error('Leaflet failed to load properly');
+            }
+
+            // Now load the draw CSS
+            const drawCss = document.createElement('link');
+            drawCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css`;
+            drawCss.rel = 'stylesheet';
+            document.head.appendChild(drawCss);
+
+            // Load fullscreen CSS
+            const fullScreenCss = document.createElement('link');
+            fullScreenCss.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.css`;
+            fullScreenCss.rel = 'stylesheet';
+            document.head.appendChild(fullScreenCss);
+
+            // Load fullscreen JS with a Promise
+            await new Promise((resolve, reject) => {
+                const fullScreenScript = document.createElement('script');
+                fullScreenScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/3.0.2/Control.FullScreen.min.js`;
+                fullScreenScript.onload = resolve;
+                fullScreenScript.onerror = reject;
+                document.head.appendChild(fullScreenScript);
+            });
+
+            // Load draw JS with a Promise
+            await new Promise((resolve, reject) => {
+                const drawScript = document.createElement('script');
+                drawScript.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js`;
+                drawScript.onload = resolve;
+                drawScript.onerror = reject;
+                document.head.appendChild(drawScript);
+            });
+
+            // Wait for draw version to be available
+            let checkAttempts = 0;
+            while (!window.L.drawVersion && checkAttempts < 20) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                checkAttempts++;
+            }
+
+            if (!window.L.drawVersion) {
+                throw new Error('Leaflet draw plugin failed to initialize');
+            }
+
+            // Set draw tooltips
+            window.L.drawLocal.edit.handlers.edit.tooltip.text = 'Drag handles 🔲 to edit/resize active shape';
+            window.L.drawLocal.edit.handlers.edit.tooltip.subtext = 'Click done to save changes or close to discard';
+        } catch (error) {
+            console.error('Error loading Leaflet dependencies:', error);
+            toast.error('Failed to load map. Please refresh the page.');
+            return;
+        }
+    }
+}
 
 let clearControl: L.Control | null = null;  // Add this line
 
