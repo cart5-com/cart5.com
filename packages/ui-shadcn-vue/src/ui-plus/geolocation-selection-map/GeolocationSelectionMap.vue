@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// TODO: remove leaflet imports, use CDN like LeafletEditor.vue
-import "leaflet/dist/leaflet.css";
-import { Map, map, tileLayer } from "leaflet";
 import { Loader2, LocateFixed } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -15,20 +12,62 @@ interface HelperBtns {
 	lng: number;
 }
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
-const mapView = ref<Map>();
+const mapView = ref<any | null>(null);
 const helperBtns = ref<HelperBtns[]>([]);
 const address = ref<string>('');
+let isLeafletInitialized = false;
 
-onMounted(() => {
+async function loadLeaflet() {
+	const script = document.querySelector('#leaflet-script')
+	if (!script) {
+		try {
+			// Load Leaflet CSS
+			const css = document.createElement('link');
+			css.href = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`;
+			css.rel = 'stylesheet';
+			document.head.appendChild(css);
+
+			// Load Leaflet JS with a Promise
+			await new Promise((resolve, reject) => {
+				const script = document.createElement('script');
+				script.src = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js`;
+				script.id = 'leaflet-script';
+				script.onload = resolve;
+				script.onerror = reject;
+				document.head.appendChild(script);
+			});
+
+			// Verify Leaflet loaded correctly
+			if (!window.L) {
+				throw new Error('Leaflet failed to load properly');
+			}
+
+			isLeafletInitialized = true;
+		} catch (error) {
+			console.error('Error loading Leaflet dependencies:', error);
+			toast.error('Failed to load map. Please refresh the page.');
+			return false;
+		}
+	}
+	return true;
+}
+
+onMounted(async () => {
 	console.log("onMounted MAP");
-	mapView.value = map(randomId);
-	mapView.value.attributionControl.setPrefix(false);
-	tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+	await loadLeaflet();
+
+	if (!isLeafletInitialized) {
+		toast.error("Map failed to load! Please refresh the page.");
+		return;
+	}
+
+	mapView.value = window.L.map(randomId);
+	mapView.value!.attributionControl.setPrefix(false);
+	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 		maxZoom: 18,
 		subdomains: ["a", "b", "c"]
-	}).addTo(mapView.value);
-	// or we can use google maps tiles, but I am not sure about TOS
-	// tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+	}).addTo(mapView.value!);
+	// window.L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
 	// 	maxZoom: 22,
 	// 	subdomains: ["mt0", "mt1", "mt2", "mt3"],
 	// 	attribution:

@@ -21,7 +21,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-vue": "^8.5.1",
-    "leaflet": "^1.9.4",
     "libphonenumber-js": "^1.11.18",
     "lucide-vue-next": "^0.475.0",
     "radix-vue": "^1.9.10",
