@@ -39,7 +39,7 @@ export const startSeed = async () => {
     const cart5Team_asSupportTeam = await getSupportTeamByHostname_Service("www.cart5dev.com")
 
     const cuneytObite = await createSeedUser("cuneyt@obite.co.uk", password, "Cuneyt");
-    const obiteWebsite = await createWebsite_Service(cuneytObite?.id!, "obite", cart5Team_asSupportTeam?.teamId!, false, "web_obite_id_456");
+    const obiteWebsite = await createWebsite_Service(cuneytObite?.id!, "obite", cart5Team_asSupportTeam?.ownerTeamId!, false, "web_obite_id_456");
     await updateWebsite_Service(obiteWebsite.id, {
         isPartner: true,
     })
@@ -55,7 +55,7 @@ export const startSeed = async () => {
 
     //flames.obite.com created by thush inside obite website
     const obiteTeam_asSupportTeam = await getSupportTeamByHostname_Service("www.obite.co.uk")
-    const flamesWebsite = await createWebsite_Service(thushObite?.id!, "flames", obiteTeam_asSupportTeam?.teamId!, true, "web_flames_id_789");
+    const flamesWebsite = await createWebsite_Service(thushObite?.id!, "flames", obiteTeam_asSupportTeam?.ownerTeamId!, true, "web_flames_id_789");
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.obite.com"); // secondary domain to redirect to default domain
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.obite.co.uk"); // secondary domain to redirect to default domain
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.com"); // secondary domain to redirect to default domain
@@ -82,7 +82,7 @@ export const startSeed = async () => {
         const rest = await createRestaurant_Service(
             thushObite?.id!,
             name,
-            obiteTeam_asSupportTeam?.teamId!,
+            obiteTeam_asSupportTeam?.ownerTeamId!,
             true,
             `rest_${i}_${i}_${i}`
         );

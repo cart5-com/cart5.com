@@ -109,7 +109,7 @@ export const createTeamTransactional_Service = async (
 }
 
 export const getSupportTeamByHostname_Service = async (hostname: string) => {
-    const result = await db
+    return await db
         .select({
             ownerTeamId: teamTable.id,
             websiteId: websitesTable.id,
@@ -130,8 +130,6 @@ export const getSupportTeamByHostname_Service = async (hostname: string) => {
         )
         .where(eq(websiteDomainMapTable.hostname, hostname))
         .then(results => results[0] || null);
-
-    return result ? result : null;
 }
 
 export const isUserMemberOfTeam_Service = async (
