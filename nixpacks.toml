@@ -4,6 +4,7 @@ nixPkgs = ['...', 'awscli2']
 [phases.build]
 cmds = [
     '...', 
+    'pnpm cf:pages:deploy'
     # Purge cache on production after build
     # 'cd apps/proxy-caddy && pnpm prod:cache:purge'
 ]
