@@ -30,6 +30,8 @@ import { onMounted, ref, watch } from 'vue';
 import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
+import { loadLeafletDrawCDN } from './loadLeafletDrawCDN';
+
 const router = useRouter();
 
 const mapComp = ref<InstanceType<typeof LeafletEditor>>();
@@ -292,6 +294,7 @@ const saveDeliveryZones = async () => {
 
 onMounted(() => {
     loadDeliveryZones();
+    loadLeafletDrawCDN(true);
 });
 </script>
 

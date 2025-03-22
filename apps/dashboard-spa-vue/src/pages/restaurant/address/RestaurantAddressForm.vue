@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -22,7 +21,10 @@ import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/u
 import { currentRestaurantId, loadMyRestaurants } from '@dashboard-spa-vue/stores/RestaurantStore';
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
+
+import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { GeoLocation } from '@/ui-plus/geolocation-selection-map/types';
+import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 
 const schema = z.object({
     country: z.string().min(1, 'Address is required'),
@@ -128,6 +130,7 @@ const loadData = async () => {
 
 onMounted(() => {
     loadData();
+    loadLeafletCDN(true);
 })
 
 

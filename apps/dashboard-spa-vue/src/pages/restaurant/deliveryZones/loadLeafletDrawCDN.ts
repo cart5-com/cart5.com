@@ -48,7 +48,7 @@ const loadCDNs = async () => {
 
 }
 
-export const loadLeafletDrawCDN = async () => {
+export const loadLeafletDrawCDN = async (isSilent = false) => {
     let checkAttempts = 0;
     while (!window.L || !window.L.drawVersion) {
         loadCDNs()
@@ -56,10 +56,14 @@ export const loadLeafletDrawCDN = async () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
         if (checkAttempts > 6) {
             console.error('Failed to load Leaflet after multiple attempts');
-            toast.error('After multiple attempts, map failed! Please refresh the page.');
+            if (isSilent === false) {
+                toast.error('After multiple attempts, map failed! Please refresh the page.');
+            }
             return false;
         } else if (!window.L) {
-            toast.error('Could not load map, retrying...');
+            if (isSilent === false) {
+                toast.error('Could not load map, retrying...');
+            }
         }
     }
     window.L.drawLocal.edit.handlers.edit.tooltip.text = 'Drag handles 🔲 to edit/resize active shape';
