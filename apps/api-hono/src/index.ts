@@ -9,6 +9,7 @@ import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
 import { apiRouter } from './routes/router';
+import { startCrons } from './cron';
 
 const app = new Hono<HonoVariables>();
 app.onError(errorHandler);
@@ -54,3 +55,4 @@ const startServer = () => {
 }
 
 startServer();
+startCrons();

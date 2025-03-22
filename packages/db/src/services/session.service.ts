@@ -95,7 +95,6 @@ export const getSessionService = async (sessionId: string): Promise<Session | nu
     } as Session;
 }
 
-// TODO: add a cron job to delete expired sessions
 export const deleteExpiredSessionsService = async () => {
     return (
         await db
