@@ -2,7 +2,7 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { PlusCircleIcon } from "lucide-vue-next";
+import { PlusCircleIcon, Store } from "lucide-vue-next";
 import { myRestaurantsFiltered, myRestaurants, searchQuery, restaurantListType } from '@dashboard-spa-vue/stores/RestaurantStore'
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
@@ -32,7 +32,10 @@ const openNewRestaurantDialog = () => {
     <HeaderOnly>
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-col gap-1">
-                <h3 class="text-2xl font-bold tracking-tight">My Restaurants</h3>
+                <h3 class="text-2xl font-bold tracking-tight">
+                    <Store class="inline-block mr-1" />
+                    My Restaurants
+                </h3>
                 <!-- <p class="text-muted-foreground text-sm">As a manager, you can view and manage all your restaurants
                     below.</p> -->
             </div>
@@ -55,7 +58,10 @@ const openNewRestaurantDialog = () => {
                         class="block">
                 <Card class="bg-muted hover:bg-muted/20 h-24 transition-colors">
                     <CardHeader>
-                        <CardTitle class="text-lg"> {{ restaurant.name }}</CardTitle>
+                        <CardTitle class="text-lg">
+                            <Store class="inline-block mr-1" />
+                            {{ restaurant.name }}
+                        </CardTitle>
                         <CardDescription>{{ restaurant.address1 }}</CardDescription>
                     </CardHeader>
                 </Card>

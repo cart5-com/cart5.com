@@ -58,7 +58,7 @@ import {
 			:to="{ name: 'website' }"
 			class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors"
 		>
-			<GlobeIcon class="text-muted-foreground h-10 w-10" />
+			<Globe class="text-muted-foreground h-10 w-10" />
 			<span class="text-foreground mt-2 text-sm">Website</span>
 		</RouterLink> -->
 		<!-- <button v-for="app in apps"
