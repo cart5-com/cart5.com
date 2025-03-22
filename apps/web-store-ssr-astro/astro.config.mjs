@@ -10,6 +10,11 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+  // build: {
+  //   assetsPrefix: {
+
+  //   }
+  // },
   server: {
     allowedHosts: [
       "www.cart5dev.com",
