@@ -103,16 +103,26 @@ export const getAllWebsitesThatUserHasAccessTo = async (userId: string) => {
     return websites;
 }
 
-export const createWebsite_Service = async (ownerUserId: string, name: string, supportTeamId: string | null, isUserMemberOfSupportTeam: boolean) => {
+export const createWebsite_Service = async (
+    ownerUserId: string,
+    name: string,
+    supportTeamId: string | null,
+    isUserMemberOfSupportTeam: boolean,
+    websiteId?: string
+) => {
     return await db.transaction(async (tx) => {
         const teamId = isUserMemberOfSupportTeam
             ? await createTeamWithoutOwner_Service('WEBSITE', tx)
             : await createTeamTransactional_Service(ownerUserId, 'WEBSITE', tx);
-        const website = await tx.insert(websitesTable).values({
+        const values = {
             name: name,
             ownerTeamId: teamId,
             supportTeamId: supportTeamId,
-        }).returning({
+        }
+        if (websiteId) {
+            (values as any).id = websiteId;
+        }
+        const website = await tx.insert(websitesTable).values(values).returning({
             id: websitesTable.id,
             ownerTeamId: websitesTable.ownerTeamId,
             name: websitesTable.name

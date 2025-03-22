@@ -38,7 +38,13 @@ export const createWebsite_Handler = async (c: Context<
         isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
     }
     return c.json({
-        data: await createWebsite_Service(ownerUserId, name, supportTeam?.teamId ?? null, isUserMemberOfSupportTeam),
+        data: await createWebsite_Service(
+            ownerUserId,
+            name,
+            supportTeam?.teamId ?? null,
+            isUserMemberOfSupportTeam,
+            // websiteId not allowed here
+        ),
         error: null as ErrorType
     }, 200);
 } 
