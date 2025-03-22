@@ -10,11 +10,9 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  // build: {
-  //   assetsPrefix: {
-
-  //   }
-  // },
+  build: {
+    assetsPrefix: "https://cart5-web-store-prod-pages.cart5.com/"
+  },
   server: {
     allowedHosts: [
       "www.cart5dev.com",
