@@ -23,6 +23,8 @@ export const websitesTable = sqliteTable("websites", {
     // if false, the website will use websiteRestaurantMapTable  to show selected restaurants
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
 
+    isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false),
+
 });
 export const insertWebsitesSchema = createInsertSchema(websitesTable, {
     name: z.string().min(1, { message: "min 1" }).max(510, { message: "max 510" }),

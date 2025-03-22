@@ -138,6 +138,11 @@ const router = createRouter({
           path: 'restaurants',
           name: 'website-restaurants',
           component: () => import('@dashboard-spa-vue/pages/website/restaurants/WebsiteRestaurantsListView.vue'),
+        },
+        {
+          path: 'partner',
+          name: 'website-partner',
+          component: () => import('@dashboard-spa-vue/pages/website/partner/PartnerView.vue'),
         }
       ],
     },
