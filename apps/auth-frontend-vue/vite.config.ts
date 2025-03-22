@@ -9,8 +9,7 @@ console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   base: mode === 'production'
-    // ? 'https://cdn.mydomain.com/auth-frontend-vue/'
-    ? '/'
+    ? 'https://cart5-auth-frontend-prod-pages.cart5.com/'
     : '/',
   server: {
     allowedHosts: [
