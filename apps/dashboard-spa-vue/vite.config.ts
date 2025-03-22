@@ -10,7 +10,7 @@ console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 export default defineConfig(({ mode }) => ({
   base: mode === 'production'
     // ? 'https://cdn.mydomain.com/auth-frontend-vue/'
-    ? '/dashboard/'
+    ? 'https://cart5-dashboard-prod-pages.cart5.com/'
     : '/dashboard/',
   server: {
     allowedHosts: [
