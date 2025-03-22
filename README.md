@@ -105,5 +105,4 @@ Add to /etc/hosts
 
 ## [TODOS]
 
-- [ ] TODO: add rate limiting for prod caddy config
 - [ ] TODO: add sentry
