@@ -33,12 +33,12 @@ export const createRestaurant_Handler = async (c: Context<
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
     let isUserMemberOfSupportTeam = false;
     if (supportTeam) {
-        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.ownerTeamId!)
     }
     return c.json({
         data: await createRestaurant_Service(
             ownerUserId, name,
-            supportTeam?.teamId ?? null,
+            supportTeam?.ownerTeamId ?? null,
             isUserMemberOfSupportTeam,
             // restaurantId not allowed here
         ),

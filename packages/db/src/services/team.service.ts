@@ -111,10 +111,12 @@ export const createTeamTransactional_Service = async (
 export const getSupportTeamByHostname_Service = async (hostname: string) => {
     const result = await db
         .select({
-            teamId: teamTable.id,
+            ownerTeamId: teamTable.id,
             websiteId: websitesTable.id,
             name: websitesTable.name,
+            isPartner: websitesTable.isPartner,
             defaultHostname: websitesTable.defaultHostname,
+            supportTeamId: websitesTable.supportTeamId,
             ownerUserId: teamTable.ownerUserId
         })
         .from(websiteDomainMapTable)

@@ -35,13 +35,13 @@ export const createWebsite_Handler = async (c: Context<
     const supportTeam = await getSupportTeamByHostname_Service(c.req.header()['host'])
     let isUserMemberOfSupportTeam = false;
     if (supportTeam) {
-        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.teamId!)
+        isUserMemberOfSupportTeam = await isUserMemberOfTeam_Service(ownerUserId, supportTeam?.ownerTeamId!)
     }
     return c.json({
         data: await createWebsite_Service(
             ownerUserId,
             name,
-            supportTeam?.teamId ?? null,
+            supportTeam?.ownerTeamId ?? null,
             isUserMemberOfSupportTeam,
             // websiteId not allowed here
         ),
