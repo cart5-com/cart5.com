@@ -44,7 +44,11 @@ function setCenter(lat: number, lng: number) {
 }
 
 onMounted(async () => {
-	await loadLeafletCDN();
+	const loaded = await loadLeafletCDN();
+	if (!loaded) {
+		return;
+	}
+
 	mapView = window.L.map(randomId);
 	marker = window.L.marker([model.value.lat ?? 0, model.value.lng ?? 0]).addTo(mapView)
 	marker.setOpacity(0.8)

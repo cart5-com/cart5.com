@@ -22,14 +22,14 @@ async function loadLeaflet() {
 		try {
 			// Load Leaflet CSS
 			const css = document.createElement('link');
-			css.href = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.css`;
+			css.href = `https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css`;
 			css.rel = 'stylesheet';
 			document.head.appendChild(css);
 
 			// Load Leaflet JS with a Promise
 			await new Promise((resolve, reject) => {
 				const script = document.createElement('script');
-				script.src = `https://unpkg.com/leaflet@1.9.4/dist/leaflet.js`;
+				script.src = `https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js`;
 				script.id = 'leaflet-script';
 				script.onload = resolve;
 				script.onerror = reject;
