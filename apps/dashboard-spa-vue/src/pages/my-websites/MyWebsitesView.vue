@@ -2,7 +2,7 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Globe, GlobeIcon, PlusCircleIcon } from "lucide-vue-next";
+import { Globe, PlusCircleIcon } from "lucide-vue-next";
 import { myWebsitesFiltered, myWebsites, searchQuery } from '@dashboard-spa-vue/stores/WebsiteStore'
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 // import { useDialog } from '@/ui-plus/dialog/use-dialog';
