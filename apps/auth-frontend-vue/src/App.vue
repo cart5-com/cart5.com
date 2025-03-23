@@ -21,7 +21,6 @@ import { getNextUrl } from '@auth-frontend-vue/lib/queryHelpers';
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner'
-import { Button } from '@/components/ui/button';
 const dialog = useDialog();
 
 onMounted(async () => {
@@ -54,17 +53,10 @@ onMounted(async () => {
 })
 
 
-const throwError = () => {
-  // @ts-ignore
-  myUndefinedFunction();
-  throw new Error('Test error');
-};
-
 </script>
 
 <template>
   <div class="mx-auto w-full sm:max-w-[600px]">
-    <Button @click="throwError">Throw Error</Button>
     <div v-if="queryParamsStore.type === 'turnstile'">
 
     </div>

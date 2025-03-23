@@ -1,13 +1,7 @@
 <script lang="ts" setup>
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import AppLinks from '@dashboard-spa-vue/components/AppLinks.vue';
-import { Button } from '@/components/ui/button';
 
-const throwError = () => {
-	// @ts-ignore
-	myUndefinedFunction();
-	throw new Error('Test error');
-};
 </script>
 
 <template>
@@ -23,7 +17,6 @@ const throwError = () => {
 					<AppLinks />
 				</div>
 			</div>
-			<Button @click="throwError">Throw Error</Button>
 		</main>
 	</HeaderOnly>
 </template>
