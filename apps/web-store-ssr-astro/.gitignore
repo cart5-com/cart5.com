@@ -12,6 +12,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+.env.dev.secrets
 
 # macOS-specific files
 .DS_Store

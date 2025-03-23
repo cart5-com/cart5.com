@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import node from "@astrojs/node";
+import sentry from "@sentry/astro";
 
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
@@ -61,5 +62,21 @@ export default defineConfig({
         // },
       },
     }
-  }
+  },
+  integrations: [
+    sentry({
+      enabled: {
+        client: true,
+        server: true
+      },
+      dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
+      replaysSessionSampleRate: 0,
+      replaysOnErrorSampleRate: 0,
+      environment: process.env.NODE_ENV,
+      sourceMapsUploadOptions: {
+        project: "web-store-ssr-astro",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      },
+    })
+  ]
 });

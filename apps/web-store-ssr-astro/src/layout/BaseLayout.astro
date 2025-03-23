@@ -5,6 +5,7 @@ interface Props {
 const { title } = Astro.props;
 const websiteId = Astro.locals.WEBSITE?.id;
 const websiteName = Astro.locals.WEBSITE?.name;
+const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 ---
 
 <html lang="en">
@@ -18,6 +19,7 @@ const websiteName = Astro.locals.WEBSITE?.name;
 	<body>
 		<ul>
 			<li><a href="/">index.astro</a></li>
+			<li><a href="/sample-error">sample-error.astro</a></li>
 			<li>
 				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
 			</li>
@@ -47,6 +49,8 @@ const websiteName = Astro.locals.WEBSITE?.name;
 		<div>
 			💩💩💩💩cache:
 			<span class="cache-date" data-cache-date={Date.now()}></span>
+			<br />
+			SENTRY_RELEASE_ID: {SENTRY_RELEASE_ID}
 		</div>
 		<div>
 			websiteId:{websiteId}
@@ -66,6 +70,37 @@ const websiteName = Astro.locals.WEBSITE?.name;
 			// 	document.body.style.backgroundColor = "red";
 			// 	window.location.reload();
 			// }, 2000);
+		</script>
+
+		<button id="error-button">Throw test error</button>
+		<script>
+			function handleClick() {
+				throw new Error("This is a test error");
+			}
+			document.querySelector<HTMLButtonElement>("#error-button")?.addEventListener("click", handleClick);
+		</script>
+
+		<!-- ACTIONS SAMPLE -->
+		<button id="get-greeting-button">Get greeting</button>
+		<button id="sample-throw-error-button">Sample throw error</button>
+		<script>
+			import { actions } from "astro:actions";
+
+			const button = document.querySelector<HTMLButtonElement>("#get-greeting-button");
+			button?.addEventListener("click", async () => {
+				// Show alert pop-up with greeting from action
+				const { data, error } = await actions.getGreeting({ name: "Houston" });
+				if (!error) alert(data);
+			});
+
+			const button2 = document.querySelector<HTMLButtonElement>("#sample-throw-error-button");
+			button2?.addEventListener("click", async () => {
+				const { data, error } = await actions.sampleThrowError();
+				if (error) {
+					console.error(error);
+				}
+				if (!error) alert(data);
+			});
 		</script>
 	</body>
 </html>

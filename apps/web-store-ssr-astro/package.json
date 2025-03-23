@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "dotenvx run -- astro dev",
+    "dev": "dotenvx run -f .env -f .env.dev.secrets -- astro dev",
     "dev:caddy": "pnpm dev",
     "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
     "cf:pages:deploy": "dotenvx run -f .env.production -- wrangler pages deploy dist/client --project-name=cart5-web-store-prod --branch=main --no-bundle",
@@ -19,6 +19,7 @@
     "astro": "^5.5.4",
     "lib": "workspace:*",
     "typescript": "^5.7.2",
-    "wrangler": "^4.3.0"
+    "wrangler": "^4.3.0",
+    "@sentry/astro": "^9.8.0"
   }
 }

@@ -8,3 +8,5 @@ declare namespace App {
         } | null;
     }
 }
+
+declare var SENTRY_RELEASE: { id: string };
