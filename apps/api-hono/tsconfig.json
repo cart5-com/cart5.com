@@ -26,5 +26,9 @@
         "../../packages/api-client/src/*"
       ]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ]
 }

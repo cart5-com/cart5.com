@@ -21,6 +21,7 @@ export const server = {
     })
 }
 
+// sentry does not catch errors from astro actions
 function handleClick() {
     throw new Error("This is a test error");
 }
