@@ -2,6 +2,7 @@ import { IS_PROD } from "@lib/utils/getEnvVariable";
 import { createSeedUser } from "./createSeedUser";
 import {
     addDomainToWebsite_Service,
+    addRestaurantToWebsite_Service,
     createWebsite_Service,
     getWebsiteInfo_Service,
     updateWebsite_Service
@@ -61,6 +62,10 @@ export const startSeed = async () => {
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.obite.co.uk"); // secondary domain to redirect to default domain
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.com"); // secondary domain to redirect to default domain
     await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "www.flames.com"); // default domain
+
+    await updateWebsite_Service(flamesWebsite.id, {
+        isMarketplace: false,
+    })
 
     const flamesRestaurantAdminUser = await createSeedUser("flames_admin@flames.com", password, "Flames Admin");
     const invitationForFlamesRestaurantAdminUser = await insertInvitation(
@@ -124,15 +129,15 @@ export const startSeed = async () => {
         restaurantsByThush.push(rest);
     }
 
-    const realFlamesRestaurant = restaurantsByThush[4];
-    await updateRestaurant_Service(realFlamesRestaurant.id, {
+    const flamesRestaurant = restaurantsByThush[4];
+    await updateRestaurant_Service(flamesRestaurant.id, {
         name: "Flames Restaurant",
     })
-    await updateRestaurantAddress_Service(realFlamesRestaurant.id, {
+    await updateRestaurantAddress_Service(flamesRestaurant.id, {
         lat: baseLat,
         lng: baseLng
     })
-    await updateRestaurantOpenHours_Service(realFlamesRestaurant.id, {
+    await updateRestaurantOpenHours_Service(flamesRestaurant.id, {
         timezone: cfRaw.timezone,
         defaultOpenHours: {
             isActive: true,
@@ -203,16 +208,21 @@ export const startSeed = async () => {
     // invite flames admin to Real Flames restaurant
     const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(
         flamesRestaurantAdminUser?.email!,
-        realFlamesRestaurant?.ownerTeamId!,
+        flamesRestaurant?.ownerTeamId!,
         [TEAM_PERMISSIONS.FULL_ACCESS],
         thushObite?.id!,
-        realFlamesRestaurant?.name!
+        flamesRestaurant?.name!
     );
     await addMemberToTeam(
-        realFlamesRestaurant?.ownerTeamId!,
+        flamesRestaurant?.ownerTeamId!,
         flamesRestaurantAdminUser?.id!,
         [TEAM_PERMISSIONS.FULL_ACCESS],
         invitationForFlamesRestaurantAdminUserRes.id
+    );
+
+    await addRestaurantToWebsite_Service(
+        flamesWebsite.id,
+        flamesRestaurant.id
     );
 
 
