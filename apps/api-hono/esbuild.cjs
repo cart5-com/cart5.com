@@ -1,3 +1,4 @@
+const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
 
 require("esbuild").build({
     entryPoints: ["src/index.ts"],
@@ -7,7 +8,13 @@ require("esbuild").build({
     format: "esm",
     minify: true,
     sourcemap: true,
-    plugins: [],
+    plugins: [
+        // Put the Sentry esbuild plugin after all other plugins
+        sentryEsbuildPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            project: "api-hono",
+        }),
+    ],
     external: [
         '@node-rs/argon2',
         '@libsql/client',

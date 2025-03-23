@@ -1,3 +1,4 @@
+import { sentryMiddleware } from './middlewares/sentryMiddleware';
 import { serve } from '@hono/node-server'
 import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
@@ -11,7 +12,9 @@ import { errorHandler } from './middlewares/errorHandler';
 import { apiRouter } from './routes/router';
 import { startCrons } from './cron';
 
+
 const app = new Hono<HonoVariables>();
+app.use(sentryMiddleware);
 app.onError(errorHandler);
 
 app.use(csrfChecks);
@@ -21,6 +24,13 @@ app.use(secureHeaders());
 
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
+});
+
+app.get("/test-error", async (c) => {
+	console.log("test-error", globalThis.SENTRY_RELEASE?.id);
+	await new Promise(resolve => setTimeout(resolve, 1000));
+	throw new Error("test error");
+	return c.html(`Hello`);
 });
 
 const apiRoutes = app
