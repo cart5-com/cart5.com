@@ -24,6 +24,7 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
 			</li>
 		</ul>
+		<hr />
 		<h4>{title}</h4>
 		<hr />
 		<button id="whoami-button">Who am I</button>
@@ -46,17 +47,20 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 				border-radius: 3px;
 			}
 		</style>
+		<hr />
 		<div>
 			💩💩💩💩cache:
 			<span class="cache-date" data-cache-date={Date.now()}></span>
 			<br />
 			SENTRY_RELEASE_ID: {SENTRY_RELEASE_ID}
 		</div>
+		<hr />
 		<div>
 			websiteId:{websiteId}
 			<br />
 			websiteName:{websiteName}
 		</div>
+		<hr />
 		<script>
 			import { formatDate } from "@lib/utils/formatDate";
 			const cacheDateSpanElement = document.querySelector<HTMLSpanElement>(".cache-date");
@@ -72,7 +76,8 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 			// }, 2000);
 		</script>
 
-		<button id="error-button">Throw test error</button>
+		<hr />
+		<button id="error-button">Throw client test error</button>
 		<script>
 			function handleClick() {
 				throw new Error("This is a test error");
@@ -80,6 +85,7 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 			document.querySelector<HTMLButtonElement>("#error-button")?.addEventListener("click", handleClick);
 		</script>
 
+		<hr />
 		<!-- ACTIONS SAMPLE -->
 		<input type="text" id="name-input" value="Houston111" />
 		<button id="get-greeting-button">Get greeting</button>
@@ -106,6 +112,33 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 				} else {
 					console.log(data);
 				}
+			});
+		</script>
+		<hr />
+		<button id="test-post-button">Test POST</button>
+		<button id="test-post-button-2">bad request Test POST 2</button>
+		<input type="text" id="test-post-input" value="Houston-test-post" />
+		<script>
+			const button3 = document.querySelector<HTMLButtonElement>("#test-post-button");
+			const input = document.querySelector<HTMLInputElement>("#test-post-input");
+			button3?.addEventListener("click", async () => {
+				const response = await fetch("/atro-api/test-post.json", {
+					method: "POST",
+					body: JSON.stringify({ name: input?.value ?? "" }),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				});
+				const data = await response.json();
+				console.log(data);
+			});
+			const button4 = document.querySelector<HTMLButtonElement>("#test-post-button-2");
+			button4?.addEventListener("click", async () => {
+				const response = await fetch("/atro-api/test-post.json", {
+					method: "POST"
+				});
+				const data = await response.json();
+				console.log(data);
 			});
 		</script>
 	</body>
