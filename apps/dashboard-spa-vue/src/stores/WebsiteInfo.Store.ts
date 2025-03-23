@@ -2,19 +2,19 @@ import { apiClient } from "@api-client/index";
 import { type ResType } from "@api-client/index";
 import { ref } from "vue";
 
-export type hostnameSupportTeamType = ResType<
-    typeof apiClient.dashboard.team.get_team_by_hostname.$get
+type websiteInfoType = ResType<
+    typeof apiClient.dashboard.website.info.$get
 >["data"];
 
-export const hostnameSupportTeam = ref<hostnameSupportTeamType | null>(null);
+export const websiteInfo = ref<websiteInfoType | null>(null);
 
-export const loadSupportTeam = async () => {
-    const { data, error } = await (await apiClient.dashboard.team.get_team_by_hostname.$get()).json()
+export const loadWebsiteInfo = async () => {
+    const { data, error } = await (await apiClient.dashboard.website.info.$get()).json()
     if (error) {
         console.error(error)
     }
     if (data) {
-        hostnameSupportTeam.value = data
+        websiteInfo.value = data
         if (data.defaultHostname) {
             if (window.location.host !== data.defaultHostname) {
                 window.location.href = window.location.href.replace(window.location.host, data.defaultHostname)
@@ -28,4 +28,4 @@ export const loadSupportTeam = async () => {
     }
 }
 
-loadSupportTeam()
+loadWebsiteInfo()

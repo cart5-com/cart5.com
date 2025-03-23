@@ -15,10 +15,15 @@ import { insertWebsitesSchema } from '@db/schema/website.schema';
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { hostnameSupportTeam, loadSupportTeam } from '@dashboard-spa-vue/stores/SupportTeam.Store';
+import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.Store';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+
 const router = useRouter();
 
+onMounted(async () => {
+    await loadWebsiteInfo();
+})
 
 const schema = z.object({
     name: insertWebsitesSchema.shape.name,
@@ -59,7 +64,6 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 defaultHostname: null
             }];
             // redirect to the new website
-            loadSupportTeam();
             loadMyWebsites();
             router.push({ name: 'website-home', params: { websiteId } });
         }
@@ -112,8 +116,8 @@ async function onSubmit(values: z.infer<typeof schema>) {
                     <div>
                         Support Organization:
                         <Badge variant="secondary">
-                            {{ hostnameSupportTeam?.name }}
-                            ({{ hostnameSupportTeam?.defaultHostname }})
+                            {{ websiteInfo?.partnerInfo?.name }}
+                            ({{ websiteInfo?.partnerInfo?.defaultHostname }})
                         </Badge>
                         <div class="text-sm text-muted-foreground">
                             This support team will be able to help you manage and maintain this new website.

@@ -2,7 +2,7 @@ import db from "@db/drizzle";
 import { teamInvitationsTable, teamTable, teamUserMapTable } from "@db/schema/team.schema";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, and, or } from "drizzle-orm";
-import { websiteDomainMapTable, websitesTable } from "@db/schema/website.schema";
+import { websitesTable } from "@db/schema/website.schema";
 import { userTable } from "@db/schema/auth.schema";
 import { restaurantTable } from "@db/schema/restaurant.schema";
 
@@ -106,30 +106,6 @@ export const createTeamTransactional_Service = async (
     });
 
     return team[0].id;
-}
-
-export const getSupportTeamByHostname_Service = async (hostname: string) => {
-    return await db
-        .select({
-            ownerTeamId: teamTable.id,
-            websiteId: websitesTable.id,
-            name: websitesTable.name,
-            isPartner: websitesTable.isPartner,
-            defaultHostname: websitesTable.defaultHostname,
-            supportTeamId: websitesTable.supportTeamId,
-            ownerUserId: teamTable.ownerUserId
-        })
-        .from(websiteDomainMapTable)
-        .innerJoin(
-            websitesTable,
-            eq(websiteDomainMapTable.websiteId, websitesTable.id)
-        )
-        .innerJoin(
-            teamTable,
-            eq(websitesTable.ownerTeamId, teamTable.id)
-        )
-        .where(eq(websiteDomainMapTable.hostname, hostname))
-        .then(results => results[0] || null);
 }
 
 export const isUserMemberOfTeam_Service = async (

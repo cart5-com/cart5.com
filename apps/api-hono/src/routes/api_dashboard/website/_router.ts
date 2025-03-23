@@ -21,11 +21,16 @@ import { transferTeamOwnership_Handler, transferTeamOwnership_SchemaValidator } 
 import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./team/team_remove_member.controller";
 import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team/team_update_permissions.controller";
 import { restaurantsRouter } from "./restaurants/_router";
+import { getWebsiteInfo_Handler } from "./info.controller";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
         '/my_websites',
         getMyWebsites_Handler
+    )
+    .get(
+        '/info',
+        getWebsiteInfo_Handler
     )
     .post(
         '/create',

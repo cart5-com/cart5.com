@@ -15,7 +15,7 @@ import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { slugify } from '@lib/utils/slugify';
 import HowTo from './HowTo.vue';
 import { shakeElem } from '@lib/clientUtils/shakeElem';
-import { loadSupportTeam } from '@dashboard-spa-vue/stores/SupportTeam.Store';
+import { loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.Store';
 
 pageTitle.value = 'Add Domain'
 const router = useRouter();
@@ -68,7 +68,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
                 } catch (error) { }
                 toast.success("Domain added successfully👍 SSL🛡️ will be activated in 5-10 minutes");
             }
-            loadSupportTeam();
+            loadWebsiteInfo();
             loadMyWebsites();
             router.push({ name: 'website-domains' });
         }

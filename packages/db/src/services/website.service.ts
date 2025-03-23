@@ -343,3 +343,69 @@ export const removeRestaurantFromWebsite_Service = async (
         );
     return true;
 }
+
+export const getWebsiteInfo_Service = async (hostname: string) => {
+    // First find the website by hostname
+    const website = await db
+        .select({
+            websiteId: websitesTable.id,
+            name: websitesTable.name,
+            isPartner: websitesTable.isPartner,
+            defaultHostname: websitesTable.defaultHostname,
+            ownerTeamId: websitesTable.ownerTeamId,
+            supportTeamId: websitesTable.supportTeamId,
+        })
+        .from(websiteDomainMapTable)
+        .innerJoin(
+            websitesTable,
+            eq(websiteDomainMapTable.websiteId, websitesTable.id)
+        )
+        .where(eq(websiteDomainMapTable.hostname, hostname))
+        .then(results => results[0] || null);
+
+    if (!website) {
+        return null;
+    }
+
+    // If it is a partner, return owner team id
+    if (website.isPartner) {
+        return {
+            ...website,
+            partnerInfo: {
+                name: website.name,
+                defaultHostname: website.defaultHostname,
+                partnerTeamId: website.ownerTeamId
+            }
+        };
+    } else if (website.supportTeamId) {
+        const partnerWebsite = await db
+            .select({
+                id: websitesTable.id,
+                name: websitesTable.name,
+                ownerTeamId: websitesTable.ownerTeamId,
+                defaultHostname: websitesTable.defaultHostname
+            })
+            .from(websitesTable)
+            .where(eq(websitesTable.ownerTeamId, website.supportTeamId))
+            .then(results => results[0] || null);
+
+        if (partnerWebsite) {
+            return {
+                ...website,
+                partnerInfo: {
+                    name: partnerWebsite.name,
+                    defaultHostname: partnerWebsite.defaultHostname,
+                    partnerTeamId: partnerWebsite.ownerTeamId
+                }
+            };
+        }
+    }
+    return {
+        ...website,
+        partnerInfo: {
+            name: website.name,
+            defaultHostname: website.defaultHostname,
+            partnerTeamId: website.ownerTeamId
+        }
+    };
+}
