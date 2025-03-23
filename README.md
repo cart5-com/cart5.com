@@ -102,7 +102,3 @@ Add to /etc/hosts
 127.0.0.1 pubo-restaurant.com
 127.0.0.1 www.pubo-restaurant.com
 ```
-
-## [TODOS]
-
-- [ ] TODO: add sentry
