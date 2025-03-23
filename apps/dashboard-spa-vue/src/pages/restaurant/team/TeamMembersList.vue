@@ -9,10 +9,11 @@ import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
 import RemoveMemberDialog from './components/RemoveMemberDialog.vue';
 import EditPermissionsDialog from './components/EditPermissionsDialog.vue';
 import { toast } from '@/ui-plus/sonner';
-import { Store } from 'lucide-vue-next';
+import { Store, TriangleAlert } from 'lucide-vue-next';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const apiPath = apiClient.dashboard.restaurant[':restaurantId'].team.$get
-type Member = ResType<typeof apiPath>["data"][0];
+type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 const props = defineProps<{
     members: Array<Member>;
@@ -176,6 +177,15 @@ const updatePermissions = async (permissions: string[]) => {
         </CardHeader>
         <CardContent>
             <div class="space-y-4">
+                <Alert v-if="members.length === 0">
+                    <TriangleAlert />
+                    <AlertTitle>Heads up!</AlertTitle>
+                    <AlertDescription>
+                        The first member of the team will be the owner of the restaurant.
+                        owner can transfer ownership to another member. but no other member can transfer ownership to
+                        another member.
+                    </AlertDescription>
+                </Alert>
                 <TeamMemberItem v-for="member in members"
                                 :key="member.userId"
                                 :member="member"

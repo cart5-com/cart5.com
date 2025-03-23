@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { apiClient, type ResType } from '@api-client/index';
 
 const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
-type Member = ResType<typeof apiPath>["data"][0];
+type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 defineProps<{
     open: boolean;

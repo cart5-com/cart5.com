@@ -12,7 +12,7 @@ import {
 import { apiClient, type ResType } from '@api-client/index';
 
 const apiPath = apiClient.dashboard.restaurant[':restaurantId'].team.$get
-type Member = ResType<typeof apiPath>["data"][0];
+type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 defineProps<{
     member: Member;

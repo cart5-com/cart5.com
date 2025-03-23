@@ -9,16 +9,20 @@ import { toast } from '@/ui-plus/sonner';
 import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
 import { Loader2 } from 'lucide-vue-next';
 import { type ResType } from '@api-client/index';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 // Set page title
 pageTitle.value = 'Team Management';
 
 const membersApiPath = apiClient.dashboard.website[':websiteId'].team.$get;
-type Member = ResType<typeof membersApiPath>["data"];
+type Member = ResType<typeof membersApiPath>["data"]["teamMembers"];
+type SupportTeamWebsite = ResType<typeof membersApiPath>["data"]["supportTeamWebsite"];
 
 const invitationsApiPath = apiClient.dashboard.website[':websiteId'].team_invitations.$get;
 type Invitation = ResType<typeof invitationsApiPath>["data"];
 
 const members = ref<Member>([]);
+const supportTeamWebsite = ref<SupportTeamWebsite | null>(null);
 const invitations = ref<Invitation>([]);
 const loading = ref(true);
 const errorBanner = ref<string | null>(null);
@@ -40,7 +44,8 @@ const loadData = async () => {
             errorBanner.value = membersRes.error.message || 'Failed to load team members';
             toast.error(errorBanner.value);
         } else {
-            members.value = membersRes.data;
+            members.value = membersRes.data.teamMembers;
+            supportTeamWebsite.value = membersRes.data.supportTeamWebsite;
         }
 
         const invitationsRes = await (await apiClient.dashboard.website[':websiteId'].team_invitations.$get({
@@ -78,7 +83,7 @@ onMounted(() => {
 <template>
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Team Management</h1>
+            <h1 class="text-2xl font-bold">Website Team Management</h1>
             <InviteTeamMemberDialog @invitation-sent="loadData" />
         </div>
 
@@ -93,6 +98,21 @@ onMounted(() => {
         </div>
 
         <div v-else>
+            <Card v-if="supportTeamWebsite"
+                  class="max-w-lg mx-auto mb-6">
+                <CardHeader>
+                    <CardTitle>
+                        Support Team
+                        <Badge variant="secondary">
+                            {{ supportTeamWebsite?.name }}
+                            ({{ supportTeamWebsite?.defaultHostname }})
+                        </Badge>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p>This team can access your website to give your team support.</p>
+                </CardContent>
+            </Card>
             <TeamMembersList :members="members"
                              @ownership-transferred="loadData"
                              @member-removed="loadData"

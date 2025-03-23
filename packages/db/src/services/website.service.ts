@@ -409,3 +409,14 @@ export const getWebsiteInfo_Service = async (hostname: string) => {
         }
     };
 }
+
+export const getWebsiteByOwnerTeamId_Service = async (ownerTeamId: string) => {
+    return await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.ownerTeamId, ownerTeamId),
+        columns: {
+            id: true,
+            name: true,
+            defaultHostname: true,
+        }
+    });
+}
