@@ -1,9 +1,11 @@
 import "@/index.css";
+import * as Sentry from "@sentry/vue";
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import { refreshUserData } from '@auth-frontend-vue/stores/userStore';
 import { getQueryParams, queryParamsStore } from "./stores/queryParamsStore";
+
 
 const queryParams = getQueryParams();
 queryParamsStore.value = queryParams;
@@ -74,6 +76,10 @@ const i18n = createI18n({
 
 refreshUserData().then(() => {
     const app = createApp(App);
+    Sentry.init({
+        app,
+        dsn: "https://656fb1db2cedf4b47b7da7b6bee375ae@o4509024863518720.ingest.us.sentry.io/4509025424834560"
+    });
     app.use(i18n)
     app.mount('#app');
 })

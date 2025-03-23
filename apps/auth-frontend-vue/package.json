@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
+    "@sentry/vue": "^9.8.0",
+    "@sentry/vite-plugin": "^3.2.2",
     "@types/node": "^22.10.1",
     "@vee-validate/zod": "^4.14.7",
     "@vitejs/plugin-vue": "^5.2.1",

@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
@@ -26,14 +27,24 @@ export default defineConfig(({ mode }) => ({
   },
   css: {
     postcss: {
-      plugins: [tailwind(), autoprefixer()],
+      plugins: [
+        tailwind(),
+        autoprefixer()
+      ],
     },
   },
   build: {
     minify: true,
     sourcemap: true,
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: "cart5com",
+      project: "auth-frontend-vue",
+    })
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(
