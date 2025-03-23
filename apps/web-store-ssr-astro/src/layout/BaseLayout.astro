@@ -1,4 +1,9 @@
 ---
+import "../styles/global.css";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import LayoutHelpers from "@/ui-plus/LayoutHelpers.vue";
+
 interface Props {
 	title: string;
 }
@@ -10,6 +15,24 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 
 <html lang="en">
 	<head>
+		<script is:inline>
+			const getThemePreference = () => {
+				if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+					return localStorage.getItem("theme");
+				}
+				return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+			};
+			const isDark = getThemePreference() === "dark";
+			document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+
+			if (typeof localStorage !== "undefined") {
+				const observer = new MutationObserver(() => {
+					const isDark = document.documentElement.classList.contains("dark");
+					localStorage.setItem("theme", isDark ? "dark" : "light");
+				});
+				observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+			}
+		</script>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
@@ -26,6 +49,21 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 		</ul>
 		<hr />
 		<h4>{title}</h4>
+		<hr />
+		Vue card:
+		<Card class="m-8 mx-auto max-w-md">
+			<CardHeader>
+				<CardTitle>Card Title</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<Button variant="default">Click me</Button>
+				<Button variant="destructive">Click me</Button>
+				<Button variant="outline">Click me</Button>
+				<Button variant="secondary">Click me</Button>
+				<Button variant="ghost">Click me</Button>
+				<Button variant="link">Click me</Button>
+			</CardContent>
+		</Card>
 		<hr />
 		<button id="whoami-button">Who am I</button>
 		<pre id="whoami-result"></pre>
@@ -141,5 +179,6 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 				console.log(data);
 			});
 		</script>
+		<LayoutHelpers client:load />
 	</body>
 </html>

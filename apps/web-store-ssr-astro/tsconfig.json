@@ -11,7 +11,11 @@
       ],
       "@api-client/*": [
         "../../packages/api-client/src/*"
+      ],
+      "@/*": [
+        "../../packages/ui-shadcn-vue/src/*"
       ]
-    }
+    },
+    "jsx": "preserve"
   }
 }

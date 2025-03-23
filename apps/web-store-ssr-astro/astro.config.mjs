@@ -3,6 +3,10 @@ import { defineConfig } from 'astro/config';
 import node from "@astrojs/node";
 import sentry from "@sentry/astro";
 
+import vue from "@astrojs/vue";
+
+import tailwindcss from "@tailwindcss/vite";
+
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 
 // https://astro.build/config
@@ -42,6 +46,7 @@ export default defineConfig({
       sourcemap: true,
       minify: true,
     },
+
     server: {
       host: '0.0.0.0',
       proxy: {
@@ -61,22 +66,29 @@ export default defineConfig({
         //   rewrite: (path) => path.replace(/^\/__p_ecom/, '')
         // },
       },
-    }
+    },
+
+    plugins: [
+      tailwindcss()
+    ]
   },
-  integrations: [
-    sentry({
-      enabled: {
-        client: true,
-        server: true
-      },
-      dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
-      replaysSessionSampleRate: 0,
-      replaysOnErrorSampleRate: 0,
-      environment: process.env.NODE_ENV,
-      sourceMapsUploadOptions: {
-        project: "web-store-ssr-astro",
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-      },
-    })
-  ]
+  integrations: [sentry({
+    enabled: {
+      client: true,
+      server: true
+    },
+    dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0,
+    environment: process.env.NODE_ENV,
+    sourceMapsUploadOptions: {
+      project: "web-store-ssr-astro",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    },
+  }), vue({
+    appEntrypoint: './src/vueAppEntrypoint.ts',
+    // devtools: {
+    //   launchEditor: "code"
+    // },
+  })]
 });
