@@ -81,25 +81,31 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 		</script>
 
 		<!-- ACTIONS SAMPLE -->
+		<input type="text" id="name-input" value="Houston111" />
 		<button id="get-greeting-button">Get greeting</button>
-		<button id="sample-throw-error-button">Sample throw error</button>
+		<button id="sampleEeerrr">sampleEeerrr</button>
 		<script>
 			import { actions } from "astro:actions";
-
+			const nameInput = document.querySelector<HTMLInputElement>("#name-input");
 			const button = document.querySelector<HTMLButtonElement>("#get-greeting-button");
 			button?.addEventListener("click", async () => {
 				// Show alert pop-up with greeting from action
-				const { data, error } = await actions.getGreeting({ name: "Houston" });
-				if (!error) alert(data);
-			});
-
-			const button2 = document.querySelector<HTMLButtonElement>("#sample-throw-error-button");
-			button2?.addEventListener("click", async () => {
-				const { data, error } = await actions.sampleThrowError();
+				const { data, error } = await actions.getGreeting({ name: nameInput?.value ?? "" });
 				if (error) {
 					console.error(error);
+				} else {
+					console.log(data);
 				}
-				if (!error) alert(data);
+			});
+
+			const button2 = document.querySelector<HTMLButtonElement>("#sampleEeerrr");
+			button2?.addEventListener("click", async () => {
+				const { data, error } = await actions.sampleEeerrr({ name: nameInput?.value ?? "" });
+				if (error) {
+					console.error(error);
+				} else {
+					console.log(data);
+				}
 			});
 		</script>
 	</body>

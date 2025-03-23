@@ -10,9 +10,17 @@ export const server = {
             return `Hello, ${input.name}!`
         }
     }),
-    sampleThrowError: defineAction({
-        handler: async () => {
-            throw new Error("This is a test error");
+    sampleEeerrr: defineAction({
+        input: z.object({
+            name: z.string(),
+        }),
+        handler: async (input) => {
+            handleClick();
+            return `Hello, ${input.name}!`
         }
     })
+}
+
+function handleClick() {
+    throw new Error("This is a test error");
 }
