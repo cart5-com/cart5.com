@@ -82,5 +82,9 @@ refreshUserData().then(() => {
     });
     app.use(i18n)
     app.mount('#app');
+    setTimeout(() => {
+        // @ts-ignore
+        myUndefinedFunction();
+    }, 1000);
 })
 
