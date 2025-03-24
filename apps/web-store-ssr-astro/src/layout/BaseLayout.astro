@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import LayoutHelpers from "@/ui-plus/LayoutHelpers.vue";
+import { LayoutHelpers } from "@/ui-plus";
 
 interface Props {
 	title: string;
@@ -126,13 +126,16 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 		<hr />
 		<!-- ACTIONS SAMPLE -->
 		<input type="text" id="name-input" value="Houston111" />
-		<button id="get-greeting-button">Get greeting</button>
+		<button id="get-greeting-button">!!!!Get greeting</button>
 		<button id="sampleEeerrr">sampleEeerrr</button>
 		<script>
 			import { actions } from "astro:actions";
+			import { toast } from "@/ui-plus/sonner";
+
 			const nameInput = document.querySelector<HTMLInputElement>("#name-input");
 			const button = document.querySelector<HTMLButtonElement>("#get-greeting-button");
 			button?.addEventListener("click", async () => {
+				toast.success("Hello from action");
 				// Show alert pop-up with greeting from action
 				const { data, error } = await actions.getGreeting({ name: nameInput?.value ?? "" });
 				if (error) {
