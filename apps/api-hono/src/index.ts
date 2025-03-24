@@ -26,13 +26,6 @@ app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 
-app.get("/test-error", async (c) => {
-	console.log("test-error", globalThis.SENTRY_RELEASE?.id);
-	await new Promise(resolve => setTimeout(resolve, 1000));
-	throw new Error("test error");
-	return c.html(`Hello`);
-});
-
 const apiRoutes = app
 	.route('/', apiRouter)
 

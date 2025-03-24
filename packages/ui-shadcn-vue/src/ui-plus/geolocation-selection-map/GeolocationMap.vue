@@ -139,8 +139,8 @@ const addGecodeHelperBtn = async () => {
 	// Check if a button with the same address, lat, and lng already exists
 	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
 		btn.label === model.value.address &&
-		btn.lat === gecodeResult?.data.results[0]?.geometry.location.lat &&
-		btn.lng === gecodeResult?.data.results[0]?.geometry.location.lng
+		btn.lat === gecodeResult?.data?.results[0]?.geometry.location.lat &&
+		btn.lng === gecodeResult?.data?.results[0]?.geometry.location.lng
 	);
 	if (isAddBeforeCurrentLocation) {
 		return;
@@ -149,8 +149,8 @@ const addGecodeHelperBtn = async () => {
 		...helperBtns.value,
 		{
 			label: model.value.address,
-			lat: gecodeResult?.data.results[0]?.geometry.location.lat,
-			lng: gecodeResult?.data.results[0]?.geometry.location.lng
+			lat: gecodeResult?.data?.results[0]?.geometry.location.lat,
+			lng: gecodeResult?.data?.results[0]?.geometry.location.lng
 		}
 	];
 	return 1;
@@ -212,7 +212,7 @@ async function loadHelperBtns() {
 	}
 	// if there is a help and initial lat and lng is not set
 	if (!model.value.lat || !model.value.lng && helperBtns.value.length > 0) {
-		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
+		setCenter(helperBtns.value[0].lat ?? 0, helperBtns.value[0].lng ?? 0)
 	}
 }
 
@@ -258,7 +258,7 @@ async function loadHelperBtns() {
 						:key="index"
 						variant="outline"
 						class="m-1 inline-block max-w-[200px] truncate"
-						@click="setCenter(helperBtn.lat, helperBtn.lng)">
+						@click="setCenter(helperBtn.lat ?? 0, helperBtn.lng ?? 0)">
 					{{ helperBtn.label }}
 				</Button>
 			</div>
