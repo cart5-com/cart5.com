@@ -15,7 +15,7 @@ export const geocode = async (address: string, countryCode?: string): Promise<Ge
         if (cachedResult) {
             try {
                 const { data, timestamp } = JSON.parse(cachedResult) as { data: GeocodeResponse, timestamp: number };
-                // Check if the cache is still valid (1 year = 31536000000 ms)
+                // Check if the cache is still valid (30 days = 31536000000 ms)
                 if (Date.now() - timestamp < 31_536_000_000) {
                     return data;
                 }

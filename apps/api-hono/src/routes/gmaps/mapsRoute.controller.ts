@@ -7,6 +7,7 @@ import { type HonoVariables } from "@api-hono/types/HonoVariables";
 import { type ErrorType } from "@lib/types/errors";
 import { getEnvVariable, IS_PROD } from "@lib/utils/getEnvVariable";
 import { verifyRequestOrigin } from "@lib/utils/verifyRequestOrigin";
+import { getGeocodingCache_Service, saveGeocodingCache_Service } from "@db/services/geocoding.service";
 
 // function generateSessionToken() {
 //     const fourHours = 14400000; //4 * 60 * 60 * 1000; // 4 hours in milliseconds
@@ -68,12 +69,41 @@ export const mapsRoute = new Hono<HonoVariables>()
             reqUrl.pathname = '/maps/api/geocode/json';
             reqUrl.searchParams.delete('key');
             reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
+            
+            // Check if the request is cached
+            // Create a cache key without the API key for security
+            const cacheKeyUrl = new URL(reqUrl.toString());
+            cacheKeyUrl.searchParams.delete('key');
+            const cacheKey = cacheKeyUrl.toString();
+            const cachedResult = await getGeocodingCache_Service(cacheKey);
+            
+            if (
+                cachedResult
+            ) {
+                // 30 days
+                const isExpired = cachedResult.created_at_ts + 31_536_000_000 < Date.now();
+                // Use cached response
+                if (!isExpired) {
+                    return c.json({
+                        data: cachedResult.response,
+                        error: null as ErrorType,
+                        fromCache: true,
+                    }, 200);
+                }
+            }
+            
+            // Fetch from Google Maps API
             const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
-            // (response as any).userIp = c.req.header('caddy-user-ip') || "";
-            // (response as any).dateTs = Date.now();
+            
+            // Cache the response
+            if (response && typeof response === 'object' && 'status' in response && response.status === 'OK') {
+                await saveGeocodingCache_Service(cacheKey, response);
+            }
+            
             return c.json({
                 data: response,
-                error: null as ErrorType
+                error: null as ErrorType,
+                fromCache: false,
             }, 200);
         }
     )
