@@ -1,7 +1,38 @@
 ---
 import BaseLayout from "../layout/BaseLayout.astro";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HeroAddress } from "@web-astro/components";
 ---
 
-<BaseLayout title="Web Store index.astro">
-	<h1>Web Store1111</h1>
+<BaseLayout title={Astro.locals.WEBSITE?.name ?? "Order near you"}>
+	<!-- Header -->
+	<Card class="sticky top-0 z-50 shadow-sm">
+		<div class="container mx-auto flex items-center justify-between px-4 py-4">
+			<div class="flex items-center">
+				<div class="mr-8 text-2xl font-bold">{Astro.locals.WEBSITE?.name}</div>
+				<!-- <nav class="hidden space-x-6 md:flex">
+						<a href="#" class="text-foreground/70 hover:text-foreground">Restaurants</a>
+						<a href="#" class="text-foreground/70 hover:text-foreground">Delivery</a>
+						<a href="#" class="text-foreground/70 hover:text-foreground">Pickup</a>
+						<a href="#" class="text-foreground/70 hover:text-foreground">About</a>
+					</nav> -->
+			</div>
+			<!-- <div class="flex items-center space-x-4">
+					<button class="text-foreground/70 hover:bg-muted hidden rounded-full px-4 py-2 md:block">Log in</button>
+					<button class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 py-2">Sign up</button>
+				</div> -->
+		</div>
+	</Card>
+
+	<!-- Hero Section -->
+	<section class="relative flex min-h-screen items-center justify-center">
+		<Card class="w-lg max-w-lg">
+			<CardHeader>
+				<CardTitle class="text-center text-3xl font-bold">Order near you</CardTitle>
+			</CardHeader>
+			<CardContent class="px-1 sm:px-6">
+				<HeroAddress client:load />
+			</CardContent>
+		</Card>
+	</section>
 </BaseLayout>

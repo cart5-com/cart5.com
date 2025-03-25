@@ -1,1 +1,5 @@
 export { default as LayoutHelpers } from './LayoutHelpers.vue'
+export { default as CountrySelect } from './CountrySelect.vue'
+export { default as AddressForm } from './geolocation-selection-map/AddressForm.vue'
+export { default as GeolocationMap } from './geolocation-selection-map/GeolocationMap.vue'
+export type { GeoLocation, HelperBtns } from './geolocation-selection-map/types'

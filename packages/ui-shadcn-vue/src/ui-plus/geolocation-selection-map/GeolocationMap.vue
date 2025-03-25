@@ -72,7 +72,6 @@ onMounted(async () => {
 				"<a href='https://www.google.com/maps' target='_blank'>Google Maps</a> | <a href='https://leafletjs.com/' target='_blank'>Leaflet</a>"
 		})
 	);
-	// mapView.fitWorld();
 
 	if (model.value.lat && model.value.lng) {
 		setCenter(model.value.lat, model.value.lng)
@@ -80,6 +79,7 @@ onMounted(async () => {
 	} else if (model.value.address) {
 		loadHelperBtns()
 	} else {
+		mapView.fitWorld();
 		handleGpsClick()
 	}
 });

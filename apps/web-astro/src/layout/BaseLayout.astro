@@ -45,24 +45,15 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 		<!-- add to homescreen for ios -->
 		<meta name="apple-mobile-web-app-title" content="Dashboard" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-		<style>
-			body {
-				background-color: black;
-			}
-		</style>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	</head>
 
 	<body>
-		<h4>{title}</h4>
-		<div>
-			websiteName:{websiteName}
+		<div class="container mx-auto p-2 lg:p-6">
+			<slot />
 		</div>
-
-		<slot />
-
-		<details>
-			<summary>info:</summary>
+		<details class="m-8 mx-auto mb-48 w-fit text-xs">
+			<summary>⚙️</summary>
 			<div>
 				cache:
 				<span class="cache-date" data-cache-date={Date.now()}></span>
