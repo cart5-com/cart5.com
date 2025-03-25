@@ -54,15 +54,36 @@ onMounted(async () => {
 
 const onSubmit = () => {
     isDialogOpen.value = true;
-    mapLocation.value = {
-        address: address.value || '',
-        country: country.value || ''
+    if (!mapLocation.value) {
+        mapLocation.value = JSON.parse(localStorage.getItem('REMEMBER_LAST_LOCATION') || '{}') as GeoLocation;
     }
+    mapLocation.value.address = address.value || '';
+    mapLocation.value.country = country.value || '';
 }
 
-const onMapConfirm = () => {
+const onMapConfirm = async () => {
     console.log(mapLocation.value)
-    // No need to save here as we're using watchers now
+    isDialogOpen.value = false;
+    localStorage.setItem('REMEMBER_LAST_LOCATION', JSON.stringify({
+        lat: mapLocation.value?.lat || 0,
+        lng: mapLocation.value?.lng || 0,
+        address: mapLocation.value?.address || address.value || '',
+        country: mapLocation.value?.country || country.value || '',
+    } as GeoLocation));
+    const url = new URL(window.location.href);
+    url.pathname = '/list';
+    url.searchParams.set('lat', mapLocation.value?.lat?.toString() || '0');
+    url.searchParams.set('lng', mapLocation.value?.lng?.toString() || '0');
+    url.searchParams.set('address', mapLocation.value?.address || address.value || '');
+    url.searchParams.set('country', mapLocation.value?.country || country.value || '');
+    if (
+        mapLocation.value?.country === "US" ||
+        mapLocation.value?.country === "LR" ||
+        mapLocation.value?.country === "MM"
+    ) {
+        url.searchParams.set('measure', 'mi');
+    }
+    window.location.href = url.toString();
 }
 
 </script>
@@ -87,7 +108,7 @@ const onMapConfirm = () => {
                             class="w-full my-6">
                         <Loader2 v-if="isLoading"
                                  class="animate-spin" />
-                        Save
+                        Confirm
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -95,20 +116,18 @@ const onMapConfirm = () => {
 
         <form @submit.prevent="onSubmit">
             <div class="my-8 flex w-full items-center gap-1.5">
-                <div class="hidden sm:block">
-                    <CountrySelect v-model="country"
-                                   class="h-14" />
-                </div>
+                <CountrySelect v-model="country"
+                               class="h-10" />
                 <Input v-model="address!"
                        autocomplete="street-address"
-                       class="inline-block text-xl h-14"
+                       class="inline-block"
                        type="text"
                        placeholder="Enter your address" />
             </div>
             <Button @click="onSubmit"
                     size="lg"
                     :disabled="isLoading"
-                    class="w-full mt-4 h-14 text-xl font-bold">Order now
+                    class="w-full mt-4 h-14 font-bold">Order now
                 <Loader2 v-if="isLoading"
                          class="animate-spin" />
                 <ChevronRight />
