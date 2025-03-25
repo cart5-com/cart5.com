@@ -11,7 +11,7 @@ export const getNearbyRestaurants = async (
     limit: number = 10,
     page: number = 1,
     range: number = 1,
-    listType: "pickup" | "delivery" = 'pickup',
+    listType: "pickup" | "delivery" = 'delivery',
     sort: "distance_asc" | "distance_desc" = 'distance_asc',
 ) => {
     const radius = measure === 'km' ? 6371 : 3959;
