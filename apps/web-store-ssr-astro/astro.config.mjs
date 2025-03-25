@@ -89,7 +89,7 @@ export default defineConfig({
       replaysOnErrorSampleRate: 0,
       environment: process.env.NODE_ENV,
       sourceMapsUploadOptions: {
-        project: "web-store-ssr-astro",
+        project: "web-astro",
         authToken: process.env.SENTRY_AUTH_TOKEN,
       },
     })

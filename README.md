@@ -44,7 +44,7 @@ apps/
 ├── api-hono/ # Authentication and other APIs
 ├── auth-frontend-vue/ # Authentication SPA
 ├── dashboard-spa-vue/ # Dashboard SPA
-├── web-store-ssr-astro/# Demo store with SSR
+├── web-astro/# Demo store with SSR
 └── proxy-caddy/ # Local development proxy (optional)
 ```
 

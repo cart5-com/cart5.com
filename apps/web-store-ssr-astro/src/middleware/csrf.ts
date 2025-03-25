@@ -6,7 +6,7 @@ export const csrfMiddleware = defineMiddleware(async (context, next) => {
         const originHeader = context.request.headers.get("Origin");
         const hostHeader = context.request.headers.get("Host");
         if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-            return new Response("csrfChecks:403:web-store-ssr-astro", {
+            return new Response("csrfChecks:403:web-astro", {
                 status: 403
             });
         }

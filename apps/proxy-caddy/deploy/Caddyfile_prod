@@ -88,7 +88,7 @@ https://{$PUBLIC_DOMAIN_NAME} {
 	import api-hono-proxy
 	import dashboard-spa-vue
 	handle_path /* {
-		#web-store-ssr-astro
+		#web-astro
 		reverse_proxy http://127.0.0.1:3002
 		cache
 	}
