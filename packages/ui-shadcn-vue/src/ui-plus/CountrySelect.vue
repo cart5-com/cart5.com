@@ -36,10 +36,11 @@ function getCountries() {
         <PopoverTrigger as-child>
             <Button type="button"
                     variant="outline"
+                    size="sm"
                     :class="props.class">
                 <FlagComponent v-if="model"
                                :country="model" />
-                <ChevronsUpDown class="-mr-2 opacity-50" />
+                <ChevronsUpDown class="-mr-2 opacity-50 hidden sm:block" />
             </Button>
         </PopoverTrigger>
         <PopoverContent class="w-[300px] p-0">
