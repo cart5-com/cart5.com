@@ -5,6 +5,7 @@ declare namespace App {
         WEBSITE: {
             id: string;
             name: string;
+            isMarketplace: boolean;
         } | null;
     }
 }

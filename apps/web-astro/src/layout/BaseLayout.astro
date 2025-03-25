@@ -1,14 +1,11 @@
 ---
 import "../styles/global.css";
-import { LayoutHelpers } from "@/ui-plus";
+import LayoutHelpers from "ui-shadcn-vue/src/ui-plus/LayoutHelpers.vue";
 import { Card } from "@/components/ui/card";
 interface Props {
 	title: string;
 }
 const { title } = Astro.props;
-const websiteId = Astro.locals.WEBSITE?.id;
-const websiteName = Astro.locals.WEBSITE?.name;
-const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 ---
 
 <html lang="en">
@@ -70,15 +67,15 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 			</Card>
 			<slot />
 		</div>
-		<details class="m-8 mx-auto mb-48 w-fit text-xs">
+		<details class="m-8 mx-auto w-fit text-xs">
 			<summary>⚙️</summary>
 			<div>
 				cache:
 				<span class="cache-date" data-cache-date={Date.now()}></span>
 				<br />
-				SENTRY_RELEASE_ID: {SENTRY_RELEASE_ID}
+				GIT: {globalThis?.SENTRY_RELEASE?.id}
 				<br />
-				websiteId:{websiteId}
+				websiteId:{Astro.locals.WEBSITE?.id}
 			</div>
 		</details>
 		<script src="../clientScripts/cacheFormat.ts"></script>

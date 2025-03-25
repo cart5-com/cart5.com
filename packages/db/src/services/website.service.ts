@@ -420,3 +420,36 @@ export const getWebsiteByOwnerTeamId_Service = async (ownerTeamId: string) => {
         }
     });
 }
+
+// if count is 1 return the restaurant id
+export const getFirstRestaurantIdForWebsite_Service = async (
+    websiteId: string
+) => {
+    return (await db.query.websiteRestaurantMapTable.findFirst({
+        where: eq(websiteRestaurantMapTable.websiteId, websiteId)
+    }))?.restaurantId ?? null;
+}
+
+export const countRestaurantsForWebsite_Service = async (
+    websiteId: string,
+    isMarketplace: boolean
+) => {
+    if (isMarketplace) {
+        const result = await db
+            .select({
+                count: count()
+            })
+            .from(restaurantTable);
+
+        return result[0]?.count || 0;
+    } else {
+        const result = await db
+            .select({
+                count: count()
+            })
+            .from(websiteRestaurantMapTable)
+            .where(eq(websiteRestaurantMapTable.websiteId, websiteId));
+
+        return result[0]?.count || 0;
+    }
+}

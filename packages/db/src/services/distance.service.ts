@@ -3,7 +3,7 @@ import db from '@db/drizzle';
 import { restaurantTable, restaurantAddressTable, restaurantDeliveryZoneMapTable } from '@db/schema/restaurant.schema';
 import { websiteRestaurantMapTable } from '@db/schema/website.schema';
 
-export const getNearbyRestaurants = async (
+export const getNearbyRestaurants_Service = async (
     lat: number,
     lng: number,
     websiteId: string | null = null,
@@ -32,6 +32,13 @@ export const getNearbyRestaurants = async (
         baseConditions.push(eq(websiteRestaurantMapTable.websiteId, websiteId));
     }
 
+    // Add offers delivery/pickup filter based on listType
+    if (listType === 'delivery') {
+        baseConditions.push(eq(restaurantTable.offersDelivery, true));
+    } else if (listType === 'pickup') {
+        baseConditions.push(eq(restaurantTable.offersPickup, true));
+    }
+
     // Using restaurantAddressTable for lat/lng filtering since restaurantDeliveryZoneMapTable doesn't have direct lat/lng fields
     baseConditions = [
         ...baseConditions,
@@ -50,9 +57,12 @@ export const getNearbyRestaurants = async (
         lte(restaurantDeliveryZoneMapTable.minLng, lng),
     ];
 
-    const whereConditions = listType === 'delivery'
-        ? [...baseConditions, ...deliveryConditions]
-        : baseConditions;
+    let whereConditions = baseConditions;
+    if (listType === 'delivery') {
+        whereConditions = [...whereConditions, ...deliveryConditions];
+    } else if (listType === 'pickup') {
+        // do nothing
+    }
 
     // Set order by based on sort parameter
     let orderBy;

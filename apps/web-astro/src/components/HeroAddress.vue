@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CountrySelect, GeolocationMap } from "@/ui-plus";
-import type { GeoLocation } from "@/ui-plus/geolocation-selection-map/types";
+import GeolocationMap from "ui-shadcn-vue/src/ui-plus/geolocation-selection-map/GeolocationMap.vue";
+import CountrySelect from "ui-shadcn-vue/src/ui-plus/CountrySelect.vue";
+import type { GeoLocation } from "ui-shadcn-vue/src/ui-plus/geolocation-selection-map/types";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import {
     Dialog,
@@ -14,6 +15,7 @@ import {
 import { ref, onMounted, watch } from "vue";
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 import { Loader2, DoorOpen, ChevronRight } from 'lucide-vue-next';
+import { BASE_ROUTES } from "@web-astro/clientScripts/router";
 
 const address = ref<string | null>(null);
 const country = ref<string | null>(null);
@@ -70,8 +72,9 @@ const onMapConfirm = async () => {
         address: mapLocation.value?.address || address.value || '',
         country: mapLocation.value?.country || country.value || '',
     } as GeoLocation));
+
     const url = new URL(window.location.href);
-    url.pathname = '/list';
+    url.pathname = BASE_ROUTES.LIST_RESTAURANTS;
     url.searchParams.set('lat', mapLocation.value?.lat?.toString() || '0');
     url.searchParams.set('lng', mapLocation.value?.lng?.toString() || '0');
     url.searchParams.set('address', mapLocation.value?.address || address.value || '');
@@ -83,6 +86,7 @@ const onMapConfirm = async () => {
     ) {
         url.searchParams.set('measure', 'mi');
     }
+
     window.location.href = url.toString();
 }
 
@@ -127,7 +131,7 @@ const onMapConfirm = async () => {
             <Button @click="onSubmit"
                     size="lg"
                     :disabled="isLoading"
-                    class="w-full mt-4 h-14 font-bold">Order now
+                    class="w-full mt-4 font-bold">Order now
                 <Loader2 v-if="isLoading"
                          class="animate-spin" />
                 <ChevronRight />

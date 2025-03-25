@@ -1,15 +1,33 @@
 ---
 import BaseLayout from "../layout/BaseLayout.astro";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeroAddress } from "@web-astro/components";
+import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import {
+	countRestaurantsForWebsite_Service,
+	getFirstRestaurantIdForWebsite_Service
+} from "@db/services/website.service";
+const count = await countRestaurantsForWebsite_Service(
+	Astro.locals.WEBSITE?.id ?? "",
+	Astro.locals.WEBSITE?.isMarketplace ?? false
+);
+if (count === 1) {
+	const restaurantId = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
+	if (restaurantId) {
+		return Astro.redirect(BASE_ROUTES.RESTAURANT(restaurantId));
+	}
+}
 ---
 
 <BaseLayout title={Astro.locals.WEBSITE?.name ?? "Order near you"}>
 	<!-- Hero Section -->
-	<section class="relative flex min-h-screen items-center justify-center">
+	<section class="relative flex min-h-[80vh] items-center justify-center">
 		<Card class="w-lg max-w-lg">
 			<CardHeader>
 				<CardTitle class="text-center text-3xl font-bold">Order near you</CardTitle>
+				<CardDescription class="text-muted-foreground text-center text-sm">
+					{count} businesses available
+				</CardDescription>
 			</CardHeader>
 			<CardContent class="px-1 sm:px-6">
 				<HeroAddress client:load />
