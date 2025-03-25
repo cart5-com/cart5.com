@@ -5,9 +5,9 @@ import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { type ErrorType } from "@lib/types/errors";
 import { updateRestaurantDeliveryZones_Service } from "@db/services/restaurant.service";
 import { updateRestaurantDeliveryZoneMapSchema } from "@db/schema/restaurant.schema";
-import { calculateDeliveryZoneMinsMaxs } from "./delivery_zones.calc";
-
+import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
 // Schema validation for updating restaurant delivery zones
+
 export const updateRestaurantDeliveryZones_SchemaValidator = zValidator('json',
     updateRestaurantDeliveryZoneMapSchema.omit({
         // unallowed fields for admins
@@ -31,26 +31,9 @@ export const updateRestaurantDeliveryZones_Handler = async (c: Context<
         ...data
     } = c.req.valid('json');
 
-    if (data.zones) {
-        const { minLat, maxLat, minLng, maxLng } = calculateDeliveryZoneMinsMaxs(
-            data.zones
-        );
-        const deliveryZoneDataWithMinsMaxs = {
-            ...data,
-            minLat,
-            maxLat,
-            minLng,
-            maxLng
-        }
-        return c.json({
-            data: await updateRestaurantDeliveryZones_Service(restaurantId, deliveryZoneDataWithMinsMaxs),
-            error: null as ErrorType
-        }, 200);
-    } else {
-        return c.json({
-            data: await updateRestaurantDeliveryZones_Service(restaurantId, data),
-            error: null as ErrorType
-        }, 200);
-    }
+    return c.json({
+        data: await updateRestaurantDeliveryZones_Service(restaurantId, processDataToSaveDeliveryZones(data)),
+        error: null as ErrorType
+    }, 200);
 
 } 

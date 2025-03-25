@@ -77,3 +77,27 @@ export const calculateDeliveryZoneMinsMaxs = (deliveryZones: DeliveryZone[]) => 
         maxLng: Math.max(...validPoints.map(p => p.lng!)),
     };
 };
+
+export const processDataToSaveDeliveryZones = (data: {
+    zones?: DeliveryZone[] | undefined;
+    minLat?: number | null | undefined;
+    maxLat?: number | null | undefined;
+    minLng?: number | null | undefined;
+    maxLng?: number | null | undefined;
+}) => {
+    if (data.zones) {
+        const { minLat, maxLat, minLng, maxLng } = calculateDeliveryZoneMinsMaxs(
+            data.zones
+        );
+        const deliveryZoneDataWithMinsMaxs = {
+            ...data,
+            minLat,
+            maxLat,
+            minLng,
+            maxLng
+        }
+        return deliveryZoneDataWithMinsMaxs;
+    } else {
+        return data;
+    }
+}
