@@ -1,7 +1,5 @@
 ---
 import "../styles/global.css";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { LayoutHelpers } from "@/ui-plus";
 
 interface Props {
@@ -15,6 +13,7 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 
 <html lang="en">
 	<head>
+		<!-- dark mode helper -->
 		<script is:inline>
 			const getThemePreference = () => {
 				if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
@@ -34,154 +33,46 @@ const SENTRY_RELEASE_ID = globalThis?.SENTRY_RELEASE?.id;
 			}
 		</script>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<meta name="color-scheme" content="light dark" />
+		<meta
+			name="viewport"
+			content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<meta name="msapplication-tap-highlight" content="no" />
+
+		<!-- add to homescreen for ios -->
+		<meta name="apple-mobile-web-app-title" content="Dashboard" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<style>
+			body {
+				background-color: black;
+			}
+		</style>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 	</head>
 
 	<body>
-		<ul>
-			<li><a href="/">index.astro</a></li>
-			<li><a href="/sample-error">sample-error.astro</a></li>
-			<li>
-				<a href="/hello/world?hello=world#helloworld=1">hello/world.astro</a>
-			</li>
-		</ul>
-		<hr />
 		<h4>{title}</h4>
-		<hr />
-		Vue card:
-		<Card class="m-8 mx-auto max-w-md">
-			<CardHeader>
-				<CardTitle>Card Title</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<Button variant="default">Click me</Button>
-				<Button variant="destructive">Click me</Button>
-				<Button variant="outline">Click me</Button>
-				<Button variant="secondary">Click me</Button>
-				<Button variant="ghost">Click me</Button>
-				<Button variant="link">Click me</Button>
-			</CardContent>
-		</Card>
-		<hr />
-		<button id="whoami-button">Who am I</button>
-		<pre id="whoami-result"></pre>
-		<hr />
-		<button class="hidden" id="manage-account-button">Manage Account</button>
-		<br />
-		<button class="hidden" id="logout-button">Logout</button>
-		<!-- <button class="hidden" id="logout-button">Logout</button> -->
-		<button class="hidden" id="login-button">Login</button>
-		<button class="hidden" id="register-button">Sign Up</button>
-		<script src="../clientScripts/helper.ts"></script>
-		<style>
-			.hidden {
-				display: none;
-			}
-			.cache-date {
-				border: 1px solid blue;
-				padding: 3px;
-				border-radius: 3px;
-			}
-		</style>
-		<hr />
 		<div>
-			💩💩💩💩cache:
-			<span class="cache-date" data-cache-date={Date.now()}></span>
-			<br />
-			SENTRY_RELEASE_ID: {SENTRY_RELEASE_ID}
-		</div>
-		<hr />
-		<div>
-			websiteId:{websiteId}
-			<br />
 			websiteName:{websiteName}
 		</div>
-		<hr />
-		<script>
-			import { formatDate } from "@lib/utils/formatDate";
-			const cacheDateSpanElement = document.querySelector<HTMLSpanElement>(".cache-date");
-			if (cacheDateSpanElement) {
-				cacheDateSpanElement.textContent = formatDate(Number(cacheDateSpanElement.dataset.cacheDate));
-			}
-			console.log("blue 💩💩💩💩 cacheDateSpanElement");
-			console.log(cacheDateSpanElement);
 
-			// setTimeout(() => {
-			// 	document.body.style.backgroundColor = "red";
-			// 	window.location.reload();
-			// }, 2000);
-		</script>
+		<slot />
 
-		<hr />
-		<button id="error-button">Throw client test error</button>
-		<script>
-			function handleClick() {
-				throw new Error("This is a test error");
-			}
-			document.querySelector<HTMLButtonElement>("#error-button")?.addEventListener("click", handleClick);
-		</script>
-
-		<hr />
-		<!-- ACTIONS SAMPLE -->
-		<input type="text" id="name-input" value="Houston111" />
-		<button id="get-greeting-button">!!!!Get greeting</button>
-		<button id="sampleEeerrr">sampleEeerrr</button>
-		<script>
-			import { actions } from "astro:actions";
-			import { toast } from "@/ui-plus/sonner";
-
-			const nameInput = document.querySelector<HTMLInputElement>("#name-input");
-			const button = document.querySelector<HTMLButtonElement>("#get-greeting-button");
-			button?.addEventListener("click", async () => {
-				toast.success("Hello from action");
-				// Show alert pop-up with greeting from action
-				const { data, error } = await actions.getGreeting({ name: nameInput?.value ?? "" });
-				if (error) {
-					console.error(error);
-				} else {
-					console.log(data);
-				}
-			});
-
-			const button2 = document.querySelector<HTMLButtonElement>("#sampleEeerrr");
-			button2?.addEventListener("click", async () => {
-				const { data, error } = await actions.sampleEeerrr({ name: nameInput?.value ?? "" });
-				if (error) {
-					console.error(error);
-				} else {
-					console.log(data);
-				}
-			});
-		</script>
-		<hr />
-		<button id="test-post-button">Test POST</button>
-		<button id="test-post-button-2">bad request Test POST 2</button>
-		<input type="text" id="test-post-input" value="Houston-test-post" />
-		<script>
-			const button3 = document.querySelector<HTMLButtonElement>("#test-post-button");
-			const input = document.querySelector<HTMLInputElement>("#test-post-input");
-			button3?.addEventListener("click", async () => {
-				const response = await fetch("/atro-api/test-post.json", {
-					method: "POST",
-					body: JSON.stringify({ name: input?.value ?? "" }),
-					headers: {
-						"Content-Type": "application/json"
-					}
-				});
-				const data = await response.json();
-				console.log(data);
-			});
-			const button4 = document.querySelector<HTMLButtonElement>("#test-post-button-2");
-			button4?.addEventListener("click", async () => {
-				const response = await fetch("/atro-api/test-post.json", {
-					method: "POST"
-				});
-				const data = await response.json();
-				console.log(data);
-			});
-		</script>
+		<details>
+			<summary>info:</summary>
+			<div>
+				cache:
+				<span class="cache-date" data-cache-date={Date.now()}></span>
+				<br />
+				SENTRY_RELEASE_ID: {SENTRY_RELEASE_ID}
+				<br />
+				websiteId:{websiteId}
+			</div>
+		</details>
+		<script src="../clientScripts/cacheFormat.ts"></script>
 		<LayoutHelpers client:load />
 	</body>
 </html>

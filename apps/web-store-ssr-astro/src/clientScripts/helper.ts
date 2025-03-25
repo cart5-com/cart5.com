@@ -1,6 +1,15 @@
 import { apiClient } from "@api-client/index";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "@lib/clientUtils/getAuthOrigin";
 
+/*
+<button id="whoami-button">Who am I</button>
+<pre id="whoami-result"></pre>
+<button class="hidden" id="manage-account-button">Manage Account</button>
+<button class="hidden" id="logout-button">Logout</button>
+<button class="hidden" id="login-button">Login</button>
+<button class="hidden" id="register-button">Sign Up</button>
+*/
+
 const whoAmI = async () => {
     const { data, error } = await (await apiClient.auth_global.whoami.$post()).json();
     console.log(data, error);
