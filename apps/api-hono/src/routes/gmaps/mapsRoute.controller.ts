@@ -78,7 +78,9 @@ export const mapsRoute = new Hono<HonoVariables>()
             const cachedResult = await getGeocodingCache_Service(cacheKey);
             
             if (
-                cachedResult
+                cachedResult &&
+                cachedResult.response &&
+                cachedResult.response.results.length > 0
             ) {
                 // 30 days
                 const isExpired = cachedResult.created_at_ts + 31_536_000_000 < Date.now();
