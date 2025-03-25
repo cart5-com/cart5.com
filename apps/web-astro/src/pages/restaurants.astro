@@ -5,7 +5,12 @@ import { BASE_ROUTES } from "@web-astro/clientScripts/router";
 import BaseLayout from "../layout/BaseLayout.astro";
 import { getNearbyRestaurants_Service } from "@db/services/distance.service";
 import { Button } from "@/components/ui/button";
-import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import {
+	ChevronsLeft,
+	ChevronsRight
+	// ChevronLeft,
+	// ChevronRight,
+} from "lucide-vue-next";
 type params = Parameters<typeof getNearbyRestaurants_Service>;
 const lat = Number(Astro.url.searchParams.get("lat"));
 const lng = Number(Astro.url.searchParams.get("lng"));
