@@ -8,7 +8,7 @@ type GeocodeResponse = ResType<
 export const geocode = async (address: string, countryCode?: string): Promise<GeocodeResponse> => {
     // Check if we're in a browser environment
     if (typeof window !== 'undefined') {
-        const cacheKey = `geocode_${address.trim().toLowerCase()}_${countryCode || ''}`;
+        const cacheKey = `_geocode_${address.trim().toLowerCase()}_${countryCode || ''}`;
         const cachedResult = localStorage.getItem(cacheKey);
 
         // If we have a cached result and it's not expired, return it
@@ -32,7 +32,7 @@ export const geocode = async (address: string, countryCode?: string): Promise<Ge
                 components: countryCode ? `country:${countryCode}` : undefined,
             }
         })).json();
-        if (!result.error) {
+        if (!result.error && result.data.results.length > 0) {
             // Cache the result
             localStorage.setItem(cacheKey, JSON.stringify({
                 data: result,
