@@ -2,7 +2,7 @@
 
 export const BASE_ROUTES = {
     HOME: "/",
-    LIST_RESTAURANTS: "/list",
+    LIST_RESTAURANTS: "/restaurants",
     RESTAURANT: function (id: string) {
         return `/restaurant/${id}`;
     },

@@ -1,0 +1,118 @@
+---
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Store } from "lucide-vue-next";
+import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import BaseLayout from "../layout/BaseLayout.astro";
+import { getNearbyRestaurants_Service } from "@db/services/distance.service";
+import { Button } from "@/components/ui/button";
+import { ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from "lucide-vue-next";
+type params = Parameters<typeof getNearbyRestaurants_Service>;
+const lat = Number(Astro.url.searchParams.get("lat"));
+const lng = Number(Astro.url.searchParams.get("lng"));
+// const address = Astro.url.searchParams.get("address");
+// const country = Astro.url.searchParams.get("country");
+const measure = (Astro.url.searchParams.get("measure") ?? "km") as params[3];
+const listType = (Astro.url.searchParams.get("listType") ?? "delivery") as params[7];
+const sort = (Astro.url.searchParams.get("sort") ?? "distance_asc") as params[8];
+const limit = Number(Astro.url.searchParams.get("limit") ?? 12);
+const currentPage = Number(Astro.url.searchParams.get("page") ?? 1);
+const range = Number(Astro.url.searchParams.get("range") ?? 0.2); // ~ 30 km
+// const listAllParams = Object.fromEntries(Astro.url.searchParams.entries());
+
+const nearbyRestaurants = await getNearbyRestaurants_Service(
+	lat,
+	lng,
+	Astro.locals.WEBSITE?.isMarketplace ? null : Astro.locals.WEBSITE?.id,
+	measure,
+	limit,
+	currentPage,
+	range,
+	listType,
+	sort
+);
+
+const createPageUrl = (pageNum: number) => {
+	const url = new URL(Astro.url);
+	url.searchParams.set("page", pageNum.toString());
+	return url.toString();
+};
+
+const maxVisiblePages = 5; // Adjust this value to show more or fewer page buttons
+
+function getPageRange(current: number, total: number, max: number) {
+	if (total <= max) return Array.from({ length: total }, (_, i) => i + 1);
+
+	let start = Math.max(current - Math.floor(max / 2), 1);
+	let end = start + max - 1;
+
+	if (end > total) {
+		end = total;
+		start = Math.max(end - max + 1, 1);
+	}
+
+	return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+const pageRange = getPageRange(currentPage, nearbyRestaurants.pagination.totalPages, maxVisiblePages);
+---
+
+<BaseLayout title={Astro.locals.WEBSITE?.name ?? "List"}>
+	<div class="grid gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
+		{
+			nearbyRestaurants.restaurants.map((restaurant) => (
+				<a href={`${BASE_ROUTES.RESTAURANT(restaurant.id)}`} class="block">
+					<Card class="bg-muted hover:bg-muted/20 h-24 transition-colors">
+						<CardHeader>
+							<CardTitle class="text-lg">
+								<Store class="mr-1 inline-block" />
+								{restaurant.name}
+							</CardTitle>
+							<CardDescription>{restaurant.address1}</CardDescription>
+						</CardHeader>
+					</Card>
+				</a>
+			))
+		}
+	</div>
+
+	<nav class="flex justify-center py-4">
+		<div class="flex items-center gap-1">
+			{
+				currentPage > 1 && (
+					<>
+						<Button variant="outline" as="a" href={createPageUrl(1)}>
+							<ChevronsLeft class="h-4 w-4" />
+						</Button>
+						{/* <Button variant="outline" as="a" href={createPageUrl(currentPage - 1)}>
+							<ChevronLeft class="h-4 w-4" />
+						</Button> */}
+					</>
+				)
+			}
+
+			{pageRange[0] > 1 && <span>...</span>}
+
+			{
+				pageRange.map((pageNum) => (
+					<Button variant={pageNum === currentPage ? "default" : "outline"} as="a" href={createPageUrl(pageNum)}>
+						{pageNum}
+					</Button>
+				))
+			}
+			{pageRange[pageRange.length - 1] < nearbyRestaurants.pagination.totalPages && <span>...</span>}
+
+			{
+				currentPage < nearbyRestaurants.pagination.totalPages && (
+					<>
+						{/* <Button k variant="outline" as="a" href={createPageUrl(currentPage + 1)}>
+							<ChevronRight class="h-4 w-4" />
+						</Button> */}
+						<Button variant="outline" as="a" href={createPageUrl(nearbyRestaurants.pagination.totalPages)}>
+							<ChevronsRight class="h-4 w-4" />
+						</Button>
+					</>
+				)
+			}
+		</div>
+	</nav>
+</BaseLayout>

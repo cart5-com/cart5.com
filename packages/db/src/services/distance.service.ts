@@ -8,7 +8,7 @@ export const getNearbyRestaurants_Service = async (
     lng: number,
     websiteId: string | null = null,
     measure: "km" | "mi" = "km",
-    limit: number = 10,
+    limit: number = 12,
     page: number = 1,
     searchRange: number = 0.2, // ~ 30 km
     listType: "pickup" | "delivery" = 'delivery',
