@@ -6,7 +6,7 @@ declare namespace App {
             id: string;
             name: string;
             isMarketplace: boolean;
-        } | null;
+        } | undefined;
     }
 }
 

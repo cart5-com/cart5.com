@@ -4,14 +4,14 @@ import { getNearbyRestaurants_Service } from "@db/services/distance.service";
 type params = Parameters<typeof getNearbyRestaurants_Service>;
 const lat = Number(Astro.url.searchParams.get("lat"));
 const lng = Number(Astro.url.searchParams.get("lng"));
-const address = Astro.url.searchParams.get("address");
-const country = Astro.url.searchParams.get("country");
+// const address = Astro.url.searchParams.get("address");
+// const country = Astro.url.searchParams.get("country");
 const measure = (Astro.url.searchParams.get("measure") ?? "km") as params[3];
 const listType = (Astro.url.searchParams.get("listType") ?? "pickup") as params[7];
 const sort = (Astro.url.searchParams.get("sort") ?? "distance_asc") as params[8];
-const limit = Number(Astro.url.searchParams.get("limit")) ?? 10;
-const page = Number(Astro.url.searchParams.get("page")) ?? 1;
-const range = Number(Astro.url.searchParams.get("range")) ?? 1;
+const limit = Number(Astro.url.searchParams.get("limit") ?? 24);
+const page = Number(Astro.url.searchParams.get("page") ?? 1);
+const range = Number(Astro.url.searchParams.get("range") ?? 0.2); // ~ 30 km
 // const listAllParams = Object.fromEntries(Astro.url.searchParams.entries());
 
 const nearbyRestaurants = await getNearbyRestaurants_Service(

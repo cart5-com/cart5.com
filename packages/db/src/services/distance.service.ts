@@ -10,15 +10,15 @@ export const getNearbyRestaurants_Service = async (
     measure: "km" | "mi" = "km",
     limit: number = 10,
     page: number = 1,
-    range: number = 1,
+    searchRange: number = 0.2, // ~ 30 km
     listType: "pickup" | "delivery" = 'delivery',
     sort: "distance_asc" | "distance_desc" = 'distance_asc',
 ) => {
     const radius = measure === 'km' ? 6371 : 3959;
 
     // Calculate the bounding box for initial filtering
-    const latDelta = range; // Approximately 111 km or 69 miles
-    const lngDelta = range / Math.cos(lat * Math.PI / 180);
+    const latDelta = searchRange; // Approximately 111 km or 69 miles
+    const lngDelta = searchRange / Math.cos(lat * Math.PI / 180);
 
     const minLat = lat - latDelta;
     const maxLat = lat + latDelta;
@@ -113,6 +113,7 @@ export const getNearbyRestaurants_Service = async (
             // Using the address table for lat/lng
             lat: restaurantAddressTable.lat,
             lng: restaurantAddressTable.lng,
+            address1: restaurantAddressTable.address1,
 
             /////////////////////////
             // v1 - Haversine formula for great-circle distance
@@ -169,6 +170,7 @@ export const getNearbyRestaurants_Service = async (
             lat: number;
             lng: number;
             distance: number;
+            address1: string | null;
         }[],
         pagination: {
             total: countResult[0]?.count || 0,

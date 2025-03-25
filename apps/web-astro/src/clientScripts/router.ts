@@ -1,3 +1,5 @@
+
+
 export const BASE_ROUTES = {
     HOME: "/",
     LIST_RESTAURANTS: "/list",

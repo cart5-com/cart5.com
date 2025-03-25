@@ -13,13 +13,17 @@ import {
     createRestaurant_Service,
     updateRestaurant_Service,
     updateRestaurantAddress_Service,
+    updateRestaurantDeliveryZones_Service,
     updateRestaurantOpenHours_Service
 } from "@db/services/restaurant.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
-import { getNearbyRestaurants } from "@db/services/distance.service";
-
-
+import { getNearbyRestaurants_Service } from "@db/services/distance.service";
+import type {
+    DeliveryZone
+} from "@lib/types/restaurantTypes";
+import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
+import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
 
 export const startSeed = async () => {
     if (IS_PROD) {
@@ -100,6 +104,10 @@ export const startSeed = async () => {
         // Generate locations within reasonable distance from base
         lat = faker.location.latitude({ min: baseLat - 0.1, max: baseLat + 0.1, precision: 6 });
         lng = faker.location.longitude({ min: baseLng - 0.1, max: baseLng + 0.1, precision: 6 });
+        if (i === 4) {
+            lat = baseLat;
+            lng = baseLng;
+        }
 
         // Sometimes use the same city as base location
         if (faker.number.int({ min: 1, max: 10 }) <= 7) {
@@ -126,16 +134,84 @@ export const startSeed = async () => {
             lng: lng
         });
 
+        let offersDelivery = faker.number.int({ min: 0, max: 1 }) === 1;
+        if (i === 4) {
+            offersDelivery = true;
+        }
+
+        const offersPickup = faker.number.int({ min: 0, max: 1 }) === 1;
+        await updateRestaurant_Service(rest.id, {
+            offersDelivery,
+            offersPickup,
+        })
+
+        if (offersDelivery) {
+            let zones: DeliveryZone[] = [
+                {
+                    id: faker.string.uuid(),
+                    name: "Circle Zone 1",
+                    minCart: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFee: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
+                    shapeType: 'circle',
+                    polygonArea: undefined,
+                    circleArea: {
+                        center: {
+                            lat: lat,
+                            lng: lng
+                        },
+                        radius: faker.number.int({ min: 100, max: 1000 })
+                    },
+                    rectangleArea: undefined,
+                    isActive: faker.number.int({ min: 0, max: 1 }) === 1,
+                },
+                // add polygon zone
+                {
+                    id: faker.string.uuid(),
+                    name: "Polygon Zone 1",
+                    minCart: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFee: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
+                    shapeType: 'polygon',
+                    polygonArea: calcDiamondShapePolygon(lat, lng, faker.number.float({ min: 0.01, max: 0.03 })),
+                    circleArea: undefined,
+                    rectangleArea: undefined,
+                    isActive: faker.number.int({ min: 0, max: 1 }) === 1,
+                },
+                // add rectangle zone
+                {
+                    id: faker.string.uuid(),
+                    name: "Rectangle Zone 1",
+                    minCart: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFee: faker.number.int({ min: 0, max: 10 }),
+                    deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
+                    shapeType: 'rectangle',
+                    polygonArea: undefined,
+                    circleArea: undefined,
+                    rectangleArea: {
+                        topLeft: {
+                            lat: lat - faker.number.float({ min: 0.01, max: 0.03 }),
+                            lng: lng - faker.number.float({ min: 0.01, max: 0.03 })
+                        },
+                        bottomRight: {
+                            lat: lat + faker.number.float({ min: 0.01, max: 0.03 }),
+                            lng: lng + faker.number.float({ min: 0.01, max: 0.03 })
+                        }
+                    },
+                    isActive: faker.number.int({ min: 0, max: 1 }) === 1,
+                }
+            ];
+            await updateRestaurantDeliveryZones_Service(rest.id, processDataToSaveDeliveryZones({
+                zones
+            }))
+        }
+
         restaurantsByThush.push(rest);
     }
 
     const flamesRestaurant = restaurantsByThush[4];
     await updateRestaurant_Service(flamesRestaurant.id, {
         name: "Flames Restaurant",
-    })
-    await updateRestaurantAddress_Service(flamesRestaurant.id, {
-        lat: baseLat,
-        lng: baseLng
     })
     await updateRestaurantOpenHours_Service(flamesRestaurant.id, {
         timezone: cfRaw.timezone,
@@ -226,7 +302,7 @@ export const startSeed = async () => {
     );
 
 
-    const nearbyRestaurants = await getNearbyRestaurants(
+    const nearbyRestaurants = await getNearbyRestaurants_Service(
         baseLat,
         baseLng,
         null,
