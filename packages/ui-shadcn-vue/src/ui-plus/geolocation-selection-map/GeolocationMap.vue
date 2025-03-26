@@ -210,9 +210,8 @@ async function loadHelperBtns() {
 	if (helperBtns.value.length === 0) {
 		await addIpwhoHelperBtn()
 	}
-	// if there is a help and initial lat and lng is not set
-	if (!model.value.lat || !model.value.lng && helperBtns.value.length > 0) {
-		setCenter(helperBtns.value[0].lat ?? 0, helperBtns.value[0].lng ?? 0)
+	if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
+		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
 	}
 }
 

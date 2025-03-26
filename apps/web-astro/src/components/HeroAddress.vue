@@ -34,6 +34,18 @@ watch(country, (newValue) => {
 
 onMounted(async () => {
     isLoading.value = true;
+
+    mapLocation.value = JSON.parse(localStorage.getItem('REMEMBER_LAST_LOCATION') || '{}') as GeoLocation;
+    if (
+        (window.location.pathname + window.location.search) !== BASE_ROUTES.HOME_UPDATE_ADDRESS &&
+        mapLocation.value?.lat &&
+        mapLocation.value?.lng &&
+        mapLocation.value?.address &&
+        mapLocation.value?.country
+    ) {
+        redirectToRestaurants();
+    }
+
     // Load saved values from localStorage if they exist
     const savedAddress = localStorage.getItem('REMEMBER_LAST_ADDRESS');
     const savedCountry = localStorage.getItem('REMEMBER_LAST_COUNTRY');
@@ -63,16 +75,7 @@ const onSubmit = () => {
     mapLocation.value.country = country.value || '';
 }
 
-const onMapConfirm = async () => {
-    console.log(mapLocation.value)
-    isDialogOpen.value = false;
-    localStorage.setItem('REMEMBER_LAST_LOCATION', JSON.stringify({
-        lat: mapLocation.value?.lat || 0,
-        lng: mapLocation.value?.lng || 0,
-        address: mapLocation.value?.address || address.value || '',
-        country: mapLocation.value?.country || country.value || '',
-    } as GeoLocation));
-
+const redirectToRestaurants = () => {
     const url = new URL(window.location.href);
     url.pathname = BASE_ROUTES.LIST_RESTAURANTS;
     url.searchParams.set('lat', mapLocation.value?.lat?.toString() || '0');
@@ -88,6 +91,18 @@ const onMapConfirm = async () => {
     }
 
     window.location.href = url.toString();
+}
+
+const onMapConfirm = async () => {
+    isDialogOpen.value = false;
+    localStorage.setItem('REMEMBER_LAST_LOCATION', JSON.stringify({
+        lat: mapLocation.value?.lat || 0,
+        lng: mapLocation.value?.lng || 0,
+        address: mapLocation.value?.address || address.value || '',
+        country: mapLocation.value?.country || country.value || '',
+    } as GeoLocation));
+
+    redirectToRestaurants();
 }
 
 </script>

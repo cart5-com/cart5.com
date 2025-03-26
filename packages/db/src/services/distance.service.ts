@@ -10,8 +10,8 @@ export const getNearbyRestaurants_Service = async (
     measure: "km" | "mi" = "km",
     limit: number = 12,
     page: number = 1,
-    searchRange: number = 0.2, // ~ 30 km
-    listType: "pickup" | "delivery" = 'delivery',
+    searchRange: number = 1, // ~ 111 km
+    type: "pickup" | "delivery" = 'delivery',
     sort: "distance_asc" | "distance_desc" = 'distance_asc',
 ) => {
     const radius = measure === 'km' ? 6371 : 3959;
@@ -33,9 +33,9 @@ export const getNearbyRestaurants_Service = async (
     }
 
     // Add offers delivery/pickup filter based on listType
-    if (listType === 'delivery') {
+    if (type === 'delivery') {
         baseConditions.push(eq(restaurantTable.offersDelivery, true));
-    } else if (listType === 'pickup') {
+    } else if (type === 'pickup') {
         baseConditions.push(eq(restaurantTable.offersPickup, true));
     }
 
@@ -58,9 +58,9 @@ export const getNearbyRestaurants_Service = async (
     ];
 
     let whereConditions = baseConditions;
-    if (listType === 'delivery') {
+    if (type === 'delivery') {
         whereConditions = [...whereConditions, ...deliveryConditions];
-    } else if (listType === 'pickup') {
+    } else if (type === 'pickup') {
         // do nothing
     }
 
@@ -91,7 +91,7 @@ export const getNearbyRestaurants_Service = async (
         );
 
         // Join with delivery zone table if in delivery mode
-        if (listType === 'delivery') {
+        if (type === 'delivery') {
             q = q.innerJoin(
                 restaurantDeliveryZoneMapTable,
                 eq(restaurantTable.id, restaurantDeliveryZoneMapTable.restaurantId)
