@@ -1,0 +1,9 @@
+---
+import BaseLayout from "@web-astro/layout/BaseLayout.astro";
+const { slug, restaurantId } = Astro.params;
+---
+
+<BaseLayout title={`-`}>
+	<h1>{slug}</h1>
+	<h2>{restaurantId}</h2>
+</BaseLayout>
