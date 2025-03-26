@@ -20,7 +20,7 @@ const address = Astro.url.searchParams.get("address") || "address";
 const measure = (Astro.url.searchParams.get("measure") ?? "km") as params[3];
 const type = (Astro.url.searchParams.get("type") ?? "delivery") as params[7];
 const sort = (Astro.url.searchParams.get("sort") ?? "distance_asc") as params[8];
-const limit = Number(Astro.url.searchParams.get("limit") ?? 12);
+const limit = Number(Astro.url.searchParams.get("limit") ?? 36);
 const currentPage = Number(Astro.url.searchParams.get("page") ?? 1);
 const range = Number(Astro.url.searchParams.get("range") ?? 1); // ~ 111 km
 // const listAllParams = Object.fromEntries(Astro.url.searchParams.entries());
@@ -126,7 +126,7 @@ const pageRange = getPageRange(currentPage, nearbyRestaurants.pagination.totalPa
 		{
 			nearbyRestaurants.restaurants.map((restaurant) => (
 				<a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
-					<Card class="bg-muted hover:bg-muted/20 h-24 transition-colors">
+					<Card class="bg-muted hover:bg-muted/20 transition-colors">
 						<CardHeader>
 							<CardTitle class="text-lg">
 								<Store class="mr-1 inline-block" />
