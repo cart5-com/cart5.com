@@ -36,7 +36,7 @@ const isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
 ---
 
 <a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
-	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "opacity-50" : ""}`}>
+	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "brightness-50" : ""}`}>
 		<CardHeader>
 			{
 				!isOpen && (
