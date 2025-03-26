@@ -2,19 +2,22 @@
 import BaseLayout from "../layout/BaseLayout.astro";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import HeroAddress from "../components/HeroAddress.vue";
-import { BASE_LINKS } from "../clientScripts/links";
+import { BASE_LINKS } from "../utils/links";
 import {
 	countRestaurantsForWebsite_Service,
 	getFirstRestaurantIdForWebsite_Service
 } from "@db/services/website.service";
+import { slugify } from "@lib/utils/slugify";
+
 const count = await countRestaurantsForWebsite_Service(
 	Astro.locals.WEBSITE?.id ?? "",
 	Astro.locals.WEBSITE?.isMarketplace ?? false
 );
 if (count === 1) {
-	const restaurantId = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
-	if (restaurantId) {
-		return Astro.redirect(BASE_LINKS.RESTAURANT(restaurantId));
+	const restaurant = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
+	if (restaurant) {
+		const restaurantLink = BASE_LINKS.RESTAURANT(restaurant.restaurantId, slugify(restaurant.restaurant.name));
+		return Astro.redirect(restaurantLink);
 	}
 }
 ---

@@ -4,8 +4,8 @@ import { getNearbyRestaurants_Service } from "@db/services/distance.service";
 import FilterControls from "../components/restaurants/FilterControls.astro";
 import RestaurantList from "../components/restaurants/RestaurantList.astro";
 import Pagination from "../components/restaurants/Pagination.astro";
-import { BASE_LINKS } from "@web-astro/clientScripts/links";
-
+import { BASE_LINKS } from "@web-astro/utils/links";
+import { slugify } from "@lib/utils/slugify";
 type params = Parameters<typeof getNearbyRestaurants_Service>;
 const lat = Number(Astro.url.searchParams.get("lat"));
 const lng = Number(Astro.url.searchParams.get("lng"));
@@ -32,7 +32,11 @@ const nearbyRestaurants = await getNearbyRestaurants_Service(
 );
 
 if (nearbyRestaurants.restaurants.length === 1) {
-	return Astro.redirect(BASE_LINKS.RESTAURANT(nearbyRestaurants.restaurants[0].id));
+	const restaurantLink = BASE_LINKS.RESTAURANT(
+		nearbyRestaurants.restaurants[0].id,
+		slugify(nearbyRestaurants.restaurants[0].name)
+	);
+	return Astro.redirect(restaurantLink);
 }
 
 const createPageUrl = (

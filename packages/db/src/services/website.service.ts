@@ -426,8 +426,15 @@ export const getFirstRestaurantIdForWebsite_Service = async (
     websiteId: string
 ) => {
     return (await db.query.websiteRestaurantMapTable.findFirst({
-        where: eq(websiteRestaurantMapTable.websiteId, websiteId)
-    }))?.restaurantId ?? null;
+        where: eq(websiteRestaurantMapTable.websiteId, websiteId),
+        with: {
+            restaurant: {
+                columns: {
+                    name: true
+                }
+            }
+        }
+    }));
 }
 
 export const countRestaurantsForWebsite_Service = async (

@@ -15,7 +15,7 @@ import {
 import { ref, onMounted, watch } from "vue";
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 import { Loader2, DoorOpen, ChevronRight } from 'lucide-vue-next';
-import { BASE_LINKS } from "@web-astro/clientScripts/links";
+import { BASE_LINKS } from "@web-astro/utils/links";
 
 const address = ref<string | null>(null);
 const country = ref<string | null>(null);

@@ -1,9 +1,11 @@
 ---
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Store, Moon } from "lucide-vue-next";
-import { BASE_LINKS } from "@web-astro/clientScripts/links";
+import { BASE_LINKS } from "@web-astro/utils/links";
 import { getRestaurantOpenHours_Service } from "@db/services/restaurant.service";
 import { isOpenNow } from "@lib/utils/isOpenNow";
+import { slugify } from "@lib/utils/slugify";
+
 interface Props {
 	restaurant: {
 		id: string;
@@ -35,7 +37,7 @@ const isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
 // ================================END===============================
 ---
 
-<a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
+<a href={`${BASE_LINKS.RESTAURANT(restaurant.id, slugify(restaurant.name))}`} class="block">
 	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "brightness-50" : ""}`}>
 		<CardHeader>
 			{
