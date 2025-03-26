@@ -8,7 +8,7 @@ Node.js, Vite, Hono, Astro, Vue.js, Vue Router, VueUse, Shadcn-vue and Tailwind
 - This is turborepo with Typescript
 - hono for api
 - Vue for spa dashboard 
-- Astro for ssr
+- Astro for ssr, *.astro files has server side code, starts with --- and ends with ---
 - Shadcn-vue for UI
 - Tailwind
 - Sqlite turso with drizzle for db
