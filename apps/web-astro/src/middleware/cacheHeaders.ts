@@ -7,8 +7,6 @@ export const cacheHeadersMiddleware = defineMiddleware(async ({ request }, next)
             // do not cache actions, use them for user private data
         } else if (request.url.includes('/_server-islands/')) {
             // do not cache server islands, use them for user private data
-        } else if (request.url.includes('/atro-api/')) {
-            // do not cache atro-api, use them for user private data
         } else if (
             response.status === 200 ||
             response.status === 404
