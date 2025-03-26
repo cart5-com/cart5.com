@@ -1,17 +1,10 @@
 ---
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Store } from "lucide-vue-next";
-import { BASE_LINKS } from "@web-astro/clientScripts/links";
 import BaseLayout from "../layout/BaseLayout.astro";
 import { getNearbyRestaurants_Service } from "@db/services/distance.service";
-import { buttonVariants } from "@/components/ui/button";
-import {
-	ChevronsLeft,
-	ChevronsRight,
-	MapPin
-	// ChevronLeft,
-	// ChevronRight,
-} from "lucide-vue-next";
+import FilterControls from "../components/restaurants/FilterControls.astro";
+import RestaurantList from "../components/restaurants/RestaurantList.astro";
+import Pagination from "../components/restaurants/Pagination.astro";
+
 type params = Parameters<typeof getNearbyRestaurants_Service>;
 const lat = Number(Astro.url.searchParams.get("lat"));
 const lng = Number(Astro.url.searchParams.get("lng"));
@@ -50,147 +43,16 @@ const createPageUrl = (
 	if (range) url.searchParams.set("range", range.toString());
 	return url.toString();
 };
-
-const maxVisiblePages = 5; // Adjust this value to show more or fewer page buttons
-
-function getPageRange(current: number, total: number, max: number) {
-	if (total <= max) return Array.from({ length: total }, (_, i) => i + 1);
-
-	let start = Math.max(current - Math.floor(max / 2), 1);
-	let end = start + max - 1;
-
-	if (end > total) {
-		end = total;
-		start = Math.max(end - max + 1, 1);
-	}
-
-	return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-}
-
-const pageRange = getPageRange(currentPage, nearbyRestaurants.pagination.totalPages, maxVisiblePages);
 ---
 
 <BaseLayout title={Astro.locals.WEBSITE?.name ?? "List"}>
-	<div class="overflow-x-auto overflow-y-hidden whitespace-nowrap">
-		<div class="my-2 flex justify-between">
-			<div
-				class="bg-muted text-muted-foreground grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1"
-				style="outline: none;">
-				<!-- bg-background text-foreground shadow -->
-				<a
-					class={buttonVariants({ variant: "ghost" }) +
-						`${type === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-					href={createPageUrl(1, "delivery")}>
-					<span class="truncate">Delivery</span>
-				</a>
+	<FilterControls type={type} address={address} sort={sort} range={range} createPageUrl={createPageUrl} />
 
-				<a
-					class={buttonVariants({ variant: "ghost" }) +
-						`${type === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-					href={createPageUrl(1, "pickup")}>
-					<span class="truncate">Pickup</span>
-				</a>
-			</div>
-			<div class="p-1">
-				<a
-					class={buttonVariants({ variant: "outline" }) + " max-w-[200px] "}
-					href={BASE_LINKS.HOME_UPDATE_ADDRESS}
-					title={`click to change\n"${address}"`}>
-					<span class="truncate">
-						<MapPin class="mr-1 inline-block" />
-						{address}
-					</span>
-				</a>
-			</div>
-			<select
-				onchange="window.location.href=this.value"
-				class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
-				<option selected={sort === "distance_asc"} value={createPageUrl(1, undefined, "distance_asc")}>
-					Sort by Distance: Low to High
-				</option>
-				<option selected={sort === "distance_desc"} value={createPageUrl(1, undefined, "distance_desc")}>
-					Sort by Distance: High to Low
-				</option>
-			</select>
-			<select
-				onchange="window.location.href=this.value"
-				class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
-				<option selected={range === 1} value={createPageUrl(1, undefined, undefined, 1)}>Range: 1x</option>
-				<option selected={range === 2} value={createPageUrl(1, undefined, undefined, 2)}>Range: 2x</option>
-				<option selected={range === 3} value={createPageUrl(1, undefined, undefined, 3)}>Range: 3x</option>
-			</select>
-		</div>
-	</div>
+	<RestaurantList restaurants={nearbyRestaurants.restaurants} measure={measure} type={type} />
 
-	<div class="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-		{
-			nearbyRestaurants.restaurants.map((restaurant) => (
-				<a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
-					<Card class="bg-muted hover:bg-muted/20 transition-colors">
-						<CardHeader>
-							<CardTitle class="text-lg">
-								<Store class="mr-1 inline-block" />
-								<span class="truncate">{restaurant.name}</span>
-							</CardTitle>
-							<CardDescription>
-								<div class="flex items-center justify-between">
-									<span class="truncate">{restaurant.address1}</span>
-									<span class="text-muted-foreground text-sm">
-										{restaurant.distance.toFixed(2)} {measure}
-									</span>
-								</div>
-							</CardDescription>
-						</CardHeader>
-					</Card>
-				</a>
-			))
-		}
-	</div>
-
-	<nav class="flex justify-center py-4">
-		<div class="flex items-center gap-1">
-			{
-				currentPage > 1 && (
-					<>
-						<a class={buttonVariants({ variant: "outline" })} href={createPageUrl(1)}>
-							<ChevronsLeft />
-						</a>
-						{/* <a class={buttonVariants({ variant: "outline" })} href={createPageUrl(currentPage - 1)}>
-							<ChevronsLeft />
-						</a> */}
-					</>
-				)
-			}
-
-			{pageRange[0] > 1 && <span>.</span>}
-
-			{
-				pageRange.map((pageNum) => (
-					<a
-						class={buttonVariants({ variant: pageNum === currentPage ? "secondary" : "outline" })}
-						href={createPageUrl(pageNum)}>
-						{pageNum}
-					</a>
-				))
-			}
-			{pageRange[pageRange.length - 1] < nearbyRestaurants.pagination.totalPages && <span>.</span>}
-
-			{
-				currentPage < nearbyRestaurants.pagination.totalPages && (
-					<>
-						{/* <a
-							class={buttonVariants({ variant: "outline" })}
-							href={createPageUrl(currentPage + 1)}>
-							<ChevronRight />
-						</a> */}
-						<a
-							class={buttonVariants({ variant: "outline" })}
-							href={createPageUrl(nearbyRestaurants.pagination.totalPages)}>
-							<ChevronsRight />
-						</a>
-					</>
-				)
-			}
-		</div>
-	</nav>
+	<Pagination
+		currentPage={currentPage}
+		totalPages={nearbyRestaurants.pagination.totalPages}
+		createPageUrl={(page: number) => createPageUrl(page)}
+	/>
 </BaseLayout>

@@ -1,0 +1,63 @@
+---
+import { buttonVariants } from "@/components/ui/button";
+import { ChevronsLeft, ChevronsRight } from "lucide-vue-next";
+
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	maxVisiblePages?: number;
+	createPageUrl: (page: number) => string;
+}
+
+const { currentPage, totalPages, maxVisiblePages = 5, createPageUrl } = Astro.props;
+
+function getPageRange(current: number, total: number, max: number) {
+	if (total <= max) return Array.from({ length: total }, (_, i) => i + 1);
+
+	let start = Math.max(current - Math.floor(max / 2), 1);
+	let end = start + max - 1;
+
+	if (end > total) {
+		end = total;
+		start = Math.max(end - max + 1, 1);
+	}
+
+	return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+const pageRange = getPageRange(currentPage, totalPages, maxVisiblePages);
+---
+
+<nav class="flex justify-center py-4">
+	<div class="flex items-center gap-1">
+		{
+			currentPage > 1 && (
+				<a class={buttonVariants({ variant: "outline" })} href={createPageUrl(1)}>
+					<ChevronsLeft />
+				</a>
+			)
+		}
+
+		{pageRange[0] > 1 && <span>.</span>}
+
+		{
+			pageRange.map((pageNum) => (
+				<a
+					class={buttonVariants({ variant: pageNum === currentPage ? "secondary" : "outline" })}
+					href={createPageUrl(pageNum)}>
+					{pageNum}
+				</a>
+			))
+		}
+
+		{pageRange[pageRange.length - 1] < totalPages && <span>.</span>}
+
+		{
+			currentPage < totalPages && (
+				<a class={buttonVariants({ variant: "outline" })} href={createPageUrl(totalPages)}>
+					<ChevronsRight />
+				</a>
+			)
+		}
+	</div>
+</nav>

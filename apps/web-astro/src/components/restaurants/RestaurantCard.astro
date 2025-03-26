@@ -1,0 +1,64 @@
+---
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Store, Moon } from "lucide-vue-next";
+import { BASE_LINKS } from "@web-astro/clientScripts/links";
+import { getRestaurantOpenHours_Service } from "@db/services/restaurant.service";
+import { isOpenNow } from "@lib/utils/isOpenNow";
+interface Props {
+	restaurant: {
+		id: string;
+		name: string;
+		address1: string | null;
+		distance: number;
+	};
+	measure: string | undefined;
+	type: string | undefined;
+}
+
+const { restaurant, measure = "km", type = "delivery" } = Astro.props;
+
+// TODO: move isOpenNow calculation to client side
+// ================================START===============================
+const openHours = await getRestaurantOpenHours_Service(restaurant.id, {
+	timezone: true,
+	defaultOpenHours: true,
+	deliveryHours: true,
+	pickupHours: true
+});
+let weeklyHours = openHours?.defaultOpenHours;
+if (type === "delivery" && openHours?.deliveryHours?.isActive) {
+	weeklyHours = openHours?.deliveryHours;
+} else if (type === "pickup" && openHours?.pickupHours?.isActive) {
+	weeklyHours = openHours?.pickupHours;
+}
+const isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
+// ================================END===============================
+---
+
+<a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
+	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "opacity-50" : ""}`}>
+		<CardHeader>
+			{
+				!isOpen && (
+					<span class="bg-destructive text-destructive-foreground rounded-md px-2 py-1 text-xs">
+						<Moon class="mr-1 inline-block" />
+						Closed
+					</span>
+				)
+			}
+			<CardTitle class="text-lg">
+				<Store class="mr-1 inline-block" />
+				<span class="truncate">{restaurant.name}</span>
+			</CardTitle>
+			<CardDescription>
+				<div class="flex items-center justify-between">
+					<span class="truncate">{restaurant.address1 || ""}</span>
+					<span class="text-muted-foreground text-sm">
+						{restaurant.distance.toFixed(2)}
+						{measure}
+					</span>
+				</div>
+			</CardDescription>
+		</CardHeader>
+	</Card>
+</a>

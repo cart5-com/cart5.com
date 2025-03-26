@@ -1,0 +1,65 @@
+---
+import { buttonVariants } from "@/components/ui/button";
+import { MapPin } from "lucide-vue-next";
+import { BASE_LINKS } from "@web-astro/clientScripts/links";
+
+interface Props {
+	type: string | undefined;
+	address: string | undefined;
+	sort: string | undefined;
+	range: number;
+	createPageUrl: (page: number, type?: string, sort?: string, range?: number) => string;
+}
+
+const { type = "delivery", address = "address", sort = "distance_asc", range = 1, createPageUrl } = Astro.props;
+---
+
+<div class="overflow-x-auto overflow-y-hidden whitespace-nowrap">
+	<div class="my-2 flex justify-between">
+		<div
+			class="bg-muted text-muted-foreground grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1"
+			style="outline: none;">
+			<a
+				class={buttonVariants({ variant: "ghost" }) +
+					`${type === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+				href={createPageUrl(1, "delivery")}>
+				<span class="truncate">Delivery</span>
+			</a>
+
+			<a
+				class={buttonVariants({ variant: "ghost" }) +
+					`${type === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+				href={createPageUrl(1, "pickup")}>
+				<span class="truncate">Pickup</span>
+			</a>
+		</div>
+		<div class="p-1">
+			<a
+				class={buttonVariants({ variant: "outline" }) + " max-w-[200px] "}
+				href={BASE_LINKS.HOME_UPDATE_ADDRESS}
+				title={`click to change\n"${address}"`}>
+				<span class="truncate">
+					<MapPin class="mr-1 inline-block" />
+					{address}
+				</span>
+			</a>
+		</div>
+		<select
+			onchange="window.location.href=this.value"
+			class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
+			<option selected={sort === "distance_asc"} value={createPageUrl(1, undefined, "distance_asc")}>
+				Sort by Distance: Low to High
+			</option>
+			<option selected={sort === "distance_desc"} value={createPageUrl(1, undefined, "distance_desc")}>
+				Sort by Distance: High to Low
+			</option>
+		</select>
+		<!-- <select
+			onchange="window.location.href=this.value"
+			class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
+			<option selected={range === 1} value={createPageUrl(1, undefined, undefined, 1)}>Range: 1x</option>
+			<option selected={range === 2} value={createPageUrl(1, undefined, undefined, 2)}>Range: 2x</option>
+			<option selected={range === 3} value={createPageUrl(1, undefined, undefined, 3)}>Range: 3x</option>
+		</select> -->
+	</div>
+</div>

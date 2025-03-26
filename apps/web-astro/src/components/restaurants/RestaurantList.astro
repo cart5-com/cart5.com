@@ -1,0 +1,21 @@
+---
+import RestaurantCard from "./RestaurantCard.astro";
+
+interface Props {
+	restaurants: Array<{
+		id: string;
+		name: string;
+		address1: string | null;
+		distance: number;
+		[key: string]: any;
+	}>;
+	measure: string | undefined;
+	type: string | undefined;
+}
+
+const { restaurants, measure = "km", type = "delivery" } = Astro.props;
+---
+
+<div class="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+	{restaurants.map((restaurant) => <RestaurantCard restaurant={restaurant} measure={measure} type={type} />)}
+</div>
