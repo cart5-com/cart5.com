@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../layout/BaseLayout.astro";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HeroAddress } from "@web-astro/components";
-import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import HeroAddress from "../components/HeroAddress.vue";
+import { BASE_LINKS } from "../clientScripts/links";
 import {
 	countRestaurantsForWebsite_Service,
 	getFirstRestaurantIdForWebsite_Service
@@ -14,7 +14,7 @@ const count = await countRestaurantsForWebsite_Service(
 if (count === 1) {
 	const restaurantId = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
 	if (restaurantId) {
-		return Astro.redirect(BASE_ROUTES.RESTAURANT(restaurantId));
+		return Astro.redirect(BASE_LINKS.RESTAURANT(restaurantId));
 	}
 }
 ---

@@ -15,7 +15,7 @@ import {
 import { ref, onMounted, watch } from "vue";
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 import { Loader2, DoorOpen, ChevronRight } from 'lucide-vue-next';
-import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import { BASE_LINKS } from "@web-astro/clientScripts/links";
 
 const address = ref<string | null>(null);
 const country = ref<string | null>(null);
@@ -37,7 +37,7 @@ onMounted(async () => {
 
     mapLocation.value = JSON.parse(localStorage.getItem('REMEMBER_LAST_LOCATION') || '{}') as GeoLocation;
     if (
-        (window.location.pathname + window.location.search) !== BASE_ROUTES.HOME_UPDATE_ADDRESS &&
+        (window.location.pathname + window.location.search) !== BASE_LINKS.HOME_UPDATE_ADDRESS &&
         mapLocation.value?.lat &&
         mapLocation.value?.lng &&
         mapLocation.value?.address &&
@@ -77,7 +77,7 @@ const onSubmit = () => {
 
 const redirectToRestaurants = () => {
     const url = new URL(window.location.href);
-    url.pathname = BASE_ROUTES.LIST_RESTAURANTS;
+    url.pathname = BASE_LINKS.LIST_RESTAURANTS;
     url.searchParams.set('lat', mapLocation.value?.lat?.toString() || '0');
     url.searchParams.set('lng', mapLocation.value?.lng?.toString() || '0');
     url.searchParams.set('address', mapLocation.value?.address || address.value || '');

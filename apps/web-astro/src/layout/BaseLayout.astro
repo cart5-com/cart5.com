@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import LayoutHelpers from "ui-shadcn-vue/src/ui-plus/LayoutHelpers.vue";
 import { Card } from "@/components/ui/card";
-import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import { BASE_LINKS } from "@web-astro/clientScripts/links";
 interface Props {
 	title: string;
 }
@@ -52,7 +52,7 @@ const { title } = Astro.props;
 			<Card class="sticky top-0 z-50 shadow-sm">
 				<div class="container mx-auto flex items-center justify-between px-4 py-4">
 					<div class="flex items-center">
-						<a href={BASE_ROUTES.HOME} class="mr-8 text-2xl font-bold">{Astro.locals.WEBSITE?.name}</a>
+						<a href={BASE_LINKS.HOME} class="mr-8 text-2xl font-bold">{Astro.locals.WEBSITE?.name}</a>
 						<!-- <nav class="hidden space-x-6 md:flex">
 						<a href="#" class="text-foreground/70 hover:text-foreground">Restaurants</a>
 						<a href="#" class="text-foreground/70 hover:text-foreground">Delivery</a>

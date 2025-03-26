@@ -1,7 +1,7 @@
 ---
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Store } from "lucide-vue-next";
-import { BASE_ROUTES } from "@web-astro/clientScripts/router";
+import { BASE_LINKS } from "@web-astro/clientScripts/links";
 import BaseLayout from "../layout/BaseLayout.astro";
 import { getNearbyRestaurants_Service } from "@db/services/distance.service";
 import { buttonVariants } from "@/components/ui/button";
@@ -94,7 +94,7 @@ const pageRange = getPageRange(currentPage, nearbyRestaurants.pagination.totalPa
 			<div class="p-1">
 				<a
 					class={buttonVariants({ variant: "outline" }) + " max-w-[200px] "}
-					href={BASE_ROUTES.HOME_UPDATE_ADDRESS}
+					href={BASE_LINKS.HOME_UPDATE_ADDRESS}
 					title={`click to change\n"${address}"`}>
 					<span class="truncate">
 						<MapPin class="mr-1 inline-block" />
@@ -125,7 +125,7 @@ const pageRange = getPageRange(currentPage, nearbyRestaurants.pagination.totalPa
 	<div class="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 		{
 			nearbyRestaurants.restaurants.map((restaurant) => (
-				<a href={`${BASE_ROUTES.RESTAURANT(restaurant.id)}`} class="block">
+				<a href={`${BASE_LINKS.RESTAURANT(restaurant.id)}`} class="block">
 					<Card class="bg-muted hover:bg-muted/20 h-24 transition-colors">
 						<CardHeader>
 							<CardTitle class="text-lg">
