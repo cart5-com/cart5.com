@@ -1,5 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
+
 declare namespace App {
     interface Locals {
         WEBSITE: {
@@ -11,3 +12,4 @@ declare namespace App {
 }
 
 declare var SENTRY_RELEASE: { id: string };
+declare var menuRoot: import("@lib/types/menuType").MenuRoot;

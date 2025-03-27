@@ -75,6 +75,7 @@ const onClickAddNewItem = (search: string | undefined) => {
                        group="category-items"
                        handle=".item-drag-handle"
                        class="grid grid-cols-1 gap-6 lg:grid-cols-2  p-2 my-4">
+                class="grid grid-cols-1 gap-6 lg:grid-cols-2 p-2 my-4">
                 <template #item="{ element: itemId }">
                     <ItemCard :itemId="itemId"
                               :categoryId="currentItem.id" />

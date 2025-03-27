@@ -1,0 +1,48 @@
+---
+import type { Item, MenuRoot } from "@lib/types/menuType";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-vue-next";
+
+interface Props {
+	item: Item | undefined;
+	getMenuRoot: () => MenuRoot;
+}
+
+const { item: currentItem, getMenuRoot } = Astro.props;
+---
+
+<div class="bg-card item-btn flex cursor-pointer overflow-hidden rounded-lg border" data-item-id={currentItem?.id}>
+	<Card class="flex-grow border-none">
+		<CardHeader>
+			<CardTitle class="flex items-center gap-2">
+				<h1 class="text-lg font-bold capitalize">
+					{currentItem?.lbl}
+				</h1>
+			</CardTitle>
+			<CardDescription>
+				${currentItem?.prc}
+			</CardDescription>
+		</CardHeader>
+		<CardContent>
+			<p class="line-clamp-3 text-xs">
+				{currentItem?.dsc}
+			</p>
+		</CardContent>
+		<CardFooter class="flex max-w-full flex-wrap justify-end gap-2">
+			<Button variant="outline" size="icon">
+				<Plus />
+			</Button>
+		</CardFooter>
+	</Card>
+
+	<!-- <div class="flex-shrink-0"
+             v-if="currentItem?.imgUrl">
+            <div class="flex items-center justify-center h-full">
+                <img :src="currentItem?.imgUrl"
+                     :alt="currentItem?.lbl"
+                     loading="lazy"
+                     class="h-full w-48 object-cover overflow-hidden" />
+            </div>
+        </div> -->
+</div>

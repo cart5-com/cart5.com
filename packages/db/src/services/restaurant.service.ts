@@ -6,6 +6,26 @@ import { eq, or, desc, inArray } from "drizzle-orm";
 import { teamUserMapTable } from "@db/schema/team.schema";
 import type { InferInsertModel } from "drizzle-orm";
 
+export const getRestaurantData_Service = async (
+    restaurantId: string
+) => {
+    return await db.query.restaurantTable.findFirst({
+        where: eq(restaurantTable.id, restaurantId),
+        with: {
+            menu: {
+                columns: {
+                    menuRoot: true
+                }
+            },
+            // address: true,
+            // openHours: true,
+            // paymentMethods: true,
+            // taxSettings: true,
+            // deliveryZones: true,
+        }
+    });
+}
+
 export const getRestaurant_Service = async (
     restaurantId: string,
     columns?: Partial<Record<keyof typeof restaurantTable.$inferSelect, boolean>>

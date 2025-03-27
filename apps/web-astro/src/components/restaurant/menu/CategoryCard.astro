@@ -1,0 +1,28 @@
+---
+import type { Item, MenuRoot } from "@lib/types/menuType";
+import ItemCard from "./ItemCard.astro";
+interface Props {
+	item: Item | undefined;
+	getMenuRoot: () => MenuRoot;
+}
+
+const { item, getMenuRoot } = Astro.props;
+---
+
+<div class="category-container bg-background mb-12 rounded-lg border">
+	<div class="border-muted-foreground flex items-center justify-between border-b p-2">
+		<div class="flex-1 text-2xl font-bold">
+			<span class="h-10 cursor-text border-none text-2xl font-bold capitalize focus:ring-0">
+				{item?.lbl || "Category Name"}
+			</span>
+		</div>
+	</div>
+	<div class="my-4 grid grid-cols-1 gap-6 p-2 lg:grid-cols-2">
+		{
+			item?.cIds?.map((childId) => {
+				const child = getMenuRoot().allItems?.[childId];
+				return <ItemCard item={child} getMenuRoot={getMenuRoot} />;
+			})
+		}
+	</div>
+</div>

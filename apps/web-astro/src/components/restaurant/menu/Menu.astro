@@ -1,0 +1,33 @@
+---
+import type { MenuRoot } from "@lib/types/menuType";
+import CategoryCard from "./CategoryCard.astro";
+interface Props {
+	menuRoot: MenuRoot | null;
+	getMenuRoot: () => MenuRoot;
+}
+
+const { menuRoot, getMenuRoot } = Astro.props;
+---
+
+<div>
+	{menuRoot?.children?.map((itemId) => <CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} />)}
+</div>
+
+<script define:vars={{ menuRoot }}>
+	window.menuRoot = menuRoot;
+</script>
+
+<script>
+	import { showItemModal } from "./showItemModal";
+	import { toast } from "@/ui-plus/sonner";
+	document.addEventListener("DOMContentLoaded", () => {
+		const itemBtns = document.querySelectorAll<HTMLElement>(".item-btn");
+		itemBtns.forEach((itemBtn) => {
+			itemBtn.addEventListener("click", () => {
+				const itemId = itemBtn.dataset.itemId;
+				if (itemId) showItemModal(itemId, window.menuRoot);
+				else toast.error("No item ID found");
+			});
+		});
+	});
+</script>
