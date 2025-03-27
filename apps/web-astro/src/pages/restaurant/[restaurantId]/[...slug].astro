@@ -24,5 +24,9 @@ const getMenuRoot = () => {
 <BaseLayout title={`${restaurant?.name} - ${slug}`}>
 	<h1>{slug}</h1>
 	<h2>{restaurantId}</h2>
+	<script define:vars={{ menuRoot: restaurant.menu?.menuRoot, restaurantId }}>
+		window.menuRoot = menuRoot;
+		window.restaurantId = restaurantId;
+	</script>
 	<Menu menuRoot={restaurant.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 </BaseLayout>

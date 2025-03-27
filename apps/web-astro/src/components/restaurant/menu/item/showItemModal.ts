@@ -1,6 +1,7 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import ItemModal from './item/ItemModal.vue';
+import ItemModal from './ItemModal.vue';
+import { addToCart } from './Cart.Store';
 const dialog = useDialog();
 
 export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
@@ -14,6 +15,7 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
             cartItem: cartItem
         },
         onSuccess: async (values) => {
+            addToCart(values);
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
         },

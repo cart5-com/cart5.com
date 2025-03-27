@@ -13,12 +13,8 @@ const { menuRoot, getMenuRoot } = Astro.props;
 	{menuRoot?.children?.map((itemId) => <CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} />)}
 </div>
 
-<script define:vars={{ menuRoot }}>
-	window.menuRoot = menuRoot;
-</script>
-
 <script>
-	import { showItemModal } from "./showItemModal";
+	import { showItemModal } from "./item/showItemModal";
 	import { toast } from "@/ui-plus/sonner";
 	document.addEventListener("DOMContentLoaded", () => {
 		const itemBtns = document.querySelectorAll<HTMLElement>(".item-btn");
