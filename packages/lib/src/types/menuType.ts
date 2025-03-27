@@ -31,11 +31,11 @@ export type Item = {
 
 export type CartChildrenItemState = {
     itemId?: ItemId;
-    childrenState?: {
+    childrenState?: ({
         itemId?: ItemId;
         quantity?: number;
         childrenState?: (CartChildrenItemState[])[];
-    }[];
+    } | null)[];
 }
 
 export type CartItem = {
@@ -54,9 +54,9 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
     if (customizationState.itemId) {
         if (customizationState.childrenState) {
             for (const optionIndex in customizationState.childrenState) {
-                const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex].itemId!];
-                if (customizationState.childrenState[optionIndex].itemId) {
-                    const quantity = customizationState.childrenState[optionIndex].quantity || 0;
+                const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex]?.itemId!];
+                if (customizationState.childrenState[optionIndex]?.itemId) {
+                    const quantity = customizationState.childrenState[optionIndex]?.quantity || 0;
                     if (optionItem?.opPrc) {
                         let chargeableQuantity = quantity;
 

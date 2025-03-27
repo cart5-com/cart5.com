@@ -37,7 +37,7 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr.quantity || 0), 0);
+    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
 
 const isMaxQuantity = () => {
@@ -97,18 +97,18 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
-        if (modelValue.value.childrenState[childIndex].quantity) {
+        if (modelValue.value.childrenState[childIndex]?.quantity) {
             modelValue.value.childrenState[childIndex].quantity--;
             if (modelValue.value.childrenState[childIndex].quantity < 1) {
                 modelValue.value.childrenState[childIndex].quantity = 0;
             }
         }
         if (hasLinkedOptions) {
-            if (modelValue.value.childrenState[childIndex].childrenState) {
+            if (modelValue.value.childrenState[childIndex]?.childrenState) {
                 modelValue.value.childrenState[childIndex].childrenState?.pop();
             }
         }
-        if (modelValue.value.childrenState[childIndex].quantity === 0) {
+        if (modelValue.value.childrenState[childIndex]?.quantity === 0) {
             delete modelValue.value.childrenState[childIndex];
         }
     }
@@ -119,12 +119,16 @@ const isRadioMode = computed(() => {
 })
 
 onMounted(() => {
+    const initialState = JSON.parse(JSON.stringify(modelValue.value)) as CartChildrenItemState;
     for (const [index, child] of (currentItem.value?.cIds || []).entries()) {
         const childItem = window.menuRoot.allItems?.[child];
         if (childItem?.defQ) {
             // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
             for (let i = 0; i < childItem?.defQ; i++) {
-                addQuantity(child, index)
+                // console.log("adding quantity", currentItem.value?.lbl, childItem?.lbl, JSON.stringify(modelValue.value?.childrenState, null, 2))
+                if (initialState?.childrenState?.length === 0) {
+                    addQuantity(child, index)
+                }
             }
         }
     }
