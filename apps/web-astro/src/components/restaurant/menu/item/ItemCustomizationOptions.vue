@@ -114,8 +114,6 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
     }
 }
 
-const randomId = crypto.randomUUID();
-
 const isRadioMode = computed(() => {
     return currentItem.value?.maxQ === 1 && currentItem.value?.minQ === 1
 })
@@ -134,6 +132,18 @@ onMounted(() => {
 
 const menuRoot = window.menuRoot
 
+const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
+    if (isRadioMode.value) {
+        if (modelValue?.value?.childrenState?.[optionItemIndex]?.quantity! > 0) {
+            removeQuantity(optionItemId, optionItemIndex)
+        } else {
+            removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)
+        }
+    } else {
+        addQuantity(optionItemId, optionItemIndex)
+    }
+}
+
 </script>
 
 <template>
@@ -143,51 +153,41 @@ const menuRoot = window.menuRoot
             <div v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
                  :key="optionItemId">
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
-                         :class="[
-                            // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
-                        ]">
-                        <span class="capitalize cursor-text col-span-5">
+
+                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1 cursor-pointer"
+                         @click="addQuantityClick(optionItemIndex, optionItemId)">
+                        <span class="capitalize col-span-6">
                             {{ menuRoot.allItems?.[optionItemId]?.lbl || 'Name:' }}
                         </span>
-                        <span class="capitalize cursor-text"
+                        <span class="capitalize"
                               :class="[
                                 menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode
                                     ? 'text-destructive font-bold' : ''
                             ]">
-                            {{ menuRoot.allItems![optionItemId!].opPrc || '$' }}
+                            {{ menuRoot.allItems![optionItemId!].opPrc }}
                         </span>
-                        <!-- <span v-if="getPrice(optionItemId)">
-                        {{ getPrice(optionItemId) }}
-                    </span> -->
 
                         <template v-if="isRadioMode">
                             <CircleCheckBig v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
-                                            @click="removeQuantity(optionItemId, optionItemIndex)"
-                                            class="cursor-pointer justify-self-end" />
+                                            class="justify-self-end" />
                             <Circle v-else
-                                    @click="removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)"
-                                    class="cursor-pointer justify-self-end" />
+                                    class="justify-self-end" />
                         </template>
                         <template v-else>
-                            <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                            <Plus class="border border-foreground rounded-md justify-self-end"
                                   :class="[
                                     ((isMaxQuantity() || isChildMaxQuantity(optionItemId, optionItemIndex))) ? 'opacity-40 cursor-not-allowed' : ''
-                                ]"
-                                  @click="addQuantity(optionItemId, optionItemIndex)" />
+                                ]" />
                         </template>
-
-                        <!-- <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
-                              @click="addQuantity(optionItemId, optionItemIndex)" /> -->
                     </div>
-                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1"
-                         v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
+
+
+                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1 cursor-pointer"
+                         v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
+                         @click="removeQuantity(optionItemId, optionItemIndex)">
                         <div>
                             {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         </div>
-                        <!-- <div class="col-span-5 capitalize line-clamp-1">
-                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
-                            </div> -->
                         <div class="col-span-6 text-right"
                              v-if="menuRoot.allItems?.[optionItemId!].opPrc">
                             ${{
@@ -200,8 +200,7 @@ const menuRoot = window.menuRoot
                         </div>
                         <div v-else
                              class="col-span-6"></div>
-                        <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
-                               @click="removeQuantity(optionItemId, optionItemIndex)" />
+                        <Minus class="border border-foreground rounded-md justify-self-end" />
                     </div>
                 </div>
             </div>
