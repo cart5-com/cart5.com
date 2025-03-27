@@ -39,6 +39,11 @@ if (typeof window !== 'undefined') {
     }, { deep: true });
 }
 
+export const updateCartItem = (index: number, item: CartItem) => {
+    cartStore.value[index] = item;
+    saveCart();
+}
+
 export const addToCart = (item: CartItem) => {
     cartStore.value.push(item);
     saveCart();
