@@ -89,10 +89,10 @@ export default defineConfig({
         dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
         replaysSessionSampleRate: 0,
         replaysOnErrorSampleRate: 0,
-        environment: process.env.NODE_ENV,
+        environment: process.env.NODE_ENV || 'development',
         sourceMapsUploadOptions: {
           project: "web-astro",
-          authToken: process.env.SENTRY_AUTH_TOKEN,
+          authToken: process.env.SENTRY_AUTH_TOKEN || '',
         },
       })
     ])

@@ -33,8 +33,8 @@ const nearbyRestaurants = await getNearbyRestaurants_Service(
 
 if (nearbyRestaurants.restaurants.length === 1) {
 	const restaurantLink = BASE_LINKS.RESTAURANT(
-		nearbyRestaurants.restaurants[0].id,
-		slugify(nearbyRestaurants.restaurants[0].name)
+		nearbyRestaurants.restaurants[0]?.id ?? "",
+		slugify(nearbyRestaurants.restaurants[0]?.name ?? "")
 	);
 	Astro.redirect(restaurantLink);
 }
