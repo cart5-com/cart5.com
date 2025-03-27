@@ -10,6 +10,8 @@ import {
     NumberFieldInput,
 } from '@/components/ui/number-field'
 import { Button } from "@/components/ui/button";
+import ItemHeader from "./ItemHeader.vue";
+import ItemCustomizations from "./ItemCustomizations.vue";
 const props = defineProps<{
     itemId?: ItemId,
     menuRoot: MenuRoot
@@ -68,13 +70,11 @@ const checkCartItem = () => {
     <div class="w-full"
          v-if="currentItem">
         <div class="p-1 sm:p-4">
-            Item Header here
-            {{ currentItem.lbl }}
+            <ItemHeader :current-item="currentItem" />
             <!-- <ItemPreviewEditableHeader :current-item="currentItem" /> -->
             <div :class="`warning-container-${randomNumber}`">
-                Item Customizations here
-                <!-- <ItemPreviewEditableCustomizations :current-item="currentItem"
-                                                   :cartItem="cartItem" /> -->
+                <ItemCustomizations :current-item="currentItem"
+                                    :cartItem="cartItem" />
             </div>
             <NumberField id="quantity"
                          class="max-w-40 mt-8"

@@ -1,6 +1,6 @@
 import { type CartItem, type ItemId, type MenuRoot } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import ItemModal from './ItemModal.vue';
+import ItemModal from './item/ItemModal.vue';
 const dialog = useDialog();
 
 export function showItemModal(itemId: ItemId, menuRoot: MenuRoot) {

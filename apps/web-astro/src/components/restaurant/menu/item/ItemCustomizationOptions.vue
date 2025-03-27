@@ -1,0 +1,210 @@
+<script lang="ts" setup>
+import { useVModel } from '@vueuse/core'
+import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
+import { computed, onMounted } from 'vue';
+import {
+    Minus,
+    Plus,
+    CircleCheckBig,
+    Circle
+} from 'lucide-vue-next';
+
+const props = defineProps<{
+    modelValue?: CartChildrenItemState
+    itemId?: ItemId
+    helperText?: string
+}>()
+
+const emits = defineEmits<{
+    (e: 'update:modelValue', payload: CartChildrenItemState): void
+    (e: 'unlink'): void
+}>()
+
+const modelValue = useVModel(props, 'modelValue', emits, {
+    passive: true,
+    defaultValue: {
+        itemId: props.itemId,
+        childrenState: [],
+    },
+    deep: props.modelValue ? false : true,
+})
+
+const currentItem = computed(() => {
+    if (props.itemId) {
+        return window.menuRoot.allItems?.[props.itemId]
+    }
+    return undefined
+})
+
+const getTotalQuantity = () => {
+    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr.quantity || 0), 0);
+}
+
+const isMaxQuantity = () => {
+    if (currentItem.value?.maxQ && currentItem.value?.maxQ > 0) {
+        return getTotalQuantity() >= currentItem.value?.maxQ;
+    }
+    return false;
+}
+
+const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
+    if (modelValue.value?.childrenState) {
+        modelValue.value.childrenState = []
+    }
+    addQuantity(childId, childIndex)
+}
+
+const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
+    if (window.menuRoot.allItems?.[childId!]?.maxQ) {
+        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > window.menuRoot.allItems?.[childId!]?.maxQ!) {
+            return true;
+        }
+    }
+}
+const addQuantity = (childId: ItemId, childIndex: number) => {
+    if (
+        isMaxQuantity() ||
+        isChildMaxQuantity(childId, childIndex)
+    ) {
+        return;
+    }
+
+    let hasLinkedOptions: boolean = false;
+    if (window.menuRoot.allItems?.[childId]?.cIds) {
+        hasLinkedOptions = true;
+    }
+    if (modelValue.value?.childrenState) {
+        if (!modelValue.value.childrenState[childIndex]) {
+            modelValue.value.childrenState[childIndex] = {
+                itemId: childId,
+                quantity: 1,
+                childrenState: hasLinkedOptions ? [[]] : undefined
+            }
+        } else {
+            if (hasLinkedOptions) {
+                modelValue.value.childrenState[childIndex].childrenState?.push([]);
+            }
+            if (modelValue.value.childrenState[childIndex].quantity) {
+                modelValue.value.childrenState[childIndex].quantity++;
+            }
+        }
+    }
+}
+
+const removeQuantity = (childId: ItemId, childIndex: number) => {
+    let hasLinkedOptions: boolean = false;
+    if (window.menuRoot.allItems?.[childId]?.cIds) {
+        hasLinkedOptions = true;
+    }
+    if (modelValue.value?.childrenState) {
+        if (modelValue.value.childrenState[childIndex].quantity) {
+            modelValue.value.childrenState[childIndex].quantity--;
+            if (modelValue.value.childrenState[childIndex].quantity < 1) {
+                modelValue.value.childrenState[childIndex].quantity = 0;
+            }
+        }
+        if (hasLinkedOptions) {
+            if (modelValue.value.childrenState[childIndex].childrenState) {
+                modelValue.value.childrenState[childIndex].childrenState?.pop();
+            }
+        }
+        if (modelValue.value.childrenState[childIndex].quantity === 0) {
+            delete modelValue.value.childrenState[childIndex];
+        }
+    }
+}
+
+const randomId = crypto.randomUUID();
+
+const isRadioMode = computed(() => {
+    return currentItem.value?.maxQ === 1 && currentItem.value?.minQ === 1
+})
+
+onMounted(() => {
+    for (const [index, child] of (currentItem.value?.cIds || []).entries()) {
+        const childItem = window.menuRoot.allItems?.[child];
+        if (childItem?.defQ) {
+            // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
+            for (let i = 0; i < childItem?.defQ; i++) {
+                addQuantity(child, index)
+            }
+        }
+    }
+})
+
+const menuRoot = window.menuRoot
+
+</script>
+
+<template>
+    <div>
+        <div v-if="currentItem?.cIds"
+             class="text-sm">
+            <div v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
+                 :key="optionItemId">
+                <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
+                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
+                         :class="[
+                            // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
+                        ]">
+                        <span class="capitalize cursor-text col-span-5">
+                            {{ menuRoot.allItems?.[optionItemId]?.lbl || 'Name:' }}
+                        </span>
+                        <span class="capitalize cursor-text"
+                              :class="[
+                                menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode
+                                    ? 'text-destructive font-bold' : ''
+                            ]">
+                            {{ menuRoot.allItems![optionItemId!].opPrc || '$' }}
+                        </span>
+                        <!-- <span v-if="getPrice(optionItemId)">
+                        {{ getPrice(optionItemId) }}
+                    </span> -->
+
+                        <template v-if="isRadioMode">
+                            <CircleCheckBig v-if="modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0"
+                                            @click="removeQuantity(optionItemId, optionItemIndex)"
+                                            class="cursor-pointer justify-self-end" />
+                            <Circle v-else
+                                    @click="removeAllQuantitiesThenAddOne(optionItemId, optionItemIndex)"
+                                    class="cursor-pointer justify-self-end" />
+                        </template>
+                        <template v-else>
+                            <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                                  :class="[
+                                    ((isMaxQuantity() || isChildMaxQuantity(optionItemId, optionItemIndex))) ? 'opacity-40 cursor-not-allowed' : ''
+                                ]"
+                                  @click="addQuantity(optionItemId, optionItemIndex)" />
+                        </template>
+
+                        <!-- <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                              @click="addQuantity(optionItemId, optionItemIndex)" /> -->
+                    </div>
+                    <div class="items-center border p-2 bg-card hover:bg-background text-sm font-bold grid grid-cols-8 gap-1"
+                         v-if="!isRadioMode && modelValue?.childrenState?.[optionItemIndex]?.quantity! > 0">
+                        <div>
+                            {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
+                        </div>
+                        <!-- <div class="col-span-5 capitalize line-clamp-1">
+                                {{ menuRoot.allItems?.[optionItemId]?.itemLabel }}
+                            </div> -->
+                        <div class="col-span-6 text-right"
+                             v-if="menuRoot.allItems?.[optionItemId!].opPrc">
+                            ${{
+                                (
+                                    (menuRoot.allItems?.[optionItemId!].opPrc!)
+                                    *
+                                    (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                ).toFixed(2)
+                            }}
+                        </div>
+                        <div v-else
+                             class="col-span-6"></div>
+                        <Minus class="border border-foreground rounded-md cursor-pointer justify-self-end"
+                               @click="removeQuantity(optionItemId, optionItemIndex)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -36,11 +36,10 @@ const { item: currentItem, getMenuRoot } = Astro.props;
 		</CardFooter>
 	</Card>
 
-	<!-- <div class="flex-shrink-0"
-             v-if="currentItem?.imgUrl">
+	<!-- <div class="flex-shrink-0">
             <div class="flex items-center justify-center h-full">
-                <img :src="currentItem?.imgUrl"
-                     :alt="currentItem?.lbl"
+                <img src={currentItem?.imgUrl}
+                     alt={currentItem?.lbl}
                      loading="lazy"
                      class="h-full w-48 object-cover overflow-hidden" />
             </div>

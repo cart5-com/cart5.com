@@ -1,0 +1,78 @@
+<script lang="ts" setup>
+import ItemCustomizationCard from './ItemCustomizationCard.vue';
+import { type CartChildrenItemState, type ItemId } from '@lib/types/menuType';
+import { computed } from 'vue';
+import { useVModel } from '@vueuse/core'
+
+const props = defineProps<{
+    modelValue?: CartChildrenItemState
+    itemId?: ItemId
+}>()
+
+const currentItem = computed(() => {
+    if (props.itemId) {
+        return window.menuRoot.allItems?.[props.itemId]
+    }
+    return undefined
+})
+
+const emits = defineEmits<{
+    (e: 'update:modelValue', payload: CartChildrenItemState): void
+}>()
+
+const modelValue = useVModel(props, 'modelValue', emits, {
+    passive: true,
+    defaultValue: {
+        itemId: props.itemId,
+        childrenState: [],
+    },
+    deep: props.modelValue ? false : true,
+})
+
+
+const updateNestedOptionGroup = (
+    _optionId: string,
+    optionIndex: number,
+    quantityIndex: number,
+    linkIndex: number,
+    newValue: CartChildrenItemState
+) => {
+    if (modelValue.value?.childrenState?.[optionIndex]?.childrenState?.[quantityIndex]) {
+        modelValue.value.childrenState[optionIndex].childrenState[quantityIndex][linkIndex] = newValue;
+    }
+}
+
+function getHelperText(optionItemIndex: number, quantityRepeated: number, optionItemId: ItemId) {
+    return modelValue.value?.
+        childrenState?.[optionItemIndex]?.quantity! > 1 ?
+        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${window.menuRoot.allItems?.[optionItemId]?.lbl}` :
+        window.menuRoot.allItems?.[optionItemId]?.lbl
+}
+
+const menuRoot = window.menuRoot;
+</script>
+<template>
+    <div v-if="currentItem?.cIds"
+         v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
+         :key="optionItemId">
+        <div v-if="menuRoot.allItems?.[optionItemId]?.cIds">
+            <template v-for="quantityRepeated in modelValue?.childrenState?.[optionItemIndex]?.quantity"
+                      :key="`${optionItemId}-${quantityRepeated}`">
+                <div class="py-2 my-8">
+                    <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.cIds"
+                         :key="`${childItemId}-${quantityRepeated}-${index}`">
+                        <div v-if="childItemId">
+                            <ItemCustomizationCard :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
+                                                   @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
+                                                   :itemId="childItemId"
+                                                   :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)"
+                                                   :parent-item-id="optionItemId" />
+                        </div>
+                    </div>
+
+
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
