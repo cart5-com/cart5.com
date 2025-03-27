@@ -323,7 +323,7 @@ export const startSeed = async () => {
         "km",
         10,
         1,
-        1,
+        20, // 20 km
         "delivery",
         "distance_asc"
     );

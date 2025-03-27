@@ -16,7 +16,7 @@ const type = (Astro.url.searchParams.get("type") ?? "delivery") as params[7];
 const sort = (Astro.url.searchParams.get("sort") ?? "distance_asc") as params[8];
 const limit = Number(Astro.url.searchParams.get("limit") ?? 36);
 const currentPage = Number(Astro.url.searchParams.get("page") ?? 1);
-const range = Number(Astro.url.searchParams.get("range") ?? 1); // ~ 111 km
+const range = Number(Astro.url.searchParams.get("range") ?? 20); // 20 km
 // const listAllParams = Object.fromEntries(Astro.url.searchParams.entries());
 
 const nearbyRestaurants = await getNearbyRestaurants_Service(
