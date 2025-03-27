@@ -2,7 +2,6 @@
 import BaseLayout from "@web-astro/layout/BaseLayout.astro";
 import { getRestaurantData_Service } from "@db/services/restaurant.service";
 import Menu from "@web-astro/components/restaurant/menu/Menu.astro";
-import CartView from "@web-astro/components/restaurant/menu/item/CartView.vue";
 
 const { slug, restaurantId } = Astro.params;
 
@@ -21,17 +20,17 @@ const getMenuRoot = () => {
 	}
 	return restaurant.menu.menuRoot;
 };
+restaurant.name;
 ---
 
 <BaseLayout title={`${restaurant?.name} - ${slug}`}>
 	<h1>{slug}</h1>
 	<h2>{restaurantId}</h2>
-	<script is:inline define:vars={{ menuRoot: restaurant.menu?.menuRoot, restaurantId }}>
+	<script is:inline define:vars={{ menuRoot: restaurant.menu?.menuRoot, restaurantId, restaurantName: restaurant.name }}
+	>
 		window.menuRoot = menuRoot;
 		window.restaurantId = restaurantId;
+		window.restaurantName = restaurantName;
 	</script>
 	<Menu menuRoot={restaurant.menu?.menuRoot} getMenuRoot={getMenuRoot} />
-	<div slot="sidebar">
-		<CartView client:only="vue" />
-	</div>
 </BaseLayout>

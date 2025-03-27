@@ -1,7 +1,6 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
-import { addToCart, updateCartItem } from './Cart.Store';
 const dialog = useDialog();
 
 export function showItemModal(itemId: ItemId, cartItem?: CartItem, index?: number) {
@@ -18,9 +17,9 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, index?: numbe
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
             if (cartItem && index) {
-                updateCartItem(index, values);
+                // updateCartItem(index, values);
             } else {
-                addToCart(values);
+                // addToCart(values);
             }
         },
         onCancel: () => {
