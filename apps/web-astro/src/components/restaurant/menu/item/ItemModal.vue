@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type ItemId, type MenuRoot, type CartItem, calculateCartItemPrice } from "@lib/types/menuType";
+import { type ItemId, type CartItem, calculateCartItemPrice } from "@lib/types/menuType";
 import { computed, ref, watch, onMounted } from "vue";
 import { toast } from "@/ui-plus/sonner";
 import {
@@ -65,6 +65,9 @@ const checkCartItem = () => {
         return true;
     }
 }
+
+const menuRoot = window.menuRoot
+
 </script>
 
 <template>

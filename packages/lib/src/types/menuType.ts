@@ -141,3 +141,60 @@ export const cleanEmptyProperties = (menuRoot: MenuRoot) => {
     }
     return cleanedMenuRoot;
 }
+
+export const recursiveCartChildrenItemSummary = (
+    customizationState: CartChildrenItemState,
+    menuRoot: MenuRoot,
+    indentLevel: number = 0
+) => {
+    let summary = '';
+    if (customizationState.itemId) {
+        if (menuRoot.allItems?.[customizationState.itemId]?.lbl) {
+            summary += " ".repeat(indentLevel) + (menuRoot.allItems?.[customizationState.itemId]?.lbl) + '\n';
+        }
+        if (customizationState.childrenState) {
+            for (const optionIndex in customizationState.childrenState) {
+                const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex]?.itemId!];
+                if (customizationState.childrenState[optionIndex]?.itemId) {
+                    const quantity = customizationState.childrenState[optionIndex]?.quantity || 0;
+                    // let chargeableQuantity = quantity;
+                    // if (optionItem?.chrgAbvQ !== undefined) {
+                    //     chargeableQuantity = Math.max(0, quantity - optionItem.chrgAbvQ);
+                    // }
+                    // if (chargeableQuantity > 0) {
+                    //     summary += "    " + chargeableQuantity + 'x ' + (optionItem?.lbl || '') + '\n';
+                    // }
+                    summary += " ".repeat(indentLevel + 1) + quantity + 'x ' + (optionItem?.lbl || '') + '\n';
+                    if (customizationState.childrenState[optionIndex].childrenState) {
+                        for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {
+                            if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
+                                    const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
+                                    summary += recursiveCartChildrenItemSummary(deepOptionSetState, menuRoot, indentLevel + 1)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return summary;
+}
+
+export const generateCartItemTextSummary = (cartItem: CartItem, menuRoot: MenuRoot) => {
+    let summary = '';
+    if (cartItem.itemId) {
+        const item = menuRoot.allItems?.[cartItem.itemId];
+        if (item) {
+            summary += (cartItem.quantity || 1) + 'x ' + item.lbl + '\n';
+        }
+    }
+    if (cartItem.childrenState) {
+        for (const index in cartItem.childrenState) {
+            const optionSetState = cartItem.childrenState[index];
+            summary += recursiveCartChildrenItemSummary(optionSetState, menuRoot)
+        }
+    }
+    return summary;
+}
