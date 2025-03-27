@@ -12,14 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
+
 const props = defineProps<{
     itemId?: ItemId,
-    menuRoot: MenuRoot
 }>()
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return props.menuRoot.allItems?.[props.itemId]
+        return window.menuRoot.allItems?.[props.itemId]
     }
     return undefined
 })
@@ -33,11 +33,11 @@ const cartItem = ref<CartItem>({
 const cartItemTotalPrice = ref("");
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, props.menuRoot)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.menuRoot)
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, props.menuRoot)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.menuRoot)
 })
 
 

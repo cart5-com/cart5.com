@@ -1,10 +1,10 @@
-import { type CartItem, type ItemId, type MenuRoot } from '@lib/types/menuType';
+import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './item/ItemModal.vue';
 const dialog = useDialog();
 
-export function showItemModal(itemId: ItemId, menuRoot: MenuRoot) {
-    const currentItem = menuRoot.allItems?.[itemId];
+export function showItemModal(itemId: ItemId) {
+    const currentItem = window.menuRoot.allItems?.[itemId];
     dialog.show<CartItem>({
         // title: menuRoot.value.allItems?.[itemId]?.itemLabel,
         title: currentItem?.lbl,
@@ -13,7 +13,6 @@ export function showItemModal(itemId: ItemId, menuRoot: MenuRoot) {
         // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId,
-            menuRoot: menuRoot
         },
         onSuccess: async (values) => {
             console.log("success");
