@@ -24,11 +24,5 @@ const getMenuRoot = () => {
 <BaseLayout title={`${restaurant?.name} - ${slug}`}>
 	<h1>{slug}</h1>
 	<h2>{restaurantId}</h2>
-	<hr class="border-foreground my-4 border-t" />
 	<Menu menuRoot={restaurant.menu?.menuRoot} getMenuRoot={getMenuRoot} />
-	<hr class="border-foreground my-4 border-t" />
-	<details>
-		<summary>Restaurant</summary>
-		<pre>{JSON.stringify(restaurant, null, 2)}</pre>
-	</details>
 </BaseLayout>
