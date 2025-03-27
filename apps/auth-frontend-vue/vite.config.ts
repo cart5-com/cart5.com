@@ -6,6 +6,7 @@ import tailwind from 'tailwindcss'
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
+const IS_DEV_BUILD = process.env.npm_lifecycle_event === 'builddev';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -39,11 +40,13 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     vue(),
-    sentryVitePlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: "cart5com",
-      project: "auth-frontend-vue",
-    })
+    ...(IS_DEV_BUILD ? [] : [
+      sentryVitePlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: "cart5com",
+        project: "auth-frontend-vue",
+      })
+    ])
   ],
   resolve: {
     alias: {

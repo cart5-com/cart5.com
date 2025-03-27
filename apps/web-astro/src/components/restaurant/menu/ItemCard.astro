@@ -6,10 +6,9 @@ import { Plus } from "lucide-vue-next";
 
 interface Props {
 	item: Item | undefined;
-	getMenuRoot: () => MenuRoot;
 }
 
-const { item: currentItem, getMenuRoot } = Astro.props;
+const { item: currentItem } = Astro.props;
 ---
 
 <div class="bg-card item-btn flex cursor-pointer overflow-hidden rounded-lg border" data-item-id={currentItem?.id}>

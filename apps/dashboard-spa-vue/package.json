@@ -7,6 +7,7 @@
     "dev": "dotenvx run -f .env -f .env.dev.secrets -- vite --port 3004",
     "dev:caddy": "pnpm dev",
     "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
+    "builddev": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
     "cf:pages:deploy": "dotenvx run -f .env.production -- wrangler pages deploy dist --project-name=cart5-dashboard-prod --branch=main --no-bundle",
     "start": "http-server dist -s -p 3004 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3004?"
   },

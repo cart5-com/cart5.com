@@ -21,7 +21,7 @@ const { item, getMenuRoot } = Astro.props;
 		{
 			item?.cIds?.map((childId) => {
 				const child = getMenuRoot().allItems?.[childId];
-				return <ItemCard item={child} getMenuRoot={getMenuRoot} />;
+				return <ItemCard item={child} />;
 			})
 		}
 	</div>

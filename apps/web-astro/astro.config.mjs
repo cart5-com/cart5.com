@@ -8,6 +8,7 @@ import vue from "@astrojs/vue";
 import tailwindcss from "@tailwindcss/vite";
 
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
+const IS_DEV_BUILD = process.env.npm_lifecycle_event === 'builddev';
 
 // https://astro.build/config
 export default defineConfig({
@@ -79,19 +80,21 @@ export default defineConfig({
       //   launchEditor: "code"
       // },
     }),
-    sentry({
-      enabled: {
-        client: true,
-        server: true
-      },
-      dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
-      replaysSessionSampleRate: 0,
-      replaysOnErrorSampleRate: 0,
-      environment: process.env.NODE_ENV,
-      sourceMapsUploadOptions: {
-        project: "web-astro",
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-      },
-    })
+    ...(IS_DEV_BUILD ? [] : [
+      sentry({
+        enabled: {
+          client: true,
+          server: true
+        },
+        dsn: "https://bebf6662621f81fad9399cb284f5dec3@o4509024863518720.ingest.us.sentry.io/4509024868761600",
+        replaysSessionSampleRate: 0,
+        replaysOnErrorSampleRate: 0,
+        environment: process.env.NODE_ENV,
+        sourceMapsUploadOptions: {
+          project: "web-astro",
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+        },
+      })
+    ])
   ]
 });

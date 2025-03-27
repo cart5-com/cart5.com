@@ -1,5 +1,7 @@
 const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
 
+const IS_DEV_BUILD = process.env.npm_lifecycle_event === 'builddev';
+
 require("esbuild").build({
     entryPoints: ["src/index.ts"],
     bundle: true,
@@ -10,10 +12,12 @@ require("esbuild").build({
     sourcemap: true,
     plugins: [
         // Put the Sentry esbuild plugin after all other plugins
-        sentryEsbuildPlugin({
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-            project: "api-hono",
-        }),
+        ...(IS_DEV_BUILD ? [] : [
+            sentryEsbuildPlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                project: "api-hono",
+            }),
+        ]),
     ],
     external: [
         '@node-rs/argon2',

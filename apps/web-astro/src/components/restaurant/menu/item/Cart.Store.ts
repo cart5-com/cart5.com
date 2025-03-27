@@ -1,4 +1,4 @@
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { type CartItem } from "@lib/types/menuType";
 
 const LOCAL_STORAGE_KEY = `v1-restaurant-cart-${window.restaurantId}`;

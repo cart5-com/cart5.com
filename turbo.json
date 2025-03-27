@@ -23,6 +23,10 @@
       "cache": false,
       "persistent": true
     },
+    "builddev": {
+      "cache": false,
+      "persistent": true
+    },
     "cf:pages:deploy": {
       "cache": false,
       "persistent": true

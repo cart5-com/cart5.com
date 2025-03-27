@@ -5,6 +5,7 @@
 		"dev": "dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
 		"dev:caddy": "dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
 		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
+		"builddev": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"
 	},
 	"devDependencies": {
