@@ -19,7 +19,6 @@ type CSVMenuRow = {
 
 // Convert CSV type to menu item type
 function convertCSVRowToMenuItem(row: CSVMenuRow): Item {
-    console.log('row', row);
     return {
         id: row.id || `${row.type}-${crypto.randomUUID()}`,
         lbl: row.title,

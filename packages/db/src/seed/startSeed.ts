@@ -24,6 +24,13 @@ import type {
 } from "@lib/types/restaurantTypes";
 import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
 import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
+import { readFileSync } from "fs";
+import { importMenuFromCSV } from "@lib/types/menuImport";
+import { updateRestaurantMenu_Service } from "@db/services/restaurant.service";
+import { fileURLToPath, URL } from 'node:url'
+
+const sampleMenuRoot1 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-1.csv", import.meta.url)), "utf8"));
+const sampleMenuRoot2 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-2.csv", import.meta.url)), "utf8"));
 
 export const startSeed = async () => {
     if (IS_PROD) {
@@ -205,6 +212,9 @@ export const startSeed = async () => {
                 zones
             }))
         }
+        await updateRestaurantMenu_Service(rest.id, {
+            menuRoot: Math.random() > 0.5 ? sampleMenuRoot1 : sampleMenuRoot2
+        });
 
         restaurantsByThush.push(rest);
     }
@@ -213,6 +223,9 @@ export const startSeed = async () => {
     await updateRestaurant_Service(flamesRestaurant.id, {
         name: "Flames Restaurant",
     })
+    await updateRestaurantMenu_Service(flamesRestaurant.id, {
+        menuRoot: sampleMenuRoot2
+    });
     await updateRestaurantOpenHours_Service(flamesRestaurant.id, {
         timezone: cfRaw.timezone,
         defaultOpenHours: {
