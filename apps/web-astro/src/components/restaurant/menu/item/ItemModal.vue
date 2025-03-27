@@ -15,6 +15,7 @@ import ItemCustomizations from "./ItemCustomizations.vue";
 
 const props = defineProps<{
     itemId?: ItemId,
+    cartItem?: CartItem
 }>()
 
 const currentItem = computed(() => {
@@ -24,7 +25,7 @@ const currentItem = computed(() => {
     return undefined
 })
 
-const cartItem = ref<CartItem>({
+const cartItem = ref<CartItem>(props.cartItem || {
     itemId: props.itemId,
     quantity: 1,
     childrenState: [],

@@ -3,7 +3,7 @@ import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './item/ItemModal.vue';
 const dialog = useDialog();
 
-export function showItemModal(itemId: ItemId) {
+export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
     const currentItem = window.menuRoot.allItems?.[itemId];
     dialog.show<CartItem>({
         // title: menuRoot.value.allItems?.[itemId]?.itemLabel,
@@ -13,6 +13,7 @@ export function showItemModal(itemId: ItemId) {
         // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId,
+            cartItem: cartItem
         },
         onSuccess: async (values) => {
             console.log("success");
