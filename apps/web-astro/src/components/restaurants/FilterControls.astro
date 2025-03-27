@@ -7,11 +7,10 @@ interface Props {
 	type: string | undefined;
 	address: string | undefined;
 	sort: string | undefined;
-	range: number;
-	createPageUrl: (page: number, type?: string, sort?: string, range?: number) => string;
+	createPageUrl: (page: number, type?: string, sort?: string) => string;
 }
 
-const { type = "delivery", address = "address", sort = "distance_asc", range = 1, createPageUrl } = Astro.props;
+const { type = "delivery", address = "address", sort = "distance_asc", createPageUrl } = Astro.props;
 ---
 
 <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap">
@@ -54,12 +53,5 @@ const { type = "delivery", address = "address", sort = "distance_asc", range = 1
 				Sort by Distance: High to Low
 			</option>
 		</select>
-		<!-- <select
-			onchange="window.location.href=this.value"
-			class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
-			<option selected={range === 1} value={createPageUrl(1, undefined, undefined, 1)}>Range: 1x</option>
-			<option selected={range === 2} value={createPageUrl(1, undefined, undefined, 2)}>Range: 2x</option>
-			<option selected={range === 3} value={createPageUrl(1, undefined, undefined, 3)}>Range: 3x</option>
-		</select> -->
 	</div>
 </div>

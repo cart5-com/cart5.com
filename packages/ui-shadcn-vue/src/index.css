@@ -1,3 +1,4 @@
+@import "./drawer.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -166,5 +167,3 @@
 		transform: scale(1);
 	}
 }
-
-@import "./drawer.css";

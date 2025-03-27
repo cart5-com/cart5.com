@@ -17,7 +17,7 @@ if (count === 1) {
 	const restaurant = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
 	if (restaurant) {
 		const restaurantLink = BASE_LINKS.RESTAURANT(restaurant.restaurantId, slugify(restaurant.restaurant.name));
-		return Astro.redirect(restaurantLink);
+		Astro.redirect(restaurantLink);
 	}
 }
 ---

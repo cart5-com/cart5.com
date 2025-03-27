@@ -36,7 +36,7 @@ if (nearbyRestaurants.restaurants.length === 1) {
 		nearbyRestaurants.restaurants[0].id,
 		slugify(nearbyRestaurants.restaurants[0].name)
 	);
-	return Astro.redirect(restaurantLink);
+	Astro.redirect(restaurantLink);
 }
 
 const createPageUrl = (
@@ -55,7 +55,7 @@ const createPageUrl = (
 ---
 
 <BaseLayout title={Astro.locals.WEBSITE?.name ?? "List"}>
-	<FilterControls type={type} address={address} sort={sort} range={range} createPageUrl={createPageUrl} />
+	<FilterControls type={type} address={address} sort={sort} createPageUrl={createPageUrl} />
 
 	<RestaurantList restaurants={nearbyRestaurants.restaurants} measure={measure} type={type} />
 
