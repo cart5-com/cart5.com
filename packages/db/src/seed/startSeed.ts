@@ -141,12 +141,13 @@ export const startSeed = async () => {
             lng: lng
         });
 
-        let offersDelivery = faker.number.int({ min: 0, max: 1 }) === 1;
+        let offersDelivery = faker.number.int({ min: 0, max: 100 }) <= 70; // 70% chance of offering delivery
+        let offersPickup = faker.number.int({ min: 0, max: 1 }) === 1;
         if (i === 4) {
             offersDelivery = true;
+            offersPickup = true;
         }
 
-        const offersPickup = faker.number.int({ min: 0, max: 1 }) === 1;
         await updateRestaurant_Service(rest.id, {
             offersDelivery,
             offersPickup,
@@ -167,7 +168,7 @@ export const startSeed = async () => {
                             lat: lat,
                             lng: lng
                         },
-                        radius: faker.number.int({ min: 100, max: 1000 })
+                        radius: faker.number.int({ min: 1000, max: 10000 })
                     },
                     rectangleArea: undefined,
                     isActive: faker.number.int({ min: 0, max: 1 }) === 1,
