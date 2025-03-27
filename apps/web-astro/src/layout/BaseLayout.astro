@@ -85,7 +85,7 @@ const { title } = Astro.props;
 				<label for="sidebar-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 				<div class="bg-background text-foreground min-h-full w-80 overflow-y-auto p-2">
 					<Drawer client:visible />
-					<!-- {Array.from({ length: 100 }).map((_, i) => <div>{i}</div>)} -->
+					{Array.from({ length: 100 }).map((_, i) => <div>{i}</div>)}
 				</div>
 			</div>
 		</div>
