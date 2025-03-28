@@ -1,11 +1,11 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
-import { addItemToCart } from '@web-astro/components/cart/UserCarts.Store';
+import { addItemToCart, updateItemInCart } from '@web-astro/components/cart/UserCarts.Store';
 
 const dialog = useDialog();
 
-export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
+export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: number) {
     dialog.show<CartItem>({
         title: window.menuRoot.allItems?.[itemId]?.lbl ?? "",
         component: ItemModal,
@@ -13,17 +13,17 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
         // dialogContentClass: "flex h-full min-h-full min-w-full flex-col p-0 md:h-[70vh] md:min-h-[70vh] md:min-w-[60vw] lg:min-w-[40vw]",
         props: {
             itemId: itemId,
-            cartItem: cartItem
+            cartItem: cartItem,
+            isEdit: cartItem ? true : false
         },
         onSuccess: async (values) => {
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
-            addItemToCart(window.restaurantId, window.restaurantName, values);
-            // if (cartItem) {
-            //     // updateCartItem(index, values);
-            // } else {
-            //     // addToCart(values);
-            // }
+            if (cartItem) {
+                updateItemInCart(window.restaurantId, itemIndex!, values);
+            } else {
+                addItemToCart(window.restaurantId, window.restaurantName, values);
+            }
         },
         onCancel: () => {
             console.log("cancel");

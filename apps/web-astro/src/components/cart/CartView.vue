@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userCartsStore, removeItemFromCart } from "./UserCarts.Store";
+import { userCartsStore, removeItemFromCart, openItemInCart } from "./UserCarts.Store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus } from "lucide-vue-next";
 import { calculateCartItemPrice, generateCartItemTextSummary, type CartItem, type MenuRoot } from "@lib/types/menuType";
@@ -32,6 +32,10 @@ const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
   }
 }
 
+const openCartItem = (itemIndex: number) => {
+  openItemInCart(window.restaurantId, itemIndex);
+}
+
 </script>
 
 <template>
@@ -50,10 +54,15 @@ const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
       <div v-for="(item, index) in currentCart?.items"
            :key="item.itemId ?? index">
         <div class="whitespace-pre-wrap bg-card  p-2 my-2">
-          <div class="font-bold text-lg">
-            {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
+          <div class="cursor-pointer"
+               @click="openCartItem(index)">
+            <div class="font-bold text-lg">
+              {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
+            </div>
+            {{ generateCartItemTextSummary(item, menuRoot) }}
           </div>
-          {{ generateCartItemTextSummary(item, menuRoot) }}
+
+
           <div class="font-medium">
             <NumberField id="quantity"
                          class="max-w-40 mt-8 border border-foreground rounded-md bg-background"

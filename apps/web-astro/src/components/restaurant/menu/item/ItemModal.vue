@@ -15,7 +15,8 @@ import ItemCustomizations from "./ItemCustomizations.vue";
 
 const props = defineProps<{
     itemId?: ItemId,
-    cartItem?: CartItem
+    cartItem?: CartItem,
+    isEdit?: boolean
 }>()
 
 const currentItem = computed(() => {
@@ -100,7 +101,12 @@ const menuRoot = window.menuRoot
                             toast.error('Please select required options')
                         }
                     }">
-                Add {{ cartItem.quantity }} to cart
+                <template v-if="isEdit">
+                    Update
+                </template>
+                <template v-else>
+                    Add {{ cartItem.quantity }} to cart
+                </template>
             </Button>
         </div>
         <div

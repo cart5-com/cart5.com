@@ -88,7 +88,7 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
 }
 
 export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) => {
-    console.log('calculateCartItemPrice');
+    console.log('calculateCartItemPrice🤑');
     let total = 0;
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];
@@ -221,6 +221,7 @@ export const recursiveCartChildrenItemSummary = (
 }
 
 export const generateCartItemTextSummary = (cartItem: CartItem, menuRoot: MenuRoot) => {
+    console.log('generateCartItemTextSummary📕');
     let summary = '';
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];

@@ -6,6 +6,7 @@ import {
     ref,
     watch
 } from "vue";
+import { showItemModal } from "../restaurant/menu/item/showItemModal";
 const USER_LOCAL_STORAGE_KEY = "ANON_USER_LOCAL_STORAGE_V1";
 export const userCartsStore = ref<UserLocalStorageType | null>(null);
 
@@ -55,6 +56,23 @@ export const addItemToCart = (
         }
     }
 };
+
+export const openItemInCart = (restaurantId: string, itemIndex: number) => {
+    const restaurantCart = getCartByRestaurantId(restaurantId);
+    if (restaurantCart) {
+        const cartItem = JSON.parse(JSON.stringify(restaurantCart.items?.[itemIndex]))
+        if (cartItem) {
+            showItemModal(cartItem.itemId!, cartItem, itemIndex)
+        }
+    }
+}
+
+export const updateItemInCart = (restaurantId: string, itemIndex: number, cartItem: CartItem) => {
+    const restaurantCart = getCartByRestaurantId(restaurantId);
+    if (restaurantCart) {
+        restaurantCart.items![itemIndex] = cartItem;
+    }
+}
 
 
 export const removeItemFromCart = (restaurantId: string, itemIndex: number) => {
