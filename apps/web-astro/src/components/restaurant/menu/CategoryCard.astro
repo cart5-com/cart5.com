@@ -10,14 +10,14 @@ const { item, getMenuRoot } = Astro.props;
 ---
 
 <div class="category-container bg-background mb-12">
-	<div class="flex items-center justify-between p-2">
+	<div class="flex items-center justify-between py-2">
 		<div class="flex-1 text-2xl font-bold">
 			<span class="h-10 cursor-text text-3xl font-bold capitalize">
 				{item?.lbl || "Category Name"}
 			</span>
 		</div>
 	</div>
-	<div class="my-4 grid grid-cols-1 gap-6 p-2 lg:grid-cols-2">
+	<div class="my-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
 		{
 			item?.cIds?.map((childId) => {
 				const child = getMenuRoot().allItems?.[childId];

@@ -9,14 +9,115 @@ interface Props {
 const { menuRoot, getMenuRoot } = Astro.props;
 ---
 
-<div>
-	{menuRoot?.children?.map((itemId) => <CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} />)}
+<div class="bg-background text-background-foreground relative sticky top-[70px] z-40">
+	<div
+		class="category-btns-container no-scrollbar border-secondary flex items-center justify-between overflow-hidden overflow-x-auto border-b">
+		{
+			menuRoot?.children?.map((itemId) => (
+				<span
+					class="category-btn hover:bg-secondary mr-4 cursor-pointer whitespace-nowrap py-4 font-bold"
+					data-item-id={itemId}>
+					{menuRoot.allItems?.[itemId]?.lbl}
+				</span>
+			))
+		}
+	</div>
 </div>
 
+<div>
+	{
+		menuRoot?.children?.map((itemId) => (
+			<div id={`category-${itemId}`}>
+				<CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} />
+			</div>
+		))
+	}
+</div>
 <script>
 	import { showItemModal } from "./item/showItemModal";
 	import { toast } from "@/ui-plus/sonner";
+
 	document.addEventListener("DOMContentLoaded", () => {
+		const categoryBtns = document.querySelectorAll<HTMLElement>(".category-btn");
+		const categoryBtnsContainer = document.querySelector<HTMLElement>(".category-btns-container");
+
+		// Function to update active category
+		function updateActiveCategory(categoryId: string) {
+			const correspondingBtn = document.querySelector(`.category-btn[data-item-id="${categoryId}"]`);
+
+			if (correspondingBtn && categoryBtnsContainer) {
+				// Scroll the button into view in the horizontal navigation
+				correspondingBtn.scrollIntoView({
+					behavior: "smooth",
+					block: "nearest",
+					inline: "center"
+				});
+
+				// Highlight the active category
+				categoryBtns.forEach((btn) => btn.classList.remove("border-b-4", "border-foreground", "bg-secondary"));
+				correspondingBtn.classList.add("border-b-4", "border-foreground", "bg-secondary");
+			}
+		}
+
+		// Set initial active category
+		if (categoryBtns.length > 0 && categoryBtns[0]?.dataset.itemId) {
+			updateActiveCategory(categoryBtns[0].dataset.itemId);
+		}
+
+		categoryBtns.forEach((categoryBtn) => {
+			categoryBtn.addEventListener("click", () => {
+				const categoryId = categoryBtn.dataset.itemId;
+				if (categoryId) {
+					const category = document.getElementById(`category-${categoryId}`);
+					if (category) {
+						// Calculate total sticky header height (main header + category nav)
+						const headerHeight = 140; // Height of main header
+						const categoryNavHeight = document.querySelector(".categories-scroll-animation")?.clientHeight || 0;
+						const totalOffset = headerHeight + categoryNavHeight;
+
+						// Scroll with offset
+						const categoryRect = category.getBoundingClientRect();
+						window.scrollTo({
+							top: window.scrollY + categoryRect.top - totalOffset,
+							behavior: "smooth"
+						});
+					}
+				}
+			});
+		});
+
+		// Add intersection observer to track visible categories
+		const categoryObserver = new IntersectionObserver(
+			(entries) => {
+				// Sort entries by their position in the document to prioritize the topmost visible category
+				const visibleEntries = entries
+					.filter((entry) => entry.isIntersecting)
+					.sort((a, b) => {
+						const rectA = a.boundingClientRect;
+						const rectB = b.boundingClientRect;
+						return rectA.top - rectB.top;
+					});
+
+				if (visibleEntries.length > 0) {
+					const topVisibleCategory = visibleEntries[0];
+					const visibleCategoryId = topVisibleCategory?.target.id.replace("category-", "");
+					if (visibleCategoryId) updateActiveCategory(visibleCategoryId);
+				}
+			},
+			{
+				root: null, // viewport
+				rootMargin: "-130px 0px 0px 0px", // Offset for sticky headers
+				threshold: 0.2 // Increased threshold to ensure more visibility before triggering
+			}
+		);
+
+		// Wait a brief moment before observing to ensure initial layout is complete
+		setTimeout(() => {
+			document.querySelectorAll('[id^="category-"]').forEach((category) => {
+				categoryObserver.observe(category);
+			});
+		}, 100);
+
 		const itemBtns = document.querySelectorAll<HTMLElement>(".item-btn");
 		itemBtns.forEach((itemBtn) => {
 			itemBtn.addEventListener("click", () => {
