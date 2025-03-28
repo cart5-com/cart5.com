@@ -15,7 +15,7 @@ const { menuRoot, getMenuRoot } = Astro.props;
 		{
 			menuRoot?.children?.map((itemId) => (
 				<span
-					class="category-btn hover:bg-secondary mr-4 cursor-pointer whitespace-nowrap py-4 font-bold"
+					class="category-btn hover:bg-secondary mr-4 cursor-pointer whitespace-nowrap p-2 font-bold"
 					data-item-id={itemId}>
 					{menuRoot.allItems?.[itemId]?.lbl}
 				</span>

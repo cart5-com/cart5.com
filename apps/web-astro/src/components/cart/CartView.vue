@@ -51,44 +51,48 @@ const openCartItem = (itemIndex: number) => {
                 class="cursor-pointer rounded-b-md m-1 flex-shrink-0">
           <X class="h-8 w-8" />
         </Button>
-        <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar">
+        <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
           {{ currentCart?.restaurantName }}
         </div>
         <div class="w-10 m-1 flex-shrink-0"></div><!-- Spacer to balance the layout -->
       </div>
-      <div v-for="(item, index) in currentCart?.items"
-           class="flex-1 border-b border-muted-foreground pb-2"
-           :key="item.itemId ?? index">
-        <div class="whitespace-pre-wrap px-2 mb-2">
-          <div class="cursor-pointer"
-               @click="openCartItem(index)">
-            <div class="font-bold text-lg">
-              {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
+      <div class="flex-1">
+        <div v-for="(item, index) in currentCart?.items"
+             class="border-b border-muted-foreground pb-2"
+             :key="item.itemId ?? index">
+          <div class="whitespace-pre-wrap px-2">
+            <div class="cursor-pointer"
+                 @click="openCartItem(index)">
+              <div class="font-bold text-lg">
+                {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
+              </div>
+              {{ generateCartItemTextSummary(item, menuRoot) }}
             </div>
-            {{ generateCartItemTextSummary(item, menuRoot) }}
           </div>
-        </div>
-        <div class="font-medium flex justify-between items-center">
-          <NumberField id="quantity"
-                       class="max-w-40 border border-foreground rounded-md bg-background"
-                       v-model="item.quantity!"
-                       :default-value="1"
-                       @update:model-value="updateCartItemQuantity(item, index)"
-                       :step="1"
-                       :max="100"
-                       :min="0">
-            <NumberFieldContent>
-              <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer">
-                <Trash2 class="h-4 w-4"
-                        v-if="item.quantity! === 1" />
-                <Minus class="h-4 w-4"
-                       v-else />
-              </NumberFieldDecrement>
-              <NumberFieldInput />
-              <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
-            </NumberFieldContent>
-          </NumberField>
-          ${{ calculateCartItemPrice(item, menuRoot) }}
+          <div class="flex justify-between items-center px-1">
+            <NumberField id="quantity"
+                         class="max-w-40 border border-foreground rounded-md bg-background"
+                         v-model="item.quantity!"
+                         :default-value="1"
+                         @update:model-value="updateCartItemQuantity(item, index)"
+                         :step="1"
+                         :max="100"
+                         :min="0">
+              <NumberFieldContent>
+                <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer">
+                  <Trash2 class="h-4 w-4"
+                          v-if="item.quantity! === 1" />
+                  <Minus class="h-4 w-4"
+                         v-else />
+                </NumberFieldDecrement>
+                <NumberFieldInput />
+                <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
+              </NumberFieldContent>
+            </NumberField>
+            <span class="font-bold">
+              ${{ calculateCartItemPrice(item, menuRoot) }}
+            </span>
+          </div>
         </div>
       </div>
       <!-- {{Array.from({ length: 1000 }, (_, index) => `item ${index}`)}} -->
