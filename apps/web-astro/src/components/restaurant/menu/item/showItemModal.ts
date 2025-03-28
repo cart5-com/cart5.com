@@ -20,9 +20,9 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
             if (cartItem) {
-                updateItemInCart(window.restaurantId, itemIndex!, values);
+                updateItemInCart(window.restaurantId, itemIndex!, JSON.parse(JSON.stringify(values)));
             } else {
-                addItemToCart(window.restaurantId, window.restaurantName, values);
+                addItemToCart(window.restaurantId, window.restaurantName, JSON.parse(JSON.stringify(values)));
             }
         },
         onCancel: () => {
