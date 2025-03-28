@@ -73,14 +73,14 @@ const openCartItem = (itemIndex: number) => {
                          :step="1"
                          :min="0">
               <NumberFieldContent>
-                <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60">
+                <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer">
                   <Trash2 class="h-4 w-4"
                           v-if="item.quantity! === 1" />
                   <Minus class="h-4 w-4"
                          v-else />
                 </NumberFieldDecrement>
                 <NumberFieldInput />
-                <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60" />
+                <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
               </NumberFieldContent>
             </NumberField>
             ${{ calculateCartItemPrice(item, menuRoot) }}

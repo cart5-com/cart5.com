@@ -98,9 +98,9 @@ const checkCartItem = () => {
                          :step="1"
                          :min="1">
                 <NumberFieldContent>
-                    <NumberFieldDecrement class="hidden sm:block bg-secondary rounded-l-md hover:bg-secondary/60" />
+                    <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer" />
                     <NumberFieldInput />
-                    <NumberFieldIncrement class="hidden sm:block bg-secondary rounded-r-md hover:bg-secondary/60" />
+                    <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
                 </NumberFieldContent>
             </NumberField>
             <Button class="w-full mt-8"
