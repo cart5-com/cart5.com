@@ -55,3 +55,14 @@ export const addItemToCart = (
         }
     }
 };
+
+
+export const removeItemFromCart = (restaurantId: string, itemIndex: number) => {
+    const restaurantCart = getCartByRestaurantId(restaurantId);
+    if (restaurantCart) {
+        restaurantCart.items?.splice(itemIndex, 1);
+    }
+    if (restaurantCart?.items?.length === 0) {
+        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === restaurantCart.id), 1);
+    }
+}

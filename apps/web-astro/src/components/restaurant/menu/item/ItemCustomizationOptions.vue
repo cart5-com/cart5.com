@@ -161,7 +161,7 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                     <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1 cursor-pointer"
                          @click="addQuantityClick(optionItemIndex, optionItemId)">
                         <span class="capitalize col-span-6">
-                            {{ menuRoot.allItems?.[optionItemId]?.lbl || 'Name:' }}
+                            {{ menuRoot.allItems?.[optionItemId]?.lbl || '' }}
                         </span>
                         <span class="capitalize"
                               :class="[

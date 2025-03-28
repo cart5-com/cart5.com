@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
 import { computed } from 'vue';
-import { CornerDownRight } from 'lucide-vue-next';
+import { CornerDownRight, Check } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';
 import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemCustomizationOptions from './ItemCustomizationOptions.vue';
@@ -49,12 +49,16 @@ const isMinQuantityAdded = () => {
 </script>
 
 <template>
-    <div class="border rounded-md p-1 sm:p-4 my-6 border-card-foreground"
+    <div class="border-t py-1 sm:py-4 mb-12 border-card-foreground"
          v-if="currentItem">
 
         <div v-if="!isMinQuantityAdded()"
              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2 w-fit">
             Required
+        </div>
+        <div v-else-if="currentItem?.minQ && currentItem?.minQ > 0"
+             class="text-xs font-bold rounded-md border border-primary text-primary-foreground p-1 mb-2 w-fit brightness-200">
+            <Check class="inline-block mr-1 w-4 h-4" /> Required
         </div>
 
         <div v-if="helperText"
@@ -65,7 +69,7 @@ const isMinQuantityAdded = () => {
         <span class="capitalize cursor-text text-lg">
             <CornerDownRight v-if="helperText"
                              class="inline-block" />
-            {{ currentItem?.lbl || 'Name:' }}
+            {{ currentItem?.lbl || '' }}
         </span>
 
 
