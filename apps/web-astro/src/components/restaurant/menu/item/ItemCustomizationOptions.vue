@@ -23,7 +23,7 @@ const emits = defineEmits<{
 const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
     defaultValue: {
-        itemId: props.itemId,
+        itemId: props.itemId!,
         childrenState: [],
     },
     deep: props.modelValue ? false : true,
@@ -79,6 +79,10 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
                 itemId: childId,
                 quantity: 1,
                 childrenState: hasLinkedOptions ? [[]] : undefined
+            } as {
+                itemId?: string;
+                quantity?: number;
+                childrenState?: CartChildrenItemState[][];
             }
         } else {
             if (hasLinkedOptions) {
@@ -165,10 +169,10 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                         </span>
                         <span class="capitalize"
                               :class="[
-                                menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode
+                                menuRoot.allItems?.[optionItemId!]?.opPrc! < 0 && !isRadioMode
                                     ? 'text-destructive font-bold' : ''
                             ]">
-                            {{ menuRoot.allItems![optionItemId!].opPrc }}
+                            {{ menuRoot.allItems?.[optionItemId!]?.opPrc }}
                         </span>
 
                         <template v-if="isRadioMode">
@@ -193,10 +197,10 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                             {{ modelValue?.childrenState?.[optionItemIndex]?.quantity }} x
                         </div>
                         <div class="col-span-6 text-right"
-                             v-if="menuRoot.allItems?.[optionItemId!].opPrc">
+                             v-if="menuRoot.allItems?.[optionItemId!]?.opPrc">
                             ${{
                                 (
-                                    (menuRoot.allItems?.[optionItemId!].opPrc!)
+                                    (menuRoot.allItems?.[optionItemId!]?.opPrc!)
                                     *
                                     (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
                                 ).toFixed(2)

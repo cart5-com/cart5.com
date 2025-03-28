@@ -2,7 +2,9 @@
 import { userCartsStore, removeItemFromCart, openItemInCart } from "./UserCarts.Store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus } from "lucide-vue-next";
-import { calculateCartItemPrice, generateCartItemTextSummary, type CartItem, type MenuRoot } from "@lib/types/menuType";
+import { type CartItem, type MenuRoot } from "@lib/types/menuType";
+import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
+import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
   NumberField,
   NumberFieldContent,
@@ -41,8 +43,7 @@ const openCartItem = (itemIndex: number) => {
 <template>
   <div class="flex flex-col gap-2"
        v-if="menuRoot">
-    <div v-if="currentCart?.items?.length"
-         class="flex flex-col gap-2 absolute w-full">
+    <div class="flex flex-col gap-2 absolute w-full h-full">
       <div class="bg-card text-card-foreground relative sticky top-0 z-40 border shadow-sm">
         <Button variant="outline"
                 as="label"
@@ -72,14 +73,14 @@ const openCartItem = (itemIndex: number) => {
                          :step="1"
                          :min="0">
               <NumberFieldContent>
-                <NumberFieldDecrement class="hidden sm:block bg-secondary rounded-l-md hover:bg-secondary/60">
+                <NumberFieldDecrement class="bg-secondary rounded-l-md hover:bg-secondary/60">
                   <Trash2 class="h-4 w-4"
                           v-if="item.quantity! === 1" />
                   <Minus class="h-4 w-4"
                          v-else />
                 </NumberFieldDecrement>
                 <NumberFieldInput />
-                <NumberFieldIncrement class="hidden sm:block bg-secondary rounded-r-md hover:bg-secondary/60" />
+                <NumberFieldIncrement class="bg-secondary rounded-r-md hover:bg-secondary/60" />
               </NumberFieldContent>
             </NumberField>
             ${{ calculateCartItemPrice(item, menuRoot) }}
@@ -87,11 +88,11 @@ const openCartItem = (itemIndex: number) => {
         </div>
       </div>
       <!-- {{Array.from({ length: 1000 }, (_, index) => `item ${index}`)}} -->
-    </div>
-    <div v-else>
-      Click
-      <Plus class="inline-block" />
-      to add items to cart
+      <div class="">
+        Click
+        <Plus class="inline-block border border-foreground rounded-md" />
+        to add items to cart
+      </div>
     </div>
 
   </div>

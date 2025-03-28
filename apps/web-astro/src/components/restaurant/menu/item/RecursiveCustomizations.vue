@@ -23,7 +23,7 @@ const emits = defineEmits<{
 const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
     defaultValue: {
-        itemId: props.itemId,
+        itemId: props.itemId!,
         childrenState: [],
     },
     deep: props.modelValue ? false : true,
@@ -62,10 +62,10 @@ const menuRoot = window.menuRoot;
                     <div v-for="(childItemId, index) in menuRoot.allItems?.[optionItemId]?.cIds"
                          :key="`${childItemId}-${quantityRepeated}-${index}`">
                         <div v-if="childItemId">
-                            <ItemCustomizationCard :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]"
+                            <ItemCustomizationCard :model-value="modelValue?.childrenState?.[optionItemIndex]?.childrenState?.[quantityRepeated - 1]?.[index]!"
                                                    @update:model-value="updateNestedOptionGroup(optionItemId, optionItemIndex, quantityRepeated - 1, index, $event)"
-                                                   :itemId="childItemId"
-                                                   :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)"
+                                                   :item-id="childItemId"
+                                                   :helper-text="getHelperText(optionItemIndex, quantityRepeated, optionItemId)!"
                                                    :parent-item-id="optionItemId" />
                         </div>
                     </div>

@@ -17,9 +17,9 @@ const props = defineProps<{
                  v-for="(child, index) in currentItem.cIds"
                  :key="child">
                 <ItemCustomizationCard v-if="cartItem?.childrenState"
-                                       :parent-item-id="currentItem?.id"
+                                       :parent-item-id="currentItem?.id!"
                                        :itemId="child"
-                                       v-model="cartItem.childrenState[index]" />
+                                       v-model="cartItem.childrenState[index]!" />
             </div>
         </div>
     </div>

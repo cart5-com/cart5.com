@@ -22,7 +22,7 @@ const emits = defineEmits<{
 const modelValue = useVModel(props, 'modelValue', emits, {
     passive: true,
     defaultValue: {
-        itemId: props.itemId,
+        itemId: props.itemId!,
         childrenState: [],
     },
     deep: props.modelValue ? false : true,
@@ -85,11 +85,11 @@ const isMinQuantityAdded = () => {
             </Badge>
         </div>
 
-        <ItemCustomizationOptions v-model="modelValue"
-                                  :item-id="itemId" />
+        <ItemCustomizationOptions v-model="modelValue!"
+                                  :item-id="itemId!" />
 
-        <RecursiveCustomizations v-model="modelValue"
-                                 :item-id="itemId" />
+        <RecursiveCustomizations v-model="modelValue!"
+                                 :item-id="itemId!" />
 
     </div>
 </template>

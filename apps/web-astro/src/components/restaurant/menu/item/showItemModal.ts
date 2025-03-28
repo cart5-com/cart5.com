@@ -17,12 +17,10 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             isEdit: cartItem ? true : false
         },
         onSuccess: async (values) => {
-            console.log("success");
-            console.log(JSON.stringify(values, null, 2));
             if (cartItem) {
-                updateItemInCart(window.restaurantId, itemIndex!, JSON.parse(JSON.stringify(values)));
+                updateItemInCart(window.restaurantId, itemIndex!, values);
             } else {
-                addItemToCart(window.restaurantId, window.restaurantName, JSON.parse(JSON.stringify(values)));
+                addItemToCart(window.restaurantId, window.restaurantName, values);
             }
         },
         onCancel: () => {

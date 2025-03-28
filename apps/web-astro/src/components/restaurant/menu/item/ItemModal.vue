@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { type ItemId, type CartItem, calculateCartItemPrice } from "@lib/types/menuType";
+import { type ItemId, type CartItem } from "@lib/types/menuType";
+import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { computed, ref, watch, onMounted } from "vue";
 import { toast } from "@/ui-plus/sonner";
 import {
@@ -27,7 +28,7 @@ const currentItem = computed(() => {
 })
 
 const cartItem = ref<CartItem>(props.cartItem || {
-    itemId: props.itemId,
+    itemId: props.itemId!,
     quantity: 1,
     childrenState: [],
 })
@@ -83,7 +84,7 @@ const menuRoot = window.menuRoot
             </div>
             <NumberField id="quantity"
                          class="max-w-40 mt-8"
-                         v-model="cartItem.quantity"
+                         v-model="cartItem.quantity!"
                          :default-value="1"
                          :step="1"
                          :min="1">
@@ -96,7 +97,7 @@ const menuRoot = window.menuRoot
             <Button class="w-full mt-8"
                     @click="() => {
                         if (checkCartItem()) {
-                            $emit('close', cartItem)
+                            $emit('close', JSON.parse(JSON.stringify(cartItem)))
                         } else {
                             toast.error('Please select required options')
                         }

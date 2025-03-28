@@ -1,6 +1,6 @@
 ---
 import type { Item } from "@lib/types/menuType";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
 
@@ -20,28 +20,31 @@ const { item: currentItem } = Astro.props;
 				</h1>
 			</CardTitle>
 			<CardDescription>
-				${currentItem?.dsc}
-				${currentItem?.prc}
+				{currentItem?.dsc}
+				{currentItem?.prc}
 			</CardDescription>
 		</CardHeader>
-		<CardContent>
-			<p class="line-clamp-3 text-xs">
-				{currentItem?.dsc}
-			</p>
-		</CardContent>
-		<CardFooter class="flex max-w-full flex-wrap justify-end gap-2">
-			<Button variant="outline" size="icon">
-				<Plus />
-			</Button>
-		</CardFooter>
+		<!-- <CardContent>
+		</CardContent> -->
+		<!-- <CardFooter class="flex max-w-full flex-wrap justify-end gap-2">
+		</CardFooter> -->
 	</Card>
 
 	<!-- <div class="flex-shrink-0">
-            <div class="flex items-center justify-center h-full">
-                <img src={currentItem?.imgUrl}
-                     alt={currentItem?.lbl}
-                     loading="lazy"
-                     class="h-full w-48 object-cover overflow-hidden" />
-            </div>
-        </div> -->
+		<div class="flex h-full items-center justify-center">
+			<img
+				src={currentItem?.imgUrl}
+				src-sample="https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&resize=556,505"
+				alt={currentItem?.lbl}
+				loading="lazy"
+				class="h-full w-48 overflow-hidden object-cover"
+			/>
+		</div>
+	</div> -->
+
+	<div class="relative">
+		<Button variant="outline" size="icon" class="absolute bottom-2 right-2">
+			<Plus />
+		</Button>
+	</div>
 </div>

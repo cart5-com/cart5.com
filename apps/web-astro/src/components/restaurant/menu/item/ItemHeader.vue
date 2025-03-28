@@ -13,15 +13,15 @@ defineProps<{
          v-if="currentItem">
 
         <span class="capitalize cursor-text text-2xl font-bold">
-            {{ currentItem.lbl || 'Name:' }}
+            {{ currentItem.lbl || '' }}
         </span>
 
         <span class="capitalize cursor-text line-clamp-3">
-            {{ currentItem.dsc || 'Description:' }}
+            {{ currentItem.dsc || '' }}
         </span>
 
         <div class="cursor-text flex">
-            {{ currentItem.prc || 'Price:' }}
+            {{ currentItem.prc || '' }}
         </div>
 
     </div>
