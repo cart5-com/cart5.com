@@ -2,6 +2,7 @@
 import BaseLayout from "@web-astro/layout/BaseLayout.astro";
 import { getRestaurantData_Service } from "@db/services/restaurant.service";
 import Menu from "@web-astro/components/restaurant/menu/Menu.astro";
+import SingleCartView from "@web-astro/components/cart/SingleCartView.vue";
 
 const { slug, restaurantId } = Astro.params;
 
@@ -33,4 +34,7 @@ restaurant.name;
 		window.restaurantName = restaurantName;
 	</script>
 	<Menu menuRoot={restaurant.menu?.menuRoot} getMenuRoot={getMenuRoot} />
+	<div slot="header-right">
+		<SingleCartView client:only="vue" />
+	</div>
 </BaseLayout>

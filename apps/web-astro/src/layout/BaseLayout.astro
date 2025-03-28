@@ -4,6 +4,7 @@ import LayoutHelpers from "ui-shadcn-vue/src/ui-plus/LayoutHelpers.vue";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { MenuIcon } from "lucide-vue-next";
 import Drawer from "../components/Drawer.vue";
+import MultipleCartsView from "@web-astro/components/cart/MultipleCartsView.vue";
 
 interface Props {
 	title: string;
@@ -63,8 +64,7 @@ const { title } = Astro.props;
 							<a href={BASE_LINKS.HOME} class="mr-8 text-2xl font-bold">{Astro.locals.WEBSITE?.name}</a>
 						</div>
 						<slot name="header-right">
-							<!-- import { ShoppingCart } from "lucide-vue-next"; -->
-							<!-- <ShoppingCart /> -->
+							<MultipleCartsView client:only="vue" />
 						</slot>
 					</div>
 				</div>

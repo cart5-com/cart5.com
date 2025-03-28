@@ -73,7 +73,9 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
                             if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                 for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                     const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
-                                    total += recursiveCartChildrenItemState(deepOptionSetState, menuRoot)
+                                    if (deepOptionSetState) {
+                                        total += recursiveCartChildrenItemState(deepOptionSetState, menuRoot)
+                                    }
                                 }
                             }
                         }
@@ -86,6 +88,7 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
 }
 
 export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) => {
+    console.log('calculateCartItemPrice');
     let total = 0;
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];
@@ -96,7 +99,9 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) =
     if (cartItem.childrenState) {
         for (const index in cartItem.childrenState) {
             const optionSetState = cartItem.childrenState[index];
-            total += recursiveCartChildrenItemState(optionSetState, menuRoot)
+            if (optionSetState) {
+                total += recursiveCartChildrenItemState(optionSetState, menuRoot)
+            }
         }
     }
     if (total < 0) {
@@ -106,41 +111,41 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) =
 }
 
 
-export const cleanEmptyProperties = (menuRoot: MenuRoot) => {
-    const cleanedMenuRoot: MenuRoot = JSON.parse(JSON.stringify(menuRoot));
-    for (const itemId in cleanedMenuRoot.allItems) {
-        const item = cleanedMenuRoot.allItems[itemId];
-        const keys = Object.keys(item) as Array<keyof Item>;
+// export const cleanEmptyProperties = (menuRoot: MenuRoot) => {
+//     const cleanedMenuRoot: MenuRoot = JSON.parse(JSON.stringify(menuRoot));
+//     for (const itemId in cleanedMenuRoot.allItems) {
+//         const item = cleanedMenuRoot.allItems[itemId];
+//         const keys = Object.keys(item) as Array<keyof Item>;
 
-        for (const key of keys) {
-            const value = item[key];
+//         for (const key of keys) {
+//             const value = item[key];
 
-            // remove null or undefined
-            if (value === null || value === undefined) {
-                delete item[key];
-                continue;
-            }
+//             // remove null or undefined
+//             if (value === null || value === undefined) {
+//                 delete item[key];
+//                 continue;
+//             }
 
-            // remove empty strings
-            if (typeof value === 'string' && value.trim().length === 0) {
-                delete item[key];
-                continue;
-            }
+//             // remove empty strings
+//             if (typeof value === 'string' && value.trim().length === 0) {
+//                 delete item[key];
+//                 continue;
+//             }
 
-            // remove empty arrays
-            if (Array.isArray(value) && value.length === 0) {
-                delete item[key];
-                continue;
-            }
+//             // remove empty arrays
+//             if (Array.isArray(value) && value.length === 0) {
+//                 delete item[key];
+//                 continue;
+//             }
 
-            // remove empty objects
-            if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) {
-                delete item[key];
-            }
-        }
-    }
-    return cleanedMenuRoot;
-}
+//             // remove empty objects
+//             if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) {
+//                 delete item[key];
+//             }
+//         }
+//     }
+//     return cleanedMenuRoot;
+// }
 
 export const recursiveCartChildrenItemSummary = (
     customizationState: CartChildrenItemState,
@@ -170,7 +175,9 @@ export const recursiveCartChildrenItemSummary = (
                             if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                 for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                     const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
-                                    summary += recursiveCartChildrenItemSummary(deepOptionSetState, menuRoot, indentLevel + 1)
+                                    if (deepOptionSetState) {
+                                        summary += recursiveCartChildrenItemSummary(deepOptionSetState, menuRoot, indentLevel + 1)
+                                    }
                                 }
                             }
                         }
@@ -193,7 +200,9 @@ export const generateCartItemTextSummary = (cartItem: CartItem, menuRoot: MenuRo
     if (cartItem.childrenState) {
         for (const index in cartItem.childrenState) {
             const optionSetState = cartItem.childrenState[index];
-            summary += recursiveCartChildrenItemSummary(optionSetState, menuRoot)
+            if (optionSetState) {
+                summary += recursiveCartChildrenItemSummary(optionSetState, menuRoot)
+            }
         }
     }
     return summary;

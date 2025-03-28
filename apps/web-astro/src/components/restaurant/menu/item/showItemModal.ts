@@ -1,9 +1,11 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
+import { addItemToCart } from '@web-astro/components/cart/UserCarts.Store';
+
 const dialog = useDialog();
 
-export function showItemModal(itemId: ItemId, cartItem?: CartItem, index?: number) {
+export function showItemModal(itemId: ItemId, cartItem?: CartItem) {
     dialog.show<CartItem>({
         title: window.menuRoot.allItems?.[itemId]?.lbl ?? "",
         component: ItemModal,
@@ -16,11 +18,12 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, index?: numbe
         onSuccess: async (values) => {
             console.log("success");
             console.log(JSON.stringify(values, null, 2));
-            if (cartItem && index) {
-                // updateCartItem(index, values);
-            } else {
-                // addToCart(values);
-            }
+            addItemToCart(window.restaurantId, window.restaurantName, values);
+            // if (cartItem) {
+            //     // updateCartItem(index, values);
+            // } else {
+            //     // addToCart(values);
+            // }
         },
         onCancel: () => {
             console.log("cancel");
