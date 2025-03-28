@@ -21,7 +21,7 @@ export const recursiveCartChildrenItemSummary = (
                     if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                         if (innerOptionItem?.defQ) {
-                            newSummary += " ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
+                            newSummary += "  ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
                         }
                         // newSummary += " ".repeat(indentLevel + 1) + nullOptionItem.lbl + ':';
                     }
@@ -40,7 +40,7 @@ export const recursiveCartChildrenItemSummary = (
                     //     summary += "    " + chargeableQuantity + 'x ' + (optionItem?.lbl || '') + '\n';
                     // }
                     if (defaultQuantity !== quantity) {
-                        newSummary += " ".repeat(indentLevel + 1) + quantity + 'x ' + (optionItem?.lbl || '') + '\n';
+                        newSummary += "  ".repeat(indentLevel + 1) + quantity + 'x ' + (optionItem?.lbl || '') + '\n';
                     }
                     if (customizationState.childrenState[optionIndex].childrenState) {
                         for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {
@@ -49,7 +49,7 @@ export const recursiveCartChildrenItemSummary = (
                                 if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                                     const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                                     if (innerOptionItem?.defQ) {
-                                        newSummary += " ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
+                                        newSummary += "  ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
                                     }
                                 }
                             }
@@ -69,7 +69,7 @@ export const recursiveCartChildrenItemSummary = (
         }
         if (newSummary.length > 0) {
             if (menuRoot.allItems?.[customizationState.itemId]?.lbl) {
-                summary += " ".repeat(indentLevel) + (menuRoot.allItems?.[customizationState.itemId]?.lbl) + ':';
+                summary += " ".repeat(indentLevel) + (menuRoot.allItems?.[customizationState.itemId]?.lbl) + '\n';
             }
             summary += newSummary;
         }

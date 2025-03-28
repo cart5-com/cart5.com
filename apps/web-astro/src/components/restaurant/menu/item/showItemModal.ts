@@ -21,6 +21,7 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
                 updateItemInCart(window.restaurantId, itemIndex!, values);
             } else {
                 addItemToCart(window.restaurantId, window.restaurantName, values);
+                openRightDrawer()
             }
         },
         onCancel: () => {
@@ -31,4 +32,11 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             console.log(error);
         }
     });
+}
+
+function openRightDrawer() {
+    const rightDrawerLabel = document.querySelector('label[for="right-drawer"]');
+    if (rightDrawerLabel) {
+        (rightDrawerLabel as HTMLElement).click();
+    }
 }
