@@ -21,7 +21,7 @@ export const recursiveCartChildrenItemSummary = (
                     if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                         if (innerOptionItem?.defQ) {
-                            newSummary += "  ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
+                            newSummary += "  ".repeat(indentLevel + 1) + '0x ' + (innerOptionItem?.lbl || '') + '\n';
                         }
                         // newSummary += " ".repeat(indentLevel + 1) + nullOptionItem.lbl + ':';
                     }
@@ -49,7 +49,7 @@ export const recursiveCartChildrenItemSummary = (
                                 if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                                     const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                                     if (innerOptionItem?.defQ) {
-                                        newSummary += "  ".repeat(indentLevel + 1) + 0 + 'x ' + (innerOptionItem?.lbl || '') + '\n';
+                                        newSummary += "  ".repeat(indentLevel + 1) + '0x ' + (innerOptionItem?.lbl || '') + '\n';
                                     }
                                 }
                             }
