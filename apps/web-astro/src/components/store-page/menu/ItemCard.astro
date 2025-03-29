@@ -21,7 +21,7 @@ const { item: currentItem } = Astro.props;
 			</CardTitle>
 			<CardDescription>
 				{currentItem?.dsc}
-				{currentItem?.prc}
+				<span class="text-foreground mt-2 block font-bold">{currentItem?.prc}</span>
 			</CardDescription>
 		</CardHeader>
 		<!-- <CardContent>
