@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { userCartsStore, removeItemFromCart, openItemInCart } from "./UserCarts.Store";
+import { userCartsStore, removeItemFromCart, openItemInCart, clearCart } from "./UserCarts.Store";
 import { computed, onMounted, ref } from "vue";
-import { Minus, Trash2, X, Plus } from "lucide-vue-next";
+import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
@@ -13,10 +13,21 @@ import {
   NumberFieldInput,
 } from '@/components/ui/number-field'
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
+import { Textarea } from '@/components/ui/textarea'
 
 const currentCart = computed(() => {
-  return userCartsStore.value?.carts?.find((cart) => cart.restaurantId === window.restaurantId
-  );
+  return userCartsStore.value?.carts?.find((cart) => cart.restaurantId === window.restaurantId);
 });
 
 
@@ -38,12 +49,16 @@ const openCartItem = (itemIndex: number) => {
   openItemInCart(window.restaurantId, itemIndex);
 }
 
+const removeAllItemsFromCart = () => {
+  clearCart(window.restaurantId);
+}
+
 </script>
 
 <template>
-  <div class="flex flex-col gap-2"
+  <div class="flex flex-col gap-2 h-full"
        v-if="menuRoot">
-    <div class="flex flex-col gap-2 absolute w-full h-full ">
+    <div class="flex flex-col gap-2 absolute w-full">
       <div class="bg-card text-card-foreground relative sticky top-0 z-40 max-w-full flex justify-between items-center">
         <Button variant="outline"
                 as="label"
@@ -54,7 +69,23 @@ const openCartItem = (itemIndex: number) => {
         <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
           {{ currentCart?.restaurantName }}
         </div>
-        <div class="w-10 m-1 flex-shrink-0"></div><!-- Spacer to balance the layout -->
+        <div class="flex-shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <MoreVerticalIcon class="cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end"
+                                 class="">
+
+              <DropdownMenuItem @click="removeAllItemsFromCart">
+                <ListX />
+                Clear Cart
+              </DropdownMenuItem>
+
+
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div><!-- Spacer to balance the layout -->
       </div>
       <div class="flex-1"
            v-if="currentCart && currentCart.items">
@@ -95,6 +126,42 @@ const openCartItem = (itemIndex: number) => {
             </span>
           </div>
         </div>
+
+        <Drawer>
+          <DrawerTrigger as-child>
+            <Button variant="outline"
+                    class="w-full">
+              <Pencil />
+              <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-xl justify-start">
+                {{ currentCart?.orderNotes || "Add an order note" }}
+              </div>
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <div class="mx-auto w-full max-w-sm">
+              <DrawerHeader>
+                <DrawerTitle>Order Notes</DrawerTitle>
+                <DrawerDescription>Set your order notes.</DrawerDescription>
+              </DrawerHeader>
+              <div class="p-4 pb-0">
+                <Textarea v-model="currentCart!.orderNotes!"
+                          rows="7"
+                          maxlength="800"
+                          placeholder="Specify which utensils, napkins, straws, and condiments you want to be included or any special instructions that you want the restaurant to be aware of" />
+              </div>
+              <DrawerFooter>
+                <DrawerClose as-child>
+                  <Button variant="outline">
+                    Close
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+
+
+
         <div class="flex justify-between items-center px-1">
           <span class="font-bold text-lg">
             Subtotal
@@ -105,7 +172,7 @@ const openCartItem = (itemIndex: number) => {
         </div>
         <div
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
-          <Button variant="outline"
+          <Button variant="default"
                   class="w-full">
             Checkout
           </Button>

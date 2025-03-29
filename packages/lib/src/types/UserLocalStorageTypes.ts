@@ -7,6 +7,7 @@ export type Cart = {
     id?: string;
     restaurantId?: RestaurantId;
     restaurantName?: string;
+    orderNotes?: string;
     items?: CartItem[];
 }
 

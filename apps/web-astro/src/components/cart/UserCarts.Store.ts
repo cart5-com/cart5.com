@@ -46,6 +46,7 @@ export const addItemToCart = (
             id: crypto.randomUUID(),
             restaurantId,
             restaurantName: restaurantName,
+            orderNotes: "",
             items: [cartItem]
         })
     } else {
@@ -79,6 +80,16 @@ export const removeItemFromCart = (restaurantId: string, itemIndex: number) => {
     const restaurantCart = getCartByRestaurantId(restaurantId);
     if (restaurantCart) {
         restaurantCart.items?.splice(itemIndex, 1);
+    }
+    if (restaurantCart?.items?.length === 0) {
+        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === restaurantCart.id), 1);
+    }
+}
+
+export const clearCart = (restaurantId: string) => {
+    const restaurantCart = getCartByRestaurantId(restaurantId);
+    if (restaurantCart) {
+        restaurantCart.items = [];
     }
     if (restaurantCart?.items?.length === 0) {
         userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === restaurantCart.id), 1);
