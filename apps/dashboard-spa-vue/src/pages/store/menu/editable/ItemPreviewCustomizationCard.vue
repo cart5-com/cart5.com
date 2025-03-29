@@ -31,7 +31,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
         itemId: props.itemId,
         childrenState: [],
     },
-    deep: props.modelValue ? false : true,
+    deep: true,
 })
 
 const currentItem = computed(() => {
@@ -42,7 +42,8 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {})
+    const itemState = JSON.parse(JSON.stringify(modelValue.value?.childrenState || [])) as CartChildrenItemState['childrenState']
+    return itemState!
         .filter(item => item !== null && item !== undefined)
         .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
@@ -105,23 +106,29 @@ const isMinQuantityAdded = () => {
             </DropdownMenu>
         </div>
 
-        <div v-if="!isMinQuantityAdded()"
-             class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2 w-fit">
+        <Badge v-if="!isMinQuantityAdded()"
+               variant="destructive"
+               class="inline-block min-quantity-warning">
             Required
-        </div>
-        <div v-else-if="currentItem?.minQ && currentItem?.minQ > 0"
-             class="text-xs font-bold rounded-md bg-secondary text-secondary-foreground p-1 mb-2 w-fit">
+        </Badge>
+        <Badge v-else-if="currentItem?.minQ && currentItem?.minQ > 0"
+               variant="outline"
+               class="inline-block">
             ✅Required
-        </div>
+        </Badge>
+        <Badge variant="outline"
+               class="inline-block">
+            Selected:{{ getTotalQuantity() }}
+        </Badge>
 
         <div v-if="helperText"
-             class="text-xl font-bold">
+             class="text-xl font-bold block">
             {{ helperText }}
         </div>
 
         <InputInline v-model="currentItem.lbl">
             <template #trigger>
-                <span class="capitalize cursor-text text-lg">
+                <span class="capitalize cursor-text text-lg block">
                     <CornerDownRight v-if="helperText"
                                      class="inline-block" />
                     {{ currentItem?.lbl || 'Name:' }}

@@ -37,7 +37,8 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {})
+    const itemState = JSON.parse(JSON.stringify(modelValue.value?.childrenState || [])) as CartChildrenItemState['childrenState']
+    return itemState!
         .filter(item => item !== null && item !== undefined)
         .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
