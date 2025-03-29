@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MoreVerticalIcon, ShoppingCart, Trash } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userCartsStore, clearCartByCartId } from "./UserCarts.Store";
+import { userCartsStore, clearCartByCartId } from "../../../stores/UserCarts.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";

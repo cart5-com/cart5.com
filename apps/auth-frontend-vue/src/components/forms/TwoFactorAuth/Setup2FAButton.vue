@@ -6,7 +6,7 @@ import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 import { FileKey, ScanQrCodeIcon } from 'lucide-vue-next';
 import RecoveryCodeDialog from '@auth-frontend-vue/components/forms/TwoFactorAuth/RecoveryCodeDialog.vue';
-import { userStore, refreshUserData } from '@auth-frontend-vue/stores/userStore';
+import { userStore, refreshUserData } from '@auth-frontend-vue/stores/User.store';
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 
 const dialog = useDialog();

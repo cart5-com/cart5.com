@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User } from "lucide-vue-next";
 import { extractBaseDomain } from '@lib/utils/extractBaseDomain';
-import { queryParamsStore } from '@auth-frontend-vue/stores/queryParamsStore';
+import { queryParamsStore } from '@auth-frontend-vue/stores/QueryParams.store';
 const DOMAIN_NAME = extractBaseDomain(
 	new URL(
 		queryParamsStore.value.next ||

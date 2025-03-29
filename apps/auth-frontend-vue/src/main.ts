@@ -3,8 +3,8 @@ import * as Sentry from "@sentry/vue";
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
-import { refreshUserData } from '@auth-frontend-vue/stores/userStore';
-import { getQueryParams, queryParamsStore } from "./stores/queryParamsStore";
+import { refreshUserData } from '@auth-frontend-vue/stores/User.store';
+import { getQueryParams, queryParamsStore } from "./stores/QueryParams.store";
 
 
 const queryParams = getQueryParams();

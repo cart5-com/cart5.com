@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { myWebsites, type websiteListType } from '@dashboard-spa-vue/stores/WebsiteStore';
+import { myWebsites, type websiteListType } from '@dashboard-spa-vue/stores/MyWebsites.store';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-import { websiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.Store';
+import { websiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.store';
 
 const open = ref(false);
 

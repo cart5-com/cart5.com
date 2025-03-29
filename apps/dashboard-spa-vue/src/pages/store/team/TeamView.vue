@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
 import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 import { Loader2 } from 'lucide-vue-next';
 import { type ResType } from '@api-client/index';
 import TeamMembersList from './TeamMembersList.vue';

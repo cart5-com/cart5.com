@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { userStore } from '@auth-frontend-vue/stores/userStore';
+import { userStore } from '@auth-frontend-vue/stores/User.store';
 </script>
 
 <template>

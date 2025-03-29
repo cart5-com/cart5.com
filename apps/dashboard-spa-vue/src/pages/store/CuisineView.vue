@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
 import { apiClient } from '@api-client/index';
 import { onMounted, ref } from 'vue';
 import { toast } from '@/ui-plus/sonner';
@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-vue-next';
 import { ecomApiCuisines } from '@lib/consts';
 import { Input } from '@/components/ui/input';
 import { PlusCircleIcon } from 'lucide-vue-next';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 
 // Common cuisine types - expand this list as needed
 const AVAILABLE_CUISINES = ecomApiCuisines;

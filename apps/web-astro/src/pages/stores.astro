@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../layout/BaseLayout.astro";
 import { getNearbyStores_Service } from "@db/services/distance.service";
-import FilterControls from "../components/stores/FilterControls.astro";
-import StoreList from "../components/stores/StoreList.astro";
-import Pagination from "../components/stores/Pagination.astro";
+import FilterControls from "../components/stores-page/FilterControls.astro";
+import StoreList from "../components/stores-page/StoreList.astro";
+import Pagination from "../components/stores-page/Pagination.astro";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 type params = Parameters<typeof getNearbyStores_Service>;
@@ -32,10 +32,7 @@ const nearbyStores = await getNearbyStores_Service(
 );
 
 if (nearbyStores.stores.length === 1) {
-	const storeLink = BASE_LINKS.STORE(
-		nearbyStores.stores[0]?.id ?? "",
-		slugify(nearbyStores.stores[0]?.name ?? "")
-	);
+	const storeLink = BASE_LINKS.STORE(nearbyStores.stores[0]?.id ?? "", slugify(nearbyStores.stores[0]?.name ?? ""));
 	Astro.redirect(storeLink);
 }
 

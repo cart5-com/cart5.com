@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 import { apiClient } from '@api-client/index'
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore'
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store'
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store'
 
 const isLoading = ref(false)
 const offersPickup = ref(false)

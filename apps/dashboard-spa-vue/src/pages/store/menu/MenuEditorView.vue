@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defaultMenuRoot, isMenuLoading, loadMenu, menuRoot, saveMenu } from "./store";
 import MenuTabs from "./MenuTabs.vue";
-import { pageTitle } from "@dashboard-spa-vue/stores/layout.store";
+import { pageTitle } from "@dashboard-spa-vue/stores/Layout.store";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { Button } from "@/components/ui/button";
 import { Check, Hourglass, Shell } from "lucide-vue-next";

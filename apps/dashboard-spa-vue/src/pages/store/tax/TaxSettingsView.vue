@@ -14,9 +14,9 @@ import {
 import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
 import type { TaxCategory } from '@lib/types/storeTypes';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 import CurrencyWidget from './CurrencyWidget.vue';
 import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 import { getSalesTaxRate } from '@lib/utils/sales_tax_rates';

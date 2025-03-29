@@ -3,7 +3,7 @@ import LoginForm from '@auth-frontend-vue/components/forms/auth-forms/LoginForm.
 import GoogleButton from "@auth-frontend-vue/components/GoogleButton.vue";
 import { Card, CardContent } from "@/components/ui/card";
 import Separator from "@/ui-plus/separator/Separator.vue";
-import { queryParamsStore, getQueryParams } from '@auth-frontend-vue/stores/queryParamsStore'
+import { queryParamsStore, getQueryParams } from '@auth-frontend-vue/stores/QueryParams.store'
 
 const onForgotPasswordClick = () => {
     const queryParams = getQueryParams();

@@ -17,7 +17,6 @@ export const myStoresFiltered = computed(() =>
 )
 
 export const currentStoreId = ref<string | null>(null);
-
 export const currentStore = computed(() => {
     if (!currentStoreId.value) return null;
     return myStores.value.find(store => store.id === currentStoreId.value);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { apiClient } from '@api-client/index';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
-import { currentWebsiteId } from '@dashboard-spa-vue/stores/WebsiteStore';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
+import { currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsites.store';
 import { onMounted, ref } from 'vue';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/ui-plus/sonner';

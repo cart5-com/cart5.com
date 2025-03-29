@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircleIcon, Store } from "lucide-vue-next";
-import { myStoresFiltered, myStores, searchQuery, storeListType } from '@dashboard-spa-vue/stores/StoreStore'
+import { myStoresFiltered, myStores, searchQuery, storeListType } from '@dashboard-spa-vue/stores/MyStores.store'
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import StoreNewForm from "@dashboard-spa-vue/pages/my-stores/StoreNewForm.vue";

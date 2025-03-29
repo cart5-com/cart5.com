@@ -23,11 +23,11 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
 import { type DeliveryZone } from '@lib/types/storeTypes';
 import { Check, Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
 import { loadLeafletDrawCDN } from './loadLeafletDrawCDN';

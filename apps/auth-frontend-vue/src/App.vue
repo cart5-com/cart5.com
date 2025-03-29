@@ -8,8 +8,8 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs'
 import Logo from '@auth-frontend-vue/components/Logo.vue';
-import { queryParamsStore } from '@auth-frontend-vue/stores/queryParamsStore'
-import { userStore } from '@auth-frontend-vue/stores/userStore'
+import { queryParamsStore } from '@auth-frontend-vue/stores/QueryParams.store'
+import { userStore } from '@auth-frontend-vue/stores/User.store'
 import SettingsView from '@auth-frontend-vue/views/user/SettingsView.vue';
 import LoginView from '@auth-frontend-vue/views/auth/LoginView.vue';
 import SignupView from '@auth-frontend-vue/views/auth/SignupView.vue';

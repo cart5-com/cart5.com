@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userCartsStore } from "./UserCarts.Store";
+import { userCartsStore } from "../../../stores/UserCarts.store";
 import { Badge } from "@/components/ui/badge";
 import { computed } from "vue";
 

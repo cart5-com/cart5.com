@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userCartsStore, removeItemFromCart, openItemInCart, clearCartByCartId } from "./UserCarts.Store";
+import { userCartsStore, removeItemFromCart, openItemInCart, clearCartByCartId } from "../../../stores/UserCarts.store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";

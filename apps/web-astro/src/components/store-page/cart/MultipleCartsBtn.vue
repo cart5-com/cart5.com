@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userCartsStore } from "./UserCarts.Store";
+import { userCartsStore } from "../../../stores/UserCarts.store";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { Badge } from "@/components/ui/badge";
 import { computed } from "vue";
@@ -21,7 +21,10 @@ const computedCartsQuantity = computed(() => {
 </script>
 
 <template>
-  <Button variant="outline" as="label" for="right-drawer" class="cursor-pointer">
+  <Button variant="outline"
+          as="label"
+          for="right-drawer"
+          class="cursor-pointer">
     <ShoppingCart />
     <Badge>
       {{ computedCartsQuantity }}

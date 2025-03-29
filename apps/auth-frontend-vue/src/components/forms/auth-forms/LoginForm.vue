@@ -11,7 +11,7 @@ import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
 import TwoFactorForm from "@auth-frontend-vue/components/forms/auth-forms/TwoFactorForm.vue";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { refreshUserData } from "@auth-frontend-vue/stores/userStore";
+import { refreshUserData } from "@auth-frontend-vue/stores/User.store";
 const dialog = useDialog();
 
 const schema = z.object({

@@ -7,15 +7,15 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { currentWebsiteId, currentWebsite, loadMyWebsites } from '@dashboard-spa-vue/stores/WebsiteStore';
+import { currentWebsiteId, currentWebsite, loadMyWebsites } from '@dashboard-spa-vue/stores/MyWebsites.store';
 import { toast } from '@/ui-plus/sonner';
 import { useRouter } from 'vue-router';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 import { slugify } from '@lib/utils/slugify';
 import HowTo from './HowTo.vue';
 import { shakeElem } from '@lib/clientUtils/shakeElem';
-import { loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.Store';
+import { loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.store';
 
 pageTitle.value = 'Add Domain'
 const router = useRouter();

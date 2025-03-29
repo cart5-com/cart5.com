@@ -18,7 +18,7 @@ import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
 import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStores.store';
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 

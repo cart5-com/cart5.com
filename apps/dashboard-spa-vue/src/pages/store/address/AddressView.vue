@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import StoreAddressForm from '@dashboard-spa-vue/pages/store/address/StoreAddressForm.vue';
 import { ArrowRightIcon } from 'lucide-vue-next';
-import { pageTitle } from '@dashboard-spa-vue/stores/layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 pageTitle.value = 'Address'

@@ -8,14 +8,14 @@ import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { ArrowLeftIcon, Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { loadMyWebsites, myWebsites } from '@dashboard-spa-vue/stores/WebsiteStore';
+import { loadMyWebsites, myWebsites } from '@dashboard-spa-vue/stores/MyWebsites.store';
 import { getTurnstileUrl } from '@lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { insertWebsitesSchema } from '@db/schema/website.schema';
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.Store';
+import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.store';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 

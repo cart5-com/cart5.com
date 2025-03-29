@@ -7,7 +7,7 @@ import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
 import { formatDate } from '@lib/utils/formatDate';
 import { ref } from 'vue';
-import { currentStoreId } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
 import { toast } from '@/ui-plus/sonner';
 
 const apiPath = apiClient.dashboard.store[':storeId'].team_invitations.$get;

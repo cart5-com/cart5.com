@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { currentStore } from '@dashboard-spa-vue/stores/StoreStore';
+import { currentStore } from '@dashboard-spa-vue/stores/MyStores.store';
 import { Store } from "lucide-vue-next";
 import { useSidebar } from "@/components/ui/sidebar"
 

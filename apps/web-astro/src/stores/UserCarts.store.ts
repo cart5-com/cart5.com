@@ -6,7 +6,7 @@ import {
     ref,
     watch
 } from "vue";
-import { showItemModal } from "../store/menu/item/showItemModal";
+import { showItemModal } from "../components/store-page/menu/item/showItemModal";
 const USER_LOCAL_STORAGE_KEY = "ANON_USER_LOCAL_STORAGE_V1";
 export const userCartsStore = ref<UserLocalStorageType | null>(null);
 
