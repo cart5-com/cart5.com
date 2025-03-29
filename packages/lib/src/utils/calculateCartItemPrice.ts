@@ -1,4 +1,5 @@
 import type { CartChildrenItemState, CartItem, MenuRoot } from "@lib/types/menuType";
+import type { Cart } from "@lib/types/UserLocalStorageTypes";
 
 
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
@@ -63,3 +64,10 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) =
 }
 
 
+export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot) => {
+    if (!cart || !cart.items) {
+        return 0;
+    }
+    const total = cart.items?.reduce((total, item) => total + parseFloat(calculateCartItemPrice(item, menuRoot)), 0).toFixed(2) || '0.00';
+    return Number(total);
+}

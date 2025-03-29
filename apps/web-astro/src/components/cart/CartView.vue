@@ -3,7 +3,7 @@ import { userCartsStore, removeItemFromCart, openItemInCart } from "./UserCarts.
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
-import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
+import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
   NumberField,
@@ -56,7 +56,8 @@ const openCartItem = (itemIndex: number) => {
         </div>
         <div class="w-10 m-1 flex-shrink-0"></div><!-- Spacer to balance the layout -->
       </div>
-      <div class="flex-1">
+      <div class="flex-1"
+           v-if="currentCart && currentCart.items">
         <div v-for="(item, index) in currentCart?.items"
              class="border-b border-muted-foreground pb-2"
              :key="item.itemId ?? index">
@@ -90,9 +91,24 @@ const openCartItem = (itemIndex: number) => {
               </NumberFieldContent>
             </NumberField>
             <span class="font-bold">
-              ${{ calculateCartItemPrice(item, menuRoot) }}
+              {{ calculateCartItemPrice(item, menuRoot) }}
             </span>
           </div>
+        </div>
+        <div class="flex justify-between items-center px-1">
+          <span class="font-bold text-lg">
+            Subtotal
+          </span>
+          <span class="font-bold text-lg">
+            {{ calculateCartTotalPrice(currentCart!, menuRoot) }}
+          </span>
+        </div>
+        <div
+             class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
+          <Button variant="outline"
+                  class="w-full">
+            Checkout
+          </Button>
         </div>
       </div>
       <!-- {{Array.from({ length: 1000 }, (_, index) => `item ${index}`)}} -->
@@ -101,13 +117,6 @@ const openCartItem = (itemIndex: number) => {
         Click
         <Plus class="inline-block border border-foreground rounded-md" />
         to add items to cart
-      </div>
-      <div
-           class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
-        <Button variant="outline"
-                class="w-full">
-          Checkout
-        </Button>
       </div>
     </div>
 
