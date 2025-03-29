@@ -42,7 +42,9 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
+    return Object.values(modelValue.value?.childrenState || {})
+        .filter(item => item !== null && item !== undefined)
+        .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
 
 const isMinQuantityAdded = () => {

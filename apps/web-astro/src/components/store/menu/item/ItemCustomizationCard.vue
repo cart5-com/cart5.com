@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
 import { computed } from 'vue';
-import { CornerDownRight, Check } from 'lucide-vue-next';
+import { CornerDownRight } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';
 import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemCustomizationOptions from './ItemCustomizationOptions.vue';
@@ -36,7 +36,9 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
+    return Object.values(modelValue.value?.childrenState || {})
+        .filter(item => item !== null && item !== undefined)
+        .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
 
 const isMinQuantityAdded = () => {
@@ -60,6 +62,7 @@ const isMinQuantityAdded = () => {
              class="text-xs font-bold rounded-md bg-secondary text-secondary-foreground p-1 mb-2 w-fit">
             ✅Required
         </div>
+        getTotalQuantity:{{ getTotalQuantity() }}
 
         <div v-if="helperText"
              class="text-xl font-bold">

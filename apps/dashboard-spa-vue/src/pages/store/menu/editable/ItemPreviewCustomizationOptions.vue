@@ -65,7 +65,9 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
+    return Object.values(modelValue.value?.childrenState || {})
+        .filter(item => item !== null && item !== undefined)
+        .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
 
 const isMaxQuantity = () => {
@@ -88,7 +90,9 @@ const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
             return true;
         }
     }
+    return false;
 }
+
 const addQuantity = (childId: ItemId, childIndex: number) => {
     if (
         isMaxQuantity() ||
@@ -137,7 +141,11 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
             }
         }
         if (modelValue.value.childrenState[childIndex]?.quantity === 0) {
-            delete modelValue.value.childrenState[childIndex];
+            modelValue.value.childrenState = [
+                ...modelValue.value.childrenState.slice(0, childIndex),
+                null,
+                ...modelValue.value.childrenState.slice(childIndex + 1)
+            ];
         }
     }
 }

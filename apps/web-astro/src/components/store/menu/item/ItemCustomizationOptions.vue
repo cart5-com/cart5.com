@@ -37,7 +37,9 @@ const currentItem = computed(() => {
 })
 
 const getTotalQuantity = () => {
-    return Object.values(modelValue.value?.childrenState || {}).reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
+    return Object.values(modelValue.value?.childrenState || {})
+        .filter(item => item !== null && item !== undefined)
+        .reduce((acc, curr) => acc + (curr?.quantity || 0), 0);
 }
 
 const isMaxQuantity = () => {
@@ -60,7 +62,9 @@ const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
             return true;
         }
     }
+    return false;
 }
+
 const addQuantity = (childId: ItemId, childIndex: number) => {
     if (
         isMaxQuantity() ||
@@ -113,7 +117,11 @@ const removeQuantity = (childId: ItemId, childIndex: number) => {
             }
         }
         if (modelValue.value.childrenState[childIndex]?.quantity === 0) {
-            delete modelValue.value.childrenState[childIndex];
+            modelValue.value.childrenState = [
+                ...modelValue.value.childrenState.slice(0, childIndex),
+                null,
+                ...modelValue.value.childrenState.slice(childIndex + 1)
+            ];
         }
     }
 }
@@ -162,7 +170,10 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                  :key="optionItemId">
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
 
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1 cursor-pointer"
+                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
+                         :class="[
+                            (!isRadioMode && ((isMaxQuantity() || isChildMaxQuantity(optionItemId, optionItemIndex)))) ? 'cursor-not-allowed' : 'cursor-pointer'
+                        ]"
                          @click="addQuantityClick(optionItemIndex, optionItemId)">
                         <span class="capitalize col-span-6">
                             {{ menuRoot.allItems?.[optionItemId]?.lbl || '' }}
