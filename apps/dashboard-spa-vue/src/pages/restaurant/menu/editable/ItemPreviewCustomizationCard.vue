@@ -189,7 +189,7 @@ const isMinQuantityAdded = () => {
 
         <!-- <div class="text-xs"
              v-if="currentItem?.price">
-            ${{ currentItem?.price }}
+            {{ currentItem?.price }}
         </div> -->
 
         <ItemPreviewCustomizationOptions v-model="modelValue"

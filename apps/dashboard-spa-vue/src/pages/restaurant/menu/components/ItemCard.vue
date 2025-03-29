@@ -47,7 +47,7 @@ const unlinkItem = () => {
                     </h1>
                 </CardTitle>
                 <CardDescription>
-                    ${{ currentItem?.prc }}
+                    {{ currentItem?.prc }}
                 </CardDescription>
             </CardHeader>
             <CardContent>

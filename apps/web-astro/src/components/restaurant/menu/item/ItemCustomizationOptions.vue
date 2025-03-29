@@ -198,7 +198,7 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                         </div>
                         <div class="col-span-6 text-right"
                              v-if="menuRoot.allItems?.[optionItemId!]?.opPrc">
-                            ${{
+                            {{
                                 (
                                     (menuRoot.allItems?.[optionItemId!]?.opPrc!)
                                     *

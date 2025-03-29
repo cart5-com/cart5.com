@@ -116,7 +116,7 @@ const checkCartItem = () => {
         </div>
         <div
              class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
-            Total: ${{ cartItemTotalPrice }}
+            Total: {{ cartItemTotalPrice }}
         </div>
 
     </div>
