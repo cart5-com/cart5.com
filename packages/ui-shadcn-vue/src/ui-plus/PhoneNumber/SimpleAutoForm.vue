@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { currentStoreId, setCurrentStoreName } from '@src/stores/MyStores.store';
+import { currentStoreId, setCurrentStoreName } from '@src/stores/MyStoresStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
 import { onMounted } from 'vue';
 

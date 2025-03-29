@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Globe, PlusCircleIcon } from "lucide-vue-next";
-import { myWebsitesFiltered, myWebsites, searchQuery } from '@dashboard-spa-vue/stores/MyWebsites.store'
+import { myWebsitesFiltered, myWebsites, searchQuery } from '@dashboard-spa-vue/stores/MyWebsitesStore'
 import HeaderOnly from '@dashboard-spa-vue/layouts/HeaderOnly.vue';
 // import { useDialog } from '@/ui-plus/dialog/use-dialog';
 // import WebsiteNewForm from "@dashboard-spa-vue/pages/my-websites/WebsiteNewForm.vue";

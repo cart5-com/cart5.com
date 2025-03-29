@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { apiClient } from '@api-client/index';
 import { toast } from '@/ui-plus/sonner';
 import { UserPlus } from 'lucide-vue-next';

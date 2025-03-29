@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { currentWebsite } from '@dashboard-spa-vue/stores/MyWebsites.store';
+import { currentWebsite } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { Globe } from "lucide-vue-next";
 import { useSidebar } from "@/components/ui/sidebar"
 

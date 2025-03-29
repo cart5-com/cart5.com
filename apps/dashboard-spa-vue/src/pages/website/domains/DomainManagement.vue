@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { apiClient } from '@api-client/index';
-import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
-import { currentWebsiteId, loadMyWebsites } from '@dashboard-spa-vue/stores/MyWebsites.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
+import { currentWebsiteId, loadMyWebsites } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { type ResType } from '@api-client/index'

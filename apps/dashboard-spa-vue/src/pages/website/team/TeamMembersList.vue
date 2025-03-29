@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ref, computed } from 'vue';
 import { apiClient } from '@api-client/index';
 import { type ResType } from '@api-client/index';
-import { currentWebsite, currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsites.store';
+import { currentWebsite, currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
 import RemoveMemberDialog from './components/RemoveMemberDialog.vue';

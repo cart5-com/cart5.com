@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { pageTitle } from './stores/Layout.store'
+import { pageTitle } from './stores/LayoutStore'
 // import HomeView from './views/HomeView.vue'
 // import { useDialog } from '@/ui-plus/dialog/use-dialog'
 

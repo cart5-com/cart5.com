@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Loader2, Check, HandCoins, CreditCard, Phone, Landmark } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
-import { currentStoreId } from '@dashboard-spa-vue/stores/MyStores.store';
+import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
 import type { PhysicalPaymentMethods } from '@lib/types/storeTypes';
-import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import PaymentMethodsEditor from './PaymentMethodsEditor.vue';
 import { Switch } from '@/components/ui/switch';
 

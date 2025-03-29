@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { apiClient } from '@api-client/index';
-import { pageTitle } from '@dashboard-spa-vue/stores/Layout.store';
-import { currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsites.store';
+import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
+import { currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

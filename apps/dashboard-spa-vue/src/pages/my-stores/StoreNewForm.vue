@@ -8,11 +8,11 @@ import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { apiClient } from '@api-client/index';
-import { loadMyStores } from '@dashboard-spa-vue/stores/MyStores.store';
+import { loadMyStores } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { getTurnstileUrl } from '@lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
 import { Badge } from '@/components/ui/badge';
-import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfo.store';
+import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfoStore';
 import { onMounted } from 'vue';
 
 const emit = defineEmits<{
