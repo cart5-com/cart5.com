@@ -18,8 +18,8 @@ export const isOpenNow = function (
     if (!weeklyHours) {
         return false;
     }
-    const businessTimeNow = getCurrentTimeNow(timezone);
-    const dayOfWeek = businessTimeNow.weekday.toString();
+    const storeTimeNow = getCurrentTimeNow(timezone);
+    const dayOfWeek = storeTimeNow.weekday.toString();
 
     // Check current day's hours
     const workingHours = weeklyHours.days?.[dayOfWeek as keyof WeeklySchedule];
@@ -31,12 +31,12 @@ export const isOpenNow = function (
     }
 
     // Check if open during current day's hours
-    if (isOpenDuringPeriods(businessTimeNow, workingHours.hours || [])) {
+    if (isOpenDuringPeriods(storeTimeNow, workingHours.hours || [])) {
         return true;
     }
 
     // Check if we're in an overnight period from the previous day
-    const yesterdayDayOfWeek = businessTimeNow.minus({ days: 1 }).weekday.toString();
+    const yesterdayDayOfWeek = storeTimeNow.minus({ days: 1 }).weekday.toString();
     const yesterdayWorkingHours = weeklyHours.days?.[yesterdayDayOfWeek as keyof WeeklySchedule];
 
     if (yesterdayWorkingHours?.hours) {
@@ -56,12 +56,12 @@ export const isOpenNow = function (
         // If we have overnight periods, check if current time is before their closing time
         if (overnightPeriods.length > 0) {
             for (const period of overnightPeriods) {
-                const closeTime = businessTimeNow.set({
+                const closeTime = storeTimeNow.set({
                     hour: parseInt(period.close?.split(':')[0] || '0'),
                     minute: parseInt(period.close?.split(':')[1] || '0')
                 });
 
-                if (businessTimeNow <= closeTime) {
+                if (storeTimeNow <= closeTime) {
                     return true;
                 }
             }
@@ -71,7 +71,7 @@ export const isOpenNow = function (
     return false;
 };
 
-// Helper function to check if business is open during any of the given periods
+// Helper function to check if store is open during any of the given periods
 function isOpenDuringPeriods(currentTime: DateTime, periods: OpenHours[]): boolean {
     for (const period of periods) {
         if (!period.open || !period.close) continue;

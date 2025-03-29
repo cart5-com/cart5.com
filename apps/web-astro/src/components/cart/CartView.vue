@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userCartsStore, removeItemFromCart, openItemInCart, clearCart } from "./UserCarts.Store";
+import { userCartsStore, removeItemFromCart, openItemInCart, clearCartByCartId } from "./UserCarts.Store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
@@ -50,7 +50,7 @@ const openCartItem = (itemIndex: number) => {
 }
 
 const removeAllItemsFromCart = () => {
-  clearCart(window.storeId);
+  clearCartByCartId(currentCart.value?.id!);
 }
 
 </script>

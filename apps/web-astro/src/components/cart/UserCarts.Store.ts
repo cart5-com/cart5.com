@@ -86,12 +86,16 @@ export const removeItemFromCart = (storeId: string, itemIndex: number) => {
     }
 }
 
-export const clearCart = (storeId: string) => {
-    const storeCart = getCartByStoreId(storeId);
-    if (storeCart) {
-        storeCart.items = [];
-    }
-    if (storeCart?.items?.length === 0) {
-        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
-    }
+export const clearCartByCartId = (cartId: string) => {
+    userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === cartId), 1);
 }
+
+// export const clearCart = (storeId: string) => {
+//     const storeCart = getCartByStoreId(storeId);
+//     if (storeCart) {
+//         storeCart.items = [];
+//     }
+//     if (storeCart?.items?.length === 0) {
+//         userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
+//     }
+// }

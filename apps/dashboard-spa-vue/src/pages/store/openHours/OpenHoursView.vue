@@ -38,10 +38,10 @@ const defaultHours = ref<WeeklyHours>({
     days: JSON.parse(JSON.stringify(defaultDaysData))
 });
 
-const businessTimeNow = ref(getCurrentTimeNow(timezone.value));
+const storeTimeNow = ref(getCurrentTimeNow(timezone.value));
 const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
 const interval: ReturnType<typeof setInterval> = setInterval(() => {
-    businessTimeNow.value = getCurrentTimeNow(timezone.value);
+    storeTimeNow.value = getCurrentTimeNow(timezone.value);
     isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
 }, 3000);
 
@@ -180,11 +180,11 @@ const copyFromDefault2Pickup = () => {
         <Card>
             <CardHeader>
                 <CardTitle>Default Operating Hours</CardTitle>
-                <CardDescription>Set your regular business hours</CardDescription>
+                <CardDescription>Set your regular hours</CardDescription>
             </CardHeader>
             <CardContent class="p-2 pt-0">
                 <div class="text-sm text-muted-foreground mb-4 border-b border-t py-4">
-                    Time now: {{ businessTimeNow.toFormat('EEEE, HH:mm:ss') }}
+                    Time now: {{ storeTimeNow.toFormat('EEEE, HH:mm:ss') }}
                     <br>
                     Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
                 </div>

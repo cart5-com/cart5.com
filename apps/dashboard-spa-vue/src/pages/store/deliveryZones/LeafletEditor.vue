@@ -186,7 +186,7 @@ const initMap = async () => {
     }).setView([props.storeLocation.lat ?? 0, props.storeLocation.lng ?? 0], 13)
 
     window.L.marker([props.storeLocation.lat ?? 0, props.storeLocation.lng ?? 0]).addTo(mapInstance)
-        .bindPopup('Business Location')
+        .bindPopup('Store Location')
 
     mapInstance.attributionControl.setPrefix(false);
     // mapInstance.addLayer(
