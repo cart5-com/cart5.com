@@ -9,6 +9,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 console.log("🟨process.env.SOURCE_COMMIT", process.env.SOURCE_COMMIT)
 const IS_DEV_BUILD = process.env.npm_lifecycle_event === 'builddev';
+const IS_DEV_CADDY = process.env.npm_lifecycle_event === 'dev:caddy';
+const IS_DEV = process.env.npm_lifecycle_event === 'dev';
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -80,7 +83,7 @@ export default defineConfig({
       //   launchEditor: "code"
       // },
     }),
-    ...(IS_DEV_BUILD ? [] : [
+    ...(IS_DEV_BUILD || IS_DEV_CADDY || IS_DEV ? [] : [
       sentry({
         enabled: {
           client: true,

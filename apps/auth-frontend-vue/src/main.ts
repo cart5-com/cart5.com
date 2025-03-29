@@ -76,10 +76,12 @@ const i18n = createI18n({
 
 refreshUserData().then(() => {
     const app = createApp(App);
-    Sentry.init({
-        app,
-        dsn: "https://ebdb35d9ab81ac229ec1c04dc67518d0@o4509024863518720.ingest.us.sentry.io/4509025435189248"
-    });
+    if (import.meta.env.PROD) {
+        Sentry.init({
+            app,
+            dsn: "https://ebdb35d9ab81ac229ec1c04dc67518d0@o4509024863518720.ingest.us.sentry.io/4509025435189248"
+        });
+    }
     app.use(i18n)
     app.mount('#app');
 })

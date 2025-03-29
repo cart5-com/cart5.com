@@ -14,7 +14,9 @@ import { startCrons } from './cron';
 
 
 const app = new Hono<HonoVariables>();
-app.use(sentryMiddleware);
+if (IS_PROD) {
+	app.use(sentryMiddleware);
+}
 app.onError(errorHandler);
 
 app.use(csrfChecks);

@@ -24,10 +24,12 @@ getUser()
         if (user) {
             window.USER = user;
             const app = createApp(App);
-            Sentry.init({
-                app,
-                dsn: "https://3ac22df20dbee5468319fa99b69cad5b@o4509024863518720.ingest.us.sentry.io/4509025472937984"
-            });
+            if (import.meta.env.PROD) {
+                Sentry.init({
+                    app,
+                    dsn: "https://3ac22df20dbee5468319fa99b69cad5b@o4509024863518720.ingest.us.sentry.io/4509025472937984"
+                });
+            }
             app.use(router);
             app.mount('#app');
         }
