@@ -3,14 +3,14 @@ import { localDbPath } from "@lib/consts";
 import { IS_PROD, getEnvVariable } from "@lib/utils/getEnvVariable";
 
 import * as authSchema from './schema/auth.schema';
-import * as restaurantSchema from './schema/restaurant.schema';
+import * as storeSchema from './schema/store.schema';
 import * as websiteSchema from './schema/website.schema';
 import * as teamSchema from './schema/team.schema';
 // import { createClient } from '@libsql/client';
 
 export const schema = {
     ...authSchema,
-    ...restaurantSchema,
+    ...storeSchema,
     ...websiteSchema,
     ...teamSchema
 };

@@ -1,4 +1,4 @@
-import type { Point } from "@lib/types/restaurantTypes";
+import type { Point } from "@lib/types/storeTypes";
 
 export function calculateDistance(
     point1: Point,

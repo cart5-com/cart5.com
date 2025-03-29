@@ -43,7 +43,7 @@ onMounted(async () => {
         mapLocation.value?.address &&
         mapLocation.value?.country
     ) {
-        redirectToRestaurants();
+        redirectToStores();
     }
 
     // Load saved values from localStorage if they exist
@@ -75,9 +75,9 @@ const onSubmit = () => {
     mapLocation.value.country = country.value || '';
 }
 
-const redirectToRestaurants = () => {
+const redirectToStores = () => {
     const url = new URL(window.location.href);
-    url.pathname = BASE_LINKS.LIST_RESTAURANTS;
+    url.pathname = BASE_LINKS.LIST_STORES;
     url.searchParams.set('lat', mapLocation.value?.lat?.toString() || '0');
     url.searchParams.set('lng', mapLocation.value?.lng?.toString() || '0');
     url.searchParams.set('address', mapLocation.value?.address || address.value || '');
@@ -102,7 +102,7 @@ const onMapConfirm = async () => {
         country: mapLocation.value?.country || country.value || '',
     } as GeoLocation));
 
-    redirectToRestaurants();
+    redirectToStores();
 }
 
 </script>

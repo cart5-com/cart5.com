@@ -1,4 +1,4 @@
-import type { DeliveryZone, Point } from "@lib/types/restaurantTypes";
+import type { DeliveryZone, Point } from "@lib/types/storeTypes";
 
 export const calculateDeliveryZoneMinsMaxs = (deliveryZones: DeliveryZone[]) => {
     if (!deliveryZones.length) {

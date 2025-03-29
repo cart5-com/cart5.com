@@ -5,7 +5,7 @@ import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { relations } from 'drizzle-orm';
 import { z } from "zod";
 import { teamTable } from "./team.schema";
-import { restaurantTable } from "./restaurant.schema";
+import { storeTable } from "./store.schema";
 
 
 export const websitesTable = sqliteTable("websites", {
@@ -20,7 +20,7 @@ export const websitesTable = sqliteTable("websites", {
     ownerTeamId: text("owner_team_id").notNull(),
     supportTeamId: text("support_team_id"),
 
-    // if false, the website will use websiteRestaurantMapTable  to show selected restaurants
+    // if false, the website will use websiteStoreMapTable  to show selected stores
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
 
     isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false),
@@ -38,14 +38,14 @@ export const updateWebsitesSchema = createInsertSchema(websitesTable);
 
 
 /// used by isMarketplace: false websites
-/// WEBSITE RESTAURANT MAP START
-export const websiteRestaurantMapTable = sqliteTable("website_restaurant_map", {
+/// WEBSITE STORE MAP START
+export const websiteStoreMapTable = sqliteTable("website_store_map", {
     websiteId: text("website_id").notNull(),
-    restaurantId: text("restaurant_id").notNull(),
+    storeId: text("store_id").notNull(),
 }, (table) => [
-    primaryKey({ columns: [table.websiteId, table.restaurantId] })
+    primaryKey({ columns: [table.websiteId, table.storeId] })
 ]);
-/// WEBSITE RESTAURANT MAP END
+/// WEBSITE STORE MAP END
 
 
 
@@ -78,7 +78,7 @@ export const websiteRelations = relations(websitesTable, ({ one, many }) => ({
         references: [teamTable.id],
         relationName: "supportTeam"
     }),
-    restaurantMappings: many(websiteRestaurantMapTable),
+    storeMappings: many(websiteStoreMapTable),
 }));
 
 
@@ -89,13 +89,13 @@ export const websiteDomainMapRelations = relations(websiteDomainMapTable, ({ one
     }),
 }));
 
-export const websiteRestaurantMapRelations = relations(websiteRestaurantMapTable, ({ one }) => ({
+export const websiteStoreMapRelations = relations(websiteStoreMapTable, ({ one }) => ({
     website: one(websitesTable, {
-        fields: [websiteRestaurantMapTable.websiteId],
+        fields: [websiteStoreMapTable.websiteId],
         references: [websitesTable.id]
     }),
-    restaurant: one(restaurantTable, {
-        fields: [websiteRestaurantMapTable.restaurantId],
-        references: [restaurantTable.id]
+    store: one(storeTable, {
+        fields: [websiteStoreMapTable.storeId],
+        references: [storeTable.id]
     }),
 }));

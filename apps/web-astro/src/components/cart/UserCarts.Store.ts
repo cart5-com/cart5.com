@@ -6,7 +6,7 @@ import {
     ref,
     watch
 } from "vue";
-import { showItemModal } from "../restaurant/menu/item/showItemModal";
+import { showItemModal } from "../store/menu/item/showItemModal";
 const USER_LOCAL_STORAGE_KEY = "ANON_USER_LOCAL_STORAGE_V1";
 export const userCartsStore = ref<UserLocalStorageType | null>(null);
 
@@ -31,67 +31,67 @@ if (typeof window !== "undefined") {
     // }, 200);
 }
 
-export const getCartByRestaurantId = (restaurantId: string) => {
-    return userCartsStore.value?.carts?.find((cart) => cart.restaurantId === restaurantId);
+export const getCartByStoreId = (storeId: string) => {
+    return userCartsStore.value?.carts?.find((cart) => cart.storeId === storeId);
 };
 
 export const addItemToCart = (
-    restaurantId: string,
-    restaurantName: string,
+    storeId: string,
+    storeName: string,
     cartItem: CartItem
 ) => {
-    const restaurantCart = getCartByRestaurantId(restaurantId);
-    if (!restaurantCart) {
+    const storeCart = getCartByStoreId(storeId);
+    if (!storeCart) {
         userCartsStore.value?.carts?.push({
             id: crypto.randomUUID(),
-            restaurantId,
-            restaurantName: restaurantName,
+            storeId,
+            storeName: storeName,
             orderNotes: "",
             items: [cartItem]
         })
     } else {
-        if (restaurantCart.items) {
-            restaurantCart.items.push(cartItem);
+        if (storeCart.items) {
+            storeCart.items.push(cartItem);
         } else {
-            restaurantCart.items = [cartItem];
+            storeCart.items = [cartItem];
         }
     }
 };
 
-export const openItemInCart = (restaurantId: string, itemIndex: number) => {
-    const restaurantCart = getCartByRestaurantId(restaurantId);
-    if (restaurantCart) {
-        const cartItem = JSON.parse(JSON.stringify(restaurantCart.items?.[itemIndex]))
+export const openItemInCart = (storeId: string, itemIndex: number) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        const cartItem = JSON.parse(JSON.stringify(storeCart.items?.[itemIndex]))
         if (cartItem) {
             showItemModal(cartItem.itemId!, cartItem, itemIndex)
         }
     }
 }
 
-export const updateItemInCart = (restaurantId: string, itemIndex: number, cartItem: CartItem) => {
-    const restaurantCart = getCartByRestaurantId(restaurantId);
-    if (restaurantCart) {
-        restaurantCart.items![itemIndex] = cartItem;
+export const updateItemInCart = (storeId: string, itemIndex: number, cartItem: CartItem) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        storeCart.items![itemIndex] = cartItem;
     }
 }
 
 
-export const removeItemFromCart = (restaurantId: string, itemIndex: number) => {
-    const restaurantCart = getCartByRestaurantId(restaurantId);
-    if (restaurantCart) {
-        restaurantCart.items?.splice(itemIndex, 1);
+export const removeItemFromCart = (storeId: string, itemIndex: number) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        storeCart.items?.splice(itemIndex, 1);
     }
-    if (restaurantCart?.items?.length === 0) {
-        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === restaurantCart.id), 1);
+    if (storeCart?.items?.length === 0) {
+        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
     }
 }
 
-export const clearCart = (restaurantId: string) => {
-    const restaurantCart = getCartByRestaurantId(restaurantId);
-    if (restaurantCart) {
-        restaurantCart.items = [];
+export const clearCart = (storeId: string) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        storeCart.items = [];
     }
-    if (restaurantCart?.items?.length === 0) {
-        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === restaurantCart.id), 1);
+    if (storeCart?.items?.length === 0) {
+        userCartsStore.value?.carts?.splice(userCartsStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
     }
 }

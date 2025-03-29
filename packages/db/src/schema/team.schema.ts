@@ -6,16 +6,16 @@ import { websitesTable } from "./website.schema";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 
 /**
- * team are for websites and restaurants
+ * team are for websites and stores
  * also they can be used for partner teams.
- * if you create a new website or restaurant in a partner website,
- * partner's owner team will become the support team for created website or restaurant.
+ * if you create a new website or store in a partner website,
+ * partner's owner team will become the support team for created website or store.
  */
 
 
 export const teamTable = sqliteTable("team", {
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('team')),
-    type: text('type', { enum: ['RESTAURANT', 'WEBSITE'] }).notNull(),
+    type: text('type', { enum: ['STORE', 'WEBSITE'] }).notNull(),
     ownerUserId: text("owner_user_id"),
 });
 

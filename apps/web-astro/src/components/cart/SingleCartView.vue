@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { computed } from "vue";
 
 const currentCart = computed(() => {
-  return userCartsStore.value?.carts?.find((cart) => cart.restaurantId === window.restaurantId
+  return userCartsStore.value?.carts?.find((cart) => cart.storeId === window.storeId
   );
 });
 

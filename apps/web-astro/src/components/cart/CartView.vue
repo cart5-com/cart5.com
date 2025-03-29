@@ -27,7 +27,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 const currentCart = computed(() => {
-  return userCartsStore.value?.carts?.find((cart) => cart.restaurantId === window.restaurantId);
+  return userCartsStore.value?.carts?.find((cart) => cart.storeId === window.storeId);
 });
 
 
@@ -41,16 +41,16 @@ onMounted(() => {
 
 const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
   if (item.quantity! === 0) {
-    removeItemFromCart(window.restaurantId, itemIndex);
+    removeItemFromCart(window.storeId, itemIndex);
   }
 }
 
 const openCartItem = (itemIndex: number) => {
-  openItemInCart(window.restaurantId, itemIndex);
+  openItemInCart(window.storeId, itemIndex);
 }
 
 const removeAllItemsFromCart = () => {
-  clearCart(window.restaurantId);
+  clearCart(window.storeId);
 }
 
 </script>
@@ -67,7 +67,7 @@ const removeAllItemsFromCart = () => {
           <X class="h-8 w-8" />
         </Button>
         <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
-          {{ currentCart?.restaurantName }}
+          {{ currentCart?.storeName }}
         </div>
         <div class="flex-shrink-0">
           <DropdownMenu>
@@ -147,7 +147,7 @@ const removeAllItemsFromCart = () => {
                 <Textarea v-model="currentCart!.orderNotes!"
                           rows="7"
                           maxlength="800"
-                          placeholder="Specify which utensils, napkins, straws, and condiments you want to be included or any special instructions that you want the restaurant to be aware of" />
+                          placeholder="Specify which utensils, napkins, straws, and condiments you want to be included or any special instructions that you want the store to be aware of" />
               </div>
               <DrawerFooter>
                 <DrawerClose as-child>

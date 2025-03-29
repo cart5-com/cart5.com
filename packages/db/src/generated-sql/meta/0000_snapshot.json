@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "be3ff905-c8a8-41f9-9ee3-2deff9004329",
+  "id": "527ba6ef-4f5d-4bfe-b95a-3c57f13e0a39",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "session": {
@@ -138,11 +138,50 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_address": {
-      "name": "restaurant_address",
+    "geocoding_cache": {
+      "name": "geocoding_cache",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "response": {
+          "name": "response",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at_ts": {
+          "name": "created_at_ts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "geocoding_cache_url_unique": {
+          "name": "geocoding_cache_url_unique",
+          "columns": [
+            "url"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "store_address": {
+      "name": "store_address",
+      "columns": {
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -206,10 +245,10 @@
         }
       },
       "indexes": {
-        "restaurant_address_restaurant_id_unique": {
-          "name": "restaurant_address_restaurant_id_unique",
+        "store_address_store_id_unique": {
+          "name": "store_address_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -219,11 +258,11 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_delivery_zone_map": {
-      "name": "restaurant_delivery_zone_map",
+    "store_delivery_zone_map": {
+      "name": "store_delivery_zone_map",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -266,10 +305,10 @@
         }
       },
       "indexes": {
-        "restaurant_delivery_zone_map_restaurant_id_unique": {
-          "name": "restaurant_delivery_zone_map_restaurant_id_unique",
+        "store_delivery_zone_map_store_id_unique": {
+          "name": "store_delivery_zone_map_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -279,11 +318,11 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_menu": {
-      "name": "restaurant_menu",
+    "store_menu": {
+      "name": "store_menu",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -298,10 +337,10 @@
         }
       },
       "indexes": {
-        "restaurant_menu_restaurant_id_unique": {
-          "name": "restaurant_menu_restaurant_id_unique",
+        "store_menu_store_id_unique": {
+          "name": "store_menu_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -311,11 +350,11 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_open_hours": {
-      "name": "restaurant_open_hours",
+    "store_open_hours": {
+      "name": "store_open_hours",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -351,10 +390,10 @@
         }
       },
       "indexes": {
-        "restaurant_open_hours_restaurant_id_unique": {
-          "name": "restaurant_open_hours_restaurant_id_unique",
+        "store_open_hours_store_id_unique": {
+          "name": "store_open_hours_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -364,11 +403,11 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_payment_methods": {
-      "name": "restaurant_payment_methods",
+    "store_payment_methods": {
+      "name": "store_payment_methods",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -397,10 +436,10 @@
         }
       },
       "indexes": {
-        "restaurant_payment_methods_restaurant_id_unique": {
-          "name": "restaurant_payment_methods_restaurant_id_unique",
+        "store_payment_methods_store_id_unique": {
+          "name": "store_payment_methods_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -410,8 +449,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant": {
-      "name": "restaurant",
+    "store": {
+      "name": "store",
       "columns": {
         "created_at_ts": {
           "name": "created_at_ts",
@@ -494,8 +533,8 @@
         }
       },
       "indexes": {
-        "restaurant_id_unique": {
-          "name": "restaurant_id_unique",
+        "store_id_unique": {
+          "name": "store_id_unique",
           "columns": [
             "id"
           ],
@@ -507,11 +546,11 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "restaurant_tax_settings": {
-      "name": "restaurant_tax_settings",
+    "store_tax_settings": {
+      "name": "store_tax_settings",
       "columns": {
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -519,6 +558,13 @@
         },
         "currency": {
           "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "currency_symbol": {
+          "name": "currency_symbol",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -554,10 +600,10 @@
         }
       },
       "indexes": {
-        "restaurant_tax_settings_restaurant_id_unique": {
-          "name": "restaurant_tax_settings_restaurant_id_unique",
+        "store_tax_settings_store_id_unique": {
+          "name": "store_tax_settings_store_id_unique",
           "columns": [
-            "restaurant_id"
+            "store_id"
           ],
           "isUnique": true
         }
@@ -773,8 +819,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "website_restaurant_map": {
-      "name": "website_restaurant_map",
+    "website_store_map": {
+      "name": "website_store_map",
       "columns": {
         "website_id": {
           "name": "website_id",
@@ -783,8 +829,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "store_id": {
+          "name": "store_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -794,12 +840,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "website_restaurant_map_website_id_restaurant_id_pk": {
+        "website_store_map_website_id_store_id_pk": {
           "columns": [
             "website_id",
-            "restaurant_id"
+            "store_id"
           ],
-          "name": "website_restaurant_map_website_id_restaurant_id_pk"
+          "name": "website_store_map_website_id_store_id_pk"
         }
       },
       "uniqueConstraints": {},
@@ -864,6 +910,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": true
+        },
+        "is_partner": {
+          "name": "is_partner",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
         }
       },
       "indexes": {

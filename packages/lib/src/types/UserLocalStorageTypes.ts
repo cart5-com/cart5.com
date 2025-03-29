@@ -1,12 +1,12 @@
 
 import type { CartItem } from "./menuType";
 
-export type RestaurantId = string;
+export type StoreId = string;
 
 export type Cart = {
     id?: string;
-    restaurantId?: RestaurantId;
-    restaurantName?: string;
+    storeId?: StoreId;
+    storeName?: string;
     orderNotes?: string;
     items?: CartItem[];
 }

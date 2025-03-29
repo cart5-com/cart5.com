@@ -13,5 +13,5 @@ declare namespace App {
 
 declare var SENTRY_RELEASE: { id: string };
 declare var menuRoot: import("@lib/types/menuType").MenuRoot;
-declare var restaurantId: string;
-declare var restaurantName: string;
+declare var storeId: string;
+declare var storeName: string;

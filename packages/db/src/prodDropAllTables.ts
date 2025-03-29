@@ -10,7 +10,7 @@ WHERE
   type = 'table'
 `);
 
-  const sqlResult = result.rows[0][result.columns[0]] || "";
+  const sqlResult = result.rows[0]![result.columns[0]!] || "";
 
   console.log("sqlResult");
   console.log(sqlResult.toString().split(";"));

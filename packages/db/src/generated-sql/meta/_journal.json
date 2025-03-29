@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1742533895063,
-      "tag": "0000_quick_punisher",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1742572120478,
-      "tag": "0001_first_red_skull",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1742675079776,
-      "tag": "0002_wakeful_firebrand",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1742859125983,
-      "tag": "0003_useful_bucky",
+      "when": 1743219426792,
+      "tag": "0000_perpetual_harrier",
       "breakpoints": true
     }
   ]

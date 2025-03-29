@@ -56,7 +56,7 @@ const onPartnerChange = async (checked: boolean) => {
             <div class="space-y-0.5">
                 <h3 class="text-lg font-medium">Partner</h3>
                 <p class="text-muted-foreground">
-                    Become a partner to support other restaurants and get a commission from their sales.
+                    Become a partner to support other stores and get a commission from their sales.
                 </p>
             </div>
             <div class="flex items-center space-x-3">

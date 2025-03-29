@@ -29,7 +29,7 @@ const permissionStates = ref<Record<string, boolean>>({
     FULL_ACCESS: false,
     WEBSITE_MANAGER: false,
     TEAM_MANAGER: false,
-    RESTAURANT_MANAGER: false
+    STORE_MANAGER: false
 });
 
 const error = ref('');

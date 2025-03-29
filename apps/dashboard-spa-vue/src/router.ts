@@ -24,71 +24,71 @@ const router = createRouter({
       name: 'team-invite-handler',
       component: () => import('@dashboard-spa-vue/pages/TeamInviteHandlerView.vue'),
     },
-    // RESTAURANT ROUTES
+    // STORE ROUTES
     {
-      path: '/my-restaurants',
-      name: 'my-restaurants',
-      component: () => import('@dashboard-spa-vue/pages/my-restaurants/MyRestaurantsView.vue'),
+      path: '/my-stores',
+      name: 'my-stores',
+      component: () => import('@dashboard-spa-vue/pages/my-stores/MyStoresView.vue'),
     },
     {
-      path: '/restaurant/:restaurantId',
-      name: 'restaurant',
-      component: () => import('@dashboard-spa-vue/layouts/restaurant/RestaurantLayout.vue'),
+      path: '/store/:storeId',
+      name: 'store',
+      component: () => import('@dashboard-spa-vue/layouts/store/StoreLayout.vue'),
       children: [
         {
           path: '',
-          name: 'restaurant-home',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/HomeView.vue'),
+          name: 'store-home',
+          component: () => import('@dashboard-spa-vue/pages/store/HomeView.vue'),
         },
         {
           path: 'name-phone',
-          name: 'restaurant-name',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/name/NamePhoneView.vue'),
+          name: 'store-name',
+          component: () => import('@dashboard-spa-vue/pages/store/name/NamePhoneView.vue'),
         },
         {
           path: 'address',
-          name: 'restaurant-address',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/address/AddressView.vue'),
+          name: 'store-address',
+          component: () => import('@dashboard-spa-vue/pages/store/address/AddressView.vue'),
         },
         {
           path: 'cuisine',
-          name: 'restaurant-cuisine',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/CuisineView.vue'),
+          name: 'store-cuisine',
+          component: () => import('@dashboard-spa-vue/pages/store/CuisineView.vue'),
         },
         {
           path: 'pickup',
-          name: 'restaurant-pickup',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/PickupView.vue'),
+          name: 'store-pickup',
+          component: () => import('@dashboard-spa-vue/pages/store/PickupView.vue'),
         },
         {
           path: 'delivery-options',
-          name: 'restaurant-delivery-options',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/deliveryZones/DeliveryZonesView.vue'),
+          name: 'store-delivery-options',
+          component: () => import('@dashboard-spa-vue/pages/store/deliveryZones/DeliveryZonesView.vue'),
         },
         {
           path: 'open-hours',
-          name: 'restaurant-open-hours',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/openHours/OpenHoursView.vue')
+          name: 'store-open-hours',
+          component: () => import('@dashboard-spa-vue/pages/store/openHours/OpenHoursView.vue')
         },
         {
           path: 'payment-methods',
-          name: 'restaurant-payment-methods',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/paymentMethods/PaymentMethodsView.vue')
+          name: 'store-payment-methods',
+          component: () => import('@dashboard-spa-vue/pages/store/paymentMethods/PaymentMethodsView.vue')
         },
         {
           path: 'tax-settings',
-          name: 'restaurant-tax-settings',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/tax/TaxSettingsView.vue')
+          name: 'store-tax-settings',
+          component: () => import('@dashboard-spa-vue/pages/store/tax/TaxSettingsView.vue')
         },
         {
           path: 'menu-editor',
-          name: 'restaurant-menu-editor',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/menu/MenuEditorView.vue'),
+          name: 'store-menu-editor',
+          component: () => import('@dashboard-spa-vue/pages/store/menu/MenuEditorView.vue'),
         },
         {
           path: 'team',
-          name: 'restaurant-team',
-          component: () => import('@dashboard-spa-vue/pages/restaurant/team/TeamView.vue'),
+          name: 'store-team',
+          component: () => import('@dashboard-spa-vue/pages/store/team/TeamView.vue'),
         }
       ],
     },
@@ -135,9 +135,9 @@ const router = createRouter({
           component: () => import('@dashboard-spa-vue/pages/website/team/TeamView.vue'),
         },
         {
-          path: 'restaurants',
-          name: 'website-restaurants',
-          component: () => import('@dashboard-spa-vue/pages/website/restaurants/WebsiteRestaurantsListView.vue'),
+          path: 'stores',
+          name: 'website-stores',
+          component: () => import('@dashboard-spa-vue/pages/website/stores/WebsiteStoresListView.vue'),
         },
         {
           path: 'partner',

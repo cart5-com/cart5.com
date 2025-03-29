@@ -23,4 +23,4 @@ export const apiClient = createApiClient()
 
 // const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
 // export type sampleResponseType_TeamMember = ResType<typeof apiPath>["data"]["teamMembers"][0];
-// apiClient.dashboard.restaurant[':restaurantId'].menu.get.$post
+// apiClient.dashboard.store[':storeId'].menu.get.$post

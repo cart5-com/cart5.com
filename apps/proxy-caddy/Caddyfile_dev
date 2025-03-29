@@ -47,7 +47,7 @@ obite.co.uk,
 www.obite.com,
 www.obite.co.uk,
 
-# restaurant by obite
+# store by obite
 flames.obite.com,
 flames.obite.co.uk,
 flames.com,
@@ -58,10 +58,10 @@ secondpartner.cart5dev.com,
 secondpartner.com,
 www.secondpartner.com,
 
-# restaurant by secondpartner
-pubo-restaurant.secondpartner.com,
-pubo-restaurant.com,
-www.pubo-restaurant.com,
+# store by secondpartner
+pubo-store.secondpartner.com,
+pubo-store.com,
+www.pubo-store.com,
 :443 {
 	tls internal
 	import api-hono-proxy

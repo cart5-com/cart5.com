@@ -31,9 +31,9 @@ export default defineConfig(({ mode }) => ({
       "secondpartner.cart5dev.com",
       "secondpartner.com",
       "www.secondpartner.com",
-      "pubo-restaurant.secondpartner.com",
-      "pubo-restaurant.com",
-      "www.pubo-restaurant.com",
+      "pubo-store.secondpartner.com",
+      "pubo-store.com",
+      "www.pubo-store.com",
     ],
     host: '0.0.0.0',
     hmr: {

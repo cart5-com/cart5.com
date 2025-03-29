@@ -1,1 +1,0 @@
-ALTER TABLE `restaurant_tax_settings` ADD `currency_symbol` text;

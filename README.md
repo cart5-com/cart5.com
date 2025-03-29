@@ -5,21 +5,21 @@ Currently in development.
 
 ## Why?
 
-Cart5.com is a web store generator for restaurants that eliminates expensive middleman fees.
+Cart5.com is a web store generator that minimizes expensive middleman fees.
 
 The Problem:
 When you order food through delivery apps:
 
-- Restaurants lose 20-30% of each order to commission fees
+- Stores lose 20-30% of each order to commission fees
 - They have to raise their menu prices to make up for these fees
 - You end up paying more for your food.
-- These platforms often force restaurants to keep the same prices everywhere,
+- These platforms often force stores to keep the same prices everywhere,
   preventing them from offering better deals directly to customers.
-- You end up paying more for your food even when dining at the restaurant.
+- You end up paying more for your food even when dining at the store.
 
 Our Solution:
 
-- Restaurants pay zero commission
+- Stores pay zero commission
 - Customers pay only a small 1-2% service fee
 - Full price transparency for everyone
 
@@ -86,7 +86,7 @@ Add to /etc/hosts
 127.0.0.1 www.obite.com
 127.0.0.1 www.obite.co.uk
 
-# restaurant by obite
+# store by obite
 127.0.0.1 flames.obite.com
 127.0.0.1 flames.obite.co.uk
 127.0.0.1 flames.com
@@ -97,8 +97,8 @@ Add to /etc/hosts
 127.0.0.1 secondpartner.com
 127.0.0.1 www.secondpartner.com
 
-# restaurant by secondpartner
-127.0.0.1 pubo-restaurant.secondpartner.com
-127.0.0.1 pubo-restaurant.com
-127.0.0.1 www.pubo-restaurant.com
+# store by secondpartner
+127.0.0.1 pubo-store.secondpartner.com
+127.0.0.1 pubo-store.com
+127.0.0.1 www.pubo-store.com
 ```

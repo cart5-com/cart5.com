@@ -4,7 +4,7 @@ import { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, and, or } from "drizzle-orm";
 import { websitesTable } from "@db/schema/website.schema";
 import { userTable } from "@db/schema/auth.schema";
-import { restaurantTable } from "@db/schema/restaurant.schema";
+import { storeTable } from "@db/schema/store.schema";
 
 export const getTeam_Service = async (
     teamId: string,
@@ -23,8 +23,8 @@ export const getUserTeams_Service = async (userId: string) => {
             websiteId: websitesTable.id,
             websiteName: websitesTable.name,
             defaultHostname: websitesTable.defaultHostname,
-            restaurantId: restaurantTable.id,
-            restaurantName: restaurantTable.name,
+            storeId: storeTable.id,
+            storeName: storeTable.name,
             // ownerUserId: teamTable.ownerUserId,
             // isOwner: eq(teamTable.ownerUserId, userId),
             // permissions: teamUserMapTable.permissions
@@ -39,10 +39,10 @@ export const getUserTeams_Service = async (userId: string) => {
             eq(teamTable.id, websitesTable.ownerTeamId)
         )
         .leftJoin(
-            restaurantTable,
+            storeTable,
             or(
-                eq(teamTable.id, restaurantTable.ownerTeamId),
-                eq(teamTable.id, restaurantTable.supportTeamId)
+                eq(teamTable.id, storeTable.ownerTeamId),
+                eq(teamTable.id, storeTable.supportTeamId)
             )
         )
         .where(
@@ -74,7 +74,7 @@ export const getTeamMembers_Service = async (
 }
 
 export const createTeamWithoutOwner_Service = async (
-    type: 'RESTAURANT' | 'WEBSITE',
+    type: 'STORE' | 'WEBSITE',
     tx: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) => {
     // Add team to db without an owner
@@ -89,7 +89,7 @@ export const createTeamWithoutOwner_Service = async (
 
 export const createTeamTransactional_Service = async (
     ownerUserId: string,
-    type: 'RESTAURANT' | 'WEBSITE',
+    type: 'STORE' | 'WEBSITE',
     tx: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) => {
     // add team to db

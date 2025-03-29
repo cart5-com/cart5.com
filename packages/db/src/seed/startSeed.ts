@@ -2,7 +2,7 @@ import { IS_PROD } from "@lib/utils/getEnvVariable";
 import { createSeedUser } from "./createSeedUser";
 import {
     addDomainToWebsite_Service,
-    addRestaurantToWebsite_Service,
+    addStoreToWebsite_Service,
     createWebsite_Service,
     getWebsiteInfo_Service,
     updateWebsite_Service
@@ -10,23 +10,23 @@ import {
 import { addMemberToTeam, insertInvitation } from "@db/services/team.service";
 import { TEAM_PERMISSIONS } from "@lib/consts";
 import {
-    createRestaurant_Service,
-    updateRestaurant_Service,
-    updateRestaurantAddress_Service,
-    updateRestaurantDeliveryZones_Service,
-    updateRestaurantOpenHours_Service
-} from "@db/services/restaurant.service";
+    createStore_Service,
+    updateStore_Service,
+    updateStoreAddress_Service,
+    updateStoreDeliveryZones_Service,
+    updateStoreOpenHours_Service
+} from "@db/services/store.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
-import { getNearbyRestaurants_Service } from "@db/services/distance.service";
+import { getNearbyStores_Service } from "@db/services/distance.service";
 import type {
     DeliveryZone
-} from "@lib/types/restaurantTypes";
+} from "@lib/types/storeTypes";
 import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
 import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
 import { readFileSync } from "fs";
 import { importMenuFromCSV } from "@lib/types/menuImport";
-import { updateRestaurantMenu_Service } from "@db/services/restaurant.service";
+import { updateStoreMenu_Service } from "@db/services/store.service";
 import { fileURLToPath, URL } from 'node:url'
 
 const sampleMenuRoot1 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-1.csv", import.meta.url)), "utf8"));
@@ -47,65 +47,65 @@ export const startSeed = async () => {
 
     const cart5DevAdminUser = await createSeedUser(email, password, name, profilePhotoUrl);
     const cart5DevWebsite = await createWebsite_Service(cart5DevAdminUser?.id!, "cart5dev", null, false, "web_cart5dev_id_123");
-    await addDomainToWebsite_Service(cart5DevWebsite.id, cart5DevWebsite, "cart5dev.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(cart5DevWebsite.id, cart5DevWebsite, "www.cart5dev.com"); // default domain add as last one
+    await addDomainToWebsite_Service(cart5DevWebsite!.id, cart5DevWebsite!, "cart5dev.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(cart5DevWebsite!.id, cart5DevWebsite!, "www.cart5dev.com"); // default domain add as last one
     const cart5WebsiteInfo = await getWebsiteInfo_Service("www.cart5dev.com")
 
     const cuneytObite = await createSeedUser("cuneyt@obite.co.uk", password, "Cuneyt");
     const obiteWebsite = await createWebsite_Service(cuneytObite?.id!, "obite", cart5WebsiteInfo?.partnerInfo?.partnerTeamId!, false, "web_obite_id_456");
-    await updateWebsite_Service(obiteWebsite.id, {
+    await updateWebsite_Service(obiteWebsite!.id, {
         isPartner: true,
     })
-    await addDomainToWebsite_Service(obiteWebsite.id, obiteWebsite, "obite.cart5dev.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(obiteWebsite.id, obiteWebsite, "obite.co.uk"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(obiteWebsite.id, obiteWebsite, "obite.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(obiteWebsite.id, obiteWebsite, "www.obite.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(obiteWebsite.id, obiteWebsite, "www.obite.co.uk"); // default domain
+    await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "obite.cart5dev.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "obite.co.uk"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "obite.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "www.obite.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "www.obite.co.uk"); // default domain
 
     const thushObite = await createSeedUser("thush@obite.co.uk", password, "thush");
-    const invitation = await insertInvitation(thushObite?.email!, obiteWebsite.ownerTeamId, [TEAM_PERMISSIONS.FULL_ACCESS], cuneytObite?.id!, obiteWebsite.name);
-    await addMemberToTeam(obiteWebsite.ownerTeamId, thushObite?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitation.id);
+    const invitation = await insertInvitation(thushObite?.email!, obiteWebsite!.ownerTeamId, [TEAM_PERMISSIONS.FULL_ACCESS], cuneytObite?.id!, obiteWebsite!.name);
+    await addMemberToTeam(obiteWebsite!.ownerTeamId, thushObite?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitation!.id);
 
     //flames.obite.com created by thush inside obite website
     const obiteTeamWebsiteInfo = await getWebsiteInfo_Service("www.obite.co.uk")
     const flamesWebsite = await createWebsite_Service(thushObite?.id!, "flames", obiteTeamWebsiteInfo?.partnerInfo?.partnerTeamId!, true, "web_flames_id_789");
-    await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.obite.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.obite.co.uk"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "flames.com"); // secondary domain to redirect to default domain
-    await addDomainToWebsite_Service(flamesWebsite.id, flamesWebsite, "www.flames.com"); // default domain
+    await addDomainToWebsite_Service(flamesWebsite!.id, flamesWebsite!, "flames.obite.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(flamesWebsite!.id, flamesWebsite!, "flames.obite.co.uk"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(flamesWebsite!.id, flamesWebsite!, "flames.com"); // secondary domain to redirect to default domain
+    await addDomainToWebsite_Service(flamesWebsite!.id, flamesWebsite!, "www.flames.com"); // default domain
 
-    await updateWebsite_Service(flamesWebsite.id, {
+    await updateWebsite_Service(flamesWebsite!.id, {
         isMarketplace: false,
     })
 
-    const flamesRestaurantAdminUser = await createSeedUser("flames_admin@flames.com", password, "Flames Admin");
-    const invitationForFlamesRestaurantAdminUser = await insertInvitation(
-        flamesRestaurantAdminUser?.email!,
-        flamesWebsite.ownerTeamId,
+    const flamesStoreAdminUser = await createSeedUser("flames_admin@flames.com", password, "Flames Admin");
+    const invitationForFlamesStoreAdminUser = await insertInvitation(
+        flamesStoreAdminUser?.email!,
+        flamesWebsite!.ownerTeamId,
         [TEAM_PERMISSIONS.FULL_ACCESS],
         thushObite?.id!,
-        flamesWebsite.name
+        flamesWebsite!.name
     );
-    await addMemberToTeam(flamesWebsite.ownerTeamId, flamesRestaurantAdminUser?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitationForFlamesRestaurantAdminUser.id);
+    await addMemberToTeam(flamesWebsite!.ownerTeamId, flamesStoreAdminUser?.id!, [TEAM_PERMISSIONS.FULL_ACCESS], invitationForFlamesStoreAdminUser!.id);
     const cfRaw: CloudflareObjectType = (await (await fetch("https://workers.cloudflare.com/cf.json")).json());
-    // create 300 restaurants with 5th one being real flames restaurant
-    const restaurantsByThush = [];
+    // create 300 stores with 5th one being real flames store
+    const storesByThush = [];
     const baseLat = parseFloat(cfRaw.latitude);
     const baseLng = parseFloat(cfRaw.longitude);
 
     for (let i = 0; i < 300; i++) {
         let name = faker.company.name();
 
-        const rest = await createRestaurant_Service(
+        const store = await createStore_Service(
             thushObite?.id!,
             name,
             obiteTeamWebsiteInfo?.partnerInfo?.partnerTeamId!,
             true,
-            `rest_${i}_${i}_${i}`
+            `str_${i}_${i}_${i}`
         );
 
         // Use Cloudflare data as a base for more realistic locations
-        // For non-flame restaurants, spread them around the base location
+        // For non-flame stores, spread them around the base location
         let lat, lng, city, state, postalCode;
 
         // Generate locations within reasonable distance from base
@@ -131,7 +131,7 @@ export const startSeed = async () => {
         const streetName = faker.location.street();
         const address2 = faker.helpers.maybe(() => `Apt ${faker.number.int({ min: 1, max: 999 })}`, { probability: 0.7 });
 
-        await updateRestaurantAddress_Service(rest.id, {
+        await updateStoreAddress_Service(store!.id, {
             address1: `${streetNumber} ${streetName}`,
             address2: address2 || "",
             city: city,
@@ -148,7 +148,7 @@ export const startSeed = async () => {
             offersPickup = true;
         }
 
-        await updateRestaurant_Service(rest.id, {
+        await updateStore_Service(store!.id, {
             offersDelivery,
             offersPickup,
         })
@@ -162,7 +162,6 @@ export const startSeed = async () => {
                     deliveryFee: faker.number.int({ min: 0, max: 10 }),
                     deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
                     shapeType: 'circle',
-                    polygonArea: undefined,
                     circleArea: {
                         center: {
                             lat: lat,
@@ -170,7 +169,6 @@ export const startSeed = async () => {
                         },
                         radius: faker.number.int({ min: 1000, max: 10000 })
                     },
-                    rectangleArea: undefined,
                     isActive: faker.number.int({ min: 0, max: 1 }) === 1,
                 },
                 // add polygon zone
@@ -182,8 +180,6 @@ export const startSeed = async () => {
                     deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
                     shapeType: 'polygon',
                     polygonArea: calcDiamondShapePolygon(lat, lng, faker.number.float({ min: 0.01, max: 0.03 })),
-                    circleArea: undefined,
-                    rectangleArea: undefined,
                     isActive: faker.number.int({ min: 0, max: 1 }) === 1,
                 },
                 // add rectangle zone
@@ -194,8 +190,6 @@ export const startSeed = async () => {
                     deliveryFee: faker.number.int({ min: 0, max: 10 }),
                     deliveryFeePerKm: faker.number.int({ min: 0, max: 10 }),
                     shapeType: 'rectangle',
-                    polygonArea: undefined,
-                    circleArea: undefined,
                     rectangleArea: {
                         topLeft: {
                             lat: lat - faker.number.float({ min: 0.01, max: 0.03 }),
@@ -209,25 +203,25 @@ export const startSeed = async () => {
                     isActive: faker.number.int({ min: 0, max: 1 }) === 1,
                 }
             ];
-            await updateRestaurantDeliveryZones_Service(rest.id, processDataToSaveDeliveryZones({
+            await updateStoreDeliveryZones_Service(store!.id, processDataToSaveDeliveryZones({
                 zones
             }))
         }
-        await updateRestaurantMenu_Service(rest.id, {
+        await updateStoreMenu_Service(store!.id, {
             menuRoot: Math.random() > 0.5 ? sampleMenuRoot1 : sampleMenuRoot2
         });
 
-        restaurantsByThush.push(rest);
+        storesByThush.push(store);
     }
 
-    const flamesRestaurant = restaurantsByThush[4];
-    await updateRestaurant_Service(flamesRestaurant.id, {
-        name: "Flames Restaurant",
+    const flamesStore = storesByThush[4];
+    await updateStore_Service(flamesStore!.id, {
+        name: "Flames Store",
     })
-    await updateRestaurantMenu_Service(flamesRestaurant.id, {
+    await updateStoreMenu_Service(flamesStore!.id, {
         menuRoot: sampleMenuRoot2
     });
-    await updateRestaurantOpenHours_Service(flamesRestaurant.id, {
+    await updateStoreOpenHours_Service(flamesStore!.id, {
         timezone: cfRaw.timezone,
         defaultOpenHours: {
             isActive: true,
@@ -295,28 +289,28 @@ export const startSeed = async () => {
             }
         }
     })
-    // invite flames admin to Real Flames restaurant
-    const invitationForFlamesRestaurantAdminUserRes = await insertInvitation(
-        flamesRestaurantAdminUser?.email!,
-        flamesRestaurant?.ownerTeamId!,
+    // invite flames admin to Real Flames store
+    const invitationForFlamesStoreAdminUserRes = await insertInvitation(
+        flamesStoreAdminUser?.email!,
+        flamesStore?.ownerTeamId!,
         [TEAM_PERMISSIONS.FULL_ACCESS],
         thushObite?.id!,
-        flamesRestaurant?.name!
+        flamesStore?.name!
     );
     await addMemberToTeam(
-        flamesRestaurant?.ownerTeamId!,
-        flamesRestaurantAdminUser?.id!,
+        flamesStore?.ownerTeamId!,
+        flamesStoreAdminUser?.id!,
         [TEAM_PERMISSIONS.FULL_ACCESS],
-        invitationForFlamesRestaurantAdminUserRes.id
+        invitationForFlamesStoreAdminUserRes!.id
     );
 
-    await addRestaurantToWebsite_Service(
-        flamesWebsite.id,
-        flamesRestaurant.id
+    await addStoreToWebsite_Service(
+        flamesWebsite!.id,
+        flamesStore!.id
     );
 
 
-    const nearbyRestaurants = await getNearbyRestaurants_Service(
+    const nearbyStores = await getNearbyStores_Service(
         baseLat,
         baseLng,
         null,
@@ -327,7 +321,7 @@ export const startSeed = async () => {
         "delivery",
         "distance_asc"
     );
-    console.log(nearbyRestaurants);
+    console.log(nearbyStores);
 }
 
 startSeed()

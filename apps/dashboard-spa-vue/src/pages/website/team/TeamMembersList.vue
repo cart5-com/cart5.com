@@ -180,7 +180,7 @@ const updatePermissions = async (permissions: string[]) => {
                     <TriangleAlert />
                     <AlertTitle>Heads up!</AlertTitle>
                     <AlertDescription>
-                        The first member of the team will be the owner of the restaurant.
+                        The first member of the team will be the owner of the store.
                         owner can transfer ownership to another member. but no other member can transfer ownership to
                         another member.
                     </AlertDescription>

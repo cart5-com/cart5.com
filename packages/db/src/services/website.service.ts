@@ -1,11 +1,11 @@
 import { eq, type InferInsertModel, or, inArray, and, sql, like, count, desc } from 'drizzle-orm';
 import db from '@db/drizzle';
-import { websitesTable, websiteDomainMapTable, websiteRestaurantMapTable } from '@db/schema/website.schema';
+import { websitesTable, websiteDomainMapTable, websiteStoreMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
-import { restaurantTable, restaurantAddressTable } from '@db/schema/restaurant.schema';
-import { getAllRestaurantsThatUserHasAccessTo } from './restaurant.service';
+import { storeTable, storeAddressTable } from '@db/schema/store.schema';
+import { getAllStoresThatUserHasAccessTo } from './store.service';
 
 export const getWebsite_Service = async (
     websiteId: string,
@@ -62,8 +62,8 @@ export const isUserWebsiteAdmin = async (
     websiteId: string,
     permissions: (typeof TEAM_PERMISSIONS)[keyof typeof TEAM_PERMISSIONS][]
 ) => {
-    // First, get the restaurant's owner and support team IDs
-    const restaurant = await db.select({
+    // First, get the store's owner and support team IDs
+    const store = await db.select({
         ownerTeamId: websitesTable.ownerTeamId,
         supportTeamId: websitesTable.supportTeamId
     })
@@ -71,13 +71,13 @@ export const isUserWebsiteAdmin = async (
         .where(eq(websitesTable.id, websiteId))
         .then(results => results[0]);
 
-    if (!restaurant) {
+    if (!store) {
         return false;
     }
     return await isAdminCheck(
         userId,
-        restaurant.ownerTeamId,
-        restaurant.supportTeamId,
+        store.ownerTeamId,
+        store.supportTeamId,
         permissions
     );
 }
@@ -225,7 +225,7 @@ export const setDefaultDomain_Service = async (websiteId: string, hostname: stri
     return true;
 }
 
-export const listRestaurantsForWebsite_Service = async (
+export const listStoresForWebsite_Service = async (
     websiteId: string,
     limit: number = 10,
     offset: number = 0,
@@ -234,77 +234,77 @@ export const listRestaurantsForWebsite_Service = async (
 ) => {
     const query = search ? `%${search}%` : '%';
 
-    // Get user's restaurants if userId is provided
-    let userRestaurantIds: string[] = [];
+    // Get user's stores if userId is provided
+    let userStoreIds: string[] = [];
     if (userId) {
-        const userRestaurants = await getAllRestaurantsThatUserHasAccessTo(userId);
-        userRestaurantIds = userRestaurants.map((restaurant: { id: string }) => restaurant.id);
+        const userStores = await getAllStoresThatUserHasAccessTo(userId);
+        userStoreIds = userStores.map((store: { id: string }) => store.id);
     }
 
-    // Get all restaurants that match the search criteria
-    const allRestaurants = await db
+    // Get all stores that match the search criteria
+    const allStores = await db
         .select({
-            id: restaurantTable.id,
-            name: restaurantTable.name,
-            address1: restaurantAddressTable.address1,
+            id: storeTable.id,
+            name: storeTable.name,
+            address1: storeAddressTable.address1,
             isListed: sql<boolean>`CASE 
-                WHEN ${websiteRestaurantMapTable.restaurantId} IS NOT NULL THEN 1 
+                WHEN ${websiteStoreMapTable.storeId} IS NOT NULL THEN 1 
                 ELSE 0 
             END`,
-            // priority for user's restaurants
-            isUserRestaurant: sql<boolean>`CASE 
-                WHEN ${restaurantTable.id} IN (${userRestaurantIds.length > 0 ? userRestaurantIds.join(',') : 'NULL'}) THEN 1
+            // priority for user's stores
+            isUserStore: sql<boolean>`CASE 
+                WHEN ${storeTable.id} IN (${userStoreIds.length > 0 ? userStoreIds.join(',') : 'NULL'}) THEN 1
                 ELSE 0
             END`,
         })
-        .from(restaurantTable)
+        .from(storeTable)
         .leftJoin(
-            restaurantAddressTable,
-            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+            storeAddressTable,
+            eq(storeTable.id, storeAddressTable.storeId)
         )
         .leftJoin(
-            websiteRestaurantMapTable,
+            websiteStoreMapTable,
             and(
-                eq(websiteRestaurantMapTable.restaurantId, restaurantTable.id),
-                eq(websiteRestaurantMapTable.websiteId, websiteId)
+                eq(websiteStoreMapTable.storeId, storeTable.id),
+                eq(websiteStoreMapTable.websiteId, websiteId)
             )
         )
         .where(
             or(
-                like(restaurantTable.name, query),
-                like(restaurantAddressTable.address1, query)
+                like(storeTable.name, query),
+                like(storeAddressTable.address1, query)
             )
         )
         .limit(limit)
         .offset(offset)
         .orderBy(
-            // priority for user's restaurants
+            // priority for user's stores
             desc(sql<number>`CASE 
-                WHEN ${restaurantTable.id} IN (${userRestaurantIds.length > 0 ? userRestaurantIds.join(',') : 'NULL'}) THEN 1
+                WHEN ${storeTable.id} IN (${userStoreIds.length > 0 ? userStoreIds.join(',') : 'NULL'}) THEN 1
                 ELSE 0
             END`),
-            restaurantTable.created_at_ts
+            storeTable.created_at_ts
         );
 
-    // Count total restaurants for pagination
+    // Count total stores for pagination
     const totalCount = await db
         .select({
             count: count()
         })
-        .from(restaurantTable)
+        .from(storeTable)
         .leftJoin(
-            restaurantAddressTable,
-            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+            storeAddressTable,
+            eq(storeTable.id, storeAddressTable.storeId)
         )
         .where(
             or(
-                like(restaurantTable.name, query),
-                like(restaurantAddressTable.address1, query)
+                like(storeTable.name, query),
+                like(storeAddressTable.address1, query)
             )
         );
 
     return {
-        restaurants: allRestaurants,
+        stores: allStores,
         pagination: {
             total: totalCount[0]?.count || 0,
             limit,
@@ -313,15 +313,15 @@ export const listRestaurantsForWebsite_Service = async (
     };
 }
 
-export const addRestaurantToWebsite_Service = async (
+export const addStoreToWebsite_Service = async (
     websiteId: string,
-    restaurantId: string
+    storeId: string
 ) => {
     // Insert into map table (will fail if already exists due to primary key constraint)
     try {
-        await db.insert(websiteRestaurantMapTable).values({
+        await db.insert(websiteStoreMapTable).values({
             websiteId,
-            restaurantId
+            storeId
         });
         return true;
     } catch (error) {
@@ -330,15 +330,15 @@ export const addRestaurantToWebsite_Service = async (
     }
 }
 
-export const removeRestaurantFromWebsite_Service = async (
+export const removeStoreFromWebsite_Service = async (
     websiteId: string,
-    restaurantId: string
+    storeId: string
 ) => {
-    await db.delete(websiteRestaurantMapTable)
+    await db.delete(websiteStoreMapTable)
         .where(
             and(
-                eq(websiteRestaurantMapTable.websiteId, websiteId),
-                eq(websiteRestaurantMapTable.restaurantId, restaurantId)
+                eq(websiteStoreMapTable.websiteId, websiteId),
+                eq(websiteStoreMapTable.storeId, storeId)
             )
         );
     return true;
@@ -421,14 +421,14 @@ export const getWebsiteByOwnerTeamId_Service = async (ownerTeamId: string) => {
     });
 }
 
-// if count is 1 return the restaurant id
-export const getFirstRestaurantIdForWebsite_Service = async (
+// if count is 1 return the store id
+export const getFirstStoreIdForWebsite_Service = async (
     websiteId: string
 ) => {
-    return (await db.query.websiteRestaurantMapTable.findFirst({
-        where: eq(websiteRestaurantMapTable.websiteId, websiteId),
+    return (await db.query.websiteStoreMapTable.findFirst({
+        where: eq(websiteStoreMapTable.websiteId, websiteId),
         with: {
-            restaurant: {
+            store: {
                 columns: {
                     name: true
                 }
@@ -437,7 +437,7 @@ export const getFirstRestaurantIdForWebsite_Service = async (
     }));
 }
 
-export const countRestaurantsForWebsite_Service = async (
+export const countStoresForWebsite_Service = async (
     websiteId: string,
     isMarketplace: boolean
 ) => {
@@ -446,7 +446,7 @@ export const countRestaurantsForWebsite_Service = async (
             .select({
                 count: count()
             })
-            .from(restaurantTable);
+            .from(storeTable);
 
         return result[0]?.count || 0;
     } else {
@@ -454,8 +454,8 @@ export const countRestaurantsForWebsite_Service = async (
             .select({
                 count: count()
             })
-            .from(websiteRestaurantMapTable)
-            .where(eq(websiteRestaurantMapTable.websiteId, websiteId));
+            .from(websiteStoreMapTable)
+            .where(eq(websiteStoreMapTable.websiteId, websiteId));
 
         return result[0]?.count || 0;
     }

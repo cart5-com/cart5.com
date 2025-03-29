@@ -43,11 +43,11 @@ const computedCartsQuantity = computed(() => {
                :key="cart.id ?? index">
             <Button as="a"
                     variant="outline"
-                    :href="`${BASE_LINKS.RESTAURANT(cart.restaurantId ?? '', slugify(cart.restaurantName ?? ''))}?cartId=${cart.id}`"
+                    :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''))}?cartId=${cart.id}`"
                     class="grid grid-cols-[auto_1fr_auto] gap-2 w-full">
               <ShoppingCart class="flex-shrink-0" />
               <span class="truncate">
-                {{ cart.restaurantName }}
+                {{ cart.storeName }}
               </span>
               <Badge class="text-sm font-medium flex-shrink-0">
                 {{ getTotalItem(cart) }}
@@ -58,7 +58,7 @@ const computedCartsQuantity = computed(() => {
             <span class="text-sm font-medium">
               No carts
               <br />
-              - Open a restaurant
+              - Open a store
               <br />
               - Add some items here
             </span>

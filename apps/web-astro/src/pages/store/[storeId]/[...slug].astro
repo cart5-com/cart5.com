@@ -1,0 +1,43 @@
+---
+import BaseLayout from "@web-astro/layout/BaseLayout.astro";
+import { getStoreData_Service } from "@db/services/store.service";
+import Menu from "@web-astro/components/store/menu/Menu.astro";
+import SingleCartView from "@web-astro/components/cart/SingleCartView.vue";
+import CartView from "@web-astro/components/cart/CartView.vue";
+
+const { slug, storeId } = Astro.params;
+
+if (!storeId) {
+	throw new Error("Store ID is required");
+}
+
+const store = await getStoreData_Service(storeId);
+if (!store) {
+	throw new Error("Store not found");
+}
+
+const getMenuRoot = () => {
+	if (!store.menu?.menuRoot) {
+		throw new Error("Menu root not found");
+	}
+	return store.menu.menuRoot;
+};
+store.name;
+---
+
+<BaseLayout title={`${store?.name} - ${slug}`}>
+	<h1>{slug}</h1>
+	<h2>{storeId}</h2>
+	<script is:inline define:vars={{ menuRoot: store.menu?.menuRoot, storeId, storeName: store.name }}>
+		window.menuRoot = menuRoot;
+		window.storeId = storeId;
+		window.storeName = storeName;
+	</script>
+	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
+	<div slot="header-right">
+		<SingleCartView client:only="vue" />
+	</div>
+	<div slot="right-drawer">
+		<CartView client:only="vue" />
+	</div>
+</BaseLayout>

@@ -1,9 +1,9 @@
 import { eq, and, gte, lte, asc, desc, count, sql } from 'drizzle-orm';
 import db from '@db/drizzle';
-import { restaurantTable, restaurantAddressTable, restaurantDeliveryZoneMapTable } from '@db/schema/restaurant.schema';
-import { websiteRestaurantMapTable } from '@db/schema/website.schema';
+import { storeTable, storeAddressTable, storeDeliveryZoneMapTable } from '@db/schema/store.schema';
+import { websiteStoreMapTable } from '@db/schema/website.schema';
 
-export const getNearbyRestaurants_Service = async (
+export const getNearbyStores_Service = async (
     lat: number,
     lng: number,
     websiteId: string | null = null,
@@ -29,32 +29,32 @@ export const getNearbyRestaurants_Service = async (
     let baseConditions = [];
 
     if (websiteId) {
-        baseConditions.push(eq(websiteRestaurantMapTable.websiteId, websiteId));
+        baseConditions.push(eq(websiteStoreMapTable.websiteId, websiteId));
     }
 
     // Add offers delivery/pickup filter based on listType
     if (type === 'delivery') {
-        baseConditions.push(eq(restaurantTable.offersDelivery, true));
+        baseConditions.push(eq(storeTable.offersDelivery, true));
     } else if (type === 'pickup') {
-        baseConditions.push(eq(restaurantTable.offersPickup, true));
+        baseConditions.push(eq(storeTable.offersPickup, true));
     }
 
-    // Using restaurantAddressTable for lat/lng filtering since restaurantDeliveryZoneMapTable doesn't have direct lat/lng fields
+    // Using storeAddressTable for lat/lng filtering since storeDeliveryZoneMapTable doesn't have direct lat/lng fields
     baseConditions = [
         ...baseConditions,
-        gte(restaurantAddressTable.lat, minLat),
-        lte(restaurantAddressTable.lat, maxLat),
-        gte(restaurantAddressTable.lng, minLng),
-        lte(restaurantAddressTable.lng, maxLng),
+        gte(storeAddressTable.lat, minLat),
+        lte(storeAddressTable.lat, maxLat),
+        gte(storeAddressTable.lng, minLng),
+        lte(storeAddressTable.lng, maxLng),
     ];
 
     // Special conditions for delivery mode
     const deliveryConditions = [
         // We use min/max lat/lng from the delivery zone table
-        gte(restaurantDeliveryZoneMapTable.maxLat, lat),
-        lte(restaurantDeliveryZoneMapTable.minLat, lat),
-        gte(restaurantDeliveryZoneMapTable.maxLng, lng),
-        lte(restaurantDeliveryZoneMapTable.minLng, lng),
+        gte(storeDeliveryZoneMapTable.maxLat, lat),
+        lte(storeDeliveryZoneMapTable.minLat, lat),
+        gte(storeDeliveryZoneMapTable.maxLng, lng),
+        lte(storeDeliveryZoneMapTable.minLng, lng),
     ];
 
     let whereConditions = baseConditions;
@@ -72,62 +72,62 @@ export const getNearbyRestaurants_Service = async (
         orderBy = desc(sql`distance`);
     }
 
-    // Create the base query for both count and restaurant selection
+    // Create the base query for both count and store selection
     const baseQueryFrom = (query: any) => {
-        let q = query.from(restaurantTable);
+        let q = query.from(storeTable);
 
-        // If we have a specific website, join with the website restaurant map
+        // If we have a specific website, join with the website store map
         if (websiteId) {
             q = q.innerJoin(
-                websiteRestaurantMapTable,
-                eq(restaurantTable.id, websiteRestaurantMapTable.restaurantId)
+                websiteStoreMapTable,
+                eq(storeTable.id, websiteStoreMapTable.storeId)
             );
         }
 
         // Join with address table for coordinates
         q = q.innerJoin(
-            restaurantAddressTable,
-            eq(restaurantTable.id, restaurantAddressTable.restaurantId)
+            storeAddressTable,
+            eq(storeTable.id, storeAddressTable.storeId)
         );
 
         // Join with delivery zone table if in delivery mode
         if (type === 'delivery') {
             q = q.innerJoin(
-                restaurantDeliveryZoneMapTable,
-                eq(restaurantTable.id, restaurantDeliveryZoneMapTable.restaurantId)
+                storeDeliveryZoneMapTable,
+                eq(storeTable.id, storeDeliveryZoneMapTable.storeId)
             );
         }
 
         return q;
     };
 
-    // Run the count and restaurants queries in parallel for efficiency
-    const [countResult, nearbyRestaurants] = await Promise.all([
+    // Run the count and stores queries in parallel for efficiency
+    const [countResult, nearbyStores] = await Promise.all([
         baseQueryFrom(db.select({
             count: count()
         })).where(and(...whereConditions)),
 
         baseQueryFrom(db.select({
-            id: restaurantTable.id,
-            name: restaurantTable.name,
+            id: storeTable.id,
+            name: storeTable.name,
             // Using the address table for lat/lng
-            lat: restaurantAddressTable.lat,
-            lng: restaurantAddressTable.lng,
-            address1: restaurantAddressTable.address1,
+            lat: storeAddressTable.lat,
+            lng: storeAddressTable.lng,
+            address1: storeAddressTable.address1,
 
             /////////////////////////
             // v1 - Haversine formula for great-circle distance
             // distance: sql<number>`${radius} * 2 * ASIN(
             //     SQRT(
             //         (
-            //             SIN((${restaurantAddressTable.lat} - ${lat}) * PI() / 180 / 2) *
-            //             SIN((${restaurantAddressTable.lat} - ${lat}) * PI() / 180 / 2)
+            //             SIN((${storeAddressTable.lat} - ${lat}) * PI() / 180 / 2) *
+            //             SIN((${storeAddressTable.lat} - ${lat}) * PI() / 180 / 2)
             //         ) +
             //         COS(${lat} * PI() / 180) *
-            //         COS(${restaurantAddressTable.lat} * PI() / 180) *
+            //         COS(${storeAddressTable.lat} * PI() / 180) *
             //         (
-            //             SIN((${restaurantAddressTable.lng} - ${lng}) * PI() / 180 / 2) *
-            //             SIN((${restaurantAddressTable.lng} - ${lng}) * PI() / 180 / 2)
+            //             SIN((${storeAddressTable.lng} - ${lng}) * PI() / 180 / 2) *
+            //             SIN((${storeAddressTable.lng} - ${lng}) * PI() / 180 / 2)
             //         )
             //     )
             // )`.mapWith(Number).as('distance'),
@@ -138,9 +138,9 @@ export const getNearbyRestaurants_Service = async (
             // v2 - simplified distance calculation
             // distance: sql<number>`${radius} * 2 * ASIN(
             //     SQRT(
-            //         0.5 - COS((${restaurantAddressTable.lat} - ${lat}) * PI() / 180) / 2 +
-            //         COS(${lat} * PI() / 180) * COS(${restaurantAddressTable.lat} * PI() / 180) *
-            //         (1 - COS((${restaurantAddressTable.lng} - ${lng}) * PI() / 180)) / 2
+            //         0.5 - COS((${storeAddressTable.lat} - ${lat}) * PI() / 180) / 2 +
+            //         COS(${lat} * PI() / 180) * COS(${storeAddressTable.lat} * PI() / 180) *
+            //         (1 - COS((${storeAddressTable.lng} - ${lng}) * PI() / 180)) / 2
             //     )
             // )`.mapWith(Number).as('distance'),
             /////////////////////////
@@ -150,9 +150,9 @@ export const getNearbyRestaurants_Service = async (
             // v3 - simplified distance with 0.017453292519943295 as PI/180
             distance: sql<number>`${radius} * 2 * ASIN(
                 SQRT(
-                    0.5 - COS((${restaurantAddressTable.lat} - ${lat}) * 0.017453292519943295) / 2 + 
-                    COS(${lat} * 0.017453292519943295) * COS(${restaurantAddressTable.lat} * 0.017453292519943295) * 
-                    (1 - COS((${restaurantAddressTable.lng} - ${lng}) * 0.017453292519943295)) / 2
+                    0.5 - COS((${storeAddressTable.lat} - ${lat}) * 0.017453292519943295) / 2 + 
+                    COS(${lat} * 0.017453292519943295) * COS(${storeAddressTable.lat} * 0.017453292519943295) * 
+                    (1 - COS((${storeAddressTable.lng} - ${lng}) * 0.017453292519943295)) / 2
                 )
             )`.mapWith(Number).as('distance'),
             /////////////////////////
@@ -164,7 +164,7 @@ export const getNearbyRestaurants_Service = async (
     ]);
 
     return {
-        restaurants: nearbyRestaurants as {
+        stores: nearbyStores as {
             id: string;
             name: string;
             lat: number;

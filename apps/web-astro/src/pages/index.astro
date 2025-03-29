@@ -4,20 +4,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import HeroAddress from "../components/HeroAddress.vue";
 import { BASE_LINKS } from "../utils/links";
 import {
-	countRestaurantsForWebsite_Service,
-	getFirstRestaurantIdForWebsite_Service
+	countStoresForWebsite_Service,
+	getFirstStoreIdForWebsite_Service
 } from "@db/services/website.service";
 import { slugify } from "@lib/utils/slugify";
 
-const count = await countRestaurantsForWebsite_Service(
+const count = await countStoresForWebsite_Service(
 	Astro.locals.WEBSITE?.id ?? "",
 	Astro.locals.WEBSITE?.isMarketplace ?? false
 );
 if (count === 1) {
-	const restaurant = await getFirstRestaurantIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
-	if (restaurant) {
-		const restaurantLink = BASE_LINKS.RESTAURANT(restaurant.restaurantId, slugify(restaurant.restaurant.name));
-		Astro.redirect(restaurantLink);
+	const store = await getFirstStoreIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
+	if (store) {
+		const storeLink = BASE_LINKS.STORE(store.storeId, slugify(store.store.name));
+		Astro.redirect(storeLink);
 	}
 }
 ---

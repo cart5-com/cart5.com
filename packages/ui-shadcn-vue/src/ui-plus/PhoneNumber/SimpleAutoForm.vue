@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
 import { dashboardApiClient } from '@src/lib/dashboardApiClient';
-import { currentRestaurantId, setCurrentRestaurantName } from '@src/stores/RestaurantStore';
+import { currentStoreId, setCurrentStoreName } from '@src/stores/StoreStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
 import { onMounted } from 'vue';
 
@@ -23,10 +23,10 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
-    console.log('loadData', currentRestaurantId.value);
-    const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$post({
+    console.log('loadData', currentStoreId.value);
+    const { data, error } = await (await dashboardApiClient.api_dashboard.store[':storeId'].$post({
         param: {
-            restaurantId: currentRestaurantId.value ?? '',
+            storeId: currentStoreId.value ?? '',
         },
         json: {
             columns: {
@@ -61,9 +61,9 @@ onMounted(() => {
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.api_dashboard.restaurant[':restaurantId'].$patch({
+        const { data, error } = await (await dashboardApiClient.api_dashboard.store[':storeId'].$patch({
             param: {
-                restaurantId: currentRestaurantId.value ?? '',
+                storeId: currentStoreId.value ?? '',
             },
             json: values
         })).json()
@@ -72,7 +72,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         } else {
             // Success
             console.log('data', data);
-            setCurrentRestaurantName(values.name);
+            setCurrentStoreName(values.name);
         }
     })
 }

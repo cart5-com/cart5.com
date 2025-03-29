@@ -1,1 +1,0 @@
-ALTER TABLE `websites` ADD `is_partner` integer DEFAULT false NOT NULL;

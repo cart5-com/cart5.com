@@ -3,8 +3,8 @@
 export const BASE_LINKS = {
     HOME: "/",
     HOME_UPDATE_ADDRESS: "/?update-address=1",
-    LIST_RESTAURANTS: "/restaurants",
-    RESTAURANT: function (id: string, slug?: string) {
-        return `/restaurant/${id}${slug ? `/${slug}` : ""}`;
+    LIST_STORES: "/stores",
+    STORE: function (id: string, slug?: string) {
+        return `/store/${id}${slug ? `/${slug}` : ""}`;
     },
 }

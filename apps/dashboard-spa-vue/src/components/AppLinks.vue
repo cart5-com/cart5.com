@@ -44,10 +44,10 @@ import {
 			<Home class="text-muted-foreground h-10 w-10" />
 			<span class="text-foreground mt-2 text-sm text-center">Home</span>
 		</RouterLink>
-		<RouterLink :to="{ name: 'my-restaurants' }"
+		<RouterLink :to="{ name: 'my-stores' }"
 					class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
 			<Store class="text-muted-foreground h-10 w-10" />
-			<span class="text-foreground mt-2 text-sm text-center">My Restaurants</span>
+			<span class="text-foreground mt-2 text-sm text-center">My Stores</span>
 		</RouterLink>
 		<RouterLink :to="{ name: 'my-websites' }"
 					class="bg-accent hover:bg-accent/80 flex flex-col items-center justify-center rounded-lg p-2 transition-colors">
