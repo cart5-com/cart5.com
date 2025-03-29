@@ -46,7 +46,7 @@ const removeCart = (cartId: string) => {
 
             <DropdownMenuItem @click="removeCart(cart.id!)">
               <Trash />
-              Remove Cart
+              Remove
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
