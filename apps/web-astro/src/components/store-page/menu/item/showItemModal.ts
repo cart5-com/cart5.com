@@ -1,7 +1,7 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
-import { addItemToCart, updateItemInCart } from '@web-astro/stores/UserCarts.store';
+import { addItemToCart, updateItemInCart } from '@web-astro/stores/User.store';
 import { openRightDrawer } from '@web-astro/utils/openRightDrawer';
 
 const dialog = useDialog();

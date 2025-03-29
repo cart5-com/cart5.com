@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userCartsStore, removeItemFromCart, openItemInCart, clearCartByCartId } from "../../../stores/UserCarts.store";
+import { userStore, removeItemFromCart, openItemInCart, clearCartByCartId, initializeUserStore } from "../../../stores/User.store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
@@ -27,7 +27,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 const currentCart = computed(() => {
-  return userCartsStore.value?.carts?.find((cart) => cart.storeId === window.storeId);
+  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeId);
 });
 
 
@@ -53,6 +53,9 @@ const removeAllItemsFromCart = () => {
   clearCartByCartId(currentCart.value?.id!);
 }
 
+onMounted(() => {
+  initializeUserStore();
+});
 </script>
 
 <template>
@@ -133,7 +136,7 @@ const removeAllItemsFromCart = () => {
                     class="w-full">
               <Pencil />
               <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-xl justify-start">
-                {{ currentCart?.orderNotes || "Add an order note" }}
+                {{ currentCart?.orderNote || "Add an order note" }}
               </div>
             </Button>
           </DrawerTrigger>
@@ -144,7 +147,7 @@ const removeAllItemsFromCart = () => {
                 <DrawerDescription>Set your order notes.</DrawerDescription>
               </DrawerHeader>
               <div class="p-4 pb-0">
-                <Textarea v-model="currentCart!.orderNotes!"
+                <Textarea v-model="currentCart!.orderNote!"
                           rows="7"
                           maxlength="800"
                           placeholder="Specify which utensils, napkins, straws, and condiments you want to be included or any special instructions that you want the store to be aware of" />

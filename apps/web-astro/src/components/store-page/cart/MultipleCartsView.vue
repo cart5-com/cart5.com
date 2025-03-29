@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { MoreVerticalIcon, ShoppingCart, Trash } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userCartsStore, clearCartByCartId } from "../../../stores/UserCarts.store";
+import { userStore, clearCartByCartId } from "../../../stores/User.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { onMounted } from "vue";
+import { initializeUserStore } from "@web-astro/stores/User.store";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -16,13 +18,17 @@ const removeCart = (cartId: string) => {
   clearCartByCartId(cartId);
 };
 
+onMounted(() => {
+  initializeUserStore();
+});
+
 </script>
 
 <template>
   <div class="flex flex-col gap-2 max-w-md w-full">
-    <div v-if="userCartsStore"
+    <div v-if="userStore"
          class="flex flex-col gap-2 p-2">
-      <div v-for="(cart, index) in userCartsStore?.carts"
+      <div v-for="(cart, index) in userStore?.carts"
            :key="cart.id ?? index"
            class="flex flex-row gap-2 items-center rounded-md border p-2">
         <Button as="a"
@@ -51,7 +57,7 @@ const removeCart = (cartId: string) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div v-if="userCartsStore?.carts?.length === 0">
+      <div v-if="userStore?.carts?.length === 0">
         <span class="text-sm font-medium">
           No carts
           <br />

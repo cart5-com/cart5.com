@@ -16,7 +16,7 @@ import { ref, onMounted, watch } from "vue";
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 import { Loader2, DoorOpen, ChevronRight } from 'lucide-vue-next';
 import { BASE_LINKS } from "@web-astro/utils/links";
-
+import { initializeUserStore, userStore } from "@web-astro/stores/User.store";
 const address = ref<string | null>(null);
 const country = ref<string | null>(null);
 const isDialogOpen = ref(false);
@@ -34,6 +34,7 @@ watch(country, (newValue) => {
 
 onMounted(async () => {
     isLoading.value = true;
+    initializeUserStore();
 
     mapLocation.value = JSON.parse(localStorage.getItem('REMEMBER_LAST_LOCATION') || '{}') as GeoLocation;
     if (
