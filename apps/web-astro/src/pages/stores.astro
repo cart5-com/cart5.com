@@ -6,6 +6,9 @@ import StoreList from "../components/stores-page/StoreList.astro";
 import Pagination from "../components/stores-page/Pagination.astro";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
+import MultipleCartsBtn from "@web-astro/components/store-page/cart/MultipleCartsBtn.vue";
+import MultipleCartsView from "@web-astro/components/store-page/cart/MultipleCartsView.vue";
+
 type params = Parameters<typeof getNearbyStores_Service>;
 const lat = Number(Astro.url.searchParams.get("lat"));
 const lng = Number(Astro.url.searchParams.get("lng"));
@@ -61,4 +64,6 @@ const createPageUrl = (
 		totalPages={nearbyStores.pagination.totalPages}
 		createPageUrl={(page: number) => createPageUrl(page)}
 	/>
+	<MultipleCartsBtn client:only="vue" slot="header-right" />
+	<MultipleCartsView client:only="vue" slot="right-drawer" />
 </BaseLayout>
