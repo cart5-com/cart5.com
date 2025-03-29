@@ -352,7 +352,7 @@ onMounted(() => {
                                             }
                                         }">
                                 <template #trigger>
-                                    <span class="capitalize cursor-text"
+                                    <span class="capitalize cursor-text text-right"
                                           :class="[
                                             menuRoot.allItems![optionItemId!].opPrc! < 0 && !isRadioMode
                                                 ? 'text-destructive font-bold' : ''

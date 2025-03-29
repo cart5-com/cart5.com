@@ -2,6 +2,7 @@ import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
 import { addItemToCart, updateItemInCart } from '@web-astro/components/cart/UserCarts.Store';
+import { openRightDrawer } from '@web-astro/utils/openRightDrawer';
 
 const dialog = useDialog();
 
@@ -21,7 +22,7 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
                 updateItemInCart(window.storeId, itemIndex!, values);
             } else {
                 addItemToCart(window.storeId, window.storeName, values);
-                openRightDrawer()
+                openRightDrawer();
             }
         },
         onCancel: () => {
@@ -34,9 +35,3 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
     });
 }
 
-function openRightDrawer() {
-    const rightDrawerLabel = document.querySelector('label[for="right-drawer"]');
-    if (rightDrawerLabel) {
-        (rightDrawerLabel as HTMLElement).click();
-    }
-}

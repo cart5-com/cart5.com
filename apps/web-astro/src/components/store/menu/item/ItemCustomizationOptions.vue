@@ -178,7 +178,7 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                         <span class="capitalize col-span-6">
                             {{ menuRoot.allItems?.[optionItemId]?.lbl || '' }}
                         </span>
-                        <span class="capitalize"
+                        <span class="capitalize text-right"
                               :class="[
                                 menuRoot.allItems?.[optionItemId!]?.opPrc! < 0 && !isRadioMode
                                     ? 'text-destructive font-bold' : ''

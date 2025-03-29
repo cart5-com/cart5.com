@@ -109,6 +109,10 @@ const isMinQuantityAdded = () => {
              class="text-xs font-bold rounded-md bg-destructive text-destructive-foreground p-1 min-quantity-warning mb-2 w-fit">
             Required
         </div>
+        <div v-else-if="currentItem?.minQ && currentItem?.minQ > 0"
+             class="text-xs font-bold rounded-md bg-secondary text-secondary-foreground p-1 mb-2 w-fit">
+            ✅Required
+        </div>
 
         <div v-if="helperText"
              class="text-xl font-bold">
