@@ -62,7 +62,6 @@ const isMinQuantityAdded = () => {
              class="text-xs font-bold rounded-md bg-secondary text-secondary-foreground p-1 mb-2 w-fit">
             ✅Required
         </div>
-        getTotalQuantity:{{ getTotalQuantity() }}
 
         <div v-if="helperText"
              class="text-xl font-bold">
