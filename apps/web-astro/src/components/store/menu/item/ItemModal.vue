@@ -113,10 +113,10 @@ const menuRoot = window.menuRoot
         <div
              class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
             Total: {{ cartItemTotalPrice }}
-            <details>
+            <!-- <details>
                 <summary>cartItem</summary>
                 <pre>{{ cartItem }}</pre>
-            </details>
+            </details> -->
         </div>
     </div>
 </template>
