@@ -80,6 +80,9 @@ export default defineConfig(({ mode }) => ({
       "@dashboard-spa-vue": fileURLToPath(
         new URL("./src", import.meta.url),
       ),
+      "@dashboard-spa-vue/*": fileURLToPath(
+        new URL("./src/*", import.meta.url),
+      ),
       "@lib": fileURLToPath(
         new URL("../../packages/lib/src", import.meta.url),
       ),
