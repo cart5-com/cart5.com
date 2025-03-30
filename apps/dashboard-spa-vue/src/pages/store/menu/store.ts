@@ -25,10 +25,8 @@ export const loadMenu = async () => {
             }
         }
     })).json();
-
     if (error) {
         toast.error('Failed to load menu');
-        return;
     } else {
         menuRoot.value = data?.menuRoot as MenuRoot || defaultMenuRoot;
     }
@@ -37,25 +35,18 @@ export const loadMenu = async () => {
 
 export const saveMenu = async () => {
     isMenuLoading.value = true;
-    try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].menu.update.$patch({
-            param: {
-                storeId: currentStoreId.value ?? '',
-            },
-            json: {
-                menuRoot: menuRoot.value
-            }
-        })).json();
-
-        if (error) {
-            toast.error('Failed to save menu');
-            return;
+    const { error } = await (await apiClient.dashboard.store[':storeId'].menu.update.$patch({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        },
+        json: {
+            menuRoot: menuRoot.value
         }
-        toast.success('Menu saved successfully');
-    } catch (err) {
-        console.error('Error saving menu:', err);
+    })).json();
+    if (error) {
         toast.error('Failed to save menu');
-    } finally {
-        isMenuLoading.value = false;
+    } else {
+        toast.success('Menu saved successfully');
     }
+    isMenuLoading.value = false;
 }
