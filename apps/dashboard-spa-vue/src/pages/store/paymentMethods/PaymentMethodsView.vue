@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Check, HandCoins, CreditCard, Phone, Landmark } from 'lucide-vue-next';
+import { Loader2, Check, Banknote, CreditCard, Phone, Landmark } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
@@ -143,10 +143,10 @@ onMounted(() => {
                 </p>
                 <ul class="text-sm text-muted-foreground list-disc pl-6 mt-2 space-y-4">
                     <li>
-                        <HandCoins class="inline-block mr-2" /> Cash at pickup counter
+                        <Banknote class="inline-block mr-2" /> Cash at pickup counter
                     </li>
                     <li>
-                        <HandCoins class=" inline-block mr-2" /> Cash at delivery address
+                        <Banknote class=" inline-block mr-2" /> Cash at delivery address
                     </li>
                     <li>
                         <CreditCard class=" inline-block mr-2" /> Card at store
