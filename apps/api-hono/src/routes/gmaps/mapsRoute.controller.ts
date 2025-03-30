@@ -87,7 +87,7 @@ export const mapsRoute = new Hono<HonoVariables>()
                 // Use cached response
                 if (!isExpired) {
                     return c.json({
-                        data: cachedResult.response,
+                        data: cachedResult.response as google.maps.GeocoderResponse,
                         error: null as ErrorType,
                         fromCache: true,
                     }, 200);
@@ -103,7 +103,7 @@ export const mapsRoute = new Hono<HonoVariables>()
             }
             
             return c.json({
-                data: response,
+                data: response as google.maps.GeocoderResponse,
                 error: null as ErrorType,
                 fromCache: false,
             }, 200);
