@@ -16,15 +16,6 @@ defineProps<{
     <div class="space-y-4"
          v-if="currentItem">
 
-        <details>
-            <summary>tax</summary>
-            <pre>{{ taxSettings }}</pre>
-        </details>
-        <details>
-            <summary>item</summary>
-            <pre>{{ currentItem }}</pre>
-        </details>
-
         <InputInline v-model="currentItem.lbl"
                      placeholder="Name:">
             <template #trigger>
@@ -55,7 +46,7 @@ defineProps<{
         </InputInline>
 
         <ItemTaxInput v-model="currentItem.taxCatId"
-                      :tax-categories="taxSettings.taxCategories"
+                      :tax-categories="taxSettings?.taxCategories ?? []"
                       @update:model-value="(val) => {
                         console.log('val', val);
                     }" />

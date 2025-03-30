@@ -11,7 +11,7 @@ export const defaultMenuRoot: MenuRoot = {
 }
 
 export const menuRoot = ref<MenuRoot>(defaultMenuRoot);
-export const taxSettings = ref<typeof defaultTaxSettings>(JSON.parse(JSON.stringify(defaultTaxSettings)));
+export const taxSettings = ref<typeof defaultTaxSettings | null>(null);
 
 export const isMenuLoading = ref(false);
 export const loadMenu = async () => {

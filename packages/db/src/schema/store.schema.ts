@@ -6,8 +6,8 @@ import { createInsertSchema, createSelectSchema, createUpdateSchema } from "driz
 import type {
 	DeliveryZone,
 	PhysicalPaymentMethods,
-	TaxCategory
 } from "@lib/types/storeTypes";
+import type { TaxCategory } from "@lib/types/taxTypes";
 import type { WeeklyHours } from "@lib/types/dateTimeType";
 import type { MenuRoot } from "@lib/types/menuType";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
