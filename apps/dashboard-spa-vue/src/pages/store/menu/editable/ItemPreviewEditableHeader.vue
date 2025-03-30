@@ -4,7 +4,7 @@ import { Banknote } from "lucide-vue-next";
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
 import { taxSettings } from "../store";
-
+import ItemTaxInput from "@/ui-plus/inline-edit/ItemTaxInput.vue";
 defineProps<{
     currentItem?: Item
 }>()
@@ -19,6 +19,10 @@ defineProps<{
         <details>
             <summary>tax</summary>
             <pre>{{ taxSettings }}</pre>
+        </details>
+        <details>
+            <summary>item</summary>
+            <pre>{{ currentItem }}</pre>
         </details>
 
         <InputInline v-model="currentItem.lbl"
@@ -49,6 +53,12 @@ defineProps<{
                 </div>
             </template>
         </InputInline>
+
+        <ItemTaxInput v-model="currentItem.taxCatId"
+                      :tax-categories="taxSettings.taxCategories"
+                      @update:model-value="(val) => {
+                        console.log('val', val);
+                    }" />
 
     </div>
 </template>

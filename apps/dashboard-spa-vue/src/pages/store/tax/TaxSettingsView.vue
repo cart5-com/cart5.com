@@ -142,7 +142,7 @@ const addTaxCategory = () => {
     }
     taxSettings.value.taxCategories.push({
         id: crypto.randomUUID(),
-        name: 'Cat ' + (taxSettings.value.taxCategories.length + 1),
+        name: 'TAX' + (taxSettings.value.taxCategories.length + 1),
         deliveryRate: 0,
         pickupRate: 0,
     });

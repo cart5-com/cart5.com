@@ -26,6 +26,10 @@ export type Item = {
     // i, ct, c, o
     t?: 'i' | 'ct' | 'c' | 'o';
 
+
+    // tax settings
+    taxCatId?: string;
+
     // imgUrl?: string;
 }
 

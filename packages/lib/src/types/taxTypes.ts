@@ -8,7 +8,7 @@ export type TaxCategory = {
 export const getDefaultTaxCategory = (): TaxCategory => {
     return {
         id: crypto.randomUUID().toString(),
-        name: 'tax1',
+        name: 'TAX1',
     }
 }
 
