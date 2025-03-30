@@ -39,7 +39,7 @@ defineProps<{
                      v-model="currentItem.prc">
             <template #trigger>
                 <div class="cursor-text flex">
-                    <Banknote /> {{ currentItem.prc || 'Price:' }}
+                    <Banknote class="mr-2" /> {{ currentItem.prc || 'Price:' }}
                 </div>
             </template>
         </InputInline>
