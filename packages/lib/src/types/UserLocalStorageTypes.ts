@@ -17,8 +17,8 @@ export type UserLocalStorageType = {
 
     address?: string;
     country?: string;
-    latitude?: number;
-    longitude?: number;
+    lat?: number;
+    lng?: number;
 
     lastOrderType?: "delivery" | "pickup";
 

@@ -11,7 +11,7 @@ import { getBrowserLocale, getCountriesList } from '@/ui-plus/PhoneNumber/basePh
 
 const props = defineProps<{
     class?: HTMLAttributes['class']
-    modelValue: string | null;
+    modelValue?: string;
 }>();
 
 const emit = defineEmits<{
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const model = useVModel(props, 'modelValue', emit, {
     passive: true,
-    defaultValue: null,
+    defaultValue: undefined,
 });
 
 const open = ref(false);
