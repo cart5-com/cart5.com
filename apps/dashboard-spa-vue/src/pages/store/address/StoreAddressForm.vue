@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,17 +21,16 @@ import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStores
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
-import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
-import { GeoLocation } from '@/ui-plus/geolocation-selection-map/types';
+import GeolocationMap2 from '@/ui-plus/geolocation-selection-map/GeolocationMap2.vue';
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 
 const schema = z.object({
     country: z.string().min(1, 'Address is required'),
     address1: z.string().min(1, 'Address is required'),
     address2: z.string().optional(),
-    city: z.string().optional(),
+    city: z.string().min(1, 'City is required'),
     state: z.string().optional(),
-    postalCode: z.string().optional(),
+    postalCode: z.string().min(1, 'Postal code is required'),
 })
 
 const form = useForm({
@@ -114,10 +112,10 @@ const loadData = async () => {
                     form.setFieldValue(typedKey, address[typedKey]);
                 }
             }
-            if (address?.lat && address?.lng) {
-                mapLocation.value.lat = address.lat;
-                mapLocation.value.lng = address.lng;
-            }
+            // if (address?.lat && address?.lng) {
+            //     mapLocation.value.lat = address.lat;
+            //     mapLocation.value.lng = address.lng;
+            // }
         }
         if (!address || !address.country) {
             fetchCountryCode().then(countryCode => {
@@ -137,24 +135,18 @@ onMounted(() => {
 
 const isDialogOpen = ref(false);
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
-const mapLocation = ref<GeoLocation>({
-    lat: undefined,
-    lng: undefined,
-    address: undefined,
-    country: undefined,
-});
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         isDialogOpen.value = true;
         console.log('values', values);
         // values.address1, form.values.country?.toLowerCase()
-        mapLocation.value.address = values.address1;
-        mapLocation.value.country = values.country.toLowerCase();
+        // mapLocation.value.address = values.address1;
+        // mapLocation.value.country = values.country.toLowerCase();
     })
 }
 
-async function onMapConfirm() {
+async function onMapConfirm(result: { lat: number, lng: number }) {
     isDialogOpen.value = false;
     // console.log('mapLocation', mapLocation.value);
     isLoading.value = true;
@@ -166,8 +158,8 @@ async function onMapConfirm() {
         },
         json: {
             ...form.values,
-            lat: mapLocation.value.lat,
-            lng: mapLocation.value.lng,
+            lat: result.lat,
+            lng: result.lng,
         }
     })).json()
     if (error) {
@@ -183,7 +175,7 @@ async function onMapConfirm() {
     await loadMyStores();
 }
 
-const address1Label = ref('Street address or P.O. Box (Address 1)');
+const address1Label = ref('Street address (Address 1)');
 const address2Label = ref('Apt, suite, unit, building, floor, etc. (Address 2)');
 const hideAddress2Label = ref(false);
 const addressStateLabel = ref('State/Province/Territory');
@@ -192,7 +184,7 @@ const addressPostalCodeLabel = ref('Postcode/Zip');
 
 watch(() => form.values.country, (newCountry) => {
     if (newCountry === 'US') {
-        address1Label.value = 'Street address or P.O. Box';
+        address1Label.value = 'Street address';
         address2Label.value = 'Apt, suite, unit, building, floor, etc.';
         hideAddress2Label.value = true;
         addressCityLabel.value = 'City';
@@ -213,7 +205,7 @@ watch(() => form.values.country, (newCountry) => {
         addressCityLabel.value = 'City';
         addressPostalCodeLabel.value = 'Postal code';
     } else {
-        address1Label.value = 'Street address or P.O. Box (Address 1)';
+        address1Label.value = 'Street address (Address 1)';
         address2Label.value = 'Apt, suite, unit, building, floor, etc. (Address 2)';
         addressStateLabel.value = 'State/Province/Territory';
         addressCityLabel.value = 'City';
@@ -240,8 +232,10 @@ watch(() => form.values.country, (newCountry) => {
                     Move the map to your entrance/door and click Confirm
                 </DialogDescription> -->
             </DialogHeader>
-            <GeolocationMap v-model="mapLocation"
-                            class="flex-1 overflow-hidden" />
+            <GeolocationMap2 :address="form.values.address1!"
+                             :country="form.values.country!"
+                             @done="onMapConfirm"
+                             class="flex-1 overflow-hidden" />
             <!-- <div class="grid gap-4 py-4">
                      <div class="grid grid-cols-4 items-center gap-4">
                          <Label for="name" class="text-right"> Name </Label>
@@ -253,7 +247,7 @@ watch(() => form.values.country, (newCountry) => {
                      </div>
                  </div>
                  -->
-            <DialogFooter>
+            <!-- <DialogFooter>
                 <Button type="button"
                         @click="onMapConfirm"
                         :disabled="isLoading"
@@ -262,7 +256,7 @@ watch(() => form.values.country, (newCountry) => {
                              class="animate-spin" />
                     Save
                 </Button>
-            </DialogFooter>
+            </DialogFooter> -->
         </DialogContent>
     </Dialog>
 
