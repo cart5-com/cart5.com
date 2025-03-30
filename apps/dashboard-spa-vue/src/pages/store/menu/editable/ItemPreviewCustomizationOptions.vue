@@ -398,7 +398,7 @@ onMounted(() => {
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </div>
-                                        {{ menuRoot.allItems![optionItemId!].opPrc || '$' }}
+                                        {{ menuRoot.allItems![optionItemId!].opPrc || '+price' }}
                                     </span>
                                 </template>
                             </InputInline>
