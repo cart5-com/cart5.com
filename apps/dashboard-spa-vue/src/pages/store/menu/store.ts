@@ -15,30 +15,24 @@ export const isMenuLoading = ref(false);
 
 export const loadMenu = async () => {
     isMenuLoading.value = true;
-    try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].menu.get.$post({
-            param: {
-                storeId: currentStoreId.value ?? '',
-            },
-            json: {
-                columns: {
-                    menuRoot: true
-                }
+    const { data, error } = await (await apiClient.dashboard.store[':storeId'].menu.get.$post({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        },
+        json: {
+            columns: {
+                menuRoot: true
             }
-        })).json();
-
-        if (error) {
-            toast.error('Failed to load menu');
-            return;
         }
+    })).json();
 
-        menuRoot.value = data?.menuRoot as MenuRoot || defaultMenuRoot;
-    } catch (err) {
-        console.error('Error loading menu:', err);
+    if (error) {
         toast.error('Failed to load menu');
-    } finally {
-        isMenuLoading.value = false;
+        return;
+    } else {
+        menuRoot.value = data?.menuRoot as MenuRoot || defaultMenuRoot;
     }
+    isMenuLoading.value = false;
 }
 
 export const saveMenu = async () => {
