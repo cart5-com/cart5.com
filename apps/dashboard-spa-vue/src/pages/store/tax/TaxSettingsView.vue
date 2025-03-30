@@ -15,7 +15,7 @@ import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { apiClient } from '@api-client/index';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
-import type { TaxCategory } from '@lib/types/storeTypes';
+import { defaultTaxSettings } from '@lib/types/taxTypes';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import CurrencyWidget from './CurrencyWidget.vue';
 import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
@@ -27,31 +27,7 @@ import TaxHelperDialog from './TaxHelperDialog.vue';
 pageTitle.value = 'Tax Settings';
 
 const isLoading = ref(false);
-const getDefaultTaxCategory = (): TaxCategory => {
-    return {
-        id: crypto.randomUUID(),
-        name: 'Food',
-        deliveryRate: undefined,
-        pickupRate: undefined,
-    }
-}
-const defaultTaxSettings: {
-    currency?: string;
-    salesTaxType?: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES';
-    currencySymbol?: string;
-    taxName?: string;
-    taxRateForDelivery?: number;
-    taxCategories?: TaxCategory[];
-} = {
-    currency: 'GBP',
-    salesTaxType: 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' as 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' | 'APPLY_TAX_ON_TOP_OF_PRICES',
-    currencySymbol: '£',
-    taxName: 'VAT',
-    taxRateForDelivery: undefined,
-    taxCategories: [
-        getDefaultTaxCategory()
-    ]
-}
+
 const taxSettings = ref<typeof defaultTaxSettings>(JSON.parse(JSON.stringify(defaultTaxSettings)));
 
 const selectedCurrency = ref('');
@@ -62,28 +38,25 @@ onMounted(() => {
 
 const loadData = async () => {
     isLoading.value = true;
-    try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.get.$post({
-            param: {
-                storeId: currentStoreId.value ?? '',
-            },
-            json: {
-                columns: {
-                    taxCategories: true,
-                    currency: true,
-                    currencySymbol: true,
-                    salesTaxType: true,
-                    taxName: true,
-                    taxRateForDelivery: true,
-                }
+    const { data, error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.get.$post({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        },
+        json: {
+            columns: {
+                taxCategories: true,
+                currency: true,
+                currencySymbol: true,
+                salesTaxType: true,
+                taxName: true,
+                taxRateForDelivery: true,
             }
-        })).json();
-
-        if (error) {
-            toast.error('Failed to load tax settings');
-            return;
         }
+    })).json();
 
+    if (error) {
+        toast.error('Failed to load tax settings');
+    } else {
         if (data) {
             taxSettings.value = {
                 taxCategories: data.taxCategories ?? defaultTaxSettings.taxCategories,
@@ -97,12 +70,9 @@ const loadData = async () => {
         } else {
             saveWithIpWhois();
         }
-    } catch (err) {
-        console.error('Error loading tax settings:', err);
-        toast.error('Failed to load tax settings');
-    } finally {
-        isLoading.value = false;
+
     }
+    isLoading.value = false;
 };
 
 const saveWithIpWhois = async () => {

@@ -3,6 +3,7 @@ import { Item } from "@lib/types/menuType";
 import { Banknote } from "lucide-vue-next";
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
+import { taxSettings } from "../store";
 
 defineProps<{
     currentItem?: Item
@@ -14,6 +15,11 @@ defineProps<{
 <template>
     <div class="space-y-4"
          v-if="currentItem">
+
+        <details>
+            <summary>tax</summary>
+            <pre>{{ taxSettings }}</pre>
+        </details>
 
         <InputInline v-model="currentItem.lbl"
                      placeholder="Name:">

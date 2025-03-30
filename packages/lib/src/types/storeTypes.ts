@@ -59,15 +59,3 @@ export type PhysicalPaymentMethods = {
 
 
 
-/// TAX SETTINGS START
-export type TaxCategory = {
-    id?: string;
-    name?: string;
-    deliveryRate?: number;
-    pickupRate?: number;
-}
-/// TAX SETTINGS END
-
-
-
-

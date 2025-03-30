@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defaultMenuRoot, isMenuLoading, loadMenu, menuRoot, saveMenu } from "./store";
+import { defaultMenuRoot, isMenuLoading, loadMenu, loadTaxSettings, menuRoot, saveMenu } from "./store";
 import MenuTabs from "./MenuTabs.vue";
 import { pageTitle } from "@dashboard-spa-vue/stores/LayoutStore";
 import { onMounted, onUnmounted, ref, watch } from "vue";
@@ -25,6 +25,7 @@ const stopWatch = watch([menuRoot], () => {
 
 onMounted(async () => {
     ignoreAutoSave = true;
+    loadTaxSettings();
     await loadMenu();
     ignoreAutoSave = false;
     // setTimeout(() => {
