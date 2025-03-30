@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { GeoLocation, HelperBtns } from "./types";
-import { useVModel } from "@vueuse/core";
+import type { HelperBtns } from "./types";
 import { loadLeafletCDN } from "./loadLeafletCDN";
-import { Loader2, LocateFixed } from "lucide-vue-next";
+import { Loader2, LocateFixed, MapPinCheckInside } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { onMounted, onUnmounted, ref } from "vue";
@@ -12,12 +11,10 @@ import { searchOpenStreetMap } from "./searchOpenStreetMap";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 
 const props = defineProps<{
-	modelValue: GeoLocation;
+	address: string;
+	country: string;
+	btnLabel?: string;
 }>();
-const emit = defineEmits<{
-	(e: "update:modelValue", value: GeoLocation): void;
-}>();
-const model = useVModel(props, "modelValue", emit);
 
 const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
 const helperBtns = ref<HelperBtns[]>([]);
@@ -25,22 +22,17 @@ let mapView: L.Map | null = null;
 let marker: L.Marker | null = null;
 
 const mapMoveListener = () => {
-	model.value.lat = mapView?.getCenter().lat ?? 0;
-	model.value.lng = mapView?.getCenter().lng ?? 0;
-	marker?.setLatLng([model.value.lat, model.value.lng])
+	marker?.setLatLng([mapView?.getCenter().lat ?? 0, mapView?.getCenter().lng ?? 0])
 }
 
 onUnmounted(() => {
-	console.log('unmounted')
 	mapView?.off('move', mapMoveListener)
 	mapView?.off('resize', mapMoveListener)
 })
 
 function setCenter(lat: number, lng: number) {
 	mapView?.setView([Number(lat), Number(lng)]);
-	model.value.lat = lat;
-	model.value.lng = lng;
-	marker?.setLatLng([model.value.lat, model.value.lng])
+	marker?.setLatLng([lat, lng])
 }
 
 onMounted(async () => {
@@ -50,12 +42,11 @@ onMounted(async () => {
 	}
 
 	mapView = window.L.map(randomId);
-	marker = window.L.marker([model.value.lat ?? 0, model.value.lng ?? 0]).addTo(mapView)
+	marker = window.L.marker([0, 0]).addTo(mapView)
 	marker.setOpacity(0.8)
 	mapView?.on('move', mapMoveListener)
 	mapView?.on('resize', mapMoveListener)
 	mapView.attributionControl.setPrefix(false);
-	mapView.setZoom(18);
 	// mapView.addLayer(
 	// 	window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	// 		maxZoom: 18,
@@ -73,15 +64,9 @@ onMounted(async () => {
 		})
 	);
 
-	if (model.value.lat && model.value.lng) {
-		setCenter(model.value.lat, model.value.lng)
-		loadHelperBtns()
-	} else if (model.value.address) {
-		loadHelperBtns()
-	} else {
-		mapView.fitWorld();
-		handleGpsClick()
-	}
+	mapView.fitWorld();
+	mapView.setZoom(18);
+	loadHelperBtns();
 });
 
 const isGpsLoading = ref(false);
@@ -131,97 +116,45 @@ async function handleGpsClick() {
 	}
 }
 
-const addGecodeHelperBtn = async () => {
-	if (!model.value.address) {
-		return;
-	}
-	const gecodeResult = await geocode(model.value.address, model.value.country?.toLowerCase())
-	// Check if a button with the same address, lat, and lng already exists
-	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
-		btn.label === model.value.address &&
-		btn.lat === gecodeResult?.data?.results[0]?.geometry.location.lat &&
-		btn.lng === gecodeResult?.data?.results[0]?.geometry.location.lng
-	);
-	if (isAddBeforeCurrentLocation) {
-		return;
-	}
-	helperBtns.value = [
-		...helperBtns.value,
-		{
-			label: model.value.address,
-			lat: gecodeResult?.data?.results[0]?.geometry.location.lat,
-			lng: gecodeResult?.data?.results[0]?.geometry.location.lng
-		}
-	];
-	return 1;
-}
-
-const addOpenStreetMapHelperBtn = async () => {
-	if (!model.value.address) {
-		return;
-	}
-	const openStreetMapItems = await searchOpenStreetMap(model.value.address, model.value.country?.toLowerCase())
-	if (openStreetMapItems.length === 0) {
-		return;
-	}
-	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
-		btn.label === model.value.address &&
-		btn.lat === openStreetMapItems[0].lat &&
-		btn.lng === openStreetMapItems[0].lng
-	);
-	if (isAddBeforeCurrentLocation) {
-		return;
-	}
-	helperBtns.value = [
-		...helperBtns.value,
-		{
-			label: openStreetMapItems[0].label,
-			lat: openStreetMapItems[0].lat,
-			lng: openStreetMapItems[0].lng
-		}
-	];
-	return 1;
-}
-
-const addIpwhoHelperBtn = async () => {
-	const ipwho = await ipwhois()
-	const isAddBeforeCurrentLocation = helperBtns.value.some(btn =>
-		btn.label === ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip &&
-		btn.lat === ipwho.latitude &&
-		btn.lng === ipwho.longitude
-	);
-	if (isAddBeforeCurrentLocation) {
-		return;
-	}
-	helperBtns.value = [
-		...helperBtns.value,
-		{
-			label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
-			lat: ipwho.latitude ?? 0,
-			lng: ipwho.longitude ?? 0
-		}
-	];
-	return 1;
-}
 
 async function loadHelperBtns() {
-	await addGecodeHelperBtn()
-	await addOpenStreetMapHelperBtn()
+	const gecodeResult = await geocode(props.address, props.country?.toLowerCase())
+	const openStreetMapItems = await searchOpenStreetMap(props.address, props.country?.toLowerCase())
+	const ipwho = await ipwhois()
+	helperBtns.value = [
+		...gecodeResult.data.results.map(item => ({
+			label: item.formatted_address || props.address,
+			lat: item.geometry.location.lat,
+			lng: item.geometry.location.lng
+		})),
+		...openStreetMapItems.map(item => ({
+			label: item.label,
+			lat: item.lat,
+			lng: item.lng
+		})),
+	]
 	if (helperBtns.value.length === 0) {
-		await addIpwhoHelperBtn()
+		if (ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip) {
+			helperBtns.value.push({
+				label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
+				lat: ipwho.latitude ?? 0,
+				lng: ipwho.longitude ?? 0
+			})
+		}
+		handleGpsClick()
 	}
+
 	if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
 		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
 	}
 }
 
 </script>
-
 <template>
 	<div class="h-full">
 		<div class="flex h-full flex-col">
 			<p class="address-value border p-1 text-sm font-extrabold shrink-0">
-				{{ model.address || "" }}
+				{{ props.address || "" }}
 			</p>
 
 			<div :id="randomId"
@@ -245,20 +178,34 @@ async function loadHelperBtns() {
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
-
 			</div>
-
-
-
 			<div
 				 class="headShake-animation helper-btns my-2 max-w-full overflow-x-auto overflow-y-hidden whitespace-nowrap shrink-0">
-				<Button :title="helperBtn.label"
-						v-for="(helperBtn, index) in helperBtns"
-						:key="index"
-						variant="outline"
-						class="m-1 inline-block max-w-[200px] truncate"
-						@click="setCenter(helperBtn.lat ?? 0, helperBtn.lng ?? 0)">
-					{{ helperBtn.label }}
+
+				<TooltipProvider v-for="(helperBtn, index) in helperBtns"
+								 :key="index">
+					<Tooltip>
+						<TooltipTrigger as-child>
+							<Button variant="outline"
+									class="m-1 inline-block max-w-[200px] truncate"
+									@click="setCenter(helperBtn.lat ?? 0, helperBtn.lng ?? 0)">
+								{{ helperBtn.label }}
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side="top"
+										class="max-w-[200px] max-h-[200px] overflow-auto">
+							<p>{{ helperBtn.label }}</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+			</div>
+
+			<div>
+				<Button type="button"
+						@click="$emit('done', { lat: mapView?.getCenter().lat ?? 0, lng: mapView?.getCenter().lng ?? 0 })"
+						class="w-full">
+					<MapPinCheckInside />
+					{{ btnLabel || "Confirm" }}
 				</Button>
 			</div>
 		</div>

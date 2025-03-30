@@ -4,6 +4,7 @@ import { getStoreData_Service } from "@db/services/store.service";
 import Menu from "@web-astro/components/store-page/menu/Menu.astro";
 import SingleCartBtn from "@web-astro/components/store-page/cart/SingleCartBtn.vue";
 import SingleCartView from "@web-astro/components/store-page/cart/SingleCartView.vue";
+import StorePageAddressWidget from "@web-astro/components/store-page/StorePageAddressWidget.vue";
 
 const { slug, storeId } = Astro.params;
 
@@ -28,6 +29,7 @@ store.name;
 <BaseLayout title={`${store?.name} - ${slug}`}>
 	<h1>{slug}</h1>
 	<h2>{storeId}</h2>
+	<StorePageAddressWidget client:load />
 	<script is:inline define:vars={{ menuRoot: store.menu?.menuRoot, storeId, storeName: store.name }}>
 		window.menuRoot = menuRoot;
 		window.storeId = storeId;

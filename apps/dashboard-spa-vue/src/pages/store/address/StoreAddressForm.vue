@@ -21,7 +21,7 @@ import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStores
 import { apiClient } from '@api-client/index';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
-import GeolocationMap2 from '@/ui-plus/geolocation-selection-map/GeolocationMap2.vue';
+import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 
 const schema = z.object({
@@ -232,10 +232,10 @@ watch(() => form.values.country, (newCountry) => {
                     Move the map to your entrance/door and click Confirm
                 </DialogDescription> -->
             </DialogHeader>
-            <GeolocationMap2 :address="form.values.address1!"
-                             :country="form.values.country!"
-                             @done="onMapConfirm"
-                             class="flex-1 overflow-hidden" />
+            <GeolocationMap :address="form.values.address1!"
+                            :country="form.values.country!"
+                            @done="onMapConfirm"
+                            class="flex-1 overflow-hidden" />
             <!-- <div class="grid gap-4 py-4">
                      <div class="grid grid-cols-4 items-center gap-4">
                          <Label for="name" class="text-right"> Name </Label>
