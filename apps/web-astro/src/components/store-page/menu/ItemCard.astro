@@ -3,12 +3,14 @@ import type { Item } from "@lib/types/menuType";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
+import type { OrderType } from "@lib/types/orderType";
 
 interface Props {
 	item: Item | undefined;
 }
 
 const { item: currentItem } = Astro.props;
+const orderType: OrderType = (Astro.url.searchParams.get("order-type") ?? "delivery") as OrderType;
 ---
 
 <div class="bg-card item-btn flex cursor-pointer overflow-hidden rounded-lg border" data-item-id={currentItem?.id}>
@@ -21,7 +23,13 @@ const { item: currentItem } = Astro.props;
 			</CardTitle>
 			<CardDescription>
 				{currentItem?.dsc}
-				<span class="text-foreground mt-2 block font-bold">{currentItem?.prc}</span>
+				<span class="text-foreground mt-2 block font-bold">
+					{
+						orderType === "pickup" && currentItem?.pickupPrc
+							? `${currentItem?.pickupPrc}`
+							: `${currentItem?.prc}`
+					}
+				</span>
 			</CardDescription>
 		</CardHeader>
 		<!-- <CardContent>

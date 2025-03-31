@@ -20,8 +20,6 @@ export type UserLocalStorageType = {
     lat?: number;
     lng?: number;
 
-    lastOrderType?: "delivery" | "pickup";
-
     carts?: Cart[];
 }
 

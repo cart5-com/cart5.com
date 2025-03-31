@@ -5,7 +5,7 @@ import { BASE_LINKS } from "@web-astro/utils/links";
 import { getStoreOpenHours_Service } from "@db/services/store.service";
 import { isOpenNow } from "@lib/utils/isOpenNow";
 import { slugify } from "@lib/utils/slugify";
-
+import type { OrderType } from "@lib/types/orderType";
 interface Props {
 	store: {
 		id: string;
@@ -14,10 +14,10 @@ interface Props {
 		distance: number;
 	};
 	measure: string | undefined;
-	type: string | undefined;
+	orderType: OrderType | undefined;
 }
 
-const { store, measure = "km", type = "delivery" } = Astro.props;
+const { store, measure = "km", orderType = "delivery" } = Astro.props;
 
 // TODO: move isOpenNow calculation to client side
 // ================================START===============================
@@ -28,16 +28,16 @@ const openHours = await getStoreOpenHours_Service(store.id, {
 	pickupHours: true
 });
 let weeklyHours = openHours?.defaultOpenHours;
-if (type === "delivery" && openHours?.deliveryHours?.isActive) {
+if (orderType === "delivery" && openHours?.deliveryHours?.isActive) {
 	weeklyHours = openHours?.deliveryHours;
-} else if (type === "pickup" && openHours?.pickupHours?.isActive) {
+} else if (orderType === "pickup" && openHours?.pickupHours?.isActive) {
 	weeklyHours = openHours?.pickupHours;
 }
 const isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
 // ================================END===============================
 ---
 
-<a href={`${BASE_LINKS.STORE(store.id, slugify(store.name))}`} class="block">
+<a href={`${BASE_LINKS.STORE(store.id, slugify(store.name), orderType)}`} class="block">
 	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "brightness-50" : ""}`}>
 		<CardHeader>
 			{

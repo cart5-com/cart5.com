@@ -2,6 +2,7 @@ import { eq, and, gte, lte, asc, desc, count, sql } from 'drizzle-orm';
 import db from '@db/drizzle';
 import { storeTable, storeAddressTable, storeDeliveryZoneMapTable } from '@db/schema/store.schema';
 import { websiteStoreMapTable } from '@db/schema/website.schema';
+import type { OrderType } from '@lib/types/orderType';
 
 export const getNearbyStores_Service = async (
     lat: number,
@@ -11,7 +12,7 @@ export const getNearbyStores_Service = async (
     limit: number = 36,
     page: number = 1,
     searchRange: number = 20, // 1=1 km
-    type: "pickup" | "delivery" = 'delivery',
+    type: OrderType = 'delivery',
     sort: "distance_asc" | "distance_desc" = 'distance_asc',
 ) => {
     const radius = measure === 'km' ? 6371 : 3959;

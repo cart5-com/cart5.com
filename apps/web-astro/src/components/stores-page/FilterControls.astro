@@ -2,15 +2,16 @@
 import { buttonVariants } from "@/components/ui/button";
 import { MapPin } from "lucide-vue-next";
 import { BASE_LINKS } from "@web-astro/utils/links";
+import type { OrderType } from "@lib/types/orderType";
 
 interface Props {
-	type: string | undefined;
+	orderType: OrderType | undefined;
 	address: string | undefined;
 	sort: string | undefined;
-	createPageUrl: (page: number, type?: string, sort?: string) => string;
+	createPageUrl: (page: number, orderType?: OrderType, sort?: string) => string;
 }
 
-const { type = "delivery", address = "address", sort = "distance_asc", createPageUrl } = Astro.props;
+const { orderType = "delivery", address = "address", sort = "distance_asc", createPageUrl } = Astro.props;
 ---
 
 <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap">
@@ -20,14 +21,14 @@ const { type = "delivery", address = "address", sort = "distance_asc", createPag
 			style="outline: none;">
 			<a
 				class={buttonVariants({ variant: "ghost" }) +
-					`${type === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+					`${orderType === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
 				href={createPageUrl(1, "delivery")}>
 				<span class="truncate">Delivery</span>
 			</a>
 
 			<a
 				class={buttonVariants({ variant: "ghost" }) +
-					`${type === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+					`${orderType === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
 				href={createPageUrl(1, "pickup")}>
 				<span class="truncate">Pickup</span>
 			</a>

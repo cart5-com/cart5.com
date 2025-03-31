@@ -1,5 +1,6 @@
 ---
 import StoreCard from "./StoreCard.astro";
+import type { OrderType } from "@lib/types/orderType";
 
 interface Props {
 	stores: Array<{
@@ -10,12 +11,12 @@ interface Props {
 		[key: string]: any;
 	}>;
 	measure: string | undefined;
-	type: string | undefined;
+	orderType: OrderType | undefined;
 }
 
-const { stores, measure = "km", type = "delivery" } = Astro.props;
+const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 ---
 
 <div class="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-	{stores.map((store) => <StoreCard store={store} measure={measure} type={type} />)}
+	{stores.map((store) => <StoreCard store={store} measure={measure} orderType={orderType} />)}
 </div>
