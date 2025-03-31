@@ -19,17 +19,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
-import { getBrowserLocale, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import CountrySelect from '@/ui-plus/CountrySelect.vue';
+
 const isOpen = ref(false);
 const selectedCountry = ref('');
 const selectedState = ref('');
 
 const emit = defineEmits(['tax-location-selected']);
-
-const countries = computed(() => {
-    return Object.keys(salesTaxRates).sort();
-});
 
 const states = computed(() => {
     if (!selectedCountry.value || !salesTaxRates[selectedCountry.value]?.states) {
@@ -48,7 +44,6 @@ const applyTaxSettings = () => {
     // Reset selections
     selectedState.value = '';
 };
-const locale = getBrowserLocale()?.browserLocale ?? 'en-US'
 </script>
 
 <template>
