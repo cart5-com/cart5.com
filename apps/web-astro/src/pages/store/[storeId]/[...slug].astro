@@ -35,12 +35,14 @@ store.name;
 		define:vars={{
 			storeId,
 			storeName: store.name,
-			menuRoot: store.menu?.menuRoot
+			menuRoot: store.menu?.menuRoot,
+			taxSettings: store.taxSettings
 		}}
 	>
 		window.storeId = storeId;
 		window.storeName = storeName;
 		window.menuRoot = menuRoot;
+		window.taxSettings = taxSettings;
 	</script>
 	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">

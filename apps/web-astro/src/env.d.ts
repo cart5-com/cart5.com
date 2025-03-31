@@ -13,5 +13,6 @@ declare namespace App {
 
 declare var SENTRY_RELEASE: { id: string };
 declare var menuRoot: import("@lib/types/menuType").MenuRoot;
+declare var taxSettings: typeof import("@lib/types/taxTypes").defaultTaxSettings;
 declare var storeId: string;
 declare var storeName: string;
