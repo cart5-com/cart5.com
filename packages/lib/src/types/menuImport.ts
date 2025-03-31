@@ -204,7 +204,7 @@ export function exportMenuToCSV(menuRoot: MenuRoot): string {
 // Parse CSV content and return MenuRoot structure
 export function importMenuFromCSV(csvContent: string): MenuRoot {
     const lines = parseCSVLines(csvContent);
-    const headers = lines[0].map(h => h.trim());
+    const headers = lines[0]?.map(h => h.trim()) || [];
 
     const menuRoot: MenuRoot = {
         children: [],
@@ -215,7 +215,7 @@ export function importMenuFromCSV(csvContent: string): MenuRoot {
     for (let i = 1; i < lines.length; i++) {
         const values = lines[i];
         const row = headers.reduce((obj, header, index) => {
-            obj[header as keyof CSVMenuRow] = values[index] || '';
+            obj[header as keyof CSVMenuRow] = values?.[index] || '';
             return obj;
         }, {} as CSVMenuRow);
 
