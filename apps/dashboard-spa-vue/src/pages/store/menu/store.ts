@@ -53,6 +53,7 @@ export const saveMenu = async () => {
 }
 
 export const loadTaxSettings = async () => {
+    taxSettings.value = null;
     const { data, error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',

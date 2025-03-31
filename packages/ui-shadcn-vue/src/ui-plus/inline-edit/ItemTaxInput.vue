@@ -55,8 +55,12 @@ const getTaxCategoryName = (categoryId?: string) => {
           {{ category.name }}
         </option>
       </select>
-      <div class="text-xs text-muted-foreground">
+      <div class="text-xs text-muted-foreground mt-2">
         Add new tax rates with "Sidemenu" -> "Tax Settings"
+      </div>
+      <div class="text-xs text-muted-foreground mt-2">
+        Default is the first tax category in "Tax Settings"
+        If no tax category is selected, the default tax category will be used.
       </div>
     </PopoverContent>
   </Popover>
