@@ -3,6 +3,7 @@ import type { HTMLAttributes } from 'vue'
 import { useVModel } from '@vueuse/core'
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import type { TaxCategory } from '@lib/types/taxTypes'
+import { Percent } from 'lucide-vue-next'
 
 const props = defineProps<{
   defaultValue?: string
@@ -20,9 +21,15 @@ const modelValue = useVModel(props, 'modelValue', emits, {
   defaultValue: props.defaultValue,
 })
 
+// const getSummary = (categoryId?: string) => {
+//   const category = props.taxCategories?.find(cat => cat.id === categoryId)
+//   if (!category) return '0%'
+//   return `${category.name}:🛵${category.deliveryRate}%|🛍️${category.pickupRate}%`
+// }
+
 const getTaxCategoryName = (categoryId?: string) => {
   return props.taxCategories?.find(cat => cat.id === categoryId)?.name ||
-    props.taxCategories?.[0]?.name
+    props.taxCategories?.[0]?.name || '0%'
 }
 </script>
 
@@ -30,9 +37,10 @@ const getTaxCategoryName = (categoryId?: string) => {
   <Popover>
     <PopoverTrigger as-child>
       <slot name="trigger">
-        <span class="cursor-text">
-          Tax:{{ getTaxCategoryName(modelValue) }}
-        </span>
+        <div class="cursor-text flex">
+          <Percent class="mr-2" />
+          {{ getTaxCategoryName(modelValue) }}
+        </div>
       </slot>
     </PopoverTrigger>
     <PopoverContent class="p-3 w-[200px]"
