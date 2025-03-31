@@ -12,7 +12,7 @@ export const salesTaxRates: Record<string, {
     type: string;
     currency: string;
     rate: number;
-    currencySymbol?: string;
+    currencySymbol?: string | undefined;
     currentState?: {
         rate: number;
         type: string;
@@ -36,7 +36,7 @@ export const getSalesTaxRate = (countryCode: string, regionCode: string) => {
             countryData.currencySymbol = currencySymbolMap(salesTaxRates[countryCode].currency);
             return countryData;
         }
-        salesTaxRates[countryCode].currencySymbol = currencySymbolMap(salesTaxRates[countryCode].currency);
+        salesTaxRates[countryCode].currencySymbol = currencySymbolMap(salesTaxRates[countryCode].currency) ?? '';
         return salesTaxRates[countryCode];
     }
     return {
