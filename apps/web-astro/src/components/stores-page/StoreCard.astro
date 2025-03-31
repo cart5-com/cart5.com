@@ -19,7 +19,6 @@ interface Props {
 
 const { store, measure = "km", orderType = "delivery" } = Astro.props;
 
-// TODO: move isOpenNow calculation to client side
 // ================================START===============================
 const openHours = await getStoreOpenHours_Service(store.id, {
 	timezone: true,

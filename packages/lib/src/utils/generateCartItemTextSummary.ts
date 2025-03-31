@@ -78,7 +78,6 @@ export const recursiveCartChildrenItemSummary = (
 }
 
 export const generateCartItemTextSummary = (cartItem: CartItem, menuRoot: MenuRoot) => {
-    console.log('generateCartItemTextSummary📕');
     let summary = '';
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];

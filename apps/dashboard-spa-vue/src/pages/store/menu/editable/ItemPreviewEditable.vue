@@ -52,14 +52,20 @@ const cartItemTotalPrice = ref({
     tax: 0,
 });
 
+const cartItemTotalPricePickup = ref({
+    itemPrice: 0,
+    tax: 0,
+});
+
+
 watch([cartItem, currentItem], () => {
-    // TODO: add deliveryRate or pickupRate
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
+    cartItemTotalPricePickup.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "pickup")
 }, { deep: true })
 
 onMounted(() => {
-    // TODO: add deliveryRate or pickupRate
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
+    cartItemTotalPricePickup.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "pickup")
 })
 
 const randomNumber = crypto.randomUUID()
@@ -121,10 +127,17 @@ const checkCartItem = () => {
             </Button>
         </div>
         <div
-             class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
-            Item: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}
+             class="text-xs sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between items-center font-bold">
+            Delivery Preview (Total: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}
             {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
-            Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.tax }}
+            Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.tax }})
+            <div>
+                <span>
+                    Pickup Preview (Total: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.itemPrice }}
+                    {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
+                    Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.tax }})
+                </span>
+            </div>
         </div>
 
     </div>

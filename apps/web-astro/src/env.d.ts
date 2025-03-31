@@ -14,3 +14,4 @@ declare namespace App {
 declare var SENTRY_RELEASE: { id: string };
 
 declare var storeData: Awaited<ReturnType<typeof import("@db/services/store.service").getStoreData_Service>>;
+declare var orderType: import("@lib/types/orderType").OrderType;

@@ -38,13 +38,11 @@ const cartItemTotalPrice = ref("");
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 watch([cartItem, currentItem], () => {
-    // TODO: add deliveryRate or pickupRate
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings).itemPrice.toFixed(2)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice.toFixed(2)
 }, { deep: true })
 
 onMounted(() => {
-    // TODO: add deliveryRate or pickupRate
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings).itemPrice.toFixed(2)
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice.toFixed(2)
 })
 
 

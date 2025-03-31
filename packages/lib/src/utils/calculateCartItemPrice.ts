@@ -1,4 +1,5 @@
 import type { CartChildrenItemState, CartItem, ItemId, MenuRoot } from "@lib/types/menuType";
+import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/types/taxTypes";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 
@@ -46,35 +47,33 @@ export const calculateCartItemTax = (
     itemId: ItemId | undefined,
     menuRoot: MenuRoot,
     taxSettings: TaxSettings,
-    orderType: 'deliveryRate' | 'pickupRate'
+    orderType: OrderType = 'delivery'
 ) => {
     if (!taxSettings || !itemId) {
         return 0;
     }
-    console.log('calculateCartItemTax😞');
     let total = 0;
     const item = menuRoot.allItems?.[itemId];
     if (item) {
         const taxCategory = taxSettings.taxCategories?.find((taxCategory) => taxCategory.id === item.taxCatId);
         if (taxCategory) {
             // selected tax category
-            total += price * ((taxCategory[orderType] || 0) / 100);
+            total += price * ((taxCategory[`${orderType}Rate`] || 0) / 100);
         } else if (taxSettings.taxCategories?.[0]) {
             // default tax category
-            total += price * ((taxSettings.taxCategories[0][orderType] || 0) / 100);
+            total += price * ((taxSettings.taxCategories[0][`${orderType}Rate`] || 0) / 100);
         }
     }
     return Number(total.toFixed(2));
 }
 
-export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: 'deliveryRate' | 'pickupRate' = 'deliveryRate') => {
-    console.log('calculateCartItemPrice🤑');
+export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
     let total = 0;
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];
         if (item) {
             if (
-                orderType === 'pickupRate' &&
+                orderType === 'pickup' &&
                 item.pickupPrc
             ) {
                 total += (item.pickupPrc || 0);
@@ -101,7 +100,7 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     };
 }
 
-export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: 'deliveryRate' | 'pickupRate' = 'deliveryRate') => {
+export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
     if (!cart || !cart.items) {
         return {
             totalPrice: 0,

@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/drawer'
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/types/taxTypes";
+import type { OrderType } from "@lib/types/orderType";
+
 
 const currentCart = computed(() => {
   return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
@@ -59,10 +61,10 @@ onMounted(() => {
   initializeUserStore();
 });
 
+const orderType: OrderType = window.orderType
+
 const getPrice = (item: CartItem) => {
-  return calculateCartItemPrice(item, menuRoot.value!, taxSettings
-    // TODO: add deliveryRate or pickupRate
-  )
+  return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
 </script>
 
@@ -180,11 +182,11 @@ const getPrice = (item: CartItem) => {
           </span>
           <span class="font-bold text-lg">
             {{ calculateCartTotalPrice(
-              currentCart!, menuRoot, taxSettings
+              currentCart!, menuRoot, taxSettings, orderType
             ).totalPrice }}
 
             tax:{{ calculateCartTotalPrice(
-              currentCart!, menuRoot, taxSettings
+              currentCart!, menuRoot, taxSettings, orderType
             ).tax }}
           </span>
         </div>

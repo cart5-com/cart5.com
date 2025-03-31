@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { Item } from "@lib/types/menuType";
+import type { OrderType } from "@lib/types/orderType";
 
 defineProps<{
     currentItem?: Item
 }>()
 
+
+const orderType: OrderType = window.orderType
 
 </script>
 
@@ -21,7 +24,7 @@ defineProps<{
         </span>
 
         <div class="cursor-text flex">
-            {{ currentItem.prc || '' }}
+            {{ orderType === "pickup" && currentItem.pickupPrc ? currentItem.pickupPrc : currentItem.prc || '' }}
         </div>
 
     </div>
