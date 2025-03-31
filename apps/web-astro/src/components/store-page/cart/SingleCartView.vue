@@ -63,6 +63,11 @@ onMounted(() => {
 
 const orderType: OrderType = window.orderType
 
+const cartTotals = computed(() => {
+  if (!currentCart.value || !menuRoot.value) return { totalPrice: "$0.00", tax: "$0.00" };
+  return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
+});
+
 const getPrice = (item: CartItem) => {
   return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
@@ -181,13 +186,9 @@ const getPrice = (item: CartItem) => {
             Subtotal
           </span>
           <span class="font-bold text-lg">
-            {{ calculateCartTotalPrice(
-              currentCart!, menuRoot, taxSettings, orderType
-            ).totalPrice }}
+            {{ cartTotals.totalPrice }}
 
-            tax:{{ calculateCartTotalPrice(
-              currentCart!, menuRoot, taxSettings, orderType
-            ).tax }}
+            tax:{{ cartTotals.tax }}
           </span>
         </div>
         <div
