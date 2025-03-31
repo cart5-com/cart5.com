@@ -28,8 +28,10 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 // }
 
 const getTaxCategoryName = (categoryId?: string) => {
-  return props.taxCategories?.find(cat => cat.id === categoryId)?.name ||
-    props.taxCategories?.[0]?.name || '0%'
+  const category = props.taxCategories?.find(cat => cat.id === categoryId)
+  if (category) return `${category.name}:🛵${category.deliveryRate}%|🛍️${category.pickupRate}%`
+  if (props.taxCategories?.[0]) return `${props.taxCategories?.[0]?.name}:🛵${props.taxCategories?.[0]?.deliveryRate}%|🛍️${props.taxCategories?.[0]?.pickupRate}%`
+  return `default:🛵0%|🛍️0%`
 }
 </script>
 
