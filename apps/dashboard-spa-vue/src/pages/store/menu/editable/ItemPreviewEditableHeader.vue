@@ -46,7 +46,8 @@ defineProps<{
                 </div>
             </template>
             <template #content>
-                <details class="mt-8">
+                <details class="mt-8"
+                         :open="currentItem.pickupPrc !== undefined">
                     <summary class="text-sm font-medium">custom pickup price</summary>
                     <div class="mt-2">
                         <Input v-model="currentItem.pickupPrc"
