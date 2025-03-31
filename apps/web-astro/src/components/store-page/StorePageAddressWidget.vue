@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import {
-    Popover,
-    PopoverContent,
-    // PopoverClose,
-    // PopoverDescription,
-    // PopoverFooter,
-    PopoverTrigger,
-} from '@/components/ui/popover'
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from '@/components/ui/drawer'
 import AddressForm from '../AddressForm.vue';
 import { onMounted } from 'vue';
 import { initializeUserStore, userStore } from "@web-astro/stores/User.store";
@@ -26,8 +25,8 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
 </script>
 
 <template>
-    <Popover v-model:open="isOpen">
-        <PopoverTrigger as-child>
+    <Drawer v-model:open="isOpen">
+        <DrawerTrigger as-child>
             <Button variant="outline"
                     class="max-w-[200px]">
                 <span class="truncate">
@@ -35,10 +34,31 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                     {{ userStore?.address || 'Location' }}
                 </span>
             </Button>
-        </PopoverTrigger>
-        <PopoverContent align="start">
+        </DrawerTrigger>
+        <!-- <DrawerContent align="start">
             <AddressForm button-label="Update"
                          @done="onMapConfirm" />
-        </PopoverContent>
-    </Popover>
+        </DrawerContent> -->
+
+        <DrawerContent>
+            <div class="mx-auto w-full max-w-sm py-20">
+                <DrawerHeader>
+                    <DrawerTitle>Update Address</DrawerTitle>
+                    <!-- <DrawerDescription></DrawerDescription> -->
+                </DrawerHeader>
+                <div class="p-4 pb-0">
+                    <AddressForm button-label="Update"
+                                 @done="onMapConfirm" />
+                </div>
+                <!-- <DrawerFooter>
+                    <Button>Submit</Button>
+                    <DrawerClose as-child>
+                        <Button variant="outline">
+                            Cancel
+                        </Button>
+                    </DrawerClose>
+                </DrawerFooter> -->
+            </div>
+        </DrawerContent>
+    </Drawer>
 </template>

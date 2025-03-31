@@ -31,7 +31,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return window.menuRoot.allItems?.[props.itemId]
+        return window.storeData?.menu?.menuRoot?.allItems?.[props.itemId]
     }
     return undefined
 })
@@ -58,8 +58,8 @@ const removeAllQuantitiesThenAddOne = (childId: ItemId, childIndex: number) => {
 }
 
 const isChildMaxQuantity = (childId: ItemId, childIndex: number) => {
-    if (window.menuRoot.allItems?.[childId!]?.maxQ) {
-        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > window.menuRoot.allItems?.[childId!]?.maxQ!) {
+    if (window.storeData?.menu?.menuRoot?.allItems?.[childId!]?.maxQ) {
+        if (modelValue.value?.childrenState?.[childIndex]?.quantity! + 1 > window.storeData?.menu?.menuRoot?.allItems?.[childId!]?.maxQ!) {
             return true;
         }
     }
@@ -75,7 +75,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
     }
 
     let hasLinkedOptions: boolean = false;
-    if (window.menuRoot.allItems?.[childId]?.cIds) {
+    if (window.storeData?.menu?.menuRoot?.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -102,7 +102,7 @@ const addQuantity = (childId: ItemId, childIndex: number) => {
 
 const removeQuantity = (childId: ItemId, childIndex: number) => {
     let hasLinkedOptions: boolean = false;
-    if (window.menuRoot.allItems?.[childId]?.cIds) {
+    if (window.storeData?.menu?.menuRoot?.allItems?.[childId]?.cIds) {
         hasLinkedOptions = true;
     }
     if (modelValue.value?.childrenState) {
@@ -134,7 +134,7 @@ const isRadioMode = computed(() => {
 onMounted(() => {
     const initialState = JSON.parse(JSON.stringify(modelValue.value)) as CartChildrenItemState;
     for (const [index, child] of (currentItem.value?.cIds || []).entries()) {
-        const childItem = window.menuRoot.allItems?.[child];
+        const childItem = window.storeData?.menu?.menuRoot?.allItems?.[child];
         if (childItem?.defQ) {
             // repeat with value of childItem?.preSelectedQuantities?.[props.itemId!]
             for (let i = 0; i < childItem?.defQ; i++) {
@@ -147,7 +147,7 @@ onMounted(() => {
     }
 })
 
-const menuRoot = window.menuRoot
+const menuRoot = window.storeData?.menu?.menuRoot
 
 const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
     if (isRadioMode.value) {
@@ -165,7 +165,7 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
 
 <template>
     <div>
-        <div v-if="currentItem?.cIds"
+        <div v-if="currentItem?.cIds && menuRoot"
              class="text-sm">
             <div v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
                  :key="optionItemId">

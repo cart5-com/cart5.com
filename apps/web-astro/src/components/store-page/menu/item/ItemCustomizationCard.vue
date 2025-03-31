@@ -30,7 +30,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return window.menuRoot.allItems?.[props.itemId]
+        return window.storeData?.menu?.menuRoot?.allItems?.[props.itemId]
     }
     return undefined
 })

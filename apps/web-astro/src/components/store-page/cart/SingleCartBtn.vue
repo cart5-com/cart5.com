@@ -7,7 +7,7 @@ import { computed, onMounted } from "vue";
 import { initializeUserStore } from "@web-astro/stores/User.store";
 
 const currentCart = computed(() => {
-  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeId
+  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id
   );
 });
 

@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return window.menuRoot.allItems?.[props.itemId]
+        return window.storeData?.menu?.menuRoot?.allItems?.[props.itemId]
     }
     return undefined
 })
@@ -45,14 +45,14 @@ const updateNestedOptionGroup = (
 function getHelperText(optionItemIndex: number, quantityRepeated: number, optionItemId: ItemId) {
     return modelValue.value?.
         childrenState?.[optionItemIndex]?.quantity! > 1 ?
-        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${window.menuRoot.allItems?.[optionItemId]?.lbl}` :
-        window.menuRoot.allItems?.[optionItemId]?.lbl
+        `(${quantityRepeated}/${modelValue.value?.childrenState?.[optionItemIndex]?.quantity}) ${window.storeData?.menu?.menuRoot?.allItems?.[optionItemId]?.lbl}` :
+        window.storeData?.menu?.menuRoot?.allItems?.[optionItemId]?.lbl
 }
 
-const menuRoot = window.menuRoot;
+const menuRoot = window.storeData?.menu?.menuRoot;
 </script>
 <template>
-    <div v-if="currentItem?.cIds"
+    <div v-if="currentItem?.cIds && menuRoot"
          v-for="(optionItemId, optionItemIndex) in currentItem?.cIds"
          :key="optionItemId">
         <div v-if="menuRoot.allItems?.[optionItemId]?.cIds">

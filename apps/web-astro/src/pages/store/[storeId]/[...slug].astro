@@ -29,20 +29,14 @@ store.name;
 <BaseLayout title={`${store?.name} - ${slug}`}>
 	<h1>{slug}</h1>
 	<h2>{storeId}</h2>
-	<StorePageAddressWidget client:load />
+	<StorePageAddressWidget client:only="vue" />
 	<script
 		is:inline
 		define:vars={{
-			storeId,
-			storeName: store.name,
-			menuRoot: store.menu?.menuRoot,
-			taxSettings: store.taxSettings
+			storeData: store
 		}}
 	>
-		window.storeId = storeId;
-		window.storeName = storeName;
-		window.menuRoot = menuRoot;
-		window.taxSettings = taxSettings;
+		window.storeData = storeData;
 	</script>
 	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">
