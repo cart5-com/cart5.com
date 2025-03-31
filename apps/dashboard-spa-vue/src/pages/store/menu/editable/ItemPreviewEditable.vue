@@ -122,9 +122,9 @@ const checkCartItem = () => {
         </div>
         <div
              class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
-            Item: {{ cartItemTotalPrice.itemPrice }}
+            Item: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}
             {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
-            Tax: {{ cartItemTotalPrice.tax }}
+            Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.tax }}
         </div>
 
     </div>
