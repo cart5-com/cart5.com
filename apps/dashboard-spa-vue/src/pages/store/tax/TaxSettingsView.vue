@@ -13,9 +13,8 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-import { apiClient } from '@api-client/index';
+import { apiClient, type ResType } from '@api-client/index';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
-import { defaultTaxSettings } from '@lib/types/taxTypes';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import CurrencyWidget from './CurrencyWidget.vue';
 import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
@@ -28,13 +27,37 @@ pageTitle.value = 'Tax Settings';
 
 const isLoading = ref(false);
 
-const taxSettings = ref<typeof defaultTaxSettings>(JSON.parse(JSON.stringify(defaultTaxSettings)));
+const taxSettingsApiPath = apiClient.dashboard.store[':storeId'].tax_settings.get.$post;
+type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
 
-const selectedCurrency = ref('');
+const taxSettings = ref<TaxSettings>();
 
 onMounted(() => {
     loadData();
 });
+
+function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof getSalesTaxRate>) {
+    const taxRate = (salesTaxRate.rate + (salesTaxRate.currentState?.rate ?? 0)) * 100;
+    const taxName = [salesTaxRate.type === 'none' ? '' : salesTaxRate.type.toUpperCase()];
+    if (salesTaxRate?.currentState) {
+        taxName.push(salesTaxRate?.currentState?.type.toUpperCase());
+    }
+    const taxSettings: TaxSettings = {
+        storeId: currentStoreId.value ?? '',
+        taxCategories: [{
+            id: crypto.randomUUID(),
+            name: "TAX1",
+            deliveryRate: taxRate,
+            pickupRate: taxRate,
+        }],
+        currency: salesTaxRate.currency,
+        currencySymbol: salesTaxRate.currencySymbol ?? null,
+        salesTaxType: "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
+        taxName: taxName.filter(Boolean).join('-'),
+        taxRateForDelivery: taxRate,
+    }
+    return taxSettings;
+}
 
 const loadData = async () => {
     isLoading.value = true;
@@ -58,15 +81,7 @@ const loadData = async () => {
         toast.error('Failed to load tax settings');
     } else {
         if (data) {
-            taxSettings.value = {
-                taxCategories: data.taxCategories ?? defaultTaxSettings.taxCategories,
-                currency: data.currency ?? defaultTaxSettings.currency,
-                currencySymbol: data.currencySymbol ?? defaultTaxSettings.currencySymbol,
-                salesTaxType: data.salesTaxType ?? defaultTaxSettings.salesTaxType,
-                taxName: data.taxName ?? defaultTaxSettings.taxName,
-                taxRateForDelivery: data.taxRateForDelivery ?? defaultTaxSettings.taxRateForDelivery,
-            };
-            selectedCurrency.value = data.currency ?? 'GBP';
+            taxSettings.value = data;
         } else {
             saveWithIpWhois();
         }
@@ -84,26 +99,7 @@ const saveWithIpWhois = async () => {
 
 const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string) => {
     const salesTaxRate = getSalesTaxRate(countryCode, regionCode);
-    // const salesTaxRate = getSalesTaxRate("GB", "BY");
-    selectedCurrency.value = salesTaxRate?.currency;
-    taxSettings.value.currencySymbol = salesTaxRate?.currencySymbol;
-    taxSettings.value.currency = salesTaxRate?.currency;
-    if (salesTaxRate?.type === 'none') {
-        taxSettings.value.taxName = '';
-    } else {
-        taxSettings.value.taxName = salesTaxRate?.type.toUpperCase();
-    }
-    taxSettings.value.taxRateForDelivery = salesTaxRate?.rate * 100;
-    if (salesTaxRate?.currentState) {
-        taxSettings.value.taxRateForDelivery += salesTaxRate?.currentState?.rate * 100;
-        taxSettings.value.taxName +=
-            ((taxSettings.value.taxName.length > 0) ? `-` : '') +
-            salesTaxRate?.currentState?.type.toUpperCase();
-    }
-    taxSettings.value.taxCategories?.forEach(category => {
-        category.deliveryRate = taxSettings.value.taxRateForDelivery;
-        category.pickupRate = taxSettings.value.taxRateForDelivery;
-    });
+    taxSettings.value = convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate);
 }
 
 const saveTaxSettings = async () => {
@@ -114,12 +110,12 @@ const saveTaxSettings = async () => {
                 storeId: currentStoreId.value ?? '',
             },
             json: {
-                currency: selectedCurrency.value,
-                currencySymbol: taxSettings.value.currencySymbol,
-                salesTaxType: taxSettings.value.salesTaxType,
-                taxName: taxSettings.value.taxName,
-                taxRateForDelivery: taxSettings.value.taxRateForDelivery,
-                taxCategories: taxSettings.value.taxCategories
+                currency: taxSettings.value?.currency,
+                currencySymbol: taxSettings.value?.currencySymbol,
+                salesTaxType: taxSettings.value?.salesTaxType,
+                taxName: taxSettings.value?.taxName,
+                taxRateForDelivery: taxSettings.value?.taxRateForDelivery,
+                taxCategories: taxSettings.value?.taxCategories ?? []
             }
         })).json();
 
@@ -137,19 +133,24 @@ const saveTaxSettings = async () => {
 };
 
 const addTaxCategory = () => {
-    if (!taxSettings.value.taxCategories) {
-        taxSettings.value.taxCategories = [];
+    if (
+        taxSettings.value &&
+        taxSettings.value.taxCategories
+    ) {
+        taxSettings.value.taxCategories.push({
+            id: crypto.randomUUID(),
+            name: 'TAX' + (taxSettings.value.taxCategories.length + 1),
+            deliveryRate: 0,
+            pickupRate: 0,
+        });
     }
-    taxSettings.value.taxCategories.push({
-        id: crypto.randomUUID(),
-        name: 'TAX' + (taxSettings.value.taxCategories.length + 1),
-        deliveryRate: 0,
-        pickupRate: 0,
-    });
 };
 
 const removeTaxCategory = (index: number) => {
-    if (taxSettings.value.taxCategories) {
+    if (
+        taxSettings.value &&
+        taxSettings.value.taxCategories
+    ) {
         taxSettings.value.taxCategories.splice(index, 1);
     }
 };
@@ -157,7 +158,8 @@ const removeTaxCategory = (index: number) => {
 </script>
 
 <template>
-    <div class="max-w-md mx-auto space-y-6">
+    <div class="max-w-md mx-auto space-y-6"
+         v-if="taxSettings">
         <Card>
             <CardHeader>
                 <CardTitle>Tax Settings</CardTitle>
@@ -186,15 +188,15 @@ const removeTaxCategory = (index: number) => {
                         <Label>Currency</Label>
                         <TaxHelperDialog @tax-location-selected="populateTaxSettingsFromLocation" />
                     </div>
-                    <CurrencyWidget v-model="selectedCurrency" />
+                    <CurrencyWidget v-model="taxSettings.currency!" />
                 </div>
 
                 <!-- Tax Type Selection -->
                 <div class="space-y-2">
                     <Label>Tax Type</Label>
-                    <Select v-model="taxSettings.salesTaxType">
+                    <Select v-model="taxSettings.salesTaxType!">
                         <SelectTrigger>
-                            <SelectValue :placeholder="taxSettings.salesTaxType" />
+                            <SelectValue :placeholder="taxSettings.salesTaxType!" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="ITEMS_PRICES_ALREADY_INCLUDE_TAXES">
@@ -213,13 +215,13 @@ const removeTaxCategory = (index: number) => {
 
                 <div class="space-y-2">
                     <Label>Tax Name</Label>
-                    <Input v-model="taxSettings.taxName"
+                    <Input v-model="taxSettings.taxName!"
                            placeholder="e.g., VAT, GST, HST" />
                 </div>
 
                 <div class="space-y-2">
                     <Label>Currency Symbol</Label>
-                    <Input v-model="taxSettings.currencySymbol"
+                    <Input v-model="taxSettings.currencySymbol!"
                            placeholder="e.g., £, $" />
                 </div>
 
@@ -267,7 +269,7 @@ const removeTaxCategory = (index: number) => {
 
                 <div class="space-y-2">
                     <Label>Tax Rate for Delivery fees(%)</Label>
-                    <Input v-model="taxSettings.taxRateForDelivery"
+                    <Input v-model="taxSettings.taxRateForDelivery!"
                            type="number"
                            step="1" />
                 </div>

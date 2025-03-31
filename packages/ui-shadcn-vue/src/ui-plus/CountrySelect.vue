@@ -7,11 +7,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ChevronsUpDown } from 'lucide-vue-next';
 import { useVModel } from '@vueuse/core';
 import FlagComponent from '@/ui-plus/PhoneNumber/FlagComponent.vue';
-import { getBrowserLocale, getCountriesList } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
+import { getBrowserLocale, getCountriesList, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 
 const props = defineProps<{
     class?: HTMLAttributes['class']
     modelValue?: string;
+    showCountryName?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -40,6 +41,10 @@ function getCountries() {
                     :class="props.class">
                 <FlagComponent v-if="model"
                                :country="model" />
+                <span v-if="showCountryName && model"
+                      class="flex-1 text-sm text-left">
+                    {{ getCountryName(locale, model) }}
+                </span>
                 <ChevronsUpDown class="-mr-2 opacity-50 hidden sm:block" />
             </Button>
         </PopoverTrigger>

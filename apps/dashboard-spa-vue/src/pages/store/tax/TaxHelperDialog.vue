@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { getBrowserLocale, getCountryName } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
-
+import CountrySelect from '@/ui-plus/CountrySelect.vue';
 const isOpen = ref(false);
 const selectedCountry = ref('');
 const selectedState = ref('');
@@ -74,18 +74,8 @@ const locale = getBrowserLocale()?.browserLocale ?? 'en-US'
 
                 <div class="space-y-2">
                     <Label for="country">Country</Label>
-                    <Select v-model="selectedCountry">
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem v-for="code in countries"
-                                        :key="code"
-                                        :value="code">
-                                {{ getCountryName(locale, code) }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <CountrySelect v-model="selectedCountry"
+                                   showCountryName />
                 </div>
 
                 <div class="space-y-2"
