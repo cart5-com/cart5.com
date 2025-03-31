@@ -5,6 +5,7 @@ import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
 import { taxSettings } from "../TaxSettingsStore";
 import ItemTaxInput from "@/ui-plus/inline-edit/ItemTaxInput.vue";
+import { Input } from "@/components/ui/input";
 
 defineProps<{
     currentItem?: Item
@@ -44,7 +45,22 @@ defineProps<{
                     <Banknote class="mr-2" /> {{ currentItem.prc || 'Price:' }}
                 </div>
             </template>
+            <template #content>
+                <details class="mt-8">
+                    <summary class="text-sm font-medium">custom pickup price</summary>
+                    <div class="mt-2">
+                        <Input v-model="currentItem.pickupPrc"
+                               type="number"
+                               placeholder="Pickup Price:" />
+                        <p class="text-xs">
+                            If no pickup price is set, the price({{ currentItem.prc }}) will be used for both delivery
+                            and pickup.
+                        </p>
+                    </div>
+                </details>
+            </template>
         </InputInline>
+
 
         <ItemTaxInput v-model="currentItem.taxCatId"
                       :tax-categories="taxSettings?.taxCategories ?? []"

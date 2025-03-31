@@ -73,7 +73,14 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     if (cartItem.itemId) {
         const item = menuRoot.allItems?.[cartItem.itemId];
         if (item) {
-            total += (item.prc || 0);
+            if (
+                orderType === 'pickupRate' &&
+                item.pickupPrc
+            ) {
+                total += (item.pickupPrc || 0);
+            } else {
+                total += (item.prc || 0);
+            }
         }
     }
     if (cartItem.childrenState) {

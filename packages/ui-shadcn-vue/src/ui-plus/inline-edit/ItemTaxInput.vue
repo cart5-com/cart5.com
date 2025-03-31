@@ -21,17 +21,12 @@ const modelValue = useVModel(props, 'modelValue', emits, {
   defaultValue: props.defaultValue,
 })
 
-// const getSummary = (categoryId?: string) => {
-//   const category = props.taxCategories?.find(cat => cat.id === categoryId)
-//   if (!category) return '0%'
-//   return `${category.name}:🛵${category.deliveryRate}%|🛍️${category.pickupRate}%`
-// }
 
 const getTaxCategoryName = (categoryId?: string) => {
   const category = props.taxCategories?.find(cat => cat.id === categoryId)
-  if (category) return `${category.name} 🛵${category.deliveryRate}% 🛍️${category.pickupRate}%`
-  if (props.taxCategories?.[0]) return `${props.taxCategories?.[0]?.name} 🛵${props.taxCategories?.[0]?.deliveryRate}% 🛍️${props.taxCategories?.[0]?.pickupRate}%`
-  return `default 🛵0% 🛍️0%`
+  if (category) return `${category.name}(delivery:${category.deliveryRate}%)(pickup:${category.pickupRate}%)`
+  if (props.taxCategories?.[0]) return `${props.taxCategories?.[0]?.name}(delivery:${props.taxCategories?.[0]?.deliveryRate}%)(pickup:${props.taxCategories?.[0]?.pickupRate}%)`
+  return `default(delivery:0%)(pickup:0%)`
 }
 </script>
 

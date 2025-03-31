@@ -34,6 +34,8 @@ const modelValue = useVModel(props, 'modelValue', emits, {
       <Input v-model="modelValue"
              v-bind="$attrs"
              :class="props.class" />
+      <slot name="content">
+      </slot>
     </PopoverContent>
   </Popover>
 </template>

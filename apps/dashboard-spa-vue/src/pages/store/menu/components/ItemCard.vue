@@ -47,7 +47,7 @@ const unlinkItem = () => {
                     </h1>
                 </CardTitle>
                 <CardDescription>
-                    {{ currentItem?.prc }}
+                    {{ currentItem?.prc }}{{ currentItem?.pickupPrc ? `/pickup:${currentItem?.pickupPrc}` : '' }}
                 </CardDescription>
             </CardHeader>
             <CardContent>

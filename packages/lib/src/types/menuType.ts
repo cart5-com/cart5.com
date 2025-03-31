@@ -8,6 +8,7 @@ export type Item = {
     lbl?: string; // label, title, name
     dsc?: string; // description
     prc?: number; // price
+    pickupPrc?: number; // pickup price
 
     cIds?: ItemId[]; // children ids
 
