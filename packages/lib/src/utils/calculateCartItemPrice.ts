@@ -1,4 +1,5 @@
-import type { CartChildrenItemState, CartItem, MenuRoot } from "@lib/types/menuType";
+import type { CartChildrenItemState, CartItem, ItemId, MenuRoot } from "@lib/types/menuType";
+import type { TaxSettings } from "@lib/types/taxTypes";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 
 
@@ -40,7 +41,33 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
     return total;
 }
 
-export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) => {
+export const calculateCartItemTax = (
+    price: number,
+    itemId: ItemId | undefined,
+    menuRoot: MenuRoot,
+    taxSettings: TaxSettings,
+    orderType: 'deliveryRate' | 'pickupRate'
+) => {
+    if (!taxSettings || !itemId) {
+        return 0;
+    }
+    console.log('calculateCartItemTax😞');
+    let total = 0;
+    const item = menuRoot.allItems?.[itemId];
+    if (item) {
+        const taxCategory = taxSettings.taxCategories?.find((taxCategory) => taxCategory.id === item.taxCatId);
+        if (taxCategory) {
+            // selected tax category
+            total += price * ((taxCategory[orderType] || 0) / 100);
+        } else if (taxSettings.taxCategories?.[0]) {
+            // default tax category
+            total += price * ((taxSettings.taxCategories[0][orderType] || 0) / 100);
+        }
+    }
+    return Number(total.toFixed(2));
+}
+
+export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: 'deliveryRate' | 'pickupRate' = 'deliveryRate') => {
     console.log('calculateCartItemPrice🤑');
     let total = 0;
     if (cartItem.itemId) {
@@ -60,14 +87,29 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot) =
     if (total < 0) {
         total = 0;
     }
-    return (total * (cartItem.quantity || 1)).toFixed(2);
+    total = Number((total * (cartItem.quantity || 1)).toFixed(2))
+    return {
+        itemPrice: total,
+        tax: calculateCartItemTax(total, cartItem.itemId, menuRoot, taxSettings, orderType),
+    };
 }
 
-
-export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot) => {
+export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: 'deliveryRate' | 'pickupRate' = 'deliveryRate') => {
     if (!cart || !cart.items) {
-        return 0;
+        return {
+            totalPrice: 0,
+            tax: 0,
+        };
     }
-    const total = cart.items?.reduce((total, item) => total + parseFloat(calculateCartItemPrice(item, menuRoot)), 0).toFixed(2) || '0.00';
-    return Number(total);
+    const total = cart.items?.reduce((total, item) => total + parseFloat(
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice.toFixed(2)
+    ), 0).toFixed(2) || '0.00';
+    const tax = cart.items?.reduce((total, item) => total + parseFloat(
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax.toFixed(2)
+    ), 0).toFixed(2) || '0.00';
+
+    return {
+        totalPrice: Number(total),
+        tax: Number(tax),
+    };
 }

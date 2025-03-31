@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
+import type { TaxSettings } from "@lib/types/taxTypes";
 
 const props = defineProps<{
     itemId?: ItemId,
@@ -22,7 +23,7 @@ const props = defineProps<{
 
 const currentItem = computed(() => {
     if (props.itemId) {
-        return window.menuRoot.allItems?.[props.itemId]
+        return window.storeData?.menu?.menuRoot?.allItems?.[props.itemId]
     }
     return undefined
 })
@@ -34,13 +35,16 @@ const cartItem = ref<CartItem>(props.cartItem || {
 })
 
 const cartItemTotalPrice = ref("");
+let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.menuRoot)
+    // TODO: add deliveryRate or pickupRate
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings).itemPrice.toFixed(2)
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.menuRoot)
+    // TODO: add deliveryRate or pickupRate
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings).itemPrice.toFixed(2)
 })
 
 
@@ -67,8 +71,6 @@ const checkCartItem = () => {
         return true;
     }
 }
-
-const menuRoot = window.menuRoot
 
 </script>
 

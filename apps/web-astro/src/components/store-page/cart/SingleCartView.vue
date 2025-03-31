@@ -25,28 +25,30 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { Textarea } from '@/components/ui/textarea'
+import type { TaxSettings } from "@lib/types/taxTypes";
 
 const currentCart = computed(() => {
-  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeId);
+  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
 });
 
 
 let menuRoot = ref<MenuRoot | null>(null);
+let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 onMounted(() => {
   if (typeof window !== "undefined") {
-    menuRoot.value = window.menuRoot;
+    menuRoot.value = window.storeData?.menu?.menuRoot ?? null;
   }
 });
 
 const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
   if (item.quantity! === 0) {
-    removeItemFromCart(window.storeId, itemIndex);
+    removeItemFromCart(window.storeData?.id!, itemIndex);
   }
 }
 
 const openCartItem = (itemIndex: number) => {
-  openItemInCart(window.storeId, itemIndex);
+  openItemInCart(window.storeData?.id!, itemIndex);
 }
 
 const removeAllItemsFromCart = () => {
@@ -56,6 +58,12 @@ const removeAllItemsFromCart = () => {
 onMounted(() => {
   initializeUserStore();
 });
+
+const getPrice = (item: CartItem) => {
+  return calculateCartItemPrice(item, menuRoot.value!, taxSettings
+    // TODO: add deliveryRate or pickupRate
+  )
+}
 </script>
 
 <template>
@@ -125,7 +133,8 @@ onMounted(() => {
               </NumberFieldContent>
             </NumberField>
             <span class="font-bold">
-              {{ calculateCartItemPrice(item, menuRoot) }}
+              {{ getPrice(item).itemPrice }}
+              tax:{{ getPrice(item).tax }}
             </span>
           </div>
         </div>
@@ -170,7 +179,13 @@ onMounted(() => {
             Subtotal
           </span>
           <span class="font-bold text-lg">
-            {{ calculateCartTotalPrice(currentCart!, menuRoot) }}
+            {{ calculateCartTotalPrice(
+              currentCart!, menuRoot, taxSettings
+            ).totalPrice }}
+
+            tax:{{ calculateCartTotalPrice(
+              currentCart!, menuRoot, taxSettings
+            ).tax }}
           </span>
         </div>
         <div

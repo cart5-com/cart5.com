@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../MenuRootStore";
+import { taxSettings } from "../TaxSettingsStore";
 import { type CartItem, type ItemId } from "@lib/types/menuType";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { computed, onMounted, ref, watch } from "vue";
@@ -14,7 +15,7 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-
+import type { TaxSettings } from "@lib/types/taxTypes";
 const props = defineProps<{
     itemId?: ItemId
 }>()
@@ -46,14 +47,19 @@ onMounted(() => {
 
 
 
-const cartItemTotalPrice = ref("");
+const cartItemTotalPrice = ref({
+    itemPrice: 0,
+    tax: 0,
+});
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
+    // TODO: add deliveryRate or pickupRate
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings)
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value)
+    // TODO: add deliveryRate or pickupRate
+    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings)
 })
 
 const randomNumber = crypto.randomUUID()
@@ -116,7 +122,9 @@ const checkCartItem = () => {
         </div>
         <div
              class="sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between gap-2 items-center font-bold">
-            Total: {{ cartItemTotalPrice }}
+            Item: {{ cartItemTotalPrice.itemPrice }}
+            {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
+            Tax: {{ cartItemTotalPrice.tax }}
         </div>
 
     </div>
