@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { menuRoot } from "../store";
+import { menuRoot } from "../MenuRootStore";
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import CategoryNewForm from '../components/CategoryNewForm.vue';
 import { Plus } from "lucide-vue-next";

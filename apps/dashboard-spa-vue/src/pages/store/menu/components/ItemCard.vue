@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { menuRoot } from "../store";
+import { menuRoot } from "../MenuRootStore";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link2Off, MoveIcon, Pencil } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";

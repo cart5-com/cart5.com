@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defaultMenuRoot, isMenuLoading, loadMenu, loadTaxSettings, menuRoot, saveMenu } from "./store";
+import { defaultMenuRoot, isMenuLoading, loadMenu, menuRoot, saveMenu } from "./MenuRootStore";
+import { loadTaxSettings } from "./TaxSettingsStore";
 import MenuTabs from "./MenuTabs.vue";
 import { pageTitle } from "@dashboard-spa-vue/stores/LayoutStore";
 import { onMounted, onUnmounted, ref, watch } from "vue";

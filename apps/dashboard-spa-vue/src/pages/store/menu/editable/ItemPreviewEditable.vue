@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { menuRoot } from "../store";
+import { menuRoot } from "../MenuRootStore";
 import { type CartItem, type ItemId } from "@lib/types/menuType";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { computed, onMounted, ref, watch } from "vue";

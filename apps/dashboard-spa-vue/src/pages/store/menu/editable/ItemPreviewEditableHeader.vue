@@ -3,8 +3,9 @@ import { Item } from "@lib/types/menuType";
 import { Banknote } from "lucide-vue-next";
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
-import { taxSettings } from "../store";
+import { taxSettings } from "../TaxSettingsStore";
 import ItemTaxInput from "@/ui-plus/inline-edit/ItemTaxInput.vue";
+
 defineProps<{
     currentItem?: Item
 }>()

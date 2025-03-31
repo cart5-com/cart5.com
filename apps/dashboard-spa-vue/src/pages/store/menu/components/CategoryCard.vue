@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { menuRoot } from '../store';
+import { menuRoot } from '../MenuRootStore';
 import { AlignJustify, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';

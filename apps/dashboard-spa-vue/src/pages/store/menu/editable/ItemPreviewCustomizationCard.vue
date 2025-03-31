@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
 import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
-import { menuRoot } from "../store";
+import { menuRoot } from "../MenuRootStore";
 import { computed } from 'vue';
 import { AlignJustify, CornerDownRight, Link2Off, MoreVerticalIcon, Pencil } from 'lucide-vue-next';
 import SelectNumber from "@/ui-plus/SelectWithSearch/SelectNumber.vue";

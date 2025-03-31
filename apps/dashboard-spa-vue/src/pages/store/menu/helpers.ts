@@ -1,7 +1,7 @@
 import { Item, type CartItem, type ItemId } from '@lib/types/menuType';
 import ItemPreviewEditable from './editable/ItemPreviewEditable.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
-import { menuRoot } from './store';
+import { menuRoot } from './MenuRootStore';
 const dialog = useDialog();
 
 export function previewItem(itemId: ItemId) {
