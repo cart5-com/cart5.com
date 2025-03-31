@@ -30,10 +30,17 @@ store.name;
 	<h1>{slug}</h1>
 	<h2>{storeId}</h2>
 	<StorePageAddressWidget client:load />
-	<script is:inline define:vars={{ menuRoot: store.menu?.menuRoot, storeId, storeName: store.name }}>
-		window.menuRoot = menuRoot;
+	<script
+		is:inline
+		define:vars={{
+			storeId,
+			storeName: store.name,
+			menuRoot: store.menu?.menuRoot
+		}}
+	>
 		window.storeId = storeId;
 		window.storeName = storeName;
+		window.menuRoot = menuRoot;
 	</script>
 	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">

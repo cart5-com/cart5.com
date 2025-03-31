@@ -21,10 +21,10 @@ export const getStoreData_Service = async (
                     menuRoot: true
                 }
             },
+            taxSettings: true,
             // address: true,
             // openHours: true,
             // paymentMethods: true,
-            // taxSettings: true,
             // deliveryZones: true,
         }
     });
