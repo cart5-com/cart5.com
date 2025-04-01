@@ -11,11 +11,17 @@ export function isInsideRectangle(point: Point, rectangle: Rectangle) {
         return false;
     }
 
+    // Calculate min and max lat/lng from the rectangle corners
+    const minLat = Math.min(rectangle.topLeft.lat, rectangle.bottomRight.lat);
+    const maxLat = Math.max(rectangle.topLeft.lat, rectangle.bottomRight.lat);
+    const minLng = Math.min(rectangle.topLeft.lng, rectangle.bottomRight.lng);
+    const maxLng = Math.max(rectangle.topLeft.lng, rectangle.bottomRight.lng);
+
     // Check if the point is within the bounds of the rectangle
     return (
-        point.lat >= rectangle.bottomRight.lat &&
-        point.lat <= rectangle.topLeft.lat &&
-        point.lng >= rectangle.topLeft.lng &&
-        point.lng <= rectangle.bottomRight.lng
+        point.lat >= minLat &&
+        point.lat <= maxLat &&
+        point.lng >= minLng &&
+        point.lng <= maxLng
     );
 } 

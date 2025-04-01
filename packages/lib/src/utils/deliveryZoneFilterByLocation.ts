@@ -17,44 +17,43 @@ export function deliveryZoneFilterByLocation(userLocation: Point, deliveryZones:
     });
 }
 
-export function getCheapestDeliveryZone(
+export function getBestDeliveryZone(
     userLocation: Point,
     deliveryZones: DeliveryZone[],
     storeLocation: Point
 ) {
-    // Get all zones that contain the user location
     const availableZones = deliveryZoneFilterByLocation(userLocation, deliveryZones);
-
     if (availableZones.length === 0) {
         return null;
     }
 
-    // Calculate distance once outside the loop
     const distance = calculateDistance(userLocation, storeLocation);
 
-    // Calculate total delivery fee for each zone
-    return availableZones.reduce((cheapest, zone) => {
-        // Get base delivery fee
+    // Calculate total delivery fees
+    const zonesWithFees = availableZones.map((zone) => {
         const baseFee = zone.deliveryFee || 0;
+        const distanceFee = zone.deliveryFeePerKm ? zone.deliveryFeePerKm * distance : 0;
+        const totalDeliveryFee = Number((baseFee + distanceFee).toFixed(2));
 
-        // Calculate distance-based fee if applicable
-        let distanceFee = 0;
-        if (zone.deliveryFeePerKm) {
-            distanceFee = zone.deliveryFeePerKm * distance;
+        return {
+            ...zone,
+            totalDeliveryFee: totalDeliveryFee,
+            distanceFromStore: distance
+        };
+    });
+
+    // First sort by delivery fee, then by minimum cart as a tiebreaker
+    zonesWithFees.sort((a, b) => {
+        // First compare by delivery fee
+        const feeDiff = a.totalDeliveryFee! - b.totalDeliveryFee!;
+
+        // If fees are the same (or very close), use minCart as tiebreaker
+        if (Math.abs(feeDiff) < 0.01) {
+            return (a.minCart || 0) - (b.minCart || 0);
         }
 
-        // Total fee for this zone
-        const totalFee = baseFee + distanceFee;
+        return feeDiff;
+    });
 
-        // If this is our first zone or this zone is cheaper than current cheapest
-        if (!cheapest || totalFee < (cheapest.calculatedFee || 0)) {
-            return {
-                ...zone,
-                calculatedFee: totalFee,
-                distanceFromStore: distance
-            };
-        }
-
-        return cheapest;
-    }, null as (DeliveryZone & { calculatedFee?: number, distanceFromStore?: number }) | null);
+    return zonesWithFees[0] || null;
 }

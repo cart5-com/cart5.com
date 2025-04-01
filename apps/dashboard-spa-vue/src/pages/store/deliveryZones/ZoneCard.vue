@@ -69,14 +69,16 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            placeholder="Enter zone name" />
                                 </div>
 
-                                <div class="grid gap-2">
+                                <div class="grid gap-2 my-8">
                                     <Label for="minCart">Minimum Cart Value</Label>
                                     <Input id="minCart"
                                            type="number"
                                            v-model="zone.minCart"
                                            placeholder="0.00" />
                                     <p class="text-xs">
-                                        Delivery fee will be applied on top of this minimum cart value.
+                                        Only items in the cart that exceed this value will be eligible for delivery.
+                                        Tax, delivery fees, service fees, and other charges are not included in this
+                                        calculation.
                                     </p>
                                 </div>
 
