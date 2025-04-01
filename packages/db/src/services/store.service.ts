@@ -22,10 +22,14 @@ export const getStoreData_Service = async (
                 }
             },
             taxSettings: true,
+            deliveryZones: {
+                columns: {
+                    zones: true,
+                }
+            },
             // address: true,
             // openHours: true,
             // paymentMethods: true,
-            // deliveryZones: true,
         }
     });
 }

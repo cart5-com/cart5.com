@@ -75,6 +75,9 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            type="number"
                                            v-model="zone.minCart"
                                            placeholder="0.00" />
+                                    <p class="text-xs">
+                                        Delivery fee will be applied on top of this minimum cart value.
+                                    </p>
                                 </div>
 
                                 <div class="grid gap-2">
