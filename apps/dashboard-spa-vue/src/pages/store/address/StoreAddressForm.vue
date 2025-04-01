@@ -67,6 +67,9 @@ const COUNTRIES_WITH_STATES = [
     'VE', // Venezuela
 ]; // Add more as needed
 
+let lat: number | null = null;
+let lng: number | null = null;
+
 const loadData = async () => {
     isLoading.value = true;
     console.log('loadData', currentStoreId.value);
@@ -116,6 +119,8 @@ const loadData = async () => {
             //     mapLocation.value.lat = address.lat;
             //     mapLocation.value.lng = address.lng;
             // }
+            lat = address.lat;
+            lng = address.lng;
         }
         if (!address || !address.country) {
             fetchCountryCode().then(countryCode => {
@@ -172,6 +177,8 @@ async function onMapConfirm(result: { lat: number, lng: number }) {
     // await new Promise(resolve => setTimeout(resolve, 1000));
     toast.success(`Saved`);
     isLoading.value = false;
+    lat = result.lat;
+    lng = result.lng;
     await loadMyStores();
 }
 
@@ -234,6 +241,8 @@ watch(() => form.values.country, (newCountry) => {
             </DialogHeader>
             <GeolocationMap :address="form.values.address1!"
                             :country="form.values.country!"
+                            :lat="lat!"
+                            :lng="lng!"
                             @done="onMapConfirm"
                             class="flex-1 overflow-hidden" />
             <!-- <div class="grid gap-4 py-4">

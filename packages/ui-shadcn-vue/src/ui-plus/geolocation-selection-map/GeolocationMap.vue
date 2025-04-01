@@ -13,6 +13,8 @@ import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 const props = defineProps<{
 	address: string;
 	country: string;
+	lat?: number;
+	lng?: number;
 	btnLabel?: string;
 }>();
 
@@ -98,7 +100,8 @@ async function handleGpsClick() {
 					helperBtns.value = [{
 						label: "Current Location",
 						lat: position.coords.latitude,
-						lng: position.coords.longitude
+						lng: position.coords.longitude,
+						type: 'GPS'
 					}, ...helperBtns.value];
 				}
 
@@ -125,12 +128,14 @@ async function loadHelperBtns() {
 		...gecodeResult.data.results.map(item => ({
 			label: item.formatted_address || props.address,
 			lat: item.geometry.location.lat,
-			lng: item.geometry.location.lng
+			lng: item.geometry.location.lng,
+			type: 'geocode' as const
 		})),
 		...openStreetMapItems.map(item => ({
 			label: item.label,
 			lat: item.lat,
-			lng: item.lng
+			lng: item.lng,
+			type: 'openstreetmap' as const
 		})),
 	]
 	if (helperBtns.value.length === 0) {
@@ -138,13 +143,15 @@ async function loadHelperBtns() {
 			helperBtns.value.push({
 				label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
 				lat: ipwho.latitude ?? 0,
-				lng: ipwho.longitude ?? 0
+				lng: ipwho.longitude ?? 0,
+				type: 'ipwhois' as const
 			})
 		}
 		handleGpsClick()
 	}
-
-	if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
+	if (props.lat && props.lng) {
+		setCenter(props.lat, props.lng)
+	} else if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
 		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
 	}
 }
@@ -194,7 +201,7 @@ async function loadHelperBtns() {
 						</TooltipTrigger>
 						<TooltipContent side="top"
 										class="max-w-[200px] max-h-[200px] overflow-auto">
-							<p>{{ helperBtn.label }}</p>
+							<p>{{ helperBtn.type }}: {{ helperBtn.label }}</p>
 						</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>

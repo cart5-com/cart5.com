@@ -2,6 +2,7 @@ export type HelperBtns = {
     label?: string;
     lat?: number;
     lng?: number;
+    type: 'geocode' | 'openstreetmap' | 'ipwhois' | 'GPS';
 }
 
 

@@ -52,6 +52,8 @@ const onSubmit = () => {
                 </DialogHeader>
                 <GeolocationMap :address="userStore.address!"
                                 :country="userStore.country!"
+                                :lat="userStore.lat!"
+                                :lng="userStore.lng!"
                                 @done="$emit('done', $event)"
                                 btn-label="Confirm" />
             </DialogContent>
