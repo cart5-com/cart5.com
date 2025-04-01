@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { type ItemId, type CartItem } from "@lib/types/menuType";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
+import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { computed, ref, watch, onMounted } from "vue";
 import { toast } from "@/ui-plus/sonner";
 import {
@@ -34,15 +35,15 @@ const cartItem = ref<CartItem>(props.cartItem || {
     childrenState: [],
 })
 
-const cartItemTotalPrice = ref("");
+const cartItemTotalPrice = ref(0);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice.toFixed(2)
+    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice)
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice.toFixed(2)
+    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice)
 })
 
 

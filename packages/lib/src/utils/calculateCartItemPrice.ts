@@ -2,7 +2,7 @@ import type { CartChildrenItemState, CartItem, ItemId, MenuRoot } from "@lib/typ
 import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/types/taxTypes";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
-
+import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
@@ -64,7 +64,7 @@ export const calculateCartItemTax = (
             total += price * ((taxSettings.taxCategories[0][`${orderType}Rate`] || 0) / 100);
         }
     }
-    return Number(total.toFixed(2));
+    return roundTo2Decimals(total);
 }
 
 export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
@@ -93,7 +93,7 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     if (total < 0) {
         total = 0;
     }
-    total = Number((total * (cartItem.quantity || 1)).toFixed(2))
+    total = roundTo2Decimals(total * (cartItem.quantity || 1))
     return {
         itemPrice: total,
         tax: calculateCartItemTax(total, cartItem.itemId, menuRoot, taxSettings, orderType),
@@ -107,12 +107,12 @@ export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSetti
             tax: 0,
         };
     }
-    const total = cart.items?.reduce((total, item) => total + parseFloat(
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice.toFixed(2)
-    ), 0).toFixed(2) || '0.00';
-    const tax = cart.items?.reduce((total, item) => total + parseFloat(
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax.toFixed(2)
-    ), 0).toFixed(2) || '0.00';
+    const total = cart.items?.reduce((total, item) => total + roundTo2Decimals(
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice
+    ), 0) || 0;
+    const tax = cart.items?.reduce((total, item) => total + roundTo2Decimals(
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax
+    ), 0) || 0;
 
     return {
         totalPrice: Number(total),

@@ -14,7 +14,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-
+import { roundTo2Decimals } from '@lib/utils/roundTo2Decimals'
 const searchQuery = ref('')
 
 const filteredItems = computed(() => {
@@ -80,7 +80,7 @@ const onClickEditItem = (item: Item) => {
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
                     <TableCell class="capitalize line-clamp-1">{{ item.lbl }}</TableCell>
-                    <TableCell>{{ item.prc?.toFixed(2) }}</TableCell>
+                    <TableCell>{{ roundTo2Decimals(item.prc ?? 0) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"
                                 size="sm"

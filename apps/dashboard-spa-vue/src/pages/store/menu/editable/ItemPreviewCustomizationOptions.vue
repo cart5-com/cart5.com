@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
 import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
+import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { menuRoot } from "../MenuRootStore";
 import { computed, onMounted, ref } from 'vue';
 import {
@@ -436,11 +437,11 @@ onMounted(() => {
                             <div class="col-span-6 text-right"
                                  v-if="menuRoot.allItems?.[optionItemId!].opPrc">
                                 {{
-                                    (
+                                    roundTo2Decimals(
                                         (menuRoot.allItems?.[optionItemId!].opPrc!)
                                         *
                                         (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
-                                    ).toFixed(2)
+                                    )
                                 }}
                             </div>
                             <div v-else

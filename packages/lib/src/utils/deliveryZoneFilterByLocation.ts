@@ -1,4 +1,5 @@
 import type { Point, DeliveryZone } from "@lib/types/storeTypes";
+import { roundTo2Decimals } from "./roundTo2Decimals";
 import { isInsideCircle } from "./isInsideCircle";
 import { isInsideRectangle } from "./isInsideRectangle";
 import { isInsidePolygon } from "./isInsidePolygon";
@@ -27,18 +28,18 @@ export function getBestDeliveryZone(
         return null;
     }
 
-    const distance = calculateDistance(userLocation, storeLocation);
+    const distance = roundTo2Decimals(calculateDistance(userLocation, storeLocation));
 
     // Calculate total delivery fees
     const zonesWithFees = availableZones.map((zone) => {
         const baseFee = zone.deliveryFee || 0;
         const distanceFee = zone.deliveryFeePerKm ? zone.deliveryFeePerKm * distance : 0;
-        const totalDeliveryFee = Number((baseFee + distanceFee).toFixed(2));
+        const totalDeliveryFee = roundTo2Decimals(baseFee + distanceFee);
 
         return {
             ...zone,
             totalDeliveryFee: totalDeliveryFee,
-            distanceFromStore: distance
+            distanceFromStoreKm: distance
         };
     });
 
