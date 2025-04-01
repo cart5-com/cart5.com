@@ -21,6 +21,8 @@ onMounted(() => {
 const onMapConfirm = (_result: { lat: number, lng: number }) => {
     isOpen.value = false;
     // console.log('onMapConfirm', result);
+    userStore.value!.lat = _result.lat;
+    userStore.value!.lng = _result.lng;
 }
 </script>
 

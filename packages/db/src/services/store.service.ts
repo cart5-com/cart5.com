@@ -21,13 +21,33 @@ export const getStoreData_Service = async (
                     menuRoot: true
                 }
             },
-            taxSettings: true,
+            taxSettings: {
+                columns: {
+                    currency: true,
+                    currencySymbol: true,
+                    salesTaxType: true,
+                    taxCategories: true,
+                    taxName: true,
+                    taxRateForDelivery: true,
+                }
+            },
             deliveryZones: {
                 columns: {
                     zones: true,
                 }
             },
-            // address: true,
+            address: {
+                columns: {
+                    address1: true,
+                    address2: true,
+                    city: true,
+                    state: true,
+                    postalCode: true,
+                    country: true,
+                    lat: true,
+                    lng: true,
+                }
+            },
             // openHours: true,
             // paymentMethods: true,
         }

@@ -27,7 +27,8 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/types/taxTypes";
 import type { OrderType } from "@lib/types/orderType";
-
+import type { DeliveryZone } from "@lib/types/storeTypes";
+import { deliveryZoneFilterByLocation } from "@lib/utils/deliveryZoneFilterByLocation";
 
 const currentCart = computed(() => {
   return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
@@ -71,6 +72,14 @@ const cartTotals = computed(() => {
 const getPrice = (item: CartItem) => {
   return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
+
+const availableDeliveryZones = computed(() => {
+  return deliveryZoneFilterByLocation({
+    lat: userStore.value?.lat!,
+    lng: userStore.value?.lng!
+  }, window.storeData?.deliveryZones?.zones ?? []);
+})
+
 </script>
 
 <template>
@@ -190,6 +199,16 @@ const getPrice = (item: CartItem) => {
 
             tax:{{ cartTotals.tax }}
           </span>
+        </div>
+
+        <div class="flex justify-between items-center px-1"
+             v-if="orderType === 'delivery'">
+          <details open>
+            <summary>
+              Delivery zones
+            </summary>
+            <pre class="text-sm">{{ availableDeliveryZones }}</pre>
+          </details>
         </div>
         <div
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
