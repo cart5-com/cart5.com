@@ -4,9 +4,9 @@ export const cacheHeadersMiddleware = defineMiddleware(async ({ request }, next)
     const response = await next();
     if (import.meta.env.PROD) {
         if (request.url.includes('/_actions/')) {
-            // do not cache actions, use them for user private data
+            // do not cache actions, able to use them for user private data
         } else if (request.url.includes('/_server-islands/')) {
-            // do not cache server islands, use them for user private data
+            // do not cache server islands, able to use them for user private data
         } else if (
             response.status === 200 ||
             response.status === 404

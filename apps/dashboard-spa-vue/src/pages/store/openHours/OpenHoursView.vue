@@ -14,14 +14,19 @@ import { getCurrentTimeNow, isOpenNow } from '@lib/utils/isOpenNow';
 import TimeZoneSelect from '@/ui-plus/TimeZoneSelect.vue';
 pageTitle.value = 'Operating Hours';
 
+const dHours = [
+    {
+        open: '09:00', close: '21:00'
+    }
+];
 const defaultDaysData = {
-    "0": { isOpen24: false, hours: [] },
-    "1": { isOpen24: false, hours: [] },
-    "2": { isOpen24: false, hours: [] },
-    "3": { isOpen24: false, hours: [] },
-    "4": { isOpen24: false, hours: [] },
-    "5": { isOpen24: false, hours: [] },
-    "6": { isOpen24: false, hours: [] },
+    "0": { isOpen24: false, hours: dHours },
+    "1": { isOpen24: false, hours: dHours },
+    "2": { isOpen24: false, hours: dHours },
+    "3": { isOpen24: false, hours: dHours },
+    "4": { isOpen24: false, hours: dHours },
+    "5": { isOpen24: false, hours: dHours },
+    "6": { isOpen24: false, hours: dHours },
 }
 
 onUnmounted(() => {
@@ -43,7 +48,7 @@ const isNowOpen = ref(isOpenNow(timezone.value, defaultHours.value));
 const interval: ReturnType<typeof setInterval> = setInterval(() => {
     storeTimeNow.value = getCurrentTimeNow(timezone.value);
     isNowOpen.value = isOpenNow(timezone.value, defaultHours.value);
-}, 3000);
+}, 1000);
 
 const deliveryHours = ref<WeeklyHours>({
     isActive: false,
@@ -176,6 +181,12 @@ const copyFromDefault2Pickup = () => {
         <div>
             Store time zone:
             <TimeZoneSelect v-model="timezone" />
+            <div class="text-sm text-muted-foreground mb-4 border-b border-t py-4">
+                Time now: {{ storeTimeNow.toFormat('EEEE, HH:mm:ss') }}
+                <br>
+                Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
+                (Default Operating Hours)
+            </div>
         </div>
         <Card>
             <CardHeader>
@@ -183,11 +194,6 @@ const copyFromDefault2Pickup = () => {
                 <CardDescription>Set your regular hours</CardDescription>
             </CardHeader>
             <CardContent class="p-2 pt-0">
-                <div class="text-sm text-muted-foreground mb-4 border-b border-t py-4">
-                    Time now: {{ storeTimeNow.toFormat('EEEE, HH:mm:ss') }}
-                    <br>
-                    Is open now: {{ isNowOpen }} {{ isNowOpen ? '✅' : '❌' }}
-                </div>
                 <WeekEditor :weekHours="defaultHours" />
             </CardContent>
         </Card>

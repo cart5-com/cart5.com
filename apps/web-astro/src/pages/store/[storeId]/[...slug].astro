@@ -16,7 +16,7 @@ if (!storeId) {
 
 const store = await getStoreData_Service(storeId);
 if (!store) {
-	throw new Error("Store not found");
+	return new Response(null, { status: 404 });
 }
 
 const createPageUrl = (orderType: OrderType | undefined = undefined) => {
@@ -31,12 +31,11 @@ const getMenuRoot = () => {
 	}
 	return store.menu.menuRoot;
 };
-store.name;
 ---
 
 <BaseLayout title={`${store?.name} - ${slug}`}>
-	<h1>{slug}</h1>
-	<h2>{storeId}</h2>
+	<h2>{store.name}</h2>
+
 	<StorePageAddressWidget client:only="vue" />
 	<div
 		class="bg-muted text-muted-foreground my-4 grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
