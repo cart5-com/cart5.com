@@ -39,6 +39,9 @@ export function initializeUserLocalStore() {
 
 export const getCartByStoreId = (storeId: string) => {
     const hostAndStoreId = `${window.location.host}_-_${storeId}`;
+    if (!userLocalStore.value?.carts) {
+        userLocalStore.value!.carts = {};
+    }
     return userLocalStore.value?.carts?.[hostAndStoreId];
 };
 
