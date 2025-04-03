@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ref, onMounted } from "vue";
 import { DoorOpen, ChevronRight } from 'lucide-vue-next';
-import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { loadLeafletCDN } from "@/ui-plus/geolocation-selection-map/loadLeafletCDN";
 
 defineProps<{
@@ -21,7 +21,7 @@ defineProps<{
 
 const isDialogOpen = ref(false);
 onMounted(async () => {
-    initializeUserStore();
+    initializeUserLocalStore();
     if (!userLocalStore.value?.country) {
         const ipwho = await ipwhois()
         if (userLocalStore && userLocalStore.value && ipwho.country_code) {

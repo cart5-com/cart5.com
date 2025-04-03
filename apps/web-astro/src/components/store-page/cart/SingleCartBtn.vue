@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { userLocalStore } from "../../../stores/UserLocal.store";
 import { Badge } from "@/components/ui/badge";
 import { computed, onMounted } from "vue";
-import { initializeUserStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
 
 const currentCart = computed(() => {
   return userLocalStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id
@@ -16,7 +16,7 @@ const totalItem = computed(() => {
 });
 
 onMounted(() => {
-  initializeUserStore();
+  initializeUserLocalStore();
 });
 
 </script>

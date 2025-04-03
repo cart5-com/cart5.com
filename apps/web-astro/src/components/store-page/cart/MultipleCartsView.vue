@@ -8,7 +8,7 @@ import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { onMounted } from "vue";
-import { initializeUserStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -19,7 +19,7 @@ const removeCart = (cartId: string) => {
 };
 
 onMounted(() => {
-  initializeUserStore();
+  initializeUserLocalStore();
 });
 
 </script>

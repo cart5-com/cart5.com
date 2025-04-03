@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AddressForm from "./AddressForm.vue";
 import { onMounted } from "vue";
-import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 
 onMounted(async () => {
-    initializeUserStore();
+    initializeUserLocalStore();
     if (
         (window.location.pathname + window.location.search) !== BASE_LINKS.HOME_UPDATE_ADDRESS &&
         userLocalStore.value?.lat && userLocalStore.value?.lat !== 0 &&

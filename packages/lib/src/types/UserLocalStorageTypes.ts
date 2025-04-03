@@ -24,6 +24,7 @@ export type UserLocalStorageType = {
 }
 
 export const USER_LOCAL_STORAGE_KEY = "USER_LOCAL_STORAGE_V1";
+
 export const USER_DEFAULT_VALUE: UserLocalStorageType = {
     version: "1",
     carts: []

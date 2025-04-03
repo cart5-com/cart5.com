@@ -5,7 +5,7 @@ import { userLocalStore } from "../../../stores/UserLocal.store";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { Badge } from "@/components/ui/badge";
 import { computed, onMounted } from "vue";
-import { initializeUserStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -20,7 +20,7 @@ const computedCartsQuantity = computed(() => {
 });
 
 onMounted(() => {
-  initializeUserStore();
+  initializeUserLocalStore();
 });
 
 </script>

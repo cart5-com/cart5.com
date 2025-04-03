@@ -9,13 +9,13 @@ import {
 } from '@/components/ui/drawer'
 import AddressForm from '../AddressForm.vue';
 import { onMounted } from 'vue';
-import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
+import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const isOpen = ref(false);
 onMounted(() => {
-    initializeUserStore();
+    initializeUserLocalStore();
 })
 
 const onMapConfirm = (_result: { lat: number, lng: number }) => {

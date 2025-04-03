@@ -13,7 +13,7 @@ import { showItemModal } from "../components/store-page/menu/item/showItemModal"
 
 export const userLocalStore = ref<UserLocalStorageType | null>(null);
 
-export function initializeUserStore() {
+export function initializeUserLocalStore() {
     if (typeof window === "undefined") {
         return;
     }
