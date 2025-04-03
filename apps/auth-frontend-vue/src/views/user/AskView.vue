@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { Card, CardContent } from "@/components/ui/card";
-import UserDetails from "@auth-frontend-vue/components/forms/UserDetails.vue";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
 import { createApiClient_AsUrlHelper } from "@api-client/index";
 import { getNextUrl, getNextHostname } from "@auth-frontend-vue/lib/queryHelpers";
+import { userStore } from '@auth-frontend-vue/stores/User.store';
+import UserCard from "@/ui-plus/UserCard.vue";
 
 const dialog = useDialog();
 const crossDomainHostname = getNextHostname();
@@ -69,7 +70,11 @@ onMounted(() => {
 <template>
     <Card>
         <CardContent class="my-6">
-            <UserDetails />
+            <UserCard v-if="userStore"
+                      :name="userStore?.name"
+                      :email="userStore?.email"
+                      :pictureUrl="userStore?.pictureUrl" />
+
             <button :class="[buttonVariants({ variant: 'default' }), 'mt-6 w-full font-medium continue-button']"
                     @click="redirectWithUser">
                 Continue

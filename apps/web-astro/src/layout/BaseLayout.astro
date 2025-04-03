@@ -63,7 +63,9 @@ const { title } = Astro.props;
 									<label for="left-drawer" class="drawer-button">
 										<MenuIcon class="mr-4 cursor-pointer" />
 									</label>
-									<a href={BASE_LINKS.HOME} class="mr-8 text-2xl font-bold">{Astro.locals.WEBSITE?.name}</a>
+									<a href={BASE_LINKS.HOME} class="mr-8 text-2xl font-bold">
+										{Astro.locals.WEBSITE?.name}
+									</a>
 								</div>
 								<slot name="header-right">
 									<!-- <MultipleCartsBtn client:only="vue" /> -->
@@ -108,9 +110,9 @@ const { title } = Astro.props;
 				<div
 					class="bg-background text-foreground max-w-10/12 border-muted-foreground min-h-full w-96 overflow-y-auto border-r">
 					<Drawer client:visible />
-					<slot name="sidebar">
+					<slot name="left-drawer">
 						<!-- loop 100 times -->
-						{Array.from({ length: 100 }, (_, i) => <div>{i}</div>)}
+						<!-- {Array.from({ length: 100 }, (_, i) => <div>{i}</div>)} -->
 					</slot>
 				</div>
 			</div>
