@@ -70,10 +70,7 @@ onMounted(() => {
 <template>
     <Card>
         <CardContent class="my-6">
-            <UserCard v-if="userStore"
-                      :name="userStore?.name"
-                      :email="userStore?.email"
-                      :pictureUrl="userStore?.pictureUrl" />
+            <UserCard :user="userStore" />
 
             <button :class="[buttonVariants({ variant: 'default' }), 'mt-6 w-full font-medium continue-button']"
                     @click="redirectWithUser">

@@ -14,10 +14,7 @@ import UserCard from "@/ui-plus/UserCard.vue";
         <CardContent class="space-y-6">
             <GoBackButton />
             <h1 class="my-6 text-2xl font-bold">{{ $t('settings') }}</h1>
-            <UserCard v-if="userStore"
-                      :name="userStore?.name"
-                      :email="userStore?.email"
-                      :pictureUrl="userStore?.pictureUrl" />
+            <UserCard :user="userStore" />
             <LogoutButton />
             <Separator class="my-10" />
             <UserSecuritySettings class="my-10" />

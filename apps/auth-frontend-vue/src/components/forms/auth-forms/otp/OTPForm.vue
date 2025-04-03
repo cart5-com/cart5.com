@@ -64,29 +64,34 @@ async function onSubmit(values: z.infer<typeof schema>) {
 </script>
 
 <template>
-	<AutoForm class="space-y-6"
-			  :schema="schema"
-			  :form="form"
-			  @submit="onSubmit"
-			  :field-config="{
-				email: {
-					inputProps: {
-						autocomplete: 'email',
-					}
-				},
-			}">
-		<div class="text-sm font-medium text-destructive"
-			 v-if="globalError">
-			{{ globalError }}
-		</div>
-		<div>
-			<Button type="submit"
-					:disabled="isLoading"
-					class="w-full my-6">
-				<Loader2 v-if="isLoading"
-						 class="animate-spin" />
-				Send Code
-			</Button>
-		</div>
-	</AutoForm>
+	<div>
+		<h1 class="text-2xl font-bold">One time password</h1>
+		<p class="text-sm text-muted-foreground">Enter your email to receive a one time password</p>
+
+		<AutoForm class="space-y-6 mt-6"
+				  :schema="schema"
+				  :form="form"
+				  @submit="onSubmit"
+				  :field-config="{
+					email: {
+						inputProps: {
+							autocomplete: 'email',
+						}
+					},
+				}">
+			<div class="text-sm font-medium text-destructive"
+				 v-if="globalError">
+				{{ globalError }}
+			</div>
+			<div>
+				<Button type="submit"
+						:disabled="isLoading"
+						class="w-full my-6">
+					<Loader2 v-if="isLoading"
+							 class="animate-spin" />
+					Send Code
+				</Button>
+			</div>
+		</AutoForm>
+	</div>
 </template>

@@ -12,6 +12,8 @@ onMounted(() => {
 <template>
     <div class="p-1">
         <UserMenu />
-        <DarkModeToggle />
+        <div class="mt-2 flex justify-center">
+            <DarkModeToggle />
+        </div>
     </div>
 </template>
