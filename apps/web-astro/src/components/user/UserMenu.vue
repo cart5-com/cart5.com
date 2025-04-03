@@ -4,7 +4,7 @@ import UserCard from "@/ui-plus/UserCard.vue";
 import { initializeUserStore, userStore, logoutAll } from "@web-astro/stores/User.store";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "@lib/clientUtils/getAuthOrigin";
-import ClearAnonData from "./ClearAnonData.vue";
+// import ClearAnonData from "./ClearAnonData.vue";
 
 const isLoading = ref(true);
 let loginUrl = "";
