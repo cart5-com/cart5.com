@@ -55,6 +55,6 @@ onMounted(async () => {
                 Register
             </Button>
         </div>
-        <ClearAnonData />
+        <!-- <ClearAnonData /> -->
     </div>
 </template>
