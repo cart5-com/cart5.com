@@ -7,6 +7,8 @@ import {
     callbackSchemaValidator
 } from './cross-domain-callback.controller';
 import { logoutAllRoute } from './logout-all.controller';
+import { getUserDataRoute, getUserDataSchemaValidator } from './get_user_data.controller';
+import { updateUserDataRoute, updateUserDataSchemaValidator } from './update_user_data.controller';
 
 export const authGlobalRoute = new Hono<HonoVariables>()
     .post(
@@ -25,6 +27,16 @@ export const authGlobalRoute = new Hono<HonoVariables>()
         '/cross-domain-callback',
         callbackSchemaValidator,
         callbackRoute
+    )
+    .post(
+        '/get_user_data',
+        getUserDataSchemaValidator,
+        getUserDataRoute
+    )
+    .patch(
+        '/update_user_data',
+        updateUserDataSchemaValidator,
+        updateUserDataRoute
     )
 
 

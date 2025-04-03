@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import node from "@astrojs/node";
 import sentry from "@sentry/astro";
-
+import { fileURLToPath, URL } from 'node:url'
 import vue from "@astrojs/vue";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -74,7 +74,38 @@ export default defineConfig({
 
     plugins: [
       tailwindcss()
-    ]
+    ],
+
+
+    resolve: {
+      alias: {
+        "@": fileURLToPath(
+          new URL("../../packages/ui-shadcn-vue/src", import.meta.url),
+        ),
+        "@web-astro": fileURLToPath(
+          new URL("./src", import.meta.url),
+        ),
+        "@web-astro/*": fileURLToPath(
+          new URL("./src/*", import.meta.url),
+        ),
+        "@lib": fileURLToPath(
+          new URL("../../packages/lib/src", import.meta.url),
+        ),
+        "@api-client": fileURLToPath(
+          new URL("../../packages/api-client/src", import.meta.url),
+        ),
+        "@db": fileURLToPath(
+          new URL("../../packages/db/src", import.meta.url),
+        ),
+        "@api-hono": fileURLToPath(
+          new URL("../../apps/api-hono/src", import.meta.url),
+        ),
+        // "@root": fileURLToPath(
+        //   new URL("../../packages/lib", import.meta.url),
+        // ),
+        // 'vue': 'vue/dist/vue.esm-bundler.js',
+      },
+    },
   },
   integrations: [
     vue({

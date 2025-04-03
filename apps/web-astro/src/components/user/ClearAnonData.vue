@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { onMounted } from "vue";
 import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
@@ -32,4 +32,4 @@ onMounted(() => {
             @click="clearLocalData">
         Clear Anonymized Data
     </Button>
-</template>
+</template> -->

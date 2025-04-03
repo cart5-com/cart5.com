@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import UserCard from "@/ui-plus/UserCard.vue";
-import { initializeUserStore, userStore, logoutAll } from "@web-astro/stores/User.store";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "@lib/clientUtils/getAuthOrigin";
+import { userDataStore, logoutAll } from "@web-astro/stores/UserData.store";
 // import ClearAnonData from "./ClearAnonData.vue";
 
 const isLoading = ref(true);
@@ -12,7 +12,6 @@ let registerUrl = "";
 let settingsUrl = "";
 
 onMounted(async () => {
-    await initializeUserStore();
     loginUrl = getLoginUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
     registerUrl = getSignupUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
     settingsUrl = getSettingsUrl(import.meta.env.PUBLIC_DOMAIN_NAME);
@@ -23,8 +22,8 @@ onMounted(async () => {
 
 <template>
     <div v-if="!isLoading">
-        <div v-if="userStore">
-            <UserCard :user="userStore" />
+        <div v-if="userDataStore?.user">
+            <UserCard :user="userDataStore.user" />
             <Button class="w-full mt-1"
                     as="a"
                     size="lg"

@@ -6,13 +6,15 @@ import * as authSchema from './schema/auth.schema';
 import * as storeSchema from './schema/store.schema';
 import * as websiteSchema from './schema/website.schema';
 import * as teamSchema from './schema/team.schema';
+import * as userDataSchema from './schema/userData.schema';
 // import { createClient } from '@libsql/client';
 
 export const schema = {
     ...authSchema,
     ...storeSchema,
     ...websiteSchema,
-    ...teamSchema
+    ...teamSchema,
+    ...userDataSchema
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {

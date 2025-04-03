@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ref, onMounted } from "vue";
 import { DoorOpen, ChevronRight } from 'lucide-vue-next';
-import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
+// import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { loadLeafletCDN } from "@/ui-plus/geolocation-selection-map/loadLeafletCDN";
 
 defineProps<{
@@ -21,13 +21,13 @@ defineProps<{
 
 const isDialogOpen = ref(false);
 onMounted(async () => {
-    initializeUserLocalStore();
-    if (!userLocalStore.value?.country) {
-        const ipwho = await ipwhois()
-        if (userLocalStore && userLocalStore.value && ipwho.country_code) {
-            userLocalStore.value.country = ipwho.country_code
-        }
-    }
+    // initializeUserLocalStore();
+    // if (!userLocalStore.value?.country) {
+    //     const ipwho = await ipwhois()
+    //     if (userLocalStore && userLocalStore.value && ipwho.country_code) {
+    //         userLocalStore.value.country = ipwho.country_code
+    //     }
+    // }
     setTimeout(() => {
         loadLeafletCDN(true);
     }, 1000);
@@ -40,7 +40,10 @@ const onSubmit = () => {
 </script>
 
 <template>
-    <div v-if="userLocalStore">
+    <div>
+        hello
+    </div>
+    <!-- <div v-if="userLocalStore">
         <Dialog v-model:open="isDialogOpen">
             <DialogContent
                            class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]">
@@ -75,5 +78,5 @@ const onSubmit = () => {
                 <ChevronRight />
             </Button>
         </form>
-    </div>
+    </div> -->
 </template>

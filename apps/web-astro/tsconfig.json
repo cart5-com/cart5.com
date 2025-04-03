@@ -17,6 +17,9 @@
       ],
       "@web-astro/*": [
         "./src/*"
+      ],
+      "@api-hono/*": [
+        "../../apps/api-hono/src/*"
       ]
     },
     "jsx": "preserve"

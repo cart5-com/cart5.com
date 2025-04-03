@@ -8,6 +8,13 @@
       "when": 1743219426792,
       "tag": "0000_perpetual_harrier",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1743707843544,
+      "tag": "0001_spicy_nitro",
+      "breakpoints": true
     }
   ]
 }
