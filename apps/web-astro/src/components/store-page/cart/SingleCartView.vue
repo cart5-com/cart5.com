@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userStore, removeItemFromCart, openItemInCart, clearCartByCartId, initializeUserStore } from "../../../stores/User.store";
+import { userLocalStore, removeItemFromCart, openItemInCart, clearCartByCartId, initializeUserStore } from "../../../stores/UserLocal.store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
@@ -30,7 +30,7 @@ import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/deliveryZoneFilterByLocation";
 
 const currentCart = computed(() => {
-  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
+  return userLocalStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
 });
 
 
@@ -75,8 +75,8 @@ const getPrice = (item: CartItem) => {
 const bestDeliveryZone = computed(() => {
   return getBestDeliveryZone(
     {
-      lat: userStore.value?.lat!,
-      lng: userStore.value?.lng!
+      lat: userLocalStore.value?.lat!,
+      lng: userLocalStore.value?.lng!
     },
     window.storeData?.deliveryZones?.zones ?? [],
     {

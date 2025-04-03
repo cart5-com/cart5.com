@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userStore } from "../../../stores/User.store";
+import { userLocalStore } from "../../../stores/UserLocal.store";
 import { Badge } from "@/components/ui/badge";
 import { computed, onMounted } from "vue";
-import { initializeUserStore } from "@web-astro/stores/User.store";
+import { initializeUserStore } from "@web-astro/stores/UserLocal.store";
 
 const currentCart = computed(() => {
-  return userStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id
+  return userLocalStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id
   );
 });
 

@@ -11,26 +11,26 @@ import {
 import { showItemModal } from "../components/store-page/menu/item/showItemModal";
 
 
-export const userStore = ref<UserLocalStorageType | null>(null);
+export const userLocalStore = ref<UserLocalStorageType | null>(null);
 
 export function initializeUserStore() {
     if (typeof window === "undefined") {
         return;
     }
-    if (userStore.value !== null) {
-        return userStore;
+    if (userLocalStore.value !== null) {
+        return userLocalStore;
     }
     const userLocalStorage = localStorage.getItem(USER_LOCAL_STORAGE_KEY);
     if (userLocalStorage) {
-        userStore.value = JSON.parse(userLocalStorage);
+        userLocalStore.value = JSON.parse(userLocalStorage);
     } else {
-        userStore.value = USER_DEFAULT_VALUE;
-        localStorage.setItem(USER_LOCAL_STORAGE_KEY, JSON.stringify(userStore.value));
+        userLocalStore.value = USER_DEFAULT_VALUE;
+        localStorage.setItem(USER_LOCAL_STORAGE_KEY, JSON.stringify(userLocalStore.value));
     }
-    watch(userStore, (newVal) => {
+    watch(userLocalStore, (newVal) => {
         localStorage.setItem(USER_LOCAL_STORAGE_KEY, JSON.stringify(newVal));
     }, { immediate: false, deep: true });
-    return userStore;
+    return userLocalStore;
 }
 
 // if (typeof window !== "undefined") {
@@ -38,7 +38,7 @@ export function initializeUserStore() {
 // }
 
 export const getCartByStoreId = (storeId: string) => {
-    return userStore.value?.carts?.find((cart) => cart.storeId === storeId);
+    return userLocalStore.value?.carts?.find((cart) => cart.storeId === storeId);
 };
 
 export const addItemToCart = (
@@ -48,7 +48,7 @@ export const addItemToCart = (
 ) => {
     const storeCart = getCartByStoreId(storeId);
     if (!storeCart) {
-        userStore.value?.carts?.push({
+        userLocalStore.value?.carts?.push({
             id: crypto.randomUUID(),
             storeId,
             storeName: storeName,
@@ -88,10 +88,10 @@ export const removeItemFromCart = (storeId: string, itemIndex: number) => {
         storeCart.items?.splice(itemIndex, 1);
     }
     if (storeCart?.items?.length === 0) {
-        userStore.value?.carts?.splice(userStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
+        userLocalStore.value?.carts?.splice(userLocalStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
     }
 }
 
 export const clearCartByCartId = (cartId: string) => {
-    userStore.value?.carts?.splice(userStore.value?.carts?.findIndex((cart) => cart.id === cartId), 1);
+    userLocalStore.value?.carts?.splice(userLocalStore.value?.carts?.findIndex((cart) => cart.id === cartId), 1);
 }

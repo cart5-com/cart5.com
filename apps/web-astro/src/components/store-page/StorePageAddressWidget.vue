@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/drawer'
 import AddressForm from '../AddressForm.vue';
 import { onMounted } from 'vue';
-import { initializeUserStore, userStore } from "@web-astro/stores/User.store";
+import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
 
@@ -21,8 +21,8 @@ onMounted(() => {
 const onMapConfirm = (_result: { lat: number, lng: number }) => {
     isOpen.value = false;
     // console.log('onMapConfirm', result);
-    userStore.value!.lat = _result.lat;
-    userStore.value!.lng = _result.lng;
+    userLocalStore.value!.lat = _result.lat;
+    userLocalStore.value!.lng = _result.lng;
 }
 </script>
 
@@ -33,7 +33,7 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                     class="max-w-[200px]">
                 <span class="truncate">
                     <MapPin class="mr-1 inline-block" />
-                    {{ userStore?.address || 'Location' }}
+                    {{ userLocalStore?.address || 'Location' }}
                 </span>
             </Button>
         </DrawerTrigger>

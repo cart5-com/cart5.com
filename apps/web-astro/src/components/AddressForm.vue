@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ref, onMounted } from "vue";
 import { DoorOpen, ChevronRight } from 'lucide-vue-next';
-import { initializeUserStore, userStore } from "@web-astro/stores/User.store";
+import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { loadLeafletCDN } from "@/ui-plus/geolocation-selection-map/loadLeafletCDN";
 
 defineProps<{
@@ -22,10 +22,10 @@ defineProps<{
 const isDialogOpen = ref(false);
 onMounted(async () => {
     initializeUserStore();
-    if (!userStore.value?.country) {
+    if (!userLocalStore.value?.country) {
         const ipwho = await ipwhois()
-        if (userStore && userStore.value && ipwho.country_code) {
-            userStore.value.country = ipwho.country_code
+        if (userLocalStore && userLocalStore.value && ipwho.country_code) {
+            userLocalStore.value.country = ipwho.country_code
         }
     }
     setTimeout(() => {
@@ -40,7 +40,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-    <div v-if="userStore">
+    <div v-if="userLocalStore">
         <Dialog v-model:open="isDialogOpen">
             <DialogContent
                            class="flex h-full min-h-full min-w-full flex-col p-0 sm:p-2 md:h-[70vh] md:min-h-[70vh] md:min-w-[80vw] lg:min-w-[50vw]">
@@ -50,10 +50,10 @@ const onSubmit = () => {
                         Confirm your entrance/door location
                     </DialogTitle>
                 </DialogHeader>
-                <GeolocationMap :address="userStore.address!"
-                                :country="userStore.country!"
-                                :lat="userStore.lat!"
-                                :lng="userStore.lng!"
+                <GeolocationMap :address="userLocalStore.address!"
+                                :country="userLocalStore.country!"
+                                :lat="userLocalStore.lat!"
+                                :lng="userLocalStore.lng!"
                                 @done="$emit('done', $event)"
                                 btn-label="Confirm" />
             </DialogContent>
@@ -61,9 +61,9 @@ const onSubmit = () => {
 
         <form @submit.prevent="onSubmit">
             <div class="my-8 flex w-full items-center gap-1.5">
-                <CountrySelect v-model="userStore.country!"
+                <CountrySelect v-model="userLocalStore.country!"
                                class="h-10" />
-                <Input v-model="userStore.address!"
+                <Input v-model="userLocalStore.address!"
                        autocomplete="street-address"
                        class="inline-block"
                        type="text"

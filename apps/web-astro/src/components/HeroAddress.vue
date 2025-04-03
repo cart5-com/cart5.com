@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import AddressForm from "./AddressForm.vue";
 import { onMounted } from "vue";
-import { initializeUserStore, userStore } from "@web-astro/stores/User.store";
+import { initializeUserStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 
 onMounted(async () => {
     initializeUserStore();
     if (
         (window.location.pathname + window.location.search) !== BASE_LINKS.HOME_UPDATE_ADDRESS &&
-        userStore.value?.lat && userStore.value?.lat !== 0 &&
-        userStore.value?.lng && userStore.value?.lng !== 0 &&
-        userStore.value?.address &&
-        userStore.value?.country
+        userLocalStore.value?.lat && userLocalStore.value?.lat !== 0 &&
+        userLocalStore.value?.lng && userLocalStore.value?.lng !== 0 &&
+        userLocalStore.value?.address &&
+        userLocalStore.value?.country
     ) {
         redirectToList();
     }
@@ -20,14 +20,14 @@ onMounted(async () => {
 const redirectToList = () => {
     const url = new URL(window.location.href);
     url.pathname = BASE_LINKS.LIST_STORES;
-    url.searchParams.set('lat', userStore.value?.lat?.toString() || '0');
-    url.searchParams.set('lng', userStore.value?.lng?.toString() || '0');
-    url.searchParams.set('address', userStore.value?.address || '');
-    url.searchParams.set('country', userStore.value?.country || '');
+    url.searchParams.set('lat', userLocalStore.value?.lat?.toString() || '0');
+    url.searchParams.set('lng', userLocalStore.value?.lng?.toString() || '0');
+    url.searchParams.set('address', userLocalStore.value?.address || '');
+    url.searchParams.set('country', userLocalStore.value?.country || '');
     if (
-        userStore.value?.country === "US" ||
-        userStore.value?.country === "LR" ||
-        userStore.value?.country === "MM"
+        userLocalStore.value?.country === "US" ||
+        userLocalStore.value?.country === "LR" ||
+        userLocalStore.value?.country === "MM"
     ) {
         url.searchParams.set('measure', 'mi');
     }
@@ -37,15 +37,15 @@ const redirectToList = () => {
 
 const onMapConfirm = (result: { lat: number, lng: number }) => {
     console.log('onMapConfirm', result);
-    userStore.value!.lat = result.lat;
-    userStore.value!.lng = result.lng;
+    userLocalStore.value!.lat = result.lat;
+    userLocalStore.value!.lng = result.lng;
     redirectToList();
 }
 
 </script>
 
 <template>
-    <div v-if="userStore">
+    <div v-if="userLocalStore">
         <AddressForm @done="onMapConfirm" />
     </div>
 </template>
