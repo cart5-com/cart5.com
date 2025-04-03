@@ -12,7 +12,7 @@ const getTotalItem = (cart: Cart) => {
 };
 
 const getAllCartsQuantity = () => {
-  return userLocalStore.value?.carts?.reduce((acc: number, cart: Cart) => acc + getTotalItem(cart), 0) ?? 0;
+  return Object.values(userLocalStore.value?.carts ?? {}).reduce((acc: number, cart: Cart) => acc + getTotalItem(cart), 0) ?? 0;
 };
 
 const computedCartsQuantity = computed(() => {

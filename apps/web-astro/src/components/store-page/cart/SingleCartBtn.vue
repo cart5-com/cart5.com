@@ -7,8 +7,7 @@ import { computed, onMounted } from "vue";
 import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
 
 const currentCart = computed(() => {
-  return userLocalStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id
-  );
+  return userLocalStore.value?.carts?.[`${window.location.host}_-_${window.storeData?.id}`];
 });
 
 const totalItem = computed(() => {

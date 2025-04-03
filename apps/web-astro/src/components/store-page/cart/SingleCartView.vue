@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userLocalStore, removeItemFromCart, openItemInCart, clearCartByCartId, initializeUserLocalStore } from "../../../stores/UserLocal.store";
+import { userLocalStore, removeItemFromCart, openItemInCart, clearCartByStoreId, initializeUserLocalStore } from "../../../stores/UserLocal.store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type CartItem, type MenuRoot } from "@lib/types/menuType";
@@ -30,7 +30,7 @@ import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/deliveryZoneFilterByLocation";
 
 const currentCart = computed(() => {
-  return userLocalStore.value?.carts?.find((cart) => cart.storeId === window.storeData?.id);
+  return userLocalStore.value?.carts?.[`${window.location.host}_-_${window.storeData?.id}`];
 });
 
 
@@ -54,7 +54,7 @@ const openCartItem = (itemIndex: number) => {
 }
 
 const removeAllItemsFromCart = () => {
-  clearCartByCartId(currentCart.value?.id!);
+  clearCartByStoreId(currentCart.value?.storeId!);
 }
 
 onMounted(() => {

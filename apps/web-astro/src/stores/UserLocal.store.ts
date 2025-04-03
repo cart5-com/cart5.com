@@ -38,7 +38,8 @@ export function initializeUserLocalStore() {
 // }
 
 export const getCartByStoreId = (storeId: string) => {
-    return userLocalStore.value?.carts?.find((cart) => cart.storeId === storeId);
+    const hostAndStoreId = `${window.location.host}_-_${storeId}`;
+    return userLocalStore.value?.carts?.[hostAndStoreId];
 };
 
 export const addItemToCart = (
@@ -47,19 +48,19 @@ export const addItemToCart = (
     cartItem: CartItem
 ) => {
     const storeCart = getCartByStoreId(storeId);
-    if (!storeCart) {
-        userLocalStore.value?.carts?.push({
-            id: crypto.randomUUID(),
+    const hostAndStoreId = `${window.location.host}_-_${storeId}`;
+    if (!userLocalStore.value?.carts?.[hostAndStoreId]) {
+        userLocalStore.value!.carts![hostAndStoreId] = {
             storeId,
             storeName: storeName,
             orderNote: "",
             items: [cartItem]
-        })
+        }
     } else {
-        if (storeCart.items) {
+        if (storeCart?.items) {
             storeCart.items.push(cartItem);
         } else {
-            storeCart.items = [cartItem];
+            storeCart!.items = [cartItem];
         }
     }
 };
@@ -88,10 +89,12 @@ export const removeItemFromCart = (storeId: string, itemIndex: number) => {
         storeCart.items?.splice(itemIndex, 1);
     }
     if (storeCart?.items?.length === 0) {
-        userLocalStore.value?.carts?.splice(userLocalStore.value?.carts?.findIndex((cart) => cart.id === storeCart.id), 1);
+        const hostAndStoreId = `${window.location.host}_-_${storeId}`;
+        delete userLocalStore.value?.carts?.[hostAndStoreId];
     }
 }
 
-export const clearCartByCartId = (cartId: string) => {
-    userLocalStore.value?.carts?.splice(userLocalStore.value?.carts?.findIndex((cart) => cart.id === cartId), 1);
+export const clearCartByStoreId = (storeId: string) => {
+    const hostAndStoreId = `${window.location.host}_-_${storeId}`;
+    delete userLocalStore.value?.carts?.[hostAndStoreId];
 }

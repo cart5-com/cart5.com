@@ -1,11 +1,10 @@
 
 import type { CartItem } from "./menuType";
 
-export type StoreId = string;
+export type HostAndStoreId = string; // as `host_-_storeId`
 
 export type Cart = {
-    id?: string;
-    storeId?: StoreId;
+    storeId?: HostAndStoreId;
     storeName?: string;
     orderNote?: string;
     items?: CartItem[];
@@ -20,12 +19,12 @@ export type UserLocalStorageType = {
     lat?: number;
     lng?: number;
 
-    carts?: Cart[];
+    carts?: Record<HostAndStoreId, Cart>;
 }
 
 export const USER_LOCAL_STORAGE_KEY = "USER_LOCAL_STORAGE_V1";
 
 export const USER_DEFAULT_VALUE: UserLocalStorageType = {
     version: "1",
-    carts: []
+    carts: {}
 };

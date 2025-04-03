@@ -7,7 +7,7 @@ import { USER_DEFAULT_VALUE } from "@lib/types/UserLocalStorageTypes";
 
 const hasLocalData = () => {
     if (userLocalStore.value) {
-        return ((userLocalStore.value.carts && userLocalStore.value.carts.length > 0) ||
+        return ((userLocalStore.value.carts && Object.keys(userLocalStore.value.carts).length > 0) ||
             userLocalStore.value.lat ||
             userLocalStore.value.lng ||
             userLocalStore.value.country ||

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MoreVerticalIcon, ShoppingCart, Trash } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userLocalStore, clearCartByCartId } from "../../../stores/UserLocal.store";
+import { userLocalStore, clearCartByStoreId } from "../../../stores/UserLocal.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
@@ -14,8 +14,8 @@ const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
 };
 
-const removeCart = (cartId: string) => {
-  clearCartByCartId(cartId);
+const removeCart = (storeId: string) => {
+  clearCartByStoreId(storeId);
 };
 
 onMounted(() => {
@@ -29,11 +29,11 @@ onMounted(() => {
     <div v-if="userLocalStore"
          class="flex flex-col gap-2 p-2">
       <div v-for="(cart, index) in userLocalStore?.carts"
-           :key="cart.id ?? index"
+           :key="cart.storeId ?? index"
            class="flex flex-row gap-2 items-center rounded-md border p-2">
         <Button as="a"
                 variant="ghost"
-                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''))}?cartId=${cart.id}`"
+                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''))}?cartId=${cart.storeId}`"
                 class="grid grid-cols-[auto_1fr_auto] gap-2 flex-1">
           <ShoppingCart class="flex-shrink-0" />
           <span class="truncate">
@@ -50,14 +50,14 @@ onMounted(() => {
           <DropdownMenuContent align="end"
                                class="">
 
-            <DropdownMenuItem @click="removeCart(cart.id!)">
+            <DropdownMenuItem @click="removeCart(cart.storeId!)">
               <Trash />
               Remove
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div v-if="userLocalStore?.carts?.length === 0">
+      <div v-if="Object.keys(userLocalStore?.carts ?? {}).length === 0">
         <span class="text-sm font-medium">
           No carts
           <br />
