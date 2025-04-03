@@ -37,6 +37,9 @@ export const callbackRoute = async (
     }
     // Create new permanent session for this domain
     await createUserSessionAndSetCookie(c, userId);
+    redirectUrl.hash = "after-login";
+    //history.replaceState(null, null, ' ');
+    //history.pushState(null, null, ' ')
 
     // Redirect to final destination
     return c.redirect(redirectUrl.toString());
