@@ -65,10 +65,16 @@ const loadUserData = async () => {
         console.error(error);
         toast.error("Failed to load user data");
     }
-    if (!data.userData || data.user) {
+    if (isAfterLogin) {
+        mergeUserData(loadFromLocalStorage(), data.userData);
+    }
+    if (!data.user) {
         userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
     } else {
-        userDataStore.value = data;
+        userDataStore.value = {
+            user: data.user,
+            userData: data.userData || {},
+        };
     }
 
     watch(userDataStore, (newVal) => {
