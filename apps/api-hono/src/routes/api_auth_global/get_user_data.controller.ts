@@ -8,7 +8,7 @@ import { selectUserDataSchema } from "@db/schema/userData.schema";
 import { getUserData_Service } from "@db/services/user_data.service";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 
-export const getUserDataSchemaValidator = zValidator('json', z.object({
+export const getUserData_SchemaValidator = zValidator('json', z.object({
     columns: z.object(
         Object.fromEntries(
             Object.keys(selectUserDataSchema.shape)
@@ -20,7 +20,7 @@ export const getUserDataSchemaValidator = zValidator('json', z.object({
 export const getUserDataRoute = async (c: Context<
     HonoVariables,
     "get_user_data",
-    ValidatorContext<typeof getUserDataSchemaValidator>
+    ValidatorContext<typeof getUserData_SchemaValidator>
 >) => {
     const user = c.get("USER");
     if (!user) {
@@ -29,7 +29,7 @@ export const getUserDataRoute = async (c: Context<
             //     user: null,
             //     userData: null,
             // },
-            data: undefined,
+            data: null,
             error: null as ErrorType
         }, 200);
     }

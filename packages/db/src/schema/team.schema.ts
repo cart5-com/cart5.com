@@ -23,7 +23,7 @@ export const teamTable = sqliteTable("team", {
 export const teamUserMapTable = sqliteTable("team_user_map", {
     teamId: text("team_id").notNull(),
     userId: text("user_id").notNull(),
-    permissions: text("permissions", { mode: "json" }).$type<string[]>().$defaultFn(() => []),
+    permissions: text("permissions", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 }, (table) => [
     primaryKey({ columns: [table.teamId, table.userId] }),
 ]);
@@ -43,7 +43,7 @@ export const teamInvitationsTable = sqliteTable("team_invitations", {
     teamName: text("team_name").notNull(),
     inviterId: text("inviter_id").notNull(),
     email: text("email").notNull(),
-    permissions: text("permissions", { mode: "json" }).$type<string[]>().$defaultFn(() => []),
+    permissions: text("permissions", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
     status: text("status", { enum: ["PENDING", "ACCEPTED", "REJECTED", "EXPIRED", "CANCELLED"] }).notNull(),
     acceptedAt: integer("accepted_at_ts"),
     ...autoCreatedUpdated,

@@ -5,14 +5,14 @@ import { zValidator } from "@hono/zod-validator";
 import { updateUserDataSchema } from "@db/schema/userData.schema";
 import { updateUserData_Service } from "@db/services/user_data.service";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
-import type { UserAddress } from "@lib/types/UserAddressType";
-import { z } from "zod";
 
-export const updateUserDataSchemaValidator = zValidator('json',
+export const updateUserData_SchemaValidator = zValidator('json',
     updateUserDataSchema
         .omit({
             // unallowed fields for direct update
-            userId: true
+            userId: true,
+            created_at_ts: true,
+            updated_at_ts: true,
         })
         // .extend({
         //     // Define proper type for addresses field
@@ -24,27 +24,18 @@ export const updateUserDataSchemaValidator = zValidator('json',
 export const updateUserDataRoute = async (c: Context<
     HonoVariables,
     "update_user_data",
-    ValidatorContext<typeof updateUserDataSchemaValidator>
+    ValidatorContext<typeof updateUserData_SchemaValidator>
 >) => {
-    const user = c.get("USER");
-    if (!user) {
-        return c.json({
-            data: null,
-            error: null as ErrorType
-        }, 401);
-    }
-
     const {
         // unallowed fields for direct update // double check after validator
         // @ts-ignore
-        userId: _userId,
-
+        userId: _userId, created_at_ts: _created_at_ts, updated_at_ts: _updated_at_ts,
         // other fields are allowed
         ...data
     } = c.req.valid('json');
-
+    const user = c.get("USER");
     return c.json({
-        data: await updateUserData_Service(user.id, data),
+        data: await updateUserData_Service(user!.id, data),
         error: null as ErrorType
     }, 200);
 } 
