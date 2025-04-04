@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userLocalStore } from "../../../stores/UserCarts.store";
-import type { Cart } from "@lib/types/UserLocalStorageTypes";
+import { userDataStore } from "../../../stores/UserData.store";
 import { Badge } from "@/components/ui/badge";
 import { computed } from "vue";
+import { type Cart } from "@lib/zod/cartItemState";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
 };
 
 const getAllCartsQuantity = () => {
-  return Object.values(userLocalStore.value?.carts ?? {}).reduce((acc: number, cart: Cart) => acc + getTotalItem(cart), 0) ?? 0;
+  return Object.values(userDataStore.value?.userData?.carts ?? {}).reduce((acc: number, cart: Cart) => acc + getTotalItem(cart), 0) ?? 0;
 };
 
 const computedCartsQuantity = computed(() => {

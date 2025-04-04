@@ -8,7 +8,7 @@ import {
     DrawerTrigger,
 } from '@/components/ui/drawer'
 import AddressForm from '../AddressForm.vue';
-import { userLocalStore } from "@web-astro/stores/UserCarts.store";
+import { userDataStore } from "@web-astro/stores/UserData.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
 
@@ -17,8 +17,8 @@ const isOpen = ref(false);
 const onMapConfirm = (_result: { lat: number, lng: number }) => {
     isOpen.value = false;
     // console.log('onMapConfirm', result);
-    userLocalStore.value!.lat = _result.lat;
-    userLocalStore.value!.lng = _result.lng;
+    userDataStore.value.userData!.rememberLastLat = _result.lat;
+    userDataStore.value.userData!.rememberLastLng = _result.lng;
 }
 </script>
 
@@ -29,7 +29,7 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                     class="max-w-[200px]">
                 <span class="truncate">
                     <MapPin class="mr-1 inline-block" />
-                    {{ userLocalStore?.address || 'Location' }}
+                    {{ userDataStore.userData?.rememberLastAddress || 'Location' }}
                 </span>
             </Button>
         </DrawerTrigger>

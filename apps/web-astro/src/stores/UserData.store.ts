@@ -5,6 +5,8 @@ import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { BASE_LINKS } from "@web-astro/utils/links";
+import { type CartItem } from "@lib/zod/cartItemState";
+import { showItemModal } from "../components/store-page/menu/item/showItemModal";
 
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
@@ -92,6 +94,7 @@ const loadUserData = async () => {
                 rememberLastCountry: true,
                 rememberLastLat: true,
                 rememberLastLng: true,
+                carts: true,
             }
         }
     })).json();
@@ -184,3 +187,81 @@ export const loadCountryFromIp = async () => {
 
 
 loadUserData();
+
+
+
+
+
+
+
+
+
+
+/////////////CART ACTIONS/////////////
+export const genCartId = (storeId: string) => {
+    return `${window.location.host}_-_${storeId}`;
+}
+export const getCartByStoreId = (storeId: string) => {
+    const hostAndStoreId = genCartId(storeId);
+    if (!userDataStore.value?.userData?.carts) {
+        userDataStore.value!.userData!.carts = {};
+    }
+    return userDataStore.value?.userData?.carts?.[hostAndStoreId];
+};
+
+export const addItemToCart = (
+    storeId: string,
+    storeName: string,
+    cartItem: CartItem
+) => {
+    const storeCart = getCartByStoreId(storeId);
+    const hostAndStoreId = genCartId(storeId);
+    if (!userDataStore.value?.userData?.carts?.[hostAndStoreId]) {
+        userDataStore.value!.userData!.carts![hostAndStoreId] = {
+            storeId,
+            storeName: storeName,
+            orderNote: "",
+            items: [cartItem]
+        }
+    } else {
+        if (storeCart?.items) {
+            storeCart.items.push(cartItem);
+        } else {
+            storeCart!.items = [cartItem];
+        }
+    }
+};
+
+export const openItemInCart = (storeId: string, itemIndex: number) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        const cartItem = JSON.parse(JSON.stringify(storeCart.items?.[itemIndex]))
+        if (cartItem) {
+            showItemModal(cartItem.itemId!, cartItem, itemIndex)
+        }
+    }
+}
+
+export const updateItemInCart = (storeId: string, itemIndex: number, cartItem: CartItem) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        storeCart.items![itemIndex] = cartItem;
+    }
+}
+
+export const removeItemFromCart = (storeId: string, itemIndex: number) => {
+    const storeCart = getCartByStoreId(storeId);
+    if (storeCart) {
+        storeCart.items?.splice(itemIndex, 1);
+    }
+    if (storeCart?.items?.length === 0) {
+        const hostAndStoreId = genCartId(storeId);
+        delete userDataStore.value?.userData?.carts?.[hostAndStoreId];
+    }
+}
+
+export const clearCartByStoreId = (storeId: string) => {
+    const hostAndStoreId = genCartId(storeId);
+    delete userDataStore.value?.userData?.carts?.[hostAndStoreId];
+}
+///////////CART ACTIONS/////////////

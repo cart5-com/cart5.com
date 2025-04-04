@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userLocalStore } from "../../../stores/UserCarts.store";
+import { userDataStore } from "../../../stores/UserData.store";
 import { Badge } from "@/components/ui/badge";
 import { computed } from "vue";
+import { genCartId } from "../../../stores/UserData.store";
+import { type CartItem } from "@lib/zod/cartItemState";
 
 const currentCart = computed(() => {
-  return userLocalStore.value?.carts?.[`${window.location.host}_-_${window.storeData?.id}`];
+  return userDataStore.value?.userData?.carts?.[genCartId(window.storeData?.id ?? "")];
 });
 
 const totalItem = computed(() => {
-  return currentCart.value?.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
+  return currentCart.value?.items?.reduce((acc: number, item: CartItem) => acc + (item.quantity ?? 0), 0) ?? 0;
 });
 
 </script>
