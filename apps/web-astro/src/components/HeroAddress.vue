@@ -29,9 +29,9 @@ const redirectToList = () => {
     url.searchParams.set('address', userDataStore.value?.userData?.rememberLastAddress || '');
     url.searchParams.set('country', userDataStore.value?.userData?.rememberLastCountry || '');
     if (
-        userDataStore.value?.userData?.rememberLastCountry === "US" ||
-        userDataStore.value?.userData?.rememberLastCountry === "LR" ||
-        userDataStore.value?.userData?.rememberLastCountry === "MM"
+        userDataStore.value?.userData?.rememberLastCountry?.toUpperCase() === "US" ||
+        userDataStore.value?.userData?.rememberLastCountry?.toUpperCase() === "LR" ||
+        userDataStore.value?.userData?.rememberLastCountry?.toUpperCase() === "MM"
     ) {
         url.searchParams.set('measure', 'mi');
     }
