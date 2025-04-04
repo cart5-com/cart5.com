@@ -383,6 +383,9 @@ importers:
       sales-tax:
         specifier: ^2.18.0
         version: 2.18.0
+      zod:
+        specifier: ^3.23.8
+        version: 3.24.2
 
   packages/ui-shadcn-vue:
     devDependencies:

@@ -5,6 +5,7 @@
     "@types/luxon": "^3.4.2",
     "currency-symbol-map": "^5.1.0",
     "luxon": "^3.5.0",
-    "sales-tax": "^2.18.0"
+    "sales-tax": "^2.18.0",
+    "zod": "^3.23.8"
   }
 }
