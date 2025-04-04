@@ -14,8 +14,14 @@ export const redirectorSchemaValidator = zValidator('form', z.object({
         .min(1, { message: "Redirect URL required" })
         .refine((url) => {
             try {
-                // If the URL is encoded, decoding it will change it
-                return url === decodeURIComponent(url);
+                // Validate it's a proper URL
+                const parsedUrl = new URL(url);
+
+                // Check that the domain and path portions aren't encoded
+                const decodedUrl = decodeURIComponent(url);
+                const basePartMatch = url.split('?')[0] === decodedUrl.split('?')[0];
+
+                return basePartMatch;
             } catch {
                 return false;
             }

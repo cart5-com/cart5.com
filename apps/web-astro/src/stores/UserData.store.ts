@@ -3,11 +3,13 @@ import { ref, watch } from "vue";
 import type { ResType } from "@api-client/index";
 import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
-import type { UserAddress } from "@lib/zod/userData";
+import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
-export type AnonUserDataType = Pick<NonNullable<UserDataType>, "rememberLastAddressId" | "addressArray">;
+export type AnonUserDataType = Pick<NonNullable<UserDataType>,
+    "rememberLastLat" | "rememberLastLng" | "rememberLastAddress" | "rememberLastCountry"
+>;
 
 export const userDataStore = ref<UserDataStoreType>({
     user: null,
@@ -15,8 +17,10 @@ export const userDataStore = ref<UserDataStoreType>({
 });
 
 const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
-    rememberLastAddressId: null,
-    addressArray: [],
+    rememberLastLat: null,
+    rememberLastLng: null,
+    rememberLastAddress: null,
+    rememberLastCountry: null,
 }
 
 const LOCAL_STORAGE_KEY = "ANON_USER_DATA_V1";
@@ -41,8 +45,13 @@ const saveToLocalStorage = (data: AnonUserDataType | null) => {
         clearTimeout(debounceTimeoutLocalStorage);
     }
     debounceTimeoutLocalStorage = setTimeout(() => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+        saveToLocalStorageNow(data);
     }, 500);
+}
+const saveToLocalStorageNow = (data: AnonUserDataType | null) => {
+    if (typeof localStorage === 'undefined') return;
+    if (!data) return;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
 }
 
 const mergedUserData = (
@@ -52,50 +61,13 @@ const mergedUserData = (
     if (!serverUserData) {
         return anonUserData;
     }
-
     const formattedServerData: AnonUserDataType = {
-        rememberLastAddressId: serverUserData.rememberLastAddressId,
-        addressArray: serverUserData.addressArray || [],
+        rememberLastLat: serverUserData.rememberLastLat,
+        rememberLastLng: serverUserData.rememberLastLng,
+        rememberLastAddress: serverUserData.rememberLastAddress,
+        rememberLastCountry: serverUserData.rememberLastCountry,
     };
-
-    if (anonUserData.addressArray?.length) {
-        const mergedAddresses = [...(formattedServerData.addressArray || [])];
-        anonUserData.addressArray.forEach(anonAddress => {
-            if (!isAddressDuplicate(anonAddress, mergedAddresses)) {
-                mergedAddresses.push(anonAddress);
-            }
-        });
-        formattedServerData.addressArray = mergedAddresses;
-    }
-
     return deepMerge(anonUserData, formattedServerData);
-}
-
-/**
- * Checks if an address is a duplicate of any in the existing array
- * by comparing significant fields (not just the ID)
- */
-function isAddressDuplicate(address: UserAddress, existingAddresses: UserAddress[]): boolean {
-    if (!address) return false;
-
-    return existingAddresses.some(existing => {
-        // Skip empty addresses
-        if (!existing) return false;
-
-        // Consider significant fields for comparison
-        // Normalize strings for more reliable comparison (trim whitespace, lowercase)
-        const normalizeStr = (s: string | undefined) =>
-            (s || "").trim().toLowerCase();
-
-        // Compare key fields that would indicate the same physical address
-        return (
-            normalizeStr(address.address1) === normalizeStr(existing.address1) &&
-            normalizeStr(address.city) === normalizeStr(existing.city) &&
-            normalizeStr(address.state) === normalizeStr(existing.state) &&
-            normalizeStr(address.postalCode) === normalizeStr(existing.postalCode) &&
-            normalizeStr(address.country) === normalizeStr(existing.country)
-        );
-    });
 }
 
 const loadUserData = async () => {
@@ -107,8 +79,10 @@ const loadUserData = async () => {
     const { data, error } = await (await apiClient.auth_global.get_user_data.$post({
         json: {
             columns: {
-                rememberLastAddressId: true,
-                addresses: true,
+                rememberLastAddress: true,
+                rememberLastCountry: true,
+                rememberLastLat: true,
+                rememberLastLng: true,
             }
         }
     })).json();
@@ -131,14 +105,25 @@ const loadUserData = async () => {
             }
         }
     }
-    watch(userDataStore, (newVal) => {
-        if (newVal.user) {
-            saveUserData(newVal);
-        } else {
-            saveToLocalStorage(newVal.userData);
-        }
-    }, { deep: true, immediate: false });
+    watch(userDataStore, handleDataChange, { deep: true, immediate: false });
 }
+
+export const handleDataChange = (newVal: UserDataStoreType) => {
+    if (newVal.user) {
+        saveUserData(newVal);
+    } else {
+        saveToLocalStorage(newVal.userData);
+    }
+}
+
+export const handleDataChangeNow = async (newVal: UserDataStoreType) => {
+    if (newVal.user) {
+        await saveUserDataNow(newVal);
+    } else {
+        saveToLocalStorageNow(newVal.userData);
+    }
+}
+
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 const saveUserData = async (newVal: UserDataStoreType) => {
@@ -146,19 +131,21 @@ const saveUserData = async (newVal: UserDataStoreType) => {
         clearTimeout(debounceTimeout);
     }
     debounceTimeout = setTimeout(async () => {
-        const { error } = await (await apiClient.auth_global.update_user_data.$patch({
-            json: {
-                ...newVal.userData,
-            }
-        })).json();
-        if (error) {
-            console.error(error);
-            toast.error("Failed to save user data");
-        }
+        saveUserDataNow(newVal);
     }, 1000);
 }
 
-loadUserData();
+export const saveUserDataNow = async (data: UserDataStoreType) => {
+    const { error } = await (await apiClient.auth_global.update_user_data.$patch({
+        json: {
+            ...data.userData,
+        }
+    })).json();
+    if (error) {
+        console.error(error);
+        toast.error("Failed to save user data");
+    }
+}
 
 export const logoutAll = async () => {
     const { error } = await (await apiClient.auth_global["logout-all"].$post()).json();
@@ -171,4 +158,17 @@ export const logoutAll = async () => {
         userData: null,
     };
     (userDataStore.value.userData as any) = loadFromLocalStorage() as UserDataType;
+    await loadCountryFromIp();
 }
+
+export const loadCountryFromIp = async () => {
+    if (!userDataStore.value?.userData?.rememberLastCountry) {
+        const ipwho = await ipwhois()
+        if (userDataStore.value?.userData && ipwho.country_code) {
+            userDataStore.value.userData.rememberLastCountry = ipwho.country_code
+        }
+    }
+}
+
+
+loadUserData();

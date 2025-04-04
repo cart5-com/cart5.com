@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "08b7477c-f260-42fb-9aee-804dd5c3d2ca",
+  "id": "aef31c2c-88ba-4336-90e2-836238fff389",
   "prevId": "527ba6ef-4f5d-4bfe-b95a-3c57f13e0a39",
   "tables": {
     "session": {
@@ -803,20 +803,33 @@
           "notNull": true,
           "autoincrement": false
         },
-        "remember_last_address_id": {
-          "name": "remember_last_address_id",
+        "remember_last_lat": {
+          "name": "remember_last_lat",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "remember_last_lng": {
+          "name": "remember_last_lng",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "remember_last_address": {
+          "name": "remember_last_address",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "addresses": {
-          "name": "addresses",
+        "remember_last_country": {
+          "name": "remember_last_country",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "'[]'"
+          "autoincrement": false
         }
       },
       "indexes": {
