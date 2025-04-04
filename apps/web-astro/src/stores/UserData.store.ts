@@ -4,7 +4,7 @@ import type { ResType } from "@api-client/index";
 import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
-
+import { BASE_LINKS } from "@web-astro/utils/links";
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
 export type AnonUserDataType = Pick<NonNullable<UserDataType>,
@@ -93,8 +93,11 @@ const loadUserData = async () => {
     if (isAfterLogin) {
         userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
         // remove local storage data
-        await saveUserData(userDataStore.value);
+        await saveUserDataNow(userDataStore.value);
         localStorage.removeItem(LOCAL_STORAGE_KEY);
+        if (window.location.pathname === BASE_LINKS.LIST_STORES) {
+            window.location.href = BASE_LINKS.HOME;
+        }
     } else {
         if (!data.user) {
             userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
