@@ -5,7 +5,7 @@ import { onMounted } from "vue";
 // import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 
-import { loadUserData, userDataStore } from "@web-astro/stores/UserData.store";
+import { userDataStore } from "@web-astro/stores/UserData.store";
 
 onMounted(async () => {
     // initializeUserLocalStore();
@@ -45,15 +45,25 @@ const onMapConfirm = (result: { lat: number, lng: number }) => {
     // redirectToList();
 }
 
+const updateRememberLastAddressId = (value: string | number) => {
+    if (userDataStore.value) {
+        if (!userDataStore.value.userData) {
+            // @ts-ignore
+            userDataStore.value.userData = {};
+        }
+        // @ts-ignore
+        userDataStore.value.userData.rememberLastAddressId = value.toString();
+    }
+}
+
 </script>
 
 <template>
     <div>
-        hello
+        hello asdasd
         <br>
         <Input type="text"
-               v-if="userDataStore?.userData"
-               v-model="userDataStore.userData.rememberLastAddressId" />
+               @update:modelValue="updateRememberLastAddressId" />
         <br>
         userDataStore:
         <pre>{{ userDataStore }}</pre>

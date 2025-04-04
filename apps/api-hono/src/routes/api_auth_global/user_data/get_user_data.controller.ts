@@ -25,21 +25,19 @@ export const getUserDataRoute = async (c: Context<
     const user = c.get("USER");
     if (!user) {
         return c.json({
-            // data: {
-            //     user: null,
-            //     userData: null,
-            // },
-            data: null,
+            data: {
+                user: null,
+                userData: null,
+            },
             error: null as ErrorType
         }, 200);
     }
     const columns = c.req.valid('json')?.columns || {};
     return c.json({
-        // data: {
-        //     user: user,
-        //     userData: await getUserData_Service(user.id, columns)
-        // },
-        data: await getUserData_Service(user.id, columns),
+        data: {
+            user: user,
+            userData: await getUserData_Service(user.id, columns)
+        },
         error: null as ErrorType
     }, 200);
 }
