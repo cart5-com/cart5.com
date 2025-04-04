@@ -2,6 +2,8 @@ import { apiClient } from "@api-client/index";
 import { ref, watch } from "vue";
 import type { ResType } from "@api-client/index";
 import { toast } from "@/ui-plus/sonner";
+import { deepMerge } from "@lib/utils/deepMerge";
+import type { UserAddress } from "@lib/zod/userData";
 
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
@@ -50,10 +52,50 @@ const mergedUserData = (
     if (!serverUserData) {
         return anonUserData;
     }
-    return {
+
+    const formattedServerData: AnonUserDataType = {
         rememberLastAddressId: serverUserData.rememberLastAddressId,
-        addressArray: serverUserData.addresses,
+        addressArray: serverUserData.addressArray || [],
+    };
+
+    if (anonUserData.addressArray?.length) {
+        const mergedAddresses = [...(formattedServerData.addressArray || [])];
+        anonUserData.addressArray.forEach(anonAddress => {
+            if (!isAddressDuplicate(anonAddress, mergedAddresses)) {
+                mergedAddresses.push(anonAddress);
+            }
+        });
+        formattedServerData.addressArray = mergedAddresses;
     }
+
+    return deepMerge(anonUserData, formattedServerData);
+}
+
+/**
+ * Checks if an address is a duplicate of any in the existing array
+ * by comparing significant fields (not just the ID)
+ */
+function isAddressDuplicate(address: UserAddress, existingAddresses: UserAddress[]): boolean {
+    if (!address) return false;
+
+    return existingAddresses.some(existing => {
+        // Skip empty addresses
+        if (!existing) return false;
+
+        // Consider significant fields for comparison
+        // Normalize strings for more reliable comparison (trim whitespace, lowercase)
+        const normalizeStr = (s: string | undefined) =>
+            (s || "").trim().toLowerCase();
+
+        // Compare key fields that would indicate the same physical address
+        return (
+            normalizeStr(address.address1) === normalizeStr(existing.address1) &&
+            normalizeStr(address.city) === normalizeStr(existing.city) &&
+            normalizeStr(address.state) === normalizeStr(existing.state) &&
+            normalizeStr(address.postalCode) === normalizeStr(existing.postalCode) &&
+            normalizeStr(address.country) === normalizeStr(existing.country)
+        );
+    });
 }
 
 const loadUserData = async () => {
@@ -75,7 +117,10 @@ const loadUserData = async () => {
         toast.error("Failed to load user data");
     }
     if (isAfterLogin) {
-        mergeUserData(loadFromLocalStorage(), data.userData);
+        userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
+        // remove local storage data
+        await saveUserData(userDataStore.value);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
     } else {
         if (!data.user) {
             userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
@@ -125,4 +170,5 @@ export const logoutAll = async () => {
         user: null,
         userData: null,
     };
+    (userDataStore.value.userData as any) = loadFromLocalStorage() as UserDataType;
 }
