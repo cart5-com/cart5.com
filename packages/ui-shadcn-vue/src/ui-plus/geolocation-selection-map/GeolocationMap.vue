@@ -9,6 +9,7 @@ import { toast } from '@/ui-plus/sonner';
 import { geocode } from "./geocode";
 import { searchOpenStreetMap } from "./searchOpenStreetMap";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
+import { calculateDistance } from "@lib/utils/calculateDistance";
 
 const props = defineProps<{
 	address: string;
@@ -150,7 +151,15 @@ async function loadHelperBtns() {
 		handleGpsClick()
 	}
 	if (props.lat && props.lng) {
+		// remember last location
 		setCenter(props.lat, props.lng)
+		// but if the distance is greater than 0.3 km use geocode
+		if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
+			const distance = calculateDistance({ lat: props.lat, lng: props.lng }, { lat: helperBtns.value[0].lat, lng: helperBtns.value[0].lng })
+			if (distance > 0.3) {
+				setCenter(helperBtns.value[0].lat!, helperBtns.value[0].lng!)
+			}
+		}
 	} else if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
 		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
 	}
