@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { MoreVerticalIcon, ShoppingCart, Trash } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userLocalStore, clearCartByStoreId } from "../../../stores/UserLocal.store";
+import { userLocalStore, clearCartByStoreId } from "../../../stores/UserCarts.store";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { onMounted } from "vue";
-import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -18,9 +16,6 @@ const removeCart = (storeId: string) => {
   clearCartByStoreId(storeId);
 };
 
-onMounted(() => {
-  initializeUserLocalStore();
-});
 
 </script>
 

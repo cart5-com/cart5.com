@@ -8,15 +8,11 @@ import {
     DrawerTrigger,
 } from '@/components/ui/drawer'
 import AddressForm from '../AddressForm.vue';
-import { onMounted } from 'vue';
-import { initializeUserLocalStore, userLocalStore } from "@web-astro/stores/UserLocal.store";
+import { userLocalStore } from "@web-astro/stores/UserCarts.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const isOpen = ref(false);
-onMounted(() => {
-    initializeUserLocalStore();
-})
 
 const onMapConfirm = (_result: { lat: number, lng: number }) => {
     isOpen.value = false;

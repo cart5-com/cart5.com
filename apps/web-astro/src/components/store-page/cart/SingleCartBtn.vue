@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ShoppingCart } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userLocalStore } from "../../../stores/UserLocal.store";
+import { userLocalStore } from "../../../stores/UserCarts.store";
 import { Badge } from "@/components/ui/badge";
-import { computed, onMounted } from "vue";
-import { initializeUserLocalStore } from "@web-astro/stores/UserLocal.store";
+import { computed } from "vue";
 
 const currentCart = computed(() => {
   return userLocalStore.value?.carts?.[`${window.location.host}_-_${window.storeData?.id}`];
@@ -12,10 +11,6 @@ const currentCart = computed(() => {
 
 const totalItem = computed(() => {
   return currentCart.value?.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
-});
-
-onMounted(() => {
-  initializeUserLocalStore();
 });
 
 </script>

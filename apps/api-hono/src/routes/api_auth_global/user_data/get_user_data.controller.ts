@@ -1,6 +1,5 @@
 import { type Context } from 'hono'
 import { type ErrorType } from '@lib/types/errors';
-import type { User } from '@lib/types/UserType';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";

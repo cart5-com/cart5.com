@@ -21,7 +21,7 @@ export const redirectorSchemaValidator = zValidator('form', z.object({
                 const decodedUrl = decodeURIComponent(url);
                 const basePartMatch = url.split('?')[0] === decodedUrl.split('?')[0];
 
-                return basePartMatch;
+                return basePartMatch && parsedUrl;
             } catch {
                 return false;
             }
