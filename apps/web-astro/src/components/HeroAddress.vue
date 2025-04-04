@@ -45,17 +45,6 @@ const onMapConfirm = (result: { lat: number, lng: number }) => {
     // redirectToList();
 }
 
-const updateRememberLastAddressId = (value: string | number) => {
-    if (userDataStore.value) {
-        if (!userDataStore.value.userData) {
-            // @ts-ignore
-            userDataStore.value.userData = {};
-        }
-        // @ts-ignore
-        userDataStore.value.userData.rememberLastAddressId = value.toString();
-    }
-}
-
 </script>
 
 <template>
@@ -63,7 +52,8 @@ const updateRememberLastAddressId = (value: string | number) => {
         hello asdasd
         <br>
         <Input type="text"
-               @update:modelValue="updateRememberLastAddressId" />
+               v-if="userDataStore?.userData"
+               v-model="userDataStore.userData.rememberLastAddressId!" />
         <br>
         userDataStore:
         <pre>{{ userDataStore }}</pre>
