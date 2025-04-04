@@ -5,21 +5,21 @@ import { toast } from "@/ui-plus/sonner";
 
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
-export type LocalStorageUserDataType = Pick<NonNullable<UserDataType>, "rememberLastAddressId" | "addressArray">;
+export type AnonUserDataType = Pick<NonNullable<UserDataType>, "rememberLastAddressId" | "addressArray">;
 
 export const userDataStore = ref<UserDataStoreType>({
     user: null,
     userData: null,
 });
 
-const DEFAULT_USERLOCAL_DATA: LocalStorageUserDataType = {
+const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
     rememberLastAddressId: null,
     addressArray: [],
 }
 
-const LOCAL_STORAGE_KEY = "ANONYMOUS_USER_DATA_V1";
+const LOCAL_STORAGE_KEY = "ANON_USER_DATA_V1";
 
-const loadFromLocalStorage = (): LocalStorageUserDataType => {
+const loadFromLocalStorage = (): AnonUserDataType => {
     if (typeof localStorage === 'undefined') {
         return DEFAULT_USERLOCAL_DATA;
     }
@@ -32,7 +32,7 @@ const loadFromLocalStorage = (): LocalStorageUserDataType => {
 }
 
 let debounceTimeoutLocalStorage: ReturnType<typeof setTimeout> | null = null;
-const saveToLocalStorage = (data: LocalStorageUserDataType | null) => {
+const saveToLocalStorage = (data: AnonUserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
     if (!data) return;
     if (debounceTimeoutLocalStorage) {
@@ -43,9 +43,16 @@ const saveToLocalStorage = (data: LocalStorageUserDataType | null) => {
     }, 500);
 }
 
+const mergeUserData = (anonUserData: AnonUserDataType, serverUserData: UserDataType) => {
+    alert("mergeUserData");
+}
 
 const loadUserData = async () => {
     if (import.meta.env.SSR) return;
+    const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
+    if (isAfterLogin && typeof window !== 'undefined') {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
     const { data, error } = await (await apiClient.auth_global.get_user_data.$post({
         json: {
             columns: {
