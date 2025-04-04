@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { toast } from "@/ui-plus/sonner";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { createApiClient_AsUrlHelper } from "@api-client/index";
+import { createApiClient } from "@api-client/index";
 import { getNextUrl, getNextHostname } from "@auth-frontend-vue/lib/queryHelpers";
 import { userStore } from '@auth-frontend-vue/stores/User.store';
 import UserCard from "@/ui-plus/UserCard.vue";
@@ -33,7 +33,7 @@ const redirectWithUser = async () => {
     }
     const turnstile = await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY);
     dialog.showBlockingLoadingModal();
-    const postActionUrl = createApiClient_AsUrlHelper().auth.cross_domain.redirector.$url();
+    const postActionUrl = createApiClient(`${window.location.origin}/__p_api/`).auth.cross_domain.redirector.$url();
     const newForm = document.createElement("form");
     newForm.method = "POST";
     newForm.action = postActionUrl.toString();
