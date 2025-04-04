@@ -4,7 +4,9 @@ import type { CartItem } from "./menuType";
 export type HostAndStoreId = string; // as `host_-_storeId`
 
 export type Cart = {
-    storeId?: HostAndStoreId;
+    storeId?: string;
+    host?: string;
+    lastUpdatedTS?: number;
     storeName?: string;
     orderNote?: string;
     items?: CartItem[];

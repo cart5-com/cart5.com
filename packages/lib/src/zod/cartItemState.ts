@@ -36,10 +36,6 @@ export const cartItemSchema = z.object({
     childrenState: z.array(cartChildrenItemStateSchema).optional(),
 });
 
-// Collection of cart items
-// export const cartItemsSchema = z.array(cartItemSchema);
-// export type CartItems = z.infer<typeof cartItemsSchema>;
-
 export type CartChildrenItemState = z.infer<typeof cartChildrenItemStateSchema>;
 export type CartItem = z.infer<typeof cartItemSchema>;
 
