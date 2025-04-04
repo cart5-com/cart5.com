@@ -1,7 +1,7 @@
 import { type CartItem, type ItemId } from '@lib/types/menuType';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
-import { addItemToCart, updateItemInCart, userLocalStore } from '@web-astro/stores/UserCarts.store';
+import { addItemToCart, updateItemInCart } from '@web-astro/stores/UserCarts.store';
 import { openRightDrawer } from '@web-astro/utils/openRightDrawer';
 
 const dialog = useDialog();
@@ -24,8 +24,6 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
                 addItemToCart(window.storeData?.id!, window.storeData?.name!, values);
                 openRightDrawer();
             }
-            console.log('JSON.stringify(userLocalStore.value, null, 2)');
-            console.log(JSON.stringify(userLocalStore.value, null, 2));
         },
         onCancel: () => {
             console.log("cancel");
