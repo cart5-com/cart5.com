@@ -15,6 +15,13 @@
       "when": 1743740231310,
       "tag": "0001_premium_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1743797908583,
+      "tag": "0002_lucky_microchip",
+      "breakpoints": true
     }
   ]
 }

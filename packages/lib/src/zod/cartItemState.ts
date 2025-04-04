@@ -39,6 +39,38 @@ export const cartItemSchema = z.object({
 export type CartChildrenItemState = z.infer<typeof cartChildrenItemStateSchema>;
 export type CartItem = z.infer<typeof cartItemSchema>;
 
+// Cart schema
+export const cartSchema = z.object({
+    storeId: z.string().optional(),
+    host: z.string().optional(),
+    lastUpdatedTS: z.number().optional(),
+    storeName: z.string().optional(),
+    orderNote: z.string().optional(),
+    // items: z.custom<CartItem[]>((val) => { // causes circular reference
+    items: z.custom<any[]>((val) => {
+        // Check if it's an array first
+        if (!Array.isArray(val)) {
+            return false;
+        }
+
+        // Validate each item against cartItemSchema
+        return val.every(item => cartItemSchema.safeParse(item).success);
+    }).optional(),
+});
+// Carts schema (a record of Cart objects)
+export const cartsSchema = z.record(z.string(), cartSchema).nullable();
+export type Cart = z.infer<typeof cartSchema>;
+export type Carts = z.infer<typeof cartsSchema>;
+
+// type Cart = {
+//     storeId?: string;
+//     host?: string;
+//     lastUpdatedTS?: number;
+//     storeName?: string;
+//     orderNote?: string;
+//     items?: CartItem[];
+// }
+// export type Carts = Record<string, Cart>;
 
 // const cartItem: CartItem = {
 //     "itemId": "item-2",

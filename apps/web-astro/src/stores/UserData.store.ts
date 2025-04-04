@@ -6,23 +6,16 @@ import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { BASE_LINKS } from "@web-astro/utils/links";
 
-
-
-// export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
-// export type UserDataType = UserDataStoreType["userData"];
-type OriginalUserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
-export type UserDataType = OriginalUserDataStoreType["userData"];
-export type UserDataStoreType = {
-    user: OriginalUserDataStoreType["user"];
-    userData: UserDataType | Record<string, never> | null;
-};
+export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
+export type UserDataType = UserDataStoreType["userData"];
 
 
 export type AnonUserDataType = Pick<NonNullable<UserDataType>,
     "rememberLastLat" |
     "rememberLastLng" |
     "rememberLastAddress" |
-    "rememberLastCountry"
+    "rememberLastCountry" |
+    "carts"
 >;
 
 export const userDataStore = ref<UserDataStoreType>({
@@ -35,6 +28,7 @@ const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
     rememberLastLng: null,
     rememberLastAddress: null,
     rememberLastCountry: null,
+    carts: {},
 }
 
 const LOCAL_STORAGE_KEY = "ANON_USER_DATA_V1";
@@ -52,7 +46,7 @@ const loadFromLocalStorage = (): AnonUserDataType => {
 }
 
 let debounceTimeoutLocalStorage: ReturnType<typeof setTimeout> | null = null;
-const saveToLocalStorage = (data: UserDataType | Record<string, never> | null) => {
+const saveToLocalStorage = (data: UserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
     if (!data) return;
     if (debounceTimeoutLocalStorage) {
@@ -62,7 +56,7 @@ const saveToLocalStorage = (data: UserDataType | Record<string, never> | null) =
         saveToLocalStorageNow(data);
     }, 500);
 }
-const saveToLocalStorageNow = (data: UserDataType | Record<string, never> | null) => {
+const saveToLocalStorageNow = (data: UserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
     if (!data) return;
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
@@ -80,6 +74,7 @@ const mergedUserData = (
         rememberLastLng: serverUserData.rememberLastLng,
         rememberLastAddress: serverUserData.rememberLastAddress,
         rememberLastCountry: serverUserData.rememberLastCountry,
+        carts: serverUserData.carts ?? {},
     };
     return deepMerge(anonUserData, formattedServerData);
 }
@@ -118,7 +113,7 @@ const loadUserData = async () => {
         } else {
             userDataStore.value = data;
             if (!data.userData) {
-                userDataStore.value.userData = {};
+                (userDataStore.value.userData as any) = {};
             }
         }
     }

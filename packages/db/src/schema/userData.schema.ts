@@ -1,6 +1,9 @@
 import { sqliteTable, text, real } from "drizzle-orm/sqlite-core";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
+import {
+    type Carts, cartsSchema,
+} from "@lib/zod/cartItemState";
 
 export const userDataTable = sqliteTable("user_data", {
     ...autoCreatedUpdated,
@@ -13,14 +16,15 @@ export const userDataTable = sqliteTable("user_data", {
 
     // rememberLastAddressId: text("remember_last_address_id"),
     // addressArray: text("addresses", { mode: 'json' }).$type<UserAddressArray>(),
+    carts: text("carts", { mode: 'json' }).$type<Carts>(),
 });
 
 
 export const selectUserDataSchema = createSelectSchema(userDataTable);
 export const insertUserDataSchema = createInsertSchema(userDataTable, {
-    // addressArray: addressesSchema,
+    carts: cartsSchema,
 });
 export const updateUserDataSchema = createUpdateSchema(userDataTable, {
-    // addressArray: addressesSchema,
+    carts: cartsSchema,
 });
 
