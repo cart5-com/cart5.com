@@ -43,8 +43,17 @@ const saveToLocalStorage = (data: AnonUserDataType | null) => {
     }, 500);
 }
 
-const mergeUserData = (anonUserData: AnonUserDataType, serverUserData: UserDataType) => {
-    alert("mergeUserData");
+const mergedUserData = (
+    anonUserData: AnonUserDataType,
+    serverUserData: UserDataType
+): AnonUserDataType => {
+    if (!serverUserData) {
+        return anonUserData;
+    }
+    return {
+        rememberLastAddressId: serverUserData.rememberLastAddressId,
+        addressArray: serverUserData.addresses,
+    }
 }
 
 const loadUserData = async () => {
@@ -67,16 +76,16 @@ const loadUserData = async () => {
     }
     if (isAfterLogin) {
         mergeUserData(loadFromLocalStorage(), data.userData);
-    }
-    if (!data.user) {
-        userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
     } else {
-        userDataStore.value = {
-            user: data.user,
-            userData: data.userData || {},
-        };
+        if (!data.user) {
+            userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
+        } else {
+            userDataStore.value = data;
+            if (!data.userData) {
+                (userDataStore.value.userData as any) = {};
+            }
+        }
     }
-
     watch(userDataStore, (newVal) => {
         if (newVal.user) {
             saveUserData(newVal);
