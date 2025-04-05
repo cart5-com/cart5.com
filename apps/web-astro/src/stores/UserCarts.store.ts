@@ -1,3 +1,4 @@
+// TODO: remove this file
 // import type { CartItem } from "@lib/types/menuType";
 // import {
 //     type UserLocalStorageType,

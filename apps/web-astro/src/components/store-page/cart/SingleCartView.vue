@@ -62,12 +62,10 @@ const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
   if (!currentCart.value || !menuRoot.value) return { totalPrice: "$0.00", tax: "$0.00" };
-  // @ts-ignore // TODO: fix this
   return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
 });
 
 const getPrice = (item: CartItem) => {
-  // @ts-ignore // TODO: fix this
   return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
 

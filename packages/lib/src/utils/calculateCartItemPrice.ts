@@ -1,10 +1,9 @@
 import type { ItemId, MenuRoot } from "@lib/types/menuType";
-import { type CartChildrenItemState } from "@lib/zod/cartItemState";
-import { type CartItem } from "@lib/zod/cartItemState";
+import type { CartChildrenItemState, CartItem, Cart } from "@lib/zod/cartItemState";
 import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/types/taxTypes";
-import type { Cart } from "@lib/types/UserLocalStorageTypes";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
+
 
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
