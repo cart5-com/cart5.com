@@ -71,13 +71,48 @@ const mergedUserData = (
     if (!serverUserData) {
         return anonUserData;
     }
+    // merge serverUserData.carts.items with anonUserData.carts.items
+
     const formattedServerData: AnonUserDataType = {
         rememberLastLat: serverUserData.rememberLastLat,
         rememberLastLng: serverUserData.rememberLastLng,
         rememberLastAddress: serverUserData.rememberLastAddress,
         rememberLastCountry: serverUserData.rememberLastCountry,
-        carts: serverUserData.carts ?? {},
+        carts: {},
     };
+
+
+    // Start with all server carts
+    formattedServerData.carts = { ...(serverUserData.carts || {}) };
+
+    // Merge anonymous carts with server carts
+    for (const [cartId, anonCart] of Object.entries(anonUserData.carts || {})) {
+        if (!formattedServerData.carts[cartId]) {
+            // If cart doesn't exist in server data, add the entire anonymous cart
+            formattedServerData.carts[cartId] = { ...anonCart };
+        } else {
+            // If cart exists in both, merge their items
+            const serverCart = formattedServerData.carts[cartId];
+            const mergedItems = [...(serverCart.items || [])];
+
+            // Add unique items from anonymous cart
+            (anonCart.items || []).forEach(anonItem => {
+                // You might want to add more sophisticated duplicate detection logic here
+                // For now, we'll just append all anonymous items
+                mergedItems.push({ ...anonItem });
+            });
+
+            // Update the cart with merged items
+            formattedServerData.carts[cartId] = {
+                ...serverCart,
+                items: mergedItems,
+                // Preserve anonymous cart note if server cart has none
+                orderNote: serverCart.orderNote || anonCart.orderNote || "",
+            };
+        }
+    }
+
+
     return deepMerge(anonUserData, formattedServerData);
 }
 
@@ -186,14 +221,6 @@ export const loadCountryFromIp = async () => {
 }
 
 
-loadUserData();
-
-
-
-
-
-
-
 
 
 
@@ -221,12 +248,15 @@ export const addItemToCart = (
             storeId,
             storeName: storeName,
             orderNote: "",
+            lastUpdatedTS: Date.now(),
             items: [cartItem]
         }
     } else {
         if (storeCart?.items) {
+            storeCart.lastUpdatedTS = Date.now();
             storeCart.items.push(cartItem);
         } else {
+            storeCart!.lastUpdatedTS = Date.now();
             storeCart!.items = [cartItem];
         }
     }
@@ -245,6 +275,7 @@ export const openItemInCart = (storeId: string, itemIndex: number) => {
 export const updateItemInCart = (storeId: string, itemIndex: number, cartItem: CartItem) => {
     const storeCart = getCartByStoreId(storeId);
     if (storeCart) {
+        storeCart.lastUpdatedTS = Date.now();
         storeCart.items![itemIndex] = cartItem;
     }
 }
@@ -252,6 +283,7 @@ export const updateItemInCart = (storeId: string, itemIndex: number, cartItem: C
 export const removeItemFromCart = (storeId: string, itemIndex: number) => {
     const storeCart = getCartByStoreId(storeId);
     if (storeCart) {
+        storeCart.lastUpdatedTS = Date.now();
         storeCart.items?.splice(itemIndex, 1);
     }
     if (storeCart?.items?.length === 0) {
@@ -265,3 +297,6 @@ export const clearCartByStoreId = (storeId: string) => {
     delete userDataStore.value?.userData?.carts?.[hostAndStoreId];
 }
 ///////////CART ACTIONS/////////////
+
+
+loadUserData();
