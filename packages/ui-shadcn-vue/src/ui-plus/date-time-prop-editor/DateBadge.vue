@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { WeeklyScheduleAsString } from "@lib/types/dateTimeType";
-import type { DateTimeProp } from "@lib/types/dateTimeType";
+import { WeeklyScheduleAsString } from "@lib/utils/weeklyScheduleAsString";
+import type { DateTimeProp } from "@lib/zod/weeklyScheduleSchema";
 import { Badge } from '@/components/ui/badge'
 defineProps<{
     modelValue: DateTimeProp

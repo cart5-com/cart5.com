@@ -13,9 +13,9 @@ import {
 } from '@/components/ui/tooltip'
 import { useVModel } from '@vueuse/core'
 import {
-    WeeklyScheduleDays,
-    type WeeklySchedule
-} from "@lib/types/dateTimeType";
+    WeeklyScheduleDays
+} from "@lib/utils/weeklyScheduleAsString";
+import type { WeeklySchedule } from "@lib/zod/weeklyScheduleSchema";
 import { Input } from '@/components/ui/input'
 import { type Ref } from 'vue'
 

@@ -5,7 +5,7 @@ import { useVModel } from '@vueuse/core'
 import { Switch } from '@/components/ui/switch';
 import WeeklyEditor from './WeeklyEditor.vue';
 import RangeCalendarEditor from './RangeCalendarEditor.vue';
-import type { DateTimeProp } from "@lib/types/dateTimeType";
+import type { DateTimeProp } from "@lib/zod/weeklyScheduleSchema";
 
 const props = defineProps<{
     modelValue?: DateTimeProp

@@ -6,7 +6,7 @@ import { Check, Loader2 } from 'lucide-vue-next';
 import { apiClient } from '@api-client/index';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
-import type { WeeklyHours } from '@lib/types/dateTimeType';
+import type { WeeklyHours } from '@lib/zod/weeklyScheduleSchema';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';

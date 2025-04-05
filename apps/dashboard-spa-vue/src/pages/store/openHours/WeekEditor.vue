@@ -9,8 +9,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { type WeeklyHours, WeeklyScheduleDays } from '@lib/types/dateTimeType';
-
+import { type WeeklyHours } from '@lib/zod/weeklyScheduleSchema';
+import { WeeklyScheduleDays } from '@lib/utils/weeklyScheduleAsString';
 const DAYS = WeeklyScheduleDays;
 
 const props = defineProps<{

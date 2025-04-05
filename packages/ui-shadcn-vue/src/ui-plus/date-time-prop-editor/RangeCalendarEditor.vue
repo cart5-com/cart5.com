@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import {
     type DateRangeValueType,
-} from "@lib/types/dateTimeType";
+} from "@lib/zod/weeklyScheduleSchema";
 import { type Ref } from 'vue'
 import {
     Calendar as CalendarIcon,

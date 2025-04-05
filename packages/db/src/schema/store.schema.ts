@@ -8,7 +8,7 @@ import type {
 	PhysicalPaymentMethods,
 } from "@lib/types/storeTypes";
 import type { TaxCategory } from "@lib/types/taxTypes";
-import type { WeeklyHours } from "@lib/types/dateTimeType";
+import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 
@@ -85,14 +85,14 @@ export const storeOpenHoursTable = sqliteTable('store_open_hours', {
 });
 export const selectStoreOpenHoursSchema = createSelectSchema(storeOpenHoursTable);
 export const insertStoreOpenHoursSchema = createInsertSchema(storeOpenHoursTable, {
-	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
-	deliveryHours: z.custom<WeeklyHours>((_val) => true),
-	pickupHours: z.custom<WeeklyHours>((_val) => true),
+	defaultOpenHours: WeeklyHoursSchema.nullable(),
+	deliveryHours: WeeklyHoursSchema.nullable(),
+	pickupHours: WeeklyHoursSchema.nullable(),
 });
 export const updateStoreOpenHoursSchema = createUpdateSchema(storeOpenHoursTable, {
-	defaultOpenHours: z.custom<WeeklyHours>((_val) => true),
-	deliveryHours: z.custom<WeeklyHours>((_val) => true),
-	pickupHours: z.custom<WeeklyHours>((_val) => true),
+	defaultOpenHours: WeeklyHoursSchema.nullable(),
+	deliveryHours: WeeklyHoursSchema.nullable(),
+	pickupHours: WeeklyHoursSchema.nullable(),
 });
 /// STORE HOURS TABLE END
 
@@ -110,10 +110,10 @@ export const storeMenuTable = sqliteTable('store_menu', {
 });
 export const selectStoreMenuSchema = createSelectSchema(storeMenuTable);
 export const insertStoreMenuSchema = createInsertSchema(storeMenuTable, {
-	menuRoot: MenuRootSchema,
+	menuRoot: MenuRootSchema.nullable(),
 });
 export const updateStoreMenuSchema = createUpdateSchema(storeMenuTable, {
-	menuRoot: MenuRootSchema,
+	menuRoot: MenuRootSchema.nullable(),
 });
 /// STORE MENU TABLE END
 
