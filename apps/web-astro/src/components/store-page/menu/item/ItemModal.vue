@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { type ItemId, type CartItem } from "@lib/zod/menuRootSchema";
+import { type ItemId } from "@lib/zod/menuRootSchema";
+import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { computed, ref, watch, onMounted } from "vue";
@@ -14,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
-import type { TaxSettings } from "@lib/types/taxTypes";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 
 const props = defineProps<{
     itemId?: ItemId,

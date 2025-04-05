@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from 'vue'
 import { useVModel } from '@vueuse/core'
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import type { TaxCategory } from '@lib/types/taxTypes'
+import type { TaxCategory } from '@lib/zod/taxSchema'
 import { Percent } from 'lucide-vue-next'
 
 const props = defineProps<{

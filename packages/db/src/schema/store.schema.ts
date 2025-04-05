@@ -11,7 +11,7 @@ import {
 	type PhysicalPaymentMethods,
 	PhysicalPaymentMethodsSchema
 } from "@lib/zod/paymentMethodsSchema";
-import type { TaxCategory } from "@lib/types/taxTypes";
+import { TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
@@ -166,10 +166,10 @@ export const storeTaxSettingsTable = sqliteTable('store_tax_settings', {
 });
 export const selectStoreTaxSettingsSchema = createSelectSchema(storeTaxSettingsTable);
 export const insertStoreTaxSettingsSchema = createInsertSchema(storeTaxSettingsTable, {
-	taxCategories: z.array(z.custom<TaxCategory>((_val) => true)).default([]),
+	taxCategories: z.array(TaxCategorySchema).default([]),
 });
 export const updateStoreTaxSettingsSchema = createUpdateSchema(storeTaxSettingsTable, {
-	taxCategories: z.array(z.custom<TaxCategory>((_val) => true)).default([]),
+	taxCategories: z.array(TaxCategorySchema).default([]),
 });
 /// TAX SETTINGS TABLE END
 

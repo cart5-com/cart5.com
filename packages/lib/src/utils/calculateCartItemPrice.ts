@@ -1,7 +1,7 @@
 import type { ItemId, MenuRoot } from "@lib/zod/menuRootSchema";
 import type { CartChildrenItemState, CartItem, Cart } from "@lib/zod/cartItemState";
 import type { OrderType } from "@lib/types/orderType";
-import type { TaxSettings } from "@lib/types/taxTypes";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
 

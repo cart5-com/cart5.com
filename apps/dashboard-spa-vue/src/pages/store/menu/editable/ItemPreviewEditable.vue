@@ -16,7 +16,7 @@ import {
     NumberFieldIncrement,
     NumberFieldInput,
 } from '@/components/ui/number-field'
-import type { TaxSettings } from "@lib/types/taxTypes";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 const props = defineProps<{
     itemId?: ItemId
 }>()

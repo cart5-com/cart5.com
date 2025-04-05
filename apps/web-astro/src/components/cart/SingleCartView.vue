@@ -27,7 +27,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { Textarea } from '@/components/ui/textarea'
-import type { TaxSettings } from "@lib/types/taxTypes";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/deliveryZoneFilterByLocation";
 
