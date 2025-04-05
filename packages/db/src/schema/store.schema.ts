@@ -9,7 +9,7 @@ import type {
 } from "@lib/types/storeTypes";
 import type { TaxCategory } from "@lib/types/taxTypes";
 import type { WeeklyHours } from "@lib/types/dateTimeType";
-import type { MenuRoot } from "@lib/zod/menuRootSchema";
+import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 
 /// STORE TABLE START
@@ -110,10 +110,10 @@ export const storeMenuTable = sqliteTable('store_menu', {
 });
 export const selectStoreMenuSchema = createSelectSchema(storeMenuTable);
 export const insertStoreMenuSchema = createInsertSchema(storeMenuTable, {
-	menuRoot: z.custom<MenuRoot>((_val) => true),
+	menuRoot: MenuRootSchema,
 });
 export const updateStoreMenuSchema = createUpdateSchema(storeMenuTable, {
-	menuRoot: z.custom<MenuRoot>((_val) => true),
+	menuRoot: MenuRootSchema,
 });
 /// STORE MENU TABLE END
 
