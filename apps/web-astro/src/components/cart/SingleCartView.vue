@@ -178,7 +178,7 @@ const bestDeliveryZone = computed(() => {
               <div class="p-4 pb-0">
                 <Textarea v-model="currentCart!.orderNote!"
                           rows="7"
-                          maxlength="800"
+                          maxlength="510"
                           placeholder="Specify which utensils, napkins, straws, and condiments you want to be included or any special instructions that you want the store to be aware of" />
               </div>
               <DrawerFooter>
