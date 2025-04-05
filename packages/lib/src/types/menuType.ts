@@ -34,6 +34,7 @@ export type Item = {
     // imgUrl?: string;
 }
 
+// TODO: remove this CartChildrenItemState use packages/lib/src/zod/cartItemState.ts
 export type CartChildrenItemState = {
     itemId?: ItemId;
     childrenState?: ({
@@ -43,6 +44,7 @@ export type CartChildrenItemState = {
     } | null)[];
 }
 
+// TODO: remove this CartItem use packages/lib/src/zod/cartItemState.ts
 export type CartItem = {
     itemId?: ItemId;
     quantity?: number;
