@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item, CartItem, } from "@lib/types/menuType";
+import type { Item, CartItem, } from "@lib/zod/menuRootSchema";
 import ItemCustomizationCard from "./ItemCustomizationCard.vue";
 
 const props = defineProps<{

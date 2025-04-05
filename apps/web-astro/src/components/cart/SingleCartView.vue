@@ -3,7 +3,7 @@ import { userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
-import { type MenuRoot } from "@lib/types/menuType";
+import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";

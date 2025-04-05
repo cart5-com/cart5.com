@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuRoot } from "../MenuRootStore";
-import { type Item } from "@lib/types/menuType";
+import { type Item } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { onMounted, ref } from "vue";
 import ItemPreviewCustomizationCard from "./ItemPreviewCustomizationCard.vue";

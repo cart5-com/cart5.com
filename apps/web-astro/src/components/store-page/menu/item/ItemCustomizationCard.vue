@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
+import { type CartChildrenItemState, type ItemId } from "@lib/zod/menuRootSchema";
 import { computed } from 'vue';
 import { CornerDownRight } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';

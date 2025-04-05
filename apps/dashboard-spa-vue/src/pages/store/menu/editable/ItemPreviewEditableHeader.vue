@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Item } from "@lib/types/menuType";
+import { Item } from "@lib/zod/menuRootSchema";
 import { Banknote } from "lucide-vue-next";
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { menuRoot } from "../MenuRootStore";
 import { taxSettings } from "../TaxSettingsStore";
-import { type ItemId } from "@lib/types/menuType";
+import { type ItemId } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { computed, onMounted, ref, watch } from "vue";

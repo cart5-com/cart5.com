@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { exportMenuToCSV, getSampleMenuCSV, importMenuFromCSV } from '@lib/types/menuImport';
+import { exportMenuToCSV, getSampleMenuCSV, importMenuFromCSV } from '@lib/utils/menuImport';
 import { menuRoot } from '../MenuRootStore';
 import { toast } from "@/ui-plus/sonner";
 import { Download, FileDown, FileUp, MoreHorizontal, Trash } from 'lucide-vue-next';

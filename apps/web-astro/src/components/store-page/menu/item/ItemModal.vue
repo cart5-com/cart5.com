@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type ItemId, type CartItem } from "@lib/types/menuType";
+import { type ItemId, type CartItem } from "@lib/zod/menuRootSchema";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { computed, ref, watch, onMounted } from "vue";

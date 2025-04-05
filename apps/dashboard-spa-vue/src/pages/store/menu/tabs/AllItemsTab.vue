@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { Item } from '@lib/types/menuType'
+import type { Item } from '@lib/zod/menuRootSchema'
 import { menuRoot } from '../MenuRootStore'
 import { Eye, Pencil, Plus } from 'lucide-vue-next'
 import { createNewItem, previewItem } from '../helpers'

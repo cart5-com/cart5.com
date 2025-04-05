@@ -21,7 +21,7 @@ function encodeBase32_internal(
         let buffer = 0n;
         let bufferBitSize = 0;
         for (let j = 0; j < 5 && i + j < bytes.byteLength; j++) {
-            buffer = (buffer << 8n) | BigInt(bytes[i + j]);
+            buffer = (buffer << 8n) | BigInt(bytes[i + j] ?? 0);
             bufferBitSize += 8;
         }
         if (bufferBitSize % 5 !== 0) {

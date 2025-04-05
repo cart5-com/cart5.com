@@ -1,4 +1,4 @@
-import type { Item, MenuRoot } from './menuType';
+import type { Item, MenuRoot } from '../zod/menuRootSchema';
 
 // CSV column mapping type
 type CSVMenuRow = {

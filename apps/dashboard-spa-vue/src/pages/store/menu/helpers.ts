@@ -1,4 +1,4 @@
-import { Item, type ItemId } from '@lib/types/menuType';
+import { Item, type ItemId } from '@lib/zod/menuRootSchema';
 import { type CartItem } from "@lib/zod/cartItemState";
 import ItemPreviewEditable from './editable/ItemPreviewEditable.vue';
 import { useDialog } from '@/ui-plus/dialog/use-dialog';

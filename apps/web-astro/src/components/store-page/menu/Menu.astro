@@ -1,5 +1,5 @@
 ---
-import type { MenuRoot } from "@lib/types/menuType";
+import type { MenuRoot } from "@lib/zod/menuRootSchema";
 import CategoryCard from "./CategoryCard.astro";
 interface Props {
 	menuRoot: MenuRoot | null;
@@ -72,7 +72,8 @@ const { menuRoot, getMenuRoot } = Astro.props;
 					if (category) {
 						// Calculate total sticky header height (main header + category nav)
 						const headerHeight = 140; // Height of main header
-						const categoryNavHeight = document.querySelector(".categories-scroll-animation")?.clientHeight || 0;
+						const categoryNavHeight =
+							document.querySelector(".categories-scroll-animation")?.clientHeight || 0;
 						const totalOffset = headerHeight + categoryNavHeight;
 
 						// Scroll with offset

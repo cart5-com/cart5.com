@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@lib/types/menuType";
+import type { Item } from "@lib/zod/menuRootSchema";
 import type { OrderType } from "@lib/types/orderType";
 
 defineProps<{

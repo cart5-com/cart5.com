@@ -1,4 +1,4 @@
-import type { Item, MenuRoot } from "@lib/types/menuType";
+import type { Item, MenuRoot } from "@lib/zod/menuRootSchema";
 
 export const menuCleanEmptyProperties = (menuRoot: MenuRoot) => {
     const cleanedMenuRoot: MenuRoot = JSON.parse(JSON.stringify(menuRoot));

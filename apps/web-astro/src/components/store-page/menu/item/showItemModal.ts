@@ -1,4 +1,4 @@
-import { type ItemId } from '@lib/types/menuType';
+import { type ItemId } from '@lib/zod/menuRootSchema';
 import { type CartItem } from "@lib/zod/cartItemState";
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';

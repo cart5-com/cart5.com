@@ -9,7 +9,7 @@ import type {
 } from "@lib/types/storeTypes";
 import type { TaxCategory } from "@lib/types/taxTypes";
 import type { WeeklyHours } from "@lib/types/dateTimeType";
-import type { MenuRoot } from "@lib/types/menuType";
+import type { MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 
 /// STORE TABLE START

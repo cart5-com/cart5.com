@@ -25,7 +25,7 @@ import type {
 import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
 import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
 import { readFileSync } from "fs";
-import { importMenuFromCSV } from "@lib/types/menuImport";
+import { importMenuFromCSV } from "@lib/utils/menuImport";
 import { updateStoreMenu_Service } from "@db/services/store.service";
 import { fileURLToPath, URL } from 'node:url'
 
