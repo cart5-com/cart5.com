@@ -6,8 +6,8 @@ import StoreList from "../components/stores-page/StoreList.astro";
 import Pagination from "../components/stores-page/Pagination.astro";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
-import MultipleCartsBtn from "@web-astro/components/store-page/cart/MultipleCartsBtn.vue";
-import MultipleCartsView from "@web-astro/components/store-page/cart/MultipleCartsView.vue";
+import MultipleCartsBtn from "@web-astro/components/cart/MultipleCartsBtn.vue";
+import MultipleCartsView from "@web-astro/components/cart/MultipleCartsView.vue";
 import type { OrderType } from "@lib/types/orderType";
 
 type params = Parameters<typeof getNearbyStores_Service>;
