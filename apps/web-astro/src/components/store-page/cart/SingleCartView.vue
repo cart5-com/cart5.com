@@ -2,7 +2,8 @@
 import { userDataStore, removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../../stores/UserData.store";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
-import { type CartItem, type MenuRoot } from "@lib/types/menuType";
+import { type MenuRoot } from "@lib/types/menuType";
+import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
@@ -66,6 +67,7 @@ const cartTotals = computed(() => {
 });
 
 const getPrice = (item: CartItem) => {
+  // @ts-ignore // TODO: fix this
   return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
 
