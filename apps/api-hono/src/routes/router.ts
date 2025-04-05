@@ -12,6 +12,6 @@ export const apiRouter = new Hono<HonoVariables>()
         validateDomainForTLS
     )
     .route('/auth', apiAuth)
-    .route('/auth_global', authGlobalRoute)
+    .route('/', authGlobalRoute)
     .route('/dashboard', apiDashboard)
     .route('/gmaps', mapsRoute)

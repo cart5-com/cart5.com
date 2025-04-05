@@ -11,6 +11,7 @@ import { getUserDataRoute, getUserData_SchemaValidator } from './user_data/get_u
 import { updateUserDataRoute, updateUserData_SchemaValidator } from './user_data/update_user_data.controller';
 
 export const authGlobalRoute = new Hono<HonoVariables>()
+    .basePath('/auth_global')
     .post(
         '/logout',
         logoutRoute
@@ -41,5 +42,6 @@ export const authGlobalRoute = new Hono<HonoVariables>()
 
 
 
+export type ApiAuthGlobalRouteType = typeof authGlobalRoute;
 
 
