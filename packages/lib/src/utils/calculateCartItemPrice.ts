@@ -107,15 +107,13 @@ export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSetti
             tax: 0,
         };
     }
-    const total = cart.items?.reduce((total, item) => total + roundTo2Decimals(
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice
-    ), 0) || 0;
-    const tax = cart.items?.reduce((total, item) => total + roundTo2Decimals(
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax
-    ), 0) || 0;
+    const total = cart.items?.reduce((total, item) => total +
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice, 0) || 0;
+    const tax = cart.items?.reduce((total, item) => total +
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax, 0) || 0;
 
     return {
-        totalPrice: Number(total),
-        tax: Number(tax),
+        totalPrice: roundTo2Decimals(total),
+        tax: roundTo2Decimals(tax),
     };
 }
