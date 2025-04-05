@@ -118,10 +118,8 @@ const mergedUserData = (
 
 const loadUserData = async () => {
     if (import.meta.env.SSR) return;
+    console.log('loadUserData');
     const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
-    if (isAfterLogin && typeof window !== 'undefined') {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
     const { data, error } = await (await apiClient.auth_global.get_user_data.$post({
         json: {
             columns: {
@@ -135,27 +133,31 @@ const loadUserData = async () => {
     })).json();
     if (error) {
         console.error(error);
-        toast.error("Failed to load user data");
-    }
-    if (isAfterLogin) {
-        userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
-        // remove local storage data
-        await saveUserDataNow(userDataStore.value);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        if (window.location.pathname === BASE_LINKS.LIST_STORES) {
-            window.location.href = BASE_LINKS.HOME;
-        }
+        toast.error("Failed to load user data please refresh the page");
     } else {
-        if (!data.user) {
-            userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
+        if (isAfterLogin && typeof window !== 'undefined') {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        if (isAfterLogin) {
+            userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
+            // remove local storage data
+            await saveUserDataNow(userDataStore.value);
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            if (window.location.pathname === BASE_LINKS.LIST_STORES) {
+                window.location.href = BASE_LINKS.HOME;
+            }
         } else {
-            userDataStore.value = data;
-            if (!data.userData) {
-                (userDataStore.value.userData as any) = {};
+            if (!data.user) {
+                userDataStore.value.userData = loadFromLocalStorage() as UserDataType;
+            } else {
+                userDataStore.value = data;
+                if (!data.userData) {
+                    (userDataStore.value.userData as any) = {};
+                }
             }
         }
+        watch(userDataStore, handleDataChange, { deep: true, immediate: false });
     }
-    watch(userDataStore, handleDataChange, { deep: true, immediate: false });
 }
 
 export const handleDataChange = (newVal: UserDataStoreType) => {

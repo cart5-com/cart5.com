@@ -4,7 +4,6 @@ import UserCard from "@/ui-plus/UserCard.vue";
 import { Button } from "@/components/ui/button";
 import { getLoginUrl, getSettingsUrl, getSignupUrl } from "@lib/clientUtils/getAuthOrigin";
 import { userDataStore, logoutAll } from "@web-astro/stores/UserData.store";
-// import ClearAnonData from "./ClearAnonData.vue";
 
 const isLoading = ref(true);
 let loginUrl = "";
@@ -54,6 +53,5 @@ onMounted(async () => {
                 Register
             </Button>
         </div>
-        <!-- <ClearAnonData /> -->
     </div>
 </template>
