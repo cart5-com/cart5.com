@@ -3,7 +3,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { XIcon, PlusIcon, Banknote, CreditCard } from 'lucide-vue-next';
-import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/types/storeTypes';
+import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema';
 import { Textarea } from '@/components/ui/textarea';
 
 const props = defineProps<{

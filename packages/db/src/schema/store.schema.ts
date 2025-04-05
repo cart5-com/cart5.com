@@ -5,8 +5,11 @@ import { generateKey } from "@lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import type {
 	DeliveryZone,
-	PhysicalPaymentMethods,
 } from "@lib/types/storeTypes";
+import {
+	type PhysicalPaymentMethods,
+	PhysicalPaymentMethodsSchema
+} from "@lib/zod/paymentMethodsSchema";
 import type { TaxCategory } from "@lib/types/taxTypes";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
@@ -36,13 +39,11 @@ export const selectStoreSchema = createSelectSchema(storeTable);
 export const insertStoreSchema = createInsertSchema(storeTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
-	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
 });
 export const updateStoreSchema = createUpdateSchema(storeTable, {
 	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
-	// links: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
 });
 
@@ -133,17 +134,16 @@ export const storePaymentMethodsTable = sqliteTable('store_payment_methods', {
 	deliveryPaymentMethods: text('delivery_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
 	pickupPaymentMethods: text('pickup_payment_methods', { mode: 'json' }).$type<PhysicalPaymentMethods>(),
 });
-
 export const selectStorePaymentMethodsSchema = createSelectSchema(storePaymentMethodsTable);
 export const insertStorePaymentMethodsSchema = createInsertSchema(storePaymentMethodsTable, {
-	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	defaultPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
+	deliveryPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
+	pickupPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
 });
 export const updateStorePaymentMethodsSchema = createUpdateSchema(storePaymentMethodsTable, {
-	defaultPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	deliveryPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
-	pickupPaymentMethods: z.custom<PhysicalPaymentMethods>((_val) => true),
+	defaultPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
+	deliveryPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
+	pickupPaymentMethods: PhysicalPaymentMethodsSchema.nullable(),
 });
 /// STORE PAYMENT METHODS TABLE END
 

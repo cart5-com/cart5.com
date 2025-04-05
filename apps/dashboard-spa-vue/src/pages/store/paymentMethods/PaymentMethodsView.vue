@@ -6,7 +6,7 @@ import { Loader2, Check, Banknote, CreditCard, Phone, Landmark } from 'lucide-vu
 import { apiClient } from '@api-client/index';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
-import type { PhysicalPaymentMethods } from '@lib/types/storeTypes';
+import type { PhysicalPaymentMethods } from '@lib/zod/paymentMethodsSchema';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import PaymentMethodsEditor from './PaymentMethodsEditor.vue';
 import { Switch } from '@/components/ui/switch';
