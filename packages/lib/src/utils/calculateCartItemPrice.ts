@@ -1,4 +1,6 @@
-import type { CartChildrenItemState, CartItem, ItemId, MenuRoot } from "@lib/types/menuType";
+import type { ItemId, MenuRoot } from "@lib/types/menuType";
+import { type CartChildrenItemState } from "@lib/zod/cartItemState";
+import { type CartItem } from "@lib/zod/cartItemState";
 import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/types/taxTypes";
 import type { Cart } from "@lib/types/UserLocalStorageTypes";

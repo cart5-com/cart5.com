@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ItemPreviewCustomizationCard from './ItemPreviewCustomizationCard.vue';
-import { type CartChildrenItemState, type ItemId } from '@lib/types/menuType';
+import { type ItemId } from '@lib/types/menuType';
+import { type CartChildrenItemState } from "@lib/zod/cartItemState";
 import { menuRoot } from '../MenuRootStore';
 import { computed } from 'vue';
 import { useVModel } from '@vueuse/core'

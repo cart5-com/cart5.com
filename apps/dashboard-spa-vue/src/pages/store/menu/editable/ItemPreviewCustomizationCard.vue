@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type CartChildrenItemState, type ItemId } from "@lib/types/menuType";
+import { type ItemId } from "@lib/types/menuType";
+import { type CartChildrenItemState } from "@lib/zod/cartItemState";
 import { menuRoot } from "../MenuRootStore";
 import { computed } from 'vue';
 import { AlignJustify, CornerDownRight, Link2Off, MoreVerticalIcon, Pencil } from 'lucide-vue-next';

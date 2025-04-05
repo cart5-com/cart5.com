@@ -1,5 +1,7 @@
 
-import type { CartItem } from "./menuType";
+import { type CartItem } from "@lib/zod/cartItemState";
+
+// TODO: remove whole ts file I don't use these types
 
 export type HostAndStoreId = string; // as `host_-_storeId`
 
