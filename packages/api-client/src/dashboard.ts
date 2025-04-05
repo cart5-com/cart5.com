@@ -2,9 +2,9 @@ import type { ApiDashboardType } from '../../../apps/api-hono/src/routes/api_das
 import { hc } from 'hono/client'
 
 const client = hc<ApiDashboardType>('')
-export type Client = typeof client
-export const createDashboardApiClient = (...args: Parameters<typeof hc>): Client => {
+type Client = typeof client
+const createDashboardApiClient = (...args: Parameters<typeof hc>): Client => {
     return hc<ApiDashboardType>(...args)
 }
 
-export const dashboardApiClient = createDashboardApiClient('/__p_api/')
+export const dashboardApiClient = createDashboardApiClient('/__p_api/dashboard/')

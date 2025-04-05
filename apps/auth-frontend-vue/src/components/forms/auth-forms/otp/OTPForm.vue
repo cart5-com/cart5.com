@@ -30,7 +30,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 
 async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
-		const { data, error } = await (await authApiClient.auth.otp.send.$post({
+		const { data, error } = await (await authApiClient.otp.send.$post({
 			form: {
 				verifyEmail: values.email,
 				turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

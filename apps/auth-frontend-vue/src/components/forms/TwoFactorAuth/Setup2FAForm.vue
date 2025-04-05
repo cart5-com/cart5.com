@@ -50,7 +50,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await authApiClient.auth.two_factor_auth.save.$post({
+        const { data, error } = await (await authApiClient.two_factor_auth.save.$post({
             form: {
                 ...values,
                 encodedTOTPKey: props.encodedTOTPKey,

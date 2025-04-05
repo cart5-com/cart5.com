@@ -62,8 +62,8 @@ const getCrossDomainCallbackUrl = (code: string, redirectUrl: string) => {
     const url = new URL(redirectUrl);
 
     const callbackUrl: string = createAuthGlobalApiClient(
-        `${url.origin}/__p_api/`
-    ).auth_global['cross-domain-callback'].$url().toString()
+        `${url.origin}/__p_api/auth_global/`
+    )['cross-domain-callback'].$url().toString()
 
     const goToUrl = new URL(callbackUrl)
     goToUrl.searchParams.set("code", code);

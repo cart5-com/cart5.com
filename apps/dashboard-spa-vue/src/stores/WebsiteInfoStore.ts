@@ -3,13 +3,13 @@ import { type ResType } from "@api-client/typeUtils";
 import { ref } from "vue";
 
 type websiteInfoType = ResType<
-    typeof dashboardApiClient.dashboard.website.info.$get
+    typeof dashboardApiClient.website.info.$get
 >["data"];
 
 export const websiteInfo = ref<websiteInfoType | null>(null);
 
 export const loadWebsiteInfo = async () => {
-    const { data, error } = await (await dashboardApiClient.dashboard.website.info.$get()).json()
+    const { data, error } = await (await dashboardApiClient.website.info.$get()).json()
     if (error) {
         console.error(error)
     }

@@ -12,7 +12,7 @@ import {
 import { dashboardApiClient } from '@api-client/dashboard';
 import type { ResType } from '@api-client/typeUtils';
 
-const apiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get
+const apiPath = dashboardApiClient.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 defineProps<{

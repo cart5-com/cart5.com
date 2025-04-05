@@ -32,7 +32,7 @@ onMounted(async () => {
         return;
       }
       const loadingModal = dialog.showBlockingLoadingModal();
-      const { data, error } = await (await authApiClient.auth["user"]['encrypt-turnstile'].$post({
+      const { data, error } = await (await authApiClient["user"]['encrypt-turnstile'].$post({
         form: {
           redirectUrl: nextUrl,
           turnstile: result

@@ -42,7 +42,7 @@ watch([defaultMethods, deliveryMethods, pickupMethods], () => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].payment_methods.get.$post({
+        const { data, error } = await (await dashboardApiClient.store[':storeId'].payment_methods.get.$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -79,7 +79,7 @@ const loadData = async () => {
 const savePaymentMethods = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].payment_methods.update.$patch({
+        const { error } = await (await dashboardApiClient.store[':storeId'].payment_methods.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

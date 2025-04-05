@@ -14,7 +14,7 @@ import { TEAM_PERMISSIONS } from '@lib/consts';
 import { dashboardApiClient } from '@api-client/dashboard';
 import type { ResType } from '@api-client/typeUtils';
 
-const apiPath = dashboardApiClient.dashboard.store[':storeId'].team.$get
+const apiPath = dashboardApiClient.store[':storeId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 const props = defineProps<{

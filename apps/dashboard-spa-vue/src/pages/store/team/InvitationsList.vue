@@ -10,7 +10,7 @@ import { ref } from 'vue';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
 
-const apiPath = dashboardApiClient.dashboard.store[':storeId'].team_invitations.$get;
+const apiPath = dashboardApiClient.store[':storeId'].team_invitations.$get;
 type Invitation = ResType<typeof apiPath>["data"][0];
 
 defineProps<{
@@ -39,7 +39,7 @@ const cancelInvitation = async (invitationId: string) => {
     cancellingInvitations.value[invitationId] = true;
 
     try {
-        const response = await dashboardApiClient.dashboard.store[':storeId'].team_invite_cancel.$post({
+        const response = await dashboardApiClient.store[':storeId'].team_invite_cancel.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },

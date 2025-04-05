@@ -34,10 +34,10 @@ app.get(
 	'/validate_tls',
 	validateDomainForTLS
 )
-app.route('/', apiAuth)
-app.route('/', apiAuthGlobal)
-app.route('/', apiDashboard)
-app.route('/', apiGMaps)
+app.route('/auth', apiAuth)
+app.route('/auth_global', apiAuthGlobal)
+app.route('/dashboard', apiDashboard)
+app.route('/gmaps', apiGMaps)
 
 
 const port = 3000;

@@ -20,7 +20,6 @@ const cacheControl = IS_PROD ? 'public, max-age=2592000, immutable' : 'no-cache'
 const REQUIRED_HEADERS = ['sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site'] as const;
 
 export const apiGMaps = new Hono<HonoVariables>()
-    .basePath('/gmaps')
     .use(async (c, next) => {
         c.header('Cache-Control', cacheControl);
         const headers = c.req.header();

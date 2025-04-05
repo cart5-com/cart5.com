@@ -28,7 +28,7 @@ pageTitle.value = 'Tax Settings';
 
 const isLoading = ref(false);
 
-const taxSettingsApiPath = dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post;
+const taxSettingsApiPath = dashboardApiClient.store[':storeId'].tax_settings.get.$post;
 type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
 
 const taxSettings = ref<TaxSettings>();
@@ -62,7 +62,7 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
 
 const loadData = async () => {
     isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post({
+    const { data, error } = await (await dashboardApiClient.store[':storeId'].tax_settings.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },
@@ -106,7 +106,7 @@ const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string
 const saveTaxSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].tax_settings.update.$patch({
+        const { error } = await (await dashboardApiClient.store[':storeId'].tax_settings.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

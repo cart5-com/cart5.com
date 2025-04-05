@@ -20,7 +20,7 @@ const loadData = async () => {
         return;
     }
     isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.dashboard.team.team_invite_info.$post({
+    const { data, error } = await (await dashboardApiClient.team.team_invite_info.$post({
         json: { token: token }
     })).json();
     if (error) {
@@ -49,7 +49,7 @@ const acceptInvitation = async () => {
         return;
     }
     isLoading.value = true;
-    const { error } = await (await dashboardApiClient.dashboard.team.team_invite_accept.$post({
+    const { error } = await (await dashboardApiClient.team.team_invite_accept.$post({
         json: {
             token: token,
             turnstile

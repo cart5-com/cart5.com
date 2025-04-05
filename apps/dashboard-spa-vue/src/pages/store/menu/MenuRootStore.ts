@@ -15,7 +15,7 @@ export const menuRoot = ref<MenuRoot>(defaultMenuRoot);
 export const isMenuLoading = ref(false);
 export const loadMenu = async () => {
     isMenuLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].menu.get.$post({
+    const { data, error } = await (await dashboardApiClient.store[':storeId'].menu.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },
@@ -35,7 +35,7 @@ export const loadMenu = async () => {
 
 export const saveMenu = async () => {
     isMenuLoading.value = true;
-    const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].menu.update.$patch({
+    const { error } = await (await dashboardApiClient.store[':storeId'].menu.update.$patch({
         param: {
             storeId: currentStoreId.value ?? '',
         },

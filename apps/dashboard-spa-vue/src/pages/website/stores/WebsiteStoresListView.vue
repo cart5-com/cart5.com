@@ -22,7 +22,7 @@ import { Plus, Search, Check, X } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 
 type StoresResponse = ResType<
-    typeof dashboardApiClient.dashboard.website[':websiteId']['stores']['list']['$get']
+    typeof dashboardApiClient.website[':websiteId']['stores']['list']['$get']
 >["data"];
 
 pageTitle.value = 'Stores';
@@ -37,7 +37,7 @@ const currentPage = ref(1);
 
 const loadStores = async () => {
     loading.value = true;
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].stores.list.$get({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].stores.list.$get({
         param: { websiteId: currentWebsiteId.value ?? '' },
         query: {
             limit: String(limit.value),
@@ -57,7 +57,7 @@ const loadStores = async () => {
 };
 
 const addStore = async (storeId: string) => {
-    const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].stores.add.$post({
+    const { error } = await (await dashboardApiClient.website[':websiteId'].stores.add.$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: { storeId }
     })).json();
@@ -73,7 +73,7 @@ const addStore = async (storeId: string) => {
 };
 
 const removeStore = async (storeId: string) => {
-    const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].stores.remove.$post({
+    const { error } = await (await dashboardApiClient.website[':websiteId'].stores.remove.$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: { storeId }
     })).json();
@@ -114,7 +114,7 @@ onMounted(async () => {
 
 const isMarketplaceMode = ref(false);
 const loadMarketplaceMode = async () => {
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$post({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -132,7 +132,7 @@ const loadMarketplaceMode = async () => {
 
 const onMarketplaceModeChange = async (checked: boolean) => {
     isMarketplaceMode.value = checked;
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$patch({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             isMarketplace: checked,

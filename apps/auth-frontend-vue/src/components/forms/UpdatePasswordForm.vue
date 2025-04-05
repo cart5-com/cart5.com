@@ -38,7 +38,7 @@ form.setFieldValue("email", userStore.value?.email || "");
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { error } = await (await authApiClient.auth.user['update-password'].$post({
+        const { error } = await (await authApiClient.user['update-password'].$post({
             form: {
                 password: values.password,
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

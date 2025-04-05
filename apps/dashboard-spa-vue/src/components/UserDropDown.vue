@@ -12,7 +12,7 @@ function goToAccountSettings() {
 }
 
 async function logout() {
-    const { data, error } = await (await authGlobalApiClient.auth_global['logout-all'].$post()).json();
+    const { data, error } = await (await authGlobalApiClient['logout-all'].$post()).json();
     console.log(data, error);
     window.location.href = `/`;
 }

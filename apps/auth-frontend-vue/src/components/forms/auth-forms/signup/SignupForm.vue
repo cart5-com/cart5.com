@@ -33,7 +33,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 
 async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
-		const { data, error } = await (await authApiClient.auth.email_password.register.$post({
+		const { data, error } = await (await authApiClient.email_password.register.$post({
 			form: {
 				email: values.email,
 				password: values.password,

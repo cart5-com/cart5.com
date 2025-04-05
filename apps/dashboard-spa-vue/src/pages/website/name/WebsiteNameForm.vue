@@ -23,7 +23,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
     isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$post({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -56,7 +56,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         const websiteId = currentWebsiteId.value;
         if (!websiteId) return;
 
-        const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$patch({
+        const { error } = await (await dashboardApiClient.website[':websiteId'].$patch({
             param: { websiteId },
             json: {
                 name: values.name,

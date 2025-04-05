@@ -7,7 +7,7 @@ import { authGlobalApiClient } from '@api-client/auth_global';
 import router from './router'
 
 export const getUser = async function () {
-    const { data, error } = await (await authGlobalApiClient.auth_global.whoami.$post()).json();
+    const { data, error } = await (await authGlobalApiClient.whoami.$post()).json();
     if (error) {
         console.error(error);
     }

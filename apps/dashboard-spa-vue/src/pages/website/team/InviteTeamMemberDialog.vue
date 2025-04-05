@@ -57,7 +57,7 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     try {
-        const { error: apiError } = await (await dashboardApiClient.dashboard.website[':websiteId'].team_invite.$post({
+        const { error: apiError } = await (await dashboardApiClient.website[':websiteId'].team_invite.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },

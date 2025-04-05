@@ -22,7 +22,7 @@ loadCountryFromIp() retrieves location data if not already set
 */
 
 
-export type UserDataStoreType = ResType<typeof authGlobalApiClient.auth_global.get_user_data.$post>["data"];
+export type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
 
 
@@ -134,7 +134,7 @@ const loadUserData = async () => {
     if (import.meta.env.SSR) return;
     console.log('loadUserData');
     const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
-    const { data, error } = await (await authGlobalApiClient.auth_global.get_user_data.$post({
+    const { data, error } = await (await authGlobalApiClient.get_user_data.$post({
         json: {
             columns: {
                 rememberLastAddress: true,
@@ -207,7 +207,7 @@ const saveUserData = async (newVal: UserDataStoreType) => {
 }
 
 export const saveUserDataNow = async (data: UserDataStoreType) => {
-    const { error } = await (await authGlobalApiClient.auth_global.update_user_data.$patch({
+    const { error } = await (await authGlobalApiClient.update_user_data.$patch({
         json: {
             ...data.userData,
         }
@@ -219,7 +219,7 @@ export const saveUserDataNow = async (data: UserDataStoreType) => {
 }
 
 export const logoutAll = async () => {
-    const { error } = await (await authGlobalApiClient.auth_global["logout-all"].$post()).json();
+    const { error } = await (await authGlobalApiClient["logout-all"].$post()).json();
     if (error) {
         console.error(error);
         toast.error("Failed to logout");

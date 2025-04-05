@@ -4,7 +4,7 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import { userStore } from "@auth-frontend-vue/stores/User.store";
 
 async function handleLogout() {
-	const { data, error } = await (await authGlobalApiClient.auth_global["logout-all"].$post()).json();
+	const { data, error } = await (await authGlobalApiClient["logout-all"].$post()).json();
 	console.log(data, error);
 	userStore.value = null;
 }

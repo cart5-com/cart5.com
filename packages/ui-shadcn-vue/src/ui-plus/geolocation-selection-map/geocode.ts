@@ -2,7 +2,7 @@ import { gmapsApiClient } from '@api-client/gmaps';
 import type { ResType } from '@api-client/typeUtils';
 
 type GeocodeResponse = ResType<
-    typeof gmapsApiClient.gmaps.geocode['$get']
+    typeof gmapsApiClient.geocode['$get']
 >;
 
 export const geocode = async (address: string, countryCode?: string): Promise<GeocodeResponse> => {
@@ -26,7 +26,7 @@ export const geocode = async (address: string, countryCode?: string): Promise<Ge
         }
 
         // If no valid cache exists, fetch new data
-        const result = await (await gmapsApiClient.gmaps.geocode.$get({
+        const result = await (await gmapsApiClient.geocode.$get({
             query: {
                 address: address.trim().toLowerCase(),
                 components: countryCode ? `country:${countryCode}` : undefined,
@@ -45,7 +45,7 @@ export const geocode = async (address: string, countryCode?: string): Promise<Ge
     }
 
     // If not in browser, just fetch without caching
-    return await (await gmapsApiClient.gmaps.geocode.$get({
+    return await (await gmapsApiClient.geocode.$get({
         query: {
             address: address.trim().toLowerCase(),
             components: countryCode ? `country:${countryCode}` : undefined,

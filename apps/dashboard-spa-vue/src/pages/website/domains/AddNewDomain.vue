@@ -45,7 +45,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].domain.add.$post({
+        const { error } = await (await dashboardApiClient.website[':websiteId'].domain.add.$post({
             param: { websiteId: currentWebsiteId.value || '' },
             json: { hostname: values.hostname }
         })).json()

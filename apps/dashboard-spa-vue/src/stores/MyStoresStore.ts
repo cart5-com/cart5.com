@@ -3,7 +3,7 @@ import { type ResType } from '@api-client/typeUtils';
 import { dashboardApiClient } from '@api-client/dashboard';
 
 export type storeListType = ResType<
-    typeof dashboardApiClient.dashboard.store.my_stores.$get
+    typeof dashboardApiClient.store.my_stores.$get
 >["data"];
 
 
@@ -24,7 +24,7 @@ export const currentStore = computed(() => {
 
 export async function loadMyStores() {
     console.log('loadMyStores');
-    const response = await (await dashboardApiClient.dashboard.store.my_stores.$get()).json()
+    const response = await (await dashboardApiClient.store.my_stores.$get()).json()
     if (response.error) {
         console.error(response.error)
         return

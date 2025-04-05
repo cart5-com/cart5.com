@@ -30,7 +30,7 @@ const isLoading = ref(false);
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].$post({
+        const { data, error } = await (await dashboardApiClient.store[':storeId'].$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -66,7 +66,7 @@ const toggleCuisine = (cuisine: string) => {
 const saveCuisines = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].$patch({
+        const { error } = await (await dashboardApiClient.store[':storeId'].$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

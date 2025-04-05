@@ -60,7 +60,7 @@ watch([deliveryZones, offersDelivery], () => {
 pageTitle.value = 'Delivery Options'
 
 const loadData = async () => {
-    const apiPath = dashboardApiClient.dashboard.store[':storeId'];
+    const apiPath = dashboardApiClient.store[':storeId'];
     const param = {
         storeId: currentStoreId.value ?? '',
     }
@@ -251,7 +251,7 @@ const deleteZone = async () => {
 }
 
 const saveData = async () => {
-    const apiPath = dashboardApiClient.dashboard.store[':storeId'];
+    const apiPath = dashboardApiClient.store[':storeId'];
     const param = {
         storeId: currentStoreId.value ?? '',
     }

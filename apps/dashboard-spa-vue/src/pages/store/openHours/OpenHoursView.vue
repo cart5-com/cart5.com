@@ -81,7 +81,7 @@ watch([
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].open_hours.get.$post({
+        const { data, error } = await (await dashboardApiClient.store[':storeId'].open_hours.get.$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -126,7 +126,7 @@ const loadData = async () => {
 const saveHours = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].open_hours.update.$patch({
+        const { error } = await (await dashboardApiClient.store[':storeId'].open_hours.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

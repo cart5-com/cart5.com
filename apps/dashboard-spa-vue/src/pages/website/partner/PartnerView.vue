@@ -16,7 +16,7 @@ onMounted(async () => {
 
 const isPartner = ref(false);
 const loadPartner = async () => {
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$post({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -34,7 +34,7 @@ const loadPartner = async () => {
 
 const onPartnerChange = async (checked: boolean) => {
     isPartner.value = checked;
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$patch({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             isPartner: checked,

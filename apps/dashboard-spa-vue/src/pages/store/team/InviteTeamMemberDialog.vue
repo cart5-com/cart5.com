@@ -57,7 +57,7 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     try {
-        const { error: apiError } = await (await dashboardApiClient.dashboard.store[':storeId'].team_invite.$post({
+        const { error: apiError } = await (await dashboardApiClient.store[':storeId'].team_invite.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },

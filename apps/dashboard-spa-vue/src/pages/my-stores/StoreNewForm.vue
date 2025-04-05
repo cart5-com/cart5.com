@@ -43,7 +43,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         return;
     }
     await withSubmit(async () => {
-        const { data, error } = await (await dashboardApiClient.dashboard.store.create.$post({
+        const { data, error } = await (await dashboardApiClient.store.create.$post({
             form: {
                 name: values.name,
                 turnstile

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-vue-next';
 
 type WebsiteType = ResType<
-    typeof dashboardApiClient.dashboard.website[':websiteId']['domain']['list']['$post']
+    typeof dashboardApiClient.website[':websiteId']['domain']['list']['$post']
 >["data"];
 
 pageTitle.value = 'Domains'
@@ -18,7 +18,7 @@ pageTitle.value = 'Domains'
 const website = ref<WebsiteType>();
 
 const loadData = async () => {
-    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].domain.list.$post({
+    const { data, error } = await (await dashboardApiClient.website[':websiteId'].domain.list.$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -37,7 +37,7 @@ const loadData = async () => {
 };
 
 const makeDefault = async (hostname: string) => {
-    await dashboardApiClient.dashboard.website[':websiteId'].domain['set_default'].$post({
+    await dashboardApiClient.website[':websiteId'].domain['set_default'].$post({
         param: {
             websiteId: currentWebsiteId.value ?? '',
         },
@@ -50,7 +50,7 @@ const makeDefault = async (hostname: string) => {
 };
 
 const removeDomain = async (hostname: string) => {
-    await dashboardApiClient.dashboard.website[':websiteId'].domain['remove'].$post({
+    await dashboardApiClient.website[':websiteId'].domain['remove'].$post({
         param: {
             websiteId: currentWebsiteId.value ?? '',
         },

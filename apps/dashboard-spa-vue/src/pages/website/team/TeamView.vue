@@ -14,11 +14,11 @@ import { Badge } from '@/components/ui/badge';
 // Set page title
 pageTitle.value = 'Team Management';
 
-const membersApiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get;
+const membersApiPath = dashboardApiClient.website[':websiteId'].team.$get;
 type Member = ResType<typeof membersApiPath>["data"]["teamMembers"];
 type SupportTeamWebsite = ResType<typeof membersApiPath>["data"]["supportTeamWebsite"];
 
-const invitationsApiPath = dashboardApiClient.dashboard.website[':websiteId'].team_invitations.$get;
+const invitationsApiPath = dashboardApiClient.website[':websiteId'].team_invitations.$get;
 type Invitation = ResType<typeof invitationsApiPath>["data"];
 
 const members = ref<Member>([]);
@@ -33,7 +33,7 @@ const loadData = async () => {
 
     try {
         // Load team members
-        const membersRes = await (await dashboardApiClient.dashboard.website[':websiteId'].team.$get({
+        const membersRes = await (await dashboardApiClient.website[':websiteId'].team.$get({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             }
@@ -48,7 +48,7 @@ const loadData = async () => {
             supportTeamWebsite.value = membersRes.data.supportTeamWebsite;
         }
 
-        const invitationsRes = await (await dashboardApiClient.dashboard.website[':websiteId'].team_invitations.$get({
+        const invitationsRes = await (await dashboardApiClient.website[':websiteId'].team_invitations.$get({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             }

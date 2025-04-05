@@ -3,7 +3,7 @@ import { type ResType } from '@api-client/typeUtils';
 import { dashboardApiClient } from '@api-client/dashboard';
 
 export type websiteListType = ResType<
-    typeof dashboardApiClient.dashboard.website.my_websites.$get
+    typeof dashboardApiClient.website.my_websites.$get
 >["data"];
 
 // Define a more specific type for website data
@@ -32,7 +32,7 @@ export const currentWebsite = computed(() => {
 
 export async function loadMyWebsites() {
     console.log('loadMyWebsites');
-    const { data, error } = await (await dashboardApiClient.dashboard.website.my_websites.$get()).json()
+    const { data, error } = await (await dashboardApiClient.website.my_websites.$get()).json()
     if (error) {
         console.error(error)
         return

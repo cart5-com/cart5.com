@@ -2,9 +2,9 @@ import type { ApiGmapsType } from '../../../apps/api-hono/src/routes/gmaps/mapsR
 import { hc } from 'hono/client'
 
 const client = hc<ApiGmapsType>('')
-export type Client = typeof client
-export const createGmapsApiClient = (...args: Parameters<typeof hc>): Client => {
+type Client = typeof client
+const createGmapsApiClient = (...args: Parameters<typeof hc>): Client => {
     return hc<ApiGmapsType>(...args)
 }
 
-export const gmapsApiClient = createGmapsApiClient('/__p_api/')
+export const gmapsApiClient = createGmapsApiClient('/__p_api/gmaps/')

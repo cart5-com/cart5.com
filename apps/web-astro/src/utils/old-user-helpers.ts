@@ -11,7 +11,7 @@ import { getLoginUrl, getSettingsUrl, getSignupUrl } from "@lib/clientUtils/getA
 */
 
 const whoAmI = async () => {
-    const { data, error } = await (await authGlobalApiClient.auth_global.whoami.$post()).json();
+    const { data, error } = await (await authGlobalApiClient.whoami.$post()).json();
     console.log(data, error);
     const whoamiResult = document.getElementById("whoami-result") as HTMLPreElement;
     whoamiResult.textContent = JSON.stringify(data, null, 2);
@@ -45,7 +45,7 @@ loginButton.addEventListener("click", async () => {
 
 const logoutButton = document.getElementById("logout-button") as HTMLButtonElement;
 logoutButton.addEventListener("click", async () => {
-    const { data, error } = await (await authGlobalApiClient.auth_global['logout-all'].$post()).json();
+    const { data, error } = await (await authGlobalApiClient['logout-all'].$post()).json();
     console.log(data, error);
     window.location.reload();
 });
