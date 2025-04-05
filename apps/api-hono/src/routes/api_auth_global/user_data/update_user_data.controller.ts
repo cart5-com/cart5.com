@@ -5,7 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { updateUserDataSchema } from "@db/schema/userData.schema";
 import { updateUserData_Service } from "@db/services/user_data.service";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
-
+import { cartItemSchema } from "@lib/zod/cartItemState";
 export const updateUserData_SchemaValidator = zValidator('json',
     updateUserDataSchema
         .omit({
@@ -14,10 +14,6 @@ export const updateUserData_SchemaValidator = zValidator('json',
             created_at_ts: true,
             updated_at_ts: true,
         })
-        // .extend({
-        //     // Define proper type for addresses field
-        //     addresses: z.array(z.custom<UserAddress>()).optional()
-        // })
         .partial()
 );
 
@@ -34,6 +30,19 @@ export const updateUserDataRoute = async (c: Context<
         ...data
     } = c.req.valid('json');
     const user = c.get("USER");
+    // clean items data with zod
+    if (data.carts) {
+        for (const cartKey in data.carts) {
+            const cart = data.carts[cartKey];
+            if (cart.items) {
+                if (data.carts[cartKey].items) {
+                    data.carts[cartKey].items = cart.items.map(item =>
+                        cartItemSchema.parse(item)
+                    );
+                }
+            }
+        }
+    }
     return c.json({
         data: await updateUserData_Service(user!.id, data),
         error: null as ErrorType

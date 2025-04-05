@@ -46,7 +46,8 @@ export const cartSchema = z.object({
     lastUpdatedTS: z.number().optional(),
     storeName: z.string().optional(),
     orderNote: z.string().optional(),
-    // items: z.custom<CartItem[]>((val) => { // causes circular reference
+    // items: z.array(cartItemSchema).optional() // causes circular deep shit
+    // items: z.custom<CartItem[]>((val) => { // same issue: causes circular deep shit
     items: z.custom<any[]>((val) => {
         // Check if it's an array first
         if (!Array.isArray(val)) {
