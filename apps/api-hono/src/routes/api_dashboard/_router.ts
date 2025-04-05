@@ -13,4 +13,4 @@ export const apiDashboard = new Hono<HonoVariables>()
     .route('/website', websiteRouter)
     .route('/team', teamRouter)
 
-export type ApiDashboardRouteType = typeof apiDashboard;
+export type ApiDashboardType = typeof apiDashboard;

@@ -42,6 +42,6 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
 
 
 
-export type ApiAuthGlobalRouteType = typeof apiAuthGlobal;
+export type ApiAuthGlobalType = typeof apiAuthGlobal;
 
 

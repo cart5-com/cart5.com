@@ -18,4 +18,4 @@ export const apiAuth = new Hono<HonoVariables>()
     .route('/two_factor_auth', twoFactorAuthRoute)
     .route('/user', userRoute)
 
-export type ApiAuthRouteType = typeof apiAuth;
+export type ApiAuthType = typeof apiAuth;

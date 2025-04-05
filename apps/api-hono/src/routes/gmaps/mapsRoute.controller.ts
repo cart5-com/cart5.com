@@ -257,5 +257,5 @@ export const apiGMaps = new Hono<HonoVariables>()
 //     }
 // )
 
-export type ApiGmapsRouteType = typeof apiGMaps;
+export type ApiGmapsType = typeof apiGMaps;
 
