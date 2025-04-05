@@ -9,12 +9,12 @@ import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
-import { apiRouter } from './routes/router';
 import { startCrons } from './cron';
-import { authGlobalRoute } from './routes/api_auth_global/_router';
-import { apiAuthRoute } from './routes/api_auth/_router';
+import { apiAuthGlobal } from './routes/api_auth_global/_router';
+import { apiAuth } from './routes/api_auth/_router';
 import { apiDashboard } from './routes/api_dashboard/_router';
-import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
+import { apiGMaps } from './routes/gmaps/mapsRoute.controller';
+import { validateDomainForTLS } from './routes/validate_domain';
 
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
@@ -30,12 +30,14 @@ app.use(secureHeaders());
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
-
-app.route('/', apiRouter)
-app.route('/', apiAuthRoute)
-app.route('/', authGlobalRoute)
+app.get(
+	'/validate_tls',
+	validateDomainForTLS
+)
+app.route('/', apiAuth)
+app.route('/', apiAuthGlobal)
 app.route('/', apiDashboard)
-app.route('/', mapsRoute)
+app.route('/', apiGMaps)
 
 
 const port = 3000;

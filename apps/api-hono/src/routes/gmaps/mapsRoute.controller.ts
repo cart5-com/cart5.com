@@ -19,7 +19,7 @@ import { getGeocodingCache_Service, saveGeocodingCache_Service } from "@db/servi
 const cacheControl = IS_PROD ? 'public, max-age=2592000, immutable' : 'no-cache'; // 30 days cache
 const REQUIRED_HEADERS = ['sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site'] as const;
 
-export const mapsRoute = new Hono<HonoVariables>()
+export const apiGMaps = new Hono<HonoVariables>()
     .basePath('/gmaps')
     .use(async (c, next) => {
         c.header('Cache-Control', cacheControl);
@@ -257,5 +257,5 @@ export const mapsRoute = new Hono<HonoVariables>()
 //     }
 // )
 
-export type ApiGmapsRouteType = typeof mapsRoute;
+export type ApiGmapsRouteType = typeof apiGMaps;
 
