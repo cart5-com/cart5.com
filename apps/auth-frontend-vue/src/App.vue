@@ -19,7 +19,7 @@ import { showTurnstile } from '@/ui-plus/dialog/showTurnstile';
 import { onMounted } from 'vue';
 import { getNextUrl } from '@auth-frontend-vue/lib/queryHelpers';
 import { useDialog } from "@/ui-plus/dialog/use-dialog";
-import { apiClient } from '@api-client/index';
+import { authApiClient } from '@api-client/auth';
 import { toast } from '@/ui-plus/sonner'
 const dialog = useDialog();
 
@@ -32,7 +32,7 @@ onMounted(async () => {
         return;
       }
       const loadingModal = dialog.showBlockingLoadingModal();
-      const { data, error } = await (await apiClient.auth["user"]['encrypt-turnstile'].$post({
+      const { data, error } = await (await authApiClient.auth["user"]['encrypt-turnstile'].$post({
         form: {
           redirectUrl: nextUrl,
           turnstile: result

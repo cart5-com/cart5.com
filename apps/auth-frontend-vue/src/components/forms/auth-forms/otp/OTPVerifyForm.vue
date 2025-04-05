@@ -4,7 +4,7 @@ import { AutoForm } from '@/ui-plus/auto-form'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import { z } from "zod";
-import { apiClient } from "@api-client/index";
+import { authApiClient } from "@api-client/auth";
 import { showTurnstile } from '@/ui-plus/dialog/showTurnstile'
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
@@ -36,7 +36,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 form.setFieldValue("verifyEmail", props.verifyEmail);
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await apiClient.auth.otp.verify.$post({
+        const { data, error } = await (await authApiClient.auth.otp.verify.$post({
             form: {
                 verifyEmail: values.verifyEmail,
                 code: values.code,

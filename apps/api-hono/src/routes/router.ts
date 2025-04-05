@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { apiAuth } from './api_auth/_router';
+// import { apiAuth } from './api_auth/_router';
 import { apiDashboard } from './api_dashboard/_router';
 import { authGlobalRoute } from './api_auth_global/_router';
 import { mapsRoute } from './gmaps/mapsRoute.controller';
@@ -11,7 +11,7 @@ export const apiRouter = new Hono<HonoVariables>()
         '/validate_tls',
         validateDomainForTLS
     )
-    .route('/auth', apiAuth)
+    // .route('/', apiAuth)
     .route('/', authGlobalRoute)
     .route('/dashboard', apiDashboard)
     .route('/gmaps', mapsRoute)

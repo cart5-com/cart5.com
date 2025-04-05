@@ -5,7 +5,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@auth-frontend-vue/const";
-import { apiClient } from "@api-client/index";
+import { authApiClient } from "@api-client/auth";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
 import { Loader2 } from "lucide-vue-next";
@@ -28,7 +28,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 });
 async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
-		const { data, error } = await (await apiClient.auth.email_password.login.$post({
+		const { data, error } = await (await authApiClient.auth.email_password.login.$post({
 			form: {
 				email: values.email,
 				password: values.password,

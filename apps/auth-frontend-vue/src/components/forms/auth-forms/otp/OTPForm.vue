@@ -7,7 +7,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 import { LOCAL_STORAGE_KEYS } from "@auth-frontend-vue/const";
-import { apiClient } from "@api-client/index";
+import { authApiClient } from "@api-client/auth";
 import OTPVerifyForm from "./OTPVerifyForm.vue";
 import { Loader2 } from "lucide-vue-next";
 import { useFormPlus } from "@/ui-plus/form/useFormPlus";
@@ -30,7 +30,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
 
 async function onSubmit(values: z.infer<typeof schema>) {
 	await withSubmit(async () => {
-		const { data, error } = await (await apiClient.auth.otp.send.$post({
+		const { data, error } = await (await authApiClient.auth.otp.send.$post({
 			form: {
 				verifyEmail: values.email,
 				turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

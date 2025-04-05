@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { AutoForm } from "@/ui-plus/auto-form";
 import { showTurnstile } from "@/ui-plus/dialog/showTurnstile";
-import { apiClient } from "@api-client/index";
+import { authApiClient } from "@api-client/auth";
 import { z } from "zod";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -31,7 +31,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await apiClient.auth.two_factor_auth.verify.$post({
+        const { data, error } = await (await authApiClient.auth.two_factor_auth.verify.$post({
             form: {
                 userProvidedCode: values.userProvidedCode,
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)
@@ -59,7 +59,7 @@ async function resetWithRecoveryCode() {
         return;
     }
     await withSubmit(async () => {
-        const { data, error } = await (await apiClient.auth.two_factor_auth['remove-2fa-with-recovery-code'].$post({
+        const { data, error } = await (await authApiClient.auth.two_factor_auth['remove-2fa-with-recovery-code'].$post({
             form: {
                 recoveryCode,
                 turnstile: await showTurnstile(import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY)

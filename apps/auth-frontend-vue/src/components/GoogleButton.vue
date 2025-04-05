@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { createApiClient } from "@api-client/index";
+import { createAuthApiClient } from "@api-client/auth";
 
 const handleGoogleClick = () => {
-	const googleRedirectUrl = createApiClient(`${window.location.origin}/__p_api/`).auth.google_oauth.redirect.$url();
+	const googleRedirectUrl = createAuthApiClient(`${window.location.origin}/__p_api/`).auth.google_oauth.redirect.$url();
 	googleRedirectUrl.searchParams.set("redirect_uri", encodeURIComponent(window.location.href));
 	const googleUrl = googleRedirectUrl.toString();
 	// recheck user data is required after google oauth redirects
