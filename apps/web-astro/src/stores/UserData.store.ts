@@ -140,9 +140,14 @@ const loadUserData = async () => {
         }
         if (isAfterLogin) {
             userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
-            // remove local storage data
+            userDataStore.value.user = data.user;
+            // save latest user data
             await saveUserDataNow(userDataStore.value);
+
+            // remove local storage data
             localStorage.removeItem(LOCAL_STORAGE_KEY);
+
+            // redirect to home to check user's own latest location
             if (window.location.pathname === BASE_LINKS.LIST_STORES) {
                 window.location.href = BASE_LINKS.HOME;
             }
