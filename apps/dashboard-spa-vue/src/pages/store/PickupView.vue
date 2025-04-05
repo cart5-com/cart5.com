@@ -3,7 +3,7 @@ import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
-import { apiClient } from '@api-client/index'
+import { dashboardApiClient } from '@api-client/dashboard'
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,7 +15,7 @@ const offersPickup = ref(false)
 const loadData = async () => {
     isLoading.value = true
     try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].$post({
+        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -42,7 +42,7 @@ const loadData = async () => {
 const savePickupOption = async () => {
     isLoading.value = true
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].$patch({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

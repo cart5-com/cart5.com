@@ -1,6 +1,6 @@
 import { authGlobalApiClient } from "@api-client/auth_global";
 import { ref, watch } from "vue";
-import type { ResType } from "@api-client/index";
+import type { ResType } from "@api-client/typeUtils";
 import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";

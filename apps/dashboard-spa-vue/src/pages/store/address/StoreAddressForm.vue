@@ -18,7 +18,7 @@ import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStoresStore';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 
 import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
@@ -75,7 +75,7 @@ const loadData = async () => {
     console.log('loadData', currentStoreId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data: address, error } = await (await apiClient.dashboard.store[':storeId'].address.get.$post({
+    const { data: address, error } = await (await dashboardApiClient.dashboard.store[':storeId'].address.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },
@@ -157,7 +157,7 @@ async function onMapConfirm(result: { lat: number, lng: number }) {
     isLoading.value = true;
     // const reverseGeocodeResult = await reverseGeocode(lat, lng);
     // console.log('reverseGeocodeResult', reverseGeocodeResult);
-    const { data, error } = await (await apiClient.dashboard.store[':storeId'].address.update.$patch({
+    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].address.update.$patch({
         param: {
             storeId: currentStoreId.value ?? '',
         },

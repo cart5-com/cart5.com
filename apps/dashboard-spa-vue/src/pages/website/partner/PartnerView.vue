@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { onMounted, ref } from 'vue';
@@ -16,7 +16,7 @@ onMounted(async () => {
 
 const isPartner = ref(false);
 const loadPartner = async () => {
-    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$post({
+    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -34,7 +34,7 @@ const loadPartner = async () => {
 
 const onPartnerChange = async (checked: boolean) => {
     isPartner.value = checked;
-    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$patch({
+    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             isPartner: checked,

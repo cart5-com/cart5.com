@@ -4,21 +4,21 @@ import TeamMembersList from './TeamMembersList.vue';
 import InvitationsList from './InvitationsList.vue';
 import InviteTeamMemberDialog from './InviteTeamMemberDialog.vue';
 import { currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsitesStore';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { toast } from '@/ui-plus/sonner';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { Loader2 } from 'lucide-vue-next';
-import { type ResType } from '@api-client/index';
+import { type ResType } from '@api-client/typeUtils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 // Set page title
 pageTitle.value = 'Team Management';
 
-const membersApiPath = apiClient.dashboard.website[':websiteId'].team.$get;
+const membersApiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get;
 type Member = ResType<typeof membersApiPath>["data"]["teamMembers"];
 type SupportTeamWebsite = ResType<typeof membersApiPath>["data"]["supportTeamWebsite"];
 
-const invitationsApiPath = apiClient.dashboard.website[':websiteId'].team_invitations.$get;
+const invitationsApiPath = dashboardApiClient.dashboard.website[':websiteId'].team_invitations.$get;
 type Invitation = ResType<typeof invitationsApiPath>["data"];
 
 const members = ref<Member>([]);
@@ -33,7 +33,7 @@ const loadData = async () => {
 
     try {
         // Load team members
-        const membersRes = await (await apiClient.dashboard.website[':websiteId'].team.$get({
+        const membersRes = await (await dashboardApiClient.dashboard.website[':websiteId'].team.$get({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             }
@@ -48,7 +48,7 @@ const loadData = async () => {
             supportTeamWebsite.value = membersRes.data.supportTeamWebsite;
         }
 
-        const invitationsRes = await (await apiClient.dashboard.website[':websiteId'].team_invitations.$get({
+        const invitationsRes = await (await dashboardApiClient.dashboard.website[':websiteId'].team_invitations.$get({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             }

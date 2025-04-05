@@ -7,7 +7,7 @@ import { z } from "zod";
 import { showTurnstilePopup } from '@lib/clientUtils/showTurnstilePopup';
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { loadMyStores } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { getTurnstileUrl } from '@lib/clientUtils/getAuthOrigin';
 import { toast } from '@/ui-plus/sonner';
@@ -43,7 +43,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         return;
     }
     await withSubmit(async () => {
-        const { data, error } = await (await apiClient.dashboard.store.create.$post({
+        const { data, error } = await (await dashboardApiClient.dashboard.store.create.$post({
             form: {
                 name: values.name,
                 turnstile

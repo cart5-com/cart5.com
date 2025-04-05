@@ -1,15 +1,15 @@
-import { apiClient } from "@api-client/index";
-import { type ResType } from "@api-client/index";
+import { dashboardApiClient } from "@api-client/dashboard";
+import { type ResType } from "@api-client/typeUtils";
 import { ref } from "vue";
 
 type websiteInfoType = ResType<
-    typeof apiClient.dashboard.website.info.$get
+    typeof dashboardApiClient.dashboard.website.info.$get
 >["data"];
 
 export const websiteInfo = ref<websiteInfoType | null>(null);
 
 export const loadWebsiteInfo = async () => {
-    const { data, error } = await (await apiClient.dashboard.website.info.$get()).json()
+    const { data, error } = await (await dashboardApiClient.dashboard.website.info.$get()).json()
     if (error) {
         console.error(error)
     }

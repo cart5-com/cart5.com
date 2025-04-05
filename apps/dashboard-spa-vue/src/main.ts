@@ -3,11 +3,11 @@ import * as Sentry from "@sentry/vue";
 import { createApp } from 'vue'
 import { getLoginUrl } from "@lib/clientUtils/getAuthOrigin";
 import App from './App.vue'
-import { apiClient } from '@api-client/index';
+import { authGlobalApiClient } from '@api-client/auth_global';
 import router from './router'
 
 export const getUser = async function () {
-    const { data, error } = await (await apiClient.auth_global.whoami.$post()).json();
+    const { data, error } = await (await authGlobalApiClient.auth_global.whoami.$post()).json();
     if (error) {
         console.error(error);
     }

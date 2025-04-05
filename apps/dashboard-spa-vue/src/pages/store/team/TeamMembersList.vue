@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ref, computed } from 'vue';
-import { apiClient } from '@api-client/index';
-import { type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 import { currentStore, currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
@@ -12,7 +12,7 @@ import { toast } from '@/ui-plus/sonner';
 import { Store, TriangleAlert } from 'lucide-vue-next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-const apiPath = apiClient.dashboard.store[':storeId'].team.$get
+const apiPath = dashboardApiClient.dashboard.store[':storeId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 const props = defineProps<{
@@ -69,7 +69,7 @@ const transferOwnership = async () => {
     isTransferring.value = true;
 
     try {
-        const response = await apiClient.dashboard.store[':storeId'].team_transfer_ownership.$post({
+        const response = await dashboardApiClient.dashboard.store[':storeId'].team_transfer_ownership.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },
@@ -102,7 +102,7 @@ const removeMember = async () => {
     isRemoving.value = true;
 
     try {
-        const response = await apiClient.dashboard.store[':storeId'].team_remove_member.$post({
+        const response = await dashboardApiClient.dashboard.store[':storeId'].team_remove_member.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },
@@ -135,7 +135,7 @@ const updatePermissions = async (permissions: string[]) => {
     isUpdatingPermissions.value = true;
 
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].team_update_permissions.$post({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].team_update_permissions.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },

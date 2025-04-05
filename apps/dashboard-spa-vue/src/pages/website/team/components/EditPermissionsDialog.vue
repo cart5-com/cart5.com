@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { TEAM_PERMISSIONS } from '@lib/consts';
-import { apiClient, type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 
-const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
+const apiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 const props = defineProps<{
@@ -44,7 +45,7 @@ watch(() => [props.open, props.member], () => {
 
         // Set selected permissions based on member's current permissions
         if (props.member.permissions && Array.isArray(props.member.permissions)) {
-            props.member.permissions.forEach(permission => {
+            props.member.permissions.forEach((permission: string) => {
                 const key = Object.keys(TEAM_PERMISSIONS).find(
                     k => TEAM_PERMISSIONS[k as keyof typeof TEAM_PERMISSIONS] === permission
                 );

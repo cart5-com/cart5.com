@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getSettingsUrl } from "@lib/clientUtils/getAuthOrigin";
-import { apiClient } from "@api-client/index";
+import { authGlobalApiClient } from "@api-client/auth_global";
 import DarkModeToggleSubMenu from "@/ui-plus/DarkModeToggleSubMenu.vue";
 const user = window.USER;
 function goToAccountSettings() {
@@ -12,7 +12,7 @@ function goToAccountSettings() {
 }
 
 async function logout() {
-    const { data, error } = await (await apiClient.auth_global['logout-all'].$post()).json();
+    const { data, error } = await (await authGlobalApiClient.auth_global['logout-all'].$post()).json();
     console.log(data, error);
     window.location.href = `/`;
 }

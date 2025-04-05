@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Clock, User, X } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import { apiClient } from '@api-client/index';
-import { type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 import { formatDate } from '@lib/utils/formatDate';
 import { ref } from 'vue';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
 
-const apiPath = apiClient.dashboard.store[':storeId'].team_invitations.$get;
+const apiPath = dashboardApiClient.dashboard.store[':storeId'].team_invitations.$get;
 type Invitation = ResType<typeof apiPath>["data"][0];
 
 defineProps<{
@@ -39,7 +39,7 @@ const cancelInvitation = async (invitationId: string) => {
     cancellingInvitations.value[invitationId] = true;
 
     try {
-        const response = await apiClient.dashboard.store[':storeId'].team_invite_cancel.$post({
+        const response = await dashboardApiClient.dashboard.store[':storeId'].team_invite_cancel.$post({
             param: {
                 storeId: currentStoreId.value ?? ''
             },

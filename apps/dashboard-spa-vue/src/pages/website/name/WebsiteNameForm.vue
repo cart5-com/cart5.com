@@ -6,7 +6,7 @@ import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2 } from 'lucide-vue-next'
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { currentWebsiteId, setCurrentWebsiteName } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { onMounted } from 'vue';
 import { toast } from '@/ui-plus/sonner';
@@ -23,7 +23,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 const loadData = async () => {
     isLoading.value = true;
-    const { data, error } = await (await apiClient.dashboard.website[':websiteId'].$post({
+    const { data, error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
@@ -56,7 +56,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
         const websiteId = currentWebsiteId.value;
         if (!websiteId) return;
 
-        const { error } = await (await apiClient.dashboard.website[':websiteId'].$patch({
+        const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].$patch({
             param: { websiteId },
             json: {
                 name: values.name,

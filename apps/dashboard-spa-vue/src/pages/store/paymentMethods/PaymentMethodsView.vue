@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Check, Banknote, CreditCard, Phone, Landmark } from 'lucide-vue-next';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
 import type { PhysicalPaymentMethods } from '@lib/zod/paymentMethodsSchema';
@@ -42,7 +42,7 @@ watch([defaultMethods, deliveryMethods, pickupMethods], () => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].payment_methods.get.$post({
+        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].payment_methods.get.$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -79,7 +79,7 @@ const loadData = async () => {
 const savePaymentMethods = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].payment_methods.update.$patch({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].payment_methods.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

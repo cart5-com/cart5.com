@@ -1,10 +1,11 @@
 import { currentStoreId } from "@dashboard-spa-vue/stores/MyStoresStore";
-import { apiClient, type ResType } from "@api-client/index";
+import { dashboardApiClient } from "@api-client/dashboard";
+import type { ResType } from "@api-client/typeUtils";
 import { toast } from "@/ui-plus/sonner";
 import { ref } from "vue";
 
 
-const taxSettingsApiPath = apiClient.dashboard.store[':storeId'].tax_settings.get.$post;
+const taxSettingsApiPath = dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post;
 type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
 export type taxCategory = NonNullable<NonNullable<TaxSettings>["taxCategories"]>[number];
 
@@ -12,7 +13,7 @@ export const taxSettings = ref<TaxSettings>();
 
 export const loadTaxSettings = async () => {
     taxSettings.value = undefined;
-    const { data, error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.get.$post({
+    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },

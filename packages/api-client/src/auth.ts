@@ -7,4 +7,4 @@ export const createAuthApiClient = (...args: Parameters<typeof hc>): Client => {
     return hc<ApiAuthRouteType>(...args)
 }
 
-export const authApiClient = createAuthApiClient('/__p_api/auth/')
+export const authApiClient = createAuthApiClient('/__p_api/')

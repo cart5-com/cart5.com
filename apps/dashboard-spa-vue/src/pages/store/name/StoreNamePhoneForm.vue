@@ -6,7 +6,7 @@ import { useForm } from 'vee-validate'
 import { z } from "zod";
 import { useFormPlus } from '@/ui-plus/form/useFormPlus'
 import { Loader2, PlusIcon } from 'lucide-vue-next'
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId, setCurrentStoreName } from '@dashboard-spa-vue/stores/MyStoresStore';
 import AutoFormFieldPhone from '@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue';
 import { onMounted, ref, watch } from 'vue';
@@ -36,7 +36,7 @@ const loadData = async () => {
     console.log('loadData', currentStoreId.value);
     // // sleep 1 second
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    const { data, error } = await (await apiClient.dashboard.store[':storeId'].$post({
+    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },
@@ -71,7 +71,7 @@ onMounted(() => {
 
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].$patch({
+        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

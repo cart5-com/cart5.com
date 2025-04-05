@@ -11,7 +11,10 @@ import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
 import { apiRouter } from './routes/router';
 import { startCrons } from './cron';
-
+import { authGlobalRoute } from './routes/api_auth_global/_router';
+import { apiAuthRoute } from './routes/api_auth/_router';
+import { apiDashboard } from './routes/api_dashboard/_router';
+import { mapsRoute } from './routes/gmaps/mapsRoute.controller';
 
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
@@ -28,11 +31,11 @@ app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
 
-const apiRoutes = app
-	.route('/', apiRouter)
-
-export type ApiAppType = typeof apiRoutes;
-
+app.route('/', apiRouter)
+app.route('/', apiAuthRoute)
+app.route('/', authGlobalRoute)
+app.route('/', apiDashboard)
+app.route('/', mapsRoute)
 
 
 const port = 3000;

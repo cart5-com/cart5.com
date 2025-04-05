@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 import { toast } from '@/ui-plus/sonner';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { Loader2 } from 'lucide-vue-next';
-import { type ResType } from '@api-client/index';
 import TeamMembersList from './TeamMembersList.vue';
 import InvitationsList from './InvitationsList.vue';
 import InviteTeamMemberDialog from './InviteTeamMemberDialog.vue';
@@ -15,11 +15,11 @@ import { Badge } from '@/components/ui/badge';
 // Set page title
 pageTitle.value = 'Store Team Management';
 
-const membersApiPath = apiClient.dashboard.store[':storeId'].team.$get;
+const membersApiPath = dashboardApiClient.dashboard.store[':storeId'].team.$get;
 type Member = ResType<typeof membersApiPath>["data"]["teamMembers"];
 type SupportTeamWebsite = ResType<typeof membersApiPath>["data"]["supportTeamWebsite"];
 
-const invitationsApiPath = apiClient.dashboard.store[':storeId'].team_invitations.$get;
+const invitationsApiPath = dashboardApiClient.dashboard.store[':storeId'].team_invitations.$get;
 type Invitation = ResType<typeof invitationsApiPath>["data"];
 
 const members = ref<Member>([]);
@@ -34,7 +34,7 @@ const loadData = async () => {
 
     try {
         // Load team members
-        const membersRes = await (await apiClient.dashboard.store[':storeId'].team.$get({
+        const membersRes = await (await dashboardApiClient.dashboard.store[':storeId'].team.$get({
             param: {
                 storeId: currentStoreId.value ?? ''
             }
@@ -49,7 +49,7 @@ const loadData = async () => {
             supportTeamWebsite.value = membersRes.data.supportTeamWebsite;
         }
 
-        const invitationsRes = await (await apiClient.dashboard.store[':storeId'].team_invitations.$get({
+        const invitationsRes = await (await dashboardApiClient.dashboard.store[':storeId'].team_invitations.$get({
             param: {
                 storeId: currentStoreId.value ?? ''
             }

@@ -3,7 +3,7 @@ import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-vue-next';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
 import type { WeeklyHours } from '@lib/zod/weeklyScheduleSchema';
@@ -81,7 +81,7 @@ watch([
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].open_hours.get.$post({
+        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].open_hours.get.$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -126,7 +126,7 @@ const loadData = async () => {
 const saveHours = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].open_hours.update.$patch({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].open_hours.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

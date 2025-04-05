@@ -10,9 +10,10 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Mail } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import { apiClient, type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 
-const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
+const apiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 defineProps<{

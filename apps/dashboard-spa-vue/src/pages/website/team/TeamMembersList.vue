@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ref, computed } from 'vue';
-import { apiClient } from '@api-client/index';
-import { type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from "@api-client/typeUtils";
 import { currentWebsite, currentWebsiteId } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import TeamMemberItem from './components/TeamMemberItem.vue';
 import TransferOwnershipDialog from './components/TransferOwnershipDialog.vue';
@@ -12,7 +12,7 @@ import { toast } from '@/ui-plus/sonner';
 import { Globe, TriangleAlert } from 'lucide-vue-next';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-const apiPath = apiClient.dashboard.website[':websiteId'].team.$get
+const apiPath = dashboardApiClient.dashboard.website[':websiteId'].team.$get
 type Member = ResType<typeof apiPath>["data"]["teamMembers"][0];
 
 const props = defineProps<{
@@ -69,7 +69,7 @@ const transferOwnership = async () => {
     isTransferring.value = true;
 
     try {
-        const response = await apiClient.dashboard.website[':websiteId'].team_transfer_ownership.$post({
+        const response = await dashboardApiClient.dashboard.website[':websiteId'].team_transfer_ownership.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },
@@ -102,7 +102,7 @@ const removeMember = async () => {
     isRemoving.value = true;
 
     try {
-        const response = await apiClient.dashboard.website[':websiteId'].team_remove_member.$post({
+        const response = await dashboardApiClient.dashboard.website[':websiteId'].team_remove_member.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },
@@ -135,7 +135,7 @@ const updatePermissions = async (permissions: string[]) => {
     isUpdatingPermissions.value = true;
 
     try {
-        const { error } = await (await apiClient.dashboard.website[':websiteId'].team_update_permissions.$post({
+        const { error } = await (await dashboardApiClient.dashboard.website[':websiteId'].team_update_permissions.$post({
             param: {
                 websiteId: currentWebsiteId.value ?? ''
             },

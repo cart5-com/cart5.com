@@ -8,7 +8,7 @@ import { crossDomainRoute } from './cross_domain/_router';
 import { twoFactorAuthRoute } from './two_factor_auth/_router';
 import { hostMustBeAuthDomain } from '@api-hono/middlewares/hostMustBeAuthDomain';
 
-export const apiAuth = new Hono<HonoVariables>()
+export const apiAuthRoute = new Hono<HonoVariables>()
     .basePath('/auth')
     .use(hostMustBeAuthDomain)
     .route('/cross_domain', crossDomainRoute)
@@ -18,4 +18,4 @@ export const apiAuth = new Hono<HonoVariables>()
     .route('/two_factor_auth', twoFactorAuthRoute)
     .route('/user', userRoute)
 
-export type ApiAuthRouteType = typeof apiAuth;
+export type ApiAuthRouteType = typeof apiAuthRoute;

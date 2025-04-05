@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-import { apiClient, type ResType } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
+import type { ResType } from '@api-client/typeUtils';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import CurrencyWidget from './CurrencyWidget.vue';
@@ -27,7 +28,7 @@ pageTitle.value = 'Tax Settings';
 
 const isLoading = ref(false);
 
-const taxSettingsApiPath = apiClient.dashboard.store[':storeId'].tax_settings.get.$post;
+const taxSettingsApiPath = dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post;
 type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
 
 const taxSettings = ref<TaxSettings>();
@@ -61,7 +62,7 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
 
 const loadData = async () => {
     isLoading.value = true;
-    const { data, error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.get.$post({
+    const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].tax_settings.get.$post({
         param: {
             storeId: currentStoreId.value ?? '',
         },
@@ -105,7 +106,7 @@ const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string
 const saveTaxSettings = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].tax_settings.update.$patch({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].tax_settings.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },

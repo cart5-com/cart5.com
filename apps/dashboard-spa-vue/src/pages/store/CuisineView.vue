@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
-import { apiClient } from '@api-client/index';
+import { dashboardApiClient } from '@api-client/dashboard';
 import { onMounted, ref } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { Loader2 } from 'lucide-vue-next';
@@ -30,7 +30,7 @@ const isLoading = ref(false);
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const { data, error } = await (await apiClient.dashboard.store[':storeId'].$post({
+        const { data, error } = await (await dashboardApiClient.dashboard.store[':storeId'].$post({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
@@ -66,7 +66,7 @@ const toggleCuisine = (cuisine: string) => {
 const saveCuisines = async () => {
     isLoading.value = true;
     try {
-        const { error } = await (await apiClient.dashboard.store[':storeId'].$patch({
+        const { error } = await (await dashboardApiClient.dashboard.store[':storeId'].$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
