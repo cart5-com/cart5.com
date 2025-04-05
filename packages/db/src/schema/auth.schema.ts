@@ -1,5 +1,7 @@
 import { sqliteTable, text, integer, blob } from "drizzle-orm/sqlite-core";
+import { relations } from 'drizzle-orm';
 import { autoCreated } from "./helpers/auto-created-updated";
+import { userDataTable } from "./userData.schema";
 
 export const userTable = sqliteTable("user", {
 	id: text("id").primaryKey(),
@@ -30,3 +32,12 @@ export const sessionTable = sqliteTable("session", {
 	// it will be used for security validation
 	// for ex:password reset, authentication reset, etc.
 });
+
+export const userRelations = relations(userTable, ({ many, one }) => ({
+	session: many(sessionTable),
+	userData: one(userDataTable, {
+		fields: [userTable.id],
+		references: [userDataTable.userId],
+	}),
+}));
+
