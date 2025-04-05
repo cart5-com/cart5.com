@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type DeliveryZone } from '@lib/types/storeTypes';
+import { type DeliveryZone } from '@lib/zod/deliverySchema';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";

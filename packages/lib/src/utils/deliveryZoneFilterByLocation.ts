@@ -1,4 +1,4 @@
-import type { Point, DeliveryZone } from "@lib/types/storeTypes";
+import type { Point, DeliveryZone } from "@lib/zod/deliverySchema";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 import { isInsideCircle } from "./isInsideCircle";
 import { isInsideRectangle } from "./isInsideRectangle";

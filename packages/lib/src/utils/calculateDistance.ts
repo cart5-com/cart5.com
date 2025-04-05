@@ -1,4 +1,4 @@
-import type { Point } from "@lib/types/storeTypes";
+import type { Point } from "@lib/zod/deliverySchema";
 
 export function calculateDistance(
     point1: Point,

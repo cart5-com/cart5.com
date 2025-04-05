@@ -21,7 +21,7 @@ import { faker } from '@faker-js/faker';
 import { getNearbyStores_Service } from "@db/services/distance.service";
 import type {
     DeliveryZone
-} from "@lib/types/storeTypes";
+} from "@lib/zod/deliverySchema";
 import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
 import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
 import { readFileSync } from "fs";

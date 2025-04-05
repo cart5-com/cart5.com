@@ -3,9 +3,10 @@ import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateKey } from "@lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import type {
-	DeliveryZone,
-} from "@lib/types/storeTypes";
+import {
+	type DeliveryZone,
+	DeliveryZoneSchema
+} from "@lib/zod/deliverySchema";
 import {
 	type PhysicalPaymentMethods,
 	PhysicalPaymentMethodsSchema
@@ -188,10 +189,10 @@ export const storeDeliveryZoneMapTable = sqliteTable("store_delivery_zone_map", 
 });
 export const selectStoreDeliveryZoneMapSchema = createSelectSchema(storeDeliveryZoneMapTable);
 export const insertStoreDeliveryZoneMapSchema = createInsertSchema(storeDeliveryZoneMapTable, {
-	zones: z.array(z.custom<DeliveryZone>((_val) => true)).default([]),
+	zones: z.array(DeliveryZoneSchema).default([]),
 });
 export const updateStoreDeliveryZoneMapSchema = createUpdateSchema(storeDeliveryZoneMapTable, {
-	zones: z.array(z.custom<DeliveryZone>((_val) => true)).default([]),
+	zones: z.array(DeliveryZoneSchema).default([]),
 });
 /// DELIVERY ZONES END
 

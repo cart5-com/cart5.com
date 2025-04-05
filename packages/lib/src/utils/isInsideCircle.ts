@@ -1,4 +1,4 @@
-import type { Point, Circle } from "@lib/types/storeTypes";
+import type { Point, Circle } from "@lib/zod/deliverySchema";
 import { calculateDistance } from "./calculateDistance";
 
 export function isInsideCircle(point: Point, circle: Circle) {

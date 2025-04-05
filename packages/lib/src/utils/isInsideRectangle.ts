@@ -1,4 +1,4 @@
-import type { Point, Rectangle } from "@lib/types/storeTypes";
+import type { Point, Rectangle } from "@lib/zod/deliverySchema";
 
 export function isInsideRectangle(point: Point, rectangle: Rectangle) {
     // Check if the rectangle has valid properties

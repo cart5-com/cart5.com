@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import type { DeliveryZone, Point } from '@lib/types/storeTypes'
+import type { DeliveryZone, Point } from '@lib/zod/deliverySchema'
 import { type DrawMap } from 'leaflet';
 import { toast } from '@/ui-plus/sonner';
 import { loadLeafletDrawCDN } from '@dashboard-spa-vue/pages/store/deliveryZones/loadLeafletDrawCDN';
