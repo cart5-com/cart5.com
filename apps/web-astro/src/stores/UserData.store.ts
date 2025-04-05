@@ -8,6 +8,22 @@ import { BASE_LINKS } from "@web-astro/utils/links";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { showItemModal } from "../components/store-page/menu/item/showItemModal";
 
+/*
+loadUserData() is called at initialization:
+Fetches user data from the server
+Handles special case for post-login state (#after-login hash)
+Merges anonymous data with server data after login
+Sets up a watcher to detect and save changes
+
+mergedUserData() combines anonymous and server data:
+Preserves all server carts
+Adds missing anonymous carts
+Merges items for carts that exist in both
+
+loadCountryFromIp() retrieves location data if not already set
+*/
+
+
 export type UserDataStoreType = ResType<typeof apiClient.auth_global.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
 
