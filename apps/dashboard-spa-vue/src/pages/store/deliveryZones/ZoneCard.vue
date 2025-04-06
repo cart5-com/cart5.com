@@ -3,7 +3,7 @@ import { type DeliveryZone } from '@lib/zod/deliverySchema';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MapPin } from 'lucide-vue-next';
+import { MapPin, Bird } from 'lucide-vue-next';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -90,12 +90,18 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            placeholder="0.00" />
                                 </div>
 
-                                <div class="grid gap-2">
-                                    <Label for="deliveryFeePerKm">Delivery Fee per KM</Label>
+                                <div class="grid gap-2 my-4">
+                                    <Label for="deliveryFeePerKm">Delivery Fee per KM
+                                        <Bird class="inline-block" />
+                                    </Label>
                                     <Input id="deliveryFeePerKm"
                                            type="number"
                                            v-model="zone.deliveryFeePerKm"
                                            placeholder="0.00" />
+                                    <p class="text-xs">
+                                        This is the delivery fee per kilometer as the crow flies.
+
+                                    </p>
                                 </div>
                             </div>
 

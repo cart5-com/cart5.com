@@ -88,13 +88,13 @@ const saveToLocalStorage = (data: UserDataType | null) => {
 
     debounceTimeoutLocalStorage = setTimeout(() => {
         saveToLocalStorageNow(data);
-        pendingSave = false;
     }, 500);
 }
 const saveToLocalStorageNow = (data: UserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
     if (!data) return;
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+    pendingSave = false;
 }
 
 const mergedUserData = (
@@ -222,7 +222,6 @@ const saveUserData = async (newVal: UserDataStoreType) => {
     }
     debounceTimeout = setTimeout(async () => {
         await saveUserDataNow(newVal);
-        pendingSave = false;
     }, 1000);
 }
 
@@ -236,6 +235,7 @@ export const saveUserDataNow = async (data: UserDataStoreType) => {
         console.error(error);
         toast.error("Failed to save user data");
     }
+    pendingSave = false;
 }
 
 export const logoutAll = async () => {

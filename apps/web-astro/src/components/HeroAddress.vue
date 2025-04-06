@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import AddressForm from "./AddressForm.vue";
+// import AddressForm from "./AddressForm.vue";
+import NewAddressForm from "./NewAddressForm.vue";
 import { onMounted } from "vue";
 import { BASE_LINKS } from "@web-astro/utils/links";
 
@@ -51,6 +52,7 @@ const onMapConfirm = async (result: { lat: number, lng: number }) => {
 
 <template>
     <div v-if="userDataStore.userData">
-        <AddressForm @done="onMapConfirm" />
+        <!-- <AddressForm @done="onMapConfirm" /> -->
+        <NewAddressForm @done="onMapConfirm" />
     </div>
 </template>

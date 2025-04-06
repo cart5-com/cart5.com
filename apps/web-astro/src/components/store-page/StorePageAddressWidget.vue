@@ -11,6 +11,7 @@ import AddressForm from '../AddressForm.vue';
 import { userDataStore } from "@web-astro/stores/UserData.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
+import NewAddressForm from '@web-astro/components/NewAddressForm.vue';
 
 const isOpen = ref(false);
 
@@ -45,8 +46,10 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                     <!-- <DrawerDescription></DrawerDescription> -->
                 </DrawerHeader>
                 <div class="p-4 pb-0">
-                    <AddressForm button-label="Update"
-                                 @done="onMapConfirm" />
+                    <!-- <AddressForm button-label="Update"
+                                 @done="onMapConfirm" /> -->
+                    <NewAddressForm button-label="Update"
+                                    @done="onMapConfirm" />
                 </div>
                 <!-- <DrawerFooter>
                     <Button>Submit</Button>
