@@ -22,6 +22,21 @@ loadCountryFromIp() retrieves location data if not already set
 */
 
 
+let pendingSave = false;
+// Prevent page unload until data is saved
+if (typeof window !== 'undefined') {
+    window.onbeforeunload = (e) => {
+        if (pendingSave) {
+            // Cancel the event and show confirmation dialog
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+            return '';
+        }
+        return undefined;
+    };
+}
+
 export type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 export type UserDataType = UserDataStoreType["userData"];
 
@@ -60,16 +75,20 @@ const loadFromLocalStorage = (): AnonUserDataType => {
         return DEFAULT_USERLOCAL_DATA;
     }
 }
-
 let debounceTimeoutLocalStorage: ReturnType<typeof setTimeout> | null = null;
 const saveToLocalStorage = (data: UserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
     if (!data) return;
+
+    pendingSave = true;
+
     if (debounceTimeoutLocalStorage) {
         clearTimeout(debounceTimeoutLocalStorage);
     }
+
     debounceTimeoutLocalStorage = setTimeout(() => {
         saveToLocalStorageNow(data);
+        pendingSave = false;
     }, 500);
 }
 const saveToLocalStorageNow = (data: UserDataType | null) => {
@@ -132,7 +151,6 @@ const mergedUserData = (
 
 const loadUserData = async () => {
     if (import.meta.env.SSR) return;
-    console.log('loadUserData');
     const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
     const { data, error } = await (await authGlobalApiClient.get_user_data.$post({
         json: {
@@ -198,11 +216,13 @@ export const handleDataChangeNow = async (newVal: UserDataStoreType) => {
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 const saveUserData = async (newVal: UserDataStoreType) => {
+    pendingSave = true;
     if (debounceTimeout) {
         clearTimeout(debounceTimeout);
     }
     debounceTimeout = setTimeout(async () => {
-        saveUserDataNow(newVal);
+        await saveUserDataNow(newVal);
+        pendingSave = false;
     }, 1000);
 }
 
