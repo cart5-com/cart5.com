@@ -14,8 +14,25 @@ export const getStoreData_Service = async (
         columns: {
             id: true,
             name: true,
+            defaultPhoneNumber: true,
+            extraPhoneNumbers: true,
+            offersPickup: true,
+            offersDelivery: true,
+            cuisines: true,
         },
         with: {
+            address: {
+                columns: {
+                    address1: true,
+                    address2: true,
+                    city: true,
+                    state: true,
+                    postalCode: true,
+                    country: true,
+                    lat: true,
+                    lng: true,
+                }
+            },
             menu: {
                 columns: {
                     menuRoot: true
@@ -36,20 +53,21 @@ export const getStoreData_Service = async (
                     zones: true,
                 }
             },
-            address: {
+            openHours: {
                 columns: {
-                    address1: true,
-                    address2: true,
-                    city: true,
-                    state: true,
-                    postalCode: true,
-                    country: true,
-                    lat: true,
-                    lng: true,
+                    timezone: true,
+                    defaultOpenHours: true,
+                    deliveryHours: true,
+                    pickupHours: true,
                 }
             },
-            // openHours: true,
-            // paymentMethods: true,
+            paymentMethods: {
+                columns: {
+                    defaultPaymentMethods: true,
+                    deliveryPaymentMethods: true,
+                    pickupPaymentMethods: true,
+                }
+            },
         }
     });
 }
