@@ -18,13 +18,31 @@ const totalItem = computed(() => {
 </script>
 
 <template>
-  <Button variant="outline"
-          as="label"
-          for="right-drawer"
-          class="cursor-pointer">
-    <ShoppingCart />
-    <Badge>
-      {{ totalItem }}
-    </Badge>
-  </Button>
+  <div>
+    <Button variant="outline"
+            as="label"
+            for="right-drawer"
+            class="cursor-pointer">
+      <ShoppingCart />
+      <Badge>
+        {{ totalItem }}
+      </Badge>
+    </Button>
+    <div class="block md:hidden fixed bottom-0 left-0 right-0 z-40 max-w-full w-full"
+         v-if="totalItem > 0">
+      <Button variant="outline"
+              as="label"
+              size="lg"
+              for="right-drawer"
+              class="cursor-pointer w-full h-12 rounded-none">
+        <ShoppingCart />
+        <Badge>
+          {{ totalItem }}
+        </Badge>
+        <span class="text-xs truncate max-w-1/2">
+          {{ currentCart?.storeName }}
+        </span>
+      </Button>
+    </div>
+  </div>
 </template>
