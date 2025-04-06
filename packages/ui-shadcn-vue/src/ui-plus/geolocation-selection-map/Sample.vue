@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref } from 'vue';
 import GeolocationSelectionMap from './GeolocationSelectionMap.vue';
 import { Button } from '@/components/ui/button';
@@ -96,4 +96,4 @@ function onMapConfirm() {
     </div>
 
 
-</template>
+</template> -->

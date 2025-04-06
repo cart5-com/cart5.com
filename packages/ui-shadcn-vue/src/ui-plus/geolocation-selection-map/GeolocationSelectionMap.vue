@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Loader2, LocateFixed } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -215,4 +215,4 @@ defineExpose({
 	right: 10px;
 	z-index: 1001;
 }
-</style>
+</style> -->

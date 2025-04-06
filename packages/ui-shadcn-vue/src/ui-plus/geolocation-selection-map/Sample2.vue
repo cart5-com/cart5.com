@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import GeolocationSelectionMap from './GeolocationSelectionMap.vue';
 import { Input } from '@/components/ui/input';
@@ -46,4 +46,4 @@ onMounted(() => {
     </div>
 
 
-</template>
+</template> -->
