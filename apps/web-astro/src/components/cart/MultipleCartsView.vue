@@ -29,7 +29,7 @@ const removeCart = (storeId: string) => {
            class="flex flex-row gap-2 items-center rounded-md border p-2">
         <Button as="a"
                 variant="ghost"
-                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''))}?cartId=${cart.storeId}`"
+                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''))}#open-cart`"
                 class="grid grid-cols-[auto_1fr_auto] gap-2 flex-1">
           <ShoppingCart class="flex-shrink-0" />
           <span class="truncate">
