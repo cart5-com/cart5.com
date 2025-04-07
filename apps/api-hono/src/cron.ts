@@ -17,18 +17,25 @@ const shouldRunDailyTask = (lastRunTime: number, targetHour = 0) => {
     ) && now.getHours() >= targetHour;
 };
 
-// Function to check if it's time to run an hourly task
-const shouldRunHourlyTask = (lastRunTime: number) => {
-    const now = new Date();
-    const lastRun = new Date(lastRunTime);
+// // Function to check if it's time to run an hourly task
+// const shouldRunHourlyTask = (lastRunTime: number) => {
+//     const now = new Date();
+//     const lastRun = new Date(lastRunTime);
 
-    // Run once per hour
-    return (
-        now.getHours() !== lastRun.getHours() ||
-        now.getDate() !== lastRun.getDate() ||
-        now.getMonth() !== lastRun.getMonth() ||
-        now.getFullYear() !== lastRun.getFullYear()
-    );
+//     // Run once per hour
+//     return (
+//         now.getHours() !== lastRun.getHours() ||
+//         now.getDate() !== lastRun.getDate() ||
+//         now.getMonth() !== lastRun.getMonth() ||
+//         now.getFullYear() !== lastRun.getFullYear()
+//     );
+// };
+
+// Function to check if it's time to run a task every 5 minutes
+const shouldRunEveryFiveMinutes = (lastRunTime: number) => {
+    const now = Date.now();
+    // Run every 5 minutes (300000 milliseconds)
+    return now - lastRunTime >= 300000;
 };
 
 export const startCrons = () => {
@@ -60,8 +67,8 @@ export const startCrons = () => {
             }
         }
 
-        // Hourly task: Purge edge cache
-        if (shouldRunHourlyTask(lastCachePurgeTime)) {
+        // Run every 5 minutes: Purge edge cache
+        if (shouldRunEveryFiveMinutes(lastCachePurgeTime)) {
             try {
                 await cfPurgeAllEdgeCache();
                 console.log(`Purged edge cache at ${new Date().toISOString()}`);
@@ -78,4 +85,3 @@ export const startCrons = () => {
     // Then check regularly
     setInterval(runTasks, checkInterval);
 }
-
