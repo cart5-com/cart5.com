@@ -15,6 +15,7 @@
 		"@libsql/client": "^0.14.0",
 		"@libsql/linux-x64-gnu": "0.5.0-pre.5",
 		"@node-rs/argon2": "^2.0.0",
+		"sharp": "^0.34.0",
 		"@oslojs/binary": "^1.0.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "1.1.0",
