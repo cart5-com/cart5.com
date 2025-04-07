@@ -85,6 +85,7 @@ export const getSessionService = async (sessionId: string): Promise<Session | nu
         .from(sessionTable)
         .where(eq(sessionTable.id, sessionId));
     if (result.length !== 1) return null;
+    if (!result[0]) return null;
     return {
         id: result[0].id,
         userId: result[0].userId,
