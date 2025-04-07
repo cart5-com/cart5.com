@@ -25,7 +25,7 @@ CF Cache -> Cache Rules
 use Cache Everything template
 Custom filter expression: (http.host wildcard "BUCKET_PUBLIC_ORIGIN")
 Cache eligibility -> Eligible for cache
-Edge TTL : Ignore cache-control header and use this TTL: 10 minutes
+Edge TTL : Ignore cache-control header and use this TTL: 5 minutes
 Browser TTL: Override origin and use this TTL: 2 minutes
 
 /*/

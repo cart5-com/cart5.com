@@ -18,31 +18,31 @@ export const getStoreData_CacheJSON = async (
         if (forceDb) {
             throw new Error("Force DB");
         }
-        const jsonUrl = `https://${getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN")}/store-data/${storeId}.json`;
+        const jsonUrl = `https://${getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN")}/store-data-full/${storeId}.json`;
         const json = await fetch(jsonUrl);
         if (!json.ok) {
             throw new Error("Failed to fetch store data");
         }
-        const jsonData = await json.json();
+        const jsonData = await json.json() as ReturnType<typeof getStoreData_Service>;
         return jsonData;
     } catch (e) {
         try {
             const storeData = await getStoreData_Service(storeId);
             if (!storeData) {
-                return null;
+                return undefined;
             }
             const jsonCreatedAt = Date.now();
             (storeData as any).source = "JSON_CACHE";
             (storeData as any).jsonCreatedAt = jsonCreatedAt;
             (storeData as any).isoJsonCreatedAt = new Date(jsonCreatedAt).toISOString();
-            await r2TextUpload(JSON.stringify(storeData), `store-data/${storeId}.json`, 'application/json');
+            await r2TextUpload(JSON.stringify(storeData), `store-data-full/${storeId}.json`, 'application/json');
             (storeData as any).source = "DB";
-            await removeAsUpdated(storeId);
+            await removeAsUpdatedQueue(storeId);
             return storeData;
         } catch (e2) {
             console.error("Error getting store data:");
             console.error(e2);
-            return null;
+            return undefined;
         }
     }
 
@@ -51,19 +51,20 @@ export const getStoreData_CacheJSON = async (
 
 
 
-export const removeAsUpdated = async (storeId: string) => {
+export const removeAsUpdatedQueue = async (storeId: string) => {
     await db.delete(storeRecentlyUpdatedTable)
         .where(eq(storeRecentlyUpdatedTable.storeId, storeId))
 }
 
-export const listAllUpdatedStores = async () => {
+export const listAllUpdatedStoresQueue = async () => {
     return await db.select()
         .from(storeRecentlyUpdatedTable)
         .orderBy(desc(storeRecentlyUpdatedTable.created_at_ts));
 }
 
 export const listAndUploadAllUpdatedStores = async () => {
-    const stores = await listAllUpdatedStores();
+    const stores = await listAllUpdatedStoresQueue();
+    // delete all the stores from the queue
     await db.delete(storeRecentlyUpdatedTable);
     for (const store of stores) {
         await getStoreData_CacheJSON(store.storeId, true);
