@@ -78,6 +78,7 @@ Add to /etc/hosts
 127.0.0.1 cart5dev.com
 127.0.0.1 auth.cart5dev.com
 127.0.0.1 www.cart5dev.com
+127.0.0.1 fake-cdn.cart5dev.com
 
 # partner obite
 127.0.0.1 obite.cart5dev.com

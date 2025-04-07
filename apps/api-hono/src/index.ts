@@ -15,6 +15,7 @@ import { apiAuth } from './routes/api_auth/_router';
 import { apiDashboard } from './routes/api_dashboard/_router';
 import { apiGMaps } from './routes/gmaps/mapsRoute.controller';
 import { validateDomainForTLS } from './routes/validate_domain';
+import { apiUpload } from '@api-hono/routes/upload';
 
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
@@ -34,6 +35,7 @@ app.get(
 	'/validate_tls',
 	validateDomainForTLS
 )
+app.route('/upload', apiUpload)
 app.route('/auth', apiAuth)
 app.route('/auth_global', apiAuthGlobal)
 app.route('/dashboard', apiDashboard)

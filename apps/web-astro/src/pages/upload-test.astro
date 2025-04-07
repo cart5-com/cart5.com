@@ -1,0 +1,36 @@
+<form method="post" enctype="multipart/form-data">
+	<input type="text" name="titleInput" />
+	<input type="file" name="uploadFile" />
+	<input type="submit" />
+</form>
+
+<pre id="result-json"></pre>
+
+<script>
+	import { uploadApiClient } from "@api-client/upload";
+	const form = document.querySelector("form");
+	if (form) {
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const formData = new FormData(form);
+			console.log(formData);
+			try {
+				const res = await uploadApiClient.index.$post({
+					form: {
+						title: formData.get("titleInput") as string,
+						file: formData.get("uploadFile") as File
+					}
+				});
+				const jsonData = await res.json();
+				console.log(jsonData);
+				(document.querySelector("#result-json") as HTMLPreElement).textContent = JSON.stringify(
+					jsonData,
+					null,
+					2
+				);
+			} catch (error) {
+				console.error("Error uploading file:", error);
+			}
+		});
+	}
+</script>

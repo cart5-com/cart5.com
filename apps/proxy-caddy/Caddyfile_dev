@@ -17,6 +17,16 @@
 	redir https://{host}{uri}
 }
 
+# FAKE public r2 allow read all
+https://fake-cdn.{$PUBLIC_DOMAIN_NAME} {
+	tls internal
+	root * {$FAKE_CDN_FOLDER}
+	file_server browse
+	header Access-Control-Allow-Origin *
+	header Access-Control-Allow-Methods *
+	header Access-Control-Allow-Headers *
+}
+
 https://auth.{$PUBLIC_DOMAIN_NAME} {
 	tls internal
 	import api-hono-proxy

@@ -1,0 +1,108 @@
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+    getEnvVariable,
+    IS_PROD
+} from "../utils/getEnvVariable";
+import { KNOWN_ERROR } from "../types/errors";
+import sharp from 'sharp';
+import { devFakeUpload } from './devFakeUpload';
+
+export const r2ImgUpload = async (file: File, key: string) => {
+    const s3Client = new S3Client({
+        region: "auto",
+        endpoint: `https://${getEnvVariable("CLOUDFLARE_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
+        credentials: {
+            accessKeyId: getEnvVariable("CLOUDFLARE_R2_ACCESS_KEY_ID"),
+            secretAccessKey: getEnvVariable("CLOUDFLARE_R2_SECRET_ACCESS_KEY"),
+        },
+    });
+
+    const fileBuffer = await file.arrayBuffer();
+    // const originalSize = fileBuffer.byteLength;
+
+    try {
+        const outputFormat = file.type === 'image/png' ? 'png' : 'jpeg';
+        // Optimize the image
+        const optimizedBuffer = await sharp(Buffer.from(fileBuffer))
+            // Resizes the image to fit within 1024x1024 pixels while maintaining aspect ratio.
+            // .resize({ width: 1024, height: 1024, fit: 'inside', withoutEnlargement: true })
+            .toFormat(outputFormat, { quality: 80 })
+            .toBuffer();
+
+        // const optimizedSize = optimizedBuffer.byteLength;
+        // const savedSize = originalSize - optimizedSize;
+        // const savingsPercentage = ((savedSize / originalSize) * 100).toFixed(2);
+
+        const url = getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN") + "/" + key
+        if (IS_PROD) {
+            await s3Client.send(new PutObjectCommand({
+                Bucket: getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_BUCKET_NAME"),
+                Key: key,
+                Body: optimizedBuffer,
+                ContentType: file.type, // Maintain original content type
+            }));
+            // TODO: cf:cache custom URL purge required after css upload
+            await r2PurgeCache([url]);
+        } else {
+            await devFakeUpload(optimizedBuffer, key);
+        }
+
+        return url;
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        throw new KNOWN_ERROR("FILE_UPLOAD_FAILED", "Failed to upload file");
+    }
+}
+
+export const r2TextUpload = async (
+    text: string,
+    key: string,
+    contentType: string = 'text/plain'
+) => {
+    const s3Client = new S3Client({
+        region: "auto",
+        endpoint: `https://${getEnvVariable("CLOUDFLARE_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
+        credentials: {
+            accessKeyId: getEnvVariable("CLOUDFLARE_R2_ACCESS_KEY_ID"),
+            secretAccessKey: getEnvVariable("CLOUDFLARE_R2_SECRET_ACCESS_KEY"),
+        },
+    });
+
+    const textBuffer = Buffer.from(text);
+
+    try {
+        const url = getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN") + "/" + key
+        if (IS_PROD) {
+            await s3Client.send(new PutObjectCommand({
+                Bucket: getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_BUCKET_NAME"),
+                Key: key,
+                Body: textBuffer,
+                ContentType: contentType,
+            }));
+            // TODO: cf:cache custom URL purge required after css upload
+            await r2PurgeCache([url]);
+        } else {
+            await devFakeUpload(textBuffer, key);
+        }
+        return url;
+    } catch (error) {
+        console.error("Error uploading text:", error);
+        throw new KNOWN_ERROR("TEXT_UPLOAD_FAILED", "Failed to upload text");
+    }
+}
+
+export const r2PurgeCache = async (urls: string[]) => {
+    const purgeUrl = `https://api.cloudflare.com/client/v4/zones/${getEnvVariable("CLOUDFLARE_PURGE_CACHE_ZONE_ID")}/purge_cache`
+    const res = await fetch(purgeUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getEnvVariable("CLOUDFLARE_ACCOUNT_TOKEN")}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "files": urls
+        })
+    })
+    console.log("Purge cache response:", await res.text());
+    console.log("Purge cache response:");
+}
