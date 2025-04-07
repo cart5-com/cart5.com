@@ -1,11 +1,11 @@
 ---
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Store, Moon } from "lucide-vue-next";
+import { Store } from "lucide-vue-next";
 import { BASE_LINKS } from "@web-astro/utils/links";
-import { getStoreOpenHours_Service } from "@db/services/store.service";
-import { isOpenNow } from "@lib/utils/isOpenNow";
 import { slugify } from "@lib/utils/slugify";
 import type { OrderType } from "@lib/types/orderType";
+import IsStoreOpenNow from "./IsStoreOpenNow.vue";
+
 interface Props {
 	store: {
 		id: string;
@@ -18,35 +18,12 @@ interface Props {
 }
 
 const { store, measure = "km", orderType = "delivery" } = Astro.props;
-
-// ================================START===============================
-const openHours = await getStoreOpenHours_Service(store.id, {
-	timezone: true,
-	defaultOpenHours: true,
-	deliveryHours: true,
-	pickupHours: true
-});
-let weeklyHours = openHours?.defaultOpenHours;
-if (orderType === "delivery" && openHours?.deliveryHours?.isActive) {
-	weeklyHours = openHours?.deliveryHours;
-} else if (orderType === "pickup" && openHours?.pickupHours?.isActive) {
-	weeklyHours = openHours?.pickupHours;
-}
-const isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
-// ================================END===============================
 ---
 
 <a href={`${BASE_LINKS.STORE(store.id, slugify(store.name), orderType)}`} class="block">
-	<Card class={`bg-muted hover:bg-muted/20 transition-colors ${!isOpen ? "brightness-50" : ""}`}>
+	<Card class="bg-muted hover:bg-muted/20 transition-colors" id={`store-card-${store.id}`}>
 		<CardHeader>
-			{
-				!isOpen && (
-					<span class="bg-destructive text-destructive-foreground rounded-md px-2 py-1 text-xs">
-						<Moon class="mr-1 inline-block" />
-						Closed
-					</span>
-				)
-			}
+			<IsStoreOpenNow storeId={store.id} orderType={orderType} client:visible />
 			<CardTitle class="text-lg">
 				<Store class="mr-1 inline-block" />
 				<span class="truncate">{store.name}</span>

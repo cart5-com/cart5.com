@@ -18,7 +18,7 @@ export const getStoreData_CacheJSON = async (
         if (forceDb) {
             throw new Error("Force DB");
         }
-        const jsonUrl = `https://${getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN")}/store-data-full/${storeId}.json`;
+        const jsonUrl = `https://${getEnvVariable("PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST")}/store-data-full/${storeId}.json`;
         const json = await fetch(jsonUrl);
         if (!json.ok) {
             throw new Error("Failed to fetch store data");

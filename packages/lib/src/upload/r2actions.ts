@@ -57,7 +57,7 @@ export const r2ImgUpload = async (file: File, key: string) => {
         // const savedSize = originalSize - optimizedSize;
         // const savingsPercentage = ((savedSize / originalSize) * 100).toFixed(2);
 
-        const url = getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN") + "/" + key
+        const url = getEnvVariable("PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST") + "/" + key
         if (IS_PROD) {
             await s3Client.send(new PutObjectCommand({
                 Bucket: getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_BUCKET_NAME"),
@@ -94,7 +94,7 @@ export const r2TextUpload = async (
     const textBuffer = Buffer.from(text);
 
     try {
-        const url = getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN") + "/" + key
+        const url = getEnvVariable("PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST") + "/" + key
         if (IS_PROD) {
             await s3Client.send(new PutObjectCommand({
                 Bucket: getEnvVariable("CLOUDFLARE_R2_USER_UPLOADS_BUCKET_NAME"),
@@ -155,7 +155,7 @@ All zones - Cache Purge: Purge
 curl - X POST https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_PURGE_CACHE_ZONE_ID/purge_cache \
 -H "Authorization: Bearer $CLOUDFLARE_PURGE_CACHE_TOKEN" \
 -H "Content-Type: application/json" \
---data '{"files":["https://$CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN/path/to/purge"]}'
+--data '{"files":["https://$PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST/path/to/purge"]}'
 
 curl - X POST https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_PURGE_CACHE_ZONE_ID/purge_cache \
 -H "Authorization: Bearer $CLOUDFLARE_PURGE_CACHE_TOKEN" \
