@@ -101,8 +101,7 @@ export const r2TextUpload = async (
                 Body: textBuffer,
                 ContentType: contentType,
             }));
-            // TODO: cf:cache custom URL purge required after css upload
-            await r2PurgeCache([url]);
+            // await r2PurgeCache([url]);
         } else {
             await devFakeUpload(textBuffer, key);
         }
