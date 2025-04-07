@@ -54,25 +54,22 @@ export const startCrons = () => {
     const checkInterval = 60000; // 1 minute
 
     const runTasks = async () => {
-        const now = Date.now();
-
         // Daily task: Delete expired sessions (run once per day at 1 AM)
         if (shouldRunDailyTask(lastSessionCleanupTime, 1)) {
             try {
                 const result = await deleteExpiredSessionsService();
                 console.log(`Cron deleted ${result} expired sessions at ${new Date().toISOString()}`);
-                lastSessionCleanupTime = now;
+                lastSessionCleanupTime = Date.now();
             } catch (error) {
                 console.error("Error running session cleanup:", error);
             }
         }
-
         // Run every 5 minutes: Purge edge cache
         if (shouldRunEveryFiveMinutes(lastCachePurgeTime)) {
             try {
                 await cfPurgeAllEdgeCache();
                 console.log(`Purged edge cache at ${new Date().toISOString()}`);
-                lastCachePurgeTime = now;
+                lastCachePurgeTime = Date.now();
             } catch (error) {
                 console.error("Error purging cache:", error);
             }
