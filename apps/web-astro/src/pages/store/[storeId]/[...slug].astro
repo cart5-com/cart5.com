@@ -34,6 +34,16 @@ const getMenuRoot = () => {
 ---
 
 <BaseLayout title={`${store?.name} - ${slug}`}>
+	<script
+		is:inline
+		define:vars={{
+			storeData: store,
+			orderType: orderType
+		}}
+	>
+		window.storeData = storeData;
+		window.orderType = orderType;
+	</script>
 	<h2>{store.name}</h2>
 
 	<StorePageAddressWidget client:only="vue" />
@@ -53,16 +63,6 @@ const getMenuRoot = () => {
 			<span class="truncate">Pickup</span>
 		</a>
 	</div>
-	<script
-		is:inline
-		define:vars={{
-			storeData: store,
-			orderType: orderType
-		}}
-	>
-		window.storeData = storeData;
-		window.orderType = orderType;
-	</script>
 	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">
 		<SingleCartBtn client:only="vue" />
