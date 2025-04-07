@@ -29,7 +29,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
-import { getBestDeliveryZone } from "@lib/utils/deliveryZoneFilterByLocation";
+import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];

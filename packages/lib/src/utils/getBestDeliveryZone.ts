@@ -5,7 +5,7 @@ import { isInsideRectangle } from "./isInsideRectangle";
 import { isInsidePolygon } from "./isInsidePolygon";
 import { calculateDistance } from "./calculateDistance";
 
-export function deliveryZoneFilterByLocation(userLocation: Point, deliveryZones: DeliveryZone[]) {
+function deliveryZoneFilterByLocation(userLocation: Point, deliveryZones: DeliveryZone[]) {
     return deliveryZones.filter(zone => zone.isActive).filter((zone) => {
         if (zone.shapeType === 'circle') {
             return isInsideCircle(userLocation, zone.circleArea!);
