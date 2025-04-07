@@ -7,6 +7,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import type { ErrorType } from "@lib/types/errors";
 import { isOpenNow } from "@lib/utils/isOpenNow";
+
 export const getStoreOpenHours_SchemaValidator = zValidator('json', z.object({
     columns: z.object(
         Object.fromEntries(
