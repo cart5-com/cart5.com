@@ -7,6 +7,29 @@ import { KNOWN_ERROR } from "../types/errors";
 import sharp from 'sharp';
 import { devFakeUpload } from './devFakeUpload';
 
+/*/
+BUCKET_NAME_BLALALA
+
+Location: Western Europe (WEUR)
+Class: Standard
+
+- CORS policy: [{"AllowedOrigins": ["https://*"],"AllowedMethods": ["GET"]}]
+
+- how to get tokens
+  - [R2 API tokens documentation](https://developers.cloudflare.com/r2/api/s3/tokens/)
+  - [AWS CLI configuration guide](https://developers.cloudflare.com/r2/examples/aws/aws-cli/)
+
+
+# EDGE CACHE CONFIG
+CF Cache -> Cache Rules
+use Cache Everything template
+Custom filter expression: (http.host wildcard "BUCKET_PUBLIC_ORIGIN")
+Cache eligibility -> Eligible for cache
+Edge TTL : Ignore cache-control header and use this TTL: 1 year
+Browser TTL: Bypass cache
+/*/
+
+
 export const r2ImgUpload = async (file: File, key: string) => {
     const s3Client = new S3Client({
         region: "auto",
@@ -41,8 +64,7 @@ export const r2ImgUpload = async (file: File, key: string) => {
                 Body: optimizedBuffer,
                 ContentType: file.type, // Maintain original content type
             }));
-            // TODO: cf:cache custom URL purge required after css upload
-            await r2PurgeCache([url]);
+            // await r2PurgeCache([url]);
         } else {
             await devFakeUpload(optimizedBuffer, key);
         }
@@ -96,7 +118,7 @@ export const r2PurgeCache = async (urls: string[]) => {
     const res = await fetch(purgeUrl, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${getEnvVariable("CLOUDFLARE_ACCOUNT_TOKEN")}`,
+            'Authorization': `Bearer ${getEnvVariable("CLOUDFLARE_PURGE_CACHE_TOKEN")}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -106,3 +128,38 @@ export const r2PurgeCache = async (urls: string[]) => {
     console.log("Purge cache response:", await res.text());
     console.log("Purge cache response:");
 }
+
+export const cfPurgeAllEdgeCache = async () => {
+    const purgeUrl = `https://api.cloudflare.com/client/v4/zones/${getEnvVariable("CLOUDFLARE_PURGE_CACHE_ZONE_ID")}/purge_cache`
+    const res = await fetch(purgeUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getEnvVariable("CLOUDFLARE_PURGE_CACHE_TOKEN")}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "purge_everything": true
+        })
+    })
+    console.log("Purge all cache response:", await res.text());
+}
+
+/*/
+
+- CF PurgeCache
+generate API TOKEN -> User API Tokens
+all - zone - cache - purge API token summary
+This API token will affect the below accounts and zones, along with their respective permissions
+All zones - Cache Purge: Purge
+
+curl - X POST https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_PURGE_CACHE_ZONE_ID/purge_cache \
+-H "Authorization: Bearer $CLOUDFLARE_PURGE_CACHE_TOKEN" \
+-H "Content-Type: application/json" \
+--data '{"files":["https://$CLOUDFLARE_R2_USER_UPLOADS_PUBLIC_ORIGIN/path/to/purge"]}'
+
+curl - X POST https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_PURGE_CACHE_ZONE_ID/purge_cache \
+-H "Authorization: Bearer $CLOUDFLARE_PURGE_CACHE_TOKEN" \
+-H "Content-Type: application/json" \
+--data '{"purge_everything":true}'
+
+/*/
