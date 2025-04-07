@@ -36,6 +36,11 @@ export const getStoreData_CacheJSON = async (
             (storeData as any).jsonCreatedAt = jsonCreatedAt;
             (storeData as any).isoJsonCreatedAt = new Date(jsonCreatedAt).toISOString();
             await r2TextUpload(JSON.stringify(storeData), `store-data-full/${storeId}.json`, 'application/json');
+            await r2TextUpload(JSON.stringify(storeData.openHours), `store-data-open-hours/${storeId}.json`, 'application/json');
+            await r2TextUpload(JSON.stringify({
+                deliveryZones: storeData.deliveryZones,
+                address: storeData.address,
+            }), `store-data-delivery-zones-and-address/${storeId}.json`, 'application/json');
             (storeData as any).source = "DB";
             await removeAsUpdatedQueue(storeId);
             return storeData;
