@@ -84,6 +84,10 @@ export const createTeamWithoutOwner_Service = async (
         type: type
     }).returning();
 
+    if (!team[0]) {
+        throw new Error("Failed to create team");
+    }
+
     return team[0].id;
 }
 
@@ -97,6 +101,10 @@ export const createTeamTransactional_Service = async (
         ownerUserId: ownerUserId,
         type: type
     }).returning();
+
+    if (!team[0]) {
+        throw new Error("Failed to create team");
+    }
 
     // make user a member of the new team
     await tx.insert(teamUserMapTable).values({
