@@ -22,6 +22,13 @@
       "when": 1743797908583,
       "tag": "0002_lucky_microchip",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1744000976160,
+      "tag": "0003_outstanding_professor_monster",
+      "breakpoints": true
     }
   ]
 }

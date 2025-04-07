@@ -14,7 +14,7 @@ import {
 import { TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
-import { autoCreatedUpdated } from "./helpers/auto-created-updated";
+import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
 
 /// STORE TABLE START
 export const storeTable = sqliteTable("store", {
@@ -49,6 +49,17 @@ export const updateStoreSchema = createUpdateSchema(storeTable, {
 });
 
 /// STORE TABLE END
+
+
+
+
+
+export const storeRecentlyUpdatedTable = sqliteTable("store_recently_updated", {
+	storeId: text("store_id").notNull().unique(),
+	...autoCreated,
+});
+
+
 
 
 

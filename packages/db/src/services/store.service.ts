@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { storeAddressTable, storeTable, storeOpenHoursTable, storeMenuTable, storePaymentMethodsTable, storeTaxSettingsTable, storeDeliveryZoneMapTable } from "@db/schema/store.schema";
+import { storeAddressTable, storeTable, storeOpenHoursTable, storeMenuTable, storePaymentMethodsTable, storeTaxSettingsTable, storeDeliveryZoneMapTable, storeRecentlyUpdatedTable } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
@@ -119,12 +119,15 @@ export const updateStoreAddress_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storeAddressTable>>
 ) => {
-    return await db.insert(storeAddressTable)
+    const result = await db.insert(storeAddressTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeAddressTable.storeId,
             set: data
         });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const getStoreOpenHours_Service = async (
@@ -141,12 +144,15 @@ export const updateStoreOpenHours_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storeOpenHoursTable>>
 ) => {
-    return (await db.insert(storeOpenHoursTable)
+    const result = await db.insert(storeOpenHoursTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeOpenHoursTable.storeId,
             set: data
-        }));
+        });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const getStoreMenu_Service = async (
@@ -163,12 +169,15 @@ export const updateStoreMenu_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storeMenuTable>>
 ) => {
-    return await db.insert(storeMenuTable)
+    const result = await db.insert(storeMenuTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeMenuTable.storeId,
             set: data
         });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const getStorePaymentMethods_Service = async (
@@ -185,12 +194,15 @@ export const updateStorePaymentMethods_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storePaymentMethodsTable>>
 ) => {
-    return await db.insert(storePaymentMethodsTable)
+    const result = await db.insert(storePaymentMethodsTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storePaymentMethodsTable.storeId,
             set: data
         });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const getStoreTaxSettings_Service = async (
@@ -207,12 +219,15 @@ export const updateStoreTaxSettings_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storeTaxSettingsTable>>
 ) => {
-    return await db.insert(storeTaxSettingsTable)
+    const result = await db.insert(storeTaxSettingsTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeTaxSettingsTable.storeId,
             set: data
         });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const getStoreDeliveryZones_Service = async (
@@ -229,21 +244,27 @@ export const updateStoreDeliveryZones_Service = async (
     storeId: string,
     data: Partial<InferInsertModel<typeof storeDeliveryZoneMapTable>>
 ) => {
-    return await db.insert(storeDeliveryZoneMapTable)
+    const result = await db.insert(storeDeliveryZoneMapTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeDeliveryZoneMapTable.storeId,
             set: data
         });
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const updateStore_Service = async (
     storeId: string,
     storeData: Partial<InferInsertModel<typeof storeTable>>
 ) => {
-    return await db.update(storeTable)
+    const result = await db.update(storeTable)
         .set(storeData)
-        .where(eq(storeTable.id, storeId))
+        .where(eq(storeTable.id, storeId));
+
+    await markStoreAsUpdated(storeId);
+    return result;
 }
 
 export const createStore_Service = async (
@@ -253,7 +274,8 @@ export const createStore_Service = async (
     isUserMemberOfSupportTeam: boolean,
     storeId?: string
 ) => {
-    return await db.transaction(async (tx) => {
+
+    const store = await db.transaction(async (tx) => {
 
         const teamId = isUserMemberOfSupportTeam
             ? await createTeamWithoutOwner_Service('STORE', tx)
@@ -277,6 +299,12 @@ export const createStore_Service = async (
 
         return store[0];
     })
+
+    if (store) {
+        await markStoreAsUpdated(store.id);
+    }
+
+    return store;
 }
 
 export const isUserStoreAdmin = async function (
@@ -328,4 +356,25 @@ export const getAllStoresThatUserHasAccessTo = async (userId: string) => {
         .orderBy(desc(storeTable.created_at_ts));
 
     return stores;
+}
+
+
+
+// R2 JSON CACHE
+export const markStoreAsUpdated = async (storeId: string) => {
+    await db
+        .insert(storeRecentlyUpdatedTable)
+        .values({ storeId })
+        .onConflictDoNothing();
+};
+
+export const removeAsUpdated = async (storeId: string) => {
+    await db.delete(storeRecentlyUpdatedTable)
+        .where(eq(storeRecentlyUpdatedTable.storeId, storeId))
+}
+
+export const listAllUpdatedStores = async () => {
+    return await db.select()
+        .from(storeRecentlyUpdatedTable)
+        .orderBy(desc(storeRecentlyUpdatedTable.created_at_ts));
 }
