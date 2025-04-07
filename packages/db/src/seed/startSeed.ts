@@ -309,6 +309,10 @@ export const startSeed = async () => {
         flamesStore!.id
     );
 
+    // console.time("storeDataJsonCron");
+    // await listAndUploadAllUpdatedStores();
+    // console.timeEnd("storeDataJsonCron");
+
 
     const nearbyStores = await getNearbyStores_Service(
         baseLat,
@@ -321,7 +325,8 @@ export const startSeed = async () => {
         "delivery",
         "distance_asc"
     );
-    console.log(nearbyStores);
+    console.log("nearbyStores.stores.length:", nearbyStores.stores.length);
+
 }
 
 startSeed()

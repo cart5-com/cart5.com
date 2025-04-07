@@ -9,7 +9,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
-import { startCrons } from './cron';
+import { startCrons } from './cron/cron';
 import { apiAuthGlobal } from './routes/api_auth_global/_router';
 import { apiAuth } from './routes/api_auth/_router';
 import { apiDashboard } from './routes/api_dashboard/_router';

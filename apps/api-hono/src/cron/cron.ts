@@ -1,10 +1,11 @@
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { deleteExpiredSessionsService } from "@db/services/session.service";
 import { cfPurgeAllEdgeCache } from "@lib/upload/r2actions";
+import { listAndUploadAllUpdatedStores } from "@db/cache_json/store.cache_json";
 
 const runCron = getEnvVariable("RUN_CRON");
 
-export const startCrons = () => {
+export const startCrons = async () => {
     if (runCron !== "1") {
         console.log("Cron is not running 💤");
         return;
@@ -35,7 +36,17 @@ export const startCrons = () => {
             }
         }
 
+        if ((currentMinute - 2) % 5 === 0) {
+            try {
+                await listAndUploadAllUpdatedStores();
+                console.log(`Updated store data at ${new Date().toISOString()}`);
+            } catch (error) {
+                console.error("Error updating store data:", error);
+            }
+        }
+
     };
     runEveryMinute();
     setInterval(runEveryMinute, 60_000);
+
 }

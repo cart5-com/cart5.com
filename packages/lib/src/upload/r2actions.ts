@@ -25,15 +25,16 @@ CF Cache -> Cache Rules
 use Cache Everything template
 Custom filter expression: (http.host wildcard "BUCKET_PUBLIC_ORIGIN")
 Cache eligibility -> Eligible for cache
-Edge TTL : Ignore cache-control header and use this TTL: 1 year
-Browser TTL: Bypass cache
+Edge TTL : Ignore cache-control header and use this TTL: 10 minutes
+Browser TTL: Override origin and use this TTL: 2 minutes
+
 /*/
 
 
 export const r2ImgUpload = async (file: File, key: string) => {
     const s3Client = new S3Client({
         region: "auto",
-        endpoint: `https://${getEnvVariable("CLOUDFLARE_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
+        endpoint: `https://${getEnvVariable("CLOUDFLARE_R2_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
         credentials: {
             accessKeyId: getEnvVariable("CLOUDFLARE_R2_ACCESS_KEY_ID"),
             secretAccessKey: getEnvVariable("CLOUDFLARE_R2_SECRET_ACCESS_KEY"),
@@ -83,7 +84,7 @@ export const r2TextUpload = async (
 ) => {
     const s3Client = new S3Client({
         region: "auto",
-        endpoint: `https://${getEnvVariable("CLOUDFLARE_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
+        endpoint: `https://${getEnvVariable("CLOUDFLARE_R2_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
         credentials: {
             accessKeyId: getEnvVariable("CLOUDFLARE_R2_ACCESS_KEY_ID"),
             secretAccessKey: getEnvVariable("CLOUDFLARE_R2_SECRET_ACCESS_KEY"),

@@ -1,10 +1,19 @@
 import db from "@db/drizzle";
-import { storeAddressTable, storeTable, storeOpenHoursTable, storeMenuTable, storePaymentMethodsTable, storeTaxSettingsTable, storeDeliveryZoneMapTable, storeRecentlyUpdatedTable } from "@db/schema/store.schema";
+import {
+    storeAddressTable,
+    storeTable,
+    storeOpenHoursTable,
+    storeMenuTable,
+    storePaymentMethodsTable,
+    storeTaxSettingsTable,
+    storeDeliveryZoneMapTable
+} from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
 import { eq, or, desc, inArray } from "drizzle-orm";
 import { teamUserMapTable } from "@db/schema/team.schema";
 import type { InferInsertModel } from "drizzle-orm";
+import { markStoreAsUpdated } from "@db/cache_json/store.cache_json";
 
 export const getStoreData_Service = async (
     storeId: string
@@ -356,25 +365,4 @@ export const getAllStoresThatUserHasAccessTo = async (userId: string) => {
         .orderBy(desc(storeTable.created_at_ts));
 
     return stores;
-}
-
-
-
-// R2 JSON CACHE
-export const markStoreAsUpdated = async (storeId: string) => {
-    await db
-        .insert(storeRecentlyUpdatedTable)
-        .values({ storeId })
-        .onConflictDoNothing();
-};
-
-export const removeAsUpdated = async (storeId: string) => {
-    await db.delete(storeRecentlyUpdatedTable)
-        .where(eq(storeRecentlyUpdatedTable.storeId, storeId))
-}
-
-export const listAllUpdatedStores = async () => {
-    return await db.select()
-        .from(storeRecentlyUpdatedTable)
-        .orderBy(desc(storeRecentlyUpdatedTable.created_at_ts));
 }
