@@ -150,7 +150,6 @@ const mergedUserData = (
     return deepMerge(anonUserData, formattedServerData);
 }
 
-// TODO: if bot browser, do not get userdata with api: authGlobalApiClient.get_user_data
 const loadUserData = async () => {
     if (import.meta.env.SSR) return;
     const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
