@@ -27,10 +27,10 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             }
         },
         onCancel: () => {
-            console.log("cancel");
+            // console.log("cancel");
         },
         onError: (error) => {
-            console.log("error");
+            console.log("item modal error");
             console.log(error);
         }
     });
