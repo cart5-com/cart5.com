@@ -77,8 +77,13 @@ export const listAndUploadAllUpdatedStores = async () => {
 }
 
 export const markStoreAsUpdated = async (storeId: string) => {
-    await db
-        .insert(storeRecentlyUpdatedTable)
-        .values({ storeId })
-        .onConflictDoNothing();
+    // Refresh the cache immediately in dev
+    if (!IS_PROD) {
+        await getStoreData_CacheJSON(storeId, true);
+    } else {
+        await db
+            .insert(storeRecentlyUpdatedTable)
+            .values({ storeId })
+            .onConflictDoNothing();
+    }
 };

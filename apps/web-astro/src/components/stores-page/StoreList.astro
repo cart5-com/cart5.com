@@ -1,7 +1,7 @@
 ---
 import StoreCard from "./StoreCard.astro";
 import type { OrderType } from "@lib/types/orderType";
-
+import { Moon, TriangleAlert } from "lucide-vue-next";
 interface Props {
 	stores: Array<{
 		id: string;
@@ -20,3 +20,133 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 <div class="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 	{stores.map((store) => <StoreCard store={store} measure={measure} orderType={orderType} />)}
 </div>
+
+<div class="hidden">
+	<Moon class="moon-icon mr-1 inline-block" />
+	<TriangleAlert class="triangle-alert-icon mr-1 inline-block" />
+</div>
+
+<script
+	is:inline
+	define:vars={{
+		orderType: orderType
+	}}
+>
+	window.orderType = orderType;
+</script>
+<script>
+	import { ON_USER_DATA_READY } from "@web-astro/stores/UserData.store";
+	import { isOpenNow } from "@lib/utils/isOpenNow";
+	import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
+	import { userDataStore } from "@web-astro/stores/UserData.store";
+	import type { OrderType } from "@lib/types/orderType";
+
+	const moonIcon = document.querySelector(".moon-icon");
+	const triangleAlertIcon = document.querySelector(".triangle-alert-icon");
+
+	window.addEventListener(ON_USER_DATA_READY, () => {
+		const storeCards = document.querySelectorAll(".store-card");
+		storeCards.forEach((storeCard) => {
+			const storeId = storeCard.getAttribute("data-store-id");
+			// Check if store is open and add banner
+			if (storeId) {
+				checkStoreOpen(storeId, window.orderType);
+
+				// Only check delivery zone if order type is delivery
+				if (window.orderType === "delivery") {
+					checkDeliveryZone(storeId, storeCard);
+				}
+			}
+		});
+	});
+
+	// Function to check if a store is open and add closed banner if needed
+	async function checkStoreOpen(storeId: string, orderType: OrderType): Promise<void> {
+		let isOpen = false;
+		try {
+			const jsonUrl = `https://${import.meta.env.PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST}/store-data-open-hours/${storeId}.json`;
+			const response = await fetch(jsonUrl);
+			const json = await response.json();
+
+			if (json) {
+				const openHours = json;
+				let weeklyHours = openHours?.defaultOpenHours;
+
+				if (orderType === "delivery" && openHours?.deliveryHours?.isActive) {
+					weeklyHours = openHours?.deliveryHours;
+				} else if (orderType === "pickup" && openHours?.pickupHours?.isActive) {
+					weeklyHours = openHours?.pickupHours;
+				}
+
+				isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
+			}
+		} catch (e) {
+			// Ignore error
+		}
+		if (!isOpen) {
+			// Add closed banner and reduce brightness
+			const storeCard = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
+			if (storeCard) {
+				storeCard.classList.add("brightness-50");
+
+				// Create and add banner
+				const statusIndicator = storeCard.querySelector(".store-status-indicator");
+				if (statusIndicator) {
+					const banner = document.createElement("span");
+					banner.className = "rounded-md px-2 py-1 text-xs bg-destructive text-destructive-foreground";
+
+					banner.innerHTML = `${moonIcon?.outerHTML} Closed`;
+					statusIndicator.appendChild(banner);
+				}
+			}
+		}
+	}
+
+	// Function to check if user is in a store's delivery zone
+	async function checkDeliveryZone(storeId: string, storeCard: Element): Promise<void> {
+		let bestDeliveryZone = null;
+		try {
+			// Get user's location from userDataStore
+			const userData = userDataStore.value.userData;
+			if (!userData?.rememberLastLat || !userData?.rememberLastLng) {
+				return;
+			}
+
+			// Fetch delivery zone data
+			const jsonUrl = `https://${import.meta.env.PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST}/store-data-delivery-zones-and-address/${storeId}.json`;
+			const response = await fetch(jsonUrl);
+			const zoneData = await response.json();
+
+			if (!zoneData) return;
+			console.log("zoneData");
+			console.log(zoneData);
+
+			// Check if user is in delivery zone
+			bestDeliveryZone = getBestDeliveryZone(
+				{
+					lat: userData.rememberLastLat,
+					lng: userData.rememberLastLng
+				},
+				zoneData?.deliveryZones?.zones ?? [],
+				{
+					lat: zoneData?.address?.lat,
+					lng: zoneData?.address?.lng
+				}
+			);
+			console.log("bestDeliveryZone");
+			console.log(bestDeliveryZone);
+		} catch (e) {
+			// Ignore error
+		}
+		// If not in delivery zone, add banner
+		if (!bestDeliveryZone) {
+			const statusIndicator = storeCard.querySelector(".store-status-indicator");
+			if (statusIndicator) {
+				const banner = document.createElement("span");
+				banner.className = "mx-2 rounded-md px-2 py-2 text-xs bg-destructive text-destructive-foreground";
+				banner.innerHTML = `${triangleAlertIcon?.outerHTML} Outside delivery zone`;
+				statusIndicator.appendChild(banner);
+			}
+		}
+	}
+</script>

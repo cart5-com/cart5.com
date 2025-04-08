@@ -4,8 +4,6 @@ import { Store } from "lucide-vue-next";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { OrderType } from "@lib/types/orderType";
-import IsStoreOpenNow from "./IsStoreOpenNow.vue";
-import DeliveryZoneCheck from "./DeliveryZoneCheck.vue";
 
 interface Props {
 	store: {
@@ -22,10 +20,9 @@ const { store, measure = "km", orderType = "delivery" } = Astro.props;
 ---
 
 <a href={`${BASE_LINKS.STORE(store.id, slugify(store.name), orderType)}`} class="block">
-	<Card class="bg-muted hover:bg-muted/20 transition-colors" id={`store-card-${store.id}`}>
-		<CardHeader>
-			<IsStoreOpenNow storeId={store.id} orderType={orderType} client:visible />
-			{orderType === "delivery" && <DeliveryZoneCheck storeId={store.id} client:visible />}
+	<Card class="bg-muted hover:bg-muted/20 store-card transition-colors" data-store-id={store.id}>
+		<div class="store-status-indicator"></div>
+		<CardHeader class="card-header">
 			<CardTitle class="text-lg">
 				<Store class="mr-1 inline-block" />
 				<span class="truncate">{store.name}</span>

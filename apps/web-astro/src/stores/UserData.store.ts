@@ -5,7 +5,7 @@ import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { BASE_LINKS } from "@web-astro/utils/links";
-
+import { isBot } from "@lib/clientUtils/isBot";
 /*
 loadUserData() is called at initialization:
 Fetches user data from the server
@@ -49,6 +49,7 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
     "carts"
 >;
 
+export const ON_USER_DATA_READY = "ON_USER_DATA_READY";
 export const userDataStore = ref<UserDataStoreType>({
     user: null,
     userData: null,
@@ -153,6 +154,10 @@ const mergedUserData = (
 const loadUserData = async () => {
     if (import.meta.env.SSR) return;
     const isAfterLogin = typeof window !== 'undefined' && window.location.hash === '#after-login';
+    if (isBot()) {
+        console.warn("Bot detected, skipping user data load");
+        return;
+    };
     const { data, error } = await (await authGlobalApiClient.get_user_data.$post({
         json: {
             columns: {
@@ -195,9 +200,13 @@ const loadUserData = async () => {
             }
         }
         watch(userDataStore, handleDataChange, { deep: true, immediate: false });
-        // TODO: emit evnet user data ready
+        setTimeout(() => {
+            window.dispatchEvent(new Event(ON_USER_DATA_READY));
+        });
     }
 }
+
+
 
 export const handleDataChange = (newVal: UserDataStoreType) => {
     if (newVal.user) {
