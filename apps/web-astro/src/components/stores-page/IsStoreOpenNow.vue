@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: remove this we do not need vue for this!
 import { Moon } from "lucide-vue-next";
 import { onMounted, ref } from "vue";
 import { isOpenNow } from "@lib/utils/isOpenNow";
@@ -11,12 +12,12 @@ const props = defineProps<{
 
 const isOpen = ref(false);
 
+// TODO: if bot browser show open
 onMounted(async () => {
     try {
         const jsonUrl = `https://${import.meta.env.PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST}/store-data-open-hours/${props.storeId}.json`;
         const json = await (await fetch(jsonUrl)).json();
         if (json) {
-            console.log(json);
             const openHours = json;
             let weeklyHours = openHours?.defaultOpenHours;
             if (props.orderType === "delivery" && openHours?.deliveryHours?.isActive) {
