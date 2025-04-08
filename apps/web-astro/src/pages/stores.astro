@@ -56,6 +56,14 @@ const createPageUrl = (
 ---
 
 <BaseLayout title={Astro.locals.WEBSITE?.name ?? "List"}>
+	<script
+		is:inline
+		define:vars={{
+			orderType: orderType
+		}}
+	>
+		window.orderType = orderType;
+	</script>
 	<FilterControls orderType={orderType} address={address} sort={sort} range={range} createPageUrl={createPageUrl} />
 
 	<StoreList stores={nearbyStores.stores} measure={measure} orderType={orderType} />
