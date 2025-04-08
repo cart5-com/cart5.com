@@ -77,13 +77,15 @@ export const listAndUploadAllUpdatedStores = async () => {
 }
 
 export const markStoreAsUpdated = async (storeId: string) => {
-    // Refresh the cache immediately in dev
-    if (!IS_PROD) {
-        await getStoreData_CacheJSON(storeId, true);
-    } else {
+    if (process.env.npm_lifecycle_event === 'dev:seed') {
+        return;
+    } else if (IS_PROD) {
         await db
             .insert(storeRecentlyUpdatedTable)
             .values({ storeId })
             .onConflictDoNothing();
+    } else {
+        // Refresh the cache immediately in dev
+        await getStoreData_CacheJSON(storeId, true);
     }
 };
