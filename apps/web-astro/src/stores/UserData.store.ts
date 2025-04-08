@@ -208,6 +208,9 @@ const loadUserData = async () => {
 
 
 export const handleDataChange = (newVal: UserDataStoreType) => {
+    if ((newVal as any).ignoreAutoDebounceSave) {
+        return;
+    }
     if (newVal.user) {
         saveUserData(newVal);
     } else {

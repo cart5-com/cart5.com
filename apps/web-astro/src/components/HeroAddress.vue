@@ -42,6 +42,7 @@ const redirectToList = () => {
 
 const onMapConfirm = async (result: { lat: number, lng: number }) => {
     console.log('onMapConfirm', result);
+    (userDataStore.value as any).ignoreAutoDebounceSave = true;
     userDataStore.value!.userData!.rememberLastLat = result.lat;
     userDataStore.value!.userData!.rememberLastLng = result.lng;
     await handleDataChangeNow(userDataStore.value);
