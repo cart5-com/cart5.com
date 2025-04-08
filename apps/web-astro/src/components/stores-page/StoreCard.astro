@@ -25,11 +25,17 @@ const { store, measure = "km", orderType = "delivery" } = Astro.props;
 		<CardHeader class="card-header">
 			<CardTitle class="text-lg">
 				<Store class="mr-1 inline-block" />
-				<span class="truncate">{store.name}</span>
+				<span class="line-clamp-1 max-w-sm">
+					{store.name}
+					I am a simple long text that should be truncated
+				</span>
 			</CardTitle>
 			<CardDescription>
 				<div class="flex items-center justify-between">
-					<span class="truncate">{store.address1 || ""}</span>
+					<span class="line-clamp-1 max-w-sm">
+						{store.address1 || ""}
+						I am a simple long text that should be truncated
+					</span>
 					<span class="text-muted-foreground text-sm">
 						{store.distance.toFixed(2)}
 						{measure}

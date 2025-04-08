@@ -233,7 +233,7 @@ watch(() => form.values.country, (newCountry) => {
             <DialogHeader>
                 <DialogTitle class="flex items-center gap-2">
                     <DoorOpen />
-                    Confirm your entrance/door location
+                    Confirm building entrance/door location
                 </DialogTitle>
                 <!-- <DialogDescription class="hidden text-sm sm:block">
                     Move the map to your entrance/door and click Confirm

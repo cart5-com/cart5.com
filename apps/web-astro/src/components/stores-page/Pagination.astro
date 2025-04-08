@@ -28,7 +28,7 @@ function getPageRange(current: number, total: number, max: number) {
 const pageRange = getPageRange(currentPage, totalPages, maxVisiblePages);
 ---
 
-<nav class="flex justify-center py-4">
+<nav class="flex justify-center overflow-x-auto overflow-y-hidden whitespace-nowrap">
 	<div class="flex items-center gap-1">
 		{
 			currentPage > 1 && (

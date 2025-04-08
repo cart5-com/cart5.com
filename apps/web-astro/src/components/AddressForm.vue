@@ -40,7 +40,7 @@ const onSubmit = () => {
                 <DialogHeader>
                     <DialogTitle class="flex items-center gap-2">
                         <DoorOpen />
-                        Confirm your entrance/door location
+                        Confirm building entrance/door location
                     </DialogTitle>
                 </DialogHeader>
                 <GeolocationMap :address="userDataStore.userData.rememberLastAddress!"

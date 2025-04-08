@@ -93,7 +93,7 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 				const statusIndicator = storeCard.querySelector(".store-status-indicator");
 				if (statusIndicator) {
 					const banner = document.createElement("span");
-					banner.className = "rounded-md px-2 py-1 text-xs bg-destructive text-destructive-foreground";
+					banner.className = "mx-2 rounded-md px-2 py-2 text-xs bg-destructive text-destructive-foreground";
 
 					banner.innerHTML = `${moonIcon?.outerHTML} Closed`;
 					statusIndicator.appendChild(banner);

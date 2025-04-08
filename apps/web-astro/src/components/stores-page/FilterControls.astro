@@ -8,50 +8,74 @@ interface Props {
 	orderType: OrderType | undefined;
 	address: string | undefined;
 	sort: string | undefined;
-	createPageUrl: (page: number, orderType?: OrderType, sort?: string) => string;
+	range: number | undefined;
+	createPageUrl: (page: number, orderType?: OrderType, sort?: string, range?: number) => string;
 }
 
-const { orderType = "delivery", address = "address", sort = "distance_asc", createPageUrl } = Astro.props;
+const { orderType = "delivery", address = "address", sort = "distance_asc", range = 20, createPageUrl } = Astro.props;
+
+const rangeOptions = [5, 10, 20, 50, 100];
 ---
 
 <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap">
 	<div class="my-2 flex justify-between">
-		<div
-			class="bg-muted text-muted-foreground grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
-			<a
-				class={buttonVariants({ variant: "ghost" }) +
-					`${orderType === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-				href={createPageUrl(1, "delivery")}>
-				<span class="truncate">Delivery</span>
-			</a>
+		<div class="flex gap-2">
+			<div
+				class="bg-muted text-muted-foreground grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
+				<a
+					class={buttonVariants({ variant: "ghost" }) +
+						`${orderType === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+					href={createPageUrl(1, "delivery")}>
+					<span class="truncate">Delivery</span>
+				</a>
 
-			<a
-				class={buttonVariants({ variant: "ghost" }) +
-					`${orderType === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-				href={createPageUrl(1, "pickup")}>
-				<span class="truncate">Pickup</span>
-			</a>
+				<a
+					class={buttonVariants({ variant: "ghost" }) +
+						`${orderType === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
+					href={createPageUrl(1, "pickup")}>
+					<span class="truncate">Pickup</span>
+				</a>
+			</div>
+			<div class="p-1">
+				<a
+					class={buttonVariants({ variant: "outline" }) + " max-w-[200px] "}
+					href={BASE_LINKS.HOME_UPDATE_ADDRESS}
+					title={`click to change\n"${address}"`}>
+					<span class="truncate">
+						<MapPin class="mr-1 inline-block" />
+						{address}
+					</span>
+				</a>
+			</div>
 		</div>
-		<div class="p-1">
-			<a
-				class={buttonVariants({ variant: "outline" }) + " max-w-[200px] "}
-				href={BASE_LINKS.HOME_UPDATE_ADDRESS}
-				title={`click to change\n"${address}"`}>
-				<span class="truncate">
-					<MapPin class="mr-1 inline-block" />
-					{address}
-				</span>
-			</a>
+		<div class="flex gap-2">
+			<!-- Range dropdown -->
+			<select
+				onchange="window.location.href=this.value"
+				class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate"
+				title="bounding box to search for stores">
+				{
+					rangeOptions.map((rangeValue) => (
+						<option
+							selected={range === rangeValue}
+							value={createPageUrl(1, undefined, undefined, rangeValue)}>
+							Range: {rangeValue} km
+						</option>
+					))
+				}
+			</select>
+
+			<!-- Sort dropdown -->
+			<select
+				onchange="window.location.href=this.value"
+				class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
+				<option selected={sort === "distance_asc"} value={createPageUrl(1, undefined, "distance_asc")}>
+					Sort by Distance: Low to High
+				</option>
+				<option selected={sort === "distance_desc"} value={createPageUrl(1, undefined, "distance_desc")}>
+					Sort by Distance: High to Low
+				</option>
+			</select>
 		</div>
-		<select
-			onchange="window.location.href=this.value"
-			class="border-input ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-ring my-1 mr-1 flex h-9 items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-start text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate">
-			<option selected={sort === "distance_asc"} value={createPageUrl(1, undefined, "distance_asc")}>
-				Sort by Distance: Low to High
-			</option>
-			<option selected={sort === "distance_desc"} value={createPageUrl(1, undefined, "distance_desc")}>
-				Sort by Distance: High to Low
-			</option>
-		</select>
 	</div>
 </div>
