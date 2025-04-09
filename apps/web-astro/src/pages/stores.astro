@@ -37,7 +37,8 @@ const nearbyStores = await getNearbyStores_Service(
 
 if (nearbyStores.stores.length === 1) {
 	const storeLink = BASE_LINKS.STORE(nearbyStores.stores[0]?.id ?? "", slugify(nearbyStores.stores[0]?.name ?? ""));
-	Astro.redirect(storeLink);
+	console.log("redirecting to", storeLink);
+	return Astro.redirect(storeLink);
 }
 
 const createPageUrl = (

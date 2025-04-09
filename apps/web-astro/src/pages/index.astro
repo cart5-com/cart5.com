@@ -14,7 +14,8 @@ if (count === 1) {
 	const store = await getFirstStoreIdForWebsite_Service(Astro.locals.WEBSITE?.id ?? "");
 	if (store) {
 		const storeLink = BASE_LINKS.STORE(store.storeId, slugify(store.store.name));
-		Astro.redirect(storeLink);
+		console.log("redirecting to", storeLink);
+		return Astro.redirect(storeLink);
 	}
 }
 ---
