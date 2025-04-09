@@ -1,10 +1,8 @@
 import db from "@db/drizzle";
 import { teamInvitationsTable, teamTable, teamUserMapTable } from "@db/schema/team.schema";
 import { TEAM_PERMISSIONS } from "@lib/consts";
-import { eq, and, or } from "drizzle-orm";
-import { websitesTable } from "@db/schema/website.schema";
+import { eq, and } from "drizzle-orm";
 import { userTable } from "@db/schema/auth.schema";
-import { storeTable } from "@db/schema/store.schema";
 
 export const getTeam_Service = async (
     teamId: string,
@@ -14,40 +12,6 @@ export const getTeam_Service = async (
         where: eq(teamTable.id, teamId),
         columns: columns,
     });
-}
-
-export const getUserTeams_Service = async (userId: string) => {
-    return await db
-        .select({
-            teamId: teamTable.id,
-            websiteId: websitesTable.id,
-            websiteName: websitesTable.name,
-            defaultHostname: websitesTable.defaultHostname,
-            storeId: storeTable.id,
-            storeName: storeTable.name,
-            // ownerUserId: teamTable.ownerUserId,
-            // isOwner: eq(teamTable.ownerUserId, userId),
-            // permissions: teamUserMapTable.permissions
-        })
-        .from(teamTable)
-        .innerJoin(
-            teamUserMapTable,
-            eq(teamTable.id, teamUserMapTable.teamId)
-        )
-        .leftJoin(
-            websitesTable,
-            eq(teamTable.id, websitesTable.ownerTeamId)
-        )
-        .leftJoin(
-            storeTable,
-            or(
-                eq(teamTable.id, storeTable.ownerTeamId),
-                eq(teamTable.id, storeTable.supportTeamId)
-            )
-        )
-        .where(
-            eq(teamUserMapTable.userId, userId)
-        );
 }
 
 export const getTeamMembers_Service = async (
