@@ -32,7 +32,7 @@ export const storeTable = sqliteTable("store", {
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
 
 	ownerTeamId: text("owner_team_id").notNull(),
-	supportTeamId: text("support_team_id"),
+	supportTeamId: text("support_team_id"), // website team can become support team for other stores with their owner team id
 
 });
 
