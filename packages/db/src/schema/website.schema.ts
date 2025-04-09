@@ -6,7 +6,7 @@ import { relations } from 'drizzle-orm';
 import { z } from "zod";
 import { teamTable } from "./team.schema";
 import { storeTable } from "./store.schema";
-
+import { ServiceFeeSchema, type ServiceFee } from "@lib/zod/serviceFee";
 
 export const websitesTable = sqliteTable("websites", {
     ...autoCreatedUpdated,
@@ -22,15 +22,23 @@ export const websitesTable = sqliteTable("websites", {
 
     // if false, the website will use websiteStoreMapTable  to show selected stores
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
+    defaultMarketplaceFee: text("default_marketplace_fee", { mode: 'json' }).$type<ServiceFee>(),
 
     isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false),
+    defaultPartnerFee: text("default_partner_fee", { mode: 'json' }).$type<ServiceFee>(),
 
 });
 export const insertWebsitesSchema = createInsertSchema(websitesTable, {
     name: z.string().min(1, { message: "min 1" }).max(510, { message: "max 510" }),
+    defaultMarketplaceFee: ServiceFeeSchema.nullable(),
+    defaultPartnerFee: ServiceFeeSchema.nullable(),
 });
 export const selectWebsitesSchema = createSelectSchema(websitesTable);
-export const updateWebsitesSchema = createInsertSchema(websitesTable);
+export const updateWebsitesSchema = createInsertSchema(websitesTable, {
+    name: z.string().min(1, { message: "min 1" }).max(510, { message: "max 510" }),
+    defaultMarketplaceFee: ServiceFeeSchema.nullable(),
+    defaultPartnerFee: ServiceFeeSchema.nullable(),
+});
 
 
 

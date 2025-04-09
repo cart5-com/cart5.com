@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/pagination';
 import { Plus, Search, Check, X } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
-
+import { ServiceFee } from '@lib/zod/serviceFee';
 type StoresResponse = ResType<
     typeof dashboardApiClient.website[':websiteId']['stores']['list']['$get']
 >["data"];
@@ -113,12 +113,18 @@ onMounted(async () => {
 });
 
 const isMarketplaceMode = ref(false);
+const defaultMarketplaceFee = ref<ServiceFee>({
+    ratePerOrder: 0,
+    feePerOrder: 0
+});
+
 const loadMarketplaceMode = async () => {
     const { data, error } = await (await dashboardApiClient.website[':websiteId'].$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
             columns: {
                 isMarketplace: true,
+                defaultMarketplaceFee: true,
             }
         }
     })).json();
@@ -127,44 +133,99 @@ const loadMarketplaceMode = async () => {
         toast.error('Failed to load marketplace mode');
     } else if (data) {
         isMarketplaceMode.value = data.isMarketplace;
+        defaultMarketplaceFee.value = data.defaultMarketplaceFee || {
+            ratePerOrder: 0,
+            feePerOrder: 0
+        };
     }
 }
 
 const onMarketplaceModeChange = async (checked: boolean) => {
     isMarketplaceMode.value = checked;
+    await saveChanges();
+}
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+const onFeeChange = async () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(async () => {
+        await saveChanges();
+    }, 1000);
+}
+
+const saveChanges = async () => {
     const { data, error } = await (await dashboardApiClient.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
         json: {
-            isMarketplace: checked,
+            isMarketplace: isMarketplaceMode.value,
+            defaultMarketplaceFee: defaultMarketplaceFee.value,
         }
     })).json();
     if (error) {
         console.error(error);
         toast.error('Failed to update marketplace mode');
     } else if (data) {
-        toast.success('Marketplace mode updated');
+        toast.success('Marketplace settings updated');
     }
 }
 </script>
 
 <template>
     <div class="max-w-3xl mx-auto">
-        <label for="marketplaceMode"
-               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer max-w-sm mx-auto mb-4">
-            <div class="space-y-0.5">
-                <h3 class="text-lg font-medium">Marketplace mode</h3>
-                <p class="text-muted-foreground">Do you want to allow all available stores to be listed on your
-                    website?</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <Switch id="marketplaceMode"
-                        :checked="isMarketplaceMode"
-                        @update:checked="onMarketplaceModeChange"
-                        class="scale-125">
-                </Switch>
-                <span class="font-medium">{{ isMarketplaceMode ? 'Yes' : 'No' }}</span>
-            </div>
-        </label>
+        <Card class="mb-4">
+            <CardHeader>
+                <CardTitle>Marketplace Settings</CardTitle>
+                <CardDescription>Configure your marketplace mode and fee settings.</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-6">
+                <div class="flex items-center justify-between p-4 border rounded-lg cursor-pointer">
+                    <div class="space-y-0.5">
+                        <h3 class="text-lg font-medium">Marketplace mode</h3>
+                        <p class="text-muted-foreground">Do you want to allow all available stores to be listed on your
+                            website?</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <Switch id="marketplaceMode"
+                                :checked="isMarketplaceMode"
+                                @update:checked="onMarketplaceModeChange"
+                                class="scale-125">
+                        </Switch>
+                        <span class="font-medium">{{ isMarketplaceMode ? 'Yes' : 'No' }}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid gap-4">
+                        <div class="space-y-2">
+                            <label for="ratePerOrder"
+                                   class="text-sm font-medium">Rate per Order (%)</label>
+                            <Input id="ratePerOrder"
+                                   type="number"
+                                   min="0"
+                                   max="100"
+                                   step="0.01"
+                                   v-model="defaultMarketplaceFee.ratePerOrder"
+                                   @change="onFeeChange"
+                                   class="max-w-[200px]" />
+                            <p class="text-sm text-muted-foreground">Percentage fee charged per order (0-100%)</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="feePerOrder"
+                                   class="text-sm font-medium">Fixed Fee per Order</label>
+                            <Input id="feePerOrder"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   v-model="defaultMarketplaceFee.feePerOrder"
+                                   @change="onFeeChange"
+                                   class="max-w-[200px]" />
+                            <p class="text-sm text-muted-foreground">Fixed fee amount charged per order</p>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
 
         <Card>
             <CardHeader>
