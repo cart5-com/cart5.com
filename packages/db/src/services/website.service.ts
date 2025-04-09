@@ -387,6 +387,7 @@ export const getWebsiteInfo_Service = async (hostname: string) => {
             }
         };
     } else if (website.supportTeamId) {
+        // get website by owner team id === support team id
         const partnerWebsite = await db
             .select({
                 id: websitesTable.id,
