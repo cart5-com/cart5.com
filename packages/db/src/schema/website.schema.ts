@@ -50,6 +50,7 @@ export const updateWebsitesSchema = createInsertSchema(websitesTable, {
 export const websiteStoreMapTable = sqliteTable("website_store_map", {
     websiteId: text("website_id").notNull(),
     storeId: text("store_id").notNull(),
+    overrideMarketplaceFee: text("override_marketplace_fee", { mode: 'json' }).$type<ServiceFee>(),
 }, (table) => [
     primaryKey({ columns: [table.websiteId, table.storeId] })
 ]);

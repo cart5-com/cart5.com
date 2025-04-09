@@ -2,7 +2,7 @@ import { IS_PROD } from "@lib/utils/getEnvVariable";
 import { createSeedUser } from "./createSeedUser";
 import {
     addDomainToWebsite_Service,
-    addStoreToWebsite_Service,
+    upsertStoreToWebsite_Service,
     createWebsite_Service,
     getWebsiteInfo_Service,
     updateWebsite_Service
@@ -304,7 +304,7 @@ export const startSeed = async () => {
         invitationForFlamesStoreAdminUserRes!.id
     );
 
-    await addStoreToWebsite_Service(
+    await upsertStoreToWebsite_Service(
         flamesWebsite!.id,
         flamesStore!.id
     );

@@ -1,0 +1,1 @@
+ALTER TABLE `website_store_map` ADD `override_marketplace_fee` text;

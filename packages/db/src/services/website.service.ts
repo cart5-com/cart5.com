@@ -6,6 +6,7 @@ import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdmi
 import { teamUserMapTable } from '@db/schema/team.schema';
 import { storeTable, storeAddressTable } from '@db/schema/store.schema';
 import { getAllStoresThatUserHasAccessTo } from './store.service';
+import type { ServiceFee } from '@lib/zod/serviceFee';
 
 export const getWebsite_Service = async (
     websiteId: string,
@@ -247,6 +248,7 @@ export const listStoresForWebsite_Service = async (
             id: storeTable.id,
             name: storeTable.name,
             address1: storeAddressTable.address1,
+            overrideMarketplaceFee: websiteStoreMapTable.overrideMarketplaceFee,
             isListed: sql<boolean>`CASE 
                 WHEN ${websiteStoreMapTable.storeId} IS NOT NULL THEN 1 
                 ELSE 0 
@@ -313,15 +315,22 @@ export const listStoresForWebsite_Service = async (
     };
 }
 
-export const addStoreToWebsite_Service = async (
+export const upsertStoreToWebsite_Service = async (
     websiteId: string,
-    storeId: string
+    storeId: string,
+    overrideMarketplaceFee?: ServiceFee
 ) => {
     // Insert into map table (will fail if already exists due to primary key constraint)
     try {
         await db.insert(websiteStoreMapTable).values({
             websiteId,
-            storeId
+            storeId,
+            overrideMarketplaceFee
+        }).onConflictDoUpdate({
+            target: [websiteStoreMapTable.websiteId, websiteStoreMapTable.storeId],
+            set: {
+                overrideMarketplaceFee: overrideMarketplaceFee || null
+            }
         });
         return true;
     } catch (error) {

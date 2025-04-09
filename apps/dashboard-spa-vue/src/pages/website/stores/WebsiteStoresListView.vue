@@ -21,6 +21,10 @@ import {
 import { Plus, Search, Check, X } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { ServiceFee } from '@lib/zod/serviceFee';
+import ServiceFeeDialog from './ServiceFeeDialog.vue';
+import { Badge } from '@/components/ui/badge';
+
+
 type StoresResponse = ResType<
     typeof dashboardApiClient.website[':websiteId']['stores']['list']['$get']
 >["data"];
@@ -56,10 +60,10 @@ const loadStores = async () => {
     loading.value = false;
 };
 
-const addStore = async (storeId: string) => {
-    const { error } = await (await dashboardApiClient.website[':websiteId'].stores.add.$post({
+const upsertStore = async (storeId: string, overrideMarketplaceFee?: ServiceFee) => {
+    const { error } = await (await dashboardApiClient.website[':websiteId'].stores.upsert.$post({
         param: { websiteId: currentWebsiteId.value ?? '' },
-        json: { storeId }
+        json: { storeId, overrideMarketplaceFee }
     })).json();
 
     if (error) {
@@ -194,7 +198,14 @@ const saveChanges = async () => {
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 border p-2 rounded-lg">
+                    <h2 class="text-lg font-medium">Default Marketplace Fee</h2>
+                    <p class="text-muted-foreground">This fee will be applied to all stores that are listed on your
+                        website.
+                    </p>
+                    <p class="text-muted-foreground">
+                        Also, you may override these fees with the gear button on each store.
+                    </p>
                     <div class="grid gap-4">
                         <div class="space-y-2">
                             <label for="ratePerOrder"
@@ -278,7 +289,7 @@ const saveChanges = async () => {
                                 <div v-if="!isMarketplaceMode">
                                     <Button v-if="!store.isListed"
                                             size="sm"
-                                            @click="addStore(store.id)">
+                                            @click="upsertStore(store.id)">
                                         <Plus class="h-4 w-4 mr-1" />
                                         Add
                                     </Button>
@@ -290,6 +301,22 @@ const saveChanges = async () => {
                                         Remove
                                     </Button>
                                 </div>
+                                <div v-if="store.overrideMarketplaceFee">
+                                    <Badge variant="outline">
+                                        {{ store.overrideMarketplaceFee?.ratePerOrder }}%
+                                    </Badge>
+                                    <Badge variant="outline">
+                                        +{{ store.overrideMarketplaceFee?.feePerOrder }}
+                                    </Badge>
+                                </div>
+                                <ServiceFeeDialog :store-id="store.id"
+                                                  :override-marketplace-fee="store.overrideMarketplaceFee ?? {}"
+                                                  @upsert-store="(storeId, overrideMarketplaceFee) => {
+                                                    console.log('overrideMarketplaceFee', overrideMarketplaceFee);
+                                                    store.overrideMarketplaceFee = overrideMarketplaceFee ?? null;
+                                                    upsertStore(storeId, overrideMarketplaceFee ?? undefined);
+                                                }" />
+
                             </div>
                         </div>
 
