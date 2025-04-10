@@ -70,9 +70,6 @@ const cancelInvitation = async (invitationId: string) => {
     <Card class="max-w-lg mx-auto mt-6">
         <CardHeader class="pb-2">
             <h3 class="text-lg font-medium">Invitations</h3>
-            <p class="text-sm text-muted-foreground">
-                These invitations are waiting for users to accept
-            </p>
         </CardHeader>
         <CardContent>
             <div v-if="invitations.length === 0"
