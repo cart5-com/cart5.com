@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { type ServiceFee } from '@lib/zod/serviceFee';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { PlusIcon, Trash2 as TrashIcon } from 'lucide-vue-next';
 
 pageTitle.value = 'Service Fees'
 
@@ -25,12 +27,41 @@ const marketingPartner = ref<ServiceFee>({
     feePerOrder: 0,
 });
 
+type OtherStoreServiceFee = {
+    name?: string;
+    ratePerOrder?: number;
+    feePerOrder?: number;
+}
+const otherStoreServiceFees = ref<OtherStoreServiceFee[]>([
+    {
+        name: 'Stripe',
+        ratePerOrder: 2.9,
+        feePerOrder: 0.30,
+    },
+]);
+
+const addOtherServiceFee = () => {
+    otherStoreServiceFees.value.push({
+        name: '',
+        ratePerOrder: 0,
+        feePerOrder: 0
+    });
+};
+
+const removeOtherServiceFee = (index: number) => {
+    otherStoreServiceFees.value.splice(index, 1);
+};
+
 const calculationType = ref<"add" | "include">("include");
 const includedBufferPercentage = ref(10);
 
 const allowedFeeTotalIncluded = computed(() => {
     return subtotal.value * ((includedBufferPercentage.value ?? 0) / 100);
 });
+
+const getTTT = function (serviceFee: ServiceFee) {
+    return (subtotal.value * ((serviceFee.ratePerOrder ?? 0) / 100)) + (serviceFee.feePerOrder ?? 0);
+}
 
 const totalApplicationFee = function () {
     const platformFeePercent = subtotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
@@ -39,7 +70,16 @@ const totalApplicationFee = function () {
     const partnerFeeFixed = partnerServiceFee.value.feePerOrder ?? 0;
     const marketingFeePercent = subtotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
     const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
-    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
+
+    // Calculate other service fees
+    let otherFeesTotal = 0;
+    for (const fee of otherStoreServiceFees.value) {
+        const percentFee = subtotal.value * ((fee.ratePerOrder ?? 0) / 100);
+        const fixedFee = fee.feePerOrder ?? 0;
+        otherFeesTotal += percentFee + fixedFee;
+    }
+
+    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed + otherFeesTotal;
 }
 
 const cartTotal = computed(() => {
@@ -59,14 +99,6 @@ const storeReceives = computed(() => {
     return cartTotal.value - totalApplicationFee();
 });
 
-const minStoreReceives = () => {
-    if (calculationType.value === "add") {
-        return cartTotal.value - totalApplicationFee();
-    } else {
-        return cartTotal.value - allowedFeeTotalIncluded.value;
-    }
-}
-
 </script>
 
 <template>
@@ -77,7 +109,11 @@ const minStoreReceives = () => {
 
             <!-- Platform Service Fee -->
             <div class="pt-4 border-t">
-                <h3 class="font-medium">Platform Service Fee</h3>
+                <h3 class="font-medium">Platform Service Fee
+                    <span class="text-sm text-muted-foreground">
+                        ({{ getTTT(platformServiceFee).toFixed(2) }})
+                    </span>
+                </h3>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="platformRatePerOrder"
@@ -106,7 +142,11 @@ const minStoreReceives = () => {
 
             <!-- Partner Service Fee -->
             <div class="pt-4 border-t">
-                <h3 class="font-medium">Partner Service Fee</h3>
+                <h3 class="font-medium">Partner Service Fee
+                    <span class="text-sm text-muted-foreground">
+                        ({{ getTTT(partnerServiceFee).toFixed(2) }})
+                    </span>
+                </h3>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="partnerRatePerOrder"
@@ -135,7 +175,11 @@ const minStoreReceives = () => {
 
             <!-- Marketing Partner -->
             <div class="pt-4 border-t">
-                <h3 class="font-medium">Marketing Partner</h3>
+                <h3 class="font-medium">Marketing Partner
+                    <span class="text-sm text-muted-foreground">
+                        ({{ getTTT(marketingPartner).toFixed(2) }})
+                    </span>
+                </h3>
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="marketingPartnerRatePerOrder"
@@ -160,6 +204,68 @@ const minStoreReceives = () => {
                        step="1"
                        class="col-span-3"
                        v-model="marketingPartner.feePerOrder" />
+            </div>
+
+            <!-- Other Store Service Fees -->
+            <div class="pt-4 border-t">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-medium">Other Store Service Fees</h3>
+                    <Button size="sm"
+                            variant="outline"
+                            @click="addOtherServiceFee">
+                        <PlusIcon class="h-4 w-4 mr-1" />
+                        Add Fee
+                    </Button>
+                </div>
+            </div>
+
+            <div v-for="(fee, index) in otherStoreServiceFees"
+                 :key="index"
+                 class="grid gap-4 mt-2 p-3 border rounded-md">
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <div class="col-span-4">
+                        {{ getTTT(fee).toFixed(2) }}
+                    </div>
+                    <Label :for="`otherFeeName${index}`"
+                           class="text-right">
+                        Name
+                    </Label>
+                    <div class="col-span-3 flex gap-2">
+                        <Input :id="`otherFeeName${index}`"
+                               type="text"
+                               class="flex-1"
+                               v-model="fee.name" />
+                        <Button size="icon"
+                                variant="destructive"
+                                @click="removeOtherServiceFee(index)">
+                            <TrashIcon class="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label :for="`otherFeeRate${index}`"
+                           class="text-right">
+                        Rate %
+                    </Label>
+                    <Input :id="`otherFeeRate${index}`"
+                           type="number"
+                           min="0"
+                           step="0.1"
+                           class="col-span-3"
+                           v-model="fee.ratePerOrder" />
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label :for="`otherFeeFixed${index}`"
+                           class="text-right">
+                        Fixed Fee
+                    </Label>
+                    <Input :id="`otherFeeFixed${index}`"
+                           type="number"
+                           min="0"
+                           step="0.01"
+                           class="col-span-3"
+                           v-model="fee.feePerOrder" />
+                </div>
             </div>
 
             <!-- Calculation Settings -->
