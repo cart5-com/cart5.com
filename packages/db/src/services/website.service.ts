@@ -1,6 +1,6 @@
 import { eq, type InferInsertModel, or, inArray, and, sql, like, count, desc } from 'drizzle-orm';
 import db from '@db/drizzle';
-import { websitesTable, websiteDomainMapTable, websiteStoreMapTable } from '@db/schema/website.schema';
+import { websitesTable, websiteDomainMapTable, websiteStoreMapTable, partnerStoreMapTable } from '@db/schema/website.schema';
 import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
@@ -226,6 +226,114 @@ export const setDefaultDomain_Service = async (websiteId: string, hostname: stri
     return true;
 }
 
+export const listSupportedStores_Service = async (
+    websiteId: string,
+    limit: number = 10,
+    offset: number = 0,
+    search?: string,
+) => {
+    const query = search ? `%${search}%` : '%';
+    // get website owner team id
+    const website = await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.id, websiteId),
+        columns: {
+            ownerTeamId: true
+        }
+    });
+    if (!website) {
+        return {
+            stores: [],
+            pagination: {
+                total: 0,
+                limit,
+                offset
+            }
+        };
+    }
+    // find stores supportTeamId === website ownerTeamId
+    const stores = await db
+        .select({
+            id: storeTable.id,
+            name: storeTable.name,
+            address1: storeAddressTable.address1,
+            overridePartnerFee: partnerStoreMapTable.overridePartnerFee
+        })
+        .from(storeTable)
+        .leftJoin(
+            storeAddressTable,
+            eq(storeTable.id, storeAddressTable.storeId)
+        )
+        .leftJoin(
+            partnerStoreMapTable,
+            and(
+                eq(partnerStoreMapTable.storeId, storeTable.id),
+                eq(partnerStoreMapTable.websiteId, websiteId)
+            )
+        )
+        .where(
+            and(
+                eq(storeTable.supportTeamId, website.ownerTeamId),
+                or(
+                    like(storeTable.name, query),
+                    like(storeAddressTable.address1, query)
+                )
+            )
+        )
+        .limit(limit)
+        .offset(offset);
+
+    const totalCount = await db
+        .select({
+            count: count()
+        })
+        .from(storeTable)
+        .leftJoin(
+            storeAddressTable,
+            eq(storeTable.id, storeAddressTable.storeId)
+        )
+        .where(
+            and(
+                eq(storeTable.supportTeamId, website.ownerTeamId),
+                or(
+                    like(storeTable.name, query),
+                    like(storeAddressTable.address1, query)
+                )
+            )
+        );
+
+    return {
+        stores,
+        pagination: {
+            total: totalCount[0]?.count || 0,
+            limit,
+            offset
+        }
+    };
+}
+
+export const upsertSupportedStore_Service = async (
+    websiteId: string,
+    storeId: string,
+    overridePartnerFee?: ServiceFee
+) => {
+    try {
+        await db.insert(partnerStoreMapTable).values({
+            websiteId,
+            storeId,
+            overridePartnerFee
+        }).onConflictDoUpdate({
+            target: [partnerStoreMapTable.websiteId, partnerStoreMapTable.storeId],
+            set: {
+                overridePartnerFee: overridePartnerFee || null
+            }
+        });
+        return true;
+    } catch (error) {
+        // Record likely already exists
+        return false;
+    }
+}
+
 export const listStoresForWebsite_Service = async (
     websiteId: string,
     limit: number = 10,
@@ -320,7 +428,6 @@ export const upsertStoreToWebsite_Service = async (
     storeId: string,
     overrideMarketplaceFee?: ServiceFee
 ) => {
-    // Insert into map table (will fail if already exists due to primary key constraint)
     try {
         await db.insert(websiteStoreMapTable).values({
             websiteId,

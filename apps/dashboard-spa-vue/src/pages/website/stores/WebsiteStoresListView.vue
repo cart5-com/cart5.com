@@ -68,9 +68,9 @@ const upsertStore = async (storeId: string, overrideMarketplaceFee?: ServiceFee)
 
     if (error) {
         console.error(error);
-        toast.error('Failed to add store');
+        toast.error('Failed to save store');
     } else {
-        toast.success('Store added to website');
+        toast.success('saved');
         // update listed field in stores array
         stores.value = stores.value.map(r => r.id === storeId ? { ...r, isListed: true } : r);
     }
@@ -213,12 +213,11 @@ const saveChanges = async () => {
                             <Input id="ratePerOrder"
                                    type="number"
                                    min="0"
-                                   max="100"
                                    step="0.01"
                                    v-model="defaultMarketplaceFee.ratePerOrder"
                                    @change="onFeeChange"
                                    class="max-w-[200px]" />
-                            <p class="text-sm text-muted-foreground">Percentage fee charged per order (0-100%)</p>
+                            <p class="text-sm text-muted-foreground">Percentage fee charged per order</p>
                         </div>
 
                         <div class="space-y-2">
@@ -310,7 +309,7 @@ const saveChanges = async () => {
                                     </Badge>
                                 </div>
                                 <ServiceFeeDialog :store-id="store.id"
-                                                  :override-marketplace-fee="store.overrideMarketplaceFee ?? {}"
+                                                  :override-fee="store.overrideMarketplaceFee ?? {}"
                                                   @upsert-store="(storeId, overrideMarketplaceFee) => {
                                                     console.log('overrideMarketplaceFee', overrideMarketplaceFee);
                                                     store.overrideMarketplaceFee = overrideMarketplaceFee ?? null;

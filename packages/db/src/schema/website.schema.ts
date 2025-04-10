@@ -60,6 +60,23 @@ export const websiteStoreMapTable = sqliteTable("website_store_map", {
 
 
 
+
+// partner website can override support fees for stores
+export const partnerStoreMapTable = sqliteTable("partner_store_map", {
+    websiteId: text("website_id").notNull(),
+    storeId: text("store_id").notNull(),
+    overridePartnerFee: text("override_partner_fee", { mode: 'json' }).$type<ServiceFee>(),
+}, (table) => [
+    primaryKey({ columns: [table.websiteId, table.storeId] })
+]);
+
+
+
+
+
+
+
+
 export const websiteDomainMapTable = sqliteTable("website_domain_map", {
     hostname: text("hostname").notNull().unique(),
     websiteId: text("website_id").notNull(),

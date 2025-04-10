@@ -22,6 +22,7 @@ import { removeTeamMember_Handler, removeTeamMember_SchemaValidator } from "./te
 import { updateTeamMemberPermissions_Handler, updateTeamMemberPermissions_SchemaValidator } from "./team/team_update_permissions.controller";
 import { storesRouter } from "./stores/_router";
 import { getWebsiteInfo_Handler } from "./info.controller";
+import { supportedStoresRouter } from "./supported_stores/_router";
 
 export const websiteRouter = new Hono<HonoVariables>()
     .get(
@@ -156,3 +157,4 @@ export const websiteRouter = new Hono<HonoVariables>()
         setDefaultDomain_Handler
     )
     .route('/:websiteId/stores', storesRouter)
+    .route('/:websiteId/supported_stores', supportedStoresRouter)

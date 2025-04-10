@@ -18,15 +18,15 @@ import { ref } from 'vue';
 
 const props = defineProps<{
     storeId: string;
-    overrideMarketplaceFee?: ServiceFee | null;
+    overrideFee?: ServiceFee | null;
 }>();
 
 const emit = defineEmits<{
     (e: 'upsertStore', storeId: string, fee?: ServiceFee | null): void;
 }>();
 
-const ratePerOrder = ref(props.overrideMarketplaceFee?.ratePerOrder ?? 0);
-const feePerOrder = ref(props.overrideMarketplaceFee?.feePerOrder ?? 0);
+const ratePerOrder = ref(props.overrideFee?.ratePerOrder ?? 0);
+const feePerOrder = ref(props.overrideFee?.feePerOrder ?? 0);
 </script>
 
 <template>
@@ -60,7 +60,6 @@ const feePerOrder = ref(props.overrideMarketplaceFee?.feePerOrder ?? 0);
                     <Input id="ratePerOrder"
                            type="number"
                            min="0"
-                           max="100"
                            step="0.01"
                            class="col-span-3"
                            v-model="ratePerOrder" />
@@ -93,8 +92,8 @@ const feePerOrder = ref(props.overrideMarketplaceFee?.feePerOrder ?? 0);
                 <DialogClose as-child>
                     <Button type="submit"
                             @click="emit('upsertStore', storeId, {
-                                ratePerOrder,
-                                feePerOrder
+                                ratePerOrder: Number(ratePerOrder),
+                                feePerOrder: Number(feePerOrder)
                             })">
                         Save
                     </Button>
