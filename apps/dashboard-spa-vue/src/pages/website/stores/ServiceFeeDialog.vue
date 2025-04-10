@@ -64,11 +64,7 @@ const feePerOrder = ref(props.overrideFee?.feePerOrder ?? 0);
                            class="col-span-3"
                            v-model="ratePerOrder" />
                 </div>
-                <div class="
-                           grid
-                           grid-cols-4
-                           items-center
-                           gap-4">
+                <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="username"
                            class="text-right">
                         Fixed Fee per Order
