@@ -86,6 +86,11 @@ const router = createRouter({
           component: () => import('@dashboard-spa-vue/pages/store/menu/MenuEditorView.vue'),
         },
         {
+          path: 'service-fees',
+          name: 'store-service-fees',
+          component: () => import('@dashboard-spa-vue/pages/store/serviceFees/ServiceFeesView.vue'),
+        },
+        {
           path: 'team',
           name: 'store-team',
           component: () => import('@dashboard-spa-vue/pages/store/team/TeamView.vue'),
