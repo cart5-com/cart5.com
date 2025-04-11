@@ -3,11 +3,11 @@ import currencySymbolMap from 'currency-symbol-map';
 
 // override sales tax rates settings to make it clear and easy to use.
 // @ts-ignore
-salesTaxRatesJson["US"].states["DE"] = {
-    "rate": 0.0,
-    "type": ""
-}
-salesTaxRatesJson["TR"].type = "KDV"
+// salesTaxRatesJson["US"].states["DE"] = {
+//     "rate": 0.0,
+//     "type": ""
+// }
+// salesTaxRatesJson["TR"].type = "KDV"
 
 export const salesTaxRates: Record<string, {
     type: string;
