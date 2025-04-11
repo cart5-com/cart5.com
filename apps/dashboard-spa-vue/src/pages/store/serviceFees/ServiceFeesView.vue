@@ -32,7 +32,7 @@ const partnerServiceFee = ref<ServiceFee>({
 });
 
 const marketingPartner = ref<ServiceFee>({
-    ratePerOrder: 5, // readonly
+    ratePerOrder: 0, // readonly
     feePerOrder: 0, // readonly
 });
 
@@ -107,6 +107,13 @@ const storeReceives = computed(() => {
     return cartTotal.value - totalApplicationFee();
 });
 
+const calculateTax = (total: number, taxRate: number) => {
+    return total * ((taxRate ?? 0) / 100);
+}
+
+const totalApplicationFeesTax = () => {
+    return calculateTax(totalApplicationFee(), taxSettings.value?.taxRate ?? 0);
+}
 </script>
 
 <template>
@@ -159,24 +166,31 @@ const storeReceives = computed(() => {
                        class="col-span-3"
                        v-model="subtotal" />
                 <div class="col-span-4">
-                    Buyer pays: {{ cartTotal.toFixed(2) }}
+                    Buyer pays: {{ cartTotal.toFixed(2) }} + {{ totalApplicationFeesTax().toFixed(2) }} tax =>
+                    {{ (cartTotal + totalApplicationFeesTax()).toFixed(2) }}
                     <br>
-                    <span>Store receives: {{ storeReceives.toFixed(2) }}</span>
+                    <span>Store receives: {{ storeReceives.toFixed(2) }}</span> +
+                    {{ totalApplicationFeesTax().toFixed(2) }} tax =>
+                    {{ (storeReceives + totalApplicationFeesTax()).toFixed(2) }}
                     <span v-if="calculationType === 'include'">
                         <br>
-                        Store receives min: {{ (subtotal - allowedFeeTotalIncluded()).toFixed(2) }}
+                        Store receives min: {{ (subtotal - allowedFeeTotalIncluded()).toFixed(2) }} +
+                        {{ totalApplicationFeesTax().toFixed(2) }} tax =>
+                        {{ (subtotal - allowedFeeTotalIncluded() + totalApplicationFeesTax()).toFixed(2) }}
                     </span>
                     <br>
-                    Application fees: {{ totalApplicationFee().toFixed(2) }}
+                    Application fees: {{ totalApplicationFee().toFixed(2) }} +
+                    {{ totalApplicationFeesTax().toFixed(2) }} tax =>
+                    {{ (totalApplicationFee() + totalApplicationFeesTax()).toFixed(2) }}
                 </div>
             </div>
 
             <div class="border p-2 rounded-lg">
-                <div class="text-sm text-muted-foreground mb-4">
-                    Readonly service fees
+                <div class="font-medium">
+                    Application fees details:
                 </div>
                 <!-- tax settings -->
-                <div class="text-sm text-muted-foreground mb-4"
+                <div class="text-sm text-muted-foreground mb-4 pt-4 border-t"
                      v-if="taxSettings">
                     Tax settings: {{ taxSettings?.taxName }}
                     <Input type="number"
@@ -190,7 +204,12 @@ const storeReceives = computed(() => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Platform Service Fee
                         <span class="text-sm text-muted-foreground">
-                            ({{ getTTT(platformServiceFee).toFixed(2) }})
+                            {{ getTTT(platformServiceFee).toFixed(2) }}
+                            <span v-if="taxSettings">
+                                +
+                                {{ calculateTax(getTTT(platformServiceFee), taxSettings.taxRate).toFixed(2) }} tax =>
+                                {{ (getTTT(platformServiceFee) + calculateTax(getTTT(platformServiceFee), taxSettings.taxRate)).toFixed(2) }}
+                            </span>
                         </span>
                     </h3>
                 </div>
@@ -223,7 +242,12 @@ const storeReceives = computed(() => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Partner Service Fee
                         <span class="text-sm text-muted-foreground">
-                            ({{ getTTT(partnerServiceFee).toFixed(2) }})
+                            {{ getTTT(partnerServiceFee).toFixed(2) }}
+                            <span v-if="taxSettings">
+                                +
+                                {{ calculateTax(getTTT(partnerServiceFee), taxSettings.taxRate).toFixed(2) }} tax =>
+                                {{ (getTTT(partnerServiceFee) + calculateTax(getTTT(partnerServiceFee), taxSettings.taxRate)).toFixed(2) }}
+                            </span>
                         </span>
                     </h3>
                 </div>
@@ -256,7 +280,12 @@ const storeReceives = computed(() => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Marketing Partner
                         <span class="text-sm text-muted-foreground">
-                            ({{ getTTT(marketingPartner).toFixed(2) }})
+                            {{ getTTT(marketingPartner).toFixed(2) }}
+                            <span v-if="taxSettings">
+                                +
+                                {{ calculateTax(getTTT(marketingPartner), taxSettings.taxRate).toFixed(2) }} tax =>
+                                {{ (getTTT(marketingPartner) + calculateTax(getTTT(marketingPartner), taxSettings.taxRate)).toFixed(2) }}
+                            </span>
                         </span>
                     </h3>
                 </div>
