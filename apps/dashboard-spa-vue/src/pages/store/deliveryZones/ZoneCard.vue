@@ -27,14 +27,28 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                         <h3 class="font-medium">
                             {{ zone.name }}
                         </h3>
-                        <Badge v-if="zone.isActive"
-                               variant="outline">
-                            Active
-                        </Badge>
-                        <Badge v-else
-                               variant="destructive">
-                            Inactive
-                        </Badge>
+                        <div class="flex flex-wrap gap-1 mt-1 sm:mt-0">
+                            <Badge v-if="zone.isActive"
+                                   variant="outline">
+                                Active
+                            </Badge>
+                            <Badge v-else
+                                   variant="destructive">
+                                Inactive
+                            </Badge>
+                            <Badge v-if="zone.minCart"
+                                   variant="outline">
+                                minCart: {{ zone.minCart }}
+                            </Badge>
+                            <Badge v-if="zone.deliveryFee"
+                                   variant="outline">
+                                fee: {{ zone.deliveryFee }}
+                            </Badge>
+                            <Badge v-if="zone.deliveryFeePerKm"
+                                   variant="outline">
+                                fee/km: {{ zone.deliveryFeePerKm }}
+                            </Badge>
+                        </div>
                     </div>
                     <p class="text-sm text-muted-foreground capitalize">
                         {{ zone.shapeType }} Zone
@@ -69,7 +83,7 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            placeholder="Enter zone name" />
                                 </div>
 
-                                <div class="grid gap-2 my-8">
+                                <div class="grid gap-2 my-8 border-t pt-4">
                                     <Label for="minCart">Minimum Cart Value</Label>
                                     <Input id="minCart"
                                            type="number"
@@ -82,15 +96,22 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                     </p>
                                 </div>
 
-                                <div class="grid gap-2">
+                                <div class="grid gap-2 border-t pt-4">
                                     <Label for="deliveryFee">Delivery Fee</Label>
                                     <Input id="deliveryFee"
                                            type="number"
                                            v-model="zone.deliveryFee"
                                            placeholder="0.00" />
+                                    <p class="text-xs">
+                                        Enter a fee without tax.
+                                        <br />
+                                        <br />
+                                        You can set a tax rate for the Delivery Fee in the "Sidemenu" -> "Tax
+                                        Settings" -> "Tax Rate for Delivery fees(%)"
+                                    </p>
                                 </div>
 
-                                <div class="grid gap-2 my-4">
+                                <div class="grid gap-2 my-4 border-t pt-4">
                                     <Label for="deliveryFeePerKm">Delivery Fee per KM
                                         <Bird class="inline-block" />
                                     </Label>
@@ -100,7 +121,13 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            placeholder="0.00" />
                                     <p class="text-xs">
                                         This is the delivery fee per kilometer as the crow flies.
-
+                                        <br />
+                                        <br />
+                                        Enter a fee without tax.
+                                        <br />
+                                        <br />
+                                        You can set a tax rate for the Delivery Fee per KM in the "Sidemenu" -> "Tax
+                                        Settings" -> "Tax Rate for Delivery fees(%)"
                                     </p>
                                 </div>
                             </div>

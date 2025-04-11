@@ -19,7 +19,7 @@ import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import CurrencyWidget from './CurrencyWidget.vue';
 import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
-import { getSalesTaxRate } from '@lib/utils/sales_tax_rates';
+import { getJurisdictionSalesTaxRate } from '@lib/utils/sales_tax_rates';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
 import TaxHelperDialog from './TaxHelperDialog.vue';
@@ -37,25 +37,20 @@ onMounted(() => {
     loadData();
 });
 
-function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof getSalesTaxRate>) {
-    const taxRate = (salesTaxRate.rate + (salesTaxRate.currentState?.rate ?? 0)) * 100;
-    const taxName = [salesTaxRate.type === 'none' ? '' : salesTaxRate.type.toUpperCase()];
-    if (salesTaxRate?.currentState) {
-        taxName.push(salesTaxRate?.currentState?.type.toUpperCase());
-    }
+function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof getJurisdictionSalesTaxRate>) {
     const taxSettings: TaxSettings = {
         storeId: currentStoreId.value ?? '',
         taxCategories: [{
             id: crypto.randomUUID(),
             name: "TAX1",
-            deliveryRate: taxRate,
-            pickupRate: taxRate,
+            deliveryRate: salesTaxRate.taxRate,
+            pickupRate: salesTaxRate.taxRate,
         }],
-        currency: salesTaxRate.currency,
-        currencySymbol: salesTaxRate.currencySymbol ?? null,
+        currency: salesTaxRate.raw.currency,
+        currencySymbol: salesTaxRate.raw.currencySymbol ?? null,
         salesTaxType: "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
-        taxName: taxName.filter(Boolean).join('-'),
-        taxRateForDelivery: taxRate,
+        taxName: salesTaxRate.taxName,
+        taxRateForDelivery: salesTaxRate.taxRate,
     }
     return taxSettings;
 }
@@ -92,14 +87,13 @@ const loadData = async () => {
 };
 
 const saveWithIpWhois = async () => {
-    console.log('saveWithIpWhois');
     const ipWhoisResult = await ipwhois();
     populateTaxSettingsFromLocation(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
-    saveTaxSettings();
+    toast.warning('Your tax setting were empty, filled for your location. You need to verify and save them. otherwise they will not be applied.');
 }
 
 const populateTaxSettingsFromLocation = (countryCode: string, regionCode: string) => {
-    const salesTaxRate = getSalesTaxRate(countryCode, regionCode);
+    const salesTaxRate = getJurisdictionSalesTaxRate(countryCode, regionCode);
     taxSettings.value = convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate);
 }
 
@@ -173,14 +167,12 @@ const removeTaxCategory = (index: number) => {
                     <AlertTitle>Important</AlertTitle>
                     <AlertDescription>
                         You are responsible for verifying the accuracy of all currency and tax information for your
-                        specific
-                        jurisdiction. While we provide these information as a convenience, we do not accept any
-                        responsibility
-                        regarding the accuracy of currency and tax information, nor for the proper collection or
-                        remittance of
-                        such taxes in connection with our products and services. All currency and tax-related
-                        information
-                        displayed here is intended solely for demonstration purposes.
+                        specific jurisdiction. While we provide this information as a convenience, we do not accept any
+                        responsibility regarding the accuracy of currency and tax information, nor for the proper
+                        collection or
+                        remittance of such taxes in connection with our products and services. All currency and
+                        tax-related information
+                        filled by this website is intended solely as a convenience.
                     </AlertDescription>
                 </Alert>
 
