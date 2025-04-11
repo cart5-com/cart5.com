@@ -19,7 +19,6 @@ const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(n
 onMounted(async () => {
     const ipWhoisResult = await ipwhois();
     taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
-    // taxSettings.value = getJurisdictionSalesTaxRate("US", "DE");
 });
 
 const platformServiceFee = ref<ServiceFee>({
@@ -188,7 +187,7 @@ const storeReceives = computed(() => {
                 </div>
 
                 <!-- Platform Service Fee -->
-                <div class="">
+                <div class="pt-4 border-t">
                     <h3 class="font-medium">Platform Service Fee
                         <span class="text-sm text-muted-foreground">
                             ({{ getTTT(platformServiceFee).toFixed(2) }})

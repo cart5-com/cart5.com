@@ -7,7 +7,7 @@ import currencySymbolMap from 'currency-symbol-map';
 //     "rate": 0.0,
 //     "type": ""
 // }
-// salesTaxRatesJson["TR"].type = "KDV"
+salesTaxRatesJson["TR"].type = "KDV"
 
 export const salesTaxRates: Record<string, {
     type: string;
