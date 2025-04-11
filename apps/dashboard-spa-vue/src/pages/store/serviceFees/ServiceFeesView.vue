@@ -3,7 +3,7 @@ import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { ref, computed } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type ServiceFee } from '@lib/zod/serviceFee';
+import { type ServiceFee, type CustomServiceFeeByStore, ALL_SERVICE_FEE_CONDITIONS } from '@lib/zod/serviceFee';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { PlusIcon, Trash2 as TrashIcon } from 'lucide-vue-next';
@@ -23,33 +23,32 @@ const partnerServiceFee = ref<ServiceFee>({
 });
 
 const marketingPartner = ref<ServiceFee>({
-    ratePerOrder: 12,
+    ratePerOrder: 5,
     feePerOrder: 0,
 });
 
-type OtherStoreServiceFee = {
-    name?: string;
-    ratePerOrder?: number;
-    feePerOrder?: number;
-}
-const otherStoreServiceFees = ref<OtherStoreServiceFee[]>([
+const customServiceFeesByStore = ref<CustomServiceFeeByStore[]>([
     {
         name: 'Stripe',
         ratePerOrder: 2.9,
         feePerOrder: 0.30,
+        condition: 'STRIPE',
+        taxRate: 0
     },
 ]);
 
-const addOtherServiceFee = () => {
-    otherStoreServiceFees.value.push({
-        name: '',
+const addNewCustomServiceFeeByStore = () => {
+    customServiceFeesByStore.value.push({
+        name: `Service Fee ${customServiceFeesByStore.value.length + 1}`,
         ratePerOrder: 0,
-        feePerOrder: 0
+        feePerOrder: 0,
+        condition: 'ALL_ORDERS',
+        taxRate: 0
     });
 };
 
-const removeOtherServiceFee = (index: number) => {
-    otherStoreServiceFees.value.splice(index, 1);
+const removeCustomServiceFeeByStore = (index: number) => {
+    customServiceFeesByStore.value.splice(index, 1);
 };
 
 const calculationType = ref<"add" | "include">("include");
@@ -71,15 +70,15 @@ const totalApplicationFee = function () {
     const marketingFeePercent = subtotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
     const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
 
-    // Calculate other service fees
-    let otherFeesTotal = 0;
-    for (const fee of otherStoreServiceFees.value) {
+    // Calculate all custom service fees
+    let total_CustomServiceFeesByStore = 0;
+    for (const fee of customServiceFeesByStore.value) {
         const percentFee = subtotal.value * ((fee.ratePerOrder ?? 0) / 100);
         const fixedFee = fee.feePerOrder ?? 0;
-        otherFeesTotal += percentFee + fixedFee;
+        total_CustomServiceFeesByStore += percentFee + fixedFee;
     }
 
-    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed + otherFeesTotal;
+    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed + total_CustomServiceFeesByStore;
 }
 
 const cartTotal = computed(() => {
@@ -206,65 +205,89 @@ const storeReceives = computed(() => {
                        v-model="marketingPartner.feePerOrder" />
             </div>
 
-            <!-- Other Store Service Fees -->
+            <!-- Custom Service Fees -->
             <div class="pt-4 border-t">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-medium">Other Store Service Fees</h3>
+                    <h3 class="font-medium">Store's custom service fees</h3>
                     <Button size="sm"
                             variant="outline"
-                            @click="addOtherServiceFee">
+                            @click="addNewCustomServiceFeeByStore">
                         <PlusIcon class="h-4 w-4 mr-1" />
                         Add Fee
                     </Button>
                 </div>
             </div>
 
-            <div v-for="(fee, index) in otherStoreServiceFees"
+            <div v-for="(fee, index) in customServiceFeesByStore"
                  :key="index"
                  class="grid gap-4 mt-2 p-3 border rounded-md">
                 <div class="grid grid-cols-4 items-center gap-4">
                     <div class="col-span-4">
                         {{ getTTT(fee).toFixed(2) }}
                     </div>
-                    <Label :for="`otherFeeName${index}`"
-                           class="text-right">
+                    <Label class="text-right">
                         Name
                     </Label>
                     <div class="col-span-3 flex gap-2">
-                        <Input :id="`otherFeeName${index}`"
-                               type="text"
+                        <Input type="text"
                                class="flex-1"
                                v-model="fee.name" />
                         <Button size="icon"
                                 variant="destructive"
-                                @click="removeOtherServiceFee(index)">
+                                @click="removeCustomServiceFeeByStore(index)">
                             <TrashIcon class="h-4 w-4" />
                         </Button>
                     </div>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label :for="`otherFeeRate${index}`"
-                           class="text-right">
+                    <Label class="text-right">
                         Rate %
                     </Label>
-                    <Input :id="`otherFeeRate${index}`"
-                           type="number"
+                    <Input type="number"
                            min="0"
-                           step="0.1"
+                           step="1"
                            class="col-span-3"
                            v-model="fee.ratePerOrder" />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label :for="`otherFeeFixed${index}`"
-                           class="text-right">
+                    <Label class="text-right">
                         Fixed Fee
                     </Label>
-                    <Input :id="`otherFeeFixed${index}`"
-                           type="number"
+                    <Input type="number"
                            min="0"
-                           step="0.01"
+                           step="1"
                            class="col-span-3"
                            v-model="fee.feePerOrder" />
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label class="text-right">
+                        Condition
+                    </Label>
+                    <div class="col-span-3">
+                        <Select v-model="fee.condition"
+                                class="w-full">
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select condition" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="condition in ALL_SERVICE_FEE_CONDITIONS"
+                                            :key="condition"
+                                            :value="condition">
+                                    {{ condition }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label class="text-right">
+                        Tax Rate %
+                    </Label>
+                    <Input type="number"
+                           min="0"
+                           step="1"
+                           class="col-span-3"
+                           v-model="fee.taxRate" />
                 </div>
             </div>
 
@@ -292,12 +315,10 @@ const storeReceives = computed(() => {
             </div>
             <div class="grid grid-cols-4 items-center gap-4"
                  v-if="calculationType === 'include'">
-                <Label for="includedBufferPercentage"
-                       class="text-right">
+                <Label class="text-right">
                     Buffer %
                 </Label>
-                <Input id="includedBufferPercentage"
-                       type="number"
+                <Input type="number"
                        min="0"
                        step="1"
                        class="col-span-3"
@@ -321,8 +342,6 @@ const storeReceives = computed(() => {
             <span>Store receives: {{ storeReceives.toFixed(2) }}</span>
             <span v-if="calculationType === 'include'">
                 Store receives min: {{ (subtotal - allowedFeeTotalIncluded).toFixed(2) }}
-                <br>
-                Note: calculation will never be less than this amount.
             </span>
             <br>
             Application fees: {{ totalApplicationFee().toFixed(2) }}

@@ -201,7 +201,7 @@ const removeTaxCategory = (index: number) => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="ITEMS_PRICES_ALREADY_INCLUDE_TAXES">
-                                Prices Include Taxes
+                                Menu Prices Include Taxes
                             </SelectItem>
                             <SelectItem value="APPLY_TAX_ON_TOP_OF_PRICES">
                                 Apply Tax on Top of Prices
