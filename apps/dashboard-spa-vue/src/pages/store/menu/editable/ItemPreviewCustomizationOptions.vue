@@ -456,6 +456,7 @@ onMounted(() => {
 
 
         </div>
+        <!--  TODO: we need a better preview for options, showing only name is not clear enough -->
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
             .filter(item => item.t === 'o' || item.t === 'i')
             .filter(item => {

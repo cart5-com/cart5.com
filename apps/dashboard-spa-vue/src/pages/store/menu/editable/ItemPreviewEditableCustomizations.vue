@@ -74,6 +74,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         Customizations
                         <ChevronUpSquare />
                     </Button>
+                    <!--  TODO: we need a better preview for customizations, showing only name is not clear enough -->
                     <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
                         .filter(item => item.t === 'c')
                         .map(item => ({

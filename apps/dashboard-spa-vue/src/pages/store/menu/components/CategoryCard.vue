@@ -81,6 +81,7 @@ const onClickAddNewItem = (search: string | undefined) => {
                               :categoryId="currentItem.id" />
                 </template>
             </draggable>
+            <!--  TODO: we need a better preview for items, showing only name is not clear enough -->
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
                     .filter(item => item.t !== 'ct')
