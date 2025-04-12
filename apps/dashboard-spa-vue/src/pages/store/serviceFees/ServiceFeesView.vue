@@ -1,26 +1,104 @@
 <script setup lang="ts">
+/*/
+You are expert at sales tax calculations, focus on sales taxes topic. 
+please check web to verify my tax and service fee commission calculation.
+Also please verify that there is no double taxation for buyer.
+---
+Terminology
+stores/restaurants: business customers of this platform.
+buyers: customers of the stores
+Service fee rates: fee rates collected by platform for provided services per order as commission.
+---
+I am providing ordering website platform for stores/restaurants.
+An e-commerce platform like Shopify or Squarespace.
+This is a not marketplace. restaurants/stores will be the merchant on the bank records.
+I will use stripe direct charges for online payments.
+buyers directly transact with connected account, often unaware of my platform’s existence.
+The transaction involves a single buyer and single store.
+Stripe fees are debited from store's stipe accounts.
+
+Some details provided by Stipe about direct charges:
+```
+Create a charge directly on a connected account. Customers are often unaware of your platform’s existence. You can add an application fee to the charge which is transferred to your platform’s account balance.
+
+This charge type is best suited for platforms providing software as a service. For example, Shopify provides tools for building online storefronts, and Thinkific enables educators to sell online courses.
+
+With this charge type:
+
+You create a charge on your user’s account so the payment appears as a charge on the connected account, not in your account balance.
+The connected account’s balance increases with every charge.
+Funds always settle in the country of the connected account.
+Your account balance increases with application fees from every charge.
+The connected account’s balance is debited for refunds and chargebacks.
+You can choose whether to have Stripe debit fees directly from connected accounts or from your platform account.
+You can use Stripe Managed Risk if you meet these additional requirements.
+```
+
+https://docs.stripe.com/connect/direct-charges
+https://docs.stripe.com/connect/direct-charges-fee-payer-behavior
+https://docs.stripe.com/connect/direct-charge-buy-rate-reporting-overview
+https://docs.stripe.com/connect/direct-charges-multiple-accounts
+---
+I need to add sales tax on top of my service fees. 
+I will charge according to provided services.
+-platfom: 1%
+-support: 2%
+-marketing: 7%
+---
+Sometimes they are included in menu prices with buffer rate.
+Sometimes these service fees will be added on top of the order total(item total).
+and sometimes both.
+---
+I am not sure about my sales tax calculation, if it is not correct, help me fix it.
+If I add a service fee on top of subtotal:(item+tax), I also add sales tax for the service fee.
+If I do not add a service fee on top, I do not add a second tax for buyer.
+if both only difference for service fee is taxable for buyer, included part is taxed to store, not for buyer.
+---
+For example I am in Canada/Ontario 
+and tax rate is 13%
+
+here is required rates and values:
+```
+Tax settings: GST-HST: 13%
+item(s): $100 (without tax)
+
+Calculation Settings: Service fees included in item prices
+Up to rate: 5% (service fee percentage allowed by store/restaurant)
+
+Application fee rates
+Platform Service Fee Rate: 1%
+Support Partner Service Fee Rate: 2%
+Marketing Partner Service Fee Rate: 7%
+```
+
+Calculation breakdown
+```
+item(s): $100 + taxes:$13.00 + (service fees: 5.00 + tax:0.65)
+Buyer pays total: 118.65
+Total application fees: 11.30 (10.00 + tax:1.30)
+(5% allowed by store)  (we add 5% to cover rest of the fees, plus tax for rest)
+for this order Store will receive: 107.35 (95.00 + tax:12.35)
+Max: 5.65 (5.00 + tax:0.65) (Max allowed deduction: 5% + tax)
+```
+/*/
+
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type ServiceFee, type CustomServiceFeeByStore, ALL_SERVICE_FEE_CONDITIONS } from '@lib/zod/serviceFee';
+import { type ServiceFee } from '@lib/zod/serviceFee';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { PlusIcon, Trash2 as TrashIcon } from 'lucide-vue-next';
 import { getJurisdictionSalesTaxRate } from '@lib/utils/sales_tax_rates';
 import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 
 pageTitle.value = 'Service Fees'
 
-const subtotal = ref(100);
-
+const itemTotal = ref(100);
 const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(null);
-
 onMounted(async () => {
     const ipWhoisResult = await ipwhois();
     taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
 });
-
 const platformServiceFee = ref<ServiceFee>({
     ratePerOrder: 1, // readonly
     feePerOrder: 0,// readonly
@@ -32,94 +110,113 @@ const partnerServiceFee = ref<ServiceFee>({
 });
 
 const marketingPartner = ref<ServiceFee>({
-    ratePerOrder: 0, // readonly
+    ratePerOrder: 7, // readonly
     feePerOrder: 0, // readonly
 });
+const calculationType = ref<"ADD" | "INCLUDE">("INCLUDE");
+const feeIncludedRateAsPercentage = ref(5);
 
-const customServiceFeesByStore = ref<CustomServiceFeeByStore[]>([
-    // {
-    //     name: 'Stripe',
-    //     ratePerOrder: 2.9,
-    //     feePerOrder: 0.30,
-    //     condition: 'STRIPE',
-    //     taxRate: 0
-    // },
-]);
-
-const addNewCustomServiceFeeByStore = () => {
-    customServiceFeesByStore.value.push({
-        name: `Service Fee ${customServiceFeesByStore.value.length + 1}`,
-        ratePerOrder: 0,
-        feePerOrder: 0,
-        condition: 'ALL_ORDERS',
-        taxRate: 0
-    });
-};
-
-const removeCustomServiceFeeByStore = (index: number) => {
-    customServiceFeesByStore.value.splice(index, 1);
-};
-
-const calculationType = ref<"add" | "include">("include");
-const includedBufferPercentage = ref(10);
-
-const allowedFeeTotalIncluded = () => {
-    return subtotal.value * ((includedBufferPercentage.value ?? 0) / 100);
-};
-
-const getTTT = function (serviceFee: ServiceFee) {
-    return (subtotal.value * ((serviceFee.ratePerOrder ?? 0) / 100)) + (serviceFee.feePerOrder ?? 0);
+const itemTax = () => {
+    return calculateTax(itemTotal.value, taxSettings?.value?.taxRate ?? 0);
 }
 
-const totalApplicationFee = function () {
-    const platformFeePercent = subtotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
+const applicationFee = function () {
+    const platformFeePercent = itemTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
     const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
-    const partnerFeePercent = subtotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
+    const partnerFeePercent = itemTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
     const partnerFeeFixed = partnerServiceFee.value.feePerOrder ?? 0;
-    const marketingFeePercent = subtotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
+    const marketingFeePercent = itemTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
     const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
 
-    // Calculate all custom service fees
-    let total_CustomServiceFeesByStore = 0;
-    for (const fee of customServiceFeesByStore.value) {
-        const percentFee = subtotal.value * ((fee.ratePerOrder ?? 0) / 100);
-        const fixedFee = fee.feePerOrder ?? 0;
-        total_CustomServiceFeesByStore += percentFee + fixedFee;
-    }
-
-    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed + total_CustomServiceFeesByStore;
+    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
+}
+const applicationFeeTax = () => {
+    return calculateTax(applicationFee(), taxSettings?.value?.taxRate ?? 0);
+}
+const applicationFeeWithTaxesTotal = () => {
+    return applicationFee() + applicationFeeTax();
 }
 
-const cartTotal = computed(() => {
-    const totalFees = totalApplicationFee();
-    if (calculationType.value === "add") {
-        return subtotal.value + totalFees;
-    } else {
-        if (totalFees > allowedFeeTotalIncluded()) {
-            return subtotal.value + (totalFees - allowedFeeTotalIncluded());
-        } else {
-            return subtotal.value;
-        }
-    }
-});
+const allowedFeeTotalIfIncluded = () => {
+    return itemTotal.value * ((feeIncludedRateAsPercentage.value ?? 0) / 100);
+}
 
-const storeReceives = computed(() => {
-    return cartTotal.value - totalApplicationFee();
-});
+const allowedFeeTotalIfIncludedTax = () => {
+    return calculateTax(allowedFeeTotalIfIncluded(), taxSettings?.value?.taxRate ?? 0);
+}
+
+const allowedFeeTotalIfIncludedWithTaxes = () => {
+    return allowedFeeTotalIfIncluded() + allowedFeeTotalIfIncludedTax();
+}
+
+const taxableAppliationFeeAmount = () => {
+    if (calculationType.value === "INCLUDE") {
+        const amount = applicationFee() - allowedFeeTotalIfIncluded()
+        return amount > 0 ? amount : 0;
+    } else {
+        return applicationFee();
+    }
+}
+
+const taxableAppliationFeeTax = () => {
+    return calculateTax(taxableAppliationFeeAmount(), taxSettings?.value?.taxRate ?? 0);
+}
 
 const calculateTax = (total: number, taxRate: number) => {
     return total * ((taxRate ?? 0) / 100);
 }
 
-const totalApplicationFeesTax = () => {
-    return calculateTax(totalApplicationFee(), taxSettings.value?.taxRate ?? 0);
+const buyerPaysTotalWithTaxes = () => {
+    return itemTotal.value + itemTax() + taxableAppliationFeeAmount() + taxableAppliationFeeTax();
 }
+
+const storeReceivesTotalWithTaxes = () => {
+    return buyerPaysTotalWithTaxes() - applicationFeeWithTaxesTotal();
+}
+
+const storeReceivesTotal = () => {
+    return storeReceivesTotalWithTaxes() / (1 + (taxSettings?.value?.taxRate ?? 0) / 100);
+}
+
+const storeReceivesTotalTax = () => {
+    return storeReceivesTotalWithTaxes() - storeReceivesTotal();
+}
+
 </script>
 
 <template>
     <div class="max-w-lg mx-auto">
         <h1>Service Fees</h1>
         <div class="grid gap-4 py-4 border rounded-lg p-4 bg-card">
+            <div class="">
+                <div class="pt-4 border-t">
+                    item(s): {{ itemTotal }} + taxes:{{ itemTax().toFixed(2) }}
+                    + (service fees: {{ taxableAppliationFeeAmount().toFixed(2) }}
+                    + tax:{{ taxableAppliationFeeTax().toFixed(2) }})
+                    <br>
+                    Buyer pays total: {{ buyerPaysTotalWithTaxes().toFixed(2) }}
+                </div>
+                <div class="pt-4 border-t">
+                    Total application fees: {{ applicationFeeWithTaxesTotal().toFixed(2) }}
+                    ({{ applicationFee().toFixed(2) }} + tax:{{ applicationFeeTax().toFixed(2) }})
+                </div>
+                <div class="pt-4 border-t">
+                    <span>
+                        Store: {{ storeReceivesTotalWithTaxes().toFixed(2) }}
+                        ({{ storeReceivesTotal().toFixed(2) }} + tax:{{ storeReceivesTotalTax().toFixed(2) }})
+
+                    </span>
+                    <span v-if="calculationType === 'INCLUDE'">
+                        <br>
+                        Max: {{ allowedFeeTotalIfIncludedWithTaxes().toFixed(2) }}
+                        ({{ allowedFeeTotalIfIncluded().toFixed(2) }} + tax:{{
+                            allowedFeeTotalIfIncludedTax().toFixed(2) }})
+                        <br>
+                        (Max allowed deduction)
+                    </span>
+                </div>
+
+            </div>
             <!-- Calculation Settings -->
             <div class="pt-4 border-t">
                 <h3 class="font-medium">Calculation Settings</h3>
@@ -136,53 +233,33 @@ const totalApplicationFeesTax = () => {
                             <SelectValue placeholder="Select calculation type" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="add">Add to total</SelectItem>
-                            <SelectItem value="include">Service fees included in menu prices</SelectItem>
+                            <SelectItem value="ADD">Add to total</SelectItem>
+                            <SelectItem value="INCLUDE">Service fees included in item prices</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
             <div class="grid grid-cols-4 items-center gap-4"
-                 v-if="calculationType === 'include'">
+                 v-if="calculationType === 'INCLUDE'">
                 <Label class="text-right">
-                    Buffer %
+                    Up to rate %
                 </Label>
                 <Input type="number"
                        min="0"
                        step="1"
                        class="col-span-3"
-                       v-model="includedBufferPercentage" />
+                       v-model="feeIncludedRateAsPercentage" />
             </div>
 
             <div class="grid grid-cols-4 items-center gap-4 pt-4 border-t">
-                <Label for="cartTotal"
-                       class="text-right">
-                    Cart Subtotal
+                <Label class="text-right">
+                    item(s)
                 </Label>
-                <Input id="cartTotal"
-                       type="number"
+                <Input type="number"
                        min="0"
                        step="1"
                        class="col-span-3"
-                       v-model="subtotal" />
-                <div class="col-span-4">
-                    Buyer pays: {{ cartTotal.toFixed(2) }} + {{ totalApplicationFeesTax().toFixed(2) }} tax =>
-                    {{ (cartTotal + totalApplicationFeesTax()).toFixed(2) }}
-                    <br>
-                    <span>Store receives: {{ storeReceives.toFixed(2) }}</span> +
-                    {{ totalApplicationFeesTax().toFixed(2) }} tax =>
-                    {{ (storeReceives + totalApplicationFeesTax()).toFixed(2) }}
-                    <span v-if="calculationType === 'include'">
-                        <br>
-                        Store receives min: {{ (subtotal - allowedFeeTotalIncluded()).toFixed(2) }} +
-                        {{ totalApplicationFeesTax().toFixed(2) }} tax =>
-                        {{ (subtotal - allowedFeeTotalIncluded() + totalApplicationFeesTax()).toFixed(2) }}
-                    </span>
-                    <br>
-                    Application fees: {{ totalApplicationFee().toFixed(2) }} +
-                    {{ totalApplicationFeesTax().toFixed(2) }} tax =>
-                    {{ (totalApplicationFee() + totalApplicationFeesTax()).toFixed(2) }}
-                </div>
+                       v-model="itemTotal" />
             </div>
 
             <div class="border p-2 rounded-lg">
@@ -204,12 +281,7 @@ const totalApplicationFeesTax = () => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Platform Service Fee
                         <span class="text-sm text-muted-foreground">
-                            {{ getTTT(platformServiceFee).toFixed(2) }}
-                            <span v-if="taxSettings">
-                                +
-                                {{ calculateTax(getTTT(platformServiceFee), taxSettings.taxRate).toFixed(2) }} tax =>
-                                {{ (getTTT(platformServiceFee) + calculateTax(getTTT(platformServiceFee), taxSettings.taxRate)).toFixed(2) }}
-                            </span>
+                            +/-
                         </span>
                     </h3>
                 </div>
@@ -242,12 +314,7 @@ const totalApplicationFeesTax = () => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Partner Service Fee
                         <span class="text-sm text-muted-foreground">
-                            {{ getTTT(partnerServiceFee).toFixed(2) }}
-                            <span v-if="taxSettings">
-                                +
-                                {{ calculateTax(getTTT(partnerServiceFee), taxSettings.taxRate).toFixed(2) }} tax =>
-                                {{ (getTTT(partnerServiceFee) + calculateTax(getTTT(partnerServiceFee), taxSettings.taxRate)).toFixed(2) }}
-                            </span>
+                            +/-
                         </span>
                     </h3>
                 </div>
@@ -280,12 +347,7 @@ const totalApplicationFeesTax = () => {
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Marketing Partner
                         <span class="text-sm text-muted-foreground">
-                            {{ getTTT(marketingPartner).toFixed(2) }}
-                            <span v-if="taxSettings">
-                                +
-                                {{ calculateTax(getTTT(marketingPartner), taxSettings.taxRate).toFixed(2) }} tax =>
-                                {{ (getTTT(marketingPartner) + calculateTax(getTTT(marketingPartner), taxSettings.taxRate)).toFixed(2) }}
-                            </span>
+                            +/-
                         </span>
                     </h3>
                 </div>
@@ -315,91 +377,6 @@ const totalApplicationFeesTax = () => {
                 </div>
             </div>
 
-            <!-- Custom Service Fees -->
-            <div class="pt-4 border-t">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-medium">Store's custom service fees</h3>
-                    <Button size="sm"
-                            variant="outline"
-                            @click="addNewCustomServiceFeeByStore">
-                        <PlusIcon class="h-4 w-4 mr-1" />
-                        Add Fee
-                    </Button>
-                </div>
-            </div>
-
-            <div v-for="(fee, index) in customServiceFeesByStore"
-                 :key="index"
-                 class="grid gap-4 mt-2 p-3 border rounded-md">
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <div class="col-span-4">
-                        {{ getTTT(fee).toFixed(2) }}
-                    </div>
-                    <Label class="text-right">
-                        Name
-                    </Label>
-                    <div class="col-span-3 flex gap-2">
-                        <Input type="text"
-                               class="flex-1"
-                               v-model="fee.name" />
-                        <Button size="icon"
-                                variant="destructive"
-                                @click="removeCustomServiceFeeByStore(index)">
-                            <TrashIcon class="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">
-                        Rate %
-                    </Label>
-                    <Input type="number"
-                           min="0"
-                           step="1"
-                           class="col-span-3"
-                           v-model="fee.ratePerOrder" />
-                </div>
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">
-                        Fixed Fee
-                    </Label>
-                    <Input type="number"
-                           min="0"
-                           step="1"
-                           class="col-span-3"
-                           v-model="fee.feePerOrder" />
-                </div>
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">
-                        Condition
-                    </Label>
-                    <div class="col-span-3">
-                        <Select v-model="fee.condition"
-                                class="w-full">
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select condition" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem v-for="condition in ALL_SERVICE_FEE_CONDITIONS"
-                                            :key="condition"
-                                            :value="condition">
-                                    {{ condition }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-4 items-center gap-4">
-                    <Label class="text-right">
-                        Tax Rate %
-                    </Label>
-                    <Input type="number"
-                           min="0"
-                           step="1"
-                           class="col-span-3"
-                           v-model="fee.taxRate" />
-                </div>
-            </div>
 
 
         </div>
