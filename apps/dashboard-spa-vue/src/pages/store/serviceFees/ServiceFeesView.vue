@@ -17,8 +17,13 @@ pageTitle.value = 'Service Fees'
 
 const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(null);
 
-const itemTotal = ref(100);
-const itemTaxes = ref(0);
+const item1Total = ref(100);
+const item1Taxes = ref(0);
+
+const item2Total = ref(50);
+const item2Taxes = ref(0);
+
+
 const isLoading = ref(false);
 const calculationType = ref<"ADD" | "INCLUDE">("INCLUDE");
 const includedServiceFeeRate = ref(0);
@@ -28,7 +33,8 @@ const offerDiscountIfPossible = ref(false);
 onMounted(async () => {
     const ipWhoisResult = await ipwhois();
     taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
-    itemTaxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * itemTotal.value;
+    item1Taxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * item1Total.value;
+    item2Taxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * item2Total.value;
     loadServiceFees();
 });
 
@@ -51,19 +57,23 @@ const totalServiceFeesTax = computed(() => {
     return (taxSettings.value?.taxRate ?? 0) / 100 * totalServiceFees.value;
 });
 
+const allItemsTotal = computed(() => {
+    return item1Total.value + item2Total.value;
+});
+
 const totalServiceFees = computed(() => {
-    const platformFeePercent = itemTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
+    const platformFeePercent = allItemsTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
     const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
-    const partnerFeePercent = itemTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
+    const partnerFeePercent = allItemsTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
     const partnerFeeFixed = partnerServiceFee.value.feePerOrder ?? 0;
-    const marketingFeePercent = itemTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
+    const marketingFeePercent = allItemsTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
     const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
 
     return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
 });
 
 const allowedFeeTotalIfIncluded = computed(() =>
-    itemTotal.value * ((includedServiceFeeRate.value ?? 0) / 100)
+    allItemsTotal.value * ((includedServiceFeeRate.value ?? 0) / 100)
 );
 
 const serviceFeeTaxNeedToPayByBuyer = computed(() => {
@@ -88,15 +98,15 @@ const offerableDiscountAmount = computed(() => {
 });
 
 const taxesTotal = computed(() => {
-    return itemTaxes.value + serviceFeeTaxNeedToPayByBuyer.value;
+    return item1Taxes.value + serviceFeeTaxNeedToPayByBuyer.value;
 });
 
 const buyerPaysTotal = computed(() =>
-    itemTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value + taxesTotal.value
+    allItemsTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value + taxesTotal.value
 );
 
 const storeReceivesTotal = computed(() =>
-    itemTotal.value - offerableDiscountAmount.value - totalServiceFees.value +
+    allItemsTotal.value - offerableDiscountAmount.value - totalServiceFees.value +
     serviceFeeNeedToPayByBuyer.value
 );
 
@@ -245,24 +255,46 @@ async function saveSettings() {
                     <div class="col-span-3 text-right border-t pt-2">Total</div>
 
                     <!-- Item total -->
-                    <div class="col-span-3 border-t pt-2">Item(s) total</div>
+                    <div class="col-span-3 border-t pt-2">Item1 total</div>
                     <div class="col-span-3 text-right border-t pt-2">
                         <Input type="number"
                                min="0"
                                step="0.01"
                                class="text-right"
-                               v-model="itemTotal" />
+                               v-model="item1Total" />
                     </div>
                     <div class="col-span-3 text-right border-t pt-2">
                         <Input type="number"
                                min="0"
                                step="0.01"
                                class="text-right"
-                               v-model="itemTaxes" />
+                               v-model="item1Taxes" />
                     </div>
                     <div class="col-span-3 text-right border-t pt-2">
-                        {{ (itemTotal + itemTaxes).toFixed(2) }}
+                        {{ (item1Total + item1Taxes).toFixed(2) }}
                     </div>
+
+                    <!-- Item 2 total -->
+                    <div class="col-span-3 border-t pt-2">Item2 total</div>
+                    <div class="col-span-3 text-right border-t pt-2">
+                        <Input type="number"
+                               min="0"
+                               step="0.01"
+                               class="text-right"
+                               v-model="item2Total" />
+                    </div>
+                    <div class="col-span-3 text-right border-t pt-2">
+                        <Input type="number"
+                               min="0"
+                               step="0.01"
+                               class="text-right"
+                               v-model="item2Taxes" />
+                    </div>
+                    <div class="col-span-3 text-right border-t pt-2">
+                        {{ (item2Total + item2Taxes).toFixed(2) }}
+                    </div>
+
+
 
                     <!-- Service fees -->
                     <div class="col-span-3 text-destructive">Service fees</div>
@@ -279,13 +311,13 @@ async function saveSettings() {
                     <!-- Subtotal - only shown if discount applies -->
                     <div class="col-span-3 font-medium">Subtotal</div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (itemTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
+                        {{ (item1Total + item2Total + serviceFeeNeedToPayByBuyer).toFixed(2) }}
                     </div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (itemTaxes + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                        {{ (item1Taxes + item2Taxes + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                     </div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (itemTotal + itemTaxes + serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                        {{ (item1Total + item1Taxes + item2Total + item2Taxes + serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                     </div>
 
                     <!-- Discount -->
