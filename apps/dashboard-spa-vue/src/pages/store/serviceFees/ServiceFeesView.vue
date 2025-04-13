@@ -257,44 +257,41 @@ async function saveSettings() {
                     </div>
 
                     <!-- Service fees -->
-                    <template v-if="serviceFeeNeedToPayByBuyer > 0">
-                        <div class="col-span-8 text-destructive">Service fees</div>
-                        <div class="col-span-4 text-right text-destructive">
-                            {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
-                            <span class="text-muted-foreground">
-                                +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}tax
-                            </span>
-                        </div>
-                    </template>
+                    <div class="col-span-8 text-destructive">Service fees</div>
+                    <div class="col-span-4 text-right text-destructive">
+                        {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
+                        <span class="">
+                            +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}tax
+                        </span>
+                    </div>
 
                     <!-- Subtotal - only shown if discount applies -->
-                    <template v-if="offerableDiscountAmount > 0">
-                        <!-- <div class="col-span-8 font-medium">Subtotal</div>
-                        <div class="col-span-4 text-right font-medium">
-                            {{ (itemTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
-                        </div> -->
+                    <div class="col-span-8 font-medium">Subtotal</div>
+                    <div class="col-span-4 text-right font-medium">
+                        {{ (itemTotal + itemTaxes).toFixed(2) }}
+                    </div>
 
-                        <!-- Discount -->
-                        <div class="col-span-8 text-primary">Discount</div>
-                        <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}
-                        </div>
-                    </template>
+                    <!-- Discount -->
+                    <div class="col-span-8 text-primary">Discount</div>
+                    <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}
+                    </div>
 
                     <!-- Buyer pays total -->
                     <div class="col-span-8 font-bold border-t pt-2">Buyer pays total</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ buyerPaysTotal.toFixed(2) }}</div>
+                    <div class="col-span-4 text-right font-bold border-t pt-2 text-2xl">{{ buyerPaysTotal.toFixed(2) }}
+                    </div>
 
                     <!-- Total service fees -->
-                    <div class="col-span-8 border-t pt-2">Total service fees</div>
-                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees.toFixed(2) }}
+                    <div class="col-span-8 border-t pt-2 text-sm">Total service fees</div>
+                    <div class="col-span-4 text-right border-t pt-2 text-sm">{{ totalServiceFees.toFixed(2) }}
                         <span class="text-muted-foreground">
                             +{{ totalServiceFeesTax.toFixed(2) }}tax
                         </span>
                     </div>
 
                     <!-- Store receives -->
-                    <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2">
+                    <div class="col-span-8 font-bold border-t pt-2 text-sm">Store receives</div>
+                    <div class="col-span-4 text-right font-bold border-t pt-2 text-sm">
                         {{ storeReceivesTotal.toFixed(2) }}
                         <span class="text-muted-foreground">
                             +{{ storeReceivesTotalTax.toFixed(2) }}tax
