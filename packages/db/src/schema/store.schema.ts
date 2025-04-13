@@ -120,7 +120,7 @@ export const updateStoreOpenHoursSchema = createUpdateSchema(storeOpenHoursTable
 export const storeMenuTable = sqliteTable('store_menu', {
 	storeId: text("store_id").notNull().unique(),
 	menuRoot: text('menu_root', { mode: 'json' }).$type<MenuRoot>(),
-	calculationType: text('calculation_type', { enum: ['INCLUDED_SERVICE_FEES', 'ADD_SERVICE_FEES'] }),
+	calculationType: text('calculation_type', { enum: ['INCLUDE', 'ADD'] }),
 	includedServiceFeeRate: real('included_service_fee_rate'),
 	offerDiscountIfPossible: integer("offer_discount_if_possible", { mode: "boolean" }).notNull().default(false),
 });
