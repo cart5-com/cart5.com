@@ -98,7 +98,10 @@ const buyerPaysTotal = computed(() =>
 const storeReceivesTotal = computed(() =>
     itemTotal.value - offerableDiscountAmount.value - totalServiceFees.value +
     serviceFeeNeedToPayByBuyer.value
+);
 
+const storeReceivesTotalTax = computed(() =>
+    taxesTotal.value - totalServiceFeesTax.value
 );
 
 async function loadServiceFees() {
@@ -257,11 +260,10 @@ async function saveSettings() {
                     <template v-if="serviceFeeNeedToPayByBuyer > 0">
                         <div class="col-span-8 text-destructive">Service fees</div>
                         <div class="col-span-4 text-right text-destructive">
-                            +{{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
-                        </div>
-                        <div class="col-span-8 text-destructive">Service fees tax</div>
-                        <div class="col-span-4 text-right text-destructive">
-                            +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}
+                            {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
+                            <span class="text-muted-foreground">
+                                +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}tax
+                            </span>
                         </div>
                     </template>
 
@@ -285,13 +287,18 @@ async function saveSettings() {
                     <!-- Total service fees -->
                     <div class="col-span-8 border-t pt-2">Total service fees</div>
                     <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees.toFixed(2) }}
-                        +{{ totalServiceFeesTax.toFixed(2) }}tax
-
+                        <span class="text-muted-foreground">
+                            +{{ totalServiceFeesTax.toFixed(2) }}tax
+                        </span>
                     </div>
 
                     <!-- Store receives -->
                     <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ storeReceivesTotal.toFixed(2) }}
+                    <div class="col-span-4 text-right font-bold border-t pt-2">
+                        {{ storeReceivesTotal.toFixed(2) }}
+                        <span class="text-muted-foreground">
+                            +{{ storeReceivesTotalTax.toFixed(2) }}tax
+                        </span>
                     </div>
                 </div>
             </div>
