@@ -233,69 +233,92 @@ async function saveSettings() {
                        class="col-span-3"
                        v-model="taxSettings.taxRate" />
             </div>
+
             <div class="pt-4 border-t">
                 <h2 class="font-medium">Sample calculation:</h2>
                 <div class="grid grid-cols-12 gap-2 mt-4">
 
+                    <!-- headers -->
+                    <div class="col-span-3 border-t pt-2"> </div>
+                    <div class="col-span-3 text-right border-t pt-2">price</div>
+                    <div class="col-span-3 text-right border-t pt-2">tax</div>
+                    <div class="col-span-3 text-right border-t pt-2">Total</div>
+
                     <!-- Item total -->
-                    <div class="col-span-8 border-t pt-2">Item(s) total</div>
-                    <div class="col-span-4 text-right border-t pt-2">
+                    <div class="col-span-3 border-t pt-2">Item(s) total</div>
+                    <div class="col-span-3 text-right border-t pt-2">
                         <Input type="number"
                                min="0"
                                step="0.01"
                                class="text-right"
                                v-model="itemTotal" />
                     </div>
-                    <!-- Item total -->
-                    <div class="col-span-8 border-t pt-2">Item(s) taxes</div>
-                    <div class="col-span-4 text-right border-t pt-2">
+                    <div class="col-span-3 text-right border-t pt-2">
                         <Input type="number"
                                min="0"
                                step="0.01"
                                class="text-right"
                                v-model="itemTaxes" />
                     </div>
-
-                    <!-- Service fees -->
-                    <div class="col-span-8 text-destructive">Service fees</div>
-                    <div class="col-span-4 text-right text-destructive">
-                        {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
-                        <span class="">
-                            +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}tax
-                        </span>
-                    </div>
-
-                    <!-- Subtotal - only shown if discount applies -->
-                    <div class="col-span-8 font-medium">Subtotal</div>
-                    <div class="col-span-4 text-right font-medium">
+                    <div class="col-span-3 text-right border-t pt-2">
                         {{ (itemTotal + itemTaxes).toFixed(2) }}
                     </div>
 
-                    <!-- Discount -->
-                    <div class="col-span-8 text-primary">Discount</div>
-                    <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}
+                    <!-- Service fees -->
+                    <div class="col-span-3 text-destructive">Service fees</div>
+                    <div class="col-span-3 text-right text-destructive">
+                        {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
+                    </div>
+                    <div class="col-span-3 text-right text-destructive">
+                        {{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}
+                    </div>
+                    <div class="col-span-3 text-right text-destructive">
+                        {{ (serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                     </div>
 
+                    <!-- Subtotal - only shown if discount applies -->
+                    <div class="col-span-3 font-medium">Subtotal</div>
+                    <div class="col-span-3 text-right font-medium">
+                        {{ (itemTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
+                    </div>
+                    <div class="col-span-3 text-right font-medium">
+                        {{ (itemTaxes + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                    </div>
+                    <div class="col-span-3 text-right font-medium">
+                        {{ (itemTotal + itemTaxes + serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="col-span-3 text-primary">Discount</div>
+                    <div class="col-span-3 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}</div>
+                    <div class="col-span-3 text-right text-primary">0.00</div>
+                    <div class="col-span-3 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}</div>
+
                     <!-- Buyer pays total -->
-                    <div class="col-span-8 font-bold border-t pt-2">Buyer pays total</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2 text-2xl">{{ buyerPaysTotal.toFixed(2) }}
+                    <div class="col-span-3 font-bold border-t pt-2">Buyer pays total</div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2"></div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2"></div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2 text-2xl">{{ buyerPaysTotal.toFixed(2) }}
                     </div>
 
                     <!-- Total service fees -->
-                    <div class="col-span-8 border-t pt-2 text-sm">Total service fees</div>
-                    <div class="col-span-4 text-right border-t pt-2 text-sm">{{ totalServiceFees.toFixed(2) }}
-                        <span class="text-muted-foreground">
-                            +{{ totalServiceFeesTax.toFixed(2) }}tax
-                        </span>
+                    <div class="col-span-3 border-t pt-2 text-sm">Total service fees</div>
+                    <div class="col-span-3 text-right border-t pt-2 text-sm">{{ totalServiceFees.toFixed(2) }}</div>
+                    <div class="col-span-3 text-right border-t pt-2 text-sm">{{ totalServiceFeesTax.toFixed(2) }}</div>
+                    <div class="col-span-3 text-right border-t pt-2 text-sm">
+                        {{ (totalServiceFees + totalServiceFeesTax).toFixed(2) }}
                     </div>
 
                     <!-- Store receives -->
-                    <div class="col-span-8 font-bold border-t pt-2 text-sm">Store receives</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2 text-sm">
+                    <div class="col-span-3 font-bold border-t pt-2 text-sm">Store receives</div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2 text-sm">
                         {{ storeReceivesTotal.toFixed(2) }}
-                        <span class="text-muted-foreground">
-                            +{{ storeReceivesTotalTax.toFixed(2) }}tax
-                        </span>
+                    </div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2 text-sm">
+                        {{ storeReceivesTotalTax.toFixed(2) }}
+                    </div>
+                    <div class="col-span-3 text-right font-bold border-t pt-2 text-sm">
+                        {{ (storeReceivesTotal + storeReceivesTotalTax).toFixed(2) }}
                     </div>
                 </div>
             </div>
