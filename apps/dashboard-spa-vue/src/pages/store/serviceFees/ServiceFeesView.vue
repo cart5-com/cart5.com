@@ -205,8 +205,10 @@ const saveSettings = async () => {
                     <div class="col-span-4 text-right border-t pt-2">{{ itemTotal.toFixed(2) }}</div>
 
                     <!-- Service fees -->
-                    <div class="col-span-8">Service fees</div>
-                    <div class="col-span-4 text-right">{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
+                    <template v-if="serviceFeeNeedToPayByBuyer() > 0">
+                        <div class="col-span-8">Service fees</div>
+                        <div class="col-span-4 text-right">{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
+                    </template>
 
                     <!-- Subtotal - only shown if discount applies -->
                     <template v-if="offerableDiscountAmount() > 0">
