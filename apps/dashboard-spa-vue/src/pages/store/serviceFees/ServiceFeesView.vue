@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -10,33 +10,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { dashboardApiClient } from "@api-client/dashboard";
 import { currentStoreId } from "@dashboard-spa-vue/stores/MyStoresStore";
 import { toast } from "@/ui-plus/sonner";
+import { getJurisdictionSalesTaxRate } from '@lib/utils/sales_tax_rates';
+import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 
 pageTitle.value = 'Service Fees'
 
+const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(null);
+
 const itemTotal = ref(100);
-onMounted(async () => {
-    await loadServiceFees();
-});
-const platformServiceFee = ref<ServiceFee>({
-    ratePerOrder: 1, // readonly
-    feePerOrder: 0,// readonly
-});
-
-const partnerServiceFee = ref<ServiceFee>({
-    ratePerOrder: 2, // readonly
-    feePerOrder: 0, // readonly
-});
-
-const marketingPartner = ref<ServiceFee>({
-    ratePerOrder: 3, // readonly
-    feePerOrder: 0, // readonly
-});
+const itemTaxes = ref(0);
+const isLoading = ref(false);
 const calculationType = ref<"ADD" | "INCLUDE">("INCLUDE");
 const includedServiceFeeRate = ref(0);
 const offerDiscountIfPossible = ref(false);
-const isLoading = ref(false);
 
-const totalServiceFees = function () {
+
+onMounted(async () => {
+    const ipWhoisResult = await ipwhois();
+    taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
+    itemTaxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * itemTotal.value;
+    loadServiceFees();
+});
+
+const platformServiceFee = ref<ServiceFee>({
+    ratePerOrder: 1,
+    feePerOrder: 0,
+});
+
+const partnerServiceFee = ref<ServiceFee>({
+    ratePerOrder: 2,
+    feePerOrder: 0,
+});
+
+const marketingPartner = ref<ServiceFee>({
+    ratePerOrder: 3,
+    feePerOrder: 0,
+});
+
+// Convert calculation functions to computed properties for better performance
+const totalServiceFees = computed(() => {
     const platformFeePercent = itemTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
     const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
     const partnerFeePercent = itemTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
@@ -45,98 +57,103 @@ const totalServiceFees = function () {
     const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
 
     return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
-}
+});
 
-const allowedFeeTotalIfIncluded = () => {
-    return itemTotal.value * ((includedServiceFeeRate.value ?? 0) / 100);
-}
+const allowedFeeTotalIfIncluded = computed(() =>
+    itemTotal.value * ((includedServiceFeeRate.value ?? 0) / 100)
+);
 
-
-const serviceFeeNeedToPayByBuyer = () => {
+const serviceFeeTax = computed(() => {
+    return (taxSettings.value?.taxRate ?? 0) / 100 * serviceFeeNeedToPayByBuyer.value;
+});
+const serviceFeeNeedToPayByBuyer = computed(() => {
     if (calculationType.value === "INCLUDE") {
-        const amount = totalServiceFees() - allowedFeeTotalIfIncluded()
+        const amount = totalServiceFees.value - allowedFeeTotalIfIncluded.value;
         return amount > 0 ? amount : 0;
     } else {
-        return totalServiceFees();
+        return totalServiceFees.value;
     }
-}
+});
 
-
-const offerableDiscountAmount = () => {
+const offerableDiscountAmount = computed(() => {
     if (offerDiscountIfPossible.value) {
-        const amount = allowedFeeTotalIfIncluded() - totalServiceFees();
+        const amount = allowedFeeTotalIfIncluded.value - totalServiceFees.value;
         return amount > 0 ? amount : 0;
     } else {
         return 0;
     }
-}
+});
 
-const buyerPaysTotal = () => {
-    return itemTotal.value + serviceFeeNeedToPayByBuyer() - offerableDiscountAmount();
-}
+const buyerPaysTotal = computed(() =>
+    itemTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value
+);
 
-const storeReceivesTotal = () => {
-    return buyerPaysTotal() - totalServiceFees();
-}
+const storeReceivesTotal = computed(() =>
+    buyerPaysTotal.value - totalServiceFees.value
+);
 
-const loadServiceFees = async () => {
+async function loadServiceFees() {
+    if (!currentStoreId.value) return;
+
     isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.store[':storeId'].menu.get.$post({
-        param: {
-            storeId: currentStoreId.value ?? '',
-        },
-        json: {
-            columns: {
-                calculationType: true,
-                includedServiceFeeRate: true,
-                offerDiscountIfPossible: true
+    try {
+        const { data, error } = await (await dashboardApiClient.store[':storeId'].menu.get.$post({
+            param: {
+                storeId: currentStoreId.value,
+            },
+            json: {
+                columns: {
+                    calculationType: true,
+                    includedServiceFeeRate: true,
+                    offerDiscountIfPossible: true
+                }
             }
-        }
-    })).json();
+        })).json();
 
-    if (error) {
-        toast.error('Failed to load service fees settings');
-    } else if (data) {
-        if (data.calculationType) {
-            calculationType.value = data.calculationType;
+        if (error) {
+            toast.error('Failed to load service fees settings');
+        } else if (data) {
+            calculationType.value = data.calculationType || calculationType.value;
+            includedServiceFeeRate.value = data.includedServiceFeeRate || includedServiceFeeRate.value;
+            offerDiscountIfPossible.value = data.offerDiscountIfPossible || offerDiscountIfPossible.value;
         }
-        if (data.includedServiceFeeRate) {
-            includedServiceFeeRate.value = data.includedServiceFeeRate;
-        }
-        if (data.offerDiscountIfPossible) {
-            offerDiscountIfPossible.value = data.offerDiscountIfPossible;
-        }
+    } catch (err) {
+        toast.error('Error loading service fees settings');
+    } finally {
+        isLoading.value = false;
     }
-    isLoading.value = false;
 }
 
-const saveSettings = async () => {
+async function saveSettings() {
     if (!currentStoreId.value) {
         toast.error('No store selected');
         return;
     }
 
     isLoading.value = true;
-    const { error } = await (await dashboardApiClient.store[':storeId'].menu.update.$patch({
-        param: {
-            storeId: currentStoreId.value,
-        },
-        json: {
-            calculationType: calculationType.value,
-            includedServiceFeeRate: includedServiceFeeRate.value,
-            offerDiscountIfPossible: offerDiscountIfPossible.value
+    try {
+        const { error } = await (await dashboardApiClient.store[':storeId'].menu.update.$patch({
+            param: {
+                storeId: currentStoreId.value,
+            },
+            json: {
+                calculationType: calculationType.value,
+                includedServiceFeeRate: includedServiceFeeRate.value,
+                offerDiscountIfPossible: offerDiscountIfPossible.value
+            }
+        })).json();
+
+        if (error) {
+            toast.error('Failed to save service fees settings');
+        } else {
+            toast.success('Service fees settings saved successfully');
         }
-    })).json();
-
-    if (error) {
-        toast.error('Failed to save service fees settings');
-    } else {
-        toast.success('Service fees settings saved successfully');
+    } catch (err) {
+        toast.error('Error saving service fees settings');
+    } finally {
+        isLoading.value = false;
     }
-    isLoading.value = false;
 }
-
-
 </script>
 
 <template>
@@ -147,12 +164,12 @@ const saveSettings = async () => {
             <div class="pt-4 border-t">
                 <h3 class="font-medium">Calculation Settings</h3>
             </div>
-            <div class="grid grid-cols-4 items-center gap-4">
+            <div class="grid grid-cols-3 items-center gap-4">
                 <Label for="calculationType"
                        class="text-right">
                     Method
                 </Label>
-                <div class="col-span-3">
+                <div class="col-span-2">
                     <Select v-model="calculationType"
                             class="w-full">
                         <SelectTrigger>
@@ -165,7 +182,7 @@ const saveSettings = async () => {
                     </Select>
                 </div>
             </div>
-            <div class="grid grid-cols-4 items-center gap-4"
+            <div class="grid grid-cols-3 items-center gap-4"
                  v-if="calculationType === 'INCLUDE'">
                 <Label class="text-right">
                     Up to rate %
@@ -173,10 +190,10 @@ const saveSettings = async () => {
                 <Input type="number"
                        min="0"
                        step="1"
-                       class="col-span-3"
+                       class="col-span-2"
                        v-model="includedServiceFeeRate" />
             </div>
-            <div class="grid grid-cols-4 items-center gap-4"
+            <div class="grid grid-cols-2 items-center gap-4"
                  v-if="calculationType === 'INCLUDE'">
                 <Label class="text-right">
                     Offer discount if possible
@@ -193,12 +210,20 @@ const saveSettings = async () => {
                 {{ isLoading ? 'Saving...' : 'Save Settings' }}
             </Button>
 
+            <!-- tax settings -->
+            <div class="text-sm text-muted-foreground mb-4 pt-4 border-t"
+                 v-if="taxSettings">
+                Tax settings: <Input type="text"
+                       v-model="taxSettings.taxName" />
+                <Input type="number"
+                       min="0"
+                       step="1"
+                       class="col-span-3"
+                       v-model="taxSettings.taxRate" />
+            </div>
             <div class="pt-4 border-t">
                 <h2 class="font-medium">Sample calculation:</h2>
                 <div class="grid grid-cols-12 gap-2 mt-4">
-                    <!-- Headers -->
-                    <div class="col-span-8 font-medium">Item</div>
-                    <div class="col-span-4 text-right font-medium">Amount</div>
 
                     <!-- Item total -->
                     <div class="col-span-8 border-t pt-2">Item(s) total</div>
@@ -209,38 +234,52 @@ const saveSettings = async () => {
                                class="text-right"
                                v-model="itemTotal" />
                     </div>
+                    <!-- Item total -->
+                    <div class="col-span-8 border-t pt-2">Item(s) taxes</div>
+                    <div class="col-span-4 text-right border-t pt-2">
+                        <Input type="number"
+                               min="0"
+                               step="0.01"
+                               class="text-right"
+                               v-model="itemTaxes" />
+                    </div>
 
                     <!-- Service fees -->
-                    <template v-if="serviceFeeNeedToPayByBuyer() > 0">
+                    <template v-if="serviceFeeNeedToPayByBuyer > 0">
                         <div class="col-span-8 text-destructive">Service fees</div>
                         <div class="col-span-4 text-right text-destructive">
-                            +{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
+                            +{{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
+                        </div>
+                        <div class="col-span-8 text-destructive">Service fees tax</div>
+                        <div class="col-span-4 text-right text-destructive">
+                            +{{ serviceFeeTax.toFixed(2) }}
+                        </div>
                     </template>
 
                     <!-- Subtotal - only shown if discount applies -->
-                    <template v-if="offerableDiscountAmount() > 0">
+                    <template v-if="offerableDiscountAmount > 0">
                         <div class="col-span-8 font-medium">Subtotal</div>
                         <div class="col-span-4 text-right font-medium">
-                            {{ (itemTotal + serviceFeeNeedToPayByBuyer()).toFixed(2) }}
+                            {{ (itemTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
                         </div>
 
                         <!-- Discount -->
                         <div class="col-span-8 text-primary">Discount</div>
-                        <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount().toFixed(2) }}
+                        <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}
                         </div>
                     </template>
 
                     <!-- Buyer pays total -->
                     <div class="col-span-8 font-bold border-t pt-2">Buyer pays total</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ buyerPaysTotal().toFixed(2) }}</div>
+                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ buyerPaysTotal.toFixed(2) }}</div>
 
                     <!-- Total service fees -->
                     <div class="col-span-8 border-t pt-2">Total service fees</div>
-                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees().toFixed(2) }}</div>
+                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees.toFixed(2) }}</div>
 
                     <!-- Store receives -->
                     <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
-                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ storeReceivesTotal().toFixed(2) }}
+                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ storeReceivesTotal.toFixed(2) }}
                     </div>
                 </div>
             </div>

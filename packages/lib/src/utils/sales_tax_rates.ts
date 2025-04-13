@@ -62,9 +62,3 @@ export const getJurisdictionSalesTaxRate = (countryCode: string, regionCode: str
         taxName: taxName.filter(Boolean).join('-')
     }
 }
-
-// import { getJurisdictionSalesTaxRate } from '@lib/utils/sales_tax_rates';
-// import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
-// const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(null);
-// const ipWhoisResult = await ipwhois();
-// taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
