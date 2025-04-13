@@ -17,26 +17,50 @@ pageTitle.value = 'Service Fees'
 
 const taxSettings = ref<ReturnType<typeof getJurisdictionSalesTaxRate> | null>(null);
 
-const item1Total = ref(100);
-const item1Taxes = ref(0);
+interface CartItem {
+    name: string;
+    total: number;
+    taxes: number;
+}
 
-const item2Total = ref(50);
-const item2Taxes = ref(0);
-
+const items = ref<CartItem[]>([
+    { name: 'Item 1', total: 50, taxes: 0 },
+    { name: 'Item 2', total: 50, taxes: 0 },
+]);
 
 const isLoading = ref(false);
 const calculationType = ref<"ADD" | "INCLUDE">("INCLUDE");
 const includedServiceFeeRate = ref(0);
 const offerDiscountIfPossible = ref(false);
 
+function addItem() {
+    items.value.push({
+        name: `Item ${items.value.length + 1}`,
+        total: 0,
+        taxes: 0
+    });
+}
+
+function removeItem(index: number) {
+    if (items.value.length > 1) {
+        items.value.splice(index, 1);
+    }
+}
 
 onMounted(async () => {
     const ipWhoisResult = await ipwhois();
     taxSettings.value = getJurisdictionSalesTaxRate(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
-    item1Taxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * item1Total.value;
-    item2Taxes.value = (taxSettings.value?.taxRate ?? 0) / 100 * item2Total.value;
+    updateItemTaxes();
     loadServiceFees();
 });
+
+function updateItemTaxes() {
+    if (!taxSettings.value) return;
+
+    for (const item of items.value) {
+        item.taxes = (taxSettings.value.taxRate ?? 0) / 100 * item.total;
+    }
+}
 
 const platformServiceFee = ref<ServiceFee>({
     ratePerOrder: 1,
@@ -58,7 +82,11 @@ const totalServiceFeesTax = computed(() => {
 });
 
 const allItemsTotal = computed(() => {
-    return item1Total.value + item2Total.value;
+    return items.value.reduce((sum, item) => sum + item.total, 0);
+});
+
+const allItemsTaxes = computed(() => {
+    return items.value.reduce((sum, item) => sum + item.taxes, 0);
 });
 
 const totalServiceFees = computed(() => {
@@ -98,7 +126,7 @@ const offerableDiscountAmount = computed(() => {
 });
 
 const taxesTotal = computed(() => {
-    return item1Taxes.value + serviceFeeTaxNeedToPayByBuyer.value;
+    return allItemsTaxes.value + serviceFeeTaxNeedToPayByBuyer.value;
 });
 
 const buyerPaysTotal = computed(() =>
@@ -218,7 +246,7 @@ async function saveSettings() {
             <div class="grid grid-cols-2 items-center gap-4"
                  v-if="calculationType === 'INCLUDE'">
                 <Label class="text-right">
-                    Offer discount if possible
+                    Offer store discount if possible
                 </Label>
                 <Switch id="offerDiscountIfPossible"
                         :checked="offerDiscountIfPossible"
@@ -241,11 +269,23 @@ async function saveSettings() {
                        min="0"
                        step="1"
                        class="col-span-3"
-                       v-model="taxSettings.taxRate" />
+                       v-model="taxSettings.taxRate"
+                       @update:modelValue="updateItemTaxes" />
             </div>
 
             <div class="pt-4 border-t">
                 <h2 class="font-medium">Sample calculation:</h2>
+                <div class="flex justify-end mb-2">
+                    <Button size="sm"
+                            @click="addItem"
+                            class="mr-2">Add Item</Button>
+                    <Button size="sm"
+                            variant="destructive"
+                            @click="removeItem(items.length - 1)"
+                            :disabled="items.length <= 1">
+                        Remove Item
+                    </Button>
+                </div>
                 <div class="grid grid-cols-12 gap-2 mt-4">
 
                     <!-- headers -->
@@ -254,47 +294,29 @@ async function saveSettings() {
                     <div class="col-span-3 text-right border-t pt-2">tax</div>
                     <div class="col-span-3 text-right border-t pt-2">Total</div>
 
-                    <!-- Item total -->
-                    <div class="col-span-3 border-t pt-2">Item1 total</div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        <Input type="number"
-                               min="0"
-                               step="0.01"
-                               class="text-right"
-                               v-model="item1Total" />
-                    </div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        <Input type="number"
-                               min="0"
-                               step="0.01"
-                               class="text-right"
-                               v-model="item1Taxes" />
-                    </div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        {{ (item1Total + item1Taxes).toFixed(2) }}
-                    </div>
-
-                    <!-- Item 2 total -->
-                    <div class="col-span-3 border-t pt-2">Item2 total</div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        <Input type="number"
-                               min="0"
-                               step="0.01"
-                               class="text-right"
-                               v-model="item2Total" />
-                    </div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        <Input type="number"
-                               min="0"
-                               step="0.01"
-                               class="text-right"
-                               v-model="item2Taxes" />
-                    </div>
-                    <div class="col-span-3 text-right border-t pt-2">
-                        {{ (item2Total + item2Taxes).toFixed(2) }}
-                    </div>
-
-
+                    <!-- Dynamic Items -->
+                    <template v-for="(item, index) in items"
+                              :key="index">
+                        <div class="col-span-3 border-t pt-2">{{ item.name }}</div>
+                        <div class="col-span-3 text-right border-t pt-2">
+                            <Input type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="text-right"
+                                   v-model="item.total"
+                                   @update:modelValue="updateItemTaxes" />
+                        </div>
+                        <div class="col-span-3 text-right border-t pt-2">
+                            <Input type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="text-right"
+                                   v-model="item.taxes" />
+                        </div>
+                        <div class="col-span-3 text-right border-t pt-2">
+                            {{ (item.total + item.taxes).toFixed(2) }}
+                        </div>
+                    </template>
 
                     <!-- Service fees -->
                     <div class="col-span-3 text-destructive">Service fees</div>
@@ -311,13 +333,13 @@ async function saveSettings() {
                     <!-- Subtotal - only shown if discount applies -->
                     <div class="col-span-3 font-medium">Subtotal</div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (item1Total + item2Total + serviceFeeNeedToPayByBuyer).toFixed(2) }}
+                        {{ (allItemsTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
                     </div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (item1Taxes + item2Taxes + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                        {{ (allItemsTaxes + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                     </div>
                     <div class="col-span-3 text-right font-medium">
-                        {{ (item1Total + item1Taxes + item2Total + item2Taxes + serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
+                        {{ (allItemsTotal + allItemsTaxes + serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                     </div>
 
                     <!-- Discount -->
