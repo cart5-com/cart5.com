@@ -47,7 +47,10 @@ const marketingPartner = ref<ServiceFee>({
     feePerOrder: 0,
 });
 
-// Convert calculation functions to computed properties for better performance
+const totalServiceFeesTax = computed(() => {
+    return (taxSettings.value?.taxRate ?? 0) / 100 * totalServiceFees.value;
+});
+
 const totalServiceFees = computed(() => {
     const platformFeePercent = itemTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
     const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
@@ -63,7 +66,7 @@ const allowedFeeTotalIfIncluded = computed(() =>
     itemTotal.value * ((includedServiceFeeRate.value ?? 0) / 100)
 );
 
-const serviceFeeTax = computed(() => {
+const serviceFeeTaxNeedToPayByBuyer = computed(() => {
     return (taxSettings.value?.taxRate ?? 0) / 100 * serviceFeeNeedToPayByBuyer.value;
 });
 const serviceFeeNeedToPayByBuyer = computed(() => {
@@ -84,12 +87,18 @@ const offerableDiscountAmount = computed(() => {
     }
 });
 
+const taxesTotal = computed(() => {
+    return itemTaxes.value + serviceFeeTaxNeedToPayByBuyer.value;
+});
+
 const buyerPaysTotal = computed(() =>
-    itemTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value
+    itemTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value + taxesTotal.value
 );
 
 const storeReceivesTotal = computed(() =>
-    buyerPaysTotal.value - totalServiceFees.value
+    itemTotal.value - offerableDiscountAmount.value - totalServiceFees.value +
+    serviceFeeNeedToPayByBuyer.value
+
 );
 
 async function loadServiceFees() {
@@ -252,16 +261,16 @@ async function saveSettings() {
                         </div>
                         <div class="col-span-8 text-destructive">Service fees tax</div>
                         <div class="col-span-4 text-right text-destructive">
-                            +{{ serviceFeeTax.toFixed(2) }}
+                            +{{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}
                         </div>
                     </template>
 
                     <!-- Subtotal - only shown if discount applies -->
                     <template v-if="offerableDiscountAmount > 0">
-                        <div class="col-span-8 font-medium">Subtotal</div>
+                        <!-- <div class="col-span-8 font-medium">Subtotal</div>
                         <div class="col-span-4 text-right font-medium">
                             {{ (itemTotal + serviceFeeNeedToPayByBuyer).toFixed(2) }}
-                        </div>
+                        </div> -->
 
                         <!-- Discount -->
                         <div class="col-span-8 text-primary">Discount</div>
@@ -275,7 +284,10 @@ async function saveSettings() {
 
                     <!-- Total service fees -->
                     <div class="col-span-8 border-t pt-2">Total service fees</div>
-                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees.toFixed(2) }}</div>
+                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees.toFixed(2) }}
+                        +{{ totalServiceFeesTax.toFixed(2) }}tax
+
+                    </div>
 
                     <!-- Store receives -->
                     <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
