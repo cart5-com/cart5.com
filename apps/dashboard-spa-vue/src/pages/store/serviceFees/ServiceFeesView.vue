@@ -195,29 +195,45 @@ const saveSettings = async () => {
 
             <div class="pt-4 border-t">
                 <h2 class="font-medium">Sample calculation:</h2>
-                <div class="pt-4 border-t">
-                    item(s): {{ itemTotal }}
-                    + (service fees: {{ serviceFeeNeedToPayByBuyer().toFixed(2) }})
-                    <span v-if="offerableDiscountAmount() > 0">
-                        <br>
-                        subtotal:{{ (itemTotal + serviceFeeNeedToPayByBuyer()).toFixed(2) }}
-                        <br>
-                        -{{ offerableDiscountAmount().toFixed(2) }}
-                        discount
-                    </span>
-                    <br>
-                    Buyer pays total: {{ buyerPaysTotal().toFixed(2) }}
-                </div>
-                <div class="pt-4 border-t">
-                    Total application fees: {{ applicationFee().toFixed(2) }}
-                </div>
-                <div class="pt-4 border-t">
-                    <span>
-                        Store receives:
-                        {{ storeReceivesTotal().toFixed(2) }}
-                    </span>
-                </div>
+                <div class="grid grid-cols-12 gap-2 mt-4">
+                    <!-- Headers -->
+                    <div class="col-span-8 font-medium">Item</div>
+                    <div class="col-span-4 text-right font-medium">Amount</div>
 
+                    <!-- Item total -->
+                    <div class="col-span-8 border-t pt-2">Item(s) total</div>
+                    <div class="col-span-4 text-right border-t pt-2">{{ itemTotal.toFixed(2) }}</div>
+
+                    <!-- Service fees -->
+                    <div class="col-span-8">Service fees</div>
+                    <div class="col-span-4 text-right">{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
+
+                    <!-- Subtotal - only shown if discount applies -->
+                    <template v-if="offerableDiscountAmount() > 0">
+                        <div class="col-span-8 font-medium">Subtotal</div>
+                        <div class="col-span-4 text-right font-medium">
+                            {{ (itemTotal + serviceFeeNeedToPayByBuyer()).toFixed(2) }}
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="col-span-8 text-green-600">Discount</div>
+                        <div class="col-span-4 text-right text-green-600">-{{ offerableDiscountAmount().toFixed(2) }}
+                        </div>
+                    </template>
+
+                    <!-- Buyer pays total -->
+                    <div class="col-span-8 font-bold border-t pt-2">Buyer pays total</div>
+                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ buyerPaysTotal().toFixed(2) }}</div>
+
+                    <!-- Application fees -->
+                    <div class="col-span-8 border-t pt-2">Total application fees</div>
+                    <div class="col-span-4 text-right border-t pt-2">{{ applicationFee().toFixed(2) }}</div>
+
+                    <!-- Store receives -->
+                    <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
+                    <div class="col-span-4 text-right font-bold border-t pt-2">{{ storeReceivesTotal().toFixed(2) }}
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-4 items-center gap-4 pt-4 border-t">
@@ -335,9 +351,6 @@ const saveSettings = async () => {
                            v-model="marketingPartner.feePerOrder" />
                 </div>
             </div>
-
-
-
         </div>
     </div>
 </template>
