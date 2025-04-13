@@ -36,7 +36,7 @@ const includedServiceFeeRate = ref(0);
 const offerDiscountIfPossible = ref(false);
 const isLoading = ref(false);
 
-const applicationFee = function () {
+const totalServiceFees = function () {
     const platformFeePercent = itemTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
     const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
     const partnerFeePercent = itemTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
@@ -54,17 +54,17 @@ const allowedFeeTotalIfIncluded = () => {
 
 const serviceFeeNeedToPayByBuyer = () => {
     if (calculationType.value === "INCLUDE") {
-        const amount = applicationFee() - allowedFeeTotalIfIncluded()
+        const amount = totalServiceFees() - allowedFeeTotalIfIncluded()
         return amount > 0 ? amount : 0;
     } else {
-        return applicationFee();
+        return totalServiceFees();
     }
 }
 
 
 const offerableDiscountAmount = () => {
     if (offerDiscountIfPossible.value) {
-        const amount = allowedFeeTotalIfIncluded() - applicationFee();
+        const amount = allowedFeeTotalIfIncluded() - totalServiceFees();
         return amount > 0 ? amount : 0;
     } else {
         return 0;
@@ -76,7 +76,7 @@ const buyerPaysTotal = () => {
 }
 
 const storeReceivesTotal = () => {
-    return buyerPaysTotal() - applicationFee();
+    return buyerPaysTotal() - totalServiceFees();
 }
 
 const loadServiceFees = async () => {
@@ -202,12 +202,19 @@ const saveSettings = async () => {
 
                     <!-- Item total -->
                     <div class="col-span-8 border-t pt-2">Item(s) total</div>
-                    <div class="col-span-4 text-right border-t pt-2">{{ itemTotal.toFixed(2) }}</div>
+                    <div class="col-span-4 text-right border-t pt-2">
+                        <Input type="number"
+                               min="0"
+                               step="0.01"
+                               class="text-right"
+                               v-model="itemTotal" />
+                    </div>
 
                     <!-- Service fees -->
                     <template v-if="serviceFeeNeedToPayByBuyer() > 0">
-                        <div class="col-span-8">Service fees</div>
-                        <div class="col-span-4 text-right">{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
+                        <div class="col-span-8 text-destructive">Service fees</div>
+                        <div class="col-span-4 text-right text-destructive">
+                            +{{ serviceFeeNeedToPayByBuyer().toFixed(2) }}</div>
                     </template>
 
                     <!-- Subtotal - only shown if discount applies -->
@@ -218,8 +225,8 @@ const saveSettings = async () => {
                         </div>
 
                         <!-- Discount -->
-                        <div class="col-span-8 text-green-600">Discount</div>
-                        <div class="col-span-4 text-right text-green-600">-{{ offerableDiscountAmount().toFixed(2) }}
+                        <div class="col-span-8 text-primary">Discount</div>
+                        <div class="col-span-4 text-right text-primary">-{{ offerableDiscountAmount().toFixed(2) }}
                         </div>
                     </template>
 
@@ -227,9 +234,9 @@ const saveSettings = async () => {
                     <div class="col-span-8 font-bold border-t pt-2">Buyer pays total</div>
                     <div class="col-span-4 text-right font-bold border-t pt-2">{{ buyerPaysTotal().toFixed(2) }}</div>
 
-                    <!-- Application fees -->
-                    <div class="col-span-8 border-t pt-2">Total application fees</div>
-                    <div class="col-span-4 text-right border-t pt-2">{{ applicationFee().toFixed(2) }}</div>
+                    <!-- Total service fees -->
+                    <div class="col-span-8 border-t pt-2">Total service fees</div>
+                    <div class="col-span-4 text-right border-t pt-2">{{ totalServiceFees().toFixed(2) }}</div>
 
                     <!-- Store receives -->
                     <div class="col-span-8 font-bold border-t pt-2">Store receives</div>
@@ -238,16 +245,6 @@ const saveSettings = async () => {
                 </div>
             </div>
 
-            <div class="grid grid-cols-4 items-center gap-4 pt-4 border-t">
-                <Label class="text-right">
-                    item(s)
-                </Label>
-                <Input type="number"
-                       min="0"
-                       step="1"
-                       class="col-span-3"
-                       v-model="itemTotal" />
-            </div>
 
             <div class="border p-2 rounded-lg">
                 <div class="font-medium">
