@@ -90,6 +90,16 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'store-tax-settings' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Tax Settings
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
+
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-delivery-options' }"
                                         @click="setOpenMobile(false)">
@@ -107,14 +117,7 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <RouterLink :to="{ name: 'store-tax-settings' }"
-                                        @click="setOpenMobile(false)">
-                                <SidebarMenuButton>
-                                    Tax Settings
-                                </SidebarMenuButton>
-                            </RouterLink>
-                        </SidebarMenuItem>
+
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-payment-methods' }"
                                         @click="setOpenMobile(false)">
@@ -123,6 +126,7 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-service-fees' }"
                                         @click="setOpenMobile(false)">
@@ -131,6 +135,7 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-menu-editor' }"
                                         @click="setOpenMobile(false)">
