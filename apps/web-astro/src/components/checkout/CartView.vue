@@ -33,7 +33,7 @@ import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
-
+import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 const currentCart = computed(() => {
     return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
 });
@@ -65,7 +65,7 @@ const removeAllItemsFromCart = () => {
 const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { totalPrice: "$0.00", tax: "$0.00" };
+    if (!currentCart.value || !menuRoot.value) return { totalPrice: 0, tax: 0 };
     return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
 });
 
@@ -75,6 +75,22 @@ const getPrice = (item: CartItem) => {
 
 const bestDeliveryZone = computed(() => {
     return getBestDeliveryZone(
+        {
+            lat: userDataStore.value.userData?.rememberLastLat!,
+            lng: userDataStore.value.userData?.rememberLastLng!
+        },
+        window.storeData?.deliveryZones?.zones ?? [],
+        {
+            lat: window.storeData?.address?.lat!,
+            lng: window.storeData?.address?.lng!
+        }
+    );
+})
+
+const subTotal = computed(() => {
+    if (!currentCart.value || !menuRoot.value) return 0;
+    return calculateSubTotal(
+        currentCart.value, menuRoot.value, taxSettings, orderType,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
@@ -202,7 +218,7 @@ const deliveryFeeTax = computed(() => {
 
                 <div class="flex justify-between items-center px-1">
                     <span class="font-bold text-lg">
-                        Subtotal
+                        items total
                     </span>
                     <span class="font-bold text-lg">
                         {{ cartTotals.totalPrice }}
@@ -210,7 +226,6 @@ const deliveryFeeTax = computed(() => {
                         tax:{{ cartTotals.tax }}
                     </span>
                 </div>
-
 
                 <div class="flex justify-between items-center px-1"
                      v-if="orderType === 'delivery'">
@@ -223,6 +238,18 @@ const deliveryFeeTax = computed(() => {
                         tax:{{ deliveryFeeTax }}
                     </span>
                 </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <span class="font-bold text-lg">
+                        Subtotal
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ subTotal.total }}
+                        (tax:{{ subTotal.tax }})
+                    </span>
+                </div>
+
+
             </div>
         </div>
 
