@@ -31,6 +31,37 @@ const items = ref<CartItem[]>([
     { name: 'Item 1', price: 100, total: 0, quantity: 1, salesTax: 0, salesTaxRate: 0, discount: 0 },
 ]);
 
+const platformServiceFee = ref<ServiceFee>({
+    ratePerOrder: 1,
+    feePerOrder: 0,
+});
+
+const partnerServiceFee = ref<ServiceFee>({
+    ratePerOrder: 2,
+    feePerOrder: 0,
+});
+
+const marketingPartner = ref<ServiceFee>({
+    ratePerOrder: 3,
+    feePerOrder: 0,
+});
+
+const stripeFees = ref<ServiceFee>({
+    ratePerOrder: 1.5,
+    feePerOrder: 0.20,
+});
+
+const stripeFeesTotal = computed(() => {
+    // buyerPaysTotal (before stripe fees)
+    const totalBeforeStripe = allItemsTotal.value +
+        serviceFeeNeedToPayByBuyer.value -
+        offerableDiscountAmount.value +
+        taxesTotal.value;
+    return ((totalBeforeStripe * 100) / (100 - (stripeFees.value.ratePerOrder ?? 0))) -
+        totalBeforeStripe + (stripeFees.value.feePerOrder ?? 0)
+});
+
+
 const isLoading = ref(false);
 const calculationType = ref<"ADD" | "INCLUDE">("INCLUDE");
 const includedServiceFeeRate = ref(0);
@@ -95,42 +126,37 @@ function updateItemTaxes() {
     }
 }
 
-const platformServiceFee = ref<ServiceFee>({
-    ratePerOrder: 1,
-    feePerOrder: 0,
+
+
+const allItemsTotal = computed(() => {
+    return items.value.reduce((sum, item) => sum + item.total, 0);
+});
+const allItemsTaxes = computed(() => {
+    return items.value.reduce((sum, item) => sum + item.salesTax, 0);
 });
 
-const partnerServiceFee = ref<ServiceFee>({
-    ratePerOrder: 2,
-    feePerOrder: 0,
+const platformServiceFeeTotal = computed(() => {
+    return allItemsTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100) + (platformServiceFee.value.feePerOrder ?? 0);
 });
-
-const marketingPartner = ref<ServiceFee>({
-    ratePerOrder: 3,
-    feePerOrder: 0,
+const partnerServiceFeeTotal = computed(() => {
+    return allItemsTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100) + (partnerServiceFee.value.feePerOrder ?? 0);
+});
+const marketingPartnerServiceFeeTotal = computed(() => {
+    return allItemsTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100) + (marketingPartner.value.feePerOrder ?? 0);
 });
 
 const totalServiceFeesTax = computed(() => {
     return (taxSettings.value?.taxRate ?? 0) / 100 * totalServiceFees.value;
 });
-
-const allItemsTotal = computed(() => {
-    return items.value.reduce((sum, item) => sum + item.total, 0);
-});
-
-const allItemsTaxes = computed(() => {
-    return items.value.reduce((sum, item) => sum + item.salesTax, 0);
-});
-
 const totalServiceFees = computed(() => {
-    const platformFeePercent = allItemsTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
-    const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
-    const partnerFeePercent = allItemsTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
-    const partnerFeeFixed = partnerServiceFee.value.feePerOrder ?? 0;
-    const marketingFeePercent = allItemsTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
-    const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
-
-    return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
+    // const platformFeePercent = allItemsTotal.value * ((platformServiceFee.value.ratePerOrder ?? 0) / 100);
+    // const platformFeeFixed = platformServiceFee.value.feePerOrder ?? 0;
+    // const partnerFeePercent = allItemsTotal.value * ((partnerServiceFee.value.ratePerOrder ?? 0) / 100);
+    // const partnerFeeFixed = partnerServiceFee.value.feePerOrder ?? 0;
+    // const marketingFeePercent = allItemsTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
+    // const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
+    // return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
+    return platformServiceFeeTotal.value + partnerServiceFeeTotal.value + marketingPartnerServiceFeeTotal.value;
 });
 
 const allowedFeeTotalIfIncluded = computed(() =>
@@ -140,6 +166,7 @@ const allowedFeeTotalIfIncluded = computed(() =>
 const serviceFeeTaxNeedToPayByBuyer = computed(() => {
     return (taxSettings.value?.taxRate ?? 0) / 100 * serviceFeeNeedToPayByBuyer.value;
 });
+
 const serviceFeeNeedToPayByBuyer = computed(() => {
     if (calculationType.value === "INCLUDE") {
         const amount = totalServiceFees.value - allowedFeeTotalIfIncluded.value;
@@ -168,7 +195,7 @@ const taxesTotal = computed(() => {
 });
 
 const buyerPaysTotal = computed(() =>
-    allItemsTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value + taxesTotal.value
+    allItemsTotal.value + serviceFeeNeedToPayByBuyer.value - offerableDiscountAmount.value + taxesTotal.value + stripeFeesTotal.value
 );
 
 const storeReceivesTotal = computed(() =>
@@ -284,8 +311,7 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                 <h3 class="font-medium">Calculation Settings</h3>
             </div>
             <div class="grid grid-cols-3 items-center gap-4">
-                <Label for="calculationType"
-                       class="text-right">
+                <Label class="text-right">
                     Method
                 </Label>
                 <div class="col-span-2">
@@ -317,8 +343,7 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                 <Label class="text-right">
                     Offer store discount if possible
                 </Label>
-                <Switch id="offerDiscountIfPossible"
-                        :checked="offerDiscountIfPossible"
+                <Switch :checked="offerDiscountIfPossible"
                         @update:checked="(checked) => offerDiscountIfPossible = checked"
                         class="scale-125">
                 </Switch>
@@ -460,6 +485,18 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                             <td class="text-right text-primary">-{{ offerableDiscountAmount.toFixed(2) }}</td>
                         </tr>
 
+                        <!-- Stripe -->
+                        <tr>
+                            <td class="font-bold border-t pt-2">Stripe</td>
+                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2">{{ stripeFeesTotal.toFixed(2) }}
+                            </td>
+                        </tr>
+
                         <!-- Buyer pays total -->
                         <tr>
                             <td class="font-bold border-t pt-2">Buyer pays total</td>
@@ -516,29 +553,25 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Platform Service Fee
                         <span class="text-sm text-muted-foreground">
-                            +/-
+                            ({{ platformServiceFeeTotal.toFixed(2) }})
                         </span>
                     </h3>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="platformRatePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Rate %
                     </Label>
-                    <Input id="platformRatePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
                            v-model="platformServiceFee.ratePerOrder" />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="platformFeePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Fixed Fee
                     </Label>
-                    <Input id="platformFeePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
@@ -549,29 +582,25 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                 <div class="pt-4 border-t">
                     <h3 class="font-medium">Partner Service Fee
                         <span class="text-sm text-muted-foreground">
-                            +/-
+                            ({{ partnerServiceFeeTotal.toFixed(2) }})
                         </span>
                     </h3>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="partnerRatePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Rate %
                     </Label>
-                    <Input id="partnerRatePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
                            v-model="partnerServiceFee.ratePerOrder" />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="partnerFeePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Fixed Fee
                     </Label>
-                    <Input id="partnerFeePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
@@ -580,35 +609,62 @@ watch(offerDiscountIfPossible, updateItemTaxes);
 
                 <!-- Marketing Partner -->
                 <div class="pt-4 border-t">
-                    <h3 class="font-medium">Marketing Partner
+                    <h3 class="font-medium">
+                        Marketing Partner
                         <span class="text-sm text-muted-foreground">
-                            +/-
+                            ({{ marketingPartnerServiceFeeTotal.toFixed(2) }})
                         </span>
                     </h3>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="marketingPartnerRatePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Rate %
                     </Label>
-                    <Input id="marketingPartnerRatePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
                            v-model="marketingPartner.ratePerOrder" />
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="marketingPartnerFeePerOrder"
-                           class="text-right">
+                    <Label class="text-right">
                         Fixed Fee
                     </Label>
-                    <Input id="marketingPartnerFeePerOrder"
-                           type="number"
+                    <Input type="number"
                            min="0"
                            step="1"
                            class="col-span-3"
                            v-model="marketingPartner.feePerOrder" />
+                </div>
+
+                <!-- Stripe -->
+                <div class="pt-4 border-t">
+                    <h3 class="font-medium">
+                        Stripe
+                        <span class="text-sm text-muted-foreground">
+                            ({{ stripeFeesTotal.toFixed(2) }})
+                        </span>
+                    </h3>
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label class="text-right">
+                        Rate %
+                    </Label>
+                    <Input type="number"
+                           min="0"
+                           step="1"
+                           class="col-span-3"
+                           v-model="stripeFees.ratePerOrder" />
+                </div>
+                <div class="grid grid-cols-4 items-center gap-4">
+                    <Label class="text-right">
+                        Fixed Fee
+                    </Label>
+                    <Input type="number"
+                           min="0"
+                           step="1"
+                           class="col-span-3"
+                           v-model="stripeFees.feePerOrder" />
                 </div>
             </div>
         </div>
