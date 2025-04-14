@@ -1,6 +1,11 @@
 import type { TaxSettings } from "@lib/zod/taxSchema";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
+import { inclusiveRate, exclusiveRate } from "./rateCalc";
 
 export const calculateDeliveryFeeTax = (fee: number, taxSettings: TaxSettings) => {
-    return roundTo2Decimals(fee * (taxSettings.taxRateForDelivery ?? 0) / 100);
+    if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+        return exclusiveRate(fee, taxSettings.taxRateForDelivery ?? 0);
+    } else {
+        return inclusiveRate(fee, taxSettings.taxRateForDelivery ?? 0);
+    }
+
 }

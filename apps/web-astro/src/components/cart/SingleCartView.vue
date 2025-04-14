@@ -31,6 +31,7 @@ import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
+import { stripeRate, inclusiveRate, exclusiveRate } from "@lib/utils/rateCalc";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -210,15 +211,49 @@ const deliveryFeeTax = computed(() => {
           </span>
         </div>
 
+
+
+        <div class="flex justify-between items-center px-1">
+          <span class="font-bold text-lg">
+            stripe rate 100
+          </span>
+          <span class="font-bold text-lg">
+            {{ stripeRate(100, 29, 0.30) }}
+          </span>
+        </div>
+
+        <div class="flex justify-between items-center px-1">
+          <span class="font-bold text-lg">
+            inclusive rate 100
+          </span>
+          <span class="font-bold text-lg">
+            {{ inclusiveRate(100, 20) }}
+          </span>
+        </div>
+        <div class="flex justify-between items-center px-1">
+          <span class="font-bold text-lg">
+            exclusive rate 100
+          </span>
+          <span class="font-bold text-lg">
+            {{ exclusiveRate(100, 20) }}
+          </span>
+        </div>
+
         <div class="flex justify-between items-center px-1"
              v-if="orderType === 'delivery'">
-          <details open>
-            <summary>
-              Best Delivery Zone
-            </summary>
-            <pre class="text-sm">{{ deliveryFeeTax }}</pre>
-            <pre class="text-sm">{{ bestDeliveryZone }}</pre>
-          </details>
+          <span class="">
+            <details>
+              <summary>
+                Delivery Fee
+              </summary>
+              <pre class="text-sm">deliveryFeeTax:{{ deliveryFeeTax }}<br>bestDeliveryZone:{{ bestDeliveryZone }}</pre>
+            </details>
+          </span>
+          <span class="font-bold text-lg">
+            {{ bestDeliveryZone?.totalDeliveryFee }}
+
+            tax:{{ deliveryFeeTax }}
+          </span>
         </div>
         <div
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">

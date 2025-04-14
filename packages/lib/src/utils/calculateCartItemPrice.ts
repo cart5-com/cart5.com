@@ -3,7 +3,7 @@ import type { CartChildrenItemState, CartItem, Cart } from "@lib/zod/cartItemSta
 import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
-
+import { inclusiveRate, exclusiveRate } from "./rateCalc";
 
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
@@ -59,10 +59,18 @@ export const calculateCartItemTax = (
         const taxCategory = taxSettings.taxCategories?.find((taxCategory) => taxCategory.id === item.taxCatId);
         if (taxCategory) {
             // selected tax category
-            total += price * ((taxCategory[`${orderType}Rate`] || 0) / 100);
+            if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+                total += exclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
+            } else {
+                total += inclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
+            }
         } else if (taxSettings.taxCategories?.[0]) {
             // default tax category
-            total += price * ((taxSettings.taxCategories[0][`${orderType}Rate`] || 0) / 100);
+            if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+                total += exclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
+            } else {
+                total += inclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
+            }
         }
     }
     return roundTo2Decimals(total);
