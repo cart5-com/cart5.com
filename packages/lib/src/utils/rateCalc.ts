@@ -1,16 +1,20 @@
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
-export const stripeRate = (total: number, ratePerPayment: number, feePerPayment: number) => {
+export const calculateStripeFee = (
+    totalBeforeStripe: number,
+    ratePerPayment: number = 2.9,
+    feePerPayment: number = 0.30
+) => {
     return roundTo2Decimals(
         (
             (
-                100 * (total + feePerPayment)
+                100 * (totalBeforeStripe + feePerPayment)
             )
             /
             (
                 100 - ratePerPayment
             )
-        ) - total
+        ) - totalBeforeStripe
     )
 }
 

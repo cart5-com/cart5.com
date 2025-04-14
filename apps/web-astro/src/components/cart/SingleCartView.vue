@@ -31,7 +31,7 @@ import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
-import { stripeRate, inclusiveRate, exclusiveRate } from "@lib/utils/rateCalc";
+import { calculateStripeFee, inclusiveRate, exclusiveRate } from "@lib/utils/rateCalc";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -218,7 +218,7 @@ const deliveryFeeTax = computed(() => {
             stripe rate 100
           </span>
           <span class="font-bold text-lg">
-            {{ stripeRate(100, 29, 0.30) }}
+            {{ calculateStripeFee(1000, 29, 0.30) }}
           </span>
         </div>
 
