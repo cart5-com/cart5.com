@@ -57,6 +57,13 @@
       "when": 1744502765888,
       "tag": "0007_square_carlie_cooper",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1744590081795,
+      "tag": "0008_amazing_colossus",
+      "breakpoints": true
     }
   ]
 }

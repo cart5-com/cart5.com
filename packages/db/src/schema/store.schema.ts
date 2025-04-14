@@ -178,6 +178,7 @@ export const storeTaxSettingsTable = sqliteTable('store_tax_settings', {
 	salesTaxType: text('sales_tax_type', { enum: ['ITEMS_PRICES_ALREADY_INCLUDE_TAXES', 'APPLY_TAX_ON_TOP_OF_PRICES'] }),
 	taxName: text('tax_name'),
 	taxRateForDelivery: real('tax_rate_for_delivery'),
+	taxRateForServiceFees: real('tax_rate_for_service_fees'),
 	taxCategories: text('tax_categories', { mode: 'json' }).$type<TaxCategory[]>().$defaultFn(() => []),
 });
 export const selectStoreTaxSettingsSchema = createSelectSchema(storeTaxSettingsTable);

@@ -51,6 +51,7 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
         salesTaxType: "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
         taxName: salesTaxRate.taxName,
         taxRateForDelivery: salesTaxRate.taxRate,
+        taxRateForServiceFees: salesTaxRate.taxRate,
     }
     return taxSettings;
 }
@@ -69,6 +70,7 @@ const loadData = async () => {
                 salesTaxType: true,
                 taxName: true,
                 taxRateForDelivery: true,
+                taxRateForServiceFees: true,
             }
         }
     })).json();
@@ -110,6 +112,7 @@ const saveTaxSettings = async () => {
                 salesTaxType: taxSettings.value?.salesTaxType,
                 taxName: taxSettings.value?.taxName,
                 taxRateForDelivery: taxSettings.value?.taxRateForDelivery,
+                taxRateForServiceFees: taxSettings.value?.taxRateForServiceFees,
                 taxCategories: taxSettings.value?.taxCategories ?? []
             }
         })).json();
@@ -267,6 +270,12 @@ const removeTaxCategory = (index: number) => {
                            step="1" />
                 </div>
 
+                <div class="space-y-2">
+                    <Label>Tax Rate for Service Fees(%)</Label>
+                    <Input v-model="taxSettings.taxRateForServiceFees!"
+                           type="number"
+                           step="1" />
+                </div>
 
                 <Button @click="saveTaxSettings"
                         :disabled="isLoading"

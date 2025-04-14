@@ -55,6 +55,7 @@ export const getStoreData_Service = async (
                     taxCategories: true,
                     taxName: true,
                     taxRateForDelivery: true,
+                    taxRateForServiceFees: true,
                 }
             },
             deliveryZones: {

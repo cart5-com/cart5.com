@@ -12,7 +12,8 @@ export const TaxSettingsSchema = z.object({
     currencySymbol: z.string().optional(),
     salesTaxType: z.enum(['ITEMS_PRICES_ALREADY_INCLUDE_TAXES', 'APPLY_TAX_ON_TOP_OF_PRICES']).optional(),
     taxName: z.string().optional(),
-    taxRateForDelivery: z.number().optional(),
+    taxRateForDelivery: z.number().min(0).max(100).optional(),
+    taxRateForServiceFees: z.number().min(0).max(100).optional(),
     taxCategories: z.array(TaxCategorySchema).optional()
 });
 export type TaxCategory = z.infer<typeof TaxCategorySchema>;

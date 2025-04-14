@@ -25,6 +25,7 @@ export const loadTaxSettings = async () => {
                 salesTaxType: true,
                 taxName: true,
                 taxRateForDelivery: true,
+                taxRateForServiceFees: true,
             }
         }
     })).json();
