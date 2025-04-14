@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
+import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -82,6 +83,10 @@ const bestDeliveryZone = computed(() => {
       lng: window.storeData?.address?.lng!
     }
   );
+})
+
+const deliveryFeeTax = computed(() => {
+  return calculateDeliveryFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings);
 })
 
 </script>
@@ -211,6 +216,7 @@ const bestDeliveryZone = computed(() => {
             <summary>
               Best Delivery Zone
             </summary>
+            <pre class="text-sm">{{ deliveryFeeTax }}</pre>
             <pre class="text-sm">{{ bestDeliveryZone }}</pre>
           </details>
         </div>
