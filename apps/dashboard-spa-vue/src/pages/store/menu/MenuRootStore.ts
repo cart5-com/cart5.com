@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
+import { menuCleanEmptyProperties } from "@lib/utils/menuCleanEmptyProperties";
 import { dashboardApiClient } from "@api-client/dashboard";
 import { currentStoreId } from "@dashboard-spa-vue/stores/MyStoresStore";
 import { toast } from "@/ui-plus/sonner";
@@ -40,7 +41,7 @@ export const saveMenu = async () => {
             storeId: currentStoreId.value ?? '',
         },
         json: {
-            menuRoot: menuRoot.value
+            menuRoot: menuCleanEmptyProperties(menuRoot.value)
         }
     })).json();
     if (error) {
