@@ -66,11 +66,11 @@ onMounted(async () => {
     items.value.forEach(item => {
         updateItemTotal(item);
     });
-    updateItemTaxes();
     loadServiceFees();
     for (let i = 0; i < items.value.length; i++) {
         items.value[i].salesTaxRate = (taxSettings.value.taxRate ?? 0)
     }
+    updateItemTaxes();
 });
 
 function updateItemTaxes() {
