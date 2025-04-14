@@ -215,10 +215,10 @@ const deliveryFeeTax = computed(() => {
 
         <div class="flex justify-between items-center px-1">
           <span class="font-bold text-lg">
-            stripe rate 100
+            stripe rate
           </span>
           <span class="font-bold text-lg">
-            {{ calculateStripeFee(1000, 29, 0.30) }}
+            {{ calculateStripeFee(1000, 2.9, 0.30) }}
           </span>
         </div>
 

@@ -129,14 +129,31 @@ const checkCartItem = () => {
         </div>
         <div
              class="text-xs sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between items-center font-bold">
-            Delivery Preview (Total: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}
-            {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
-            Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.tax }})
             <div>
-                <span>
-                    Pickup Preview (Total: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.itemPrice }}
-                    {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '+' : 'included' }}
-                    Tax: {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.tax }})
+                Delivery Preview
+                <span v-if="taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'">
+                    {{ taxSettings?.currencySymbol }}{{
+                        cartItemTotalPrice.itemPrice + cartItemTotalPrice.tax }}={{ cartItemTotalPrice.itemPrice }}+({{
+                            cartItemTotalPrice.tax }}tax)
+                </span>
+                <span v-else-if="taxSettings?.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES'">
+                    {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}={{
+                        (cartItemTotalPrice.itemPrice -
+                            cartItemTotalPrice.tax).toFixed(2) }}+({{ cartItemTotalPrice.tax }}tax)
+                </span>
+            </div>
+            <div>
+                Pickup Preview
+                <span v-if="taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'">
+                    {{ taxSettings?.currencySymbol }}{{
+                        cartItemTotalPricePickup.itemPrice + cartItemTotalPricePickup.tax }}={{
+                    cartItemTotalPricePickup.itemPrice }}+({{
+                        cartItemTotalPricePickup.tax }}tax)
+                </span>
+                <span v-else-if="taxSettings?.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES'">
+                    {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.itemPrice }}={{
+                        (cartItemTotalPricePickup.itemPrice -
+                            cartItemTotalPricePickup.tax).toFixed(2) }}+({{ cartItemTotalPricePickup.tax }}tax)
                 </span>
             </div>
         </div>
