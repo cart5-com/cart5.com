@@ -48,7 +48,7 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
         }],
         currency: salesTaxRate.raw.currency,
         currencySymbol: salesTaxRate.raw.currencySymbol ?? null,
-        salesTaxType: "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
+        salesTaxType: salesTaxRate.raw.isTaxAppliesAtCheckout ? "APPLY_TAX_ON_TOP_OF_PRICES" : "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
         taxName: salesTaxRate.taxName,
         taxRateForDelivery: salesTaxRate.taxRate,
         taxRateForServiceFees: salesTaxRate.taxRate,

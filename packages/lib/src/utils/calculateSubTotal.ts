@@ -33,6 +33,13 @@ export const calculateSubTotal = (
         )
         deliveryFeeTax = calculateDeliveryFeeTax(bestDeliveryZone?.totalDeliveryFee ?? 0, taxSettings)
     }
+    if (!taxSettings) {
+        console.error('No tax settings')
+        return {
+            total: cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0),
+            tax: 0
+        }
+    }
 
     if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
         return {

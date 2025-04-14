@@ -14,7 +14,8 @@ import {
     updateStore_Service,
     updateStoreAddress_Service,
     updateStoreDeliveryZones_Service,
-    updateStoreOpenHours_Service
+    updateStoreOpenHours_Service,
+    updateStoreTaxSettings_Service
 } from "@db/services/store.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
@@ -28,7 +29,7 @@ import { readFileSync } from "fs";
 import { importMenuFromCSV } from "@lib/utils/menuImport";
 import { updateStoreMenu_Service } from "@db/services/store.service";
 import { fileURLToPath, URL } from 'node:url'
-
+import { getAsTaxSettings } from "@lib/utils/sales_tax_rates";
 const sampleMenuRoot1 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-1.csv", import.meta.url)), "utf8"));
 const sampleMenuRoot2 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-2.csv", import.meta.url)), "utf8"));
 
@@ -152,6 +153,8 @@ export const startSeed = async () => {
             offersDelivery,
             offersPickup,
         })
+
+        await updateStoreTaxSettings_Service(store!.id, getAsTaxSettings(cfRaw.country, cfRaw.regionCode))
 
         if (offersDelivery) {
             let zones: DeliveryZone[] = [
