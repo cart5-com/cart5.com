@@ -51,7 +51,7 @@ export const getSalesTaxRate = (countryCode: string, regionCode: string) => {
 
 export const getJurisdictionSalesTaxRate = (countryCode: string, regionCode: string) => {
     const salesTaxRate = getSalesTaxRate(countryCode, regionCode);
-    const taxRate = (salesTaxRate.rate + (salesTaxRate.currentState?.rate ?? 0)) * 100;
+    const taxRate = Number(((salesTaxRate.rate + (salesTaxRate.currentState?.rate ?? 0)) * 100).toFixed(2));
     const taxName = [salesTaxRate.type === 'none' ? '' : salesTaxRate.type.toUpperCase()];
     if (salesTaxRate?.currentState) {
         taxName.push(salesTaxRate?.currentState?.type.toUpperCase());
