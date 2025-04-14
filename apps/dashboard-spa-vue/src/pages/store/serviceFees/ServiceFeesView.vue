@@ -126,8 +126,6 @@ function updateItemTaxes() {
     }
 }
 
-
-
 const allItemsTotal = computed(() => {
     return items.value.reduce((sum, item) => sum + item.total, 0);
 });
@@ -156,7 +154,9 @@ const totalServiceFees = computed(() => {
     // const marketingFeePercent = allItemsTotal.value * ((marketingPartner.value.ratePerOrder ?? 0) / 100);
     // const marketingFeeFixed = marketingPartner.value.feePerOrder ?? 0;
     // return platformFeePercent + platformFeeFixed + partnerFeePercent + partnerFeeFixed + marketingFeePercent + marketingFeeFixed;
-    return platformServiceFeeTotal.value + partnerServiceFeeTotal.value + marketingPartnerServiceFeeTotal.value;
+    return platformServiceFeeTotal.value +
+        partnerServiceFeeTotal.value +
+        marketingPartnerServiceFeeTotal.value;
 });
 
 const allowedFeeTotalIfIncluded = computed(() =>
@@ -177,7 +177,7 @@ const serviceFeeNeedToPayByBuyer = computed(() => {
 });
 
 const offerableDiscountAmount = computed(() => {
-    if (offerDiscountIfPossible.value) {
+    if (calculationType.value === "INCLUDE" && offerDiscountIfPossible.value) {
         const amount = allowedFeeTotalIfIncluded.value - totalServiceFees.value;
         const result = amount > 0 ? amount : 0;
         // Trigger tax recalculation when discount changes
@@ -440,19 +440,19 @@ watch(offerDiscountIfPossible, updateItemTaxes);
 
                         <!-- Service fees -->
                         <tr class="border-t pt-2">
-                            <td class="text-destructive">Service fees</td>
-                            <td class="text-right text-destructive"></td>
-                            <td class="text-right text-destructive"></td>
-                            <td class="text-right text-destructive">
+                            <td class="">Service fees</td>
+                            <td class="text-right "></td>
+                            <td class="text-right "></td>
+                            <td class="text-right ">
                                 {{ serviceFeeNeedToPayByBuyer.toFixed(2) }}
                             </td>
-                            <td class="text-right text-destructive">
+                            <td class="text-right ">
                                 {{ taxSettings?.taxRate ?? 0 }}
                             </td>
-                            <td class="text-right text-destructive">
+                            <td class="text-right ">
                                 {{ serviceFeeTaxNeedToPayByBuyer.toFixed(2) }}
                             </td>
-                            <td class="text-right text-destructive">
+                            <td class="text-right ">
                                 {{ (serviceFeeNeedToPayByBuyer + serviceFeeTaxNeedToPayByBuyer).toFixed(2) }}
                             </td>
                         </tr>
@@ -490,9 +490,9 @@ watch(offerDiscountIfPossible, updateItemTaxes);
                             <td class="font-bold border-t pt-2">Stripe</td>
                             <td class="text-right font-bold border-t pt-2"></td>
                             <td class="text-right font-bold border-t pt-2"></td>
-                            <td class="text-right font-bold border-t pt-2"></td>
-                            <td class="text-right font-bold border-t pt-2"></td>
-                            <td class="text-right font-bold border-t pt-2"></td>
+                            <td class="text-right font-bold border-t pt-2">{{ stripeFeesTotal.toFixed(2) }}</td>
+                            <td class="text-right font-bold border-t pt-2">0</td>
+                            <td class="text-right font-bold border-t pt-2">0</td>
                             <td class="text-right font-bold border-t pt-2">{{ stripeFeesTotal.toFixed(2) }}
                             </td>
                         </tr>
