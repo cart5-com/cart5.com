@@ -61,15 +61,19 @@ export const calculateCartItemTax = (
             // selected tax category
             if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
                 total += exclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
-            } else {
+            } else if (taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES') {
                 total += inclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
+            } else {
+                console.error('Invalid tax type', taxSettings.salesTaxType);
             }
         } else if (taxSettings.taxCategories?.[0]) {
             // default tax category
             if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
                 total += exclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
-            } else {
+            } else if (taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES') {
                 total += inclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
+            } else {
+                console.error('Invalid tax type', taxSettings.salesTaxType);
             }
         }
     }

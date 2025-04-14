@@ -31,7 +31,8 @@ import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
-import { calculateStripeFee, inclusiveRate, exclusiveRate } from "@lib/utils/rateCalc";
+import { BASE_LINKS } from "@web-astro/utils/links";
+import { slugify } from "@lib/utils/slugify";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -211,34 +212,6 @@ const deliveryFeeTax = computed(() => {
           </span>
         </div>
 
-
-
-        <div class="flex justify-between items-center px-1">
-          <span class="font-bold text-lg">
-            stripe rate
-          </span>
-          <span class="font-bold text-lg">
-            {{ calculateStripeFee(1000, 2.9, 0.30) }}
-          </span>
-        </div>
-
-        <div class="flex justify-between items-center px-1">
-          <span class="font-bold text-lg">
-            inclusive rate 100
-          </span>
-          <span class="font-bold text-lg">
-            {{ inclusiveRate(100, 20) }}
-          </span>
-        </div>
-        <div class="flex justify-between items-center px-1">
-          <span class="font-bold text-lg">
-            exclusive rate 100
-          </span>
-          <span class="font-bold text-lg">
-            {{ exclusiveRate(100, 20) }}
-          </span>
-        </div>
-
         <div class="flex justify-between items-center px-1"
              v-if="orderType === 'delivery'">
           <span class="">
@@ -258,6 +231,8 @@ const deliveryFeeTax = computed(() => {
         <div
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
           <Button variant="default"
+                  as="a"
+                  :href="BASE_LINKS.CHECKOUT(currentCart?.storeId!, slugify(currentCart?.storeName!), orderType)"
                   class="w-full">
             Checkout
           </Button>
