@@ -88,7 +88,7 @@ const bestDeliveryZone = computed(() => {
 })
 
 const subTotal = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return 0;
+    if (!currentCart.value || !menuRoot.value) return { total: 0, tax: 0 };
     return calculateSubTotal(
         currentCart.value, menuRoot.value, taxSettings, orderType,
         {

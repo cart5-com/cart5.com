@@ -47,10 +47,9 @@ export const calculateSubTotal = (
         }
     } else {
         console.error('Invalid tax settings')
-        return {
-            total: 0,
-            tax: 0
-        };
     }
-
+    return {
+        total: 0,
+        tax: 0
+    };
 }
