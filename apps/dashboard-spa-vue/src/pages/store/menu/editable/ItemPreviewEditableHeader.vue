@@ -39,6 +39,11 @@ defineProps<{
 
         <InputInline type="number"
                      placeholder="Price:"
+                     @update:modelValue="(val: any) => {
+                        if (val === '' && currentItem) {
+                            currentItem.prc = undefined;
+                        }
+                    }"
                      v-model="currentItem.prc">
             <template #trigger>
                 <div class="cursor-text flex">
@@ -50,8 +55,14 @@ defineProps<{
                          :open="currentItem.pickupPrc !== undefined">
                     <summary class="text-sm font-medium">custom pickup price</summary>
                     <div class="mt-2">
+                        currentItem.pickupPrc:{{ currentItem.pickupPrc }}
                         <Input v-model="currentItem.pickupPrc"
                                type="number"
+                               @update:modelValue="(val: any) => {
+                                if (val === '' && currentItem) {
+                                    currentItem.pickupPrc = undefined;
+                                }
+                            }"
                                placeholder="Pickup Price:" />
                         <p class="text-xs">
                             If no pickup price is set, the price({{ currentItem.prc }}) will be used for both delivery
