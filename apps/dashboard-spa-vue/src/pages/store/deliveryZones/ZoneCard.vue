@@ -103,9 +103,6 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                            v-model="zone.deliveryFee"
                                            placeholder="0.00" />
                                     <p class="text-xs">
-                                        Enter a fee without tax.
-                                        <br />
-                                        <br />
                                         You can set a tax rate for the Delivery Fee in the "Sidemenu" -> "Tax
                                         Settings" -> "Tax Rate for Delivery fees(%)"
                                     </p>
@@ -115,17 +112,14 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                     <Label for="deliveryFeePerKm">Delivery Fee per KM
                                         <Bird class="inline-block" />
                                     </Label>
+                                    <p class="text-xs">
+                                        This is the delivery fee per kilometer as the crow flies.
+                                    </p>
                                     <Input id="deliveryFeePerKm"
                                            type="number"
                                            v-model="zone.deliveryFeePerKm"
                                            placeholder="0.00" />
                                     <p class="text-xs">
-                                        This is the delivery fee per kilometer as the crow flies.
-                                        <br />
-                                        <br />
-                                        Enter a fee without tax.
-                                        <br />
-                                        <br />
                                         You can set a tax rate for the Delivery Fee per KM in the "Sidemenu" -> "Tax
                                         Settings" -> "Tax Rate for Delivery fees(%)"
                                     </p>
