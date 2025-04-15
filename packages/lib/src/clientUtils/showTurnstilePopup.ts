@@ -13,7 +13,7 @@ const DEFAULT_HEIGHT = 600;
 
 const FIREFOX_EMPTY_URL = 'http://localhost';
 
-
+// TODO: check when auth domain user expired, but other website users are still logged in.
 export const showTurnstilePopup = async (url: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         const width = DEFAULT_WIDTH;
