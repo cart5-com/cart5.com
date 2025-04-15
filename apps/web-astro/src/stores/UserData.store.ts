@@ -175,6 +175,9 @@ const loadUserData = async () => {
         if (isAfterLogin && typeof window !== 'undefined') {
             history.replaceState(null, '', window.location.pathname + window.location.search);
         }
+        // TODO: another tab may login without sync for this tab.
+        // if there is a userdata from server, check localstorage for anon userdata to detect merge if required.
+        // this case, dashboard login with another tab, caused an empty cart 
         if (isAfterLogin) {
             userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
             userDataStore.value.user = data.user;

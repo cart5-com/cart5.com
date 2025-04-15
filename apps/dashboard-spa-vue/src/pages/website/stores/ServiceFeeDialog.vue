@@ -47,7 +47,9 @@ const feePerOrder = ref(props.overrideFee?.feePerOrder ?? 0);
                     <span class="text-muted-foreground">
                         Note: If you leave the fee fields empty or zero,
                         <br>
-                        it will still override the default values
+                        it will still override the default values with zero.
+                        <br>
+                        if required, use 'Remove custom and use default values' button
                     </span>
                 </DialogDescription>
             </DialogHeader>

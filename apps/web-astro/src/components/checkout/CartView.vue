@@ -51,6 +51,7 @@ import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
 const tolerableServiceFeeRate = 15;
 const offerDiscountIfPossible = true;
+
 const isStripe = ref(false);
 
 const platformServiceFee: ServiceFee | null = {

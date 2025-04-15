@@ -559,10 +559,7 @@ export const getWebsiteTeamServiceFee_Service = async (
             overrideMarketplaceFee: true,
         }
     });
-    if (websiteStore?.overrideMarketplaceFee) {
-        return websiteStore.overrideMarketplaceFee;
-    }
-    return defaultMarketplaceFee;
+    return websiteStore?.overrideMarketplaceFee || defaultMarketplaceFee || null;
 }
 
 export const getSupportTeamServiceFee_Service = async (storeId: string) => {

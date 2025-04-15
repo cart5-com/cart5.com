@@ -13,14 +13,16 @@ if (!storeId) {
 	throw new Error("Store ID is required");
 }
 
-const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
-const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
-	Astro.locals.WEBSITE?.id ?? "",
-	storeId,
-	Astro.locals.WEBSITE?.defaultMarketplaceFee ?? null
-);
+const [supportTeamServiceFee, websiteTeamServiceFee, store] = await Promise.all([
+	getSupportTeamServiceFee_Service(storeId),
+	getWebsiteTeamServiceFee_Service(
+		Astro.locals.WEBSITE?.id ?? "",
+		storeId,
+		Astro.locals.WEBSITE?.defaultMarketplaceFee ?? null
+	),
+	getStoreData_CacheJSON(storeId)
+]);
 
-const store = await getStoreData_CacheJSON(storeId);
 if (!store) {
 	return new Response(null, { status: 404 });
 }
