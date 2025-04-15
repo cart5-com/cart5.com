@@ -275,6 +275,16 @@ const removeTaxCategory = (index: number) => {
                     <Input v-model="taxSettings.taxRateForServiceFees!"
                            type="number"
                            step="1" />
+                    <!-- <p class="text-xs text-muted-foreground">
+                        This tax rate will be used to calculate the tax on platform service fee, support partner service
+                        fees and marketing partner service fees.
+                        <br />
+                        <br />
+                        <span class="font-bold">
+                            Note:
+                        </span>
+                        apply the tax rate that you pay to other businesses in your jurisdiction.
+                    </p> -->
                 </div>
 
                 <Button @click="saveTaxSettings"
