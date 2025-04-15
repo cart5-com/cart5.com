@@ -271,7 +271,7 @@ const saveChanges = async () => {
                         <!-- Empty state -->
                         <div v-if="supportedStores.length === 0"
                              class="p-8 text-center text-muted-foreground">
-                            No stores found. Try adjusting your search.
+                            No stores found that you are supporting as a support partner.
                         </div>
                     </div>
 

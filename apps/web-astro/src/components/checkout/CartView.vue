@@ -419,11 +419,7 @@ const deliveryFeeTax = computed(() => {
                         {{ storeReceivesTotal }}
                     </span>
                 </div>
-
-
-
             </div>
         </div>
-
     </div>
 </template>
