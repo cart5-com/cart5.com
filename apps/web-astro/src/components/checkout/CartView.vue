@@ -36,7 +36,7 @@ import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
-import type { ServiceFee } from "@lib/zod/serviceFee";
+import type { ServiceFee, CALCULATION_TYPE } from "@lib/zod/serviceFee";
 import {
     calculateAllServiceFees,
     tolerableServiceFee,
@@ -49,7 +49,8 @@ import { calculateStripeFee } from "@lib/utils/rateCalc";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
 // TODO: get them from store data
-const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
+// type is "ADD" | "INCLUDE"
+const calculationType: (typeof CALCULATION_TYPE)[number] = "INCLUDE";
 const tolerableServiceFeeRate = 0;
 const offerDiscountIfPossible = true;
 
