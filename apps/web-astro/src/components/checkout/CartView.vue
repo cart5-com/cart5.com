@@ -243,9 +243,16 @@ const deliveryFeeTax = computed(() => {
                     <span class="font-bold text-lg">
                         Subtotal
                     </span>
-                    <span class="font-bold text-lg">
+                    <span class="font-bold text-lg text-right">
+                        <details>
+                            <summary>
+                                tax
+                            </summary>
+                            <p>
+                                {{ subTotal.tax }}
+                            </p>
+                        </details>
                         {{ subTotal.total }}
-                        (tax:{{ subTotal.tax }})
                     </span>
                 </div>
 
