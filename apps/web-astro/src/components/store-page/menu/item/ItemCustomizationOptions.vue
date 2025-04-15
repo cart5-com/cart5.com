@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useVModel } from '@vueuse/core'
-import { type CartChildrenItemState, type ItemId } from "@lib/zod/menuRootSchema";
+import { type ItemId } from "@lib/zod/menuRootSchema";
+import { type CartChildrenItemState } from "@lib/zod/cartItemState";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { computed, onMounted } from 'vue';
 import {

@@ -1,7 +1,7 @@
 id,title,type,price,description,is-sold-out,children,default-quantity,price-as-option,max,min,charge-above,refund-below
-item-1,Meat and Chips,item,12.65,"Served with salad, pitta, and any sauce. Add rice for £2, add cheese for £1.5, and add shashlik for £2.5.",,"customization-1,customization-2,customization-3",,,,,,
-item-2,Doner Kebab,item,9.89,"Served with salad, pitta, and any sauce. Add rice for £2, add cheese for £1.5, and add shashlik for £2.5.",,"customization-4,customization-3,customization-2,customization-1,customization-5",,,,,,
-item-3,Cheese and Chips,item,6.05,,,customization-6,,,,,,
+item-1,Meat and Chips,item,10.00,"Served with salad, pitta, and any sauce. Add rice for £2, add cheese for £1.5, and add shashlik for £2.5.",,"customization-1,customization-2,customization-3",,,,,,
+item-2,Doner Kebab,item,10.00,"Served with salad, pitta, and any sauce. Add rice for £2, add cheese for £1.5, and add shashlik for £2.5.",,"customization-4,customization-3,customization-2,customization-1,customization-5",,,,,,
+item-3,Cheese and Chips,item,10.00,,,customization-6,,,,,,
 item-4,Doner Wraps,item,10.89,,,"customization-3,customization-2",,,,,,
 item-5,Chicken Shish Wrap,item,11.99,,,"customization-3,customization-2",,,,,,
 item-6,Chicken Shish,item,11.99,"Served with salad, pitta, and any sauce. Add rice for £2, add cheese for £1.5, and add shashlik for £2.5.",,"customization-4,customization-3,customization-2,customization-1,customization-5",,,,,,

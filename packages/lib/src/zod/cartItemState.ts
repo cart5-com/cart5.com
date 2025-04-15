@@ -33,7 +33,12 @@ export const cartChildrenItemStateSchema: z.ZodType<CartChildrenItemStateType> =
 export const cartItemSchema = z.object({
     itemId: z.string().optional(),
     quantity: z.number().optional(),
-    childrenState: z.array(cartChildrenItemStateSchema).optional(),
+    childrenState: z.array(
+        z.union([
+            cartChildrenItemStateSchema,
+            z.null()
+        ])
+    ).optional(),
 });
 
 export type CartChildrenItemState = z.infer<typeof cartChildrenItemStateSchema>;

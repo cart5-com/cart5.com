@@ -1,7 +1,7 @@
 id,title,type,price,description,is-sold-out,children,default-quantity,price-as-option,max,min,charge-above,refund-below
-item-1,Med Fries [350.0 Cals],item,5.59,,,customization-1,,,,,,
-item-2,Big Mac Extra Value Meal [710-1140 Cals],item,15.99,,,"customization-3,customization-5,customization-56,customization-57",,,,,,
-item-3,10 Chicken McNuggets [490-630 Cals],item,12.39,,,customization-58,,,,,,
+item-1,Med Fries [350.0 Cals],item,10.00,,,customization-1,,,,,,
+item-2,Big Mac Extra Value Meal [710-1140 Cals],item,10.00,,,"customization-3,customization-5,customization-56,customization-57",,,,,,
+item-3,10 Chicken McNuggets [490-630 Cals],item,10.00,,,customization-58,,,,,,
 item-4,Regular Oreo McFlurry [570.0 Cals],item,5.99,,,customization-59,,,,,,
 item-5,Cheeseburger [290.0 Cals],item,3.99,,,"customization-62,customization-63",,,,,,
 item-6,Double Cheeseburger [420.0 Cals],item,5.49,,,"customization-64,customization-63",,,,,,

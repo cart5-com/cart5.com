@@ -107,7 +107,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                                                         unlink(index)
                                                     }"
                                                       :is-draggable="true"
-                                                      v-model="cartItem.childrenState[index]" />
+                                                      v-model="cartItem.childrenState[index]!" />
                     </template>
                 </draggable>
             </div>

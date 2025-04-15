@@ -1,8 +1,7 @@
 import type {
-    CartChildrenItemState,
-    CartItem,
     MenuRoot
 } from "@lib/zod/menuRootSchema";
+import { type CartChildrenItemState, type CartItem } from "@lib/zod/cartItemState";
 
 export const recursiveCartChildrenItemSummary = (
     customizationState: CartChildrenItemState,

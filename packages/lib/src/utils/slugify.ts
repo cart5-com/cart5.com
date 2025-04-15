@@ -5,6 +5,7 @@
  * @returns The slugified text
  */
 export const slugify = (text: string): string => {
+    if (!text) return "";
     return text
         .toString()
         .toLowerCase()

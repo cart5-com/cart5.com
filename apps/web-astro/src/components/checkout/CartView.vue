@@ -34,6 +34,48 @@ import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
+import type { ServiceFee } from "@lib/zod/serviceFee";
+import { calculateServiceFeeWithTax, allowedServiceFeeAmountIfIncluded, serviceFeeAmountNeedToPayByBuyer } from "@lib/utils/calculateServiceFee";
+
+const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
+const includedServiceFeeRate = 4;
+const offerDiscountIfPossible = false;
+
+const platformServiceFee: ServiceFee = {
+    ratePerOrder: 1,
+    feePerOrder: 0,
+};
+const supportPartnerServiceFee: ServiceFee = {
+    ratePerOrder: 2,
+    feePerOrder: 0,
+};
+const marketingPartnerServiceFee: ServiceFee = {
+    ratePerOrder: 3,
+    feePerOrder: 0,
+};
+
+const serviceFeeResult = computed(() => {
+    return calculateServiceFeeWithTax(
+        subTotal.value.total,
+        [
+            platformServiceFee,
+            supportPartnerServiceFee,
+            marketingPartnerServiceFee
+        ],
+        taxSettings.taxRateForServiceFees ?? 0
+    )
+})
+
+const allowedServiceFeeAmount = computed(() => {
+    return allowedServiceFeeAmountIfIncluded(subTotal.value.total, includedServiceFeeRate, calculationType)
+})
+
+const serviceFeeAmountForBuyer = computed(() => {
+    return serviceFeeAmountNeedToPayByBuyer(
+        serviceFeeResult.value.serviceFeeAmountTotal,
+        allowedServiceFeeAmount.value
+    )
+})
 
 const currentCart = computed(() => {
     return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -256,6 +298,32 @@ const deliveryFeeTax = computed(() => {
                     </span>
                 </div>
 
+                <div class="flex justify-between items-center px-1 border-b border-muted-foreground">
+                    <span class="font-bold text-lg">
+                        Service Fee
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ serviceFeeResult }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <span class="font-bold text-lg">
+                        Allowed Service Fee
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ allowedServiceFeeAmount }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <span class="font-bold text-lg">
+                        Service Fee for Buyer
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ serviceFeeAmountForBuyer }}
+                    </span>
+                </div>
 
             </div>
         </div>
