@@ -20,7 +20,7 @@ import { roundTo2Decimals } from "./roundTo2Decimals";
 //     feePerOrder: 0,
 // };
 // serviceFee: ServiceFee,
-export const calculateServiceFeeWithTax = (
+export const calculateAllServiceFees = (
     subTotal: number, // includes tax
     serviceFeeArray: ServiceFee[],
     taxRateForServiceFees: number
@@ -37,8 +37,8 @@ export const calculateServiceFeeWithTax = (
         (serviceFee.feePerOrder ?? 0)
     const tax = inclusiveRate(serviceFeeAmount, taxRateForServiceFees)
     return {
-        serviceFeeAmountTotal: roundTo2Decimals(serviceFeeAmount),
-        serviceFeeAmountWithoutTax: roundTo2Decimals(serviceFeeAmount - tax),
+        totalWithTax: roundTo2Decimals(serviceFeeAmount),
+        itemTotal: roundTo2Decimals(serviceFeeAmount - tax),
         tax: roundTo2Decimals(tax)
     }
 }
@@ -113,3 +113,12 @@ export const buyerPays = (
         }
     }
 }
+
+
+// export const storeReceives = (
+//     buyerPays: {
+//         totalWithTax: number,// tax included
+//         tax: number,
+//     },
+//     serviceFee: {
+// )

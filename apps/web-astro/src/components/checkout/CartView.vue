@@ -36,7 +36,7 @@ import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee } from "@lib/zod/serviceFee";
 import {
-    calculateServiceFeeWithTax,
+    calculateAllServiceFees,
     tolerableServiceFee,
     serviceFeeAmountNeedToPayByBuyer,
     calculateDiscount,
@@ -61,7 +61,7 @@ const marketingPartnerServiceFee: ServiceFee = {
 };
 
 const serviceFeeResult = computed(() => {
-    return calculateServiceFeeWithTax(
+    return calculateAllServiceFees(
         subTotal.value.total,
         [
             platformServiceFee,
@@ -77,12 +77,12 @@ const tolerableServiceFeeAmount = computed(() => {
 })
 
 const discountAmount = computed(() => {
-    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeResult.value.serviceFeeAmountTotal)
+    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeResult.value.totalWithTax)
 })
 
 const serviceFeeAmountForBuyer = computed(() => {
     return serviceFeeAmountNeedToPayByBuyer(
-        serviceFeeResult.value.serviceFeeAmountTotal,
+        serviceFeeResult.value.totalWithTax,
         tolerableServiceFeeAmount.value,
         taxSettings.taxRateForServiceFees ?? 0
     )
