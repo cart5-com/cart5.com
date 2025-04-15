@@ -40,11 +40,12 @@ import {
     tolerableServiceFee,
     serviceFeeAmountNeedToPayByBuyer,
     calculateDiscount,
-    buyerPays
+    buyerPays,
+    storeReceives
 } from "@lib/utils/calculateServiceFee";
 
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-const tolerableServiceFeeRate = 30;
+const tolerableServiceFeeRate = 15;
 const offerDiscountIfPossible = true;
 
 const platformServiceFee: ServiceFee = {
@@ -97,6 +98,13 @@ const buyerPaysTotal = computed(() => {
         subTotal.value,
         serviceFeeAmountForBuyer.value,
         discountAmount.value
+    )
+})
+
+const storeReceivesTotal = computed(() => {
+    return storeReceives(
+        buyerPaysTotal.value,
+        serviceFeeForThisOrder.value
     )
 })
 
@@ -369,6 +377,17 @@ const deliveryFeeTax = computed(() => {
                         {{ serviceFeeForThisOrder }}
                     </span>
                 </div>
+
+                <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
+                    <span class="font-bold text-lg">
+                        Store Receives
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ storeReceivesTotal }}
+                    </span>
+                </div>
+
+
 
             </div>
         </div>

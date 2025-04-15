@@ -116,10 +116,18 @@ export const buyerPays = (
 }
 
 
-// export const storeReceives = (
-//     buyerPays: {
-//         totalWithTax: number,// tax included
-//         tax: number,
-//     },
-//     serviceFee: {
-// )
+export const storeReceives = (
+    buyerPays: {
+        totalWithTax: number,// tax included
+        tax: number,
+    },
+    serviceFeeForThisOrder: {
+        totalWithTax: number,// tax included
+        tax: number,
+    }
+) => {
+    return {
+        totalWithTax: roundTo2Decimals(buyerPays.totalWithTax - serviceFeeForThisOrder.totalWithTax),
+        tax: roundTo2Decimals(buyerPays.tax - serviceFeeForThisOrder.tax)
+    }
+}
