@@ -49,7 +49,7 @@ import { calculateStripeFee } from "@lib/utils/rateCalc";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-const tolerableServiceFeeRate = 0;
+const tolerableServiceFeeRate = 15;
 const offerDiscountIfPossible = true;
 const isStripe = ref(false);
 
@@ -62,7 +62,7 @@ const supportPartnerServiceFee: ServiceFee = {
     feePerOrder: 0,
 };
 const marketingPartnerServiceFee: ServiceFee = {
-    ratePerOrder: 13,
+    ratePerOrder: 5,
     feePerOrder: 0,
 };
 
