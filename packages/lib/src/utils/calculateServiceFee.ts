@@ -90,17 +90,18 @@ export const calculateDiscount = (
 
 export const buyerPays = (
     subTotal: {
-        total: number,// tax included
+        totalWithTax: number,// tax included
         tax: number,
     },
     serviceFeeNeedToPayByBuyer: {
-        total: number,// tax included
+        totalWithTax: number,// tax included
         tax: number,
     },
     discount: number,
 ) => {
     const totalTax = subTotal.tax + serviceFeeNeedToPayByBuyer.tax;
-    const buyerPaysTotal = roundTo2Decimals(subTotal.total + serviceFeeNeedToPayByBuyer.total - discount)
+    const buyerPaysTotal = roundTo2Decimals(subTotal.totalWithTax + serviceFeeNeedToPayByBuyer.totalWithTax - discount)
+    // never apply discount to tax
     if (totalTax > buyerPaysTotal) {
         return {
             tax: totalTax,

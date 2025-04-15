@@ -37,7 +37,7 @@ export const calculateSubTotal = (
     if (!taxSettings) {
         console.error('No tax settings found')
         return {
-            total: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0)),
+            totalWithTax: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0)),
             tax: 0
         }
     }
@@ -45,21 +45,21 @@ export const calculateSubTotal = (
     if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
         // SUM (ITEMS PRICES + ITEMS TAXES + DELIVERY + DELIVERY TAXES)
         return {
-            total: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0) +
+            totalWithTax: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0) +
                 cartTotalValues.tax + deliveryFeeTax),
             tax: roundTo2Decimals(deliveryFeeTax + cartTotalValues.tax)
         }
     } else if (taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES') {
         // SUM (ITEMS PRICES + DELIVERY FEE)
         return {
-            total: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0)),
+            totalWithTax: roundTo2Decimals(cartTotalValues.totalPrice + (bestDeliveryZone?.totalDeliveryFee ?? 0)),
             tax: roundTo2Decimals(deliveryFeeTax + cartTotalValues.tax)
         }
     } else {
         console.error('Invalid tax settings')
     }
     return {
-        total: 0,
+        totalWithTax: 0,
         tax: 0
     };
 }

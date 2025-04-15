@@ -60,9 +60,9 @@ const marketingPartnerServiceFee: ServiceFee = {
     feePerOrder: 0,
 };
 
-const serviceFeeResult = computed(() => {
+const serviceFeeForThisOrder = computed(() => {
     return calculateAllServiceFees(
-        subTotal.value.total,
+        subTotal.value.totalWithTax,
         [
             platformServiceFee,
             supportPartnerServiceFee,
@@ -73,16 +73,16 @@ const serviceFeeResult = computed(() => {
 })
 
 const tolerableServiceFeeAmount = computed(() => {
-    return tolerableServiceFee(subTotal.value.total, tolerableServiceFeeRate, calculationType)
+    return tolerableServiceFee(subTotal.value.totalWithTax, tolerableServiceFeeRate, calculationType)
 })
 
 const discountAmount = computed(() => {
-    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeResult.value.totalWithTax)
+    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeForThisOrder.value.totalWithTax)
 })
 
 const serviceFeeAmountForBuyer = computed(() => {
     return serviceFeeAmountNeedToPayByBuyer(
-        serviceFeeResult.value.totalWithTax,
+        serviceFeeForThisOrder.value.totalWithTax,
         tolerableServiceFeeAmount.value,
         taxSettings.taxRateForServiceFees ?? 0
     )
@@ -95,10 +95,7 @@ const currentCart = computed(() => {
 const buyerPaysTotal = computed(() => {
     return buyerPays(
         subTotal.value,
-        {
-            total: serviceFeeAmountForBuyer.value.totalWithTax,
-            tax: serviceFeeAmountForBuyer.value.tax
-        },
+        serviceFeeAmountForBuyer.value,
         discountAmount.value
     )
 })
@@ -152,7 +149,7 @@ const bestDeliveryZone = computed(() => {
 })
 
 const subTotal = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { total: 0, tax: 0 };
+    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0 };
     return calculateSubTotal(
         currentCart.value, menuRoot.value, taxSettings, orderType,
         {
@@ -316,7 +313,7 @@ const deliveryFeeTax = computed(() => {
                                 {{ subTotal.tax }}
                             </p>
                         </details>
-                        {{ subTotal.total }}
+                        {{ subTotal.totalWithTax }}
                     </span>
                 </div>
 
@@ -369,7 +366,7 @@ const deliveryFeeTax = computed(() => {
                         Service Fee
                     </span>
                     <span class="font-bold text-lg">
-                        {{ serviceFeeResult }}
+                        {{ serviceFeeForThisOrder }}
                     </span>
                 </div>
 
