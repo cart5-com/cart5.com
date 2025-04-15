@@ -15,6 +15,7 @@ import { TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
+import { CustomServiceFeeSchema, type CustomServiceFee, CALCULATION_TYPE } from "@lib/zod/serviceFee";
 
 /// STORE TABLE START
 export const storeTable = sqliteTable("store", {
@@ -120,20 +121,42 @@ export const updateStoreOpenHoursSchema = createUpdateSchema(storeOpenHoursTable
 export const storeMenuTable = sqliteTable('store_menu', {
 	storeId: text("store_id").notNull().unique(),
 	menuRoot: text('menu_root', { mode: 'json' }).$type<MenuRoot>(),
-	calculationType: text('calculation_type', { enum: ['INCLUDE', 'ADD'] }),
-	includedServiceFeeRate: real('included_service_fee_rate'),
-	offerDiscountIfPossible: integer("offer_discount_if_possible", { mode: "boolean" }).notNull().default(false),
 });
 export const selectStoreMenuSchema = createSelectSchema(storeMenuTable);
 export const insertStoreMenuSchema = createInsertSchema(storeMenuTable, {
 	menuRoot: MenuRootSchema.nullable(),
-	includedServiceFeeRate: z.number().min(0).max(100).nullable(),
 });
 export const updateStoreMenuSchema = createUpdateSchema(storeMenuTable, {
 	menuRoot: MenuRootSchema.nullable(),
-	includedServiceFeeRate: z.number().min(0).max(100).nullable(),
 });
 /// STORE MENU TABLE END
+
+
+
+
+
+
+
+
+
+/// STORE SERVICE FEES TABLE START
+export const storeServiceFeesTable = sqliteTable('store_service_fees', {
+	storeId: text("store_id").notNull().unique(),
+	calculationType: text('calculation_type', { enum: CALCULATION_TYPE }),
+	tolerableServiceFeeRate: real('tolerable_service_fee_rate'),
+	offerDiscountIfPossible: integer("offer_discount_if_possible", { mode: "boolean" }).notNull().default(false),
+	customServiceFees: text('custom_service_fees', { mode: 'json' }).$type<CustomServiceFee[]>().$defaultFn(() => []),
+});
+export const selectStoreServiceFeesSchema = createSelectSchema(storeServiceFeesTable);
+export const insertStoreServiceFeesSchema = createInsertSchema(storeServiceFeesTable, {
+	tolerableServiceFeeRate: z.number().min(0).max(100).nullable(),
+	customServiceFees: z.array(CustomServiceFeeSchema).default([]),
+});
+export const updateStoreServiceFeesSchema = createUpdateSchema(storeServiceFeesTable, {
+	tolerableServiceFeeRate: z.number().min(0).max(100).nullable(),
+	customServiceFees: z.array(CustomServiceFeeSchema).default([]),
+});
+/// STORE SERVICE FEES TABLE END
 
 
 
@@ -237,6 +260,12 @@ export const storeRelations = relations(storeTable, ({
 			storeMenuTable, {
 			fields: [storeTable.id],
 			references: [storeMenuTable.storeId]
+		}),
+	serviceFees:
+		one(
+			storeServiceFeesTable, {
+			fields: [storeTable.id],
+			references: [storeServiceFeesTable.storeId]
 		}),
 	paymentMethods:
 		one(

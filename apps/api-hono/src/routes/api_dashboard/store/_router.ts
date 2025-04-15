@@ -25,6 +25,8 @@ import { cancelStoreTeamInvitation_SchemaValidator, cancelStoreTeamInvitation_Ha
 import { transferStoreTeamOwnership_SchemaValidator, transferStoreTeamOwnership_Handler } from "./team/team_transfer_ownership.controller";
 import { removeStoreTeamMember_SchemaValidator, removeStoreTeamMember_Handler } from "./team/team_remove_member.controller";
 import { updateStoreTeamMemberPermissions_SchemaValidator, updateStoreTeamMemberPermissions_Handler } from "./team/team_update_permissions.controller";
+import { getStoreServiceFees_Handler, getStoreServiceFees_SchemaValidator } from "./service_fees/service_fees_get.controller";
+import { updateStoreServiceFees_Handler, updateStoreServiceFees_SchemaValidator } from "./service_fees/service_fees_update.controller";
 
 export const storeRouter = new Hono<HonoVariables>()
     .get(
@@ -162,6 +164,22 @@ export const storeRouter = new Hono<HonoVariables>()
         ]),
         updateStoreMenu_SchemaValidator,
         updateStoreMenu_Handler
+    )
+    .post('/:storeId/service_fees/get',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER
+        ]),
+        getStoreServiceFees_SchemaValidator,
+        getStoreServiceFees_Handler
+    )
+    .patch('/:storeId/service_fees/update',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER
+        ]),
+        updateStoreServiceFees_SchemaValidator,
+        updateStoreServiceFees_Handler
     )
     .post('/:storeId/payment_methods/get',
         createAdminCheckStore([

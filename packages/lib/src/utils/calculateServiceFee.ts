@@ -2,23 +2,6 @@ import type { ServiceFee } from "@lib/zod/serviceFee";
 import { exclusiveRate, inclusiveRate } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 
-
-// const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-// const includedServiceFeeRate = 10;
-// const offerDiscountIfPossible = false;
-// const platformServiceFee: ServiceFee = {
-//     ratePerOrder: 1,
-//     feePerOrder: 0,
-// };
-// const partnerServiceFee: ServiceFee = {
-//     ratePerOrder: 2,
-//     feePerOrder: 0,
-// };
-// const marketingPartner: ServiceFee = {
-//     ratePerOrder: 3,
-//     feePerOrder: 0,
-// };
-// serviceFee: ServiceFee,
 export const calculateAllServiceFees = (
     subTotal: number, // includes tax
     serviceFeeArray: (ServiceFee | null)[],

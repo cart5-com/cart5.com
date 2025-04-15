@@ -6,7 +6,8 @@ import {
     storeMenuTable,
     storePaymentMethodsTable,
     storeTaxSettingsTable,
-    storeDeliveryZoneMapTable
+    storeDeliveryZoneMapTable,
+    storeServiceFeesTable
 } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
@@ -183,6 +184,31 @@ export const updateStoreMenu_Service = async (
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeMenuTable.storeId,
+            set: data
+        });
+
+    await markStoreAsUpdated(storeId);
+    return result;
+}
+
+export const getStoreServiceFees_Service = async (
+    storeId: string,
+    columns?: Partial<Record<keyof typeof storeServiceFeesTable.$inferSelect, boolean>>
+) => {
+    return await db.query.storeServiceFeesTable.findFirst({
+        where: eq(storeServiceFeesTable.storeId, storeId),
+        columns: columns,
+    });
+}
+
+export const updateStoreServiceFees_Service = async (
+    storeId: string,
+    data: Partial<InferInsertModel<typeof storeServiceFeesTable>>
+) => {
+    const result = await db.insert(storeServiceFeesTable)
+        .values({ ...data, storeId: storeId })
+        .onConflictDoUpdate({
+            target: storeServiceFeesTable.storeId,
             set: data
         });
 
