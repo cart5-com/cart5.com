@@ -30,6 +30,8 @@ import { importMenuFromCSV } from "@lib/utils/menuImport";
 import { updateStoreMenu_Service } from "@db/services/store.service";
 import { fileURLToPath, URL } from 'node:url'
 import { getAsTaxSettings } from "@lib/utils/sales_tax_rates";
+import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
+
 const sampleMenuRoot1 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-1.csv", import.meta.url)), "utf8"));
 const sampleMenuRoot2 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-2.csv", import.meta.url)), "utf8"));
 
@@ -214,6 +216,75 @@ export const startSeed = async () => {
             menuRoot: Math.random() > 0.5 ? sampleMenuRoot1 : sampleMenuRoot2
         });
 
+        await updateStoreOpenHours_Service(store!.id, {
+            timezone: cfRaw.timezone,
+            defaultOpenHours: {
+                isActive: true,
+                days: {
+                    "0": {
+                        // Sunday closed
+                        isOpen24: false,
+                        hours: []
+                    },
+                    "1": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+                    "2": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+                    "3": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+                    "4": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+                    "5": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+                    "6": {
+                        isOpen24: false,
+                        hours: [
+                            {
+                                open: "09:00",
+                                close: "23:00"
+                            }
+                        ]
+                    },
+
+                }
+            }
+        })
+
         storesByThush.push(store);
     }
 
@@ -224,74 +295,6 @@ export const startSeed = async () => {
     await updateStoreMenu_Service(flamesStore!.id, {
         menuRoot: sampleMenuRoot2
     });
-    await updateStoreOpenHours_Service(flamesStore!.id, {
-        timezone: cfRaw.timezone,
-        defaultOpenHours: {
-            isActive: true,
-            days: {
-                "0": {
-                    // Sunday closed
-                    isOpen24: false,
-                    hours: []
-                },
-                "1": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-                "2": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-                "3": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-                "4": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-                "5": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-                "6": {
-                    isOpen24: false,
-                    hours: [
-                        {
-                            open: "09:00",
-                            close: "23:00"
-                        }
-                    ]
-                },
-
-            }
-        }
-    })
     // invite flames admin to Real Flames store
     const invitationForFlamesStoreAdminUserRes = await insertInvitation(
         flamesStoreAdminUser?.email!,
@@ -312,9 +315,11 @@ export const startSeed = async () => {
         flamesStore!.id
     );
 
-    // console.time("storeDataJsonCron");
-    // await listAndUploadAllUpdatedStores();
-    // console.timeEnd("storeDataJsonCron");
+    console.time("storeDataJsonCron");
+    for (const store of storesByThush) {
+        await getStoreData_CacheJSON(store!.id, true);
+    }
+    console.timeEnd("storeDataJsonCron");
 
 
     const nearbyStores = await getNearbyStores_Service(
