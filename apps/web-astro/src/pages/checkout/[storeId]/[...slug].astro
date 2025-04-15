@@ -5,6 +5,7 @@ import CartView from "@web-astro/components/checkout/CartView.vue";
 import StorePageAddressWidget from "@web-astro/components/store-page/StorePageAddressWidget.vue";
 import { buttonVariants } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
+import { getSupportTeamServiceFee_Service } from "@db/services/website.service";
 
 const { slug, storeId } = Astro.params;
 const orderType: OrderType = Astro.url.searchParams.get("order-type") === "pickup" ? "pickup" : "delivery";
@@ -12,6 +13,7 @@ if (!storeId) {
 	throw new Error("Store ID is required");
 }
 
+const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
 const store = await getStoreData_CacheJSON(storeId);
 if (!store) {
 	return new Response(null, { status: 404 });
@@ -33,11 +35,13 @@ if (!store.menu?.menuRoot) {
 		is:inline
 		define:vars={{
 			storeData: store,
-			orderType: orderType
+			orderType: orderType,
+			supportTeamServiceFee: supportTeamServiceFee
 		}}
 	>
 		window.storeData = storeData;
 		window.orderType = orderType;
+		window.supportTeamServiceFee = supportTeamServiceFee;
 	</script>
 	<h2>{store.name}</h2>
 

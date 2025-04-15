@@ -63,6 +63,8 @@ export const websiteStoreMapTable = sqliteTable("website_store_map", {
 
 
 // partner website can override support fees for stores
+// we do not use this table like we used to, we use the websiteStoreMapTable instead
+// partnerStoreMapTable is only used for overriding service fees for stores
 export const partnerStoreMapTable = sqliteTable("partner_store_map", {
     websiteId: text("website_id").notNull(),
     storeId: text("store_id").notNull(),

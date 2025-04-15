@@ -5,7 +5,7 @@ import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from './team.service';
 import { teamUserMapTable } from '@db/schema/team.schema';
 import { storeTable, storeAddressTable } from '@db/schema/store.schema';
-import { getAllStoresThatUserHasAccessTo } from './store.service';
+import { getAllStoresThatUserHasAccessTo, getStore_Service } from './store.service';
 import type { ServiceFee } from '@lib/zod/serviceFee';
 
 export const getWebsite_Service = async (
@@ -317,16 +317,23 @@ export const upsertSupportedStore_Service = async (
     overridePartnerFee?: ServiceFee
 ) => {
     try {
-        await db.insert(partnerStoreMapTable).values({
-            websiteId,
-            storeId,
-            overridePartnerFee
-        }).onConflictDoUpdate({
-            target: [partnerStoreMapTable.websiteId, partnerStoreMapTable.storeId],
-            set: {
-                overridePartnerFee: overridePartnerFee || null
-            }
-        });
+        if (!overridePartnerFee) {
+            await db.delete(partnerStoreMapTable).where(and(
+                eq(partnerStoreMapTable.websiteId, websiteId),
+                eq(partnerStoreMapTable.storeId, storeId)
+            ));
+        } else {
+            await db.insert(partnerStoreMapTable).values({
+                websiteId,
+                storeId,
+                overridePartnerFee
+            }).onConflictDoUpdate({
+                target: [partnerStoreMapTable.websiteId, partnerStoreMapTable.storeId],
+                set: {
+                    overridePartnerFee: overridePartnerFee || null
+                }
+            });
+        }
         return true;
     } catch (error) {
         // Record likely already exists
@@ -536,6 +543,32 @@ export const getWebsiteByOwnerTeamId_Service = async (ownerTeamId: string) => {
             defaultHostname: true,
         }
     });
+}
+
+export const getSupportTeamServiceFee_Service = async (storeId: string) => {
+    const storeData = await getStore_Service(storeId, { supportTeamId: true });
+    const website = await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.ownerTeamId, storeData?.supportTeamId ?? ""),
+        columns: {
+            id: true,
+            name: true,
+            defaultHostname: true,
+            defaultPartnerFee: true,
+        }
+    });
+    //override from partnerStoreMapTable if exists
+    const partnerStore = await db.query.partnerStoreMapTable.findFirst({
+        where: and(
+            eq(partnerStoreMapTable.websiteId, website?.id ?? ''),
+            eq(partnerStoreMapTable.storeId, storeId)
+        ),
+        columns: {
+            overridePartnerFee: true,
+        }
+    });
+
+    // ...website,
+    return partnerStore?.overridePartnerFee || website?.defaultPartnerFee || null;
 }
 
 // if count is 1 return the store id

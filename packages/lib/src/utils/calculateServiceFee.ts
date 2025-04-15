@@ -21,7 +21,7 @@ import { roundTo2Decimals } from "./roundTo2Decimals";
 // serviceFee: ServiceFee,
 export const calculateAllServiceFees = (
     subTotal: number, // includes tax
-    serviceFeeArray: ServiceFee[],
+    serviceFeeArray: (ServiceFee | null)[],
     taxRateForServiceFees: number
 ) => {
     let serviceFee: ServiceFee = {
@@ -29,8 +29,10 @@ export const calculateAllServiceFees = (
         feePerOrder: 0
     }
     serviceFeeArray.forEach(fee => {
-        serviceFee.ratePerOrder! += fee.ratePerOrder ?? 0
-        serviceFee.feePerOrder! += fee.feePerOrder ?? 0
+        if (fee) {
+            serviceFee.ratePerOrder! += fee.ratePerOrder ?? 0
+            serviceFee.feePerOrder! += fee.feePerOrder ?? 0
+        }
     })
     const serviceFeeAmount = exclusiveRate(subTotal, serviceFee.ratePerOrder ?? 0) +
         (serviceFee.feePerOrder ?? 0)

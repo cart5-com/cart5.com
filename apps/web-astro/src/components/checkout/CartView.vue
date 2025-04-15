@@ -53,15 +53,14 @@ const tolerableServiceFeeRate = 15;
 const offerDiscountIfPossible = true;
 const isStripe = ref(false);
 
-const platformServiceFee: ServiceFee = {
+const platformServiceFee: ServiceFee | null = {
     ratePerOrder: 1,
     feePerOrder: 0,
 };
-const supportPartnerServiceFee: ServiceFee = {
-    ratePerOrder: 2,
-    feePerOrder: 0,
-};
-const marketingPartnerServiceFee: ServiceFee = {
+const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
+console.log("✅✅✅✅supportPartnerServiceFee");
+console.log(supportPartnerServiceFee);
+const marketingPartnerServiceFee: ServiceFee | null = {
     ratePerOrder: 5,
     feePerOrder: 0,
 };
