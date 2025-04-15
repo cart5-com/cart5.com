@@ -3,7 +3,6 @@ import { exclusiveRate, inclusiveRate } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 
 
-
 // const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
 // const includedServiceFeeRate = 10;
 // const offerDiscountIfPossible = false;
@@ -105,12 +104,12 @@ export const buyerPays = (
     if (totalTax > buyerPaysTotal) {
         return {
             tax: totalTax,
-            totalWithTax: totalTax
+            totalWithTax: roundTo2Decimals(totalTax),
         }
     } else {
         return {
             tax: totalTax,
-            totalWithTax: buyerPaysTotal
+            totalWithTax: roundTo2Decimals(buyerPaysTotal),
         }
     }
 }
@@ -128,6 +127,7 @@ export const storeReceives = (
 ) => {
     return {
         totalWithTax: roundTo2Decimals(buyerPays.totalWithTax - serviceFeeForThisOrder.totalWithTax),
-        tax: roundTo2Decimals(buyerPays.tax - serviceFeeForThisOrder.tax)
+        tax: roundTo2Decimals(buyerPays.tax - serviceFeeForThisOrder.tax),
+        afterTax: roundTo2Decimals(buyerPays.totalWithTax - buyerPays.tax)
     }
 }

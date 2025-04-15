@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { userDataStore } from "../../stores/UserData.store";
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
@@ -43,10 +45,13 @@ import {
     buyerPays,
     storeReceives
 } from "@lib/utils/calculateServiceFee";
+import { calculateStripeFee } from "@lib/utils/rateCalc";
+import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-const tolerableServiceFeeRate = 15;
+const tolerableServiceFeeRate = 0;
 const offerDiscountIfPossible = true;
+const isStripe = ref(false);
 
 const platformServiceFee: ServiceFee = {
     ratePerOrder: 1,
@@ -57,7 +62,7 @@ const supportPartnerServiceFee: ServiceFee = {
     feePerOrder: 0,
 };
 const marketingPartnerServiceFee: ServiceFee = {
-    ratePerOrder: 3,
+    ratePerOrder: 13,
     feePerOrder: 0,
 };
 
@@ -97,14 +102,25 @@ const buyerPaysTotal = computed(() => {
     return buyerPays(
         subTotal.value,
         serviceFeeAmountForBuyer.value,
-        discountAmount.value
+        discountAmount.value,
     )
+})
+
+const stripeFee = computed(() => {
+    return calculateStripeFee(buyerPaysTotal.value.totalWithTax)
+})
+
+const buyerPaysTotalWithStripe = computed(() => {
+    if (isStripe.value) {
+        return roundTo2Decimals(buyerPaysTotal.value.totalWithTax + stripeFee.value)
+    }
+    return buyerPaysTotal.value.totalWithTax;
 })
 
 const storeReceivesTotal = computed(() => {
     return storeReceives(
         buyerPaysTotal.value,
-        serviceFeeForThisOrder.value
+        serviceFeeForThisOrder.value,
     )
 })
 
@@ -361,11 +377,28 @@ const deliveryFeeTax = computed(() => {
                 </div>
 
                 <div class="flex justify-between items-center px-1">
+                    <Label class="text-right">
+                        Stripe ({{ isStripe ? `enabled ${stripeFee}` : "disabled" }})
+                    </Label>
+                    <Switch :checked="isStripe"
+                            @update:checked="(checked) => isStripe = checked"
+                            class="scale-125">
+                    </Switch>
+                </div>
+
+                <div class="flex justify-between items-center px-1">
                     <span class="font-bold text-2xl">
                         Buyer Pays
                     </span>
                     <span class="font-bold text-2xl">
-                        {{ buyerPaysTotal }}
+                        <details>
+                            <summary>
+                                {{ buyerPaysTotalWithStripe }}
+                            </summary>
+                            <p>
+                                {{ buyerPaysTotal }}
+                            </p>
+                        </details>
                     </span>
                 </div>
 
