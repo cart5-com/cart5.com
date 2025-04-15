@@ -11,6 +11,7 @@ export const CalculationTypeSchema = z.enum(CALCULATION_TYPE);
 
 
 export const CustomServiceFeeSchema = z.object({
+    id: z.string().optional(),
     name: z.string().optional(),
     ratePerOrder: z.number().min(0).optional(),
     feePerOrder: z.number().min(0).optional(),
