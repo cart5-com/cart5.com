@@ -34,10 +34,10 @@ import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
+
 const currentCart = computed(() => {
     return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
 });
-
 
 let menuRoot = ref<MenuRoot | null>(null);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
