@@ -545,6 +545,26 @@ export const getWebsiteByOwnerTeamId_Service = async (ownerTeamId: string) => {
     });
 }
 
+export const getWebsiteTeamServiceFee_Service = async (
+    websiteId: string,
+    storeId: string,
+    defaultMarketplaceFee: ServiceFee | null
+) => {
+    const websiteStore = await db.query.websiteStoreMapTable.findFirst({
+        where: and(
+            eq(websiteStoreMapTable.websiteId, websiteId),
+            eq(websiteStoreMapTable.storeId, storeId)
+        ),
+        columns: {
+            overrideMarketplaceFee: true,
+        }
+    });
+    if (websiteStore?.overrideMarketplaceFee) {
+        return websiteStore.overrideMarketplaceFee;
+    }
+    return defaultMarketplaceFee;
+}
+
 export const getSupportTeamServiceFee_Service = async (storeId: string) => {
     const storeData = await getStore_Service(storeId, { supportTeamId: true });
     const website = await db.query.websitesTable.findFirst({

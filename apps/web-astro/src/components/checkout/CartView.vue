@@ -60,10 +60,9 @@ const platformServiceFee: ServiceFee | null = {
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
 console.log("✅✅✅✅supportPartnerServiceFee");
 console.log(supportPartnerServiceFee);
-const marketingPartnerServiceFee: ServiceFee | null = {
-    ratePerOrder: 5,
-    feePerOrder: 0,
-};
+const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceFee;
+console.log("✅✅✅✅marketingPartnerServiceFee");
+console.log(marketingPartnerServiceFee);
 
 const serviceFeeForThisOrder = computed(() => {
     return calculateAllServiceFees(
