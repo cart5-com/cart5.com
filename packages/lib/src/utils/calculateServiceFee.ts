@@ -43,20 +43,46 @@ export const calculateServiceFeeWithTax = (
     }
 }
 
-export const allowedServiceFeeAmountIfIncluded = (subTotal: number, rate: number, calculationType: "ADD" | "INCLUDE") => {
+export const tolerableServiceFee = (subTotal: number, tolerableServiceFeeRate: number, calculationType: "ADD" | "INCLUDE") => {
     if (calculationType === "ADD") {
         return 0
     } else if (calculationType === "INCLUDE") {
-        return roundTo2Decimals(exclusiveRate(subTotal, rate))
+        return roundTo2Decimals(exclusiveRate(subTotal, tolerableServiceFeeRate))
     } else {
         console.error("Invalid calculation type")
         return 0
     }
 }
 
-export const serviceFeeAmountNeedToPayByBuyer = (totalServiceFee: number, allowedServiceFeeAmountIfIncluded: number) => {
+export const serviceFeeAmountNeedToPayByBuyer = (
+    totalServiceFee: number,
+    allowedServiceFeeAmountIfIncluded: number,
+    taxRateForServiceFees: number
+) => {
     if (totalServiceFee > allowedServiceFeeAmountIfIncluded) {
-        return roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded)
+        const tax = inclusiveRate(totalServiceFee - allowedServiceFeeAmountIfIncluded, taxRateForServiceFees)
+        return {
+            serviceFeeAmountTotal: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded),
+            serviceFeeAmountWithoutTax: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded - tax),
+            tax: roundTo2Decimals(tax)
+        }
+    } else {
+        return {
+            serviceFeeAmountTotal: 0,
+            serviceFeeAmountWithoutTax: 0,
+            tax: 0
+        }
+    }
+}
+
+export const calculateDiscount = (
+    offerDiscountIfPossible: boolean,
+    tolerableServiceFeeAmount: number,
+    totalServiceFee: number,
+) => {
+    if (offerDiscountIfPossible) {
+        const discount = roundTo2Decimals(tolerableServiceFeeAmount - totalServiceFee)
+        return discount > 0 ? discount : 0
     } else {
         return 0
     }

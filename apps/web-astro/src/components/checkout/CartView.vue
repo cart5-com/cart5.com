@@ -35,11 +35,16 @@ import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee } from "@lib/zod/serviceFee";
-import { calculateServiceFeeWithTax, allowedServiceFeeAmountIfIncluded, serviceFeeAmountNeedToPayByBuyer } from "@lib/utils/calculateServiceFee";
+import {
+    calculateServiceFeeWithTax,
+    tolerableServiceFee,
+    serviceFeeAmountNeedToPayByBuyer,
+    calculateDiscount
+} from "@lib/utils/calculateServiceFee";
 
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-const includedServiceFeeRate = 4;
-const offerDiscountIfPossible = false;
+const tolerableServiceFeeRate = 10;
+const offerDiscountIfPossible = true;
 
 const platformServiceFee: ServiceFee = {
     ratePerOrder: 1,
@@ -66,14 +71,19 @@ const serviceFeeResult = computed(() => {
     )
 })
 
-const allowedServiceFeeAmount = computed(() => {
-    return allowedServiceFeeAmountIfIncluded(subTotal.value.total, includedServiceFeeRate, calculationType)
+const tolerableServiceFeeAmount = computed(() => {
+    return tolerableServiceFee(subTotal.value.total, tolerableServiceFeeRate, calculationType)
+})
+
+const discountAmount = computed(() => {
+    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeResult.value.serviceFeeAmountTotal)
 })
 
 const serviceFeeAmountForBuyer = computed(() => {
     return serviceFeeAmountNeedToPayByBuyer(
         serviceFeeResult.value.serviceFeeAmountTotal,
-        allowedServiceFeeAmount.value
+        tolerableServiceFeeAmount.value,
+        taxSettings.taxRateForServiceFees ?? 0
     )
 })
 
@@ -312,7 +322,7 @@ const deliveryFeeTax = computed(() => {
                         Allowed Service Fee
                     </span>
                     <span class="font-bold text-lg">
-                        {{ allowedServiceFeeAmount }}
+                        {{ tolerableServiceFeeAmount }}
                     </span>
                 </div>
 
@@ -324,6 +334,16 @@ const deliveryFeeTax = computed(() => {
                         {{ serviceFeeAmountForBuyer }}
                     </span>
                 </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <span class="font-bold text-lg">
+                        Discount
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ discountAmount }}
+                    </span>
+                </div>
+
 
             </div>
         </div>
