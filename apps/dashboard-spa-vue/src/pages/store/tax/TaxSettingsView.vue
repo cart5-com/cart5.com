@@ -81,14 +81,14 @@ const loadData = async () => {
         if (data) {
             taxSettings.value = data;
         } else {
-            saveWithIpWhois();
+            fillWithIpWhois();
         }
 
     }
     isLoading.value = false;
 };
 
-const saveWithIpWhois = async () => {
+const fillWithIpWhois = async () => {
     const ipWhoisResult = await ipwhois();
     populateTaxSettingsFromLocation(ipWhoisResult.country_code ?? '', ipWhoisResult.region_code ?? '');
     toast.warning('Your tax setting were empty, filled for your location. You need to verify and save them. otherwise they will not be applied.');
