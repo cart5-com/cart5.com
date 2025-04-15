@@ -62,14 +62,14 @@ export const serviceFeeAmountNeedToPayByBuyer = (
     if (totalServiceFee > allowedServiceFeeAmountIfIncluded) {
         const tax = inclusiveRate(totalServiceFee - allowedServiceFeeAmountIfIncluded, taxRateForServiceFees)
         return {
-            serviceFeeAmountTotal: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded),
-            serviceFeeAmountWithoutTax: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded - tax),
+            totalWithTax: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded),
+            itemTotal: roundTo2Decimals(totalServiceFee - allowedServiceFeeAmountIfIncluded - tax),
             tax: roundTo2Decimals(tax)
         }
     } else {
         return {
-            serviceFeeAmountTotal: 0,
-            serviceFeeAmountWithoutTax: 0,
+            totalWithTax: 0,
+            itemTotal: 0,
             tax: 0
         }
     }
@@ -85,5 +85,31 @@ export const calculateDiscount = (
         return discount > 0 ? discount : 0
     } else {
         return 0
+    }
+}
+
+export const buyerPays = (
+    subTotal: {
+        total: number,// tax included
+        tax: number,
+    },
+    serviceFeeNeedToPayByBuyer: {
+        total: number,// tax included
+        tax: number,
+    },
+    discount: number,
+) => {
+    const totalTax = subTotal.tax + serviceFeeNeedToPayByBuyer.tax;
+    const buyerPaysTotal = roundTo2Decimals(subTotal.total + serviceFeeNeedToPayByBuyer.total - discount)
+    if (totalTax > buyerPaysTotal) {
+        return {
+            tax: totalTax,
+            totalWithTax: totalTax
+        }
+    } else {
+        return {
+            tax: totalTax,
+            totalWithTax: buyerPaysTotal
+        }
     }
 }

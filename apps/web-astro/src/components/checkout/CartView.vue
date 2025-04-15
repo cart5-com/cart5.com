@@ -39,11 +39,12 @@ import {
     calculateServiceFeeWithTax,
     tolerableServiceFee,
     serviceFeeAmountNeedToPayByBuyer,
-    calculateDiscount
+    calculateDiscount,
+    buyerPays
 } from "@lib/utils/calculateServiceFee";
 
 const calculationType: "ADD" | "INCLUDE" = "INCLUDE";
-const tolerableServiceFeeRate = 10;
+const tolerableServiceFeeRate = 30;
 const offerDiscountIfPossible = true;
 
 const platformServiceFee: ServiceFee = {
@@ -90,6 +91,17 @@ const serviceFeeAmountForBuyer = computed(() => {
 const currentCart = computed(() => {
     return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
 });
+
+const buyerPaysTotal = computed(() => {
+    return buyerPays(
+        subTotal.value,
+        {
+            total: serviceFeeAmountForBuyer.value.totalWithTax,
+            tax: serviceFeeAmountForBuyer.value.tax
+        },
+        discountAmount.value
+    )
+})
 
 let menuRoot = ref<MenuRoot | null>(null);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
@@ -308,23 +320,14 @@ const deliveryFeeTax = computed(() => {
                     </span>
                 </div>
 
-                <div class="flex justify-between items-center px-1 border-b border-muted-foreground">
-                    <span class="font-bold text-lg">
-                        Service Fee
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ serviceFeeResult }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
+                <!-- <div class="flex justify-between items-center px-1">
                     <span class="font-bold text-lg">
                         Allowed Service Fee
                     </span>
                     <span class="font-bold text-lg">
                         {{ tolerableServiceFeeAmount }}
                     </span>
-                </div>
+                </div> -->
 
                 <div class="flex justify-between items-center px-1">
                     <span class="font-bold text-lg">
@@ -335,15 +338,40 @@ const deliveryFeeTax = computed(() => {
                     </span>
                 </div>
 
-                <div class="flex justify-between items-center px-1">
+                <div class="flex justify-between items-center px-1 text-primary"
+                     v-if="discountAmount > 0">
                     <span class="font-bold text-lg">
                         Discount
                     </span>
-                    <span class="font-bold text-lg">
-                        {{ discountAmount }}
+                    <span class="font-bold text-lg text-right">
+                        <details>
+                            <summary>
+                                - {{ discountAmount }}
+                            </summary>
+                            <p>
+                                Discounts do not apply to taxes
+                            </p>
+                        </details>
                     </span>
                 </div>
 
+                <div class="flex justify-between items-center px-1">
+                    <span class="font-bold text-2xl">
+                        Buyer Pays
+                    </span>
+                    <span class="font-bold text-2xl">
+                        {{ buyerPaysTotal }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
+                    <span class="font-bold text-lg">
+                        Service Fee
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ serviceFeeResult }}
+                    </span>
+                </div>
 
             </div>
         </div>
