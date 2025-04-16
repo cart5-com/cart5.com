@@ -15,7 +15,8 @@ export const updateWebsite_SchemaValidator = zValidator('json',
         created_at_ts: true,
         updated_at_ts: true,
         ownerTeamId: true,
-        supportTeamId: true
+        supportTeamId: true,
+        isPartner: true,
     }).partial()
 )
 // Controller for updating website
@@ -29,7 +30,7 @@ export const updateWebsite_Handler = async (c: Context<
     const {
         // unallowed fields for admins // double check after validator
         // @ts-ignore
-        id, created_at_ts, updated_at_ts, defaultHostname, ownerTeamId, supportTeamId,
+        id, created_at_ts, updated_at_ts, defaultHostname, ownerTeamId, supportTeamId, isPartner,
 
         // other fields are allowed for admins
         ...data
