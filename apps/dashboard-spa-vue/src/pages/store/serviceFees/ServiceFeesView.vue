@@ -88,7 +88,7 @@ const saveServiceFees = async () => {
                 offerDiscountIfPossible: serviceFees.value?.offerDiscountIfPossible,
                 customServiceFees: (serviceFees.value?.customServiceFees ?? []).map(fee => ({
                     ...fee,
-                    overrideServiceFeeTaxRate: fee.overrideServiceFeeTaxRate || undefined
+                    overrideServiceFeeTaxRate: typeof fee.overrideServiceFeeTaxRate === 'number' ? fee.overrideServiceFeeTaxRate : undefined
                 }))
             }
         })).json();
@@ -243,12 +243,15 @@ const removeServiceFee = (index: number) => {
                                        min="0" />
                             </div>
                             <div class="space-y-2">
-                                <Label>Override Tax Rate (%)</Label>
+                                <Label>Custom Tax Rate (%)</Label>
                                 <Input v-model="fee.overrideServiceFeeTaxRate"
                                        type="number"
                                        step="0.1"
                                        min="0" />
                                 <p class="text-xs text-muted-foreground">
+                                    {{
+                                        !fee.overrideServiceFeeTaxRate ? '(default)' : `(custom:${fee.overrideServiceFeeTaxRate})`
+                                    }}
                                     Optional: Override the default tax rate
                                     "Sidemenu" -> "Tax Settings" ->
                                     "Tax Rate for Service Fees(%)"
