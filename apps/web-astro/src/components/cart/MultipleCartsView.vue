@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { MoreVerticalIcon, ShoppingCart, Trash } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { userDataStore } from "../../stores/UserData.store";
-import { clearCartByStoreId } from "../../stores/UserDataCartHelpers";
+import { clearCartByStoreId, currentWebsiteCarts } from "../../stores/UserDataCartHelpers";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import type { Cart } from "@lib/zod/cartItemState";
 import { Badge } from "@/components/ui/badge";
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const getTotalItem = (cart: Cart) => {
@@ -24,9 +24,9 @@ const orderType = window.orderType;
 <template>
   <div class="flex flex-col gap-2 max-w-md w-full">
     <!-- // TODO: filter carts by current website hostname -->
-    <div v-if="userDataStore.userData?.carts"
+    <div v-if="currentWebsiteCarts"
          class="flex flex-col gap-2 p-2">
-      <div v-for="(cart, index) in userDataStore.userData?.carts"
+      <div v-for="(cart, index) in currentWebsiteCarts"
            :key="cart.storeId ?? index"
            class="flex flex-row gap-2 items-center rounded-md border p-2">
         <Button as="a"
@@ -55,7 +55,7 @@ const orderType = window.orderType;
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div v-if="Object.keys(userDataStore.userData?.carts ?? {}).length === 0">
+      <div v-if="Object.keys(currentWebsiteCarts ?? {}).length === 0">
         <span class="text-sm font-medium">
           No carts
           <br />

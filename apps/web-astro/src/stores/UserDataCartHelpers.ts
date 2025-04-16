@@ -1,6 +1,18 @@
 import { userDataStore } from "@web-astro/stores/UserData.store";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { showItemModal } from "../components/store-page/menu/item/showItemModal";
+import { computed } from "vue";
+import { type Cart } from "@lib/zod/cartItemState";
+
+export const currentWebsiteCarts = computed(() => {
+    const filteredCarts: Record<string, Cart> = {};
+    for (const key in (userDataStore.value.userData?.carts ?? {})) {
+        if (key.startsWith(window.location.hostname)) {
+            filteredCarts[key] = userDataStore.value.userData?.carts?.[key] as Cart;
+        }
+    }
+    return filteredCarts;
+});
 
 /////////////CART ACTIONS/////////////
 export const genCartId = (storeId: string) => {
