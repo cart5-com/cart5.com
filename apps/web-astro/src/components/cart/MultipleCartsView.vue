@@ -23,7 +23,6 @@ const orderType = window.orderType;
 
 <template>
   <div class="flex flex-col gap-2 max-w-md w-full">
-    <!-- // TODO: filter carts by current website hostname -->
     <div v-if="currentWebsiteCarts"
          class="flex flex-col gap-2 p-2">
       <div v-for="(cart, index) in currentWebsiteCarts"
