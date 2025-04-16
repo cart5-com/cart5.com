@@ -11,7 +11,7 @@ import {
 	type PhysicalPaymentMethods,
 	PhysicalPaymentMethodsSchema
 } from "@lib/zod/paymentMethodsSchema";
-import { TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
+import { TAX_TYPE, TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
@@ -198,7 +198,7 @@ export const storeTaxSettingsTable = sqliteTable('store_tax_settings', {
 	storeId: text("store_id").notNull().unique(),
 	currency: text('currency'),
 	currencySymbol: text('currency_symbol'),
-	salesTaxType: text('sales_tax_type', { enum: ['ITEMS_PRICES_ALREADY_INCLUDE_TAXES', 'APPLY_TAX_ON_TOP_OF_PRICES'] }),
+	salesTaxType: text('sales_tax_type', { enum: TAX_TYPE }),
 	taxName: text('tax_name'),
 	taxRateForDelivery: real('tax_rate_for_delivery'),
 	taxRateForServiceFees: real('tax_rate_for_service_fees'),

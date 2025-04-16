@@ -1,4 +1,4 @@
-import type { CALCULATION_TYPE, ServiceFee } from "@lib/zod/serviceFee";
+import type { CalculationType, ServiceFee } from "@lib/zod/serviceFee";
 import { exclusiveRate, inclusiveRate } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 
@@ -27,7 +27,7 @@ export const calculateAllServiceFees = (
     }
 }
 
-export const tolerableServiceFee = (subTotal: number, tolerableServiceFeeRate: number, calculationType: (typeof CALCULATION_TYPE)[number]) => {
+export const tolerableServiceFee = (subTotal: number, tolerableServiceFeeRate: number, calculationType: CalculationType) => {
     if (calculationType === "ADD") {
         return 0
     } else if (calculationType === "INCLUDE") {

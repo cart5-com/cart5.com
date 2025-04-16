@@ -7,8 +7,7 @@ export const ServiceFeeSchema = z.object({
 export type ServiceFee = z.infer<typeof ServiceFeeSchema>;
 
 export const CALCULATION_TYPE = ["INCLUDE", "ADD"] as const;
-export const CalculationTypeSchema = z.enum(CALCULATION_TYPE);
-
+export type CalculationType = (typeof CALCULATION_TYPE)[number];
 
 export const CustomServiceFeeSchema = z.object({
     id: z.string().optional(),

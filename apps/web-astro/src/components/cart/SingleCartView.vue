@@ -30,7 +30,7 @@ import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
-import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
+import { calculateFeeTax } from "@lib/utils/calculateFeeTax";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 
@@ -88,7 +88,7 @@ const bestDeliveryZone = computed(() => {
 })
 
 const deliveryFeeTax = computed(() => {
-  return calculateDeliveryFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings);
+  return calculateFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings.salesTaxType ?? 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES', taxSettings.taxRateForDelivery ?? 0);
 })
 
 </script>

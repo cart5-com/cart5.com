@@ -48,6 +48,14 @@ export const getStoreData_Service = async (
                     menuRoot: true
                 }
             },
+            serviceFees: {
+                columns: {
+                    calculationType: true,
+                    tolerableServiceFeeRate: true,
+                    offerDiscountIfPossible: true,
+                    customServiceFees: true,
+                }
+            },
             taxSettings: {
                 columns: {
                     currency: true,

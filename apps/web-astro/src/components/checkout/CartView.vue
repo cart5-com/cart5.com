@@ -34,9 +34,9 @@ import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
-import { calculateDeliveryFeeTax } from "@lib/utils/calculateDeliveryFeeTax";
+import { calculateFeeTax } from "@lib/utils/calculateFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
-import type { ServiceFee, CALCULATION_TYPE } from "@lib/zod/serviceFee";
+import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
     calculateAllServiceFees,
     tolerableServiceFee,
@@ -48,12 +48,10 @@ import {
 import { calculateStripeFee } from "@lib/utils/rateCalc";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 
-// TODO: get them from store data
-// type is "ADD" | "INCLUDE"
-const calculationType: (typeof CALCULATION_TYPE)[number] = "INCLUDE";
-const tolerableServiceFeeRate = 0;
-const offerDiscountIfPossible = true;
-
+const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
+const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
+const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPossible ?? true;
+const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? [];
 const isStripe = ref(false);
 
 const platformServiceFee: ServiceFee | null = {
@@ -170,7 +168,7 @@ const bestDeliveryZone = computed(() => {
 })
 
 const subTotal = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0 };
+    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0, calculatedCustomServiceFees: [] };
     return calculateSubTotal(
         currentCart.value, menuRoot.value, taxSettings, orderType,
         {
@@ -181,12 +179,13 @@ const subTotal = computed(() => {
         {
             lat: window.storeData?.address?.lat!,
             lng: window.storeData?.address?.lng!
-        }
+        },
+        customServiceFees
     );
 })
 
 const deliveryFeeTax = computed(() => {
-    return calculateDeliveryFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings);
+    return calculateFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings.salesTaxType ?? 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES', taxSettings.taxRateForDelivery ?? 0);
 })
 
 </script>
@@ -318,6 +317,18 @@ const deliveryFeeTax = computed(() => {
                         {{ bestDeliveryZone?.totalDeliveryFee }}
 
                         tax:{{ deliveryFeeTax }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center px-1"
+                     v-for="customSFee in subTotal.calculatedCustomServiceFees"
+                     :key="customSFee.name">
+                    <span class="">
+                        {{ customSFee.name }}
+                    </span>
+                    <span class="font-bold text-lg">
+                        {{ customSFee.shownFee }}
+                        tax:{{ customSFee.tax }}
                     </span>
                 </div>
 
