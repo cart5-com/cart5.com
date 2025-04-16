@@ -65,7 +65,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: values
+            json: cleanEmptyProps(values)
         })).json()
         if (error) {
             handleError(error, form);

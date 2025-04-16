@@ -10,6 +10,7 @@ import { ecomApiCuisines } from '@lib/consts';
 import { Input } from '@/components/ui/input';
 import { PlusCircleIcon } from 'lucide-vue-next';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 // Common cuisine types - expand this list as needed
 const AVAILABLE_CUISINES = ecomApiCuisines;
@@ -70,9 +71,9 @@ const saveCuisines = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 cuisines: selectedCuisines.value
-            }
+            })
         })).json();
 
         if (error) {

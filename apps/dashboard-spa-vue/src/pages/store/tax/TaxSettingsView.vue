@@ -23,6 +23,7 @@ import { getJurisdictionSalesTaxRate } from '@lib/utils/sales_tax_rates';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
 import TaxHelperDialog from './TaxHelperDialog.vue';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 pageTitle.value = 'Tax Settings';
 
@@ -106,7 +107,7 @@ const saveTaxSettings = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 currency: taxSettings.value?.currency,
                 currencySymbol: taxSettings.value?.currencySymbol,
                 salesTaxType: taxSettings.value?.salesTaxType,
@@ -114,7 +115,7 @@ const saveTaxSettings = async () => {
                 taxRateForDelivery: taxSettings.value?.taxRateForDelivery,
                 taxRateForServiceFees: taxSettings.value?.taxRateForServiceFees,
                 taxCategories: taxSettings.value?.taxCategories ?? []
-            }
+            })
         })).json();
 
         if (error) {

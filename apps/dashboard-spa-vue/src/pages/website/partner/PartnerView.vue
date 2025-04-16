@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationList, PaginationListItem, PaginationFirst, PaginationPrev, PaginationNext, PaginationLast, PaginationEllipsis } from '@/components/ui/pagination';
 import ServiceFeeDialog from '../stores/ServiceFeeDialog.vue';
 import { type ServiceFee } from '@lib/zod/serviceFee';
-
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 type SupportedStoresResponse = ResType<
     typeof dashboardApiClient.website[':websiteId']['supported_stores']['list']['$get']
 >["data"];
@@ -132,10 +132,10 @@ const onFeeChange = async () => {
 const saveChanges = async () => {
     const { data, error } = await (await dashboardApiClient.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
-        json: {
+        json: cleanEmptyProps({
             isPartner: isPartner.value,
             defaultPartnerFee: defaultPartnerFee.value,
-        }
+        })
     })).json();
     if (error) {
         console.error(error);

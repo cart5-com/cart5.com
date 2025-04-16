@@ -20,7 +20,7 @@ import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/u
 import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { dashboardApiClient } from '@api-client/dashboard';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
-
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 
@@ -161,11 +161,11 @@ async function onMapConfirm(result: { lat: number, lng: number }) {
         param: {
             storeId: currentStoreId.value ?? '',
         },
-        json: {
+        json: cleanEmptyProps({
             ...form.values,
             lat: result.lat,
             lng: result.lng,
-        }
+        })
     })).json()
     if (error) {
         handleError(error, form);

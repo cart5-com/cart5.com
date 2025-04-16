@@ -23,7 +23,7 @@ import { toast } from '@/ui-plus/sonner';
 import { ServiceFee } from '@lib/zod/serviceFee';
 import ServiceFeeDialog from './ServiceFeeDialog.vue';
 import { Badge } from '@/components/ui/badge';
-
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 type StoresResponse = ResType<
     typeof dashboardApiClient.website[':websiteId']['stores']['list']['$get']
@@ -160,10 +160,10 @@ const onFeeChange = async () => {
 const saveChanges = async () => {
     const { data, error } = await (await dashboardApiClient.website[':websiteId'].$patch({
         param: { websiteId: currentWebsiteId.value ?? '' },
-        json: {
+        json: cleanEmptyProps({
             isMarketplace: isMarketplaceMode.value,
             defaultMarketplaceFee: defaultMarketplaceFee.value,
-        }
+        })
     })).json();
     if (error) {
         console.error(error);

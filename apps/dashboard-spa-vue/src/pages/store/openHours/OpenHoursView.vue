@@ -12,6 +12,8 @@ import WeekEditor from './WeekEditor.vue';
 import { Switch } from '@/components/ui/switch';
 import { getCurrentTimeNow, isOpenNow } from '@lib/utils/isOpenNow';
 import TimeZoneSelect from '@/ui-plus/TimeZoneSelect.vue';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+
 pageTitle.value = 'Operating Hours';
 
 const dHours = [
@@ -130,12 +132,12 @@ const saveHours = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 timezone: timezone.value,
                 defaultOpenHours: defaultHours.value,
                 deliveryHours: deliveryHours.value,
                 pickupHours: pickupHours.value,
-            }
+            })
         })).json();
 
         if (error) {

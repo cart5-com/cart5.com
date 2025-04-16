@@ -10,6 +10,7 @@ import { dashboardApiClient } from '@api-client/dashboard';
 import { currentWebsiteId, setCurrentWebsiteName } from '@dashboard-spa-vue/stores/MyWebsitesStore';
 import { onMounted } from 'vue';
 import { toast } from '@/ui-plus/sonner';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
@@ -58,9 +59,9 @@ async function onSubmit(values: z.infer<typeof schema>) {
 
         const { error } = await (await dashboardApiClient.website[':websiteId'].$patch({
             param: { websiteId },
-            json: {
+            json: cleanEmptyProps({
                 name: values.name,
-            },
+            })
         })).json();
 
         if (error) {

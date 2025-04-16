@@ -8,6 +8,7 @@ import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore'
 import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore'
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 const isLoading = ref(false)
 const offersPickup = ref(false)
@@ -46,9 +47,9 @@ const savePickupOption = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 offersPickup: offersPickup.value
-            }
+            })
         })).json()
 
         if (error) {

@@ -31,6 +31,7 @@ import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
 import { loadLeafletDrawCDN } from './loadLeafletDrawCDN';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 const router = useRouter();
 
@@ -258,15 +259,15 @@ const saveData = async () => {
     const [deliveryZonesResponse, offersDeliveryResponse] = await Promise.all([
         (await apiPath.delivery_zones.update.$patch({
             param,
-            json: {
+            json: cleanEmptyProps({
                 zones: deliveryZones.value
-            }
+            })
         })).json(),
         (await apiPath.$patch({
             param,
-            json: {
+            json: cleanEmptyProps({
                 offersDelivery: offersDelivery.value
-            }
+            })
         })).json(),
     ])
     return { deliveryZonesResponse, offersDeliveryResponse };

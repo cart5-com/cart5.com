@@ -19,6 +19,7 @@ import type { ResType } from '@api-client/typeUtils';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { CALCULATION_TYPE } from '@lib/zod/serviceFee';
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 pageTitle.value = 'Service Fees';
 
@@ -82,15 +83,12 @@ const saveServiceFees = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 calculationType: serviceFees.value?.calculationType,
                 tolerableServiceFeeRate: serviceFees.value?.tolerableServiceFeeRate,
                 offerDiscountIfPossible: serviceFees.value?.offerDiscountIfPossible,
-                customServiceFees: (serviceFees.value?.customServiceFees ?? []).map(fee => ({
-                    ...fee,
-                    overrideServiceFeeTaxRate: typeof fee.overrideServiceFeeTaxRate === 'number' ? fee.overrideServiceFeeTaxRate : undefined
-                }))
-            }
+                customServiceFees: (serviceFees.value?.customServiceFees ?? [])
+            })
         })).json();
 
         if (error) {

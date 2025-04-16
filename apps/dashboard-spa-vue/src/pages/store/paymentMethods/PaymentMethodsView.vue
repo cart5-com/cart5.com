@@ -10,7 +10,7 @@ import type { PhysicalPaymentMethods } from '@lib/zod/paymentMethodsSchema';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import PaymentMethodsEditor from './PaymentMethodsEditor.vue';
 import { Switch } from '@/components/ui/switch';
-
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 
 pageTitle.value = 'Payment Methods';
 
@@ -83,11 +83,11 @@ const savePaymentMethods = async () => {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: {
+            json: cleanEmptyProps({
                 defaultPaymentMethods: defaultMethods.value,
                 deliveryPaymentMethods: deliveryMethods.value,
                 pickupPaymentMethods: pickupMethods.value,
-            }
+            })
         })).json();
 
         if (error) {

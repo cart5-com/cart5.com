@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form'
 import SPhoneInput from '@/ui-plus/PhoneNumber/SPhoneInput.vue'
 import { toast } from '@/ui-plus/sonner';
-
+import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
     defaultPhoneNumber: z.string().min(1, { message: "required" }),
@@ -75,7 +75,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: values
+            json: cleanEmptyProps(values)
         })).json()
         if (error) {
             handleError(error, form);
