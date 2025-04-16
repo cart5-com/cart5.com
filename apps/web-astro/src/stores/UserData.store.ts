@@ -6,6 +6,7 @@ import { deepMerge } from "@lib/utils/deepMerge";
 import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { isBot } from "@lib/clientUtils/isBot";
+import { cleanEmptyProps } from "@lib/utils/cleanEmptyProps";
 /*
 loadUserData() is called at initialization:
 Fetches user data from the server
@@ -175,10 +176,15 @@ const loadUserData = async () => {
         if (isAfterLogin && typeof window !== 'undefined') {
             history.replaceState(null, '', window.location.pathname + window.location.search);
         }
-        // TODO: another tab may login without sync for this tab.
-        // if there is a userdata from server, check localstorage for anon userdata to detect merge if required.
-        // this case, dashboard login with another tab, caused an empty cart 
-        if (isAfterLogin) {
+        if (
+            isAfterLogin ||
+            (
+                // may login /dashboard/ etc.. with another tab
+                // dashboard or other apps does not have same user merge handling
+                localStorage.hasOwnProperty(LOCAL_STORAGE_KEY) &&
+                data.user
+            )
+        ) {
             userDataStore.value.userData = mergedUserData(loadFromLocalStorage(), data.userData) as UserDataType;
             userDataStore.value.user = data.user;
             // save latest user data
@@ -243,9 +249,9 @@ const saveUserData = async (newVal: UserDataStoreType) => {
 
 export const saveUserDataNow = async (data: UserDataStoreType) => {
     const { error } = await (await authGlobalApiClient.update_user_data.$patch({
-        json: {
+        json: cleanEmptyProps({
             ...data.userData,
-        }
+        })
     })).json();
     if (error) {
         console.error(error);
