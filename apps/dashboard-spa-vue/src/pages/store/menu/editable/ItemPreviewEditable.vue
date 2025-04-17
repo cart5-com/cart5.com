@@ -48,24 +48,28 @@ onMounted(() => {
 
 
 
-const cartItemTotalPrice = ref({
-    itemPrice: 0,
+const cartItemTotalPriceDelivery = ref<ReturnType<typeof calculateCartItemPrice>>({
+    itemTotal: 0,
     tax: 0,
+    totalWithTax: 0,
+    shownFee: 0,
 });
 
-const cartItemTotalPricePickup = ref({
-    itemPrice: 0,
+const cartItemTotalPricePickup = ref<ReturnType<typeof calculateCartItemPrice>>({
+    itemTotal: 0,
     tax: 0,
+    totalWithTax: 0,
+    shownFee: 0,
 });
 
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
+    cartItemTotalPriceDelivery.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
     cartItemTotalPricePickup.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "pickup")
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
+    cartItemTotalPriceDelivery.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "delivery")
     cartItemTotalPricePickup.value = calculateCartItemPrice(cartItem.value, menuRoot.value, taxSettings.value as TaxSettings, "pickup")
 })
 
@@ -129,33 +133,33 @@ const checkCartItem = () => {
         </div>
         <div
              class="text-xs sticky bottom-0 rounded-md bg-background w-full flex flex-col justify-between items-center font-bold">
-            <div>
-                Delivery Preview
-                <span v-if="taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'">
-                    {{ taxSettings?.currencySymbol }}{{
-                        cartItemTotalPrice.itemPrice + cartItemTotalPrice.tax }}={{ cartItemTotalPrice.itemPrice }}+({{
-                            cartItemTotalPrice.tax }}tax)
-                </span>
-                <span v-else-if="taxSettings?.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES'">
-                    {{ taxSettings?.currencySymbol }}{{ cartItemTotalPrice.itemPrice }}={{
-                        (cartItemTotalPrice.itemPrice -
-                            cartItemTotalPrice.tax).toFixed(2) }}+({{ cartItemTotalPrice.tax }}tax)
-                </span>
-            </div>
-            <div>
-                Pickup Preview
-                <span v-if="taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'">
-                    {{ taxSettings?.currencySymbol }}{{
-                        cartItemTotalPricePickup.itemPrice + cartItemTotalPricePickup.tax }}={{
-                    cartItemTotalPricePickup.itemPrice }}+({{
-                        cartItemTotalPricePickup.tax }}tax)
-                </span>
-                <span v-else-if="taxSettings?.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES'">
-                    {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.itemPrice }}={{
-                        (cartItemTotalPricePickup.itemPrice -
-                            cartItemTotalPricePickup.tax).toFixed(2) }}+({{ cartItemTotalPricePickup.tax }}tax)
-                </span>
-            </div>
+
+            <table class="mx-auto max-w-sm">
+                <tr class="border-b">
+                    <td class="font-medium">Delivery Price:</td>
+                    <td class="font-bold text-right">
+                        {{ taxSettings?.currencySymbol }}{{ cartItemTotalPriceDelivery.shownFee }}
+                    </td>
+                    <td class="text-muted-foreground">
+                        {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'
+                            ? `+ ${taxSettings?.currencySymbol}${cartItemTotalPriceDelivery.tax} tax`
+                            : `(tax included: ${taxSettings?.currencySymbol}${cartItemTotalPriceDelivery.tax})` }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-medium">Pickup Price:</td>
+                    <td class="font-bold text-right">
+                        {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.shownFee }}
+                    </td>
+                    <td class="text-muted-foreground">
+                        {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'
+                            ? `+ ${taxSettings?.currencySymbol}${cartItemTotalPricePickup.tax} tax`
+                            : `(tax included: ${taxSettings?.currencySymbol}${cartItemTotalPricePickup.tax})` }}
+                    </td>
+                </tr>
+            </table>
+
+
         </div>
 
     </div>

@@ -43,7 +43,7 @@ export const recursiveCartChildrenItemState = (customizationState: CartChildrenI
     return total;
 }
 
-export const calculateCartItemTax = (
+const calculateCartItemTax = (
     price: number,
     itemId: ItemId | undefined,
     menuRoot: MenuRoot,
@@ -60,18 +60,34 @@ export const calculateCartItemTax = (
         if (taxCategory) {
             // selected tax category
             if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-                total += exclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
+                if (orderType === 'delivery') {
+                    total += exclusiveRate(price, taxCategory[`deliveryRate`] || 0);
+                } else if (orderType === 'pickup') {
+                    total += exclusiveRate(price, taxCategory[`pickupRate`] || 0);
+                }
             } else if (taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES') {
-                total += inclusiveRate(price, taxCategory[`${orderType}Rate`] || 0);
+                if (orderType === 'delivery') {
+                    total += inclusiveRate(price, taxCategory[`deliveryRate`] || 0);
+                } else if (orderType === 'pickup') {
+                    total += inclusiveRate(price, taxCategory[`pickupRate`] || 0);
+                }
             } else {
                 console.error('Invalid tax type', taxSettings.salesTaxType);
             }
         } else if (taxSettings.taxCategories?.[0]) {
             // default tax category
             if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-                total += exclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
+                if (orderType === 'delivery') {
+                    total += exclusiveRate(price, taxSettings.taxCategories[0][`deliveryRate`] || 0);
+                } else if (orderType === 'pickup') {
+                    total += exclusiveRate(price, taxSettings.taxCategories[0][`pickupRate`] || 0);
+                }
             } else if (taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES') {
-                total += inclusiveRate(price, taxSettings.taxCategories[0][`${orderType}Rate`] || 0);
+                if (orderType === 'delivery') {
+                    total += inclusiveRate(price, taxSettings.taxCategories[0][`deliveryRate`] || 0);
+                } else if (orderType === 'pickup') {
+                    total += inclusiveRate(price, taxSettings.taxCategories[0][`pickupRate`] || 0);
+                }
             } else {
                 console.error('Invalid tax type', taxSettings.salesTaxType);
             }
@@ -106,27 +122,43 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     if (total < 0) {
         total = 0;
     }
-    total = roundTo2Decimals(total * (cartItem.quantity || 1))
+    total = total * (cartItem.quantity || 1)
+
+    const tax = calculateCartItemTax(total, cartItem.itemId, menuRoot, taxSettings, orderType);
+    const totalWithTax = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total + tax : total;
+    const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total : totalWithTax;
+    const itemTotal = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total : total - tax;
     return {
-        itemPrice: total,
-        tax: calculateCartItemTax(total, cartItem.itemId, menuRoot, taxSettings, orderType),
+        itemTotal: roundTo2Decimals(itemTotal),
+        tax: roundTo2Decimals(tax),
+        totalWithTax: roundTo2Decimals(totalWithTax),
+        shownFee: roundTo2Decimals(shownFee),
     };
 }
 
 export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
+    let result = {
+        itemTotal: 0,
+        tax: 0,
+        totalWithTax: 0,
+        shownFee: 0,
+    };
     if (!cart || !cart.items) {
-        return {
-            totalPrice: 0,
-            tax: 0,
-        };
+        return result;
     }
-    const total = cart.items?.reduce((total, item) => total +
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).itemPrice, 0) || 0;
-    const tax = cart.items?.reduce((total, item) => total +
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderType).tax, 0) || 0;
+
+    cart.items.forEach(item => {
+        const itemPrice = calculateCartItemPrice(item, menuRoot, taxSettings, orderType);
+        result.itemTotal += itemPrice.itemTotal || 0;
+        result.tax += itemPrice.tax || 0;
+        result.totalWithTax += itemPrice.totalWithTax || 0;
+        result.shownFee += itemPrice.shownFee || 0;
+    })
 
     return {
-        totalPrice: roundTo2Decimals(total),
-        tax: roundTo2Decimals(tax),
+        itemTotal: roundTo2Decimals(result.itemTotal),
+        tax: roundTo2Decimals(result.tax),
+        totalWithTax: roundTo2Decimals(result.totalWithTax),
+        shownFee: roundTo2Decimals(result.shownFee),
     };
 }

@@ -40,11 +40,11 @@ const cartItemTotalPrice = ref(0);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice)
+    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemTotal)
 }, { deep: true })
 
 onMounted(() => {
-    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemPrice)
+    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemTotal)
 })
 
 

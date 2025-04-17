@@ -65,7 +65,7 @@ const removeAllItemsFromCart = () => {
 const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
-  if (!currentCart.value || !menuRoot.value) return { totalPrice: "$0.00", tax: "$0.00" };
+  if (!currentCart.value || !menuRoot.value) return { itemTotal: "$0.00", tax: "$0.00" };
   return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
 });
 
@@ -160,7 +160,7 @@ const deliveryFeeTax = computed(() => {
               </NumberFieldContent>
             </NumberField>
             <span class="font-bold">
-              {{ getPrice(item).itemPrice }}
+              {{ getPrice(item).itemTotal }}
               tax:{{ getPrice(item).tax }}
             </span>
           </div>
@@ -206,7 +206,7 @@ const deliveryFeeTax = computed(() => {
             Subtotal
           </span>
           <span class="font-bold text-lg">
-            {{ cartTotals.totalPrice }}
+            {{ cartTotals.itemTotal }}
 
             tax:{{ cartTotals.tax }}
           </span>

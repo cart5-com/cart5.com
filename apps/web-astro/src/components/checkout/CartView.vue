@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
@@ -31,8 +31,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { OrderType } from "@lib/types/orderType";
-import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
-import { calculateFeeTax } from "@lib/utils/calculateFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
@@ -73,14 +71,8 @@ const currentCart = computed(() => {
 });
 
 
-let menuRoot = ref<MenuRoot | null>(null);
+let menuRoot = ref<MenuRoot | null>(window.storeData?.menu?.menuRoot ?? null);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
-
-onMounted(() => {
-    if (typeof window !== "undefined") {
-        menuRoot.value = window.storeData?.menu?.menuRoot ?? null;
-    }
-});
 
 const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
     if (item.quantity! === 0) {
@@ -107,24 +99,9 @@ const getPrice = (item: CartItem) => {
     return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
 }
 
-const bestDeliveryZone = computed(() => {
-    return getBestDeliveryZone(
-        {
-            lat: userDataStore.value.userData?.rememberLastLat!,
-            lng: userDataStore.value.userData?.rememberLastLng!
-        },
-        window.storeData?.deliveryZones?.zones ?? [],
-        {
-            lat: window.storeData?.address?.lat!,
-            lng: window.storeData?.address?.lng!
-        }
-    );
-})
-
 const subTotal = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0, itemTotal: 0, calculatedCustomServiceFees: [] };
     return calculateSubTotal(
-        currentCart.value, menuRoot.value, taxSettings, orderType,
+        currentCart.value, menuRoot.value ?? undefined, taxSettings, orderType,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
@@ -136,10 +113,6 @@ const subTotal = computed(() => {
         },
         customServiceFees
     );
-})
-
-const deliveryFeeTax = computed(() => {
-    return calculateFeeTax(bestDeliveryZone.value?.totalDeliveryFee ?? 0, taxSettings.salesTaxType ?? 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES', taxSettings.taxRateForDelivery ?? 0);
 })
 
 </script>
@@ -208,10 +181,11 @@ const deliveryFeeTax = computed(() => {
                                                       class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
                             </NumberFieldContent>
                         </NumberField>
-                        <span class="font-bold">
-                            {{ getPrice(item).itemPrice }}
-                            tax:{{ getPrice(item).tax }}
-                        </span>
+                        <div>
+                            <div class="font-bold text-right">
+                                <pre>{{ getPrice(item) }}</pre>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -249,59 +223,19 @@ const deliveryFeeTax = computed(() => {
                     </DrawerContent>
                 </Drawer>
 
-
-
                 <div class="flex justify-between items-center px-1">
                     <span class="font-bold text-lg">
-                        items total
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ cartTotals.totalPrice }}
-
-                        tax:{{ cartTotals.tax }}
+                        <pre>{{ cartTotals }}</pre>
                     </span>
                 </div>
 
-                <div class="flex justify-between items-center px-1"
-                     v-if="orderType === 'delivery'">
-                    <span class="">
-                        Delivery Fee
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ bestDeliveryZone?.totalDeliveryFee }}
-
-                        tax:{{ deliveryFeeTax }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center px-1"
+                <!-- <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
                      v-for="customSFee in subTotal.calculatedCustomServiceFees"
                      :key="customSFee.name">
-                    <span class="">
-                        {{ customSFee.name }}
-                    </span>
                     <span class="font-bold text-lg">
-                        {{ customSFee.totalWithTax }}
-                        tax:{{ customSFee.tax }}
+                        <pre>{{ customSFee }}</pre>
                     </span>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <span class="font-bold text-lg">
-                        Subtotal
-                    </span>
-                    <span class="font-bold text-lg text-right">
-                        <details>
-                            <summary>
-                                tax
-                            </summary>
-                            <p>
-                                {{ subTotal.tax }}
-                            </p>
-                        </details>
-                        {{ subTotal.totalWithTax }}
-                    </span>
-                </div>
+                </div> -->
 
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
                     <pre>{{ subTotal }}</pre>

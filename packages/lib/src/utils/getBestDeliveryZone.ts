@@ -4,6 +4,9 @@ import { isInsideCircle } from "./isInsideCircle";
 import { isInsideRectangle } from "./isInsideRectangle";
 import { isInsidePolygon } from "./isInsidePolygon";
 import { calculateDistance } from "./calculateDistance";
+import type { TaxSettings } from "@lib/zod/taxSchema";
+import { calculateFeeTax } from "./calculateFeeTax";
+
 
 function deliveryZoneFilterByLocation(userLocation: Point, deliveryZones: DeliveryZone[]) {
     return deliveryZones.filter(zone => zone.isActive).filter((zone) => {
@@ -16,6 +19,36 @@ function deliveryZoneFilterByLocation(userLocation: Point, deliveryZones: Delive
         }
         return false;
     });
+}
+
+export function getBestDeliveryZoneWithTaxDetails(
+    userLocation: Point,
+    deliveryZones: DeliveryZone[],
+    storeLocation: Point,
+    taxSettings: TaxSettings
+) {
+    const bestZone = getBestDeliveryZone(
+        userLocation,
+        deliveryZones,
+        storeLocation
+    );
+
+    if (!bestZone) {
+        return null;
+    }
+
+    const tax = calculateFeeTax(bestZone.totalDeliveryFee ?? 0, taxSettings.salesTaxType ?? 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES', taxSettings.taxRateForDelivery ?? 0);
+    const itemTotal = taxSettings.salesTaxType === 'ITEMS_PRICES_ALREADY_INCLUDE_TAXES' ? (bestZone.totalDeliveryFee ?? 0) - tax : (bestZone.totalDeliveryFee ?? 0);
+    const totalWithTax = itemTotal + tax;
+    const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? itemTotal : totalWithTax;
+
+    return {
+        itemTotal: roundTo2Decimals(itemTotal),
+        tax: roundTo2Decimals(tax),
+        totalWithTax: roundTo2Decimals(totalWithTax),
+        shownFee: roundTo2Decimals(shownFee),
+        ...bestZone,
+    };
 }
 
 export function getBestDeliveryZone(
@@ -38,7 +71,7 @@ export function getBestDeliveryZone(
 
         return {
             ...zone,
-            totalDeliveryFee: totalDeliveryFee,
+            totalDeliveryFee: totalDeliveryFee, // without tax
             distanceFromStoreKm: distance
         };
     });
