@@ -58,14 +58,14 @@ export function calculateCartBreakdown(
         const feeAmount = exclusiveRate(subTotal.totalWithTax, fee.ratePerOrder ?? 0) +
             (fee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
-        const itemTotal = feeAmount - feeTax;
-        const feePercentage = (itemTotal / totalPlatformFee.itemTotal) * 100;
+        // const itemTotal = feeAmount - feeTax;
+        // const feePercentage = (itemTotal / totalPlatformFee.itemTotal) * 100;
         return {
             name: fee.name ?? 'Unnamed Fee',
             totalWithTax: feeAmount,
             itemTotal: feeAmount - feeTax,
             tax: feeTax,
-            percentage: feePercentage
+            // percentage: feePercentage
         };
     });
 
@@ -144,7 +144,7 @@ export function calculateCartBreakdown(
                     totalWithTax: roundTo2Decimals(fee.totalWithTax),
                     itemTotal: roundTo2Decimals(fee.itemTotal),
                     tax: roundTo2Decimals(fee.tax),
-                    percentage: roundTo2Decimals(fee.percentage)
+                    // percentage: roundTo2Decimals(fee.percentage)
                 };
             }).filter(Boolean)
         },

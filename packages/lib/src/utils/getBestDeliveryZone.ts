@@ -82,7 +82,7 @@ export function getBestDeliveryZone(
         const feeDiff = a.totalDeliveryFee! - b.totalDeliveryFee!;
 
         // If fees are the same (or very close), use minCart as tiebreaker
-        if (Math.abs(feeDiff) < 0.01) {
+        if (Math.abs(feeDiff) < 0.3) {
             return (a.minCart || 0) - (b.minCart || 0);
         }
 
