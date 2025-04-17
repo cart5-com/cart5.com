@@ -6,8 +6,8 @@ export type TaxType = (typeof TAX_TYPE)[number];
 export const TaxCategorySchema = z.object({
     id: z.string().optional(),
     name: z.string().optional(),
-    deliveryRate: z.number().optional(),
-    pickupRate: z.number().optional()
+    deliveryRate: z.number().min(0).max(100).optional(),
+    pickupRate: z.number().min(0).max(100).optional()
 });
 
 export const TaxSettingsSchema = z.object({

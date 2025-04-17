@@ -67,7 +67,7 @@ export function calculateCartBreakdown(
             tax: feeTax,
             percentage: feePercentage
         };
-    }).filter(Boolean);
+    });
 
 
     // Step 3: Calculate tolerable service fee amount
@@ -99,6 +99,7 @@ export function calculateCartBreakdown(
     let buyerTotal = subTotal.totalWithTax + buyerPaysPlatformFee.totalWithTax - discount;
 
     // Never apply discount to tax
+    // I believe discount should be simple and stupid, otherwise it will become a three-headed dragon that eats each other
     if (totalTax > buyerTotal) {
         buyerTotal = totalTax;
     }

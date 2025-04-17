@@ -20,8 +20,9 @@ export const calculateStripeFee = (
 
 export const inclusiveRate = (gross: number, rate: number) => {
     return roundTo2Decimals(
-        // gross - (gross / (1 + (rate / 100)))
-        (gross * rate) / (100 + rate)
+        gross - (gross / (1 + (rate / 100)))
+        // (gross * rate) / (100 + rate) // This is mathematically correct, but can produce rounding errors for certain combinations of values
+
     )
 }
 
