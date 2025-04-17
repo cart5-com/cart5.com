@@ -200,6 +200,7 @@ export const storeTaxSettingsTable = sqliteTable('store_tax_settings', {
 	currencySymbol: text('currency_symbol'),
 	salesTaxType: text('sales_tax_type', { enum: TAX_TYPE }),
 	taxName: text('tax_name'),
+	showTaxDetailsInCart: integer("show_tax_details_in_cart", { mode: "boolean" }).notNull().default(false),
 	taxRateForDelivery: real('tax_rate_for_delivery'),
 	taxRateForServiceFees: real('tax_rate_for_service_fees'),
 	taxCategories: text('tax_categories', { mode: 'json' }).$type<TaxCategory[]>().$defaultFn(() => []),

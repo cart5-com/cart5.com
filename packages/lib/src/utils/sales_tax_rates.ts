@@ -104,6 +104,7 @@ export const getAsTaxSettings = (
         currency: salesTaxRate.raw.currency,
         currencySymbol: salesTaxRate.raw.currencySymbol ?? undefined,
         salesTaxType: salesTaxRate.raw.isTaxAppliesAtCheckout ? "APPLY_TAX_ON_TOP_OF_PRICES" : "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
+        showTaxDetailsInCart: salesTaxRate.raw.isTaxAppliesAtCheckout,
         taxName: salesTaxRate.taxName,
         taxRateForDelivery: salesTaxRate.taxRate,
         taxRateForServiceFees: salesTaxRate.taxRate,

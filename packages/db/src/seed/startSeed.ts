@@ -156,7 +156,7 @@ export const startSeed = async () => {
             offersPickup,
         })
 
-        await updateStoreTaxSettings_Service(store!.id, getAsTaxSettings(cfRaw.country, cfRaw.regionCode))
+        // await updateStoreTaxSettings_Service(store!.id, getAsTaxSettings(cfRaw.country, cfRaw.regionCode))
 
         if (offersDelivery) {
             let zones: DeliveryZone[] = [
