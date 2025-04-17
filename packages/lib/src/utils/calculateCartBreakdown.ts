@@ -42,12 +42,12 @@ export function calculateCartBreakdown(
     const serviceTax = inclusiveRate(serviceFeeAmount, taxRateForServiceFees);
 
     const totalServiceFee = {
-        totalWithTax: roundTo2Decimals(serviceFeeAmount),
-        itemTotal: roundTo2Decimals(serviceFeeAmount - serviceTax),
-        tax: roundTo2Decimals(serviceTax),
+        totalWithTax: serviceFeeAmount,
+        itemTotal: serviceFeeAmount - serviceTax,
+        tax: serviceTax,
         percentage: {
-            ratePerOrder: roundTo2Decimals(combinedServiceFee.ratePerOrder ?? 0),
-            feePerOrder: roundTo2Decimals(combinedServiceFee.feePerOrder ?? 0)
+            ratePerOrder: combinedServiceFee.ratePerOrder ?? 0,
+            feePerOrder: combinedServiceFee.feePerOrder ?? 0
         }
     };
 
@@ -58,21 +58,21 @@ export function calculateCartBreakdown(
         const feeAmount = exclusiveRate(subTotal.totalWithTax, fee.ratePerOrder ?? 0) +
             (fee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
-        const itemTotal = roundTo2Decimals(feeAmount - feeTax);
+        const itemTotal = feeAmount - feeTax;
         const feePercentage = (itemTotal / totalServiceFee.itemTotal) * 100;
         return {
             name: fee.name ?? 'Unnamed Fee',
-            totalWithTax: roundTo2Decimals(feeAmount),
-            itemTotal: roundTo2Decimals(feeAmount - feeTax),
-            tax: roundTo2Decimals(feeTax),
-            percentage: roundTo2Decimals(feePercentage)
+            totalWithTax: feeAmount,
+            itemTotal: feeAmount - feeTax,
+            tax: feeTax,
+            percentage: feePercentage
         };
     }).filter(Boolean);
 
 
     // Step 3: Calculate tolerable service fee amount
     const tolerableAmount = config.calculationType === "INCLUDE"
-        ? roundTo2Decimals(exclusiveRate(subTotal.totalWithTax, config.tolerableRate))
+        ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
         : 0;
 
     // Step 4: Calculate what buyer needs to pay
@@ -83,44 +83,69 @@ export function calculateCartBreakdown(
         const extraTax = inclusiveRate(extraAmount, taxRateForServiceFees);
 
         buyerServiceFee = {
-            totalWithTax: roundTo2Decimals(extraAmount),
-            itemTotal: roundTo2Decimals(extraAmount - extraTax),
-            tax: roundTo2Decimals(extraTax)
+            totalWithTax: extraAmount,
+            itemTotal: extraAmount - extraTax,
+            tax: extraTax
         };
     }
 
     // Step 5: Calculate discount if applicable
     const discount = config.offerDiscount && tolerableAmount > totalServiceFee.totalWithTax
-        ? roundTo2Decimals(tolerableAmount - totalServiceFee.totalWithTax)
+        ? tolerableAmount - totalServiceFee.totalWithTax
         : 0;
 
     // Step 6: Calculate final amounts
     const totalTax = subTotal.tax + buyerServiceFee.tax;
-    let buyerTotal = roundTo2Decimals(subTotal.totalWithTax + buyerServiceFee.totalWithTax - discount);
+    let buyerTotal = subTotal.totalWithTax + buyerServiceFee.totalWithTax - discount;
 
     // Never apply discount to tax
     if (totalTax > buyerTotal) {
-        buyerTotal = roundTo2Decimals(totalTax);
+        buyerTotal = totalTax;
     }
 
     // Step 7: Calculate what store receives
     const storeReceives = {
-        totalWithTax: roundTo2Decimals(buyerTotal - totalServiceFee.totalWithTax),
-        tax: roundTo2Decimals(totalTax - totalServiceFee.tax),
-        afterTax: roundTo2Decimals(buyerTotal - totalTax)
+        totalWithTax: buyerTotal - totalServiceFee.totalWithTax,
+        tax: totalTax - totalServiceFee.tax,
+        afterTax: buyerTotal - totalTax
     };
 
-    // Return complete breakdown
+    // Return complete breakdown with rounding applied only at the end
     return {
-        tolerableAmount,
-        discount,
+        tolerableAmount: roundTo2Decimals(tolerableAmount),
+        discount: roundTo2Decimals(discount),
         buyerPays: {
             totalWithTax: roundTo2Decimals(buyerTotal),
             tax: roundTo2Decimals(totalTax)
         },
-        buyerServiceFee,
-        storeReceives,
-        totalServiceFee,
-        feeBreakdown
+        buyerServiceFee: {
+            totalWithTax: roundTo2Decimals(buyerServiceFee.totalWithTax),
+            itemTotal: roundTo2Decimals(buyerServiceFee.itemTotal),
+            tax: roundTo2Decimals(buyerServiceFee.tax)
+        },
+        storeReceives: {
+            totalWithTax: roundTo2Decimals(storeReceives.totalWithTax),
+            tax: roundTo2Decimals(storeReceives.tax),
+            afterTax: roundTo2Decimals(storeReceives.afterTax)
+        },
+        totalServiceFee: {
+            totalWithTax: roundTo2Decimals(totalServiceFee.totalWithTax),
+            itemTotal: roundTo2Decimals(totalServiceFee.itemTotal),
+            tax: roundTo2Decimals(totalServiceFee.tax),
+            percentage: {
+                ratePerOrder: roundTo2Decimals(totalServiceFee.percentage.ratePerOrder),
+                feePerOrder: roundTo2Decimals(totalServiceFee.percentage.feePerOrder)
+            }
+        },
+        feeBreakdown: feeBreakdown.map(fee => {
+            if (!fee) return null;
+            return {
+                name: fee.name,
+                totalWithTax: roundTo2Decimals(fee.totalWithTax),
+                itemTotal: roundTo2Decimals(fee.itemTotal),
+                tax: roundTo2Decimals(fee.tax),
+                percentage: roundTo2Decimals(fee.percentage)
+            };
+        }).filter(Boolean)
     };
 }

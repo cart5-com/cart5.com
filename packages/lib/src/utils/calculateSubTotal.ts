@@ -14,12 +14,13 @@ type CalculatedCustomServiceFee = {
     name: string,
     tax: number,
     totalWithTax: number,
-    shownFee: number,
+    itemTotal: number,
 };
 
 type SubTotalResult = {
     totalWithTax: number,
     tax: number,
+    itemTotal: number,
     calculatedCustomServiceFees: CalculatedCustomServiceFee[]
 };
 
@@ -49,6 +50,7 @@ export const calculateSubTotal = (
     const result: SubTotalResult = {
         totalWithTax: 0,
         tax: 0,
+        itemTotal: 0,
         calculatedCustomServiceFees: []
     };
 
@@ -59,17 +61,28 @@ export const calculateSubTotal = (
     }
 
     if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-        result.totalWithTax = roundTo2Decimals(
-            cartTotalValues.totalPrice + deliveryFee + cartTotalValues.tax + deliveryFeeTax
-        );
+        result.totalWithTax = cartTotalValues.totalPrice + deliveryFee + cartTotalValues.tax + deliveryFeeTax;
     } else {
-        result.totalWithTax = roundTo2Decimals(cartTotalValues.totalPrice + deliveryFee);
+        result.totalWithTax = cartTotalValues.totalPrice + deliveryFee;
     }
 
-    result.tax = roundTo2Decimals(deliveryFeeTax + cartTotalValues.tax);
+    result.tax = deliveryFeeTax + cartTotalValues.tax;
+    result.itemTotal = result.totalWithTax - result.tax;
 
     // Calculate service fees
     calculateServiceFees(result, customServiceFees, taxSettings);
+
+    // Apply rounding only at the end
+    result.totalWithTax = roundTo2Decimals(result.totalWithTax);
+    result.tax = roundTo2Decimals(result.tax);
+    result.itemTotal = roundTo2Decimals(result.itemTotal);
+
+    result.calculatedCustomServiceFees = result.calculatedCustomServiceFees.map(fee => ({
+        ...fee,
+        totalWithTax: roundTo2Decimals(fee.totalWithTax),
+        itemTotal: roundTo2Decimals(fee.itemTotal),
+        tax: roundTo2Decimals(fee.tax),
+    }));
 
     return result;
 };
@@ -118,16 +131,17 @@ function calculateServiceFees(
         );
 
         const totalWithTax = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
-            roundTo2Decimals(feeAmount + tax) : roundTo2Decimals(feeAmount);
+            feeAmount + tax : feeAmount;
 
-        const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
-            roundTo2Decimals(feeAmount) : roundTo2Decimals(feeAmount + tax);
+        const itemTotal = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+            feeAmount : feeAmount - tax;
+
 
         result.calculatedCustomServiceFees.push({
             name: fee.name ?? 'Service fee',
-            tax: roundTo2Decimals(tax),
+            tax: tax,
             totalWithTax,
-            shownFee
+            itemTotal,
         });
     }
 
@@ -139,6 +153,10 @@ function calculateServiceFees(
     result.tax += result.calculatedCustomServiceFees.reduce(
         (sum, fee) => sum + fee.tax, 0
     );
-    result.totalWithTax = roundTo2Decimals(result.totalWithTax);
-    result.tax = roundTo2Decimals(result.tax);
+
+    result.itemTotal += result.calculatedCustomServiceFees.reduce(
+        (sum, fee) => sum + fee.itemTotal, 0
+    );
+
+    // Rounding will be applied at the end of the main function
 }
