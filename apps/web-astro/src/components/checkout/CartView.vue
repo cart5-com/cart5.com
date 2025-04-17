@@ -122,7 +122,7 @@ const bestDeliveryZone = computed(() => {
 })
 
 const subTotal = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0, calculatedCustomServiceFees: [] };
+    if (!currentCart.value || !menuRoot.value) return { totalWithTax: 0, tax: 0, itemTotal: 0, calculatedCustomServiceFees: [] };
     return calculateSubTotal(
         currentCart.value, menuRoot.value, taxSettings, orderType,
         {
@@ -281,7 +281,7 @@ const deliveryFeeTax = computed(() => {
                         {{ customSFee.name }}
                     </span>
                     <span class="font-bold text-lg">
-                        {{ customSFee.shownFee }}
+                        {{ customSFee.totalWithTax }}
                         tax:{{ customSFee.tax }}
                     </span>
                 </div>
