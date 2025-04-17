@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { userDataStore } from "../../stores/UserData.store";
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
@@ -38,21 +36,13 @@ import { calculateFeeTax } from "@lib/utils/calculateFeeTax";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
-    calculateAllServiceFees,
-    tolerableServiceFee,
-    serviceFeeAmountNeedToPayByBuyer,
-    calculateDiscount,
-    buyerPays,
-    storeReceives
-} from "@lib/utils/calculateServiceFee";
-import { calculateStripeFee } from "@lib/utils/rateCalc";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
+    calculateCartBreakdown
+} from "@lib/utils/calculateCartBreakdown";
 
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
 const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPossible ?? true;
 const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? [];
-const isStripe = ref(false);
 
 const platformServiceFee: ServiceFee | null = {
     ratePerOrder: 1,
@@ -61,31 +51,20 @@ const platformServiceFee: ServiceFee | null = {
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
 const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceFee;
 
-const serviceFeeForThisOrder = computed(() => {
-    return calculateAllServiceFees(
-        subTotal.value.totalWithTax,
+const cartBreakdown = computed(() => {
+    return calculateCartBreakdown(
+        subTotal.value,
         [
-            platformServiceFee,
-            supportPartnerServiceFee,
-            marketingPartnerServiceFee
+            { ...platformServiceFee, name: "Platform" },
+            supportPartnerServiceFee && { ...supportPartnerServiceFee, name: "Support Partner" },
+            marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
         ],
-        taxSettings.taxRateForServiceFees ?? 0
-    )
-})
-
-const tolerableServiceFeeAmount = computed(() => {
-    return tolerableServiceFee(subTotal.value.totalWithTax, tolerableServiceFeeRate, calculationType)
-})
-
-const discountAmount = computed(() => {
-    return calculateDiscount(offerDiscountIfPossible, tolerableServiceFeeAmount.value, serviceFeeForThisOrder.value.totalWithTax)
-})
-
-const serviceFeeAmountForBuyer = computed(() => {
-    return serviceFeeAmountNeedToPayByBuyer(
-        serviceFeeForThisOrder.value.totalWithTax,
-        tolerableServiceFeeAmount.value,
-        taxSettings.taxRateForServiceFees ?? 0
+        taxSettings.taxRateForServiceFees ?? 0,
+        {
+            calculationType: calculationType,
+            tolerableRate: tolerableServiceFeeRate,
+            offerDiscount: offerDiscountIfPossible
+        }
     )
 })
 
@@ -93,31 +72,6 @@ const currentCart = computed(() => {
     return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
 });
 
-const buyerPaysTotal = computed(() => {
-    return buyerPays(
-        subTotal.value,
-        serviceFeeAmountForBuyer.value,
-        discountAmount.value,
-    )
-})
-
-const stripeFee = computed(() => {
-    return calculateStripeFee(buyerPaysTotal.value.totalWithTax)
-})
-
-const buyerPaysTotalWithStripe = computed(() => {
-    if (isStripe.value) {
-        return roundTo2Decimals(buyerPaysTotal.value.totalWithTax + stripeFee.value)
-    }
-    return buyerPaysTotal.value.totalWithTax;
-})
-
-const storeReceivesTotal = computed(() => {
-    return storeReceives(
-        buyerPaysTotal.value,
-        serviceFeeForThisOrder.value,
-    )
-})
 
 let menuRoot = ref<MenuRoot | null>(null);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
@@ -349,83 +303,17 @@ const deliveryFeeTax = computed(() => {
                     </span>
                 </div>
 
-                <!-- <div class="flex justify-between items-center px-1">
-                    <span class="font-bold text-lg">
-                        Allowed Service Fee
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ tolerableServiceFeeAmount }}
-                    </span>
-                </div> -->
-
-                <div class="flex justify-between items-center px-1">
-                    <span class="font-bold text-lg">
-                        Service Fee for Buyer
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ serviceFeeAmountForBuyer }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center px-1 text-primary"
-                     v-if="discountAmount > 0">
-                    <span class="font-bold text-lg">
-                        Discount
-                    </span>
-                    <span class="font-bold text-lg text-right">
-                        <details>
-                            <summary>
-                                - {{ discountAmount }}
-                            </summary>
-                            <p>
-                                Discounts do not apply to taxes
-                            </p>
-                        </details>
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <Label class="text-right">
-                        Stripe ({{ isStripe ? `enabled ${stripeFee}` : "disabled" }})
-                    </Label>
-                    <Switch :checked="isStripe"
-                            @update:checked="(checked) => isStripe = checked"
-                            class="scale-125">
-                    </Switch>
-                </div>
-
-                <div class="flex justify-between items-center px-1">
-                    <span class="font-bold text-2xl">
-                        Buyer Pays
-                    </span>
-                    <span class="font-bold text-2xl">
-                        <details>
-                            <summary>
-                                {{ buyerPaysTotalWithStripe }}
-                            </summary>
-                            <p>
-                                {{ buyerPaysTotal }}
-                            </p>
-                        </details>
-                    </span>
-                </div>
-
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
-                    <span class="font-bold text-lg">
-                        Service Fee
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ serviceFeeForThisOrder }}
-                    </span>
+                    <pre>{{ subTotal }}</pre>
                 </div>
-
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
-                    <span class="font-bold text-lg">
-                        Store Receives
-                    </span>
-                    <span class="font-bold text-lg">
-                        {{ storeReceivesTotal }}
-                    </span>
+                    <!-- <span class="font-bold text-lg">
+                        Service Fee Breakdown
+                    </span> -->
+                    <!-- <span class="font-bold text-lg">
+                        
+                    </span> -->
+                    <pre>{{ cartBreakdown }}</pre>
                 </div>
             </div>
         </div>
