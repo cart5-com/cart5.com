@@ -196,12 +196,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                         </NumberField>
                         <div>
                             <div class="font-medium">
-                                <details>
-                                    <summary>
-                                        {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
-                                    </summary>
-                                    <pre>{{ getPrice(index) }}</pre>
-                                </details>
+                                {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
                             </div>
                         </div>
                     </div>
@@ -246,12 +241,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                         Subtotal
                     </span>
                     <span class=" text-right">
-                        <details>
-                            <summary>
-                                {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
-                            </summary>
-                            <pre>{{ cartTotals }}</pre>
-                        </details>
+                        {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
                     </span>
                 </div>
 
@@ -265,12 +255,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                         Delivery Fee
                     </span>
                     <span class=" text-right">
-                        <details>
-                            <summary>
-                                {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
-                            </summary>
-                            <pre>{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone }}</pre>
-                        </details>
+                        {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
                     </span>
                 </div>
 
@@ -284,12 +269,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                             {{ customSFee.name }}
                         </span>
                         <span class=" text-right">
-                            <details>
-                                <summary>
-                                    {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
-                                </summary>
-                                <pre>{{ customSFee }}</pre>
-                            </details>
+                            {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
                         </span>
                     </div>
                 </div>
@@ -401,8 +381,8 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                     </span>
                 </div>
 
-                <pre>{{ cartBreakdown }}</pre>
-                <pre>{{ subTotalWithDeliveryAndServiceFees }}</pre>
+                <!-- <pre>{{ cartBreakdown }}</pre>
+                <pre>{{ subTotalWithDeliveryAndServiceFees }}</pre> -->
             </div>
         </div>
     </div>

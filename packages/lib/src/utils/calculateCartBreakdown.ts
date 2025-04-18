@@ -173,10 +173,9 @@ export function calculateCartBreakdown(
 
     // Return complete breakdown with rounding applied only at the end
     const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` : 'Platform Fees';
-    const debug = {
-        tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
-    }
+
     return {
+        tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
         discount: roundTo2Decimals(discount),
         taxesAndOtherFees: {
             shownFeeName,
