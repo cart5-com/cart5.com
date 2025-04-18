@@ -61,6 +61,8 @@ export function calculateCartBreakdown(
             (platformServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
         (totalPlatformFee.feeBreakdown as any).platform = {
+            name: "Platform Team",
+            note: "nerds 🤓 who develops and maintains the website",
             totalWithTax: roundTo2Decimals(feeAmount),
             itemTotal: roundTo2Decimals(feeAmount - feeTax),
             tax: roundTo2Decimals(feeTax),
@@ -71,6 +73,8 @@ export function calculateCartBreakdown(
             (supportPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
         (totalPlatformFee.feeBreakdown as any).support = {
+            name: "Support Team",
+            note: "provides dedicated support and guidance to store owners",
             totalWithTax: roundTo2Decimals(feeAmount),
             itemTotal: roundTo2Decimals(feeAmount - feeTax),
             tax: roundTo2Decimals(feeTax),
@@ -81,6 +85,8 @@ export function calculateCartBreakdown(
             (marketingPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
         (totalPlatformFee.feeBreakdown as any).marketing = {
+            name: "Marketing Team",
+            note: "helps promoting the store to find new customers",
             totalWithTax: roundTo2Decimals(feeAmount),
             itemTotal: roundTo2Decimals(feeAmount - feeTax),
             tax: roundTo2Decimals(feeTax),
@@ -109,7 +115,7 @@ export function calculateCartBreakdown(
     const tolerableAmountByStore = config.calculationType === "INCLUDE"
         ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
         : 0;
-    console.log('subTotal.totalWithTax🟪🟪', subTotal.totalWithTax)
+    // console.log('subTotal.totalWithTax🟪🟪', subTotal.totalWithTax)
     // Step 4: Calculate what buyer needs to pay
     let buyerPaysPlatformFee = {
         totalWithTax: 0,
@@ -154,12 +160,12 @@ export function calculateCartBreakdown(
     // Calculate what store receives with detailed breakdown
     const storeReceives = {
         // What buyer pays
-        buyerTotal: roundTo2Decimals(buyerTotal), // includes tax
+        // buyerTotal: roundTo2Decimals(buyerTotal), // includes tax
         tax: totalTax, // Jurisdiction total
         platformFees: roundTo2Decimals(totalPlatformFee.itemTotal), // includes tax
-        platformFeesBreakdown: {
-            ...totalPlatformFee.feeBreakdown
-        },
+        // platformFeesBreakdown: {
+        //     ...totalPlatformFee.feeBreakdown
+        // },
         netRevenue: roundTo2Decimals(
             buyerTotal - totalPlatformFee.itemTotal - totalTax
         )

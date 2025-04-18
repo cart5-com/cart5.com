@@ -304,7 +304,31 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                                 <Info class="inline-block ml-2" />
                             </PopoverTrigger>
                             <PopoverContent>
-                                <pre>{{ cartBreakdown.taxesAndOtherFees }}</pre>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold">What's included?</h3>
+                                    <div v-if="cartBreakdown.taxesAndOtherFees.otherFees > 0">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">Platform Fee</div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.otherFees }}
+                                            </div>
+                                        </div>
+                                        <div class="text-sm text-muted-foreground">This fee varies based on factors like
+                                            basket size and helps cover costs related to your order.</div>
+                                    </div>
+                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">
+                                                {{ taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '' : '-' }}
+                                                Taxes
+                                                ({{ taxSettings.taxName }})
+                                            </div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.tax }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </PopoverContent>
                         </Popover>
 
@@ -326,7 +350,50 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
-                    <span class="">
+                    <span>
+                        <Popover>
+                            <PopoverTrigger as-child>
+                                <Info class="inline-block mr-2" />
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold">Breakdown</h3>
+                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">
+                                                - Taxes
+                                            </div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.tax }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-for="(fee) in cartBreakdown.totalPlatformFee.feeBreakdown">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">
+                                                - {{ (fee as any).name }}
+                                            </div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ (fee as any).itemTotal }}
+                                            </div>
+                                        </div>
+                                        <div class="text-sm text-muted-foreground">
+                                            {{ (fee as any).note }}
+                                        </div>
+                                    </div>
+                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">
+                                                Store Net Revenue
+                                            </div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.netRevenue }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                         Total
                     </span>
                     <span class="text-right">
