@@ -20,26 +20,26 @@ const currentItem = computed(() => {
 </script>
 
 <template>
-    <div class="w-full max-h-80 overflow-y-auto"
+    <div class="w-full"
          v-if="currentItem">
-        <div class="p-1 sm:p-4">
+        <div class="">
             <div class="space-y-4">
-                <span class="capitalize cursor-text text-2xl font-bold">
+                <span class="capitalize text-2xl font-bold">
                     {{ currentItem.lbl || 'Name:' }}
                 </span>
-                <span class="capitalize cursor-text line-clamp-3">
+                <span class="capitalize line-clamp-3">
                     {{ currentItem.dsc || 'Description:' }}
                 </span>
-                <div class="cursor-text flex">
+                <div class="flex">
                     <Banknote class="mr-2" /> {{ currentItem.prc || 'Price:' }}
                 </div>
             </div>
             <div class="mt-8">
-                <div class="border rounded-lg p-1 sm:p-4">
-                    <Button variant="ghost">
-                        <ListTodo />
+                <div class="border rounded-lg p-1">
+                    <div>
+                        <ListTodo class="inline-block mr-1" />
                         Customizations
-                    </Button>
+                    </div>
                     <div v-for="child in currentItem.cIds">
                         <HoverCustomizationCard :item-id="child" />
                     </div>

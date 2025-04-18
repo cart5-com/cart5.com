@@ -9,7 +9,7 @@ import ItemCard from './ItemCard.vue';
 import { addChildItem, createNewItem, previewItem } from '../helpers';
 import InputInline from '@/ui-plus/inline-edit/InputInline.vue';
 import { CommandItem } from '@/components/ui/command';
-import ItemPreviewHover from './hover/HoverItem.vue';
+import HoverItem from './hover/HoverItem.vue';
 import {
     Popover,
     PopoverContent,
@@ -91,10 +91,10 @@ const onClickAddNewItem = (search: string | undefined) => {
             <!--  TODO: we need a better preview for items, showing only name is not clear enough -->
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                    .filter(item => item.t !== 'ct')
+                    .filter(item => item.t == 'i')
                     .map(item => ({
                         key: item.id,
-                        name: item.lbl
+                        name: item.lbl,
                     }))"
                                   @select="(selectedItem) => {
                                     addChildItem(currentItem?.id, selectedItem.key)
@@ -114,16 +114,19 @@ const onClickAddNewItem = (search: string | undefined) => {
                                      :key="item.key"
                                      :value="item.name + ' ' + item.key">
                             <div class="flex justify-between w-full">
-                                <div @click="emit('select', item)">
+                                <div @click="emit('select', item)"
+                                     class="cursor-pointer w-full">
                                     {{ item.name }}
                                 </div>
                                 <div>
                                     <Popover>
-                                        <PopoverTrigger>
+                                        <PopoverTrigger as-child>
                                             <Eye />
                                         </PopoverTrigger>
                                         <PopoverContent class="w-80 border border-card-foreground">
-                                            <ItemPreviewHover :item-id="item.key" />
+                                            <div class="max-h-80 overflow-y-auto">
+                                                <HoverItem :item-id="item.key" />
+                                            </div>
                                         </PopoverContent>
                                     </Popover>
                                 </div>

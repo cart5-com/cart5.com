@@ -6,9 +6,16 @@ import { onMounted, ref } from "vue";
 import ItemPreviewCustomizationCard from "./ItemPreviewCustomizationCard.vue";
 import { Button } from "@/components/ui/button";
 import draggable from "vuedraggable";
-import { ChevronUpSquare, ListTodo, Plus } from "lucide-vue-next";
+import { ChevronUpSquare, ListTodo, Plus, Eye } from "lucide-vue-next";
 import { addChildItem, createNewItem } from "../helpers";
 import SelectWithSearch from "@/ui-plus/SelectWithSearch/SelectWithSearch.vue";
+import { CommandItem } from '@/components/ui/command';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
+import HoverCustomizationCard from "../components/hover/HoverCustomizationCard.vue";
 
 const props = defineProps<{
     currentItem?: Item,
@@ -93,6 +100,32 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                                 <Plus />
                             </Button>
                         </template>
+
+                        <template #items-list="{ items, emit }">
+                            <CommandItem v-for="item in items"
+                                         :key="item.key"
+                                         :value="item.name + ' ' + item.key">
+                                <div class="flex justify-between w-full">
+                                    <div @click="emit('select', item)"
+                                         class="cursor-pointer w-full">
+                                        {{ item.name || 'no-name' }}
+                                    </div>
+                                    <div>
+                                        <Popover>
+                                            <PopoverTrigger as-child>
+                                                <Eye />
+                                            </PopoverTrigger>
+                                            <PopoverContent class="w-80 border border-card-foreground">
+                                                <div class="max-h-80 overflow-y-auto">
+                                                    <HoverCustomizationCard :item-id="item.key" />
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                </div>
+                            </CommandItem>
+                        </template>
+
                     </SelectWithSearch>
                 </div>
                 <draggable v-model="currentItem.cIds"

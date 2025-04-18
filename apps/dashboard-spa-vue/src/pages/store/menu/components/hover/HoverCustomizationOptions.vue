@@ -33,22 +33,22 @@ const isRadioMode = computed(() => {
                  :key="optionItemId">
 
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
-                    <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
+                    <div class="items-center p-1 bg-card grid grid-cols-8 gap-1"
                          :class="[
                             // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
                         ]">
-                        <span class="capitalize cursor-text col-span-5">
+                        <span class="capitalize col-span-5">
                             {{ menuRoot.allItems?.[optionItemId]?.lbl || 'Name:' }}
                         </span>
-                        <!-- <span class="capitalize cursor-text text-right">
+                        <!-- <span class="capitalize text-right">
                             {{ menuRoot.allItems![optionItemId!].opPrc || '+price' }}
                         </span> -->
 
                         <template v-if="isRadioMode">
-                            <Circle class="cursor-pointer justify-self-end" />
+                            <Circle class=" justify-self-end" />
                         </template>
                         <template v-else>
-                            <Plus class="border border-foreground rounded-md cursor-pointer justify-self-end" />
+                            <Plus class="border border-foreground rounded-md justify-self-end" />
                         </template>
                     </div>
                 </div>

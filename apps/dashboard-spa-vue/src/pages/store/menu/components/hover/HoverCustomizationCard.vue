@@ -19,7 +19,7 @@ const currentItem = computed(() => {
 </script>
 
 <template>
-    <div class="border rounded-md p-1 sm:p-4 my-6 border-card-foreground"
+    <div class="border rounded-md p-1 my-6 border-card-foreground"
          v-if="currentItem">
 
         <Badge v-if="currentItem?.minQ && currentItem?.minQ > 0"
@@ -28,7 +28,7 @@ const currentItem = computed(() => {
             ✅Required
         </Badge>
 
-        <span class="capitalize cursor-text text-lg block">
+        <span class="capitalize text-lg block">
             {{ currentItem?.lbl || 'Name:' }}
         </span>
 
