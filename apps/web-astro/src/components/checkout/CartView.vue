@@ -287,9 +287,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
                     <span class="">
-                        Taxes<span v-if="cartBreakdown.buyerPaysPlatformFee.shownFee > 0">
-                            & Other Fees
-                        </span>
+                        {{ cartBreakdown.taxesAndOtherFees.shownFeeName }}
                     </span>
                     <span class=" text-right">
                         <details>

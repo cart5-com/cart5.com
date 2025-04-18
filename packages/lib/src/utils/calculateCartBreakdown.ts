@@ -73,15 +73,15 @@ export function calculateCartBreakdown(
 
 
     // Step 3: Calculate tolerable service fee amount
-    const tolerableAmount = config.calculationType === "INCLUDE"
+    const tolerableAmountByStore = config.calculationType === "INCLUDE"
         ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
         : 0;
 
     // Step 4: Calculate what buyer needs to pay
     let buyerPaysPlatformFee = { totalWithTax: 0, itemTotal: 0, tax: 0, shownFee: 0 };
 
-    if (totalPlatformFee.totalWithTax > tolerableAmount) {
-        const extraAmount = totalPlatformFee.totalWithTax - tolerableAmount;
+    if (totalPlatformFee.totalWithTax > tolerableAmountByStore) {
+        const extraAmount = totalPlatformFee.totalWithTax - tolerableAmountByStore;
         const extraTax = inclusiveRate(extraAmount, taxRateForServiceFees);
         const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? extraAmount - extraTax : extraAmount
 
@@ -94,8 +94,8 @@ export function calculateCartBreakdown(
     }
 
     // Step 5: Calculate discount if applicable
-    const discount = config.offerDiscount && tolerableAmount > totalPlatformFee.totalWithTax
-        ? tolerableAmount - totalPlatformFee.totalWithTax
+    const discount = config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax
+        ? tolerableAmountByStore - totalPlatformFee.totalWithTax
         : 0;
 
     // Step 6: Calculate final amounts
@@ -116,11 +116,13 @@ export function calculateCartBreakdown(
     // };
 
     // Return complete breakdown with rounding applied only at the end
+    const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` : 'Platform Fees';
     return {
-        tolerableAmount: roundTo2Decimals(tolerableAmount),
+        tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
         discount: roundTo2Decimals(discount),
         taxesAndOtherFees: {
-            shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax),
+            shownFeeName,
+            shownFee: taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax) : roundTo2Decimals(buyerPaysPlatformFee.shownFee),
             tax: roundTo2Decimals(totalTax),
             otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
         },
