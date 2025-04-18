@@ -16,7 +16,10 @@ import { type TaxSettings } from "../zod/taxSchema"
  */
 export function calculateCartBreakdown(
     subTotal: ReturnType<typeof calculateSubTotal>,
-    fees: (ServiceFee & { name?: string } | null)[],
+    // fees: (ServiceFee & { name?: string } | null)[],
+    platformServiceFee: ServiceFee | null,
+    supportPartnerServiceFee: ServiceFee | null,
+    marketingPartnerServiceFee: ServiceFee | null,
     taxRateForServiceFees: number,
     taxSettings: TaxSettings,
     config: {
@@ -31,7 +34,7 @@ export function calculateCartBreakdown(
         feePerOrder: 0
     };
 
-    fees.forEach(fee => {
+    [platformServiceFee, supportPartnerServiceFee, marketingPartnerServiceFee].forEach(fee => {
         if (fee) {
             combinedServiceFee.ratePerOrder! += fee.ratePerOrder ?? 0;
             combinedServiceFee.feePerOrder! += fee.feePerOrder ?? 0;
@@ -50,35 +53,70 @@ export function calculateCartBreakdown(
         percentage: {
             ratePerOrder: combinedServiceFee.ratePerOrder ?? 0,
             feePerOrder: combinedServiceFee.feePerOrder ?? 0
-        }
+        },
+        feeBreakdown: {}
     };
+    if (platformServiceFee) {
+        const feeAmount = exclusiveRate(subTotal.totalWithTax, platformServiceFee.ratePerOrder ?? 0) +
+            (platformServiceFee.feePerOrder ?? 0);
+        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        (totalPlatformFee.feeBreakdown as any).platform = {
+            totalWithTax: roundTo2Decimals(feeAmount),
+            itemTotal: roundTo2Decimals(feeAmount - feeTax),
+            tax: roundTo2Decimals(feeTax),
+        };
+    }
+    if (supportPartnerServiceFee) {
+        const feeAmount = exclusiveRate(subTotal.totalWithTax, supportPartnerServiceFee.ratePerOrder ?? 0) +
+            (supportPartnerServiceFee.feePerOrder ?? 0);
+        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        (totalPlatformFee.feeBreakdown as any).support = {
+            totalWithTax: roundTo2Decimals(feeAmount),
+            itemTotal: roundTo2Decimals(feeAmount - feeTax),
+            tax: roundTo2Decimals(feeTax),
+        };
+    }
+    if (marketingPartnerServiceFee) {
+        const feeAmount = exclusiveRate(subTotal.totalWithTax, marketingPartnerServiceFee.ratePerOrder ?? 0) +
+            (marketingPartnerServiceFee.feePerOrder ?? 0);
+        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        (totalPlatformFee.feeBreakdown as any).marketing = {
+            totalWithTax: roundTo2Decimals(feeAmount),
+            itemTotal: roundTo2Decimals(feeAmount - feeTax),
+            tax: roundTo2Decimals(feeTax),
+        };
+    }
 
     // breakdown for individual fees
-    const feeBreakdown = fees.filter(Boolean).map(fee => {
-        if (!fee) return null;
+    // const feeBreakdown = [platformServiceFee, supportPartnerServiceFee, marketingPartnerServiceFee].filter(Boolean).map(fee => {
+    //     if (!fee) return null;
 
-        const feeAmount = exclusiveRate(subTotal.totalWithTax, fee.ratePerOrder ?? 0) +
-            (fee.feePerOrder ?? 0);
-        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
-        // const itemTotal = feeAmount - feeTax;
-        // const feePercentage = (itemTotal / totalPlatformFee.itemTotal) * 100;
-        return {
-            name: fee.name ?? 'Unnamed Fee',
-            totalWithTax: feeAmount,
-            itemTotal: feeAmount - feeTax,
-            tax: feeTax,
-            // percentage: feePercentage
-        };
-    });
+    //     const feeAmount = exclusiveRate(subTotal.totalWithTax, fee.ratePerOrder ?? 0) +
+    //         (fee.feePerOrder ?? 0);
+    //     const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+    //     // const itemTotal = feeAmount - feeTax;
+    //     // const feePercentage = (itemTotal / totalPlatformFee.itemTotal) * 100;
+    //     return {
+    //         totalWithTax: feeAmount,
+    //         itemTotal: feeAmount - feeTax,
+    //         tax: feeTax,
+    //         // percentage: feePercentage
+    //     };
+    // });
 
 
     // Step 3: Calculate tolerable service fee amount
     const tolerableAmountByStore = config.calculationType === "INCLUDE"
         ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
         : 0;
-
+    console.log('subTotal.totalWithTax🟪🟪', subTotal.totalWithTax)
     // Step 4: Calculate what buyer needs to pay
-    let buyerPaysPlatformFee = { totalWithTax: 0, itemTotal: 0, tax: 0, shownFee: 0 };
+    let buyerPaysPlatformFee = {
+        totalWithTax: 0,
+        itemTotal: 0,
+        tax: 0,
+        shownFee: 0
+    };
 
     if (totalPlatformFee.totalWithTax > tolerableAmountByStore) {
         const extraAmount = totalPlatformFee.totalWithTax - tolerableAmountByStore;
@@ -92,6 +130,10 @@ export function calculateCartBreakdown(
             shownFee: shownFee
         };
     }
+    // else {
+    //     // store covers all platform fees
+    // }
+
 
     // Step 5: Calculate discount if applicable
     const discount = config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax
@@ -109,11 +151,19 @@ export function calculateCartBreakdown(
     }
 
     // Step 7: Calculate what store receives
-    // const storeReceives = {
-    //     totalWithTax: buyerTotal - totalPlatformFee.totalWithTax,
-    //     tax: totalTax - totalPlatformFee.tax,
-    //     afterTax: buyerTotal - totalTax
-    // };
+    // Calculate what store receives with detailed breakdown
+    const storeReceives = {
+        // What buyer pays
+        buyerTotal: roundTo2Decimals(buyerTotal), // includes tax
+        tax: totalTax, // Jurisdiction total
+        platformFees: roundTo2Decimals(totalPlatformFee.itemTotal), // includes tax
+        platformFeesBreakdown: {
+            ...totalPlatformFee.feeBreakdown
+        },
+        netRevenue: roundTo2Decimals(
+            buyerTotal - totalPlatformFee.itemTotal - totalTax
+        )
+    }
 
     // Return complete breakdown with rounding applied only at the end
     const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` : 'Platform Fees';
@@ -133,12 +183,9 @@ export function calculateCartBreakdown(
             tax: roundTo2Decimals(buyerPaysPlatformFee.tax),
             shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee)
         },
-        // storeReceives: {
-        //     totalWithTax: roundTo2Decimals(storeReceives.totalWithTax),
-        //     tax: roundTo2Decimals(storeReceives.tax),
-        //     afterTax: roundTo2Decimals(storeReceives.afterTax)
-        // },
+        storeReceives,
         totalPlatformFee: { // total platform fees that can be covered by store and buyer
+            ...totalPlatformFee,
             totalWithTax: roundTo2Decimals(totalPlatformFee.totalWithTax),
             itemTotal: roundTo2Decimals(totalPlatformFee.itemTotal),
             tax: roundTo2Decimals(totalPlatformFee.tax),
@@ -146,16 +193,16 @@ export function calculateCartBreakdown(
                 ratePerOrder: roundTo2Decimals(totalPlatformFee.percentage.ratePerOrder),
                 feePerOrder: roundTo2Decimals(totalPlatformFee.percentage.feePerOrder)
             },
-            feeBreakdown: feeBreakdown.map(fee => {
-                if (!fee) return null;
-                return {
-                    name: fee.name,
-                    totalWithTax: roundTo2Decimals(fee.totalWithTax),
-                    itemTotal: roundTo2Decimals(fee.itemTotal),
-                    tax: roundTo2Decimals(fee.tax),
-                    // percentage: roundTo2Decimals(fee.percentage)
-                };
-            }).filter(Boolean)
+            // feeBreakdown: feeBreakdown.map(fee => {
+            //     if (!fee) return null;
+            //     return {
+            //         name: fee.name,
+            //         totalWithTax: roundTo2Decimals(fee.totalWithTax),
+            //         itemTotal: roundTo2Decimals(fee.itemTotal),
+            //         tax: roundTo2Decimals(fee.tax),
+            //         // percentage: roundTo2Decimals(fee.percentage)
+            //     };
+            // }).filter(Boolean)
         },
     };
 }

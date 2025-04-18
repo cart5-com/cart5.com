@@ -2,7 +2,7 @@
 import { userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
-import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
+import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -36,6 +36,11 @@ import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
     calculateCartBreakdown
 } from "@lib/utils/calculateCartBreakdown";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
 
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
@@ -52,11 +57,14 @@ const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceF
 const cartBreakdown = computed(() => {
     return calculateCartBreakdown(
         subTotalWithDeliveryAndServiceFees.value,
-        [
-            { ...platformServiceFee, name: "Platform" },
-            supportPartnerServiceFee && { ...supportPartnerServiceFee, name: "Support Partner" },
-            marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
-        ],
+        platformServiceFee,
+        supportPartnerServiceFee,
+        marketingPartnerServiceFee,
+        // [
+        //     { ...platformServiceFee, name: "Platform" },
+        //     supportPartnerServiceFee && { ...supportPartnerServiceFee, name: "Support Partner" },
+        //     marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
+        // ],
         taxSettings.taxRateForServiceFees ?? 0,
         taxSettings,
         {
@@ -290,14 +298,19 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                      v-if="cartBreakdown.taxesAndOtherFees.shownFee > 0">
                     <span class="">
                         {{ cartBreakdown.taxesAndOtherFees.shownFeeName }}
+
+                        <Popover>
+                            <PopoverTrigger as-child>
+                                <Info class="inline-block ml-2" />
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <pre>{{ cartBreakdown.taxesAndOtherFees }}</pre>
+                            </PopoverContent>
+                        </Popover>
+
                     </span>
                     <span class=" text-right">
-                        <details>
-                            <summary>
-                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.shownFee }}
-                            </summary>
-                            <pre>{{ cartBreakdown.taxesAndOtherFees }}</pre>
-                        </details>
+                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.shownFee }}
                     </span>
                 </div>
 
