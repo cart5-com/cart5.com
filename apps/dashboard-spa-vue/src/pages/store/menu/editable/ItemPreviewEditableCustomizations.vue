@@ -59,6 +59,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     <div v-if="currentItem"
          class="mt-8">
         <div v-if="currentItem">
+
             <Button variant="outline"
                     class="w-full"
                     v-if="isCollapsed"

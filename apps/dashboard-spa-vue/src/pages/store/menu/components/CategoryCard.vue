@@ -1,13 +1,20 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { menuRoot } from '../MenuRootStore';
-import { AlignJustify, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-vue-next';
+import { AlignJustify, ChevronDown, ChevronUp, Plus, Trash2, Eye } from 'lucide-vue-next';
 import draggable from "vuedraggable"
 import Button from '@/components/ui/button/Button.vue';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import ItemCard from './ItemCard.vue';
 import { addChildItem, createNewItem, previewItem } from '../helpers';
 import InputInline from '@/ui-plus/inline-edit/InputInline.vue';
+import { CommandItem } from '@/components/ui/command';
+import ItemPreviewHover from './hover/HoverItem.vue';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
 
 const props = defineProps<{
     itemId: string
@@ -101,6 +108,29 @@ const onClickAddNewItem = (search: string | undefined) => {
                             <!-- to '<span class="capitalize">{{ currentItem?.itemLabel }}</span>' -->
                         </Button>
                     </template>
+
+                    <template #items-list="{ items, emit }">
+                        <CommandItem v-for="item in items"
+                                     :key="item.key"
+                                     :value="item.name + ' ' + item.key">
+                            <div class="flex justify-between w-full">
+                                <div @click="emit('select', item)">
+                                    {{ item.name }}
+                                </div>
+                                <div>
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <Eye />
+                                        </PopoverTrigger>
+                                        <PopoverContent class="w-80 border border-card-foreground">
+                                            <ItemPreviewHover :item-id="item.key" />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+                            </div>
+                        </CommandItem>
+                    </template>
+
                 </SelectWithSearch>
 
 

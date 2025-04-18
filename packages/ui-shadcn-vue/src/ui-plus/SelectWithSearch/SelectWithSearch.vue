@@ -30,10 +30,10 @@ const search = ref("");
                 <CommandEmpty>not found</CommandEmpty>
                 <CommandList>
                     <CommandGroup :heading="heading">
-                        <PopoverClose class="w-full">
-                            <slot name="items-list"
-                                  :items="items"
-                                  :emit="$emit">
+                        <slot name="items-list"
+                              :items="items"
+                              :emit="$emit">
+                            <PopoverClose class="w-full">
                                 <CommandItem v-for="item in items"
                                              :key="item.key"
                                              :value="item.name + ' ' + item.key"
@@ -42,8 +42,8 @@ const search = ref("");
                                         {{ item.name }}
                                     </span>
                                 </CommandItem>
-                            </slot>
-                        </PopoverClose>
+                            </PopoverClose>
+                        </slot>
                     </CommandGroup>
                 </CommandList>
             </Command>
