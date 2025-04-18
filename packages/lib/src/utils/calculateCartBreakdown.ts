@@ -2,6 +2,7 @@ import type { CalculationType, ServiceFee } from "@lib/zod/serviceFee";
 import { exclusiveRate, inclusiveRate } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 import type { calculateSubTotal } from "./calculateSubTotal";
+import { type TaxSettings } from "../zod/taxSchema"
 // import { calculateStripeFee } from "@lib/utils/rateCalc";
 
 /**
@@ -17,6 +18,7 @@ export function calculateCartBreakdown(
     subTotal: ReturnType<typeof calculateSubTotal>,
     fees: (ServiceFee & { name?: string } | null)[],
     taxRateForServiceFees: number,
+    taxSettings: TaxSettings,
     config: {
         calculationType: CalculationType,
         tolerableRate: number,
@@ -76,16 +78,18 @@ export function calculateCartBreakdown(
         : 0;
 
     // Step 4: Calculate what buyer needs to pay
-    let buyerPaysPlatformFee = { totalWithTax: 0, itemTotal: 0, tax: 0 };
+    let buyerPaysPlatformFee = { totalWithTax: 0, itemTotal: 0, tax: 0, shownFee: 0 };
 
     if (totalPlatformFee.totalWithTax > tolerableAmount) {
         const extraAmount = totalPlatformFee.totalWithTax - tolerableAmount;
         const extraTax = inclusiveRate(extraAmount, taxRateForServiceFees);
+        const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? extraAmount - extraTax : extraAmount
 
         buyerPaysPlatformFee = {
             totalWithTax: extraAmount,
             itemTotal: extraAmount - extraTax,
-            tax: extraTax
+            tax: extraTax,
+            shownFee: shownFee
         };
     }
 
@@ -105,31 +109,34 @@ export function calculateCartBreakdown(
     }
 
     // Step 7: Calculate what store receives
-    const storeReceives = {
-        totalWithTax: buyerTotal - totalPlatformFee.totalWithTax,
-        tax: totalTax - totalPlatformFee.tax,
-        afterTax: buyerTotal - totalTax
-    };
+    // const storeReceives = {
+    //     totalWithTax: buyerTotal - totalPlatformFee.totalWithTax,
+    //     tax: totalTax - totalPlatformFee.tax,
+    //     afterTax: buyerTotal - totalTax
+    // };
 
     // Return complete breakdown with rounding applied only at the end
     return {
         tolerableAmount: roundTo2Decimals(tolerableAmount),
         discount: roundTo2Decimals(discount),
-        buyerPays: {
-            totalWithTax: roundTo2Decimals(buyerTotal),
-            tax: roundTo2Decimals(totalTax)
+        taxesAndOtherFees: {
+            shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax),
+            tax: roundTo2Decimals(totalTax),
+            otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
         },
-        buyerPaysPlatformFee: {
+        buyerPays: roundTo2Decimals(buyerTotal),
+        buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
             totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
             itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),
-            tax: roundTo2Decimals(buyerPaysPlatformFee.tax)
+            tax: roundTo2Decimals(buyerPaysPlatformFee.tax),
+            shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee)
         },
-        storeReceives: {
-            totalWithTax: roundTo2Decimals(storeReceives.totalWithTax),
-            tax: roundTo2Decimals(storeReceives.tax),
-            afterTax: roundTo2Decimals(storeReceives.afterTax)
-        },
-        totalPlatformFee: {
+        // storeReceives: {
+        //     totalWithTax: roundTo2Decimals(storeReceives.totalWithTax),
+        //     tax: roundTo2Decimals(storeReceives.tax),
+        //     afterTax: roundTo2Decimals(storeReceives.afterTax)
+        // },
+        totalPlatformFee: { // total platform fees that can be covered by store and buyer
             totalWithTax: roundTo2Decimals(totalPlatformFee.totalWithTax),
             itemTotal: roundTo2Decimals(totalPlatformFee.itemTotal),
             tax: roundTo2Decimals(totalPlatformFee.tax),

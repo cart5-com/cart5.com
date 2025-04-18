@@ -136,14 +136,14 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     };
 }
 
-export const calculateCartTotalPrice = (cart: Cart, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
+export const calculateCartTotalPrice = (cart: Cart | undefined, menuRoot: MenuRoot | undefined, taxSettings: TaxSettings | undefined, orderType: OrderType = 'delivery') => {
     let result = {
         itemTotal: 0,
         tax: 0,
         totalWithTax: 0,
         shownFee: 0,
     };
-    if (!cart || !cart.items) {
+    if (!cart || !cart.items || !menuRoot || !taxSettings) {
         return result;
     }
 

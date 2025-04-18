@@ -51,13 +51,14 @@ const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceF
 
 const cartBreakdown = computed(() => {
     return calculateCartBreakdown(
-        subTotal.value,
+        subTotalWithDeliveryAndServiceFees.value,
         [
             { ...platformServiceFee, name: "Platform" },
             supportPartnerServiceFee && { ...supportPartnerServiceFee, name: "Support Partner" },
             marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
         ],
         taxSettings.taxRateForServiceFees ?? 0,
+        taxSettings,
         {
             calculationType: calculationType,
             tolerableRate: tolerableServiceFeeRate,
@@ -91,15 +92,22 @@ const removeAllItemsFromCart = () => {
 const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
-    if (!currentCart.value || !menuRoot.value) return { totalPrice: 0, tax: 0 };
-    return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
+    return calculateCartTotalPrice(currentCart.value, menuRoot.value ?? undefined, taxSettings, orderType);
 });
 
-const getPrice = (item: CartItem) => {
-    return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
+const itemPrices = computed(() => {
+    if (!currentCart.value?.items || !menuRoot.value) return [];
+
+    return currentCart.value.items.map(item =>
+        calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
+    );
+});
+
+const getPrice = (itemIndex: number) => {
+    return itemPrices.value[itemIndex] || { shownFee: 0 };
 }
 
-const subTotal = computed(() => {
+const subTotalWithDeliveryAndServiceFees = computed(() => {
     return calculateSubTotal(
         currentCart.value, menuRoot.value ?? undefined, taxSettings, orderType,
         {
@@ -134,22 +142,19 @@ const subTotal = computed(() => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end"
                                              class="">
-
                             <DropdownMenuItem @click="removeAllItemsFromCart">
                                 <ListX />
                                 Clear Cart
                             </DropdownMenuItem>
-
-
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div><!-- Spacer to balance the layout -->
+                </div>
             </div>
             <div class="flex-1"
                  v-if="currentCart && currentCart.items">
                 <div v-for="(item, index) in currentCart?.items"
-                     class="border-b border-muted-foreground pb-2"
-                     :key="item.itemId ?? index">
+                     class="border-t border-muted-foreground pb-2"
+                     :key="index">
                     <div class="whitespace-pre-wrap px-2">
                         <div class="cursor-pointer"
                              @click="openCartItem(index)">
@@ -182,8 +187,13 @@ const subTotal = computed(() => {
                             </NumberFieldContent>
                         </NumberField>
                         <div>
-                            <div class="font-bold text-right">
-                                <pre>{{ getPrice(item) }}</pre>
+                            <div class="font-medium">
+                                <details>
+                                    <summary>
+                                        {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
+                                    </summary>
+                                    <pre>{{ getPrice(index) }}</pre>
+                                </details>
                             </div>
                         </div>
                     </div>
@@ -224,31 +234,95 @@ const subTotal = computed(() => {
                 </Drawer>
 
                 <div class="flex justify-between items-center px-1">
-                    <span class="font-bold text-lg">
-                        <pre>{{ cartTotals }}</pre>
+                    <span class="">
+                        Subtotal
+                    </span>
+                    <span class=" text-right">
+                        <details>
+                            <summary>
+                                {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
+                            </summary>
+                            <pre>{{ cartTotals }}</pre>
+                        </details>
                     </span>
                 </div>
 
-                <!-- <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
-                     v-for="customSFee in subTotal.calculatedCustomServiceFees"
-                     :key="customSFee.name">
-                    <span class="font-bold text-lg">
-                        <pre>{{ customSFee }}</pre>
+                <div class=" p-2 bg-destructive text-destructive-foreground"
+                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderType === 'delivery'">
+                    Out of delivery zone
+                </div>
+                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                     v-if="subTotalWithDeliveryAndServiceFees.bestDeliveryZone">
+                    <span class="">
+                        Delivery Fee
                     </span>
-                </div> -->
+                    <span class=" text-right">
+                        <details>
+                            <summary>
+                                {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
+                            </summary>
+                            <pre>{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone }}</pre>
+                        </details>
+                    </span>
+                </div>
+
+
+
+
+                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                     v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
+                     :key="index">
+                    <span class="">
+                        {{ customSFee.name }}
+                    </span>
+                    <span class=" text-right">
+                        <details>
+                            <summary>
+                                {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
+                            </summary>
+                            <pre>{{ customSFee }}</pre>
+                        </details>
+                    </span>
+                </div>
 
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
-                    <pre>{{ subTotal }}</pre>
+                    <span class="">
+                        Taxes<span v-if="cartBreakdown.buyerPaysPlatformFee.shownFee > 0">
+                            & Other Fees
+                        </span>
+                    </span>
+                    <span class=" text-right">
+                        <details>
+                            <summary>
+                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.shownFee }}
+                            </summary>
+                            <pre>{{ cartBreakdown.taxesAndOtherFees }}</pre>
+                        </details>
+                    </span>
                 </div>
-                <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
-                    <!-- <span class="font-bold text-lg">
-                        Service Fee Breakdown
-                    </span> -->
-                    <!-- <span class="font-bold text-lg">
-                        
-                    </span> -->
-                    <pre>{{ cartBreakdown }}</pre>
+
+                <div class="flex justify-between items-center p-2 text-xl font-bold bg-primary text-primary-foreground"
+                     v-if="cartBreakdown.discount > 0">
+                    <span class="">
+                        Discount
+                    </span>
+                    <span class=" text-right">
+                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.discount }}
+                    </span>
                 </div>
+
+                <div
+                     class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
+                    <span class="">
+                        Total
+                    </span>
+                    <span class="text-right">
+                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPays }}
+                    </span>
+                </div>
+
+                <pre>{{ cartBreakdown }}</pre>
+                <pre>{{ subTotalWithDeliveryAndServiceFees }}</pre>
             </div>
         </div>
     </div>
