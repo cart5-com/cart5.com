@@ -161,7 +161,7 @@ export function calculateCartBreakdown(
     const storeReceives = {
         // What buyer pays
         // buyerTotal: roundTo2Decimals(buyerTotal), // includes tax
-        tax: totalTax, // Jurisdiction total
+        tax: roundTo2Decimals(totalTax), // Jurisdiction total
         platformFees: roundTo2Decimals(totalPlatformFee.itemTotal), // includes tax
         // platformFeesBreakdown: {
         //     ...totalPlatformFee.feeBreakdown
