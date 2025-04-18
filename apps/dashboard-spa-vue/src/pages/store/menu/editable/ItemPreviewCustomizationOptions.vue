@@ -15,7 +15,8 @@ import {
     ArrowDownUp,
     CircleCheckBig,
     Circle,
-    AlertCircle
+    AlertCircle,
+    Eye
 } from 'lucide-vue-next';
 import InputInline from "@/ui-plus/inline-edit/InputInline.vue";
 import draggable from "vuedraggable"
@@ -37,6 +38,13 @@ import {
 } from '@/components/ui/tooltip'
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import HoverItem from '../components/hover/HoverItem.vue';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
+import { CommandItem } from '@/components/ui/command';
 
 const props = defineProps<{
     modelValue?: CartChildrenItemState
@@ -454,9 +462,8 @@ onMounted(() => {
                 </template>
             </draggable>
 
-
         </div>
-        <!--  TODO: we need a better preview for options, showing only name is not clear enough -->
+
         <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
             .filter(item => item.t === 'o' || item.t === 'i')
             .filter(item => {
@@ -486,6 +493,35 @@ onMounted(() => {
                     <Plus /> Add New Option
                 </Button>
             </template>
+
+            <template #items-list="{ items, emit }">
+                <CommandItem v-for="item in items"
+                             :key="item.key"
+                             :value="item.name + ' ' + item.key"
+                             @click.stop="emit('select', item)">
+                    <div class="flex justify-between w-full">
+                        <div @click.stop="emit('select', item)"
+                             class="cursor-pointer w-full">
+                            {{ item.name }}
+                        </div>
+                        <div>
+                            <Popover>
+                                <PopoverTrigger as-child>
+                                    <Eye @click.stop />
+                                </PopoverTrigger>
+                                <PopoverContent class="w-80 border border-card-foreground"
+                                                align="start">
+                                    <div class="max-h-80 overflow-y-auto">
+                                        <HoverItem :item-id="item.key" />
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    </div>
+                </CommandItem>
+            </template>
+
+
         </SelectWithSearch>
     </div>
 </template>

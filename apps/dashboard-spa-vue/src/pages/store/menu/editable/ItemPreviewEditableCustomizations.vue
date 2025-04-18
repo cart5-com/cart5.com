@@ -58,6 +58,9 @@ const onClickAddNewCustomization = (search: string | undefined) => {
     // }, 500)
 }
 
+const getChildNames = (cIds: string[], joiner: string = ' | ') => {
+    return cIds.map(id => menuRoot.value?.allItems?.[id]?.lbl).join(joiner);
+}
 
 
 </script>
@@ -82,12 +85,12 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         Customizations
                         <ChevronUpSquare />
                     </Button>
-                    <!--  TODO: we need a better preview for customizations, showing only name is not clear enough -->
                     <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
                         .filter(item => item.t === 'c')
                         .map(item => ({
                             key: item.id,
-                            name: item.lbl
+                            name: item.lbl,
+                            cIds: item.cIds,
                         }))"
                                       @select="(item) => {
                                         addChildItem(currentItem?.id, item.key)
@@ -104,18 +107,23 @@ const onClickAddNewCustomization = (search: string | undefined) => {
                         <template #items-list="{ items, emit }">
                             <CommandItem v-for="item in items"
                                          :key="item.key"
-                                         :value="item.name + ' ' + item.key">
+                                         :value="item.name + ' ' + item.key + ' ' + getChildNames(item.cIds, ' ')"
+                                         @click.stop="emit('select', item)">
                                 <div class="flex justify-between w-full">
-                                    <div @click="emit('select', item)"
+                                    <div @click.stop="emit('select', item)"
                                          class="cursor-pointer w-full">
-                                        {{ item.name || 'no-name' }}
+                                        {{ item.name }}
+                                        <span class="text-xs text-muted-foreground">
+                                            ({{ getChildNames(item.cIds) }})
+                                        </span>
                                     </div>
                                     <div>
                                         <Popover>
                                             <PopoverTrigger as-child>
-                                                <Eye />
+                                                <Eye @click.stop />
                                             </PopoverTrigger>
-                                            <PopoverContent class="w-80 border border-card-foreground">
+                                            <PopoverContent class="w-80 border border-card-foreground"
+                                                            align="start">
                                                 <div class="max-h-80 overflow-y-auto">
                                                     <HoverCustomizationCard :item-id="item.key" />
                                                 </div>

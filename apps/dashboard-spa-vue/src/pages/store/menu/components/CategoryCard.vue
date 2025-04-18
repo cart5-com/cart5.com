@@ -88,10 +88,10 @@ const onClickAddNewItem = (search: string | undefined) => {
                               :categoryId="currentItem.id" />
                 </template>
             </draggable>
-            <!--  TODO: we need a better preview for items, showing only name is not clear enough -->
+
             <div class="p-2">
                 <SelectWithSearch :items="Object.values(menuRoot.allItems ?? {})
-                    .filter(item => item.t == 'i')
+                    .filter(item => item.t !== 'ct')
                     .map(item => ({
                         key: item.id,
                         name: item.lbl,
@@ -112,18 +112,20 @@ const onClickAddNewItem = (search: string | undefined) => {
                     <template #items-list="{ items, emit }">
                         <CommandItem v-for="item in items"
                                      :key="item.key"
-                                     :value="item.name + ' ' + item.key">
+                                     :value="item.name + ' ' + item.key"
+                                     @click.stop="emit('select', item)">
                             <div class="flex justify-between w-full">
-                                <div @click="emit('select', item)"
+                                <div @click.stop="emit('select', item)"
                                      class="cursor-pointer w-full">
                                     {{ item.name }}
                                 </div>
                                 <div>
                                     <Popover>
                                         <PopoverTrigger as-child>
-                                            <Eye />
+                                            <Eye @click.stop />
                                         </PopoverTrigger>
-                                        <PopoverContent class="w-80 border border-card-foreground">
+                                        <PopoverContent class="w-80 border border-card-foreground"
+                                                        align="start">
                                             <div class="max-h-80 overflow-y-auto">
                                                 <HoverItem :item-id="item.key" />
                                             </div>

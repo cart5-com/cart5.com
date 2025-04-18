@@ -3,7 +3,6 @@ import { menuRoot } from "../../MenuRootStore";
 import { type ItemId } from "@lib/zod/menuRootSchema";
 import { Banknote, ListTodo } from "lucide-vue-next";
 import { computed } from "vue";
-import Button from "@/components/ui/button/Button.vue";
 import HoverCustomizationCard from "./HoverCustomizationCard.vue";
 
 const props = defineProps<{
