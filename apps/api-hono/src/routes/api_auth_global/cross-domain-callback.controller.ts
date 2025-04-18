@@ -33,7 +33,7 @@ export const callbackRoute = async (
     );
     // Validate payload
     if (!userId) {
-        throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
+        throw new KNOWN_ERROR("User not found, please make sure logout and login again", "USER_NOT_FOUND");
     }
     // Create new permanent session for this domain
     await createUserSessionAndSetCookie(c, userId);

@@ -29,7 +29,7 @@ export const createStore_Handler = async (c: Context<
         c.req.header()['host']
     );
     if (requestUserId !== c.get('USER')?.id!) {
-        throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
+        throw new KNOWN_ERROR("Invalid user, please make sure logout and login again", "INVALID_USER");
     }
     const websiteInfo = await getWebsiteInfo_Service(c.req.header()['host'])
     let isUserMemberOfSupportTeam = false;

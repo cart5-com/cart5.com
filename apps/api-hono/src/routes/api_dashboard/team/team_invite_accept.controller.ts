@@ -34,7 +34,7 @@ export const teamInviteAccept_Handler = async (c: Context<
         c.req.header()['host']
     );
     if (userId !== c.get('USER')?.id!) {
-        throw new KNOWN_ERROR("Invalid user", "INVALID_USER");
+        throw new KNOWN_ERROR("Invalid user, please make sure logout and login again", "INVALID_USER");
     }
 
     // c.req.valid('json').token,
