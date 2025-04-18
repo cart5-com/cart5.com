@@ -14,7 +14,7 @@ function goToAccountSettings() {
 async function logout() {
     const { data, error } = await (await authGlobalApiClient['logout-all'].$post()).json();
     console.log(data, error);
-    window.location.href = `/`;
+    window.location.href = `/dashboard/`;
 }
 
 </script>
