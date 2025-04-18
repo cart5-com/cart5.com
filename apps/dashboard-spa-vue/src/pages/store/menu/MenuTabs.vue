@@ -21,7 +21,7 @@ import AllItemsTab from './tabs/AllItemsTab.vue';
                     Menu Editor
                 </TabsTrigger>
                 <TabsTrigger value="allItems">
-                    All Items
+                    All
                 </TabsTrigger>
             </TabsList>
             <slot name="top-btns" />

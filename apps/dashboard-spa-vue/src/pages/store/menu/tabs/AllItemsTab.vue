@@ -23,15 +23,19 @@ const filteredItems = computed(() => {
 
     return Object.entries(items)
         // filter categories
-        .filter(([_id, item]) => item.t !== 'ct')
+        // .filter(([_id, item]) => item.t !== 'ct')
         // filter customizations
-        .filter(([_id, item]) => item.t !== 'c')
+        // .filter(([_id, item]) => item.t !== 'c')
         .filter(([id, item]) => {
             const typedItem = item as Item
             return typedItem.lbl?.toLowerCase().includes(query) ||
                 id.toLowerCase().includes(query)
         })
 })
+
+const getChildNames = (cIds: string[], joiner: string = ' | ') => {
+    return cIds.map(id => menuRoot.value?.allItems?.[id]?.lbl).filter(Boolean).join(joiner);
+}
 
 const onClickAddNewItem = () => {
     const existingOnes = Object.values(menuRoot.value.allItems ?? {}).filter(item => item.t === 'i');
@@ -52,6 +56,15 @@ const onClickEditItem = (item: Item) => {
     }
     previewItem(item.id)
 }
+
+const getTypeName = (item: Item) => {
+    return item.t === 'i' ? 'Item' :
+        item.t === 'ct' ? 'Category' :
+            item.t === 'c' ? 'Customization' :
+                item.t === 'o' ? 'Option' :
+                    'Unknown'
+}
+
 </script>
 
 <template>
@@ -71,6 +84,7 @@ const onClickEditItem = (item: Item) => {
         <Table>
             <TableHeader>
                 <TableRow>
+                    <TableHead>Type</TableHead>
                     <TableHead>Label</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Actions</TableHead>
@@ -79,7 +93,16 @@ const onClickEditItem = (item: Item) => {
             <TableBody>
                 <TableRow v-for="[itemId, item] in filteredItems"
                           :key="itemId">
-                    <TableCell class="capitalize line-clamp-1">{{ item.lbl }}</TableCell>
+                    <TableCell>
+                        {{ getTypeName(item) }}
+                    </TableCell>
+                    <TableCell class="capitalize line-clamp-1">
+                        {{ item.lbl }}
+                        <span class="text-xs text-muted-foreground line-clamp-1"
+                              v-if="item.cIds">
+                            {{ getChildNames(item.cIds) }}
+                        </span>
+                    </TableCell>
                     <TableCell>{{ roundTo2Decimals(item.prc ?? 0) }}</TableCell>
                     <TableCell class="space-x-2">
                         <Button variant="outline"
@@ -87,11 +110,11 @@ const onClickEditItem = (item: Item) => {
                                 @click="onClickEditItem(item)">
                             <Pencil /> Edit
                         </Button>
-                        <Button variant="outline"
+                        <!-- <Button variant="outline"
                                 size="sm"
                                 @click="previewItem(itemId)">
                             <Eye /> Preview
-                        </Button>
+                        </Button> -->
                     </TableCell>
                 </TableRow>
             </TableBody>
