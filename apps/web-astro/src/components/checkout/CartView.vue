@@ -384,7 +384,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                                     <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
                                         <div class="flex justify-between items-center">
                                             <div class="font-medium">
-                                                Store Net Revenue
+                                                - Store
                                             </div>
                                             <div>
                                                 {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.netRevenue }}

@@ -563,8 +563,9 @@ export const getWebsiteTeamServiceFee_Service = async (
 }
 
 export const getSupportTeamServiceFee_Service = async (storeId: string) => {
+    // find support team id from store
     const storeData = await getStore_Service(storeId, { supportTeamId: true });
-    const website = await db.query.websitesTable.findFirst({
+    const supportTeamWebsite = await db.query.websitesTable.findFirst({
         where: eq(websitesTable.ownerTeamId, storeData?.supportTeamId ?? ""),
         columns: {
             id: true,
@@ -576,7 +577,7 @@ export const getSupportTeamServiceFee_Service = async (storeId: string) => {
     //override from partnerStoreMapTable if exists
     const partnerStore = await db.query.partnerStoreMapTable.findFirst({
         where: and(
-            eq(partnerStoreMapTable.websiteId, website?.id ?? ''),
+            eq(partnerStoreMapTable.websiteId, supportTeamWebsite?.id ?? ''),
             eq(partnerStoreMapTable.storeId, storeId)
         ),
         columns: {
@@ -585,7 +586,7 @@ export const getSupportTeamServiceFee_Service = async (storeId: string) => {
     });
 
     // ...website,
-    return partnerStore?.overridePartnerFee || website?.defaultPartnerFee || null;
+    return partnerStore?.overridePartnerFee || supportTeamWebsite?.defaultPartnerFee || null;
 }
 
 // if count is 1 return the store id
