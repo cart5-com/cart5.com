@@ -265,6 +265,7 @@ export const logoutAll = async () => {
     if (error) {
         console.error(error);
         toast.error("Failed to logout");
+        return;
     }
     userDataStore.value = {
         user: null,
