@@ -268,24 +268,26 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 
 
 
-
-                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
-                     v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
+                <div v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
                      :key="index">
-                    <span class="">
-                        {{ customSFee.name }}
-                    </span>
-                    <span class=" text-right">
-                        <details>
-                            <summary>
-                                {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
-                            </summary>
-                            <pre>{{ customSFee }}</pre>
-                        </details>
-                    </span>
+                    <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                         v-if="customSFee.shownFee > 0">
+                        <span class="">
+                            {{ customSFee.name }}
+                        </span>
+                        <span class=" text-right">
+                            <details>
+                                <summary>
+                                    {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
+                                </summary>
+                                <pre>{{ customSFee }}</pre>
+                            </details>
+                        </span>
+                    </div>
                 </div>
 
-                <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
+                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                     v-if="cartBreakdown.taxesAndOtherFees.shownFee > 0">
                     <span class="">
                         {{ cartBreakdown.taxesAndOtherFees.shownFeeName }}
                     </span>
@@ -305,7 +307,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                         Discount
                     </span>
                     <span class=" text-right">
-                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.discount }}
+                        -{{ taxSettings.currencySymbol }}{{ cartBreakdown.discount }}
                     </span>
                 </div>
 
