@@ -12,6 +12,7 @@ import RecursiveCustomizations from './RecursiveCustomizations.vue';
 import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { previewItem } from '@dashboard-spa-vue/pages/store/menu/helpers';
+import { Button } from '@/components/ui/button';
 
 const props = defineProps<{
     modelValue?: CartChildrenItemState
@@ -140,26 +141,12 @@ const isMinQuantityAdded = () => {
 
 
         <div class="text-xs flex flex-col gap-2 items-start my-2">
-            <SelectNumber :items="Array.from({ length: 10 }, (_, i) => ({
-                key: i + 1,
-                name: String(i + 1)
-            }))"
-                          placeholder="Enter num. to force minimum"
-                          type="number"
-                          :min="1"
-                          btn-text="Remove Requirement"
-                          @select="(value) => {
-                            if (currentItem) {
-                                currentItem.minQ = Number(value.key)
-                                if (currentItem.minQ === 0) {
-                                    currentItem.minQ = undefined
-                                }
-                                // if (currentItem.maxQuantity &&
-                                //     currentItem.maxQuantity > 0 &&
-                                //     currentItem.maxQuantity < currentItem.minQuantity
-                                // ) {
-                                //     currentItem.minQuantity = currentItem.maxQuantity
-                                // }
+
+            <SelectNumber v-model="currentItem.minQ"
+                          :min="0"
+                          @update:modelValue="(value) => {
+                            if (value === 0) {
+                                currentItem!.minQ = undefined
                             }
                         }">
                 <template #trigger>
@@ -168,28 +155,20 @@ const isMinQuantityAdded = () => {
                         {{ (currentItem?.minQ === 0 || !currentItem?.minQ) ? 'optional' : currentItem?.minQ }}
                     </Badge>
                 </template>
+                <template #content>
+                    <Button variant="outline"
+                            class="w-full"
+                            @click="currentItem!.minQ = undefined">
+                        Remove Requirement
+                    </Button>
+                </template>
             </SelectNumber>
-            <SelectNumber :items="Array.from({ length: 10 }, (_, i) => ({
-                key: i + 1,
-                name: String(i + 1)
-            }))"
-                          placeholder="Enter num. to limit"
-                          type="number"
-                          :min="1"
-                          btn-text="Remove Limit"
-                          @select="(value) => {
-                            if (currentItem) {
-                                currentItem.maxQ = Number(value.key)
-                                if (currentItem.maxQ === 0) {
-                                    currentItem.maxQ = undefined
-                                }
-                                // if (
-                                //     currentItem.minQuantity &&
-                                //     currentItem.maxQuantity > 0 &&
-                                //     currentItem.maxQuantity < currentItem.minQuantity
-                                // ) {
-                                //     currentItem.minQuantity = currentItem.maxQuantity
-                                // }
+
+            <SelectNumber v-model="currentItem.maxQ"
+                          :min="0"
+                          @update:modelValue="(value) => {
+                            if (value === 0) {
+                                currentItem!.maxQ = undefined
                             }
                         }">
                 <template #trigger>
@@ -198,7 +177,15 @@ const isMinQuantityAdded = () => {
                         {{ (currentItem?.maxQ === 0 || !currentItem?.maxQ) ? 'unlimited' : currentItem?.maxQ }}
                     </Badge>
                 </template>
+                <template #content>
+                    <Button variant="outline"
+                            class="w-full"
+                            @click="currentItem!.maxQ = undefined">
+                        Remove Limit
+                    </Button>
+                </template>
             </SelectNumber>
+
         </div>
 
         <!-- <div class="text-xs"

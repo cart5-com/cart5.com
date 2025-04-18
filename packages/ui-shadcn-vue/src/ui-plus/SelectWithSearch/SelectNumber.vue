@@ -1,75 +1,56 @@
 <script setup lang="ts">
+import { useVModel } from '@vueuse/core'
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { PopoverClose } from "radix-vue";
-import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
-import { Button } from "@/components/ui/button";
-import { computed, ref } from "vue";
+import {
+    NumberField,
+    NumberFieldContent,
+    NumberFieldDecrement,
+    NumberFieldIncrement,
+    NumberFieldInput,
+} from '@/components/ui/number-field'
 
 const props = defineProps<{
-    items: Array<Record<string, any>>;
-    btnText?: string;
-    min?: number;
-}>();
+    defaultValue?: number
+    modelValue?: number
+}>()
 
-const search = ref("");
+const emits = defineEmits<{
+    (e: 'update:modelValue', payload: number): void
+}>()
 
-const addSearchToItems = computed(() => {
-    if (
-        search.value &&
-        props.items.filter(item => item.name === search.value).length === 0 &&
-        Number(search.value) >= Number(props.min)
-    ) {
-        return [...props.items, {
-            name: search.value,
-            key: search.value
-        }];
-    } else {
-        return props.items
-    }
-});
+const modelValue = useVModel(props, 'modelValue', emits, {
+    passive: true,
+    defaultValue: props.defaultValue,
+})
 </script>
 
 <template>
     <Popover>
-        <PopoverTrigger>
+        <PopoverTrigger as-child>
             <slot name="trigger">
-                <Button variant="outline">
-                    Select
-                </Button>
+                <span class="cursor-text">
+                    {{ modelValue || 'Edit' }}
+                </span>
             </slot>
         </PopoverTrigger>
-        <PopoverContent class="p-1">
-            <slot name="new-button"
-                  :search="search">
-                <PopoverClose class="w-full">
-                    <Button variant="outline"
-                            class="w-full"
-                            @click="$emit('select', { name: btnText, key: 0 })">
-                        {{ btnText }}
-                    </Button>
-                </PopoverClose>
+        <PopoverContent class="p-4 max-w-56"
+                        align="start">
+
+            <NumberField v-model="modelValue"
+                         v-bind="$attrs">
+
+                <NumberFieldContent>
+
+                    <NumberFieldDecrement />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement />
+
+                </NumberFieldContent>
+
+            </NumberField>
+
+            <slot name="content">
             </slot>
-            <Command v-model:searchTerm="search"
-                     class="border">
-                <CommandInput v-bind="$attrs"
-                              @enter="$emit('select', { name: search, key: search })" />
-                <CommandList>
-                    <CommandGroup>
-                        <PopoverClose class="w-full">
-                            <slot name="items-list"
-                                  :items="items"
-                                  :emit="$emit">
-                                <CommandItem v-for="item in addSearchToItems"
-                                             :key="item.key"
-                                             :value="item.name + ' ' + item.key"
-                                             @select="$emit('select', item)">
-                                    {{ item.name }}
-                                </CommandItem>
-                            </slot>
-                        </PopoverClose>
-                    </CommandGroup>
-                </CommandList>
-            </Command>
         </PopoverContent>
     </Popover>
 </template>
