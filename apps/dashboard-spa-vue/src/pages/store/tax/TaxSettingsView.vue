@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
     Select,
     SelectContent,
@@ -52,7 +51,6 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
         currencySymbol: salesTaxRate.raw.currencySymbol ?? null,
         salesTaxType: salesTaxRate.raw.isTaxAppliesAtCheckout ? "APPLY_TAX_ON_TOP_OF_PRICES" : "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
         taxName: salesTaxRate.taxName,
-        showTaxDetailsInCart: salesTaxRate.raw.isTaxAppliesAtCheckout ?? false,
         taxRateForDelivery: salesTaxRate.taxRate,
         taxRateForServiceFees: salesTaxRate.taxRate,
     }
@@ -72,7 +70,6 @@ const loadData = async () => {
                 currencySymbol: true,
                 salesTaxType: true,
                 taxName: true,
-                showTaxDetailsInCart: true,
                 taxRateForDelivery: true,
                 taxRateForServiceFees: true,
             }
@@ -115,7 +112,6 @@ const saveTaxSettings = async () => {
                 currencySymbol: taxSettings.value?.currencySymbol,
                 salesTaxType: taxSettings.value?.salesTaxType,
                 taxName: taxSettings.value?.taxName,
-                showTaxDetailsInCart: taxSettings.value?.showTaxDetailsInCart,
                 taxRateForDelivery: taxSettings.value?.taxRateForDelivery,
                 taxRateForServiceFees: taxSettings.value?.taxRateForServiceFees,
                 taxCategories: taxSettings.value?.taxCategories ?? []
@@ -218,18 +214,6 @@ const removeTaxCategory = (index: number) => {
                     <Label>Tax Name</Label>
                     <Input v-model="taxSettings.taxName!"
                            placeholder="e.g., VAT, GST, HST" />
-                </div>
-
-                <div class="space-y-2">
-
-                    <div class="items-top flex space-x-2">
-                        <Checkbox id="showTaxDetailsInCart"
-                                  v-model:checked="taxSettings.showTaxDetailsInCart" />
-                        <label for="showTaxDetailsInCart"
-                               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            Show Tax Details in Cart
-                        </label>
-                    </div>
                 </div>
 
                 <div class="space-y-2">

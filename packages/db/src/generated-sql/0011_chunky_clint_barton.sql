@@ -1,0 +1,1 @@
+ALTER TABLE `store_tax_settings` DROP COLUMN `show_tax_details_in_cart`;

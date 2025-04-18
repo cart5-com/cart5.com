@@ -24,7 +24,6 @@ export const loadTaxSettings = async () => {
                 currencySymbol: true,
                 salesTaxType: true,
                 taxName: true,
-                showTaxDetailsInCart: true,
                 taxRateForDelivery: true,
                 taxRateForServiceFees: true,
             }

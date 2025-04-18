@@ -63,7 +63,6 @@ export const getStoreData_Service = async (
                     salesTaxType: true,
                     taxCategories: true,
                     taxName: true,
-                    showTaxDetailsInCart: true,
                     taxRateForDelivery: true,
                     taxRateForServiceFees: true,
                 }
