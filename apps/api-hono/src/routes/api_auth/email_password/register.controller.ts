@@ -37,6 +37,7 @@ export const registerEmailPasswordRoute = async (
         ValidatorContext<typeof registerEmailPasswordSchemaValidator>
     >
 ) => {
+    // TODO always reject domains listed in blacklist
     const { email, password, name, turnstile } = c.req.valid('form');
     await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
 

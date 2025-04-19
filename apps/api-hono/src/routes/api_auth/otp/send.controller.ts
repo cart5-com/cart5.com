@@ -25,6 +25,7 @@ export const sendOtpRoute = async (
         ValidatorContext<typeof sendOtpSchemaValidator>
     >
 ) => {
+    // TODO always reject domains listed in blacklist
     const { verifyEmail, turnstile } = c.req.valid('form');
     await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
 

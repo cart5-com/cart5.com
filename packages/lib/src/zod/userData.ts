@@ -17,7 +17,7 @@ export const addressSchema = z.object({
     instructionsForDelivery: z.string().optional(), // e.g. "Leave at the door" #BUZZ, building name, etc.
 
     // TODO: before order check against the user's phone verified numbers
-    verifiedPhone: z.string().optional(), // selection from user verified phone numbers
+    verifiedPhone: z.string(), // selection from user verified phone numbers
 })
 export type UserAddress = z.infer<typeof addressSchema>;
 

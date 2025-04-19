@@ -25,6 +25,7 @@ export const loginEmailPasswordSchemaValidator = zValidator('form', z.object({
 export const loginEmailPasswordRoute = async (
     c: Context<HonoVariables, "/otp/verify", ValidatorContext<typeof loginEmailPasswordSchemaValidator>>
 ) => {
+    // TODO always reject domains listed in blacklist
     const { email, password, turnstile } = c.req.valid('form');
     await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
     const isRegistered = await isEmailExistsService(email);
