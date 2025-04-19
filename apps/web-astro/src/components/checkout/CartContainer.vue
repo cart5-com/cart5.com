@@ -5,6 +5,8 @@ import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
+import UserAddressesView from "../user/UserAddressesView.vue";
+
 const orderType = window.orderType;
 
 const createPageUrl = (orderType: OrderType) => {
@@ -22,6 +24,9 @@ const createPageUrl = (orderType: OrderType) => {
             <UserMenu />
         </div>
         <div v-else>
+            <UserAddressesView />
+
+
             <StorePageAddressWidget />
 
             <div
