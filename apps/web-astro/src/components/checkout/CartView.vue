@@ -43,6 +43,9 @@ import {
 } from '@/components/ui/popover'
 import PaymentMethods from './PaymentMethods.vue';
 
+// TODO: OPEN HOURS VALIDATION HERE
+// TODO: SUPPORTED ORDER TYPES VALIDATION HERE (delivery, pickup)
+
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
 const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPossible ?? true;
