@@ -141,7 +141,7 @@ onMounted(() => {
 const isDialogOpen = ref(false);
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
-async function onSubmit(values: z.infer<typeof schema>) {
+async function onSubmit(_values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         isDialogOpen.value = true;
         // console.log('values', values);
