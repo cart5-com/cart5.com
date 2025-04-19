@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Item } from '@lib/zod/menuRootSchema'
 import { menuRoot } from '../MenuRootStore'
-import { Pencil, Plus } from 'lucide-vue-next'
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 import { createNewItem, previewItem } from '../helpers'
+import { toast } from '@/ui-plus/sonner'
 import {
     Table,
     TableBody,
@@ -65,6 +66,49 @@ const getTypeName = (item: Item) => {
                     'Unknown'
 }
 
+
+const onClickDeleteItem = (itemId: string) => {
+    // Check if item exists
+    if (!menuRoot.value?.allItems?.[itemId]) return
+
+    // Confirm deletion
+    if (!confirm(`Are you sure you want to delete "${menuRoot.value.allItems[itemId]?.lbl}"?`)) return
+
+    // Find items that have this item as a child
+    const parentsWithThisChild = Object.entries(menuRoot.value.allItems || {})
+        .filter(([_id, item]) => item.cIds?.includes(itemId))
+
+    // If there are parents, show a warning and ask for confirmation
+    if (parentsWithThisChild.length > 0) {
+        const parentNames = parentsWithThisChild
+            .map(([_id, item]) => item.lbl)
+            .join(', ')
+
+        if (!confirm(`This item is used in ${parentsWithThisChild.length} other places: ${parentNames}. Delete anyway?`)) return
+
+        // Remove the item from all parent cIds arrays
+        parentsWithThisChild.forEach(([_parentId, parent]) => {
+            const index = parent.cIds?.indexOf(itemId) || -1
+            if (index > -1 && parent.cIds) {
+                parent.cIds.splice(index, 1)
+            }
+        })
+    }
+
+    // Remove from root children if it's there
+    if (menuRoot.value.children) {
+        const index = menuRoot.value.children.indexOf(itemId)
+        if (index > -1) {
+            menuRoot.value.children.splice(index, 1)
+        }
+    }
+
+    // Delete the item from allItems
+    delete menuRoot.value.allItems[itemId]
+
+    toast.success('Item deleted successfully')
+}
+
 </script>
 
 <template>
@@ -98,23 +142,24 @@ const getTypeName = (item: Item) => {
                     </TableCell>
                     <TableCell class="capitalize line-clamp-1">
                         {{ item.lbl }}
-                        <span class="text-xs text-muted-foreground line-clamp-1"
+                        <span class="text-xs text-muted-foreground "
                               v-if="item.cIds">
                             {{ getChildNames(item.cIds) }}
                         </span>
                     </TableCell>
                     <TableCell>{{ roundTo2Decimals(item.prc ?? 0) }}</TableCell>
-                    <TableCell class="space-x-2">
+                    <TableCell class="space-x-2 flex items-center md:flex-row flex-col gap-2">
                         <Button variant="outline"
                                 size="sm"
                                 @click="onClickEditItem(item)">
                             <Pencil /> Edit
                         </Button>
-                        <!-- <Button variant="outline"
+
+                        <Button variant="destructive"
                                 size="sm"
-                                @click="previewItem(itemId)">
-                            <Eye /> Preview
-                        </Button> -->
+                                @click="onClickDeleteItem(itemId)">
+                            <Trash2 /> Delete
+                        </Button>
                     </TableCell>
                 </TableRow>
             </TableBody>
