@@ -45,6 +45,8 @@ import PaymentMethods from './PaymentMethods.vue';
 
 // TODO: OPEN HOURS VALIDATION HERE
 // TODO: SUPPORTED ORDER TYPES VALIDATION HERE (delivery, pickup)
+// TODO: CRUD verified phone numbers
+// TODO: CRUD address for delivery only/ no address required for pickup
 
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;

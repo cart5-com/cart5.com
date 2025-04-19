@@ -28,3 +28,5 @@ export const updateUserDataSchema = createUpdateSchema(userDataTable, {
     carts: cartsSchema,
 });
 
+
+// TODO: user verified phone numbers
