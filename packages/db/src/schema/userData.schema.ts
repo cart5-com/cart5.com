@@ -4,7 +4,7 @@ import { createInsertSchema, createSelectSchema, createUpdateSchema } from "driz
 import {
     type Carts, cartsSchema,
 } from "@lib/zod/cartItemState";
-import type { AddressesType } from "@lib/zod/userAddressSchema";
+import { type AddressesType, addressesSchema } from "@lib/zod/userAddressSchema";
 
 export const userDataTable = sqliteTable("user_data", {
     ...autoCreatedUpdated,
@@ -17,6 +17,7 @@ export const userDataTable = sqliteTable("user_data", {
 
     rememberLastAddressId: text("remember_last_address_id"),
     addresses: text("addresses", { mode: 'json' }).$type<AddressesType>(),
+
     carts: text("carts", { mode: 'json' }).$type<Carts>(),
 });
 
@@ -24,7 +25,9 @@ export const userDataTable = sqliteTable("user_data", {
 export const selectUserDataSchema = createSelectSchema(userDataTable);
 export const insertUserDataSchema = createInsertSchema(userDataTable, {
     carts: cartsSchema,
+    addresses: addressesSchema,
 });
 export const updateUserDataSchema = createUpdateSchema(userDataTable, {
     carts: cartsSchema,
+    addresses: addressesSchema,
 });

@@ -47,6 +47,8 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
     "rememberLastLng" |
     "rememberLastAddress" |
     "rememberLastCountry" |
+    "rememberLastAddressId" |
+    "addresses" |
     "carts"
 >;
 
@@ -62,6 +64,8 @@ const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
     rememberLastLng: null,
     rememberLastAddress: null,
     rememberLastCountry: null,
+    rememberLastAddressId: null,
+    addresses: {},
     carts: {},
 }
 
@@ -114,6 +118,8 @@ const mergedUserData = (
         rememberLastLng: serverUserData.rememberLastLng,
         rememberLastAddress: serverUserData.rememberLastAddress,
         rememberLastCountry: serverUserData.rememberLastCountry,
+        rememberLastAddressId: serverUserData.rememberLastAddressId,
+        addresses: serverUserData.addresses,
         carts: {},
     };
 
@@ -166,6 +172,8 @@ const loadUserData = async () => {
                 rememberLastCountry: true,
                 rememberLastLat: true,
                 rememberLastLng: true,
+                rememberLastAddressId: true,
+                addresses: true,
                 carts: true,
             }
         }
