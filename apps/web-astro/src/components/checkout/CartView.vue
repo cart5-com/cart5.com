@@ -143,8 +143,8 @@ const currentPaymentMethod = ref('');
     <div class="flex flex-col gap-2 h-full"
          v-if="menuRoot">
         <div class="flex flex-col gap-2 max-w-lg w-lg mx-auto">
-            <div
-                 class="bg-card text-card-foreground relative sticky top-0 z-40 max-w-full flex justify-between items-center">
+            <!-- relative sticky top-0 z-40 -->
+            <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">
                 <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), orderType)"
                    class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
                     {{ currentCart?.storeName }}
