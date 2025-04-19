@@ -41,6 +41,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import PaymentMethods from './PaymentMethods.vue';
 
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
@@ -259,8 +260,6 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                     </span>
                 </div>
 
-
-
                 <div v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
                      :key="index">
                     <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
@@ -283,7 +282,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                             <PopoverTrigger as-child>
                                 <Info class="inline-block ml-2" />
                             </PopoverTrigger>
-                            <PopoverContent>
+                            <PopoverContent align="start">
                                 <div class="space-y-2">
                                     <h3 class="font-semibold">What's included?</h3>
                                     <div v-if="cartBreakdown.taxesAndOtherFees.otherFees > 0">
@@ -328,6 +327,8 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                     </span>
                 </div>
 
+                <PaymentMethods />
+
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
                     <span>
@@ -335,9 +336,9 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                             <PopoverTrigger as-child>
                                 <Info class="inline-block mr-2" />
                             </PopoverTrigger>
-                            <PopoverContent>
+                            <PopoverContent align="start">
                                 <div class="space-y-2">
-                                    <h3 class="font-semibold">Breakdown</h3>
+                                    <h3 class="font-semibold">Transparency breakdown</h3>
                                     <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
                                         <div class="flex justify-between items-center">
                                             <div class="font-medium">
