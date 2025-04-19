@@ -23,6 +23,7 @@ import draggable from "vuedraggable"
 import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import { addChildItem, createNewItem, previewItem } from '../helpers';
+import RelationViewer from '../components/RelationViewer.vue';
 
 import {
     DropdownMenu,
@@ -229,6 +230,8 @@ onMounted(() => {
                        handle=".option-drag-handle">
                 <template #item="{ element: optionItemId, index: optionItemIndex }">
                     <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
+                        <RelationViewer :item-id="optionItemId"
+                                        name="option" />
                         <div class="items-center p-2 bg-card hover:bg-background grid grid-cols-8 gap-1"
                              :class="[
                                 // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',
@@ -241,7 +244,6 @@ onMounted(() => {
                                         <MoreHorizontal class="cursor-pointer" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
-
                                         <DropdownMenuItem @click="showReorder = !showReorder">
                                             <ArrowDownUp /> Reordering {{ showReorder ? 'Off' : 'On' }}
                                         </DropdownMenuItem>

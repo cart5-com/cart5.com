@@ -59,7 +59,7 @@ const onClickAddNewCustomization = (search: string | undefined) => {
 }
 
 const getChildNames = (cIds: string[], joiner: string = ' | ') => {
-    return cIds.map(id => menuRoot.value?.allItems?.[id]?.lbl).join(joiner);
+    return cIds?.map(id => menuRoot.value?.allItems?.[id]?.lbl).join(joiner);
 }
 
 

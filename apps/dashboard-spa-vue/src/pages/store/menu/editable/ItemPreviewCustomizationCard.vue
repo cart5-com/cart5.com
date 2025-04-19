@@ -13,6 +13,7 @@ import ItemPreviewCustomizationOptions from './ItemPreviewCustomizationOptions.v
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { previewItem } from '@dashboard-spa-vue/pages/store/menu/helpers';
 import { Button } from '@/components/ui/button';
+import RelationViewer from '../components/RelationViewer.vue';
 
 const props = defineProps<{
     modelValue?: CartChildrenItemState
@@ -70,6 +71,9 @@ const isMinQuantityAdded = () => {
 <template>
     <div class="border rounded-md p-1 sm:p-4 my-6 border-card-foreground"
          v-if="currentItem">
+
+        <RelationViewer :item-id="itemId!"
+                        name="customization" />
 
         <div class="items-center mb-2 justify-self-end flex gap-2">
             <AlignJustify v-if="isDraggable"

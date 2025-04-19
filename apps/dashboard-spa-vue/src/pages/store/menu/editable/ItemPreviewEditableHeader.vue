@@ -6,7 +6,7 @@ import TextareaInline from "@/ui-plus/inline-edit/TextareaInline.vue";
 import { taxSettings } from "../TaxSettingsStore";
 import ItemTaxInput from "@/ui-plus/inline-edit/ItemTaxInput.vue";
 import { Input } from "@/components/ui/input";
-
+import RelationViewer from "../components/RelationViewer.vue";
 defineProps<{
     currentItem?: Item
 }>()
@@ -17,6 +17,9 @@ defineProps<{
 <template>
     <div class="space-y-4"
          v-if="currentItem">
+
+        <RelationViewer :item-id="currentItem.id!"
+                        name="item" />
 
         <InputInline v-model="currentItem.lbl"
                      placeholder="Name:">

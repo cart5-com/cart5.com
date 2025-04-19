@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Item } from '@lib/zod/menuRootSchema'
 import { menuRoot } from '../MenuRootStore'
-import { Eye, Pencil, Plus } from 'lucide-vue-next'
+import { Pencil, Plus } from 'lucide-vue-next'
 import { createNewItem, previewItem } from '../helpers'
 import {
     Table,
@@ -34,7 +34,7 @@ const filteredItems = computed(() => {
 })
 
 const getChildNames = (cIds: string[], joiner: string = ' | ') => {
-    return cIds.map(id => menuRoot.value?.allItems?.[id]?.lbl).filter(Boolean).join(joiner);
+    return cIds?.map(id => menuRoot.value?.allItems?.[id]?.lbl).filter(Boolean).join(joiner);
 }
 
 const onClickAddNewItem = () => {
