@@ -22,7 +22,8 @@ onMounted(async () => {
 <template>
     <div v-if="!isLoading"
          class="p-2">
-        <div v-if="userDataStore?.user">
+        <div v-if="userDataStore?.user"
+             class="space-y-2">
             <UserCard :user="userDataStore.user" />
             <Button class="w-full mt-1"
                     as="a"
@@ -38,7 +39,8 @@ onMounted(async () => {
                 Logout
             </Button>
         </div>
-        <div v-else>
+        <div v-else
+             class="space-y-2">
             <Button class="w-full mt-4"
                     as="a"
                     size="lg"
