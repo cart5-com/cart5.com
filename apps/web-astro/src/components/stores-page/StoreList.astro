@@ -118,8 +118,6 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 			const zoneData = await response.json();
 
 			if (!zoneData) return;
-			console.log("zoneData");
-			console.log(zoneData);
 
 			// Check if user is in delivery zone
 			bestDeliveryZone = getBestDeliveryZone(

@@ -16,7 +16,7 @@ pageTitle.value = 'Payment Methods';
 
 const defaultPaymentMethods = {
     isActive: true,
-    cash: true,
+    cash: false,
     cardTerminal: false,
     customMethods: [],
 };
