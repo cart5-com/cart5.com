@@ -1,9 +1,7 @@
 ---
 import BaseLayout from "@web-astro/layout/BaseLayout.astro";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
-import CartView from "@web-astro/components/checkout/CartView.vue";
-import StorePageAddressWidget from "@web-astro/components/store-page/StorePageAddressWidget.vue";
-import { buttonVariants } from "@/components/ui/button";
+import CartContainer from "@web-astro/components/checkout/CartContainer.vue";
 import type { OrderType } from "@lib/types/orderType";
 import { getSupportTeamServiceFee_Service, getWebsiteTeamServiceFee_Service } from "@db/services/website.service";
 
@@ -27,12 +25,6 @@ if (!store) {
 	return new Response(null, { status: 404 });
 }
 
-const createPageUrl = (orderType: OrderType | undefined = undefined) => {
-	const url = new URL(Astro.url);
-	if (orderType) url.searchParams.set("order-type", orderType);
-	return url.toString();
-};
-
 if (!store.menu?.menuRoot) {
 	throw new Error("Menu root not found");
 }
@@ -53,25 +45,5 @@ if (!store.menu?.menuRoot) {
 		window.supportTeamServiceFee = supportTeamServiceFee;
 		window.websiteTeamServiceFee = websiteTeamServiceFee;
 	</script>
-	<h2>{store.name}</h2>
-
-	<StorePageAddressWidget client:only="vue" />
-	<div
-		class="bg-muted text-muted-foreground my-4 grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
-		<a
-			class={buttonVariants({ variant: "ghost" }) +
-				`${orderType === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-			href={createPageUrl("delivery")}>
-			<span class="truncate">Delivery</span>
-		</a>
-
-		<a
-			class={buttonVariants({ variant: "ghost" }) +
-				`${orderType === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-			href={createPageUrl("pickup")}>
-			<span class="truncate">Pickup</span>
-		</a>
-	</div>
-
-	<CartView client:only="vue" />
+	<CartContainer client:only="vue" />
 </BaseLayout>

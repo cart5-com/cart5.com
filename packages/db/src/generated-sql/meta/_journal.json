@@ -85,6 +85,13 @@
       "when": 1744951889857,
       "tag": "0011_chunky_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1745084415711,
+      "tag": "0012_early_lord_tyger",
+      "breakpoints": true
     }
   ]
 }

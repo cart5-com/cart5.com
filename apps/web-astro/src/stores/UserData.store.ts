@@ -51,6 +51,7 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
 >;
 
 export const ON_USER_DATA_READY = "ON_USER_DATA_READY";
+export let isUserDataReady = false;
 export const userDataStore = ref<UserDataStoreType>({
     user: null,
     userData: null,
@@ -210,6 +211,7 @@ const loadUserData = async () => {
         watch(userDataStore, handleDataChange, { deep: true, immediate: false });
         setTimeout(() => {
             window.dispatchEvent(new Event(ON_USER_DATA_READY));
+            isUserDataReady = true;
         });
     }
 }

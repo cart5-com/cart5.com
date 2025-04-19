@@ -33,6 +33,13 @@ export const sessionTable = sqliteTable("session", {
 	// for ex:password reset, authentication reset, etc.
 });
 
+export const verifiedPhoneNumberTable = sqliteTable("verified_phone_number", {
+	userId: text("user_id")
+		.notNull()
+		.references(() => userTable.id),
+	phoneNumber: text("phone_number").notNull(),
+});
+
 export const userRelations = relations(userTable, ({ many, one }) => ({
 	session: many(sessionTable, {
 		relationName: "user"
@@ -40,6 +47,17 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
 	userData: one(userDataTable, {
 		fields: [userTable.id],
 		references: [userDataTable.userId],
+	}),
+	verifiedPhoneNumber: many(verifiedPhoneNumberTable, {
+		relationName: "user"
+	}),
+}));
+
+export const verifiedPhoneNumberRelations = relations(verifiedPhoneNumberTable, ({ one }) => ({
+	user: one(userTable, {
+		fields: [verifiedPhoneNumberTable.userId],
+		references: [userTable.id],
+		relationName: "user"
 	}),
 }));
 

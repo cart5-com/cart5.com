@@ -20,7 +20,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="!isLoading">
+    <div v-if="!isLoading"
+         class="p-2">
         <div v-if="userDataStore?.user">
             <UserCard :user="userDataStore.user" />
             <Button class="w-full mt-1"
@@ -38,14 +39,14 @@ onMounted(async () => {
             </Button>
         </div>
         <div v-else>
-            <Button class="w-full mt-1"
+            <Button class="w-full mt-4"
                     as="a"
                     size="lg"
                     :href="loginUrl"
                     variant="outline">
                 Login
             </Button>
-            <Button class="w-full mt-1"
+            <Button class="w-full mt-4"
                     as="a"
                     size="lg"
                     :href="registerUrl"

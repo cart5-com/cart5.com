@@ -15,6 +15,7 @@ import {
     updateStoreAddress_Service,
     updateStoreDeliveryZones_Service,
     updateStoreOpenHours_Service,
+    updateStorePaymentMethods_Service,
     updateStoreTaxSettings_Service
 } from "@db/services/store.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
@@ -282,6 +283,15 @@ export const startSeed = async () => {
                     },
 
                 }
+            }
+        })
+
+        await updateStorePaymentMethods_Service(store!.id, {
+            defaultPaymentMethods: {
+                isActive: true,
+                cash: true,
+                cardTerminal: true,
+                customMethods: []
             }
         })
 
