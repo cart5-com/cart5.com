@@ -132,6 +132,8 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
     );
 })
 
+const currentPaymentMethod = ref('');
+
 </script>
 
 <template>
@@ -327,7 +329,8 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                     </span>
                 </div>
 
-                <PaymentMethods />
+                currentPaymentMethod:{{ currentPaymentMethod }}
+                <PaymentMethods v-model="currentPaymentMethod" />
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">

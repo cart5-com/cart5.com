@@ -90,7 +90,7 @@ const saveToLocalStorage = (data: UserDataType | null) => {
 
     debounceTimeoutLocalStorage = setTimeout(() => {
         saveToLocalStorageNow(data);
-    }, 500);
+    }, 200);
 }
 const saveToLocalStorageNow = (data: UserDataType | null) => {
     if (typeof localStorage === 'undefined') return;
@@ -248,7 +248,7 @@ const saveUserData = async (newVal: UserDataStoreType) => {
     }
     debounceTimeout = setTimeout(async () => {
         await saveUserDataNow(newVal);
-    }, 1000);
+    }, 400);
 }
 
 export const saveUserDataNow = async (data: UserDataStoreType) => {

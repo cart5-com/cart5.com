@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useVModel } from '@vueuse/core'
 import { ref, onBeforeMount } from 'vue';
 import { Banknote, CreditCard } from 'lucide-vue-next';
 import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema'
@@ -14,9 +15,23 @@ import {
 } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 
+const props = defineProps<{
+    modelValue: string
+}>()
+
+const emits = defineEmits<{
+    (e: 'update:modelValue', payload: string): void
+}>()
+
+const selectedPaymentMethod = useVModel(props, 'modelValue', emits, {
+    passive: true,
+    defaultValue: '',
+    deep: false,
+})
 
 // console.log("window.storeData?.paymentMethods", window.storeData?.paymentMethods);
 // console.log("window.orderType", window.orderType);
+const orderType = window.orderType || 'pickup';
 
 // Payment methods handling
 const availablePaymentMethods = ref<{
@@ -25,8 +40,6 @@ const availablePaymentMethods = ref<{
     description?: string;
     icon?: any;
 }[]>([]);
-
-const selectedPaymentMethod = ref('');
 
 // Get the appropriate payment methods based on order type
 const getPaymentMethods = () => {
@@ -83,8 +96,6 @@ const getPaymentMethods = () => {
     return methods;
 };
 
-const currentPaymentMethodSelection = ref('');;
-
 onBeforeMount(() => {
     availablePaymentMethods.value = getPaymentMethods();
     if (availablePaymentMethods.value.length > 0) {
@@ -99,7 +110,7 @@ onBeforeMount(() => {
     <!-- Payment Methods Selection -->
     <Card class="my-4"
           v-if="availablePaymentMethods.length > 0">
-        selectedPaymentMethod:{{ selectedPaymentMethod }}
+        <!-- selectedPaymentMethod:{{ selectedPaymentMethod }} -->
         <CardHeader>
             <CardTitle>Payment Method</CardTitle>
         </CardHeader>
