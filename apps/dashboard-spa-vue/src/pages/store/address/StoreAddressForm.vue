@@ -25,10 +25,10 @@ import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.v
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
 
 const schema = z.object({
-    country: z.string().min(1, 'Address is required'),
-    address1: z.string().min(1, 'Address is required'),
+    country: z.string().min(1, 'Required'),
+    address1: z.string().min(1, 'Required'),
     address2: z.string().optional(),
-    city: z.string().min(1, 'City is required'),
+    city: z.string().min(1, 'Required'),
     state: z.string().optional(),
     postalCode: z.string().min(1, 'Postal code is required'),
 })
@@ -144,7 +144,7 @@ const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 async function onSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         isDialogOpen.value = true;
-        console.log('values', values);
+        // console.log('values', values);
         // values.address1, form.values.country?.toLowerCase()
         // mapLocation.value.address = values.address1;
         // mapLocation.value.country = values.country.toLowerCase();

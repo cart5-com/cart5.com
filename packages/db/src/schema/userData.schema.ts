@@ -4,6 +4,7 @@ import { createInsertSchema, createSelectSchema, createUpdateSchema } from "driz
 import {
     type Carts, cartsSchema,
 } from "@lib/zod/cartItemState";
+import type { AddressesType } from "@lib/zod/userAddressSchema";
 
 export const userDataTable = sqliteTable("user_data", {
     ...autoCreatedUpdated,
@@ -14,8 +15,8 @@ export const userDataTable = sqliteTable("user_data", {
     rememberLastAddress: text("remember_last_address"),
     rememberLastCountry: text("remember_last_country"),
 
-    // rememberLastAddressId: text("remember_last_address_id"),
-    // addressArray: text("addresses", { mode: 'json' }).$type<UserAddressArray>(),
+    rememberLastAddressId: text("remember_last_address_id"),
+    addresses: text("addresses", { mode: 'json' }).$type<AddressesType>(),
     carts: text("carts", { mode: 'json' }).$type<Carts>(),
 });
 
@@ -27,6 +28,3 @@ export const insertUserDataSchema = createInsertSchema(userDataTable, {
 export const updateUserDataSchema = createUpdateSchema(userDataTable, {
     carts: cartsSchema,
 });
-
-
-// TODO: user verified phone numbers
