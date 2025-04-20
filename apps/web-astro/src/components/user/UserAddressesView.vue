@@ -15,6 +15,8 @@ import {
     Pencil,
     Trash2,
     PlusCircle,
+    CircleCheckBig,
+    Circle,
 } from 'lucide-vue-next';
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 import { computed, onMounted } from 'vue';
@@ -187,17 +189,20 @@ transform-origin: center center;"
                 </CardContent>
                 <CardFooter>
                     <div class="flex gap-2">
-                        <Button variant="outline"
-                                size="sm"
+                        <Button :variant="selectedAddressId === address.addressId ? 'default' : 'outline'">
+                            <CircleCheckBig v-if="selectedAddressId === address.addressId" />
+                            <Circle v-else />
+                            Select
+                        </Button>
+                        <Button variant="ghost"
                                 @click="(e) => editAddress(address, e)">
-                            <Pencil class="h-4 w-4 mr-1" />
+                            <Pencil />
                             Edit
                         </Button>
-                        <Button variant="destructive"
+                        <Button variant="ghost"
                                 size="sm"
                                 @click="(e) => deleteAddress(address.addressId, e)">
-                            <Trash2 class="h-4 w-4 mr-1" />
-                            Delete
+                            <Trash2 />
                         </Button>
                     </div>
                 </CardFooter>
