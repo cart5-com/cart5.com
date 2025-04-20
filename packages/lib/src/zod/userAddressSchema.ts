@@ -23,6 +23,7 @@ export const addressSchema = z.object({
     instructionsForDelivery: z.string().optional(),
     label: z.string().optional(),
     icon: z.string().optional(),
+    lastUpdatedTS: z.number().optional(),
 })
 export type AddressType = z.infer<typeof addressSchema>;
 

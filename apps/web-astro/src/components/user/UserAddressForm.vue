@@ -40,6 +40,7 @@ const schema = addressSchema
         lat: true,
         lng: true,
         dropoffOption: true,
+        lastUpdatedTS: true,
     })
 
 const form = useForm({

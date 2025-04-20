@@ -5,7 +5,7 @@ import {
     type Carts, cartsSchema,
 } from "@lib/zod/cartItemState";
 import { type AddressesType, addressesSchema } from "@lib/zod/userAddressSchema";
-
+import { z } from "zod";
 export const userDataTable = sqliteTable("user_data", {
     ...autoCreatedUpdated,
     userId: text("user_id")
@@ -15,19 +15,19 @@ export const userDataTable = sqliteTable("user_data", {
     rememberLastAddress: text("remember_last_address"),
     rememberLastCountry: text("remember_last_country"),
 
+    rememberLastNickname: text("remember_last_nickname"),
+
     rememberLastAddressId: text("remember_last_address_id"),
     addresses: text("addresses", { mode: 'json' }).$type<AddressesType>(),
 
     carts: text("carts", { mode: 'json' }).$type<Carts>(),
 });
 
-
+const overrideSchema = {
+    rememberLastNickname: z.string().max(255).optional().nullable(),
+    carts: cartsSchema,
+    addresses: addressesSchema,
+}
 export const selectUserDataSchema = createSelectSchema(userDataTable);
-export const insertUserDataSchema = createInsertSchema(userDataTable, {
-    carts: cartsSchema,
-    addresses: addressesSchema,
-});
-export const updateUserDataSchema = createUpdateSchema(userDataTable, {
-    carts: cartsSchema,
-    addresses: addressesSchema,
-});
+export const insertUserDataSchema = createInsertSchema(userDataTable, overrideSchema);
+export const updateUserDataSchema = createUpdateSchema(userDataTable, overrideSchema);
