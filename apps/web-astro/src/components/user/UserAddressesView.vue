@@ -17,7 +17,7 @@ import {
     PlusCircle,
 } from 'lucide-vue-next';
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Hospital } from 'lucide-vue-next'
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -35,12 +35,23 @@ const icons = [
     { name: 'Hospital', component: Hospital }
 ]
 
+// google maps embed api key
+const GOOGLE_MAPS_EMBED_API_KEY = "AIzaSyDfZRiObEgFLQXUc5l8SEV7Mrxc5e001bQ"; //Maps Embed API has unlimited free use
+
 const dialog = useDialog();
 
 const addresses = computed(() => {
     return userDataStore.value.userData?.addresses || {};
 });
 
+const selectedAddressId = computed(() => {
+    return userDataStore.value.userData?.rememberLastAddressId || '';
+});
+
+function selectAddress(address: AddressType) {
+    userDataStore.value.userData!.rememberLastAddressId = address.addressId;
+    console.log('Selected address:', address.addressId);
+}
 
 function newAddress() {
     dialog.show<AddressType>({
@@ -68,7 +79,8 @@ function newAddress() {
     })
 }
 
-function editAddress(address: AddressType) {
+function editAddress(address: AddressType, event: Event) {
+    event.stopPropagation();
     dialog.show<AddressType>({
         title: 'Edit Address',
         component: UserAddressForm,
@@ -84,7 +96,8 @@ function editAddress(address: AddressType) {
     });
 }
 
-function deleteAddress(addressId: string) {
+function deleteAddress(addressId: string, event: Event) {
+    event.stopPropagation();
     if (userDataStore.value.userData?.addresses) {
         delete userDataStore.value.userData.addresses[addressId];
     }
@@ -117,10 +130,12 @@ onMounted(() => {
         </div>
 
         <div v-else
-             class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             class="grid grid-cols-1 gap-4">
             <Card v-for="address in Object.values(addresses)"
                   :key="address.addressId"
-                  class="shadow-sm">
+                  class="shadow-sm transition-all cursor-pointer"
+                  :class="{ 'ring-2 ring-primary': selectedAddressId === address.addressId }"
+                  @click="selectAddress(address)">
                 <CardHeader class="pb-2">
                     <CardTitle class="flex items-center gap-2 text-base">
                         <component :is="icons.find(icon => icon.name === address.icon)?.component || MapPin"
@@ -147,13 +162,13 @@ onMounted(() => {
                     <div class="flex gap-2">
                         <Button variant="ghost"
                                 size="sm"
-                                @click="editAddress(address)">
+                                @click="(e) => editAddress(address, e)">
                             <Pencil class="h-4 w-4 mr-1" />
                             Edit
                         </Button>
                         <Button variant="ghost"
                                 size="sm"
-                                @click="deleteAddress(address.addressId)">
+                                @click="(e) => deleteAddress(address.addressId, e)">
                             <Trash2 class="h-4 w-4 mr-1" />
                             Delete
                         </Button>
