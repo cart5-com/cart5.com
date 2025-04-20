@@ -5,7 +5,8 @@ import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
-import UserAddressForm from "../user/UserAddressForm.vue";
+import UserAddressesView from "../user/UserAddressesView.vue";
+// import UserAddressForm from "../user/UserAddressForm.vue";
 // import { type AddressType } from "@lib/zod/userAddressSchema";
 import { onMounted } from "vue";
 // import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
@@ -34,8 +35,8 @@ onMounted(async () => {
             <UserMenu />
         </div>
         <div v-else>
-            <!-- <UserAddressesView /> -->
-            <UserAddressForm @complete="(v) => {
+            <UserAddressesView />
+            <!-- <UserAddressForm @close="(v) => {
                 console.log('complete', v);
             }"
                              :address="{
@@ -44,7 +45,7 @@ onMounted(async () => {
                                 lat: userDataStore.userData?.rememberLastLat || 0,
                                 lng: userDataStore.userData?.rememberLastLng || 0,
                             }"
-                             :is-edit="true" />
+                             :is-edit="true" /> -->
 
 
             <StorePageAddressWidget />

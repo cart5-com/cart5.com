@@ -22,11 +22,11 @@ import { DoorOpen } from "lucide-vue-next";
 
 const props = defineProps<{
     address?: Partial<AddressType>;
-    isEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'complete', address: AddressType): void;
+    close: [address: AddressType],
+    cancel: [];
 }>();
 
 const isMapDialogOpen = ref(false);
@@ -66,9 +66,6 @@ const COUNTRIES_WITH_STATES = [
 async function onFormSubmit(_values: z.infer<typeof schema>) {
     await withSubmit(async () => {
         isMapDialogOpen.value = true;
-        if (!lat.value || !lng.value) {
-        } else {
-        }
     });
 }
 
@@ -85,7 +82,7 @@ async function onMapConfirm(result: { lat: number; lng: number }) {
         lng: lng.value,
     } as AddressType;
 
-    emit('complete', completeAddress);
+    emit('close', completeAddress);
 }
 
 // Watchers for form labels based on country
