@@ -10,6 +10,7 @@ export const dropoffOptions = [
 
 export const addressSchema = z.object({
     addressId: z.string(),
+    nickname: z.string().optional(),
     country: z.string(),
     address1: z.string(),
     address2: z.string().optional(),

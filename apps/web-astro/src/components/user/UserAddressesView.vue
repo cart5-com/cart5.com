@@ -16,8 +16,8 @@ import {
     Trash2,
     PlusCircle,
 } from 'lucide-vue-next';
-import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Hospital } from 'lucide-vue-next'
-import { computed, onMounted, ref } from 'vue';
+import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
+import { computed, onMounted } from 'vue';
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -32,6 +32,7 @@ const icons = [
     { name: 'Landmark', component: Landmark },
     { name: 'Store', component: Store },
     { name: 'Castle', component: Castle },
+    { name: 'Warehouse', component: Warehouse },
     { name: 'Hospital', component: Hospital }
 ]
 
@@ -56,6 +57,7 @@ function newAddress() {
         component: UserAddressForm,
         props: {
             address: {
+                nickname: userDataStore.value.user?.name || '',
                 country: userDataStore.value.userData?.rememberLastCountry || '',
                 address1: userDataStore.value.userData?.rememberLastAddress || '',
                 lat: userDataStore.value.userData?.rememberLastLat || 0,

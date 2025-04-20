@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { beautifyObjectName } from './utils'
 import { ref } from 'vue'
-import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Hospital } from 'lucide-vue-next'
+import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 
 const open = ref(false);
 defineProps<FieldProps>()
@@ -24,6 +24,7 @@ const icons = [
   { name: 'Landmark', component: Landmark },
   { name: 'Store', component: Store },
   { name: 'Castle', component: Castle },
+  { name: 'Warehouse', component: Warehouse },
   { name: 'Hospital', component: Hospital }
 ]
 </script>
