@@ -35,9 +35,6 @@ const icons = [
     { name: 'Hospital', component: Hospital }
 ]
 
-// google maps embed api key
-const GOOGLE_MAPS_EMBED_API_KEY = "AIzaSyDfZRiObEgFLQXUc5l8SEV7Mrxc5e001bQ"; //Maps Embed API has unlimited free use
-
 const dialog = useDialog();
 
 const addresses = computed(() => {
@@ -108,10 +105,10 @@ function deleteAddress(addressId: string, event: Event) {
 function getMapUrl(address: AddressType): string {
     if (address.lat && address.lng) {
         // return `https://www.google.com/maps/embed/v1/directions?` +
-        //     `key=${GOOGLE_MAPS_EMBED_API_KEY}&destination=${address.lat},${address.lng}` +
+        //     `key=${import.meta.env.PUBLIC_GMAPS_EMBED_API_KEY}&destination=${address.lat},${address.lng}` +
         //     `&origin=${window.storeData?.address?.lat},${window.storeData?.address?.lng}`;
         return `https://www.google.com/maps/embed/v1/place?` +
-            `key=${GOOGLE_MAPS_EMBED_API_KEY}&q=${address.lat},${address.lng}&zoom=17`;
+            `key=${import.meta.env.PUBLIC_GMAPS_EMBED_API_KEY}&q=${address.lat},${address.lng}&zoom=17`;
     }
     return '';
 }
