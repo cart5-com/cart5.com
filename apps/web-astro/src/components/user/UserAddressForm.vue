@@ -151,7 +151,8 @@ onMounted(() => {
                     },
                     icon: {
                         component: AutoFormFieldIcon,
-                        label: 'Icon',
+                        // label: 'Icon',
+                        hideLabel: true,
                     },
                     address1: {
                         label: address1Label,
@@ -202,7 +203,8 @@ onMounted(() => {
                 }"
                   :form="form"
                   @submit="onFormSubmit">
-            <Button type="submit">
+            <Button type="submit"
+                    class="w-full">
                 Save
             </Button>
         </AutoForm>

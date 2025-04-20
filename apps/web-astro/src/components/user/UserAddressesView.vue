@@ -98,9 +98,22 @@ function editAddress(address: AddressType, event: Event) {
 
 function deleteAddress(addressId: string, event: Event) {
     event.stopPropagation();
-    if (userDataStore.value.userData?.addresses) {
-        delete userDataStore.value.userData.addresses[addressId];
+    if (confirm('Are you sure you want to delete this address?')) {
+        if (userDataStore.value.userData?.addresses) {
+            delete userDataStore.value.userData.addresses[addressId];
+        }
     }
+}
+
+function getMapUrl(address: AddressType): string {
+    if (address.lat && address.lng) {
+        // return `https://www.google.com/maps/embed/v1/directions?` +
+        //     `key=${GOOGLE_MAPS_EMBED_API_KEY}&destination=${address.lat},${address.lng}` +
+        //     `&origin=${window.storeData?.address?.lat},${window.storeData?.address?.lng}`;
+        return `https://www.google.com/maps/embed/v1/place?` +
+            `key=${GOOGLE_MAPS_EMBED_API_KEY}&q=${address.lat},${address.lng}&zoom=17`;
+    }
+    return '';
 }
 
 onMounted(() => {
@@ -137,7 +150,8 @@ onMounted(() => {
                   :class="{ 'ring-2 ring-primary': selectedAddressId === address.addressId }"
                   @click="selectAddress(address)">
                 <CardHeader class="pb-2">
-                    <CardTitle class="flex items-center gap-2 text-base">
+                    <CardTitle class="flex items-center gap-2 text-base"
+                               :class="{ 'text-primary': selectedAddressId === address.addressId }">
                         <component :is="icons.find(icon => icon.name === address.icon)?.component || MapPin"
                                    class="h-4 w-4" />
                         {{ address.label || 'Address' }}
@@ -150,23 +164,38 @@ onMounted(() => {
                         <div>
                             {{ [address.city, address.state].filter(Boolean).join(', ') }}
                             {{ address.postalCode }}
+                            {{ address.country }}
                         </div>
-                        <div>{{ address.country }}</div>
                         <div v-if="address.instructionsForDelivery"
                              class="mt-2 italic">
                             {{ address.instructionsForDelivery }}
                         </div>
                     </div>
+
+                    <!-- Google Map for address with coordinates -->
+                    <div v-if="address.lat && address.lng"
+                         class="mt-3 overflow-hidden rounded-lg">
+                        <iframe width="100%"
+                                height="1500"
+                                class="rounded-lg"
+                                frameborder="0"
+                                style="border:0; pointer-events: none; zoom: 0.1; transform: scale(10);
+transform-origin: center center;"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                allowfullscreen="false"
+                                :src="getMapUrl(address)">
+                        </iframe>
+                    </div>
                 </CardContent>
                 <CardFooter>
                     <div class="flex gap-2">
-                        <Button variant="ghost"
+                        <Button variant="outline"
                                 size="sm"
                                 @click="(e) => editAddress(address, e)">
                             <Pencil class="h-4 w-4 mr-1" />
                             Edit
                         </Button>
-                        <Button variant="ghost"
+                        <Button variant="destructive"
                                 size="sm"
                                 @click="(e) => deleteAddress(address.addressId, e)">
                             <Trash2 class="h-4 w-4 mr-1" />
