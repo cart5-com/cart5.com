@@ -35,7 +35,9 @@ onMounted(async () => {
             <UserMenu />
         </div>
         <div v-else>
-            <UserAddressesView />
+            <div class="max-w-md mx-auto">
+                <UserAddressesView />
+            </div>
             <!-- <UserAddressForm @close="(v) => {
                 console.log('complete', v);
             }"
