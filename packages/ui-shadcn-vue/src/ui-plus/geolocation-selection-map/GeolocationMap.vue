@@ -67,7 +67,7 @@ onMounted(async () => {
 		})
 	);
 
-	mapView.fitWorld();
+	// mapView.fitWorld();
 	mapView.setZoom(18);
 	loadHelperBtns();
 });
