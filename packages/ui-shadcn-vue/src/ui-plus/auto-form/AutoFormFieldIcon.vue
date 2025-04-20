@@ -6,7 +6,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { beautifyObjectName } from './utils'
 import { ref } from 'vue'
-import { ChevronsUpDown } from 'lucide-vue-next';
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Hospital } from 'lucide-vue-next'
 
 const open = ref(false);
@@ -43,15 +42,16 @@ const icons = [
             <Button type="button"
                     variant="outline"
                     size="lg"
+                    class="h-12 w-12"
                     :disabled="config?.inputProps?.disabled">
-              <component :is="icons.find(i => i.name === slotProps.componentField.modelValue)?.component || MapPin" />
+              <component :is="icons.find(i => i.name === slotProps.componentField.modelValue)?.component || MapPin"
+                         class="min-h-8 min-w-8" />
               <span v-if="slotProps.componentField.modelValue"
                     class="flex-1 text-sm text-left">
               </span>
               <span v-else
                     class="flex-1 text-sm text-left text-muted-foreground">
               </span>
-              <ChevronsUpDown class="-mr-2 h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-[300px] p-2"
@@ -61,13 +61,14 @@ const icons = [
               <Button v-for="icon in icons"
                       :key="icon.name"
                       variant="outline"
-                      size="icon"
+                      class="h-12 w-12"
                       :class="{ 'ring-2 ring-primary': slotProps.componentField.modelValue === icon.name }"
                       @click="() => {
                         slotProps.setValue(icon.name);
                         open = false;
                       }">
-                <component :is="icon.component" />
+                <component :is="icon.component"
+                           class="min-h-8 min-w-8" />
               </Button>
             </div>
           </PopoverContent>

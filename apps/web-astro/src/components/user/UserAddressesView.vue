@@ -149,8 +149,7 @@ onMounted(() => {
                 <CardHeader class="pb-2">
                     <CardTitle class="flex items-center gap-2 text-base"
                                :class="{ 'text-primary': selectedAddressId === address.addressId }">
-                        <component :is="icons.find(icon => icon.name === address.icon)?.component || MapPin"
-                                   class="h-4 w-4" />
+                        <component :is="icons.find(icon => icon.name === address.icon)?.component || MapPin" />
                         {{ address.label || 'Address' }}
                     </CardTitle>
                 </CardHeader>
