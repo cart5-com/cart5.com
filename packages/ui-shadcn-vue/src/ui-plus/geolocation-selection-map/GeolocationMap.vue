@@ -67,7 +67,7 @@ onMounted(async () => {
 		})
 	);
 
-	// mapView.fitWorld();
+	// mapView.fitWorld(); // no need to load unnecessary tiles
 	mapView.setZoom(18);
 	loadHelperBtns();
 });
