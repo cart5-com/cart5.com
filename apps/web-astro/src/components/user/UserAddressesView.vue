@@ -50,7 +50,10 @@ const selectedAddressId = computed(() => {
 
 function selectAddress(address: AddressType) {
     userDataStore.value.userData!.rememberLastAddressId = address.addressId;
-    console.log('Selected address:', address.addressId);
+    userDataStore.value.userData!.rememberLastAddress = address.address1;
+    userDataStore.value.userData!.rememberLastCountry = address.country;
+    userDataStore.value.userData!.rememberLastLat = address.lat || null;
+    userDataStore.value.userData!.rememberLastLng = address.lng || null;
 }
 
 function newAddress() {
