@@ -13,16 +13,15 @@ export const addressSchema = z.object({
     country: z.string(),
     address1: z.string(),
     address2: z.string().optional(),
-    city: z.string(),
+    city: z.string().optional(),
     state: z.string().optional(),
     postalCode: z.string().optional(),
     lat: z.number().optional(),
     lng: z.number().optional(),
     dropoffOption: z.enum(dropoffOptions).optional(),
-    //Instructions for delivery person
-    instructionsForDelivery: z.string().optional(), // e.g. "Leave at the door" #BUZZ, building name, etc.
+    instructionsForDelivery: z.string().optional(),
     label: z.string().optional(),
-    icon: z.string().optional(), // import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Hospital } from 'lucide-vue-next';
+    icon: z.string().optional(),
 })
 export type AddressType = z.infer<typeof addressSchema>;
 

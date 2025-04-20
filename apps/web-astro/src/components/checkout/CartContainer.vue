@@ -5,8 +5,10 @@ import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
-import UserAddressesView from "../user/UserAddressesView.vue";
-
+import UserAddressForm from "../user/UserAddressForm.vue";
+// import { type AddressType } from "@lib/zod/userAddressSchema";
+import { onMounted } from "vue";
+// import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
 const orderType = window.orderType;
 
 const createPageUrl = (orderType: OrderType) => {
@@ -14,6 +16,14 @@ const createPageUrl = (orderType: OrderType) => {
     if (orderType) url.searchParams.set("order-type", orderType);
     return url.toString();
 }
+
+onMounted(async () => {
+    setTimeout(async () => {
+        // const result = await geocode(userDataStore.value.userData?.rememberLastAddress || '', userDataStore.value.userData?.rememberLastCountry || '')
+        // console.log(result.data as google.maps.GeocoderResponse);
+    }, 1000);
+})
+
 </script>
 
 <template>
@@ -24,7 +34,17 @@ const createPageUrl = (orderType: OrderType) => {
             <UserMenu />
         </div>
         <div v-else>
-            <UserAddressesView />
+            <!-- <UserAddressesView /> -->
+            <UserAddressForm @complete="(v) => {
+                console.log('complete', v);
+            }"
+                             :address="{
+                                country: userDataStore.userData?.rememberLastCountry || '',
+                                address1: userDataStore.userData?.rememberLastAddress || '',
+                                lat: userDataStore.userData?.rememberLastLat || 0,
+                                lng: userDataStore.userData?.rememberLastLng || 0,
+                            }"
+                             :is-edit="true" />
 
 
             <StorePageAddressWidget />

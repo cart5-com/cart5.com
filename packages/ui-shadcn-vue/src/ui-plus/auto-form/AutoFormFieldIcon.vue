@@ -39,24 +39,23 @@ const icons = [
       </AutoFormLabel>
       <FormControl>
         <Popover v-model:open="open">
-          <PopoverTrigger class="flex w-full">
+          <PopoverTrigger class="flex">
             <Button type="button"
                     variant="outline"
                     size="lg"
                     :disabled="config?.inputProps?.disabled">
-              <component :is="icons.find(i => i.name === slotProps.componentField.modelValue)?.component || MapPin"
-                         class="mr-2 h-4 w-4" />
+              <component :is="icons.find(i => i.name === slotProps.componentField.modelValue)?.component || MapPin" />
               <span v-if="slotProps.componentField.modelValue"
                     class="flex-1 text-sm text-left">
               </span>
               <span v-else
                     class="flex-1 text-sm text-left text-muted-foreground">
-                Select an icon
               </span>
               <ChevronsUpDown class="-mr-2 h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-[300px] p-2"
+                          align="start"
                           v-if="!config?.inputProps?.disabled">
             <div class="grid grid-cols-4 gap-2">
               <Button v-for="icon in icons"
