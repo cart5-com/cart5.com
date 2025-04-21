@@ -48,6 +48,7 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
     "rememberLastAddress" |
     "rememberLastCountry" |
     "rememberLastAddressId" |
+    "rememberLastNickname" |
     "addresses" |
     "carts"
 >;
@@ -65,6 +66,7 @@ const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
     rememberLastAddress: null,
     rememberLastCountry: null,
     rememberLastAddressId: null,
+    rememberLastNickname: null,
     addresses: {},
     carts: {},
 }
@@ -119,6 +121,7 @@ const mergedUserData = (
         rememberLastAddress: serverUserData.rememberLastAddress,
         rememberLastCountry: serverUserData.rememberLastCountry,
         rememberLastAddressId: serverUserData.rememberLastAddressId,
+        rememberLastNickname: serverUserData.rememberLastNickname,
         addresses: serverUserData.addresses,
         carts: {},
     };
@@ -154,6 +157,9 @@ const mergedUserData = (
         }
     }
 
+    // if we show addresses or CRUD addresses, we also need to merge addresses
+    // right now we're not showing addresses for anon users
+    // so we don't need to merge addresses
 
     return deepMerge(anonUserData, formattedServerData);
 }
@@ -173,6 +179,7 @@ const loadUserData = async () => {
                 rememberLastLat: true,
                 rememberLastLng: true,
                 rememberLastAddressId: true,
+                rememberLastNickname: true,
                 addresses: true,
                 carts: true,
             }

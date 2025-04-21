@@ -33,7 +33,8 @@ function isObject(item: any): item is object {
 }
 
 
-
+// not needed anymore because we're showing and CRUDing addresses for only server users.
+// anon users don't have addresses.
 // export const mergeAddresses = (anonAddresses: UserAddressArray, serverAddresses: UserAddressArray) => {
 //     // merge using by detecting duplicates by isAddressDuplicate
 //     const mergedAddresses = [...(serverAddresses || [])];
