@@ -6,9 +6,11 @@ import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
 import UserAddressesView from "../user/UserAddressesView.vue";
+import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 // import UserAddressForm from "../user/UserAddressForm.vue";
 // import { type AddressType } from "@lib/zod/userAddressSchema";
 import { onMounted } from "vue";
+import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 // import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
 const orderType = window.orderType;
 
@@ -20,10 +22,14 @@ const createPageUrl = (orderType: OrderType) => {
 
 onMounted(async () => {
     setTimeout(async () => {
+        const pageUrl = getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME)
+        showPhoneValidationForm(pageUrl)
         // const result = await geocode(userDataStore.value.userData?.rememberLastAddress || '', userDataStore.value.userData?.rememberLastCountry || '')
         // console.log(result.data as google.maps.GeocoderResponse);
     }, 1000);
 })
+
+
 
 </script>
 

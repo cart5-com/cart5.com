@@ -43,7 +43,7 @@ const { focused } = useFocus(phoneInput);
 												open = false;
 												focused = true;
 											}
-												">
+											">
 									<FlagComponent :country="option?.iso2" />
 									<span class="flex-1 text-sm">{{ option.name }}</span>
 									<span class="text-foreground/50 text-sm">{{ option.dialCode }}</span>
@@ -63,7 +63,8 @@ const { focused } = useFocus(phoneInput);
 				   :model-value="inputValue"
 				   @input="updateInputValue"
 				   :placeholder="placeholder"
-				   :name="$attrs.fieldName" />
+				   :name="$attrs.fieldName"
+				   v-bind="{ ...$attrs }" />
 		</template>
 	</PhoneInput>
 </template>

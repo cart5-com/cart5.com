@@ -30,6 +30,9 @@
       ],
       "@api-client/*": [
         "../api-client/src/*"
+      ],
+      "@api-hono/*": [
+        "../../apps/api-hono/src/*"
       ]
     },
     "noUnusedLocals": true,

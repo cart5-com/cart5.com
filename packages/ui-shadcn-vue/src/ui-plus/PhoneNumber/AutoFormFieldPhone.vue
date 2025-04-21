@@ -12,7 +12,6 @@ defineProps<FieldProps>()
 // Add watch for slotProps value
 const phoneValue = ref('')
 const formValue = ref('')
-
 // Watch slot props value changes
 watch(
   () => formValue?.value,
@@ -39,6 +38,7 @@ watch(
         <slot v-bind="slotProps">
           <SPhoneInput :fieldName="fieldName"
                        v-model="phoneValue"
+                       :autofocus="config?.inputProps?.autofocus"
                        @update="($event: Results) => {
                         if ($event.isValid) {
                           slotProps.handleChange($event.e164)
