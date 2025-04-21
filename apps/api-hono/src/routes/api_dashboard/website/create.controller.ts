@@ -29,6 +29,9 @@ export const createWebsite_Handler = async (c: Context<
     if (requestUserId !== c.get('USER')?.id!) {
         throw new KNOWN_ERROR("Invalid user, please make sure logout and login again", "INVALID_USER");
     }
+    if (c.var.USER?.hasVerifiedPhoneNumber === 0) {
+        throw new KNOWN_ERROR("has no verified phone number", "HAS_NO_VERIFIED_PHONE_NUMBER");
+    }
     const websiteInfo = await getWebsiteInfo_Service(c.req.header()['host'])
     let isUserMemberOfSupportTeam = false;
     if (websiteInfo?.partnerInfo?.partnerTeamId) {

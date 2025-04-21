@@ -14,6 +14,7 @@ import { toast } from '@/ui-plus/sonner';
 import { Badge } from '@/components/ui/badge';
 import { websiteInfo, loadWebsiteInfo } from '@dashboard-spa-vue/stores/WebsiteInfoStore';
 import { onMounted } from 'vue';
+import { showPhoneValidationForm } from '@/ui-plus/PhoneNumber/validation/PhoneValidation';
 
 const emit = defineEmits<{
     close: [values: { id: string, name: string }],
@@ -32,6 +33,17 @@ const form = useForm({
 const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form);
 
 async function onSubmit(values: z.infer<typeof schema>) {
+    if (window.USER?.hasVerifiedPhoneNumber === 0) {
+        const result = await showPhoneValidationForm(getTurnstileUrl(import.meta.env.VITE_PUBLIC_DOMAIN_NAME))
+        if (result === 1) {
+            window.USER.hasVerifiedPhoneNumber = 1;
+            toast.success('Phone number verified, now you can create your store');
+            return;
+        } else {
+            toast.error('Phone number verification failed');
+            return;
+        }
+    }
     let turnstile;
     try {
         turnstile = await showTurnstilePopup(

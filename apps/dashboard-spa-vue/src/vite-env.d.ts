@@ -2,6 +2,6 @@
 /// <reference types="@types/leaflet-draw" />
 
 interface Window {
-    USER: import("lib/hono/apiClients/authApiClient").User | null;
+    USER: import("@lib/types/UserType").User | undefined;
     // L: typeof import('@types/leaflet-draw');
 }

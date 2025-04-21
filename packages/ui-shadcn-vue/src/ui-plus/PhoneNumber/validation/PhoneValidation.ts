@@ -4,15 +4,23 @@ import PhoneValidationForm from '@/ui-plus/PhoneNumber/validation/PhoneValidatio
 const dialog = useDialog();
 
 export function showPhoneValidationForm(pageUrl: string) {
-    dialog.show({
-        title: 'One time phone verification',
-        description: 'please enter your mobile phone number for one time verification',
-        component: PhoneValidationForm,
-        props: {
-            pageUrl: pageUrl,
-        },
-        onSuccess: () => {
-            // console.log('verification success');
-        }
+    return new Promise((resolve) => {
+        dialog.show({
+            title: 'One time phone verification',
+            description: 'please enter your mobile phone number for one time verification',
+            component: PhoneValidationForm,
+            props: {
+                pageUrl: pageUrl,
+            },
+            onSuccess: () => {
+                resolve(1);
+            },
+            onError: () => {
+                resolve(0);
+            },
+            onCancel: () => {
+                resolve(0);
+            }
+        })
     })
 }
