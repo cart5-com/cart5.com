@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { generateNumberOnlyOtp, generateOTPJsOnly } from '@api-hono/utils/generateRandomOtp';
+import { generateNumberOnlyOtp } from '@api-hono/utils/generateRandomOtp';
 import { signJwtAndEncrypt } from '@api-hono/utils/jwt';
 import { PHONE_OTP_COOKIE_NAME } from '@lib/consts';
 import { sendUserOtpSms } from '@api-hono/utils/sms';
