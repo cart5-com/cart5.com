@@ -6,6 +6,7 @@ export interface User {
     pictureUrl: string;
     has2FA: boolean;
     hasNewSession: boolean;
+    hasVerifiedPhoneNumber: 0 | 1;
 }
 
 export type TwoFactorAuthVerifyPayload = {

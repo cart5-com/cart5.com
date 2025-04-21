@@ -1,6 +1,6 @@
 import type { Session } from "@lib/types/SessionType";
 import { SESSION_EXPIRES_IN } from "@lib/consts";
-import { sessionTable, userTable } from "@db/schema/auth.schema";
+import { sessionTable, userTable, verifiedPhoneNumberTable } from "@db/schema/auth.schema";
 import db from "@db/drizzle";
 import { eq, lte, sql } from "drizzle-orm";
 import type { User } from "@lib/types/UserType";
@@ -63,7 +63,11 @@ export const getUserFromSessionIdService = async (sessionId: string): Promise<Us
             isEmailVerified: userTable.isEmailVerified,
             name: userTable.name,
             pictureUrl: userTable.pictureUrl,
-            has2FA: sql<boolean>`${userTable.encryptedTwoFactorAuthKey} IS NOT NULL`
+            has2FA: sql<boolean>`${userTable.encryptedTwoFactorAuthKey} IS NOT NULL`,
+            hasVerifiedPhoneNumber: sql<0 | 1>`EXISTS (
+                SELECT 1 FROM ${verifiedPhoneNumberTable}
+                WHERE ${verifiedPhoneNumberTable.userId} = ${userTable.id}
+            )`
         })
         .from(sessionTable)
         .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
