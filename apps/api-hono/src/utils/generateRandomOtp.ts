@@ -1,5 +1,14 @@
 import { encodeBase32UpperCaseNoPadding } from "@oslojs/encoding";
 
+export const generateNumberOnlyOtp = (size: number = 4) => {
+    const characters = '0123456789';
+    let code = '';
+    for (let i = 0; i < size; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters[randomIndex];
+    }
+}
+
 export const generateOTPJsOnly = (size: number = 6) => {
     const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     // const characters = '0123456789QWERTYASDFGH';
