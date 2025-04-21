@@ -7,6 +7,7 @@ export const generateNumberOnlyOtp = (size: number = 4) => {
         const randomIndex = Math.floor(Math.random() * characters.length);
         code += characters[randomIndex];
     }
+    return code;
 }
 
 export const generateOTPJsOnly = (size: number = 6) => {

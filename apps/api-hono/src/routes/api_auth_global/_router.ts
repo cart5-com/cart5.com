@@ -9,6 +9,7 @@ import {
 import { logoutAllRoute } from './logout-all.controller';
 import { getUserDataRoute, getUserData_SchemaValidator } from './user_data/get_user_data.controller';
 import { updateUserDataRoute, updateUserData_SchemaValidator } from './user_data/update_user_data.controller';
+import { phoneRoute } from './phone/_router';
 
 export const apiAuthGlobal = new Hono<HonoVariables>()
     .post(
@@ -38,6 +39,7 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
         updateUserData_SchemaValidator,
         updateUserDataRoute
     )
+    .route('/phone', phoneRoute)
 
 
 

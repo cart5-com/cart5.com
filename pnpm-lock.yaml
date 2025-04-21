@@ -89,6 +89,9 @@ importers:
       lib:
         specifier: workspace:*
         version: link:../../packages/lib
+      libphonenumber-js:
+        specifier: ^1.11.18
+        version: 1.12.6
       sharp:
         specifier: ^0.34.0
         version: 0.34.0

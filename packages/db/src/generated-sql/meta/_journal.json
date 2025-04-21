@@ -106,6 +106,13 @@
       "when": 1745193052617,
       "tag": "0014_steep_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1745199317838,
+      "tag": "0015_gray_boomerang",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
-
 export const SESSION_COOKIE_NAME = `auth_session`;
 export const GOOGLE_OAUTH_COOKIE_NAME = `google_oauth_token`;
 export const OTP_COOKIE_NAME = "otp_token";
+export const PHONE_OTP_COOKIE_NAME = "phone_otp_token";
 export const OTP_COOKIE_NAME_AFTER_REGISTER = "otp_token_after_register";
 export const TWO_FACTOR_AUTH_COOKIE_NAME = "two_factor_auth_token";
 export const localDbPath = "file:../../local-sqlite.db";

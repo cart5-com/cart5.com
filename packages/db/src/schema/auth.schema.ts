@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, blob } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, blob, primaryKey } from "drizzle-orm/sqlite-core";
 import { relations } from 'drizzle-orm';
 import { autoCreated } from "./helpers/auto-created-updated";
 import { userDataTable } from "./userData.schema";
@@ -35,10 +35,13 @@ export const sessionTable = sqliteTable("session", {
 
 export const verifiedPhoneNumberTable = sqliteTable("verified_phone_number", {
 	userId: text("user_id")
-		.notNull()
-		.references(() => userTable.id),
+		.notNull(),
 	phoneNumber: text("phone_number").notNull(),
-});
+}, (table) => [
+	primaryKey({ columns: [table.userId, table.phoneNumber] }),
+]);
+
+
 
 export const userRelations = relations(userTable, ({ many, one }) => ({
 	session: many(sessionTable, {
