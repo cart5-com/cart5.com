@@ -7,7 +7,8 @@ import {
     storePaymentMethodsTable,
     storeTaxSettingsTable,
     storeDeliveryZoneMapTable,
-    storeServiceFeesTable
+    storeServiceFeesTable,
+    storeStripePrivateDataTable
 } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
@@ -123,6 +124,28 @@ export const getStore_Service = async (
         /*/
     });
 }
+
+
+export const getStoreStripePrivateData_Service = async (
+    storeId: string,
+    columns?: Partial<Record<keyof typeof storeStripePrivateDataTable.$inferSelect, boolean>>
+) => {
+    return await db.query.storeStripePrivateDataTable.findFirst({
+        where: eq(storeStripePrivateDataTable.storeId, storeId),
+        columns: columns,
+    });
+}
+export const updateStoreStripePrivateData_Service = async (
+    storeId: string,
+    data: Partial<InferInsertModel<typeof storeStripePrivateDataTable>>
+) => {
+    const result = await db.insert(storeStripePrivateDataTable)
+        .values({ ...data, storeId: storeId })
+        .onConflictDoNothing();
+    await markStoreAsUpdated(storeId);
+    return result;
+}
+
 
 export const getStoreAddress_Service = async (
     storeId: string,

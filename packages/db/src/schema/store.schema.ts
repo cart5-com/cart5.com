@@ -62,6 +62,11 @@ export const storeRecentlyUpdatedTable = sqliteTable("store_recently_updated", {
 
 
 
+export const storeStripePrivateDataTable = sqliteTable("store_stripe_private_data", {
+	storeId: text("store_id").notNull().unique(),
+	stripeConnectAccountId: text("stripe_connect_account_id"),
+	// TODO: add account status to show required banners/actions
+});
 
 
 
