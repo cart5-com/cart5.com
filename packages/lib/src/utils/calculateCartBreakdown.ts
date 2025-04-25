@@ -28,6 +28,7 @@ export function calculateCartBreakdown(
     },
     hasPaymentProcessorFee: boolean,
     paymentProcesssorSettings: {
+        name: string,
         ratePerOrder: number,
         feePerOrder: number,
         whoPaysFee: "STORE" | "CUSTOMER"
@@ -51,7 +52,24 @@ export function calculateCartBreakdown(
         (combinedServiceFee.feePerOrder ?? 0);
     const serviceTax = inclusiveRate(serviceFeeAmount, taxRateForServiceFees);
 
-    const totalPlatformFee = {
+    const totalPlatformFee: {
+        totalWithTax: number;
+        itemTotal: number;
+        tax: number;
+        percentage: {
+            ratePerOrder: number;
+            feePerOrder: number;
+        };
+        feeBreakdown: {
+            [key: string]: {
+                name: string;
+                note: string;
+                totalWithTax: number;
+                itemTotal: number;
+                tax: number;
+            };
+        };
+    } = {
         totalWithTax: serviceFeeAmount,
         itemTotal: serviceFeeAmount - serviceTax,
         tax: serviceTax,
@@ -191,7 +209,43 @@ export function calculateCartBreakdown(
         `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` :
         'Platform Fees';
 
+    const allTransparencyBreakdown: {
+        name: string,
+        shownFee: string, // currencySymbol+fee
+        note: string,
+    }[] = [];
+
+    if (totalTax > 0) {
+        allTransparencyBreakdown.push({
+            name: 'Taxes',
+            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
+            note: '',
+        });
+    }
+    if (paymentProcessorFee > 0) {
+        allTransparencyBreakdown.push({
+            name: paymentProcesssorSettings.name,
+            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
+            note: 'The cost of processing online payment',
+        });
+    }
+    Object.entries(totalPlatformFee.feeBreakdown).forEach(([_key, fee]) => {
+        allTransparencyBreakdown.push({
+            name: fee.name,
+            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal).toString(),
+            note: fee.note,
+        });
+    });
+    allTransparencyBreakdown.push({
+        name: 'Store',
+        shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(storeReceives.netRevenue).toString(),
+        note: 'net amount that store receives after deducting all fees',
+    });
+
     return {
+        buyerPays: roundTo2Decimals(buyerTotal),
+        allTransparencyBreakdown,
+
         tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
         discount: roundTo2Decimals(discount),
         taxesAndOtherFees: {
@@ -200,7 +254,6 @@ export function calculateCartBreakdown(
             tax: roundTo2Decimals(totalTax),
             otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
         },
-        buyerPays: roundTo2Decimals(buyerTotal),
         paymentProcesssorFee: roundTo2Decimals(paymentProcessorFee),
         buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
             totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),

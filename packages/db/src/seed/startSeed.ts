@@ -317,7 +317,7 @@ export const startSeed = async () => {
     await updateStoreStripeSettingsData_Service(flamesStore!.id, {
         stripeConnectAccountId: "acct_1RHadvGhHHWOLny2", // stripe sandbox account
         isStripeEnabled: true,
-        stripeRatePerOrder: 0.029,
+        stripeRatePerOrder: 2.9,
         stripeFeePerOrder: 0.30,
         whoPaysStripeFee: "CUSTOMER",
     });

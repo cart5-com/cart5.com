@@ -80,6 +80,7 @@ const cartBreakdown = computed(() => {
         },
         currentPaymentMethod.value === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
         {
+            name: "Stripe Fee",
             ratePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
             feePerOrder: window.storeData?.stripeSettings?.stripeFeePerOrder ?? 0,
             whoPaysFee: window.storeData?.stripeSettings?.whoPaysStripeFee ?? "STORE"
@@ -145,7 +146,6 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 
 const currentPaymentMethod = ref('');
 const paymentProcessorSettings = window.storeData?.stripeSettings;
-const paymentProcessorName = "Stripe Fee";
 
 </script>
 
@@ -349,7 +349,8 @@ const paymentProcessorName = "Stripe Fee";
                      v-if="currentPaymentMethod === 'stripe' && paymentProcessorSettings?.whoPaysStripeFee === 'CUSTOMER'">
                     <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
                         <span class="">
-                            {{ paymentProcessorName }}
+                            <!-- // TODO: add fee name for stripe fee -->
+                            fee name
                         </span>
                         <span class=" text-right">
                             {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
@@ -367,49 +368,20 @@ const paymentProcessorName = "Stripe Fee";
                             <PopoverContent align="start">
                                 <div class="space-y-2">
                                     <h3 class="font-semibold">Transparency breakdown</h3>
-                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">
-                                                - Taxes
+                                    <div v-if="cartBreakdown.allTransparencyBreakdown">
+                                        <div v-for="(fee, index) in cartBreakdown.allTransparencyBreakdown"
+                                             :key="index"
+                                             class="my-4">
+                                            <div class="flex justify-between items-center">
+                                                <div class="font-medium">
+                                                    {{ fee.name }}
+                                                </div>
+                                                <div>
+                                                    {{ fee.shownFee }}
+                                                </div>
                                             </div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.tax }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div v-if="cartBreakdown.paymentProcesssorFee > 0">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">
-                                                - {{ paymentProcessorName }}
-                                            </div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
-                                            </div>
-                                        </div>
-                                        <div class="text-sm text-muted-foreground">
-                                            Payment processor fee
-                                        </div>
-                                    </div>
-                                    <div v-for="(fee) in cartBreakdown.totalPlatformFee.feeBreakdown">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">
-                                                - {{ (fee as any).name }}
-                                            </div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ (fee as any).itemTotal }}
-                                            </div>
-                                        </div>
-                                        <div class="text-sm text-muted-foreground">
-                                            {{ (fee as any).note }}
-                                        </div>
-                                    </div>
-                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">
-                                                - Store
-                                            </div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.netRevenue }}
+                                            <div class="text-sm text-muted-foreground">
+                                                {{ fee.note }}
                                             </div>
                                         </div>
                                     </div>
