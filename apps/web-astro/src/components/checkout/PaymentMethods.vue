@@ -76,8 +76,8 @@ const getPaymentMethods = () => {
     if (isStripeEnabled) {
         methods.push({
             id: 'stripe',
-            name: 'Credit/Debit Card',
-            description: 'Pay online with Stripe secure payment',
+            name: 'Pay online',
+            description: 'Pay with credit/debit card online using Stripe',
             icon: CreditCard
         });
     }
