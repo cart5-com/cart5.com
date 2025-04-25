@@ -298,4 +298,10 @@ export const storeRelations = relations(storeTable, ({
 			fields: [storeTable.id],
 			references: [storeDeliveryZoneMapTable.storeId]
 		}),
+	stripeSettings:
+		one(
+			storeStripeSettingsDataTable, {
+			fields: [storeTable.id],
+			references: [storeStripeSettingsDataTable.storeId]
+		}),
 }));

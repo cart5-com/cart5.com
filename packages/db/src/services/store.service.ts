@@ -88,6 +88,14 @@ export const getStoreData_Service = async (
                     pickupPaymentMethods: true,
                 }
             },
+            stripeSettings: {
+                columns: {
+                    isStripeEnabled: true,
+                    stripeRatePerOrder: true,
+                    stripeFeePerOrder: true,
+                    whoPaysStripeFee: true,
+                }
+            }
         }
     });
 }

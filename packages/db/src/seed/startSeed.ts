@@ -301,6 +301,10 @@ export const startSeed = async () => {
 
     await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
         stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
+        isStripeEnabled: true,
+        stripeRatePerOrder: 0.029,
+        stripeFeePerOrder: 0.30,
+        whoPaysStripeFee: "CUSTOMER",
     });
 
     const flamesStore = storesByThush[4];
@@ -312,6 +316,10 @@ export const startSeed = async () => {
     });
     await updateStoreStripeSettingsData_Service(flamesStore!.id, {
         stripeConnectAccountId: "acct_1RHadvGhHHWOLny2", // stripe sandbox account
+        isStripeEnabled: true,
+        stripeRatePerOrder: 0.029,
+        stripeFeePerOrder: 0.30,
+        whoPaysStripeFee: "CUSTOMER",
     });
 
     // invite flames admin to Real Flames store
