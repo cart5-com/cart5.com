@@ -4,15 +4,7 @@ import { roundTo2Decimals } from "./roundTo2Decimals";
 import type { calculateSubTotal } from "./calculateSubTotal";
 import { type TaxSettings } from "../zod/taxSchema"
 
-/**
- * Calculates the complete service fee breakdown for a cart transaction
- * 
- * @param subTotal - Cart subtotal amount (including tax)
- * @param fees - Array of service fees to apply
- * @param taxRateForServiceFees - Tax rate to apply to service fees
- * @param config - Configuration for fee calculation
- * @returns Complete breakdown of all fee calculations
- */
+
 export function calculateCartBreakdown(
     subTotal: ReturnType<typeof calculateSubTotal>,
     platformServiceFee: ServiceFee | null,
@@ -34,17 +26,14 @@ export function calculateCartBreakdown(
     }
 ) {
     // Step 1: Combine all service fees
-    const combinedServiceFee: ServiceFee = {
-        ratePerOrder: 0,
-        feePerOrder: 0
+    const combinedServiceFee = {
+        ratePerOrder: (platformServiceFee?.ratePerOrder ?? 0) +
+            (supportPartnerServiceFee?.ratePerOrder ?? 0) +
+            (marketingPartnerServiceFee?.ratePerOrder ?? 0),
+        feePerOrder: (platformServiceFee?.feePerOrder ?? 0) +
+            (supportPartnerServiceFee?.feePerOrder ?? 0) +
+            (marketingPartnerServiceFee?.feePerOrder ?? 0)
     };
-
-    [platformServiceFee, supportPartnerServiceFee, marketingPartnerServiceFee].forEach(fee => {
-        if (fee) {
-            combinedServiceFee.ratePerOrder! += fee.ratePerOrder ?? 0;
-            combinedServiceFee.feePerOrder! += fee.feePerOrder ?? 0;
-        }
-    });
 
     // Step 2: Calculate total service fee amount
     const serviceFeeAmount = exclusiveRate(subTotal.totalWithTax, combinedServiceFee.ratePerOrder ?? 0) +
