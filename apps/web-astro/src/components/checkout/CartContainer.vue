@@ -22,8 +22,10 @@ const createPageUrl = (orderType: OrderType) => {
 
 onMounted(async () => {
     setTimeout(async () => {
-        const pageUrl = getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME)
-        showPhoneValidationForm(pageUrl)
+        // TODO: check user has a verified phone number
+        // const pageUrl = getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME)
+        // showPhoneValidationForm(pageUrl)
+
         // const result = await geocode(userDataStore.value.userData?.rememberLastAddress || '', userDataStore.value.userData?.rememberLastCountry || '')
         // console.log(result.data as google.maps.GeocoderResponse);
     }, 1000);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
 import { ref, onBeforeMount } from 'vue';
-import { Banknote, CreditCard } from 'lucide-vue-next';
+import { Banknote, CreditCard, Calculator } from 'lucide-vue-next';
 import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema'
 import {
     Card,
@@ -32,6 +32,9 @@ const selectedPaymentMethod = useVModel(props, 'modelValue', emits, {
 // console.log("window.storeData?.paymentMethods", window.storeData?.paymentMethods);
 // console.log("window.orderType", window.orderType);
 const orderType = window.orderType || 'pickup';
+
+// Check if Stripe is enabled
+const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled || false;
 
 // Payment methods handling
 const availablePaymentMethods = ref<{
@@ -69,6 +72,16 @@ const getPaymentMethods = () => {
 
     const methods = [];
 
+    // Add Stripe if enabled
+    if (isStripeEnabled) {
+        methods.push({
+            id: 'stripe',
+            name: 'Credit/Debit Card',
+            description: 'Pay online with Stripe secure payment',
+            icon: CreditCard
+        });
+    }
+
     if (paymentMethods?.cash) {
         methods.push({
             id: 'cash',
@@ -83,7 +96,7 @@ const getPaymentMethods = () => {
             id: 'cardTerminal',
             name: 'Card',
             description: orderType === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
-            icon: CreditCard
+            icon: Calculator
         });
     }
 
@@ -134,7 +147,7 @@ onBeforeMount(() => {
                         <div class="font-medium flex items-center">
                             <component :is="method.icon"
                                        v-if="method.icon"
-                                       class="w-4 h-4 mr-2" />
+                                       class="mr-2" />
                             {{ method.name }}
                         </div>
                         <div class="text-muted-foreground text-sm leading-snug"
