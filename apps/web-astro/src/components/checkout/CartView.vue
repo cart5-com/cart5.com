@@ -77,6 +77,13 @@ const cartBreakdown = computed(() => {
             calculationType: calculationType,
             tolerableRate: tolerableServiceFeeRate,
             offerDiscount: offerDiscountIfPossible
+        },
+        currentPaymentMethod.value as "stripe" | "cash" | "cardTerminal",
+        {
+            isStripeEnabled: window.storeData?.stripeSettings?.isStripeEnabled ?? false,
+            stripeRatePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
+            stripeFeePerOrder: window.storeData?.stripeSettings?.stripeFeePerOrder ?? 0,
+            whoPaysStripeFee: window.storeData?.stripeSettings?.whoPaysStripeFee ?? "STORE"
         }
     )
 })
@@ -334,8 +341,20 @@ const currentPaymentMethod = ref('');
                     </span>
                 </div>
 
-                currentPaymentMethod:{{ currentPaymentMethod }}
+                <!-- currentPaymentMethod:{{ currentPaymentMethod }} -->
                 <PaymentMethods v-model="currentPaymentMethod" />
+
+                <div
+                     v-if="currentPaymentMethod === 'stripe' && cartBreakdown.stripeFees.whoPaysStripeFee === 'CUSTOMER'">
+                    <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
+                        <span class="">
+                            Stripe Fee
+                        </span>
+                        <span class=" text-right">
+                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.stripeFees.shownFee }}
+                        </span>
+                    </div>
+                </div>
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
@@ -354,6 +373,16 @@ const currentPaymentMethod = ref('');
                                             </div>
                                             <div>
                                                 {{ taxSettings.currencySymbol }}{{ cartBreakdown.storeReceives.tax }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-if="cartBreakdown.stripeFees.shownFee > 0">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">
+                                                - Stripe Fee
+                                            </div>
+                                            <div>
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.stripeFees.shownFee }}
                                             </div>
                                         </div>
                                     </div>

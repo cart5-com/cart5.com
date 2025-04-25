@@ -302,7 +302,7 @@ export const startSeed = async () => {
     await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
         stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
         isStripeEnabled: true,
-        stripeRatePerOrder: 0.029,
+        stripeRatePerOrder: 2.9,
         stripeFeePerOrder: 0.30,
         whoPaysStripeFee: "CUSTOMER",
     });

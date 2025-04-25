@@ -1,5 +1,5 @@
 import type { CalculationType, ServiceFee } from "@lib/zod/serviceFee";
-import { exclusiveRate, inclusiveRate } from "./rateCalc";
+import { exclusiveRate, inclusiveRate, calculateStripeFee } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 import type { calculateSubTotal } from "./calculateSubTotal";
 import { type TaxSettings } from "../zod/taxSchema"
@@ -26,6 +26,13 @@ export function calculateCartBreakdown(
         calculationType: CalculationType,
         tolerableRate: number,
         offerDiscount: boolean
+    },
+    currentPaymentMethod: "stripe" | "cash" | "cardTerminal",
+    stripeSettings: {
+        isStripeEnabled: boolean,
+        stripeRatePerOrder: number,
+        stripeFeePerOrder: number,
+        whoPaysStripeFee: "STORE" | "CUSTOMER"
     }
 ) {
     // Step 1: Combine all service fees
@@ -156,7 +163,17 @@ export function calculateCartBreakdown(
         buyerTotal = totalTax;
     }
 
-    // Step 7: Calculate what store receives
+    // Step 7: Calculate stripe fees    
+    let stripeFee = 0;
+    if (currentPaymentMethod === "stripe" && stripeSettings.isStripeEnabled) {
+        stripeFee = calculateStripeFee(buyerTotal, stripeSettings.stripeRatePerOrder, stripeSettings.stripeFeePerOrder)
+        if (stripeSettings.whoPaysStripeFee === "CUSTOMER") {
+            // no 'store receives' change
+            buyerTotal += stripeFee // payment processor fee has no sales tax
+        }
+    }
+
+    // Step 8: Calculate what store receives
     // Calculate what store receives with detailed breakdown
     const storeReceives = {
         // What buyer pays
@@ -167,12 +184,14 @@ export function calculateCartBreakdown(
         //     ...totalPlatformFee.feeBreakdown
         // },
         netRevenue: roundTo2Decimals(
-            buyerTotal - totalPlatformFee.itemTotal - totalTax
+            buyerTotal - totalPlatformFee.itemTotal - totalTax - stripeFee
         )
     }
 
     // Return complete breakdown with rounding applied only at the end
-    const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` : 'Platform Fees';
+    const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+        `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` :
+        'Platform Fees';
 
     return {
         tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
@@ -184,6 +203,10 @@ export function calculateCartBreakdown(
             otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
         },
         buyerPays: roundTo2Decimals(buyerTotal),
+        stripeFees: {
+            shownFee: roundTo2Decimals(stripeFee),
+            whoPaysStripeFee: stripeSettings.whoPaysStripeFee,
+        },
         buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
             totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
             itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),
