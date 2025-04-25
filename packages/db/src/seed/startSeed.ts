@@ -60,6 +60,14 @@ export const startSeed = async () => {
     const obiteWebsite = await createWebsite_Service(cuneytObite?.id!, "obite", cart5WebsiteInfo?.partnerInfo?.partnerTeamId!, false, "web_obite_id_456");
     await updateWebsite_Service(obiteWebsite!.id, {
         isPartner: true,
+        defaultPartnerFee: {
+            ratePerOrder: 2,
+            feePerOrder: 0
+        },
+        defaultMarketplaceFee: {
+            ratePerOrder: 5,
+            feePerOrder: 0
+        }
     })
     await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "obite.cart5dev.com"); // secondary domain to redirect to default domain
     await addDomainToWebsite_Service(obiteWebsite!.id, obiteWebsite!, "obite.co.uk"); // secondary domain to redirect to default domain
