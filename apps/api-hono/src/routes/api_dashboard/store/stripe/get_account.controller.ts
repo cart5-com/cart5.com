@@ -32,6 +32,7 @@ export const stripeGetAccount_Handler = async (c: Context<
             await updateStoreStripeSettingsData_Service(storeId, {
                 isStripeEnabled: false,
             });
+            existingStripeSettingsData.isStripeEnabled = false;
         }
         if (IS_PROD) {
             return c.json({

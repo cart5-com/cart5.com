@@ -8,6 +8,10 @@ import type { ResType } from '@api-client/typeUtils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TriangleAlert, CircleCheck, Loader2 } from 'lucide-vue-next';
 
+const stripeAccountApiPath = dashboardApiClient.store[':storeId'].stripe.get_account.$get;
+type StripeAccount = ResType<typeof stripeAccountApiPath>["data"];
+const stripeAccount = ref<StripeAccount | null>(null);
+
 onMounted(() => {
     // ?refresh=true
     const refresh = new URLSearchParams(window.location.search).get('refresh');
@@ -33,10 +37,27 @@ const openStripeAccountLink = async () => {
         window.location.href = data;
     }
 }
-const stripeAccountApiPath = dashboardApiClient.store[':storeId'].stripe.get_account.$get;
-type StripeAccount = ResType<typeof stripeAccountApiPath>["data"];
-const stripeAccount = ref<StripeAccount | null>(null);
+
 const isLoading = ref(false);
+
+const saveSettings = async () => {
+    isLoading.value = true;
+    const { error } = await (await dashboardApiClient.store[':storeId'].stripe.settings.$patch({
+        param: {
+            storeId: currentStoreId.value || '',
+        },
+        json: {
+            isStripeEnabled: stripeAccount.value?.existingStripeSettingsData?.isStripeEnabled,
+            stripeRatePerOrder: stripeAccount.value?.existingStripeSettingsData?.stripeRatePerOrder,
+            stripeFeePerOrder: stripeAccount.value?.existingStripeSettingsData?.stripeFeePerOrder,
+            whoPaysStripeFee: stripeAccount.value?.existingStripeSettingsData?.whoPaysStripeFee,
+        },
+    })).json();
+    if (error) {
+        isLoading.value = false;
+        console.error(error);
+    }
+}
 
 const getStripeAccount = async () => {
     isLoading.value = true;
