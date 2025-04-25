@@ -141,7 +141,10 @@ export const updateStoreStripeSettingsData_Service = async (
 ) => {
     const result = await db.insert(storeStripeSettingsDataTable)
         .values({ ...data, storeId: storeId })
-        .onConflictDoNothing();
+        .onConflictDoUpdate({
+            target: storeStripeSettingsDataTable.storeId,
+            set: data
+        });
     await markStoreAsUpdated(storeId);
     return result;
 }

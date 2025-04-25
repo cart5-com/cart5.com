@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { getStoreStripeSettingsData_Service } from "@db/services/store.service";
+import { getStoreStripeSettingsData_Service, updateStoreStripeSettingsData_Service } from "@db/services/store.service";
 import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
@@ -18,8 +18,8 @@ export const stripeGetAccount_Handler = async (c: Context<
         });
 
         // Check if store already has a Stripe account
-        const existingStripeData = await getStoreStripeSettingsData_Service(storeId);
-        let stripeConnectAccountId = existingStripeData?.stripeConnectAccountId;
+        const existingStripeSettingsData = await getStoreStripeSettingsData_Service(storeId);
+        let stripeConnectAccountId = existingStripeSettingsData?.stripeConnectAccountId;
         if (!stripeConnectAccountId) {
             throw new KNOWN_ERROR(
                 "Stripe account not found",
@@ -27,19 +27,31 @@ export const stripeGetAccount_Handler = async (c: Context<
             );
         }
         const account = await stripe.accounts.retrieve(stripeConnectAccountId);
+        const isReady = account.charges_enabled;
+        if (!isReady && existingStripeSettingsData?.isStripeEnabled) {
+            await updateStoreStripeSettingsData_Service(storeId, {
+                isStripeEnabled: false,
+            });
+        }
         if (IS_PROD) {
             return c.json({
                 data: {
-                    email: account.email,
-                    id: account.id,
-                    details_submitted: account.details_submitted,
-                    charges_enabled: account.charges_enabled,
+                    existingStripeSettingsData,
+                    account: {
+                        email: account.email,
+                        id: account.id,
+                        details_submitted: account.details_submitted,
+                        charges_enabled: account.charges_enabled,
+                    },
                 },
                 error: null as ErrorType
             }, 200);
         } else {
             return c.json({
-                data: account,
+                data: {
+                    existingStripeSettingsData,
+                    account,
+                },
                 error: null as ErrorType
             }, 200);
         }

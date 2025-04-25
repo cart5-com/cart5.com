@@ -59,11 +59,11 @@ const getStripeAccount = async () => {
 
 const isOnboardingComplete = computed(() => {
     if (!stripeAccount.value) return false;
-    return stripeAccount.value.charges_enabled && stripeAccount.value.details_submitted;
+    return stripeAccount.value.account.charges_enabled && stripeAccount.value.account.details_submitted;
 });
 
 const isOnboardingStarted = computed(() => {
-    return !!stripeAccount.value?.id;
+    return !!stripeAccount.value?.existingStripeSettingsData?.stripeConnectAccountId;
 });
 </script>
 
@@ -109,7 +109,7 @@ const isOnboardingStarted = computed(() => {
 
                 <Button as="a"
                         v-if="stripeAccount"
-                        :href="`https://dashboard.stripe.com/${stripeAccount.id}`"
+                        :href="`https://dashboard.stripe.com/${stripeAccount.existingStripeSettingsData?.stripeConnectAccountId}`"
                         target="_blank"
                         class="w-full md:w-auto"
                         variant="outline">
@@ -122,15 +122,14 @@ const isOnboardingStarted = computed(() => {
                  class="mt-8">
                 <h2 class="text-xl font-semibold mb-2">Stripe Account Details</h2>
                 <div class="bg-muted p-4 rounded-md">
-                    <div class="mb-2"><strong>Account ID:</strong> {{ stripeAccount.id }}</div>
                     <div class="mb-2"><strong>Details Submitted:</strong>
-                        {{ stripeAccount.details_submitted ? 'Yes' : 'No' }}
+                        {{ stripeAccount.account.details_submitted ? 'Yes' : 'No' }}
                     </div>
                     <div class="mb-2"><strong>Charges Enabled:</strong>
-                        {{ stripeAccount.charges_enabled ? 'Yes' : 'No' }}
+                        {{ stripeAccount.account.charges_enabled ? 'Yes' : 'No' }}
                     </div>
                     <div class="mb-2"><strong>stripe account email:</strong>
-                        {{ stripeAccount.email }}
+                        {{ stripeAccount.account.email }}
                     </div>
                     <details class="mt-4">
                         <summary class="cursor-pointer">View Raw Account Data</summary>
@@ -138,6 +137,9 @@ const isOnboardingStarted = computed(() => {
                     </details>
                 </div>
             </div>
+
+
+            <!-- https://stripe.com/pricing -->
         </div>
     </div>
 </template>

@@ -64,9 +64,17 @@ export const storeRecentlyUpdatedTable = sqliteTable("store_recently_updated", {
 
 export const storeStripeSettingsDataTable = sqliteTable("store_stripe_settings_data", {
 	storeId: text("store_id").notNull().unique(),
-	stripeConnectAccountId: text("stripe_connect_account_id"),
-	// TODO: add account status to show required banners/actions
+	stripeConnectAccountId: text("stripe_connect_account_id"), // not allowed to change by store admins
+	isStripeEnabled: integer("is_stripe_enabled", { mode: "boolean" }).notNull().default(false),
+	stripeRatePerOrder: real("stripe_rate_per_order"),
+	stripeFeePerOrder: real("stripe_fee_per_order"),
+	whoPaysStripeFee: text('who_pays_stripe_fee', { enum: ["STORE", "CUSTOMER"] }).notNull().default("STORE"),
+	// IF STORE, CALCULATION WILL ONLY SHOW STRIPE FEE IN BREAKDOWN
+	// IF CUSTOMER, CALCULATION WILL ADD STRIPE FEE TO ORDER TOTAL AND SHOW STRIPE FEES
 });
+export const selectStoreStripeSettingsDataSchema = createSelectSchema(storeStripeSettingsDataTable);
+export const insertStoreStripeSettingsDataSchema = createInsertSchema(storeStripeSettingsDataTable);
+export const updateStoreStripeSettingsDataSchema = createUpdateSchema(storeStripeSettingsDataTable);
 
 
 

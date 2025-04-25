@@ -29,6 +29,8 @@ import { getStoreServiceFees_Handler, getStoreServiceFees_SchemaValidator } from
 import { updateStoreServiceFees_Handler, updateStoreServiceFees_SchemaValidator } from "./service_fees/service_fees_update.controller";
 import { stripeAccount_Handler } from "./stripe/account.controller";
 import { stripeGetAccount_Handler } from "./stripe/get_account.controller";
+import { updateStoreStripeSettings_Handler } from "./stripe/stripe_settings_update.controller";
+import { updateStoreStripeSettings_SchemaValidator } from "./stripe/stripe_settings_update.controller";
 
 export const storeRouter = new Hono<HonoVariables>()
     .get(
@@ -244,4 +246,12 @@ export const storeRouter = new Hono<HonoVariables>()
             TEAM_PERMISSIONS.STORE_MANAGER
         ]),
         stripeGetAccount_Handler
+    )
+    .patch('/:storeId/stripe/settings',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER
+        ]),
+        updateStoreStripeSettings_SchemaValidator,
+        updateStoreStripeSettings_Handler
     )
