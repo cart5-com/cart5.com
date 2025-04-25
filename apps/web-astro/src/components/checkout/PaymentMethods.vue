@@ -131,7 +131,7 @@ onBeforeMount(() => {
           v-if="availablePaymentMethods.length > 0">
         <!-- selectedPaymentMethod:{{ selectedPaymentMethod }} -->
         <CardHeader>
-            <CardTitle>Payment Method</CardTitle>
+            <CardTitle>Select a Payment Method</CardTitle>
         </CardHeader>
         <CardContent>
             <!-- @update:model-value="" -->

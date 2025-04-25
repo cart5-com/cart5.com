@@ -54,7 +54,7 @@ const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPo
 const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? [];
 
 const platformServiceFee: ServiceFee | null = {
-    ratePerOrder: 1,
+    ratePerOrder: 2,
     feePerOrder: 0,
 };
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
@@ -289,9 +289,9 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                 </div>
 
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
-                     v-if="cartBreakdown.taxesAndOtherFees.shownFee > 0">
+                     v-if="cartBreakdown.buyerPaysTaxAndFeesShownFee > 0">
                     <span class="">
-                        {{ cartBreakdown.taxesAndOtherFees.shownFeeName }}
+                        {{ cartBreakdown.buyerPaysTaxAndFeesName }}
 
                         <Popover>
                             <PopoverTrigger as-child>
@@ -300,7 +300,15 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                             <PopoverContent align="start">
                                 <div class="space-y-2">
                                     <h3 class="font-semibold">What's included?</h3>
-                                    <div v-if="cartBreakdown.taxesAndOtherFees.otherFees > 0">
+                                    <div v-for="(fee, index) in cartBreakdown.buyerPaysTaxAndFees"
+                                         :key="index">
+                                        <div class="flex justify-between items-center">
+                                            <div class="font-medium">{{ fee.name }}</div>
+                                            <div>{{ fee.currencyShownFee }}</div>
+                                        </div>
+                                        <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
+                                    </div>
+                                    <!-- <div v-if="cartBreakdown.taxesAndOtherFees.otherFees > 0">
                                         <div class="flex justify-between items-center">
                                             <div class="font-medium">Platform Fee</div>
                                             <div>
@@ -321,14 +329,14 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                                                 {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.tax }}
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </PopoverContent>
                         </Popover>
 
                     </span>
                     <span class=" text-right">
-                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.shownFee }}
+                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPaysTaxAndFeesShownFee }}
                     </span>
                 </div>
 
@@ -345,18 +353,18 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                 <!-- currentPaymentMethod:{{ currentPaymentMethod }} -->
                 <PaymentMethods v-model="currentPaymentMethod" />
 
-                <div
+                <!-- <div
                      v-if="currentPaymentMethod === 'stripe' && paymentProcessorSettings?.whoPaysStripeFee === 'CUSTOMER'">
                     <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
                         <span class="">
-                            <!-- // TODO: add fee name for stripe fee -->
+                            // TODO: add fee name for stripe fee
                             fee name
                         </span>
                         <span class=" text-right">
                             {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
                         </span>
                     </div>
-                </div>
+                </div> -->
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
@@ -377,7 +385,7 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                                                     {{ fee.name }}
                                                 </div>
                                                 <div>
-                                                    {{ fee.shownFee }}
+                                                    {{ fee.currencyShownFee }}
                                                 </div>
                                             </div>
                                             <div class="text-sm text-muted-foreground">

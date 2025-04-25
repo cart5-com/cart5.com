@@ -150,7 +150,9 @@ export function calculateCartBreakdown(
     if (totalPlatformFee.totalWithTax > tolerableAmountByStore) {
         const extraAmount = totalPlatformFee.totalWithTax - tolerableAmountByStore;
         const extraTax = inclusiveRate(extraAmount, taxRateForServiceFees);
-        const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? extraAmount - extraTax : extraAmount
+        const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+            extraAmount - extraTax :
+            extraAmount
 
         buyerPaysPlatformFee = {
             totalWithTax: extraAmount,
@@ -165,9 +167,12 @@ export function calculateCartBreakdown(
 
 
     // Step 5: Calculate discount if applicable
-    const discount = config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax
+    let discount = (config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax)
         ? tolerableAmountByStore - totalPlatformFee.totalWithTax
         : 0;
+    if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+        discount = discount - inclusiveRate(discount, taxRateForServiceFees);
+    }
 
     // Step 6: Calculate final amounts
     const totalTax = subTotal.tax + buyerPaysPlatformFee.tax;
@@ -204,83 +209,117 @@ export function calculateCartBreakdown(
         )
     }
 
-    // Return complete breakdown with rounding applied only at the end
-    const shownFeeName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
-        `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` :
-        'Platform Fees';
-
     const allTransparencyBreakdown: {
         name: string,
-        shownFee: string, // currencySymbol+fee
+        currencyShownFee: string, // currencySymbol+fee
         note: string,
     }[] = [];
 
     if (totalTax > 0) {
         allTransparencyBreakdown.push({
             name: 'Taxes',
-            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
             note: '',
         });
     }
     if (paymentProcessorFee > 0) {
         allTransparencyBreakdown.push({
             name: paymentProcesssorSettings.name,
-            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
             note: 'The cost of processing online payment',
         });
     }
     Object.entries(totalPlatformFee.feeBreakdown).forEach(([_key, fee]) => {
         allTransparencyBreakdown.push({
             name: fee.name,
-            shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal).toString(),
             note: fee.note,
         });
     });
     allTransparencyBreakdown.push({
         name: 'Store',
-        shownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(storeReceives.netRevenue).toString(),
+        currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(storeReceives.netRevenue).toString(),
         note: 'net amount that store receives after deducting all fees',
     });
+
+    let buyerPaysTaxAndFeesShownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+        (buyerPaysPlatformFee.shownFee + totalTax) :
+        (buyerPaysPlatformFee.shownFee);
+    const buyerPaysTaxAndFees: {
+        name: string,
+        currencyShownFee: string, // currencySymbol+fee
+        note: string,
+    }[] = [];
+    if (totalTax > 0 && taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+        buyerPaysTaxAndFees.push({
+            name: `Taxes`,
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
+            note: '',
+        });
+    }
+    if (paymentProcessorFee > 0 && paymentProcesssorSettings.whoPaysFee === "CUSTOMER") {
+        buyerPaysTaxAndFeesShownFee += paymentProcessorFee;
+        buyerPaysTaxAndFees.push({
+            name: paymentProcesssorSettings.name,
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
+            note: 'online payment processing fee',
+        });
+    }
+    if (buyerPaysPlatformFee.shownFee > 0) {
+        buyerPaysTaxAndFees.push({
+            name: 'Platform Fees',
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(buyerPaysPlatformFee.shownFee).toString(),
+            note: 'This fee varies based on factors like basket size and helps cover costs related to your order.',
+        });
+    }
+
+    const buyerPaysTaxAndFeesName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+        `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` :
+        'Other Fees';
+
 
     return {
         buyerPays: roundTo2Decimals(buyerTotal),
         allTransparencyBreakdown,
-
-        tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
+        buyerPaysTaxAndFeesName,
+        buyerPaysTaxAndFees,
+        buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
         discount: roundTo2Decimals(discount),
-        taxesAndOtherFees: {
-            shownFeeName,
-            shownFee: taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax) : roundTo2Decimals(buyerPaysPlatformFee.shownFee),
-            tax: roundTo2Decimals(totalTax),
-            otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
-        },
-        paymentProcesssorFee: roundTo2Decimals(paymentProcessorFee),
-        buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
-            totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
-            itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),
-            tax: roundTo2Decimals(buyerPaysPlatformFee.tax),
-            shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee)
-        },
-        storeReceives,
-        totalPlatformFee: { // total platform fees that can be covered by store and buyer
-            ...totalPlatformFee,
-            totalWithTax: roundTo2Decimals(totalPlatformFee.totalWithTax),
-            itemTotal: roundTo2Decimals(totalPlatformFee.itemTotal),
-            tax: roundTo2Decimals(totalPlatformFee.tax),
-            percentage: {
-                ratePerOrder: roundTo2Decimals(totalPlatformFee.percentage.ratePerOrder),
-                feePerOrder: roundTo2Decimals(totalPlatformFee.percentage.feePerOrder)
-            },
-            // feeBreakdown: feeBreakdown.map(fee => {
-            //     if (!fee) return null;
-            //     return {
-            //         name: fee.name,
-            //         totalWithTax: roundTo2Decimals(fee.totalWithTax),
-            //         itemTotal: roundTo2Decimals(fee.itemTotal),
-            //         tax: roundTo2Decimals(fee.tax),
-            //         // percentage: roundTo2Decimals(fee.percentage)
-            //     };
-            // }).filter(Boolean)
-        },
+
+        // tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
+        // taxesAndOtherFees: {
+        //     shownFeeName,
+        //     shownFee: taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax) : roundTo2Decimals(buyerPaysPlatformFee.shownFee),
+        //     tax: roundTo2Decimals(totalTax),
+        //     otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
+        // },
+        // paymentProcesssorFee: roundTo2Decimals(paymentProcessorFee),
+        // buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
+        //     totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
+        //     itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),
+        //     tax: roundTo2Decimals(buyerPaysPlatformFee.tax),
+        //     shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee)
+        // },
+        // storeReceives,
+        // totalPlatformFee: { // total platform fees that can be covered by store and buyer
+        //     ...totalPlatformFee,
+        //     totalWithTax: roundTo2Decimals(totalPlatformFee.totalWithTax),
+        //     itemTotal: roundTo2Decimals(totalPlatformFee.itemTotal),
+        //     tax: roundTo2Decimals(totalPlatformFee.tax),
+        //     percentage: {
+        //         ratePerOrder: roundTo2Decimals(totalPlatformFee.percentage.ratePerOrder),
+        //         feePerOrder: roundTo2Decimals(totalPlatformFee.percentage.feePerOrder)
+        //     },
+        //     // feeBreakdown: feeBreakdown.map(fee => {
+        //     //     if (!fee) return null;
+        //     //     return {
+        //     //         name: fee.name,
+        //     //         totalWithTax: roundTo2Decimals(fee.totalWithTax),
+        //     //         itemTotal: roundTo2Decimals(fee.itemTotal),
+        //     //         tax: roundTo2Decimals(fee.tax),
+        //     //         // percentage: roundTo2Decimals(fee.percentage)
+        //     //     };
+        //     // }).filter(Boolean)
+        // },
     };
 }
