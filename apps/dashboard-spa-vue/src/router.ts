@@ -94,6 +94,11 @@ const router = createRouter({
           path: 'team',
           name: 'store-team',
           component: () => import('@dashboard-spa-vue/pages/store/team/TeamView.vue'),
+        },
+        {
+          path: 'stripe',
+          name: 'store-stripe',
+          component: () => import('@dashboard-spa-vue/pages/store/stripe/StripeSettingsView.vue'),
         }
       ],
     },

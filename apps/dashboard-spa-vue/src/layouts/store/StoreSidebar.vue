@@ -144,6 +144,15 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'store-stripe' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Stripe
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>

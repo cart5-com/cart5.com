@@ -8,7 +8,7 @@ import {
     storeTaxSettingsTable,
     storeDeliveryZoneMapTable,
     storeServiceFeesTable,
-    storeStripePrivateDataTable
+    storeStripeSettingsDataTable
 } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
@@ -126,20 +126,20 @@ export const getStore_Service = async (
 }
 
 
-export const getStoreStripePrivateData_Service = async (
+export const getStoreStripeSettingsData_Service = async (
     storeId: string,
-    columns?: Partial<Record<keyof typeof storeStripePrivateDataTable.$inferSelect, boolean>>
+    columns?: Partial<Record<keyof typeof storeStripeSettingsDataTable.$inferSelect, boolean>>
 ) => {
-    return await db.query.storeStripePrivateDataTable.findFirst({
-        where: eq(storeStripePrivateDataTable.storeId, storeId),
+    return await db.query.storeStripeSettingsDataTable.findFirst({
+        where: eq(storeStripeSettingsDataTable.storeId, storeId),
         columns: columns,
     });
 }
-export const updateStoreStripePrivateData_Service = async (
+export const updateStoreStripeSettingsData_Service = async (
     storeId: string,
-    data: Partial<InferInsertModel<typeof storeStripePrivateDataTable>>
+    data: Partial<InferInsertModel<typeof storeStripeSettingsDataTable>>
 ) => {
-    const result = await db.insert(storeStripePrivateDataTable)
+    const result = await db.insert(storeStripeSettingsDataTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoNothing();
     await markStoreAsUpdated(storeId);
