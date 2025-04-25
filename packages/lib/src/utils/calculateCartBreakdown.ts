@@ -15,7 +15,6 @@ import { type TaxSettings } from "../zod/taxSchema"
  */
 export function calculateCartBreakdown(
     subTotal: ReturnType<typeof calculateSubTotal>,
-    // fees: (ServiceFee & { name?: string } | null)[],
     platformServiceFee: ServiceFee | null,
     supportPartnerServiceFee: ServiceFee | null,
     marketingPartnerServiceFee: ServiceFee | null,
@@ -116,29 +115,13 @@ export function calculateCartBreakdown(
         };
     }
 
-    // breakdown for individual fees
-    // const feeBreakdown = [platformServiceFee, supportPartnerServiceFee, marketingPartnerServiceFee].filter(Boolean).map(fee => {
-    //     if (!fee) return null;
-
-    //     const feeAmount = exclusiveRate(subTotal.totalWithTax, fee.ratePerOrder ?? 0) +
-    //         (fee.feePerOrder ?? 0);
-    //     const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
-    //     // const itemTotal = feeAmount - feeTax;
-    //     // const feePercentage = (itemTotal / totalPlatformFee.itemTotal) * 100;
-    //     return {
-    //         totalWithTax: feeAmount,
-    //         itemTotal: feeAmount - feeTax,
-    //         tax: feeTax,
-    //         // percentage: feePercentage
-    //     };
-    // });
 
 
     // Step 3: Calculate tolerable service fee amount
     const tolerableAmountByStore = config.calculationType === "INCLUDE"
         ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
         : 0;
-    // console.log('subTotal.totalWithTax🟪🟪', subTotal.totalWithTax)
+
     // Step 4: Calculate what buyer needs to pay
     let buyerPaysPlatformFee = {
         totalWithTax: 0,
@@ -161,17 +144,15 @@ export function calculateCartBreakdown(
             shownFee: shownFee
         };
     }
-    // else {
-    //     // store covers all platform fees
-    // }
 
 
     // Step 5: Calculate discount if applicable
-    let discount = (config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax)
-        ? tolerableAmountByStore - totalPlatformFee.totalWithTax
-        : 0;
-    if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-        discount = discount - inclusiveRate(discount, taxRateForServiceFees);
+    let discount = 0;
+    if (config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax) {
+        discount = tolerableAmountByStore - totalPlatformFee.totalWithTax;
+        if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+            discount = discount - inclusiveRate(discount, taxRateForServiceFees);
+        }
     }
 
     // Step 6: Calculate final amounts
@@ -195,19 +176,9 @@ export function calculateCartBreakdown(
     }
 
     // Step 8: Calculate what store receives
-    // Calculate what store receives with detailed breakdown
-    const storeReceives = {
-        // What buyer pays
-        // buyerTotal: roundTo2Decimals(buyerTotal), // includes tax
-        tax: roundTo2Decimals(totalTax), // Jurisdiction total
-        platformFees: roundTo2Decimals(totalPlatformFee.itemTotal), // includes tax
-        // platformFeesBreakdown: {
-        //     ...totalPlatformFee.feeBreakdown
-        // },
-        netRevenue: roundTo2Decimals(
-            buyerTotal - totalPlatformFee.itemTotal - totalTax - paymentProcessorFee
-        )
-    }
+    const netStoreRevenue = roundTo2Decimals(
+        buyerTotal - totalPlatformFee.itemTotal - totalTax - paymentProcessorFee
+    );
 
     const allTransparencyBreakdown: {
         name: string,
@@ -218,27 +189,27 @@ export function calculateCartBreakdown(
     if (totalTax > 0) {
         allTransparencyBreakdown.push({
             name: 'Taxes',
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax),
             note: '',
         });
     }
     if (paymentProcessorFee > 0) {
         allTransparencyBreakdown.push({
             name: paymentProcesssorSettings.name,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee),
             note: 'The cost of processing online payment',
         });
     }
     Object.entries(totalPlatformFee.feeBreakdown).forEach(([_key, fee]) => {
         allTransparencyBreakdown.push({
             name: fee.name,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal),
             note: fee.note,
         });
     });
     allTransparencyBreakdown.push({
         name: 'Store',
-        currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(storeReceives.netRevenue).toString(),
+        currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(netStoreRevenue),
         note: 'net amount that store receives after deducting all fees',
     });
 
@@ -253,7 +224,7 @@ export function calculateCartBreakdown(
     if (totalTax > 0 && taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
         buyerPaysTaxAndFees.push({
             name: `Taxes`,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax),
             note: '',
         });
     }
@@ -261,14 +232,14 @@ export function calculateCartBreakdown(
         buyerPaysTaxAndFeesShownFee += paymentProcessorFee;
         buyerPaysTaxAndFees.push({
             name: paymentProcesssorSettings.name,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee),
             note: 'online payment processing fee',
         });
     }
     if (buyerPaysPlatformFee.shownFee > 0) {
         buyerPaysTaxAndFees.push({
             name: 'Platform Fees',
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(buyerPaysPlatformFee.shownFee).toString(),
+            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(buyerPaysPlatformFee.shownFee),
             note: 'This fee varies based on factors like basket size and helps cover costs related to your order.',
         });
     }
@@ -285,41 +256,5 @@ export function calculateCartBreakdown(
         buyerPaysTaxAndFees,
         buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
         discount: roundTo2Decimals(discount),
-
-        // tolerableAmount: roundTo2Decimals(tolerableAmountByStore),
-        // taxesAndOtherFees: {
-        //     shownFeeName,
-        //     shownFee: taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? roundTo2Decimals(buyerPaysPlatformFee.shownFee + totalTax) : roundTo2Decimals(buyerPaysPlatformFee.shownFee),
-        //     tax: roundTo2Decimals(totalTax),
-        //     otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
-        // },
-        // paymentProcesssorFee: roundTo2Decimals(paymentProcessorFee),
-        // buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
-        //     totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
-        //     itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),
-        //     tax: roundTo2Decimals(buyerPaysPlatformFee.tax),
-        //     shownFee: roundTo2Decimals(buyerPaysPlatformFee.shownFee)
-        // },
-        // storeReceives,
-        // totalPlatformFee: { // total platform fees that can be covered by store and buyer
-        //     ...totalPlatformFee,
-        //     totalWithTax: roundTo2Decimals(totalPlatformFee.totalWithTax),
-        //     itemTotal: roundTo2Decimals(totalPlatformFee.itemTotal),
-        //     tax: roundTo2Decimals(totalPlatformFee.tax),
-        //     percentage: {
-        //         ratePerOrder: roundTo2Decimals(totalPlatformFee.percentage.ratePerOrder),
-        //         feePerOrder: roundTo2Decimals(totalPlatformFee.percentage.feePerOrder)
-        //     },
-        //     // feeBreakdown: feeBreakdown.map(fee => {
-        //     //     if (!fee) return null;
-        //     //     return {
-        //     //         name: fee.name,
-        //     //         totalWithTax: roundTo2Decimals(fee.totalWithTax),
-        //     //         itemTotal: roundTo2Decimals(fee.itemTotal),
-        //     //         tax: roundTo2Decimals(fee.tax),
-        //     //         // percentage: roundTo2Decimals(fee.percentage)
-        //     //     };
-        //     // }).filter(Boolean)
-        // },
     };
 }
