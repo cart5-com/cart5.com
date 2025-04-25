@@ -271,10 +271,16 @@ const saveUserData = async (newVal: UserDataStoreType) => {
 }
 
 export const saveUserDataNow = async (data: UserDataStoreType) => {
+    const saveData = cleanEmptyProps({
+        ...data.userData,
+    });
+    // last remove cart action removes the field completely
+    // so we need it for update
+    if (!saveData.carts) {
+        saveData.carts = {};
+    }
     const { error } = await (await authGlobalApiClient.update_user_data.$patch({
-        json: cleanEmptyProps({
-            ...data.userData,
-        })
+        json: saveData
     })).json();
     if (error) {
         console.error(error);

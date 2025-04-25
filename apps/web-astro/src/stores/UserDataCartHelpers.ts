@@ -85,5 +85,8 @@ export const removeItemFromCart = (storeId: string, itemIndex: number) => {
 export const clearCartByStoreId = (storeId: string) => {
     const hostAndStoreId = genCartId(storeId);
     delete userDataStore.value?.userData?.carts?.[hostAndStoreId];
+    if (!userDataStore.value?.userData?.carts) {
+        userDataStore.value!.userData!.carts = {};
+    }
 }
 ///////////CART ACTIONS/////////////
