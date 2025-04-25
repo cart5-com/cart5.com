@@ -11,11 +11,9 @@ export function calculateCartBreakdown(
     supportPartnerServiceFee: ServiceFee | null,
     marketingPartnerServiceFee: ServiceFee | null,
     taxSettings: TaxSettings,
-    config: {
-        calculationType: CalculationType,
-        tolerableRate: number,
-        offerDiscount: boolean
-    },
+    tolerableFeeByStoreCalculationType: CalculationType,
+    tolerableRateByStoreToCoverServiceFees: number,
+    isOfferDiscountEnabled: boolean,
     hasPaymentProcessorFee: boolean,
     paymentProcesssorSettings: {
         name: string,
@@ -24,7 +22,6 @@ export function calculateCartBreakdown(
         whoPaysFee: "STORE" | "CUSTOMER"
     }
 ) {
-    // Step 1: Combine all service fees
     const combinedPlatformFee = {
         ratePerOrder: (platformServiceFee?.ratePerOrder ?? 0) +
             (supportPartnerServiceFee?.ratePerOrder ?? 0) +
@@ -34,13 +31,12 @@ export function calculateCartBreakdown(
             (marketingPartnerServiceFee?.feePerOrder ?? 0)
     };
 
-    // Step 2: Calculate total service fee amount
-    const platformFeeAmountIncludingTax = exclusiveRate(subTotal.totalWithTax, combinedPlatformFee.ratePerOrder ?? 0) +
+    const combinedPlatformFeeAmountIncludingTax = exclusiveRate(subTotal.totalWithTax, combinedPlatformFee.ratePerOrder ?? 0) +
         (combinedPlatformFee.feePerOrder ?? 0);
 
-    const platformFeeTax = inclusiveRate(platformFeeAmountIncludingTax, (taxSettings.taxRateForServiceFees ?? 0));
+    const combinedPlatformFeeTaxonly = inclusiveRate(combinedPlatformFeeAmountIncludingTax, (taxSettings.taxRateForServiceFees ?? 0));
 
-    const platformFeeWithoutTax = platformFeeAmountIncludingTax - platformFeeTax;
+    const combinedPlatformFeeWithoutTax = combinedPlatformFeeAmountIncludingTax - combinedPlatformFeeTaxonly;
 
     type PlatformFeeBreakdown = {
         name: string;
@@ -90,12 +86,10 @@ export function calculateCartBreakdown(
 
 
 
-    // Step 3: Calculate tolerable service fee amount
-    const tolerableAmountByStore = config.calculationType === "INCLUDE"
-        ? exclusiveRate(subTotal.totalWithTax, config.tolerableRate)
+    const tolerableAmountByStore = tolerableFeeByStoreCalculationType === "INCLUDE"
+        ? exclusiveRate(subTotal.totalWithTax, tolerableRateByStoreToCoverServiceFees)
         : 0;
 
-    // Step 4: Calculate what buyer needs to pay
     let buyerPaysPlatformFee = {
         totalWithTax: 0,
         itemTotal: 0,
@@ -103,8 +97,8 @@ export function calculateCartBreakdown(
         shownFee: 0
     };
 
-    if (platformFeeAmountIncludingTax > tolerableAmountByStore) {
-        const extraAmount = platformFeeAmountIncludingTax - tolerableAmountByStore;
+    if (combinedPlatformFeeAmountIncludingTax > tolerableAmountByStore) {
+        const extraAmount = combinedPlatformFeeAmountIncludingTax - tolerableAmountByStore;
         const extraTax = inclusiveRate(extraAmount, (taxSettings.taxRateForServiceFees ?? 0));
         const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
             extraAmount - extraTax :
@@ -119,39 +113,32 @@ export function calculateCartBreakdown(
     }
 
 
-    // Step 5: Calculate discount if applicable
     let discount = 0;
-    if (config.offerDiscount && tolerableAmountByStore > platformFeeAmountIncludingTax) {
-        discount = tolerableAmountByStore - platformFeeAmountIncludingTax;
+    if (isOfferDiscountEnabled && tolerableAmountByStore > combinedPlatformFeeAmountIncludingTax) {
+        discount = tolerableAmountByStore - combinedPlatformFeeAmountIncludingTax;
         if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
             discount = discount - inclusiveRate(discount, (taxSettings.taxRateForServiceFees ?? 0));
         }
     }
 
-    // Step 6: Calculate final amounts
     const totalTax = subTotal.tax + buyerPaysPlatformFee.tax;
     let buyerTotal = subTotal.totalWithTax + buyerPaysPlatformFee.totalWithTax - discount;
 
     // Never apply discount to tax
-    // I believe discount should be simple and stupid, otherwise it will become a three-headed dragon that eats each other
+    // I think, discount should be simple and stupid. 
+    // I can not deal with the logic of applying discount to tax or individual fees in the cart
+    // it is too complex for my stupid brain to handle
     if (totalTax > buyerTotal) {
         buyerTotal = totalTax;
     }
 
-    // Step 7: Calculate stripe fees    
     let paymentProcessorFee = 0;
     if (hasPaymentProcessorFee) {
         paymentProcessorFee = reverseFeeCalculation(buyerTotal, paymentProcesssorSettings.ratePerOrder, paymentProcesssorSettings.feePerOrder)
         if (paymentProcesssorSettings.whoPaysFee === "CUSTOMER") {
-            // no 'store receives' change
             buyerTotal += paymentProcessorFee // payment processor fee has no sales tax
         }
     }
-
-    // Step 8: Calculate what store receives
-    const netStoreRevenue = roundTo2Decimals(
-        buyerTotal - platformFeeWithoutTax - totalTax - paymentProcessorFee
-    );
 
     const allTransparencyBreakdown: {
         name: string,
@@ -180,6 +167,9 @@ export function calculateCartBreakdown(
             note: fee.note,
         });
     });
+    const netStoreRevenue = roundTo2Decimals(
+        buyerTotal - combinedPlatformFeeWithoutTax - totalTax - paymentProcessorFee
+    );
     allTransparencyBreakdown.push({
         name: 'Store',
         currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(netStoreRevenue),
@@ -229,6 +219,6 @@ export function calculateCartBreakdown(
         buyerPaysTaxAndFees,
         buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
         discount: roundTo2Decimals(discount),
-        platformFeeBreakdown, // required for saving order data
+        platformFeeBreakdown, // we need this for saving order data
     };
 }

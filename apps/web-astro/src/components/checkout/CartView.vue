@@ -72,11 +72,9 @@ const cartBreakdown = computed(() => {
         //     marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
         // ],
         taxSettings,
-        {
-            calculationType: calculationType,
-            tolerableRate: tolerableServiceFeeRate,
-            offerDiscount: offerDiscountIfPossible
-        },
+        calculationType,
+        tolerableServiceFeeRate,
+        offerDiscountIfPossible,
         currentPaymentMethod.value === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
         {
             name: "Stripe Fee",
