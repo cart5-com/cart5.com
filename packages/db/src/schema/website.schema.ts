@@ -23,7 +23,6 @@ export const websitesTable = sqliteTable("websites", {
     // if false, the website will use websiteStoreMapTable to show only selected stores
     // has no connection with marketplace fees, only for store selection
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
-
     defaultMarketplaceFee: text("default_marketplace_fee", { mode: 'json' }).$type<ServiceFee>(),
 
     isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false),
