@@ -33,6 +33,7 @@ export const stripeGetAccount_Handler = async (c: Context<
                 isStripeEnabled: false,
             });
             existingStripeSettingsData.isStripeEnabled = false;
+            // TODO: send email notification to store owner
         }
         if (IS_PROD) {
             return c.json({
