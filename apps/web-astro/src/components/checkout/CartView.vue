@@ -48,6 +48,8 @@ import PaymentMethods from './PaymentMethods.vue';
 // TODO: CRUD verified phone numbers
 // TODO: CRUD address for delivery only/ no address required for pickup
 
+const currentPaymentMethod = ref('');
+
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
 const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPossible ?? true;
@@ -90,7 +92,7 @@ const currentCart = computed(() => {
 });
 
 
-let menuRoot = ref<MenuRoot | null>(window.storeData?.menu?.menuRoot ?? null);
+let menuRoot: MenuRoot | null = (window.storeData?.menu?.menuRoot ?? null);
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 
 const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
@@ -110,14 +112,14 @@ const removeAllItemsFromCart = () => {
 const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
-    return calculateCartTotalPrice(currentCart.value, menuRoot.value ?? undefined, taxSettings, orderType);
+    return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, orderType);
 });
 
 const itemPrices = computed(() => {
-    if (!currentCart.value?.items || !menuRoot.value) return [];
+    if (!currentCart.value?.items || !menuRoot) return [];
 
     return currentCart.value.items.map(item =>
-        calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
+        calculateCartItemPrice(item, menuRoot, taxSettings, window.orderType)
     );
 });
 
@@ -127,7 +129,7 @@ const getPrice = (itemIndex: number) => {
 
 const subTotalWithDeliveryAndServiceFees = computed(() => {
     return calculateSubTotal(
-        currentCart.value, menuRoot.value ?? undefined, taxSettings, orderType,
+        currentCart.value, menuRoot ?? undefined, taxSettings, orderType,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
@@ -140,8 +142,6 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
         customServiceFees
     );
 })
-
-const currentPaymentMethod = ref('');
 
 </script>
 
