@@ -144,7 +144,6 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 })
 
 const currentPaymentMethod = ref('');
-const paymentProcessorSettings = window.storeData?.stripeSettings;
 
 </script>
 

@@ -42,30 +42,22 @@ export function calculateCartBreakdown(
 
     const platformFeeWithoutTax = platformFeeAmountIncludingTax - platformFeeTax;
 
-    const totalPlatformFee: {
-        // totalWithTax: number;
-        // itemTotal: number;
-        // tax: number;
-        feeBreakdown: {
-            [key: string]: {
-                name: string;
-                note: string;
-                totalWithTax: number;
-                itemTotal: number;
-                tax: number;
-            };
-        };
-    } = {
-        // totalWithTax: platformFeeAmountIncludingTax,
-        // itemTotal: platformFeeAmountIncludingTax - platformFeeTax,
-        // tax: platformFeeTax,
-        feeBreakdown: {}
-    };
+    type PlatformFeeBreakdown = {
+        name: string;
+        note: string;
+        totalWithTax: number; // always include tax
+        itemTotal: number; // always exclude tax
+        tax: number; // the tax
+    }
+    const platformFeeBreakdown: {
+        [key: "platform" | "support" | "marketing" | string]: PlatformFeeBreakdown;
+    } = {};
+
     if (platformServiceFee) {
         const feeAmount = exclusiveRate(subTotal.totalWithTax, platformServiceFee.ratePerOrder ?? 0) +
             (platformServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
-        (totalPlatformFee.feeBreakdown as any).platform = {
+        platformFeeBreakdown.platform = {
             name: "Platform Team",
             note: "nerds 🤓 who develops and maintains the website",
             totalWithTax: roundTo2Decimals(feeAmount),
@@ -77,7 +69,7 @@ export function calculateCartBreakdown(
         const feeAmount = exclusiveRate(subTotal.totalWithTax, supportPartnerServiceFee.ratePerOrder ?? 0) +
             (supportPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
-        (totalPlatformFee.feeBreakdown as any).support = {
+        platformFeeBreakdown.support = {
             name: "Support Team",
             note: "provides dedicated support and guidance to stores",
             totalWithTax: roundTo2Decimals(feeAmount),
@@ -89,7 +81,7 @@ export function calculateCartBreakdown(
         const feeAmount = exclusiveRate(subTotal.totalWithTax, marketingPartnerServiceFee.ratePerOrder ?? 0) +
             (marketingPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
-        (totalPlatformFee.feeBreakdown as any).marketing = {
+        platformFeeBreakdown.marketing = {
             name: "Marketing Team",
             note: "helps promoting the store to find new customers",
             totalWithTax: roundTo2Decimals(feeAmount),
@@ -183,7 +175,7 @@ export function calculateCartBreakdown(
             note: 'The cost of processing online payment',
         });
     }
-    Object.entries(totalPlatformFee.feeBreakdown).forEach(([_key, fee]) => {
+    Object.entries(platformFeeBreakdown).forEach(([_key, fee]) => {
         allTransparencyBreakdown.push({
             name: fee.name,
             currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal),
@@ -239,5 +231,6 @@ export function calculateCartBreakdown(
         buyerPaysTaxAndFees,
         buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
         discount: roundTo2Decimals(discount),
+        platformFeeBreakdown, // required for saving order data
     };
 }
