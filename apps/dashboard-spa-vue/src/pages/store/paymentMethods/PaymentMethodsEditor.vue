@@ -2,7 +2,7 @@
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { XIcon, PlusIcon, Banknote, CreditCard } from 'lucide-vue-next';
+import { XIcon, PlusIcon, Banknote, Calculator } from 'lucide-vue-next';
 import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -49,7 +49,7 @@ const removeCustomMethod = (index: number) => {
                         :checked="paymentMethods.cardTerminal"
                         @update:checked="(checked) => paymentMethods.cardTerminal = checked" />
                 <label for="cardTerminal">
-                    <CreditCard class=" inline-block mr-2" />
+                    <Calculator class=" inline-block mr-2" />
                     Card (pickup counter, delivery person, in store)
                 </label>
             </div>

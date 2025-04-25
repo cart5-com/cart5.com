@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Check, Banknote, CreditCard, Phone, Landmark } from 'lucide-vue-next';
+import { Loader2, Check, Banknote, CreditCard, Phone, Landmark, Calculator } from 'lucide-vue-next';
 import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
@@ -149,9 +149,11 @@ onMounted(() => {
                         <Banknote class=" inline-block mr-2" /> Cash at delivery address
                     </li>
                     <li>
-                        <CreditCard class=" inline-block mr-2" /> Card at store
+                        <Calculator class=" inline-block mr-2" />
+                        <CreditCard class=" inline-block mr-2" /> Card at store at counter
                     </li>
                     <li>
+                        <Calculator class=" inline-block mr-2" />
                         <CreditCard class=" inline-block mr-2" /> Card at delivery address with delivery person's
                         terminal/device
                     </li>

@@ -233,10 +233,12 @@ const loadUserData = async () => {
 
 
 
-export const handleDataChange = (newVal: UserDataStoreType, oldVal: UserDataStoreType) => {
-    if (newVal.userData === oldVal.userData) {
-        console.warn("no changes but saving anyway");
-    }
+export const handleDataChange = (newVal: UserDataStoreType
+    // , oldVal: UserDataStoreType
+) => {
+    // if (newVal.userData === oldVal.userData) {
+    //     console.warn("no changes but saving anyway");
+    // }
 
     if ((newVal as any).ignoreAutoDebounceSave) {
         return;

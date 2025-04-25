@@ -1,9 +1,8 @@
 import type { CalculationType, ServiceFee } from "@lib/zod/serviceFee";
-import { exclusiveRate, inclusiveRate, calculateStripeFee } from "./rateCalc";
+import { exclusiveRate, inclusiveRate, reverseFeeCalculation } from "./rateCalc";
 import { roundTo2Decimals } from "./roundTo2Decimals";
 import type { calculateSubTotal } from "./calculateSubTotal";
 import { type TaxSettings } from "../zod/taxSchema"
-// import { calculateStripeFee } from "@lib/utils/rateCalc";
 
 /**
  * Calculates the complete service fee breakdown for a cart transaction
@@ -27,12 +26,11 @@ export function calculateCartBreakdown(
         tolerableRate: number,
         offerDiscount: boolean
     },
-    currentPaymentMethod: "stripe" | "cash" | "cardTerminal",
-    stripeSettings: {
-        isStripeEnabled: boolean,
-        stripeRatePerOrder: number,
-        stripeFeePerOrder: number,
-        whoPaysStripeFee: "STORE" | "CUSTOMER"
+    hasPaymentProcessorFee: boolean,
+    paymentProcesssorSettings: {
+        ratePerOrder: number,
+        feePerOrder: number,
+        whoPaysFee: "STORE" | "CUSTOMER"
     }
 ) {
     // Step 1: Combine all service fees
@@ -81,7 +79,7 @@ export function calculateCartBreakdown(
         const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
         (totalPlatformFee.feeBreakdown as any).support = {
             name: "Support Team",
-            note: "provides dedicated support and guidance to store owners",
+            note: "provides dedicated support and guidance to stores",
             totalWithTax: roundTo2Decimals(feeAmount),
             itemTotal: roundTo2Decimals(feeAmount - feeTax),
             tax: roundTo2Decimals(feeTax),
@@ -164,12 +162,12 @@ export function calculateCartBreakdown(
     }
 
     // Step 7: Calculate stripe fees    
-    let stripeFee = 0;
-    if (currentPaymentMethod === "stripe" && stripeSettings.isStripeEnabled) {
-        stripeFee = calculateStripeFee(buyerTotal, stripeSettings.stripeRatePerOrder, stripeSettings.stripeFeePerOrder)
-        if (stripeSettings.whoPaysStripeFee === "CUSTOMER") {
+    let paymentProcessorFee = 0;
+    if (hasPaymentProcessorFee) {
+        paymentProcessorFee = reverseFeeCalculation(buyerTotal, paymentProcesssorSettings.ratePerOrder, paymentProcesssorSettings.feePerOrder)
+        if (paymentProcesssorSettings.whoPaysFee === "CUSTOMER") {
             // no 'store receives' change
-            buyerTotal += stripeFee // payment processor fee has no sales tax
+            buyerTotal += paymentProcessorFee // payment processor fee has no sales tax
         }
     }
 
@@ -184,7 +182,7 @@ export function calculateCartBreakdown(
         //     ...totalPlatformFee.feeBreakdown
         // },
         netRevenue: roundTo2Decimals(
-            buyerTotal - totalPlatformFee.itemTotal - totalTax - stripeFee
+            buyerTotal - totalPlatformFee.itemTotal - totalTax - paymentProcessorFee
         )
     }
 
@@ -203,10 +201,7 @@ export function calculateCartBreakdown(
             otherFees: roundTo2Decimals(buyerPaysPlatformFee.shownFee), // platform fees that needs to cover by buyer
         },
         buyerPays: roundTo2Decimals(buyerTotal),
-        stripeFees: {
-            shownFee: roundTo2Decimals(stripeFee),
-            whoPaysStripeFee: stripeSettings.whoPaysStripeFee,
-        },
+        paymentProcesssorFee: roundTo2Decimals(paymentProcessorFee),
         buyerPaysPlatformFee: { // platform fees that needs to cover by buyer
             totalWithTax: roundTo2Decimals(buyerPaysPlatformFee.totalWithTax),
             itemTotal: roundTo2Decimals(buyerPaysPlatformFee.itemTotal),

@@ -78,12 +78,11 @@ const cartBreakdown = computed(() => {
             tolerableRate: tolerableServiceFeeRate,
             offerDiscount: offerDiscountIfPossible
         },
-        currentPaymentMethod.value as "stripe" | "cash" | "cardTerminal",
+        currentPaymentMethod.value === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
         {
-            isStripeEnabled: window.storeData?.stripeSettings?.isStripeEnabled ?? false,
-            stripeRatePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
-            stripeFeePerOrder: window.storeData?.stripeSettings?.stripeFeePerOrder ?? 0,
-            whoPaysStripeFee: window.storeData?.stripeSettings?.whoPaysStripeFee ?? "STORE"
+            ratePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
+            feePerOrder: window.storeData?.stripeSettings?.stripeFeePerOrder ?? 0,
+            whoPaysFee: window.storeData?.stripeSettings?.whoPaysStripeFee ?? "STORE"
         }
     )
 })
@@ -145,6 +144,8 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 })
 
 const currentPaymentMethod = ref('');
+const paymentProcessorSettings = window.storeData?.stripeSettings;
+const paymentProcessorName = "Stripe Fee";
 
 </script>
 
@@ -345,13 +346,13 @@ const currentPaymentMethod = ref('');
                 <PaymentMethods v-model="currentPaymentMethod" />
 
                 <div
-                     v-if="currentPaymentMethod === 'stripe' && cartBreakdown.stripeFees.whoPaysStripeFee === 'CUSTOMER'">
+                     v-if="currentPaymentMethod === 'stripe' && paymentProcessorSettings?.whoPaysStripeFee === 'CUSTOMER'">
                     <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
                         <span class="">
-                            Stripe Fee
+                            {{ paymentProcessorName }}
                         </span>
                         <span class=" text-right">
-                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.stripeFees.shownFee }}
+                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
                         </span>
                     </div>
                 </div>
@@ -376,14 +377,17 @@ const currentPaymentMethod = ref('');
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="cartBreakdown.stripeFees.shownFee > 0">
+                                    <div v-if="cartBreakdown.paymentProcesssorFee > 0">
                                         <div class="flex justify-between items-center">
                                             <div class="font-medium">
-                                                - Stripe Fee
+                                                - {{ paymentProcessorName }}
                                             </div>
                                             <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.stripeFees.shownFee }}
+                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
                                             </div>
+                                        </div>
+                                        <div class="text-sm text-muted-foreground">
+                                            Payment processor fee
                                         </div>
                                     </div>
                                     <div v-for="(fee) in cartBreakdown.totalPlatformFee.feeBreakdown">
