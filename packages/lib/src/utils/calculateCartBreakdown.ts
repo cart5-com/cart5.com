@@ -55,10 +55,6 @@ export function calculateCartBreakdown(
         totalWithTax: number;
         itemTotal: number;
         tax: number;
-        percentage: {
-            ratePerOrder: number;
-            feePerOrder: number;
-        };
         feeBreakdown: {
             [key: string]: {
                 name: string;
@@ -72,10 +68,6 @@ export function calculateCartBreakdown(
         totalWithTax: serviceFeeAmount,
         itemTotal: serviceFeeAmount - serviceTax,
         tax: serviceTax,
-        percentage: {
-            ratePerOrder: combinedServiceFee.ratePerOrder ?? 0,
-            feePerOrder: combinedServiceFee.feePerOrder ?? 0
-        },
         feeBreakdown: {}
     };
     if (platformServiceFee) {

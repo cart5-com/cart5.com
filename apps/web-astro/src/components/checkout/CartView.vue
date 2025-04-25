@@ -308,28 +308,6 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                                         </div>
                                         <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
                                     </div>
-                                    <!-- <div v-if="cartBreakdown.taxesAndOtherFees.otherFees > 0">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">Platform Fee</div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.otherFees }}
-                                            </div>
-                                        </div>
-                                        <div class="text-sm text-muted-foreground">This fee varies based on factors like
-                                            basket size and helps cover costs related to your order.</div>
-                                    </div>
-                                    <div v-if="cartBreakdown.taxesAndOtherFees.tax > 0">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">
-                                                {{ taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? '' : '-' }}
-                                                Taxes
-                                                ({{ taxSettings.taxName }})
-                                            </div>
-                                            <div>
-                                                {{ taxSettings.currencySymbol }}{{ cartBreakdown.taxesAndOtherFees.tax }}
-                                            </div>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </PopoverContent>
                         </Popover>
@@ -350,21 +328,7 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                     </span>
                 </div>
 
-                <!-- currentPaymentMethod:{{ currentPaymentMethod }} -->
                 <PaymentMethods v-model="currentPaymentMethod" />
-
-                <!-- <div
-                     v-if="currentPaymentMethod === 'stripe' && paymentProcessorSettings?.whoPaysStripeFee === 'CUSTOMER'">
-                    <div class="flex justify-between items-center px-1 border-t border-muted-foreground">
-                        <span class="">
-                            // TODO: add fee name for stripe fee
-                            fee name
-                        </span>
-                        <span class=" text-right">
-                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.paymentProcesssorFee }}
-                        </span>
-                    </div>
-                </div> -->
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
@@ -403,8 +367,6 @@ const paymentProcessorSettings = window.storeData?.stripeSettings;
                     </span>
                 </div>
 
-                <!-- <pre>{{ cartBreakdown }}</pre>
-                <pre>{{ subTotalWithDeliveryAndServiceFees }}</pre> -->
             </div>
         </div>
     </div>
