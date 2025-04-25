@@ -49,9 +49,7 @@ export function calculateCartBreakdown(
         itemTotal: number; // always exclude tax
         tax: number; // the tax
     }
-    const platformFeeBreakdown: {
-        [key: "platform" | "support" | "marketing" | string]: PlatformFeeBreakdown;
-    } = {};
+    const platformFeeBreakdown: Partial<Record<"platform" | "support" | "marketing", PlatformFeeBreakdown>> = {};
 
     if (platformServiceFee) {
         const feeAmount = exclusiveRate(subTotal.totalWithTax, platformServiceFee.ratePerOrder ?? 0) +
