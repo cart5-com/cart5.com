@@ -16,6 +16,7 @@ import {
     updateStoreDeliveryZones_Service,
     updateStoreOpenHours_Service,
     updateStorePaymentMethods_Service,
+    updateStoreStripeSettingsData_Service,
     updateStoreTaxSettings_Service
 } from "@db/services/store.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
@@ -298,6 +299,10 @@ export const startSeed = async () => {
         storesByThush.push(store);
     }
 
+    await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
+        stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
+    });
+
     const flamesStore = storesByThush[4];
     await updateStore_Service(flamesStore!.id, {
         name: "Flames Store",
@@ -305,6 +310,10 @@ export const startSeed = async () => {
     await updateStoreMenu_Service(flamesStore!.id, {
         menuRoot: sampleMenuRoot2
     });
+    await updateStoreStripeSettingsData_Service(flamesStore!.id, {
+        stripeConnectAccountId: "acct_1RHadvGhHHWOLny2", // stripe sandbox account
+    });
+
     // invite flames admin to Real Flames store
     const invitationForFlamesStoreAdminUserRes = await insertInvitation(
         flamesStoreAdminUser?.email!,

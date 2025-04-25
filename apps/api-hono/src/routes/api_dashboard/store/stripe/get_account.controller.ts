@@ -4,7 +4,7 @@ import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getStoreStripeSettingsData_Service } from "@db/services/store.service";
 import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
-
+import { IS_PROD } from "@lib/utils/getEnvVariable";
 export const stripeGetAccount_Handler = async (c: Context<
     HonoVariables,
     "/:storeId/stripe/get_account"
@@ -27,10 +27,22 @@ export const stripeGetAccount_Handler = async (c: Context<
             );
         }
         const account = await stripe.accounts.retrieve(stripeConnectAccountId);
-        return c.json({
-            data: account,
-            error: null as ErrorType
-        }, 200);
+        if (IS_PROD) {
+            return c.json({
+                data: {
+                    email: account.email,
+                    id: account.id,
+                    details_submitted: account.details_submitted,
+                    charges_enabled: account.charges_enabled,
+                },
+                error: null as ErrorType
+            }, 200);
+        } else {
+            return c.json({
+                data: account,
+                error: null as ErrorType
+            }, 200);
+        }
     } catch (error) {
         console.error('Stripe account retrieval error:', error);
         throw new KNOWN_ERROR(

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { onMounted, ref, computed } from 'vue';
 import type { ResType } from '@api-client/typeUtils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { TriangleAlert, CircleCheck } from 'lucide-vue-next';
+import { TriangleAlert, CircleCheck, Loader2 } from 'lucide-vue-next';
 
 onMounted(() => {
     // ?refresh=true
@@ -19,12 +19,14 @@ onMounted(() => {
 
 pageTitle.value = 'Stripe Settings';
 const openStripeAccountLink = async () => {
+    isLoading.value = true;
     const { data, error } = await (await dashboardApiClient.store[':storeId'].stripe.account.$post({
         param: {
             storeId: currentStoreId.value || '',
         },
     })).json();
     if (error) {
+        isLoading.value = false;
         console.error(error);
     }
     if (data) {
@@ -70,7 +72,9 @@ const isOnboardingStarted = computed(() => {
         <h1 class="text-2xl font-bold">Stripe Settings</h1>
 
         <div v-if="isLoading"
-             class="py-4">Loading Stripe account information...</div>
+             class="py-4">
+            <Loader2 class="animate-spin" />
+        </div>
 
         <div v-else>
             <!-- Onboarding Status Alert -->
@@ -100,7 +104,7 @@ const isOnboardingStarted = computed(() => {
                 <Button @click="openStripeAccountLink"
                         class="w-full md:w-auto"
                         variant="default">
-                    {{ isOnboardingStarted ? 'Continue/Edit Stripe Onboarding' : 'Start Stripe Connect Onboarding' }}
+                    {{ isOnboardingStarted ? 'Continue Stripe Onboarding' : 'Start Stripe Connect Onboarding' }}
                 </Button>
 
                 <Button as="a"
@@ -125,10 +129,13 @@ const isOnboardingStarted = computed(() => {
                     <div class="mb-2"><strong>Charges Enabled:</strong>
                         {{ stripeAccount.charges_enabled ? 'Yes' : 'No' }}
                     </div>
-                    <!-- <details class="mt-4">
+                    <div class="mb-2"><strong>stripe account email:</strong>
+                        {{ stripeAccount.email }}
+                    </div>
+                    <details class="mt-4">
                         <summary class="cursor-pointer">View Raw Account Data</summary>
                         <pre class="mt-2 text-xs overflow-auto">{{ stripeAccount }}</pre>
-                    </details> -->
+                    </details>
                 </div>
             </div>
         </div>
