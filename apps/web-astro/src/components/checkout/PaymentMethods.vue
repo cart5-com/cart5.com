@@ -43,6 +43,12 @@ const availablePaymentMethods = ref<{
 
 // Get the appropriate payment methods based on order type
 const getPaymentMethods = () => {
+    // console.log("getPaymentMethods window.storeData?.stripeSettings", window.storeData?.stripeSettings);
+    // const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled;
+    // const stripeRatePerOrder = window.storeData?.stripeSettings?.stripeRatePerOrder;
+    // const stripeFeePerOrder = window.storeData?.stripeSettings?.stripeFeePerOrder;
+    // const whoPaysStripeFee = window.storeData?.stripeSettings?.whoPaysStripeFee;
+
     let paymentMethods: PhysicalPaymentMethods | null = null;
 
     if (!window.storeData?.paymentMethods) {
