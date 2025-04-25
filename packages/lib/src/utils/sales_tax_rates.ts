@@ -36,12 +36,12 @@ const getSalesTaxRate = (countryCode: string, regionCode: string) => {
         if (salesTaxRates[countryCode].states && salesTaxRates[countryCode].states[regionCode]) {
             const countryData = { ...salesTaxRates[countryCode] };
             countryData.currentState = salesTaxRates[countryCode].states[regionCode];
-            countryData.currencySymbol = currencySymbolMap(salesTaxRates[countryCode].currency);
+            countryData.currencySymbol = countryCode === "TR" ? "TL" : currencySymbolMap(salesTaxRates[countryCode].currency);
             return countryData;
         }
         return {
             ...salesTaxRates[countryCode],
-            currencySymbol: currencySymbolMap(salesTaxRates[countryCode].currency) ?? ''
+            currencySymbol: countryCode === "TR" ? "TL" : currencySymbolMap(salesTaxRates[countryCode].currency) ?? ''
         };
     }
     // default is "GB"
