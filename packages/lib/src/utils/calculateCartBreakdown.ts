@@ -10,7 +10,6 @@ export function calculateCartBreakdown(
     platformServiceFee: ServiceFee | null,
     supportPartnerServiceFee: ServiceFee | null,
     marketingPartnerServiceFee: ServiceFee | null,
-    taxRateForServiceFees: number,
     taxSettings: TaxSettings,
     config: {
         calculationType: CalculationType,
@@ -26,7 +25,7 @@ export function calculateCartBreakdown(
     }
 ) {
     // Step 1: Combine all service fees
-    const combinedServiceFee = {
+    const combinedPlatformFee = {
         ratePerOrder: (platformServiceFee?.ratePerOrder ?? 0) +
             (supportPartnerServiceFee?.ratePerOrder ?? 0) +
             (marketingPartnerServiceFee?.ratePerOrder ?? 0),
@@ -36,14 +35,17 @@ export function calculateCartBreakdown(
     };
 
     // Step 2: Calculate total service fee amount
-    const serviceFeeAmount = exclusiveRate(subTotal.totalWithTax, combinedServiceFee.ratePerOrder ?? 0) +
-        (combinedServiceFee.feePerOrder ?? 0);
-    const serviceTax = inclusiveRate(serviceFeeAmount, taxRateForServiceFees);
+    const platformFeeAmountIncludingTax = exclusiveRate(subTotal.totalWithTax, combinedPlatformFee.ratePerOrder ?? 0) +
+        (combinedPlatformFee.feePerOrder ?? 0);
+
+    const platformFeeTax = inclusiveRate(platformFeeAmountIncludingTax, (taxSettings.taxRateForServiceFees ?? 0));
+
+    const platformFeeWithoutTax = platformFeeAmountIncludingTax - platformFeeTax;
 
     const totalPlatformFee: {
-        totalWithTax: number;
-        itemTotal: number;
-        tax: number;
+        // totalWithTax: number;
+        // itemTotal: number;
+        // tax: number;
         feeBreakdown: {
             [key: string]: {
                 name: string;
@@ -54,15 +56,15 @@ export function calculateCartBreakdown(
             };
         };
     } = {
-        totalWithTax: serviceFeeAmount,
-        itemTotal: serviceFeeAmount - serviceTax,
-        tax: serviceTax,
+        // totalWithTax: platformFeeAmountIncludingTax,
+        // itemTotal: platformFeeAmountIncludingTax - platformFeeTax,
+        // tax: platformFeeTax,
         feeBreakdown: {}
     };
     if (platformServiceFee) {
         const feeAmount = exclusiveRate(subTotal.totalWithTax, platformServiceFee.ratePerOrder ?? 0) +
             (platformServiceFee.feePerOrder ?? 0);
-        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         (totalPlatformFee.feeBreakdown as any).platform = {
             name: "Platform Team",
             note: "nerds 🤓 who develops and maintains the website",
@@ -74,7 +76,7 @@ export function calculateCartBreakdown(
     if (supportPartnerServiceFee) {
         const feeAmount = exclusiveRate(subTotal.totalWithTax, supportPartnerServiceFee.ratePerOrder ?? 0) +
             (supportPartnerServiceFee.feePerOrder ?? 0);
-        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         (totalPlatformFee.feeBreakdown as any).support = {
             name: "Support Team",
             note: "provides dedicated support and guidance to stores",
@@ -86,7 +88,7 @@ export function calculateCartBreakdown(
     if (marketingPartnerServiceFee) {
         const feeAmount = exclusiveRate(subTotal.totalWithTax, marketingPartnerServiceFee.ratePerOrder ?? 0) +
             (marketingPartnerServiceFee.feePerOrder ?? 0);
-        const feeTax = inclusiveRate(feeAmount, taxRateForServiceFees);
+        const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         (totalPlatformFee.feeBreakdown as any).marketing = {
             name: "Marketing Team",
             note: "helps promoting the store to find new customers",
@@ -111,9 +113,9 @@ export function calculateCartBreakdown(
         shownFee: 0
     };
 
-    if (totalPlatformFee.totalWithTax > tolerableAmountByStore) {
-        const extraAmount = totalPlatformFee.totalWithTax - tolerableAmountByStore;
-        const extraTax = inclusiveRate(extraAmount, taxRateForServiceFees);
+    if (platformFeeAmountIncludingTax > tolerableAmountByStore) {
+        const extraAmount = platformFeeAmountIncludingTax - tolerableAmountByStore;
+        const extraTax = inclusiveRate(extraAmount, (taxSettings.taxRateForServiceFees ?? 0));
         const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
             extraAmount - extraTax :
             extraAmount
@@ -129,10 +131,10 @@ export function calculateCartBreakdown(
 
     // Step 5: Calculate discount if applicable
     let discount = 0;
-    if (config.offerDiscount && tolerableAmountByStore > totalPlatformFee.totalWithTax) {
-        discount = tolerableAmountByStore - totalPlatformFee.totalWithTax;
+    if (config.offerDiscount && tolerableAmountByStore > platformFeeAmountIncludingTax) {
+        discount = tolerableAmountByStore - platformFeeAmountIncludingTax;
         if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-            discount = discount - inclusiveRate(discount, taxRateForServiceFees);
+            discount = discount - inclusiveRate(discount, (taxSettings.taxRateForServiceFees ?? 0));
         }
     }
 
@@ -158,7 +160,7 @@ export function calculateCartBreakdown(
 
     // Step 8: Calculate what store receives
     const netStoreRevenue = roundTo2Decimals(
-        buyerTotal - totalPlatformFee.itemTotal - totalTax - paymentProcessorFee
+        buyerTotal - platformFeeWithoutTax - totalTax - paymentProcessorFee
     );
 
     const allTransparencyBreakdown: {

@@ -71,7 +71,6 @@ const cartBreakdown = computed(() => {
         //     supportPartnerServiceFee && { ...supportPartnerServiceFee, name: "Support Partner" },
         //     marketingPartnerServiceFee && { ...marketingPartnerServiceFee, name: "Marketing Partner" }
         // ],
-        taxSettings.taxRateForServiceFees ?? 0,
         taxSettings,
         {
             calculationType: calculationType,
