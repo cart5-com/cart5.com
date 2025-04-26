@@ -232,6 +232,9 @@ const loadUserData = async () => {
         setTimeout(() => {
             window.dispatchEvent(new Event(ON_USER_DATA_READY));
             isUserDataReady = true;
+            if (userDataStore.value.userData && !userDataStore.value.userData.rememberLastNickname) {
+                userDataStore.value.userData.rememberLastNickname = userDataStore.value.user?.name;
+            }
             if (window.orderType && userDataStore.value.userData?.rememberLastOrderType !== window.orderType) {
                 setCurrentOrderType(window.orderType);
             }
