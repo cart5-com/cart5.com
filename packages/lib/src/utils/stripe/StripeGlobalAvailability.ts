@@ -1,5 +1,6 @@
 /*/
 TODO: handle a redirect or page for "Statement descriptor:'CART5.COM/A'"
+short descriptor: "CART5COM/A"
 /*/
 
 /*/
