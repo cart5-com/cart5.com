@@ -14,8 +14,8 @@ if (!storeId) {
 	throw new Error("Store ID is required");
 }
 
-const store = await getStoreData_CacheJSON(storeId);
-if (!store) {
+const storeData = await getStoreData_CacheJSON(storeId);
+if (!storeData) {
 	return new Response(null, { status: 404 });
 }
 
@@ -26,25 +26,25 @@ const createPageUrl = (orderType: OrderType | undefined = undefined) => {
 };
 
 const getMenuRoot = () => {
-	if (!store.menu?.menuRoot) {
+	if (!storeData.menu?.menuRoot) {
 		throw new Error("Menu root not found");
 	}
-	return store.menu.menuRoot;
+	return storeData.menu.menuRoot;
 };
 ---
 
-<BaseLayout title={`${store?.name} - ${slug}`}>
+<BaseLayout title={`${storeData?.name} - ${slug}`}>
 	<script
 		is:inline
 		define:vars={{
-			storeData: store,
+			storeData: storeData,
 			orderType: orderType
 		}}
 	>
 		window.storeData = storeData;
 		window.orderType = orderType;
 	</script>
-	<h2>{store.name}</h2>
+	<h2>{storeData.name}</h2>
 
 	<StorePageAddressWidget client:only="vue" />
 	<div
@@ -63,7 +63,7 @@ const getMenuRoot = () => {
 			<span class="truncate">Pickup</span>
 		</a>
 	</div>
-	<Menu menuRoot={store.menu?.menuRoot} getMenuRoot={getMenuRoot} />
+	<Menu menuRoot={storeData.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">
 		<SingleCartBtn client:only="vue" />
 		<script>

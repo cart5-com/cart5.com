@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { orderCurrentType, setOrderCurrentType, userDataStore } from "../../stores/UserData.store";
+import { userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
-import { Button } from "@/components/ui/button";
 import UserAddressesView from "../user/UserAddressesView.vue";
 import { onMounted } from "vue";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
+import OrderTypeWidget from "./OrderTypeWidget.vue";
 
 onMounted(async () => {
     setTimeout(async () => {
@@ -17,8 +17,6 @@ onMounted(async () => {
     }, 1000);
 })
 
-const offersDelivery = window.storeData?.offersDelivery ?? false;
-const offersPickup = window.storeData?.offersPickup ?? false;
 
 </script>
 
@@ -36,24 +34,7 @@ const offersPickup = window.storeData?.offersPickup ?? false;
 
             <StorePageAddressWidget />
 
-            <!-- // TODO: CHECK SUPPORTED ORDER TYPES VALIDATION HERE (delivery, pickup) -->
-            <div
-                 class="bg-muted text-muted-foreground my-4 grid w-fit grid-cols-2 items-center justify-center rounded-lg p-1">
-                <Button variant="ghost"
-                        @click="setOrderCurrentType('delivery')"
-                        :disabled="!offersDelivery"
-                        :class="orderCurrentType === 'delivery' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''">
-                    Delivery
-                </Button>
-                <Button variant="ghost"
-                        @click="setOrderCurrentType('pickup')"
-                        :disabled="!offersPickup"
-                        :class="orderCurrentType === 'pickup' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''">
-                    Pickup
-                </Button>
-            </div>
-
-
+            <OrderTypeWidget />
             <CartView />
         </div>
     </div>

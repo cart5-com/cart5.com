@@ -243,7 +243,6 @@ const loadUserData = async () => {
 export const orderCurrentType = computed(() => {
     return userDataStore.value.userData?.rememberLastOrderType ?? "delivery";
 });
-
 export const setOrderCurrentType = (orderType: OrderType) => {
     userDataStore.value.userData!.rememberLastOrderType = orderType;
 }
