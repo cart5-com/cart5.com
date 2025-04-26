@@ -2,7 +2,6 @@
 import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
-import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import UserAddressesView from "../user/UserAddressesView.vue";
 import { computed, onMounted, ref } from "vue";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
@@ -38,8 +37,13 @@ const currentCart = computed(() => {
             <UserMenu />
         </div>
         <div v-else>
+            <OrderTypeWidget />
+
             <div class="max-w-2xl mx-auto my-4">
-                <UserAddressesView v-if="currentOrderType === 'delivery'" />
+                <div v-if="currentOrderType === 'delivery'">
+                    <UserAddressesView />
+                    <!-- <StorePageAddressWidget /> -->
+                </div>
                 <div v-if="currentOrderType === 'pickup' && userDataStore.userData">
                     <div class="grid gap-3">
                         <Label for="nickname-input">Pickup Name/Nickname</Label>
@@ -50,9 +54,6 @@ const currentCart = computed(() => {
                 </div>
             </div>
 
-            <StorePageAddressWidget />
-
-            <OrderTypeWidget />
             <PaymentMethods v-model="currentPaymentMethod" />
 
             <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">

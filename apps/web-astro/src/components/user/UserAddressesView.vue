@@ -45,7 +45,7 @@ const addresses = computed(() => {
 });
 
 const selectedAddressId = computed(() => {
-    return userDataStore.value.userData?.rememberLastAddressId || '';
+    return userDataStore.value.userData?.rememberLastAddressId;
 });
 
 function selectAddress(address: AddressType) {
