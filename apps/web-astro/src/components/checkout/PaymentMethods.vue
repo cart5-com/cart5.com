@@ -134,7 +134,7 @@ onBeforeMount(() => {
         <CardContent>
             <!-- @update:model-value="" -->
             <RadioGroup v-model="selectedPaymentMethod"
-                        class="max-w-sm max-h-36 overflow-y-auto">
+                        class="w-full max-h-36 overflow-y-auto">
                 <Label v-for="method in availablePaymentMethods"
                        :key="method.id"
                        class="cursor-pointer hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-4 mb-2 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/10 dark:has-[[data-state=checked]]:border-primary-foreground dark:has-[[data-state=checked]]:bg-primary/20">
