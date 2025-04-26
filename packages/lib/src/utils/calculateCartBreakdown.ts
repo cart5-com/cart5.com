@@ -201,7 +201,7 @@ export function calculateCartBreakdown(
     }
     if (buyerPaysPlatformFee.shownFee > 0) {
         buyerPaysTaxAndFees.push({
-            name: 'Platform Fees',
+            name: 'Service Fee',
             currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(buyerPaysPlatformFee.shownFee),
             note: 'This fee varies based on factors like basket size and helps cover costs related to your order.',
         });

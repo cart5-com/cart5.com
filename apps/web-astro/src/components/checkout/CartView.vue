@@ -2,7 +2,7 @@
 import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
-import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info, Moon, MapPinOff } from "lucide-vue-next";
+import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info, Moon, MapPinOff, OctagonX } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -141,6 +141,9 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
         customServiceFees
     );
 })
+
+const offersDelivery = window.storeData?.offersDelivery ?? false;
+const offersPickup = window.storeData?.offersPickup ?? false;
 
 </script>
 
@@ -331,6 +334,20 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                     <MapPinOff class="mr-1 inline-block" />
                     Out of delivery zone
                 </div>
+
+                <div class=" p-2 bg-destructive text-destructive-foreground"
+                     v-if="!offersDelivery && orderCurrentType === 'delivery'">
+                    <OctagonX class="mr-1 inline-block" />
+                    Delivery disabled by store
+                </div>
+
+                <div class=" p-2 bg-destructive text-destructive-foreground"
+                     v-if="!offersPickup && orderCurrentType === 'pickup'">
+                    <OctagonX class="mr-1 inline-block" />
+                    Pickup disabled by store
+                </div>
+
+
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">

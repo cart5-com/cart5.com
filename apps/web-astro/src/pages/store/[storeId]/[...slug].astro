@@ -5,8 +5,9 @@ import Menu from "@web-astro/components/store-page/menu/Menu.astro";
 import SingleCartBtn from "@web-astro/components/cart/SingleCartBtn.vue";
 import SingleCartView from "@web-astro/components/cart/SingleCartView.vue";
 import StorePageAddressWidget from "@web-astro/components/store-page/StorePageAddressWidget.vue";
-import { buttonVariants } from "@/components/ui/button";
+
 import type { OrderType } from "@lib/types/orderType";
+import OrderTypeWidget from "@web-astro/components/store-page/OrderTypeWidget.astro";
 
 const { slug, storeId } = Astro.params;
 const orderType: OrderType = Astro.url.searchParams.get("order-type") === "pickup" ? "pickup" : "delivery";
@@ -18,12 +19,6 @@ const storeData = await getStoreData_CacheJSON(storeId);
 if (!storeData) {
 	return new Response(null, { status: 404 });
 }
-
-const createPageUrl = (orderType: OrderType | undefined = undefined) => {
-	const url = new URL(Astro.url);
-	if (orderType) url.searchParams.set("order-type", orderType);
-	return url.toString();
-};
 
 const getMenuRoot = () => {
 	if (!storeData.menu?.menuRoot) {
@@ -47,22 +42,13 @@ const getMenuRoot = () => {
 	<h2>{storeData.name}</h2>
 
 	<StorePageAddressWidget client:only="vue" />
-	<div
-		class="bg-muted text-muted-foreground my-4 grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
-		<a
-			class={buttonVariants({ variant: "ghost" }) +
-				`${orderType === "delivery" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-			href={createPageUrl("delivery")}>
-			<span class="truncate">Delivery</span>
-		</a>
 
-		<a
-			class={buttonVariants({ variant: "ghost" }) +
-				`${orderType === "pickup" ? " bg-background text-foreground shadow hover:bg-background/80" : ""}`}
-			href={createPageUrl("pickup")}>
-			<span class="truncate">Pickup</span>
-		</a>
-	</div>
+	<OrderTypeWidget
+		offersDelivery={storeData.offersDelivery}
+		offersPickup={storeData.offersPickup}
+		orderType={orderType}
+	/>
+
 	<Menu menuRoot={storeData.menu?.menuRoot} getMenuRoot={getMenuRoot} />
 	<div slot="header-right">
 		<SingleCartBtn client:only="vue" />

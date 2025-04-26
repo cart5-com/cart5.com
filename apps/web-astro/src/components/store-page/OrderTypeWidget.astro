@@ -1,0 +1,66 @@
+---
+import { buttonVariants } from "@/components/ui/button";
+import type { OrderType } from "@lib/types/orderType";
+import { OctagonX } from "lucide-vue-next";
+const createPageUrl = (orderType: OrderType | undefined = undefined) => {
+	const url = new URL(Astro.url);
+	if (orderType) url.searchParams.set("order-type", orderType);
+	return url.toString();
+};
+
+interface Props {
+	offersDelivery: boolean;
+	offersPickup: boolean;
+	orderType: OrderType;
+}
+
+const { offersDelivery, offersPickup, orderType } = Astro.props;
+---
+
+<div class="bg-muted text-muted-foreground my-4 flex w-fit items-center justify-center rounded-lg p-1">
+	{
+		(offersDelivery || orderType === "delivery") && (
+			<a
+				class={
+					buttonVariants({ variant: "ghost" }) +
+					`${orderType === "delivery" ? " bg-background text-foreground hover:bg-background/80 shadow" : ""}` +
+					`${!offersDelivery ? " cursor-not-allowed opacity-50" : ""}`
+				}
+				href={offersDelivery ? createPageUrl("delivery") : null}>
+				<span>Delivery</span>
+			</a>
+		)
+	}
+
+	{
+		(offersPickup || orderType === "pickup") && (
+			<a
+				class={
+					buttonVariants({ variant: "ghost" }) +
+					`${orderType === "pickup" ? " bg-background text-foreground hover:bg-background/80 shadow" : ""}` +
+					`${!offersPickup ? " cursor-not-allowed opacity-50" : ""}`
+				}
+				href={offersPickup ? createPageUrl("pickup") : null}>
+				<span>Pickup</span>
+			</a>
+		)
+	}
+</div>
+
+{
+	!offersDelivery && orderType === "delivery" && (
+		<div class="bg-destructive text-destructive-foreground p-2">
+			<OctagonX class="mr-1 inline-block" />
+			Delivery disabled by store
+		</div>
+	)
+}
+
+{
+	!offersPickup && orderType === "pickup" && (
+		<div class="bg-destructive text-destructive-foreground p-2">
+			<OctagonX class="mr-1 inline-block" />
+			Pickup disabled by store
+		</div>
+	)
+}
