@@ -56,7 +56,7 @@ const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPo
 const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? [];
 
 const platformServiceFee: ServiceFee | null = {
-    ratePerOrder: 2,
+    ratePerOrder: 1,
     feePerOrder: 0,
 };
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;

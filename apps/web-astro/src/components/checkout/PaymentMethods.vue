@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, onBeforeMount, computed } from 'vue';
+import { onBeforeMount, computed } from 'vue';
 import { Banknote, CreditCard, Calculator } from 'lucide-vue-next';
 import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema'
 import {
@@ -114,7 +114,8 @@ const availablePaymentMethods = computed(() => {
 
 onBeforeMount(() => {
     if (availablePaymentMethods.value.length > 0) {
-        // choose the first payment method by default // TODO: should we save this in user data?
+        // choose the first payment method by default 
+        // TODO: should we save this in user data?
         selectedPaymentMethod.value = availablePaymentMethods.value[0]?.id || '';
     }
 
