@@ -297,6 +297,9 @@ export const saveUserDataNow = async (data: UserDataStoreType) => {
     if (!saveData.carts) {
         saveData.carts = {};
     }
+    if (!saveData.addresses) {
+        saveData.addresses = {};
+    }
     const { error } = await (await authGlobalApiClient.update_user_data.$patch({
         json: saveData
     })).json();

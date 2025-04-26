@@ -1,0 +1,32 @@
+---
+import BaseLayout from "@web-astro/layout/BaseLayout.astro";
+import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
+import ConfirmInfoView from "@web-astro/components/confirm-info/ConfirmInfoView.vue";
+
+const { slug, storeId } = Astro.params;
+if (!storeId) {
+	throw new Error("Store ID is required");
+}
+
+const [storeData] = await Promise.all([getStoreData_CacheJSON(storeId)]);
+
+if (!storeData) {
+	return new Response(null, { status: 404 });
+}
+
+if (!storeData.menu?.menuRoot) {
+	throw new Error("Menu root not found");
+}
+---
+
+<BaseLayout title={`${storeData?.name} - ${slug}`}>
+	<script
+		is:inline
+		define:vars={{
+			storeData: storeData
+		}}
+	>
+		window.storeData = storeData;
+	</script>
+	<ConfirmInfoView client:only="vue" />
+</BaseLayout>

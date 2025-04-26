@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import UserAddressForm from './UserAddressForm.vue';
-import { userDataStore } from '@web-astro/stores/UserData.store';
+import { handleDataChangeNow, userDataStore } from '@web-astro/stores/UserData.store';
 import type { AddressType } from '@lib/zod/userAddressSchema';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +20,10 @@ import {
 } from 'lucide-vue-next';
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 import { computed, onMounted } from 'vue';
+
+const emit = defineEmits<{
+    (e: 'selectAddress', address: AddressType): void
+}>();
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -48,16 +52,20 @@ const selectedAddressId = computed(() => {
     return userDataStore.value.userData?.rememberLastAddressId;
 });
 
-function selectAddress(address: AddressType) {
+async function selectAddress(address: AddressType) {
     address.lastUpdatedTS = Date.now();
+    (userDataStore.value as any).ignoreAutoDebounceSave = true;
     userDataStore.value.userData!.rememberLastAddressId = address.addressId;
     userDataStore.value.userData!.rememberLastAddress = address.address1;
     userDataStore.value.userData!.rememberLastCountry = address.country;
     userDataStore.value.userData!.rememberLastLat = address.lat || null;
     userDataStore.value.userData!.rememberLastLng = address.lng || null;
+    await handleDataChangeNow(userDataStore.value);
+    emit('selectAddress', address);
 }
 
 function newAddress() {
+    const userHasAddress = userDataStore.value.userData?.addresses && Object.keys(userDataStore.value.userData?.addresses).length > 0;
     dialog.show<AddressType>({
         title: 'Add Address',
         component: UserAddressForm,
@@ -65,7 +73,7 @@ function newAddress() {
             address: {
                 nickname: userDataStore.value.user?.name || '',
                 country: userDataStore.value.userData?.rememberLastCountry || '',
-                address1: userDataStore.value.userData?.rememberLastAddress || '',
+                address1: userHasAddress ? '' : userDataStore.value.userData?.rememberLastAddress || '',
                 lat: userDataStore.value.userData?.rememberLastLat || 0,
                 lng: userDataStore.value.userData?.rememberLastLng || 0,
             },
@@ -180,7 +188,6 @@ onMounted(() => {
                             {{ address.instructionsForDelivery }}
                         </div>
                     </div>
-
                     <!-- Google Map for address with coordinates -->
                     <div v-if="address.lat && address.lng"
                          class="mt-3 overflow-hidden rounded-lg">
@@ -188,8 +195,7 @@ onMounted(() => {
                                 height="194"
                                 class="rounded-lg"
                                 frameborder="0"
-                                style="border:0; pointer-events: none; zoom: 0.6; transform: scale(1.5);
-transform-origin: center center;"
+                                style="border:0;pointer-events: none;zoom: 0.6;transform: scale(1.5);transform-origin: center center;"
                                 referrerpolicy="no-referrer-when-downgrade"
                                 allowfullscreen="false"
                                 :src="getMapUrl(address)">

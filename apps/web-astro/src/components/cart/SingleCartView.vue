@@ -60,7 +60,7 @@ const removeAllItemsFromCart = () => {
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
           <Button variant="default"
                   as="a"
-                  :href="BASE_LINKS.CHECKOUT(currentCart?.storeId!, slugify(currentCart?.storeName!))"
+                  :href="BASE_LINKS.CONFIRM_INFO(currentCart?.storeId!, slugify(currentCart?.storeName!))"
                   class="w-full">
             Checkout
           </Button>

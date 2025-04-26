@@ -6,7 +6,7 @@ import UserAddressesView from "../user/UserAddressesView.vue";
 import { computed, onMounted, ref } from "vue";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
-import OrderTypeWidget from "./OrderTypeWidget.vue";
+import OrderTypeWidget from "../OrderTypeWidget.vue";
 import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
@@ -39,10 +39,11 @@ const currentCart = computed(() => {
         <div v-else>
             <OrderTypeWidget />
 
-            <div class="max-w-2xl mx-auto my-4">
+            <!-- TODO: only show no need to manage them here -->
+            <!-- <div class="max-w-2xl mx-auto my-4">
                 <div v-if="currentOrderType === 'delivery'">
                     <UserAddressesView />
-                    <!-- <StorePageAddressWidget /> -->
+                    <StorePageAddressWidget />
                 </div>
                 <div v-if="currentOrderType === 'pickup' && userDataStore.userData">
                     <div class="grid gap-3">
@@ -52,7 +53,7 @@ const currentCart = computed(() => {
                                v-model="userDataStore.userData.rememberLastNickname!" />
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <PaymentMethods v-model="currentPaymentMethod" />
 

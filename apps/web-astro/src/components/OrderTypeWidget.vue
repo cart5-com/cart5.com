@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { currentOrderType, setCurrentOrderType } from "../../stores/UserData.store";
+import { currentOrderType, setCurrentOrderType } from "@web-astro/stores/UserData.store";
 
 const offersDelivery = window.storeData?.offersDelivery ?? false;
 const offersPickup = window.storeData?.offersPickup ?? false;
