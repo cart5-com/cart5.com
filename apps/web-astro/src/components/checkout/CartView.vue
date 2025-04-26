@@ -285,7 +285,7 @@ const offersPickup = window.storeData?.offersPickup ?? false;
                     </span>
                 </div>
 
-                <div class="flex justify-between items-center p-2 text-xl font-bold bg-primary text-primary-foreground"
+                <div class="flex justify-between items-center p-2 text-xl font-bold text-primary"
                      v-if="cartBreakdown.discount > 0">
                     <span class="">
                         Discount
