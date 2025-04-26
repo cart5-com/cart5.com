@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
+import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed } from "vue";
 import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX } from "lucide-vue-next";
@@ -45,7 +45,7 @@ const props = defineProps<{
 }>();
 
 const isStoreOpen = computed(() => {
-    return isStoreOpenNow(orderCurrentType.value, window.storeData?.openHours ?? null);
+    return isStoreOpenNow(currentOrderType.value, window.storeData?.openHours ?? null);
 });
 
 
@@ -106,14 +106,14 @@ const openCartItem = (itemIndex: number) => {
 }
 
 const cartTotals = computed(() => {
-    return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, orderCurrentType.value);
+    return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, currentOrderType.value);
 });
 
 const itemPrices = computed(() => {
     if (!currentCart.value?.items || !menuRoot) return [];
 
     return currentCart.value.items.map(item =>
-        calculateCartItemPrice(item, menuRoot, taxSettings, orderCurrentType.value)
+        calculateCartItemPrice(item, menuRoot, taxSettings, currentOrderType.value)
     );
 });
 
@@ -123,7 +123,7 @@ const getPrice = (itemIndex: number) => {
 
 const subTotalWithDeliveryAndServiceFees = computed(() => {
     return calculateSubTotal(
-        currentCart.value, menuRoot ?? undefined, taxSettings, orderCurrentType.value,
+        currentCart.value, menuRoot ?? undefined, taxSettings, currentOrderType.value,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
@@ -302,19 +302,19 @@ const offersPickup = window.storeData?.offersPickup ?? false;
                 </div>
 
                 <div class=" p-2 bg-destructive text-destructive-foreground"
-                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderCurrentType === 'delivery'">
+                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && currentOrderType === 'delivery'">
                     <MapPinOff class="mr-1 inline-block" />
                     Out of delivery zone
                 </div>
 
                 <div class=" p-2 bg-destructive text-destructive-foreground"
-                     v-if="!offersDelivery && orderCurrentType === 'delivery'">
+                     v-if="!offersDelivery && currentOrderType === 'delivery'">
                     <OctagonX class="mr-1 inline-block" />
                     Delivery disabled by store
                 </div>
 
                 <div class=" p-2 bg-destructive text-destructive-foreground"
-                     v-if="!offersPickup && orderCurrentType === 'pickup'">
+                     v-if="!offersPickup && currentOrderType === 'pickup'">
                     <OctagonX class="mr-1 inline-block" />
                     Pickup disabled by store
                 </div>

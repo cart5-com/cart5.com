@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
+import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
@@ -46,7 +46,7 @@ const currentCart = computed(() => {
             <PaymentMethods v-model="currentPaymentMethod" />
 
             <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">
-                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), orderCurrentType)"
+                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), currentOrderType)"
                    class="w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
                     {{ currentCart?.storeName }}
                 </a>

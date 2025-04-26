@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
 import type { TaxSettings } from "@lib/zod/taxSchema";
-import { orderCurrentType } from "@web-astro/stores/UserData.store";
+import { currentOrderType } from "@web-astro/stores/UserData.store";
 
 const props = defineProps<{
     itemId?: ItemId,
@@ -37,14 +37,6 @@ const cartItem = ref<CartItem>(props.cartItem || {
     childrenState: [],
 })
 
-// const cartItemTotalPrice = ref(0);
-// watch([cartItem, currentItem], () => {
-//     cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, orderCurrentType.value).itemTotal)
-// }, { deep: true })
-
-// onMounted(() => {
-//     cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, orderCurrentType.value).itemTotal)
-// })
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 const cartItemTotalPrice = computed(() => {
     return roundTo2Decimals(
@@ -52,7 +44,7 @@ const cartItemTotalPrice = computed(() => {
             cartItem.value,
             window.storeData?.menu?.menuRoot!,
             taxSettings,
-            orderCurrentType.value
+            currentOrderType.value
         ).itemTotal
     );
 });

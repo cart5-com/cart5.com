@@ -233,17 +233,17 @@ const loadUserData = async () => {
             window.dispatchEvent(new Event(ON_USER_DATA_READY));
             isUserDataReady = true;
             if (window.orderType && userDataStore.value.userData?.rememberLastOrderType !== window.orderType) {
-                setOrderCurrentType(window.orderType);
+                setCurrentOrderType(window.orderType);
             }
         });
     }
 }
 
 
-export const orderCurrentType = computed(() => {
+export const currentOrderType = computed(() => {
     return userDataStore.value.userData?.rememberLastOrderType ?? "delivery";
 });
-export const setOrderCurrentType = (orderType: OrderType) => {
+export const setCurrentOrderType = (orderType: OrderType) => {
     userDataStore.value.userData!.rememberLastOrderType = orderType;
 }
 

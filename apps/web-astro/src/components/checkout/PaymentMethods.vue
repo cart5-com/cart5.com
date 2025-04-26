@@ -14,7 +14,7 @@ import {
     RadioGroupItem,
 } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { orderCurrentType } from '@web-astro/stores/UserData.store';
+import { currentOrderType } from '@web-astro/stores/UserData.store';
 
 const props = defineProps<{
     modelValue: string
@@ -55,11 +55,11 @@ const availablePaymentMethods = computed(() => {
         return [];
     }
 
-    if (orderCurrentType.value === 'delivery') {
+    if (currentOrderType.value === 'delivery') {
         paymentMethods = window.storeData.paymentMethods.deliveryPaymentMethods?.isActive ?
             window.storeData.paymentMethods.deliveryPaymentMethods || null :
             window.storeData.paymentMethods.defaultPaymentMethods || null;
-    } else if (orderCurrentType.value === 'pickup') {
+    } else if (currentOrderType.value === 'pickup') {
         paymentMethods = window.storeData.paymentMethods.pickupPaymentMethods?.isActive ?
             window.storeData.paymentMethods.pickupPaymentMethods || null :
             window.storeData.paymentMethods.defaultPaymentMethods || null;
@@ -83,7 +83,7 @@ const availablePaymentMethods = computed(() => {
         methods.push({
             id: 'cash',
             name: 'Cash',
-            description: orderCurrentType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
+            description: currentOrderType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
             icon: Banknote
         });
     }
@@ -92,7 +92,7 @@ const availablePaymentMethods = computed(() => {
         methods.push({
             id: 'cardTerminal',
             name: 'Card',
-            description: orderCurrentType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
+            description: currentOrderType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
             icon: Calculator
         });
     }

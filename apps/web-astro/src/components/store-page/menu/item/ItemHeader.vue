@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "@lib/zod/menuRootSchema";
-import { orderCurrentType } from "@web-astro/stores/UserData.store";
+import { currentOrderType } from "@web-astro/stores/UserData.store";
 
 defineProps<{
     currentItem?: Item
@@ -22,7 +22,7 @@ defineProps<{
         </span>
 
         <div class="cursor-text flex">
-            {{ orderCurrentType === "pickup" && currentItem.pickupPrc ? currentItem.pickupPrc : currentItem.prc || '' }}
+            {{ currentOrderType === "pickup" && currentItem.pickupPrc ? currentItem.pickupPrc : currentItem.prc || '' }}
         </div>
 
     </div>
