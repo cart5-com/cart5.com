@@ -30,8 +30,15 @@ export const apiUpload = new Hono<HonoVariables>()
         })),
         async (c) => {
             const { title, file } = c.req.valid('form')
+            // return c.json({
+            //     url: await r2ImgUpload(file, title),
+            //     title,
+            //     fileType: file.type,
+            //     fileSize: file.size,
+            //     fileName: file.name,
+            // });
             return c.json({
-                url: await r2ImgUpload(file, title),
+                url: "upload disabled!!",
                 title,
                 fileType: file.type,
                 fileSize: file.size,
