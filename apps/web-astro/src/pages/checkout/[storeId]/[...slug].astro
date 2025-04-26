@@ -9,7 +9,7 @@ if (!storeId) {
 	throw new Error("Store ID is required");
 }
 
-const [supportTeamServiceFee, websiteTeamServiceFee, store] = await Promise.all([
+const [supportTeamServiceFee, websiteTeamServiceFee, storeData] = await Promise.all([
 	getSupportTeamServiceFee_Service(storeId),
 	getWebsiteTeamServiceFee_Service(
 		Astro.locals.WEBSITE?.id ?? "",
@@ -19,20 +19,20 @@ const [supportTeamServiceFee, websiteTeamServiceFee, store] = await Promise.all(
 	getStoreData_CacheJSON(storeId)
 ]);
 
-if (!store) {
+if (!storeData) {
 	return new Response(null, { status: 404 });
 }
 
-if (!store.menu?.menuRoot) {
+if (!storeData.menu?.menuRoot) {
 	throw new Error("Menu root not found");
 }
 ---
 
-<BaseLayout title={`${store?.name} - ${slug}`}>
+<BaseLayout title={`${storeData?.name} - ${slug}`}>
 	<script
 		is:inline
 		define:vars={{
-			storeData: store,
+			storeData: storeData,
 			supportTeamServiceFee: supportTeamServiceFee,
 			websiteTeamServiceFee: websiteTeamServiceFee
 		}}

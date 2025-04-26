@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
-import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
-import { computed, ref } from "vue";
-import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info, Moon, MapPinOff, OctagonX } from "lucide-vue-next";
+import { removeItemFromCart, openItemInCart, genCartId } from "../../stores/UserDataCartHelpers";
+import { computed } from "vue";
+import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
-import { BASE_LINKS } from "@web-astro/utils/links";
-import { slugify } from "@lib/utils/slugify";
 import {
     NumberField,
     NumberFieldContent,
@@ -17,7 +15,6 @@ import {
     NumberFieldInput,
 } from '@/components/ui/number-field'
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
     Drawer,
     DrawerClose,
@@ -40,15 +37,18 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import PaymentMethods from './PaymentMethods.vue';
+
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
+const props = defineProps<{
+    currentPaymentMethod?: string;
+}>();
 
 const isStoreOpen = computed(() => {
     return isStoreOpenNow(orderCurrentType.value, window.storeData?.openHours ?? null);
 });
 
-const currentPaymentMethod = ref('');
+
 
 const calculationType: CalculationType = window.storeData?.serviceFees?.calculationType ?? "INCLUDE";
 const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
@@ -77,7 +77,7 @@ const cartBreakdown = computed(() => {
         calculationType,
         tolerableServiceFeeRate,
         offerDiscountIfPossible,
-        currentPaymentMethod.value === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
+        props.currentPaymentMethod === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
         {
             name: "Stripe Fee",
             ratePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
@@ -104,11 +104,6 @@ const updateCartItemQuantity = (item: CartItem, itemIndex: number) => {
 const openCartItem = (itemIndex: number) => {
     openItemInCart(window.storeData?.id!, itemIndex);
 }
-
-const removeAllItemsFromCart = () => {
-    clearCartByStoreId(currentCart.value?.storeId!);
-}
-
 
 const cartTotals = computed(() => {
     return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, orderCurrentType.value);
@@ -148,30 +143,9 @@ const offersPickup = window.storeData?.offersPickup ?? false;
 </script>
 
 <template>
-    <div class="flex flex-col gap-2 h-full"
+    <div class="flex flex-col gap-2 h-full w-full"
          v-if="menuRoot">
-        <div class="flex flex-col gap-2 max-w-lg w-lg mx-auto">
-            <!-- relative sticky top-0 z-40 -->
-            <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">
-                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), orderCurrentType)"
-                   class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
-                    {{ currentCart?.storeName }}
-                </a>
-                <div class="flex-shrink-0">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                            <MoreVerticalIcon class="cursor-pointer" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end"
-                                             class="">
-                            <DropdownMenuItem @click="removeAllItemsFromCart">
-                                <ListX />
-                                Clear Cart
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
+        <div class="flex flex-col gap-2 w-full mx-auto">
             <div class="flex-1"
                  v-if="currentCart && currentCart.items">
                 <div v-for="(item, index) in currentCart?.items"
@@ -320,8 +294,6 @@ const offersPickup = window.storeData?.offersPickup ?? false;
                         -{{ taxSettings.currencySymbol }}{{ cartBreakdown.discount }}
                     </span>
                 </div>
-
-                <PaymentMethods v-model="currentPaymentMethod" />
 
                 <div class=" p-2 bg-destructive text-destructive-foreground"
                      v-if="!isStoreOpen">

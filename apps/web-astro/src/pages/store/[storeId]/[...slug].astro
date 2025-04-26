@@ -3,11 +3,11 @@ import BaseLayout from "@web-astro/layout/BaseLayout.astro";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
 import Menu from "@web-astro/components/store-page/menu/Menu.astro";
 import SingleCartBtn from "@web-astro/components/cart/SingleCartBtn.vue";
-import SingleCartView from "@web-astro/components/cart/SingleCartView.vue";
 import StorePageAddressWidget from "@web-astro/components/store-page/StorePageAddressWidget.vue";
-
+import { getSupportTeamServiceFee_Service, getWebsiteTeamServiceFee_Service } from "@db/services/website.service";
 import type { OrderType } from "@lib/types/orderType";
 import OrderTypeWidget from "@web-astro/components/store-page/OrderTypeWidget.astro";
+import SingleCartView from "@web-astro/components/cart/SingleCartView.vue";
 
 const { slug, storeId } = Astro.params;
 const orderType: OrderType = Astro.url.searchParams.get("order-type") === "pickup" ? "pickup" : "delivery";
@@ -15,7 +15,15 @@ if (!storeId) {
 	throw new Error("Store ID is required");
 }
 
-const storeData = await getStoreData_CacheJSON(storeId);
+const [supportTeamServiceFee, websiteTeamServiceFee, storeData] = await Promise.all([
+	getSupportTeamServiceFee_Service(storeId),
+	getWebsiteTeamServiceFee_Service(
+		Astro.locals.WEBSITE?.id ?? "",
+		storeId,
+		Astro.locals.WEBSITE?.defaultMarketplaceFee ?? null
+	),
+	getStoreData_CacheJSON(storeId)
+]);
 if (!storeData) {
 	return new Response(null, { status: 404 });
 }
@@ -33,11 +41,15 @@ const getMenuRoot = () => {
 		is:inline
 		define:vars={{
 			storeData: storeData,
-			orderType: orderType
+			orderType: orderType,
+			supportTeamServiceFee: supportTeamServiceFee,
+			websiteTeamServiceFee: websiteTeamServiceFee
 		}}
 	>
 		window.storeData = storeData;
 		window.orderType = orderType;
+		window.supportTeamServiceFee = supportTeamServiceFee;
+		window.websiteTeamServiceFee = websiteTeamServiceFee;
 	</script>
 	<h2>{storeData.name}</h2>
 
