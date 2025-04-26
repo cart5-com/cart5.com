@@ -37,7 +37,7 @@ const currentPaymentMethod = ref('');
 </script>
 
 <template>
-    <div class="max-w-md mx-auto">
+    <div class="max-w-lg mx-auto">
         <div v-if="!userDataStore.user">
             Please login or register before checking out
             <UserMenu />
