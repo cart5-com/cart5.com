@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, genCartId } from "../../stores/UserDataCartHelpers";
-import { computed } from "vue";
-import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX } from "lucide-vue-next";
+import { computed, ref } from "vue";
+import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX, ChevronDown, ChevronUp } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -38,15 +38,18 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 
+
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
 const props = defineProps<{
     currentPaymentMethod?: string;
+    isCollapsed?: boolean;
 }>();
 
 const isStoreOpen = computed(() => {
     return isStoreOpenNow(currentOrderType.value, window.storeData?.openHours ?? null);
 });
+
 
 
 
@@ -140,6 +143,13 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
 const offersDelivery = window.storeData?.offersDelivery ?? false;
 const offersPickup = window.storeData?.offersPickup ?? false;
 
+const isCollapsed = ref(props.isCollapsed ?? false);
+
+const totalItem = computed(() => {
+    return currentCart.value?.items?.reduce((acc: number, item: CartItem) => acc + (item.quantity ?? 0), 0) ?? 0;
+});
+
+
 </script>
 
 <template>
@@ -149,7 +159,28 @@ const offersPickup = window.storeData?.offersPickup ?? false;
             <div class="flex-1"
                  v-if="currentCart && currentCart.items">
 
-                <div v-for="(item, index) in currentCart?.items"
+
+                <div class="w-full flex-col cursor-pointer"
+                     @click="isCollapsed = !isCollapsed">
+                    <div class="flex justify-between items-center font-bold text-2xl">
+                        <div
+                             class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
+                            {{ currentCart.storeName }}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <ChevronUp class="inline-block mr-2"
+                                       v-if="!isCollapsed" />
+                            <ChevronDown class="inline-block mr-2"
+                                         v-else />
+                        </div>
+                    </div>
+                    <div class="text-sm text-muted-foreground p-2">
+                        {{ totalItem }} items
+                    </div>
+                </div>
+
+                <div v-if="!isCollapsed"
+                     v-for="(item, index) in currentCart?.items"
                      class="border-t border-muted-foreground pb-2"
                      :key="index">
                     <div class="whitespace-pre-wrap px-2">

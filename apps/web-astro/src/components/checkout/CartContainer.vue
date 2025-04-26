@@ -56,7 +56,8 @@ const currentPaymentMethod = ref('');
 
             <PaymentMethods v-model="currentPaymentMethod" />
 
-            <CartView :current-payment-method="currentPaymentMethod" />
+            <CartView :current-payment-method="currentPaymentMethod"
+                      :is-collapsed="true" />
 
         </div>
     </div>

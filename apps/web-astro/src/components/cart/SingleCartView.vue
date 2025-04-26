@@ -30,9 +30,9 @@ const removeAllItemsFromCart = () => {
                 class="cursor-pointer rounded-b-md m-1 flex-shrink-0">
           <X class="h-8 w-8" />
         </Button>
-        <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
+        <!-- <div class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
           {{ currentCart?.storeName }}
-        </div>
+        </div> -->
         <div class="flex-shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
