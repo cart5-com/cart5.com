@@ -35,7 +35,7 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 	window.orderType = orderType;
 </script>
 <script>
-	import { isUserDataReady, ON_USER_DATA_READY } from "@web-astro/stores/UserData.store";
+	import { waitUntilUserDataReady } from "@web-astro/stores/UserData.store";
 	import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 	import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 	import { userDataStore } from "@web-astro/stores/UserData.store";
@@ -59,13 +59,9 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 			}
 		});
 	};
-	if (isUserDataReady) {
-		// User data is ready, so we can check the store status
+	waitUntilUserDataReady().then(() => {
 		handleUserDataReady();
-	} else {
-		// User data is not ready, so we need to wait for it
-		window.addEventListener(ON_USER_DATA_READY, handleUserDataReady);
-	}
+	});
 
 	// Function to check if a store is open and add closed banner if needed
 	async function checkStoreOpen(storeId: string, orderType: OrderType): Promise<void> {

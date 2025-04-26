@@ -242,6 +242,16 @@ const loadUserData = async () => {
     }
 }
 
+export const waitUntilUserDataReady = () => {
+    return new Promise((resolve) => {
+        if (isUserDataReady) {
+            resolve(true);
+        } else {
+            window.addEventListener(ON_USER_DATA_READY, resolve);
+        }
+    });
+}
+
 
 export const currentOrderType = computed(() => {
     return userDataStore.value.userData?.rememberLastOrderType ?? "delivery";
