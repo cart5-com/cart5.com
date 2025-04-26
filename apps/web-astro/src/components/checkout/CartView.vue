@@ -229,7 +229,7 @@ const totalItem = computed(() => {
                             <Pencil />
                             <div
                                  class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-xl justify-start">
-                                {{ currentCart?.orderNote || "Add an order note" }}
+                                {{ currentCart?.orderNote || "Add a note" }}
                             </div>
                         </Button>
                     </DrawerTrigger>

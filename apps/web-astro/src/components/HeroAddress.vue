@@ -47,6 +47,7 @@ const onMapConfirm = async (result: { lat: number, lng: number }) => {
     userDataStore.value!.userData!.rememberLastLat = result.lat;
     userDataStore.value!.userData!.rememberLastLng = result.lng;
     await handleDataChangeNow(userDataStore.value);
+    (userDataStore.value as any).ignoreAutoDebounceSave = false;
     redirectToList();
 }
 

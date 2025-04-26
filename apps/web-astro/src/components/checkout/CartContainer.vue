@@ -12,6 +12,7 @@ import { slugify } from "@lib/utils/slugify";
 import SelectedInfo from "./SelectedInfo.vue";
 import { ChevronLeft } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 onMounted(async () => {
     await waitUntilUserDataReady();
@@ -56,8 +57,15 @@ const currentPaymentMethod = ref('');
 
             <PaymentMethods v-model="currentPaymentMethod" />
 
-            <CartView :current-payment-method="currentPaymentMethod"
-                      :is-collapsed="true" />
+            <Card>
+                <CardHeader>
+                    <CardTitle></CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <CartView :current-payment-method="currentPaymentMethod"
+                              :is-collapsed="true" />
+                </CardContent>
+            </Card>
 
         </div>
     </div>

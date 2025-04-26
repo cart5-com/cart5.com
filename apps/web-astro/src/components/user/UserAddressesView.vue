@@ -61,6 +61,7 @@ async function selectAddress(address: AddressType) {
     userDataStore.value.userData!.rememberLastLat = address.lat || null;
     userDataStore.value.userData!.rememberLastLng = address.lng || null;
     await handleDataChangeNow(userDataStore.value);
+    (userDataStore.value as any).ignoreAutoDebounceSave = false;
     emit('selectAddress', address);
 }
 
@@ -78,18 +79,15 @@ function newAddress() {
                 lng: userDataStore.value.userData?.rememberLastLng || 0,
             },
         },
-        onSuccess: (address) => {
+        onSuccess: async (address) => {
             if (!userDataStore.value.userData?.addresses) {
                 userDataStore.value.userData!.addresses = {};
             }
             address.lastUpdatedTS = Date.now();
+            (userDataStore.value as any).ignoreAutoDebounceSave = true;
             userDataStore.value.userData!.addresses![address.addressId] = address;
-            userDataStore.value.userData!.rememberLastAddressId = address.addressId;
-            userDataStore.value.userData!.rememberLastAddress = address.address1;
-            userDataStore.value.userData!.rememberLastCountry = address.country;
-            userDataStore.value.userData!.rememberLastLat = address.lat || null;
-            userDataStore.value.userData!.rememberLastLng = address.lng || null;
             userDataStore.value.userData!.rememberLastNickname = userDataStore.value.userData!.rememberLastNickname || address.nickname || null;
+            await selectAddress(address);
         }
     })
 }
