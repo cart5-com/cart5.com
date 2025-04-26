@@ -6,14 +6,11 @@ import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
 import type { OrderType } from "@lib/types/orderType";
 import UserAddressesView from "../user/UserAddressesView.vue";
-import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
-// import UserAddressForm from "../user/UserAddressForm.vue";
-// import { type AddressType } from "@lib/zod/userAddressSchema";
 import { onMounted } from "vue";
+import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
-// import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
-const orderType = window.orderType;
 
+const orderType = window.orderType;
 const createPageUrl = (orderType: OrderType) => {
     const url = new URL(window.location.href);
     if (orderType) url.searchParams.set("order-type", orderType);
@@ -22,16 +19,14 @@ const createPageUrl = (orderType: OrderType) => {
 
 onMounted(async () => {
     setTimeout(async () => {
-        // TODO: check user has a verified phone number
-        // const pageUrl = getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME)
-        // showPhoneValidationForm(pageUrl)
-
-        // const result = await geocode(userDataStore.value.userData?.rememberLastAddress || '', userDataStore.value.userData?.rememberLastCountry || '')
-        // console.log(result.data as google.maps.GeocoderResponse);
+        if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
+            showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
+        }
     }, 1000);
 })
 
-
+const offersDelivery = window.storeData?.offersDelivery ?? false;
+const offersPickup = window.storeData?.offersPickup ?? false;
 
 </script>
 
@@ -46,30 +41,22 @@ onMounted(async () => {
             <div class="max-w-2xl mx-auto">
                 <UserAddressesView />
             </div>
-            <!-- <UserAddressForm @close="(v) => {
-                console.log('complete', v);
-            }"
-                             :address="{
-                                country: userDataStore.userData?.rememberLastCountry || '',
-                                address1: userDataStore.userData?.rememberLastAddress || '',
-                                lat: userDataStore.userData?.rememberLastLat || 0,
-                                lng: userDataStore.userData?.rememberLastLng || 0,
-                            }"
-                             :is-edit="true" /> -->
-
 
             <StorePageAddressWidget />
 
+            <!-- // TODO: CHECK SUPPORTED ORDER TYPES VALIDATION HERE (delivery, pickup) -->
             <div
-                 class="bg-muted text-muted-foreground my-4 grid w-fit min-w-48 grid-cols-2 items-center justify-center rounded-lg p-1">
+                 class="bg-muted text-muted-foreground my-4 grid w-fit grid-cols-2 items-center justify-center rounded-lg p-1">
                 <Button variant="ghost"
                         as="a"
+                        v-if="offersDelivery"
                         :class="orderType === 'delivery' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''"
                         :href="createPageUrl('delivery')">
                     Delivery
                 </Button>
                 <Button variant="ghost"
                         as="a"
+                        v-if="offersPickup"
                         :class="orderType === 'pickup' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''"
                         :href="createPageUrl('pickup')">
                     Pickup

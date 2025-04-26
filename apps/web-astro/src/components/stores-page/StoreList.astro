@@ -36,7 +36,7 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 </script>
 <script>
 	import { isUserDataReady, ON_USER_DATA_READY } from "@web-astro/stores/UserData.store";
-	import { isOpenNow } from "@lib/utils/isOpenNow";
+	import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 	import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 	import { userDataStore } from "@web-astro/stores/UserData.store";
 	import type { OrderType } from "@lib/types/orderType";
@@ -74,18 +74,8 @@ const { stores, measure = "km", orderType = "delivery" } = Astro.props;
 			const jsonUrl = `https://${import.meta.env.PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST}/store-data-open-hours/${storeId}.json`;
 			const response = await fetch(jsonUrl);
 			const json = await response.json();
-
 			if (json) {
-				const openHours = json;
-				let weeklyHours = openHours?.defaultOpenHours;
-
-				if (orderType === "delivery" && openHours?.deliveryHours?.isActive) {
-					weeklyHours = openHours?.deliveryHours;
-				} else if (orderType === "pickup" && openHours?.pickupHours?.isActive) {
-					weeklyHours = openHours?.pickupHours;
-				}
-
-				isOpen = isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
+				isOpen = isStoreOpenNow(orderType, json);
 			}
 		} catch (e) {
 			// Ignore error

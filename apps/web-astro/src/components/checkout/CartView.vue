@@ -2,7 +2,7 @@
 import { userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
-import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info } from "lucide-vue-next";
+import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info, Moon, MapPinOff } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -42,11 +42,9 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import PaymentMethods from './PaymentMethods.vue';
+import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
-// TODO: OPEN HOURS VALIDATION HERE
-// TODO: CHECK SUPPORTED ORDER TYPES VALIDATION HERE (delivery, pickup)
-// TODO: CRUD verified phone numbers
-// TODO: CRUD address for delivery only/ no address required for pickup
+const isStoreOpen = isStoreOpenNow(window.orderType, window.storeData?.openHours ?? null);
 
 const currentPaymentMethod = ref('');
 
@@ -256,11 +254,6 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                         {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
                     </span>
                 </div>
-
-                <div class=" p-2 bg-destructive text-destructive-foreground"
-                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderType === 'delivery'">
-                    Out of delivery zone
-                </div>
                 <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
                      v-if="subTotalWithDeliveryAndServiceFees.bestDeliveryZone">
                     <span class="">
@@ -325,6 +318,18 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                 </div>
 
                 <PaymentMethods v-model="currentPaymentMethod" />
+
+                <div class=" p-2 bg-destructive text-destructive-foreground"
+                     v-if="!isStoreOpen">
+                    <Moon class="mr-1 inline-block" />
+                    Store is closed now
+                </div>
+
+                <div class=" p-2 bg-destructive text-destructive-foreground"
+                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderType === 'delivery'">
+                    <MapPinOff class="mr-1 inline-block" />
+                    Out of delivery zone
+                </div>
 
                 <div
                      class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">

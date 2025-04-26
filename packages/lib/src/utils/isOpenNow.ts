@@ -1,3 +1,4 @@
+import type { OrderType } from '@lib/types/orderType';
 import type { WeeklySchedule, OpenHours, WeeklyHours } from '@lib/zod/weeklyScheduleSchema'
 import { DateTime } from 'luxon'
 
@@ -8,6 +9,27 @@ export const getCurrentTimeNow = function (
         timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
     return DateTime.now().setZone(timezone)
+}
+
+export const isStoreOpenNow = function (
+    orderType: OrderType,
+    openHours: {
+        timezone: string | null;
+        defaultOpenHours: WeeklyHours | null;
+        deliveryHours: WeeklyHours | null;
+        pickupHours: WeeklyHours | null;
+    } | null
+) {
+    if (!openHours) {
+        return false;
+    }
+    let weeklyHours = openHours?.defaultOpenHours;
+    if (orderType === "delivery" && openHours?.deliveryHours?.isActive) {
+        weeklyHours = openHours?.deliveryHours;
+    } else if (orderType === "pickup" && openHours?.pickupHours?.isActive) {
+        weeklyHours = openHours?.pickupHours;
+    }
+    return isOpenNow(openHours?.timezone ?? null, weeklyHours ?? null);
 }
 
 
