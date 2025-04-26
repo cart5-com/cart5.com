@@ -28,7 +28,7 @@ const selectAddress = () => {
                     <UserAddressesView @selectAddress="selectAddress" />
                 </div>
                 <div v-if="currentOrderType === 'pickup' && userDataStore.userData">
-                    <div class="grid gap-3">
+                    <div class="grid gap-3 my-10">
                         <Label for="nickname-input">Your Pickup Name/Nickname</Label>
                         <Input id="nickname-input"
                                placeholder="Enter a name/nickname for your pickup"
@@ -42,7 +42,7 @@ const selectAddress = () => {
                         :disabled="!userDataStore.userData?.rememberLastAddressId"
                         @click="selectAddress"
                         class="w-full">
-                    Checkout
+                    Confirm
                 </Button>
             </div>
         </div>

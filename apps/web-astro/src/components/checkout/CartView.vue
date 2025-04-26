@@ -148,6 +148,7 @@ const offersPickup = window.storeData?.offersPickup ?? false;
         <div class="flex flex-col gap-2 w-full mx-auto">
             <div class="flex-1"
                  v-if="currentCart && currentCart.items">
+
                 <div v-for="(item, index) in currentCart?.items"
                      class="border-t border-muted-foreground pb-2"
                      :key="index">

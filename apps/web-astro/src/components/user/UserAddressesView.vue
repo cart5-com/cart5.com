@@ -145,15 +145,12 @@ onMounted(() => {
 
 <template>
     <div class="space-y-6">
-        <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium">My Addresses</h3>
-            <Button variant="outline"
-                    size="sm"
-                    @click="newAddress">
-                <PlusCircle class="h-4 w-4 mr-2" />
-                Add Address
-            </Button>
-        </div>
+        <Button variant="outline"
+                class="w-full"
+                @click="newAddress">
+            <PlusCircle class="h-4 w-4 mr-2" />
+            Add New Address
+        </Button>
 
         <div v-if="Object.keys(addresses).length === 0"
              class="text-center py-6">
@@ -165,7 +162,7 @@ onMounted(() => {
             <Card v-for="address in Object.values(addresses)"
                   :key="address.addressId"
                   class="shadow-sm transition-all cursor-pointer"
-                  :class="{ 'ring-2 ring-primary': selectedAddressId === address.addressId }"
+                  :class="{ 'border-primary border-2': selectedAddressId === address.addressId }"
                   @click="selectAddress(address)">
                 <CardHeader class="pb-2">
                     <CardTitle class="flex items-center gap-2 text-base"

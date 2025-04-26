@@ -1,20 +1,28 @@
 <script setup lang="ts">
-import { currentOrderType, userDataStore } from "../../stores/UserData.store";
+import { currentOrderType, userDataStore, waitUntilUserDataReady } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
-import UserAddressesView from "../user/UserAddressesView.vue";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 import OrderTypeWidget from "../OrderTypeWidget.vue";
 import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
-import { genCartId } from "@web-astro/stores/UserDataCartHelpers";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import SelectedInfo from "./SelectedInfo.vue";
+import { ChevronLeft } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
 
 onMounted(async () => {
+    await waitUntilUserDataReady();
+
+    // Check if delivery is selected but no address is set
+    if (currentOrderType.value === 'delivery' && !userDataStore.value.userData?.rememberLastAddressId) {
+        // Redirect to confirm info page
+        window.location.href = BASE_LINKS.CONFIRM_INFO(window.storeData?.id!, slugify(window.storeData?.name!));
+        return;
+    }
+
     setTimeout(async () => {
         if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
             showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
@@ -22,12 +30,9 @@ onMounted(async () => {
     }, 1000);
 })
 
-
+const storeId = window.storeData?.id;
+const storeName = window.storeData?.name;
 const currentPaymentMethod = ref('');
-const currentCart = computed(() => {
-    return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
-});
-
 </script>
 
 <template>
@@ -37,32 +42,20 @@ const currentCart = computed(() => {
             <UserMenu />
         </div>
         <div v-else>
+            <Button variant="outline"
+                    as="a"
+                    :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
+                    class="w-full">
+                <ChevronLeft class="inline-block mr-2" />
+                Back to store
+            </Button>
             <OrderTypeWidget />
 
-            <!-- TODO: only show no need to manage them here -->
-            <!-- <div class="max-w-2xl mx-auto my-4">
-                <div v-if="currentOrderType === 'delivery'">
-                    <UserAddressesView />
-                    <StorePageAddressWidget />
-                </div>
-                <div v-if="currentOrderType === 'pickup' && userDataStore.userData">
-                    <div class="grid gap-3">
-                        <Label for="nickname-input">Pickup Name/Nickname</Label>
-                        <Input id="nickname-input"
-                               placeholder="Enter a name/nickname for your pickup order"
-                               v-model="userDataStore.userData.rememberLastNickname!" />
-                    </div>
-                </div>
-            </div> -->
+            <!-- Display selected address or pickup name -->
+            <SelectedInfo />
 
             <PaymentMethods v-model="currentPaymentMethod" />
 
-            <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">
-                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), currentOrderType)"
-                   class="w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
-                    {{ currentCart?.storeName }}
-                </a>
-            </div>
             <CartView :current-payment-method="currentPaymentMethod" />
 
         </div>
