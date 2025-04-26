@@ -1,21 +1,13 @@
 <script setup lang="ts">
-import { userDataStore } from "../../stores/UserData.store";
+import { orderCurrentType, setOrderCurrentType, userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
 import StorePageAddressWidget from "../store-page/StorePageAddressWidget.vue";
 import { Button } from "@/components/ui/button";
-import type { OrderType } from "@lib/types/orderType";
 import UserAddressesView from "../user/UserAddressesView.vue";
 import { onMounted } from "vue";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
-
-const orderType = window.orderType;
-const createPageUrl = (orderType: OrderType) => {
-    const url = new URL(window.location.href);
-    if (orderType) url.searchParams.set("order-type", orderType);
-    return url.toString();
-}
 
 onMounted(async () => {
     setTimeout(async () => {
@@ -48,17 +40,15 @@ const offersPickup = window.storeData?.offersPickup ?? false;
             <div
                  class="bg-muted text-muted-foreground my-4 grid w-fit grid-cols-2 items-center justify-center rounded-lg p-1">
                 <Button variant="ghost"
-                        as="a"
-                        v-if="offersDelivery"
-                        :class="orderType === 'delivery' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''"
-                        :href="createPageUrl('delivery')">
+                        @click="setOrderCurrentType('delivery')"
+                        :disabled="!offersDelivery"
+                        :class="orderCurrentType === 'delivery' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''">
                     Delivery
                 </Button>
                 <Button variant="ghost"
-                        as="a"
-                        v-if="offersPickup"
-                        :class="orderType === 'pickup' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''"
-                        :href="createPageUrl('pickup')">
+                        @click="setOrderCurrentType('pickup')"
+                        :disabled="!offersPickup"
+                        :class="orderCurrentType === 'pickup' ? 'bg-background text-foreground shadow hover:bg-background/80' : ''">
                     Pickup
                 </Button>
             </div>

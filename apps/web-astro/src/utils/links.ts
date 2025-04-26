@@ -7,7 +7,7 @@ export const BASE_LINKS = {
     STORE: function (id: string, slug?: string, orderType?: string) {
         return `/store/${id}${slug ? `/${slug}` : ""}${orderType ? `?order-type=${orderType}` : ""}`;
     },
-    CHECKOUT: function (id: string, slug?: string, orderType?: string) {
-        return `/checkout/${id}${slug ? `/${slug}` : ""}${orderType ? `?order-type=${orderType}` : ""}`;
+    CHECKOUT: function (id: string, slug?: string) {
+        return `/checkout/${id}${slug ? `/${slug}` : ""}`;
     },
 }

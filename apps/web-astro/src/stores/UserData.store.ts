@@ -1,5 +1,5 @@
 import { authGlobalApiClient } from "@api-client/auth_global";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { ResType } from "@api-client/typeUtils";
 import { toast } from "@/ui-plus/sonner";
 import { deepMerge } from "@lib/utils/deepMerge";
@@ -7,6 +7,7 @@ import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { isBot } from "@lib/clientUtils/isBot";
 import { cleanEmptyProps } from "@lib/utils/cleanEmptyProps";
+import type { OrderType } from "@lib/types/orderType";
 /*
 loadUserData() is called at initialization:
 Fetches user data from the server
@@ -48,6 +49,7 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
     "rememberLastAddress" |
     "rememberLastCountry" |
     "rememberLastAddressId" |
+    "rememberLastOrderType" |
     "rememberLastNickname" |
     "addresses" |
     "carts"
@@ -66,6 +68,7 @@ const DEFAULT_USERLOCAL_DATA: AnonUserDataType = {
     rememberLastAddress: null,
     rememberLastCountry: null,
     rememberLastAddressId: null,
+    rememberLastOrderType: null,
     rememberLastNickname: null,
     addresses: {},
     carts: {},
@@ -121,6 +124,7 @@ const mergedUserData = (
         rememberLastAddress: serverUserData.rememberLastAddress,
         rememberLastCountry: serverUserData.rememberLastCountry,
         rememberLastAddressId: serverUserData.rememberLastAddressId,
+        rememberLastOrderType: serverUserData.rememberLastOrderType,
         rememberLastNickname: serverUserData.rememberLastNickname,
         addresses: serverUserData.addresses,
         carts: {},
@@ -179,6 +183,7 @@ const loadUserData = async () => {
                 rememberLastLat: true,
                 rememberLastLng: true,
                 rememberLastAddressId: true,
+                rememberLastOrderType: true,
                 rememberLastNickname: true,
                 addresses: true,
                 carts: true,
@@ -227,10 +232,21 @@ const loadUserData = async () => {
         setTimeout(() => {
             window.dispatchEvent(new Event(ON_USER_DATA_READY));
             isUserDataReady = true;
+            if (window.orderType && userDataStore.value.userData?.rememberLastOrderType !== window.orderType) {
+                setOrderCurrentType(window.orderType);
+            }
         });
     }
 }
 
+
+export const orderCurrentType = computed(() => {
+    return userDataStore.value.userData?.rememberLastOrderType ?? "delivery";
+});
+
+export const setOrderCurrentType = (orderType: OrderType) => {
+    userDataStore.value.userData!.rememberLastOrderType = orderType;
+}
 
 
 export const handleDataChange = (newVal: UserDataStoreType

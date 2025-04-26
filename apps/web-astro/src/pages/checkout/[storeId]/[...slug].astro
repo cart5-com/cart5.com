@@ -2,11 +2,9 @@
 import BaseLayout from "@web-astro/layout/BaseLayout.astro";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
 import CartContainer from "@web-astro/components/checkout/CartContainer.vue";
-import type { OrderType } from "@lib/types/orderType";
 import { getSupportTeamServiceFee_Service, getWebsiteTeamServiceFee_Service } from "@db/services/website.service";
 
 const { slug, storeId } = Astro.params;
-const orderType: OrderType = Astro.url.searchParams.get("order-type") === "pickup" ? "pickup" : "delivery";
 if (!storeId) {
 	throw new Error("Store ID is required");
 }
@@ -35,13 +33,11 @@ if (!store.menu?.menuRoot) {
 		is:inline
 		define:vars={{
 			storeData: store,
-			orderType: orderType,
 			supportTeamServiceFee: supportTeamServiceFee,
 			websiteTeamServiceFee: websiteTeamServiceFee
 		}}
 	>
 		window.storeData = storeData;
-		window.orderType = orderType;
 		window.supportTeamServiceFee = supportTeamServiceFee;
 		window.websiteTeamServiceFee = websiteTeamServiceFee;
 	</script>

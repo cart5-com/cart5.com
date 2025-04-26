@@ -8,6 +8,7 @@ import type { Cart } from "@lib/zod/cartItemState";
 import { Badge } from "@/components/ui/badge";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { orderCurrentType } from "@web-astro/stores/UserData.store";
 
 const getTotalItem = (cart: Cart) => {
   return cart.items?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -16,8 +17,6 @@ const getTotalItem = (cart: Cart) => {
 const removeCart = (storeId: string) => {
   clearCartByStoreId(storeId);
 };
-
-const orderType = window.orderType;
 
 </script>
 
@@ -30,7 +29,7 @@ const orderType = window.orderType;
            class="flex flex-row gap-2 items-center rounded-md border p-2">
         <Button as="a"
                 variant="ghost"
-                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''), orderType)}#open-cart`"
+                :href="`${BASE_LINKS.STORE(cart.storeId ?? '', slugify(cart.storeName ?? ''), orderCurrentType)}#open-cart`"
                 class="grid grid-cols-[auto_1fr_auto] gap-2 flex-1">
           <ShoppingCart class="flex-shrink-0" />
           <span class="truncate">

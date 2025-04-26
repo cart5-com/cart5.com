@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, computed } from 'vue';
 import { Banknote, CreditCard, Calculator } from 'lucide-vue-next';
 import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema'
 import {
@@ -14,6 +14,7 @@ import {
     RadioGroupItem,
 } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { orderCurrentType } from '@web-astro/stores/UserData.store';
 
 const props = defineProps<{
     modelValue: string
@@ -29,23 +30,19 @@ const selectedPaymentMethod = useVModel(props, 'modelValue', emits, {
     deep: false,
 })
 
-// console.log("window.storeData?.paymentMethods", window.storeData?.paymentMethods);
-// console.log("window.orderType", window.orderType);
-const orderType = window.orderType || 'pickup';
-
 // Check if Stripe is enabled
 const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled || false;
 
 // Payment methods handling
-const availablePaymentMethods = ref<{
-    id: string;
-    name: string;
-    description?: string;
-    icon?: any;
-}[]>([]);
+// const availablePaymentMethods = ref<{
+//     id: string;
+//     name: string;
+//     description?: string;
+//     icon?: any;
+// }[]>([]);
 
 // Get the appropriate payment methods based on order type
-const getPaymentMethods = () => {
+const availablePaymentMethods = computed(() => {
     // console.log("getPaymentMethods window.storeData?.stripeSettings", window.storeData?.stripeSettings);
     // const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled;
     // const stripeRatePerOrder = window.storeData?.stripeSettings?.stripeRatePerOrder;
@@ -58,11 +55,11 @@ const getPaymentMethods = () => {
         return [];
     }
 
-    if (orderType === 'delivery') {
+    if (orderCurrentType.value === 'delivery') {
         paymentMethods = window.storeData.paymentMethods.deliveryPaymentMethods?.isActive ?
             window.storeData.paymentMethods.deliveryPaymentMethods || null :
             window.storeData.paymentMethods.defaultPaymentMethods || null;
-    } else if (orderType === 'pickup') {
+    } else if (orderCurrentType.value === 'pickup') {
         paymentMethods = window.storeData.paymentMethods.pickupPaymentMethods?.isActive ?
             window.storeData.paymentMethods.pickupPaymentMethods || null :
             window.storeData.paymentMethods.defaultPaymentMethods || null;
@@ -86,7 +83,7 @@ const getPaymentMethods = () => {
         methods.push({
             id: 'cash',
             name: 'Cash',
-            description: orderType === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
+            description: orderCurrentType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
             icon: Banknote
         });
     }
@@ -95,7 +92,7 @@ const getPaymentMethods = () => {
         methods.push({
             id: 'cardTerminal',
             name: 'Card',
-            description: orderType === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
+            description: orderCurrentType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
             icon: Calculator
         });
     }
@@ -113,11 +110,11 @@ const getPaymentMethods = () => {
     }
 
     return methods;
-};
+});
 
 onBeforeMount(() => {
-    availablePaymentMethods.value = getPaymentMethods();
     if (availablePaymentMethods.value.length > 0) {
+        // choose the first payment method by default // TODO: should we save this in user data?
         selectedPaymentMethod.value = availablePaymentMethods.value[0]?.id || '';
     }
 

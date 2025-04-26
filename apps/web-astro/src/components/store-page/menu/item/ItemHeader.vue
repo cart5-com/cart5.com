@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type { Item } from "@lib/zod/menuRootSchema";
-import type { OrderType } from "@lib/types/orderType";
+import { orderCurrentType } from "@web-astro/stores/UserData.store";
 
 defineProps<{
     currentItem?: Item
 }>()
 
-
-const orderType: OrderType = window.orderType
 
 </script>
 
@@ -24,7 +22,7 @@ const orderType: OrderType = window.orderType
         </span>
 
         <div class="cursor-text flex">
-            {{ orderType === "pickup" && currentItem.pickupPrc ? currentItem.pickupPrc : currentItem.prc || '' }}
+            {{ orderCurrentType === "pickup" && currentItem.pickupPrc ? currentItem.pickupPrc : currentItem.prc || '' }}
         </div>
 
     </div>

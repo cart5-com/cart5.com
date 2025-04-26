@@ -121,7 +121,7 @@ function getMapUrl(address: AddressType): string {
         //     `key=${import.meta.env.PUBLIC_GMAPS_EMBED_API_KEY}&destination=${address.lat},${address.lng}` +
         //     `&origin=${window.storeData?.address?.lat},${window.storeData?.address?.lng}`;
         return `https://www.google.com/maps/embed/v1/place?` +
-            `key=${import.meta.env.PUBLIC_GMAPS_EMBED_API_KEY}&q=${address.lat},${address.lng}&zoom=17`;
+            `key=${import.meta.env.PUBLIC_GMAPS_EMBED_API_KEY}&q=${address.lat},${address.lng}&zoom=16`;
     }
     return '';
 }
@@ -185,10 +185,10 @@ onMounted(() => {
                     <div v-if="address.lat && address.lng"
                          class="mt-3 overflow-hidden rounded-lg">
                         <iframe width="100%"
-                                height="1500"
+                                height="194"
                                 class="rounded-lg"
                                 frameborder="0"
-                                style="border:0; pointer-events: none; zoom: 0.1; transform: scale(10);
+                                style="border:0; pointer-events: none; zoom: 0.6; transform: scale(1.5);
 transform-origin: center center;"
                                 referrerpolicy="no-referrer-when-downgrade"
                                 allowfullscreen="false"

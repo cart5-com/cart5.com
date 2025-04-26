@@ -6,6 +6,8 @@ import {
 } from "@lib/zod/cartItemState";
 import { type AddressesType, addressesSchema } from "@lib/zod/userAddressSchema";
 import { z } from "zod";
+import { ORDER_TYPE } from "@lib/types/orderType";
+
 export const userDataTable = sqliteTable("user_data", {
     ...autoCreatedUpdated,
     userId: text("user_id")
@@ -14,6 +16,8 @@ export const userDataTable = sqliteTable("user_data", {
     rememberLastLng: real("remember_last_lng"),
     rememberLastAddress: text("remember_last_address"),
     rememberLastCountry: text("remember_last_country"),
+
+    rememberLastOrderType: text("remember_last_order_type", { enum: ORDER_TYPE }),
 
     rememberLastNickname: text("remember_last_nickname"),
 

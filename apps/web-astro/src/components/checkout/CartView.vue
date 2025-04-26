@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userDataStore } from "../../stores/UserData.store";
+import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
 import { Minus, Trash2, MoreVerticalIcon, ListX, Pencil, Info, Moon, MapPinOff } from "lucide-vue-next";
@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/drawer'
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
-import type { OrderType } from "@lib/types/orderType";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
@@ -44,7 +43,10 @@ import {
 import PaymentMethods from './PaymentMethods.vue';
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
-const isStoreOpen = isStoreOpenNow(window.orderType, window.storeData?.openHours ?? null);
+
+const isStoreOpen = computed(() => {
+    return isStoreOpenNow(orderCurrentType.value, window.storeData?.openHours ?? null);
+});
 
 const currentPaymentMethod = ref('');
 
@@ -107,17 +109,16 @@ const removeAllItemsFromCart = () => {
     clearCartByStoreId(currentCart.value?.storeId!);
 }
 
-const orderType: OrderType = window.orderType
 
 const cartTotals = computed(() => {
-    return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, orderType);
+    return calculateCartTotalPrice(currentCart.value, menuRoot ?? undefined, taxSettings, orderCurrentType.value);
 });
 
 const itemPrices = computed(() => {
     if (!currentCart.value?.items || !menuRoot) return [];
 
     return currentCart.value.items.map(item =>
-        calculateCartItemPrice(item, menuRoot, taxSettings, window.orderType)
+        calculateCartItemPrice(item, menuRoot, taxSettings, orderCurrentType.value)
     );
 });
 
@@ -127,7 +128,7 @@ const getPrice = (itemIndex: number) => {
 
 const subTotalWithDeliveryAndServiceFees = computed(() => {
     return calculateSubTotal(
-        currentCart.value, menuRoot ?? undefined, taxSettings, orderType,
+        currentCart.value, menuRoot ?? undefined, taxSettings, orderCurrentType.value,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
@@ -149,7 +150,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
         <div class="flex flex-col gap-2 max-w-lg w-lg mx-auto">
             <!-- relative sticky top-0 z-40 -->
             <div class="bg-card text-card-foreground max-w-full flex justify-between items-center">
-                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), orderType)"
+                <a :href="BASE_LINKS.STORE(currentCart?.storeId!, slugify(currentCart?.storeName!), orderCurrentType)"
                    class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
                     {{ currentCart?.storeName }}
                 </a>
@@ -326,7 +327,7 @@ const subTotalWithDeliveryAndServiceFees = computed(() => {
                 </div>
 
                 <div class=" p-2 bg-destructive text-destructive-foreground"
-                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderType === 'delivery'">
+                     v-if="!subTotalWithDeliveryAndServiceFees.bestDeliveryZone && orderCurrentType === 'delivery'">
                     <MapPinOff class="mr-1 inline-block" />
                     Out of delivery zone
                 </div>

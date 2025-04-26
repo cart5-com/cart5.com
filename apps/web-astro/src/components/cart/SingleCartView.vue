@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { userDataStore } from "../../stores/UserData.store";
+// TODO: remove this component use CartView.vue instead
+import { orderCurrentType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, clearCartByStoreId, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, onMounted, ref } from "vue";
 import { Minus, Trash2, X, Plus, MoreVerticalIcon, ListX, Pencil } from "lucide-vue-next";
@@ -28,7 +29,6 @@ import {
 } from '@/components/ui/drawer'
 import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
-import type { OrderType } from "@lib/types/orderType";
 import { getBestDeliveryZone } from "@lib/utils/getBestDeliveryZone";
 import { calculateFeeTax } from "@lib/utils/calculateFeeTax";
 import { BASE_LINKS } from "@web-astro/utils/links";
@@ -62,15 +62,13 @@ const removeAllItemsFromCart = () => {
   clearCartByStoreId(currentCart.value?.storeId!);
 }
 
-const orderType: OrderType = window.orderType
-
 const cartTotals = computed(() => {
   if (!currentCart.value || !menuRoot.value) return { itemTotal: "$0.00", tax: "$0.00" };
-  return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderType);
+  return calculateCartTotalPrice(currentCart.value, menuRoot.value, taxSettings, orderCurrentType.value);
 });
 
 const getPrice = (item: CartItem) => {
-  return calculateCartItemPrice(item, menuRoot.value!, taxSettings, window.orderType)
+  return calculateCartItemPrice(item, menuRoot.value!, taxSettings, orderCurrentType.value)
 }
 
 const bestDeliveryZone = computed(() => {
@@ -213,7 +211,7 @@ const deliveryFeeTax = computed(() => {
         </div>
 
         <div class="flex justify-between items-center px-1"
-             v-if="orderType === 'delivery'">
+             v-if="orderCurrentType === 'delivery'">
           <span class="">
             <details>
               <summary>
@@ -232,7 +230,7 @@ const deliveryFeeTax = computed(() => {
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
           <Button variant="default"
                   as="a"
-                  :href="BASE_LINKS.CHECKOUT(currentCart?.storeId!, slugify(currentCart?.storeName!), orderType)"
+                  :href="BASE_LINKS.CHECKOUT(currentCart?.storeId!, slugify(currentCart?.storeName!))"
                   class="w-full">
             Checkout
           </Button>

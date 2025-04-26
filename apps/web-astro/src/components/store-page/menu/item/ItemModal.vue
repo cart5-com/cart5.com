@@ -3,7 +3,7 @@ import { type ItemId } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
-import { computed, ref, watch, onMounted } from "vue";
+import { computed, ref } from "vue";
 import { toast } from "@/ui-plus/sonner";
 import {
     NumberField,
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
 import type { TaxSettings } from "@lib/zod/taxSchema";
+import { orderCurrentType } from "@web-astro/stores/UserData.store";
 
 const props = defineProps<{
     itemId?: ItemId,
@@ -36,16 +37,25 @@ const cartItem = ref<CartItem>(props.cartItem || {
     childrenState: [],
 })
 
-const cartItemTotalPrice = ref(0);
+// const cartItemTotalPrice = ref(0);
+// watch([cartItem, currentItem], () => {
+//     cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, orderCurrentType.value).itemTotal)
+// }, { deep: true })
+
+// onMounted(() => {
+//     cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, orderCurrentType.value).itemTotal)
+// })
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
-
-watch([cartItem, currentItem], () => {
-    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemTotal)
-}, { deep: true })
-
-onMounted(() => {
-    cartItemTotalPrice.value = roundTo2Decimals(calculateCartItemPrice(cartItem.value, window.storeData?.menu?.menuRoot!, taxSettings, window.orderType).itemTotal)
-})
+const cartItemTotalPrice = computed(() => {
+    return roundTo2Decimals(
+        calculateCartItemPrice(
+            cartItem.value,
+            window.storeData?.menu?.menuRoot!,
+            taxSettings,
+            orderCurrentType.value
+        ).itemTotal
+    );
+});
 
 
 const randomNumber = crypto.randomUUID()
