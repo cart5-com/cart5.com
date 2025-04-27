@@ -10,7 +10,6 @@ import { slugify } from "@lib/utils/slugify";
 import SelectedInfo from "./SelectedInfo.vue";
 import { ChevronLeft } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 // import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 
