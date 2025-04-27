@@ -42,7 +42,7 @@ const storeName = window.storeData?.name;
 
 <template>
     <a :href="BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!))">
-        <Card class="my-4">
+        <Card class="my-4 hover:bg-card/80">
             <CardContent class="p-4">
                 <div v-if="currentOrderType === 'delivery' && selectedAddress"
                      class="flex items-start gap-2 justify-between">

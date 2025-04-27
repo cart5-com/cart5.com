@@ -66,7 +66,7 @@ const storeName = window.storeData?.name;
 
             <PaymentMethods />
 
-            <Card>
+            <Card class="my-4">
                 <CardHeader>
                     <CardTitle></CardTitle>
                 </CardHeader>
