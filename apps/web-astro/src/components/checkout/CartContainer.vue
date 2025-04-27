@@ -39,18 +39,30 @@ const currentPaymentMethod = ref('');
 <template>
     <div class="max-w-lg mx-auto">
         <div v-if="!userDataStore.user">
-            Please login or register before checking out
-            <UserMenu />
-        </div>
-        <div v-else>
             <Button variant="outline"
                     as="a"
                     :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
-                    class="w-full">
+                    class="">
                 <ChevronLeft class="inline-block mr-2" />
                 Back to store
             </Button>
-            <OrderTypeWidget />
+            <div class="mt-8">
+                Please login or register before checking out
+            </div>
+            <UserMenu />
+        </div>
+        <div v-else>
+            <div class="flex justify-between items-center">
+                <Button variant="outline"
+                        as="a"
+                        :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
+                        class="w-full mr-4">
+                    <ChevronLeft class="inline-block mr-2" />
+                    Back to store
+                </Button>
+                <OrderTypeWidget />
+            </div>
+
 
             <!-- Display selected address or pickup name -->
             <SelectedInfo />

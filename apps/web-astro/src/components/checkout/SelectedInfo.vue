@@ -70,10 +70,7 @@ const storeName = window.storeData?.name;
                     <div class="flex items-start gap-2">
                         <User class="" />
                         <div>
-                            <h3 class="font-medium">Pickup Name/Nickname</h3>
-                            <p class="text-sm text-muted-foreground">{{ pickupNickname }}</p>
-                            <!-- <a 
-                       class="text-sm text-primary mt-2 inline-block">Change Pickup Name</a> -->
+                            <h3 class="font-medium">Pickup Name/Nickname: {{ pickupNickname }}</h3>
                         </div>
                     </div>
                     <Pencil class="inline-block ml-2" />
