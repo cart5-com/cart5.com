@@ -51,7 +51,7 @@ const storeName = window.storeData?.name;
                             <component
                                        :is="icons.find(icon => icon.name === selectedAddress?.icon)?.component || MapPin" />
                             <div>
-                                <h3 class="font-medium">{{ selectedAddress.label || 'Delivery Address' }}</h3>
+                                <h3 class="font-medium">{{ selectedAddress.label }}</h3>
                                 <p class="text-sm text-muted-foreground">{{ selectedAddress.address1 }}</p>
                                 <p v-if="selectedAddress.address2"
                                    class="text-sm text-muted-foreground">{{ selectedAddress.address2 }}</p>

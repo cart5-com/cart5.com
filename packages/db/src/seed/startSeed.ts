@@ -327,6 +327,14 @@ export const startSeed = async () => {
         whoPaysStripeFee: "CUSTOMER",
     });
 
+    await updateStoreStripeSettingsData_Service(`str_296_296_296`, {
+        stripeConnectAccountId: "acct_1RId8yGfFDgiaKRa", // stripe sandbox account
+        isStripeEnabled: true,
+        stripeRatePerOrder: 2.9,
+        stripeFeePerOrder: 0.30,
+        whoPaysStripeFee: "STORE",
+    });
+
     const flamesStore = storesByThush[4];
     await updateStore_Service(flamesStore!.id, {
         name: "Flames Store",

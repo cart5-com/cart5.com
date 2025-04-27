@@ -23,6 +23,23 @@ export const stripeAccount_Handler = async (c: Context<
         if (!stripeConnectAccountId) {
             // Create a Stripe Connect account
             const account = await stripe.accounts.create({
+                controller: {
+                    fees: {
+                        payer: 'account',
+                    },
+                    losses: {
+                        payments: 'stripe',
+                    },
+                    stripe_dashboard: {
+                        type: 'full',
+                    },
+                    requirement_collection: 'stripe',
+                },
+                // settings: {
+                //     invoices: {
+                //         hosted_payment_method_save: "never"
+                //     }  
+                // },
                 metadata: {
                     storeId,
                 },
