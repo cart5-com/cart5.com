@@ -118,6 +118,9 @@ const selectedPaymentMethod = computed(() => {
                            class="w-full p-4 hover:bg-card/80 cursor-pointer rounded-lg border bg-card text-card-foreground shadow-sm flex items-center justify-between">
                 <div>
                     <div class="font-normal">
+                        <h3 class="text-lg">
+                            Payment method
+                        </h3>
                         <div class="font-medium flex items-center">
                             <component :is="selectedPaymentMethod?.icon"
                                        v-if="selectedPaymentMethod?.icon"
