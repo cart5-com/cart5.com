@@ -1,0 +1,1 @@
+ALTER TABLE `user_data` ADD `remember_last_payment_method_id` text;

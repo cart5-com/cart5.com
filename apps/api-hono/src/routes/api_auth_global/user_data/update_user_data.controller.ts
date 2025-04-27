@@ -43,6 +43,8 @@ export const updateUserDataRoute = async (c: Context<
             }
         }
     }
+    // TODO: do not allow more than 30 carts remove oldest ones
+    // TODO: do not allow more than 30 addresses remove oldest ones
     return c.json({
         data: await updateUserData_Service(user!.id, data),
         error: null as ErrorType

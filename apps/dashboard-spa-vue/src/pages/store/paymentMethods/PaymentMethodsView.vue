@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Check, Banknote, CreditCard, Phone, Landmark, Calculator } from 'lucide-vue-next';
+import { Loader2, Banknote, CreditCard, Phone, Landmark, Calculator } from 'lucide-vue-next';
 import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
@@ -15,29 +15,16 @@ import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 pageTitle.value = 'Payment Methods';
 
 const defaultPaymentMethods = {
-    isActive: true,
+    isActive: false,
     cash: false,
     cardTerminal: false,
     customMethods: [],
 };
 
 const isLoading = ref(false);
-const defaultMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify(defaultPaymentMethods)));
+const defaultMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: true })));
 const deliveryMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
 const pickupMethods = ref<PhysicalPaymentMethods>(JSON.parse(JSON.stringify({ ...defaultPaymentMethods, isActive: false })));
-
-let ignoreAutoSave = true;
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-watch([defaultMethods, deliveryMethods, pickupMethods], () => {
-    if (ignoreAutoSave) return;
-    if (debounceTimer) {
-        clearTimeout(debounceTimer);
-    }
-    debounceTimer = setTimeout(() => {
-        savePaymentMethods();
-    }, 3000);
-}, { deep: true });
 
 const loadData = async () => {
     isLoading.value = true;
@@ -61,18 +48,21 @@ const loadData = async () => {
         }
 
         if (data) {
-            defaultMethods.value = data.defaultPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            deliveryMethods.value = data.deliveryPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
-            pickupMethods.value = data.pickupPaymentMethods || JSON.parse(JSON.stringify(defaultPaymentMethods));
+            if (data.defaultPaymentMethods) {
+                defaultMethods.value = data.defaultPaymentMethods
+            }
+            if (data.deliveryPaymentMethods) {
+                deliveryMethods.value = data.deliveryPaymentMethods
+            }
+            if (data.pickupPaymentMethods) {
+                pickupMethods.value = data.pickupPaymentMethods
+            }
         }
     } catch (err) {
         console.error('Error loading payment methods:', err);
         toast.error('Failed to load payment methods');
     } finally {
         isLoading.value = false;
-        setTimeout(() => {
-            ignoreAutoSave = false;
-        }, 1000);
     }
 };
 
@@ -112,12 +102,11 @@ onMounted(() => {
 <template>
     <div class="space-y-16 max-w-md mx-auto">
         <Button @click="savePaymentMethods"
-                variant="outline"
-                :disabled="isLoading">
-            <Loader2 class="w-4 h-4 animate-spin"
-                     v-if="isLoading" />
-            Auto save
-            <Check />
+                :disabled="isLoading"
+                class="w-full">
+            <Loader2 v-if="isLoading"
+                     class="mr-2 h-4 w-4 animate-spin" />
+            Save Changes
         </Button>
 
         <Card>

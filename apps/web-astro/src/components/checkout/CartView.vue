@@ -42,7 +42,6 @@ import {
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
 const props = defineProps<{
-    currentPaymentMethod?: string;
     isCollapsed?: boolean;
 }>();
 
@@ -80,7 +79,7 @@ const cartBreakdown = computed(() => {
         calculationType,
         tolerableServiceFeeRate,
         offerDiscountIfPossible,
-        props.currentPaymentMethod === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
+        userDataStore.value.userData?.rememberLastPaymentMethodId === "stripe" && (window.storeData?.stripeSettings?.isStripeEnabled ?? false),
         {
             name: "Stripe Fee",
             ratePerOrder: window.storeData?.stripeSettings?.stripeRatePerOrder ?? 0,

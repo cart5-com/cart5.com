@@ -141,6 +141,13 @@
       "when": 1745626226701,
       "tag": "0019_familiar_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1745713540279,
+      "tag": "0020_clumsy_abomination",
+      "breakpoints": true
     }
   ]
 }

@@ -301,7 +301,19 @@ export const startSeed = async () => {
                 cash: true,
                 cardTerminal: true,
                 customMethods: []
-            }
+            },
+            deliveryPaymentMethods: {
+                isActive: false,
+                cash: false,
+                cardTerminal: false,
+                customMethods: []
+            },
+            pickupPaymentMethods: {
+                isActive: false,
+                cash: false,
+                cardTerminal: false,
+                customMethods: []
+            },
         })
 
         storesByThush.push(store);

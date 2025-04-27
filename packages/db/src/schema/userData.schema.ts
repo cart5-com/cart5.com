@@ -24,6 +24,8 @@ export const userDataTable = sqliteTable("user_data", {
     rememberLastAddressId: text("remember_last_address_id"),
     addresses: text("addresses", { mode: 'json' }).$type<AddressesType>(),
 
+    rememberLastPaymentMethodId: text("remember_last_payment_method_id"),
+
     carts: text("carts", { mode: 'json' }).$type<Carts>(),
 });
 
