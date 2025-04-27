@@ -34,6 +34,7 @@ export const sessionTable = sqliteTable("session", {
 });
 
 export const verifiedPhoneNumberTable = sqliteTable("verified_phone_number", {
+	...autoCreated,
 	userId: text("user_id")
 		.notNull(),
 	phoneNumber: text("phone_number").notNull(),

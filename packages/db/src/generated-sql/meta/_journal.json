@@ -148,6 +148,20 @@
       "when": 1745713540279,
       "tag": "0020_clumsy_abomination",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1745780857513,
+      "tag": "0021_closed_dazzler",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "6",
+      "when": 1745781872001,
+      "tag": "0022_bouncy_komodo",
+      "breakpoints": true
     }
   ]
 }

@@ -16,6 +16,7 @@ import { KNOWN_ERROR } from '@lib/types/errors';
 import {
     parsePhoneNumberFromString,
 } from 'libphonenumber-js'
+import { isPhoneNumberVerified_Service } from '@db/services/phone.service';
 
 export const sendPhoneOtpSchemaValidator = zValidator('form', z.object({
     phoneNumber: z.string().refine(
@@ -46,6 +47,11 @@ export const sendPhoneOtpRoute = async (
     const parsedNumber = parsePhoneNumberFromString(phoneNumber);
     if (!parsedNumber?.isValid()) {
         throw new KNOWN_ERROR("Invalid phone number", "INVALID_PHONE");
+    }
+
+    const isPhoneNumberVerifiedBefore = await isPhoneNumberVerified_Service(parsedNumber.number);
+    if (isPhoneNumberVerifiedBefore) {
+        throw new KNOWN_ERROR("Phone number already verified", "PHONE_NUMBER_ALREADY_VERIFIED");
     }
 
     const otp = generateNumberOnlyOtp(4);

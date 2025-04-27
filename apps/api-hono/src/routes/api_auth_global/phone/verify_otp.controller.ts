@@ -10,7 +10,7 @@ import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import type { PhoneOtpTokenPayload } from './send_otp.controller';
-import { addVerifiedPhoneNumberService } from '@db/services/phone.service';
+import { addVerifiedPhoneNumber_Service } from '@db/services/phone.service';
 
 export const verifyPhoneOtpSchemaValidator = zValidator('form', z.object({
     code: z.string().min(4, { message: "One-time password required" }).max(4, { message: "4 digits required" }),
@@ -68,7 +68,7 @@ export const verifyPhoneOtpRoute = async (
     deleteCookie(c, PHONE_OTP_COOKIE_NAME);
 
     // Add the verified phone number to the user's account
-    await addVerifiedPhoneNumberService(user.id, tokenData.phoneNumber);
+    await addVerifiedPhoneNumber_Service(user.id, tokenData.phoneNumber);
 
     return c.json({
         data: "success",
