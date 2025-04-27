@@ -22,7 +22,7 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             if (cartItem) {
                 updateItemInCart(window.storeData?.id!, itemIndex!, values);
             } else {
-                addItemToCart(window.storeData?.id!, window.storeData?.name!, values);
+                addItemToCart(window.storeData?.id!, window.storeData?.name!, window.storeData?.address.address1!, values);
                 openRightDrawer();
             }
         },

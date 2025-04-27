@@ -10,13 +10,13 @@ import { Label } from '@/components/ui/label'
 import { currentOrderType, userDataStore, waitUntilUserDataReady } from '@web-astro/stores/UserData.store';
 import {
     Dialog,
-    DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogClose
+    DialogClose,
+    DialogScrollContent,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button';
 
@@ -49,7 +49,7 @@ const availablePaymentMethods = computed(() => {
         methods.push({
             id: 'stripe',
             name: 'Pay online',
-            description: 'Pay with credit/debit card online using Stripe',
+            description: 'Stripe checkout (Credit/Debit Card, Apple Pay, Google Pay, etc.)',
             icon: CreditCard
         });
     }
@@ -117,10 +117,8 @@ const selectedPaymentMethod = computed(() => {
             <DialogTrigger as-child
                            class="w-full p-4 hover:bg-card/80 cursor-pointer rounded-lg border bg-card text-card-foreground shadow-sm flex items-center justify-between">
                 <div>
-                    <div class="font-normal">
-                        <h3 class="text-lg">
-                            Payment method
-                        </h3>
+                    <div>
+                        <h3 class="font-bold text-xl mb-2">Payment</h3>
                         <div class="font-medium flex items-center">
                             <component :is="selectedPaymentMethod?.icon"
                                        v-if="selectedPaymentMethod?.icon"
@@ -135,7 +133,7 @@ const selectedPaymentMethod = computed(() => {
                     <Pencil class="ml-2" />
                 </div>
             </DialogTrigger>
-            <DialogContent>
+            <DialogScrollContent>
                 <DialogHeader>
                     <DialogTitle>Select a payment method</DialogTitle>
                     <DialogDescription />
@@ -165,12 +163,13 @@ const selectedPaymentMethod = computed(() => {
 
                 <DialogFooter>
                     <DialogClose as-child>
-                        <Button class="w-full">
-                            Done
+                        <Button variant="secondary"
+                                class="w-full">
+                            Close
                         </Button>
                     </DialogClose>
                 </DialogFooter>
-            </DialogContent>
+            </DialogScrollContent>
         </Dialog>
         <div v-else
              class="p-2 bg-destructive text-destructive-foreground rounded-lg">

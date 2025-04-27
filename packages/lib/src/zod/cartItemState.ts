@@ -50,6 +50,7 @@ export const cartSchema = z.object({
     host: z.string().optional(),
     lastUpdatedTS: z.number().optional(),
     storeName: z.string().optional(),
+    storeAddress1: z.string().optional(),
     orderNote: z.string().max(510).optional(),
     // items: z.array(cartItemSchema).optional() // causes circular deep shit
     // items: z.custom<CartItem[]>((val) => { // same issue: causes circular deep shit

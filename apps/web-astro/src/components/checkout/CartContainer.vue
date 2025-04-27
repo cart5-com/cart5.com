@@ -66,14 +66,9 @@ const storeName = window.storeData?.name;
 
             <PaymentMethods />
 
-            <Card class="my-4">
-                <CardHeader>
-                    <CardTitle></CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <CartView :is-collapsed="true" />
-                </CardContent>
-            </Card>
+            <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
+                <CartView :is-collapsed="true" />
+            </div>
 
         </div>
     </div>

@@ -44,36 +44,41 @@ const storeName = window.storeData?.name;
     <a :href="BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!))">
         <Card class="my-4 hover:bg-card/80">
             <CardContent class="p-4">
-                <div v-if="currentOrderType === 'delivery' && selectedAddress"
-                     class="flex items-start gap-2 justify-between">
-                    <div class="flex items-start gap-2">
-                        <component :is="icons.find(icon => icon.name === selectedAddress?.icon)?.component || MapPin" />
-                        <div>
-                            <h3 class="font-medium">{{ selectedAddress.label || 'Delivery Address' }}</h3>
-                            <p class="text-sm text-muted-foreground">{{ selectedAddress.address1 }}</p>
-                            <p v-if="selectedAddress.address2"
-                               class="text-sm text-muted-foreground">{{ selectedAddress.address2 }}</p>
-                            <p class="text-sm text-muted-foreground">
-                                {{ [selectedAddress.city, selectedAddress.state].filter(Boolean).join(', ') }}
-                                {{ selectedAddress.postalCode }}
-                            </p>
-                            <p v-if="selectedAddress.instructionsForDelivery"
-                               class="text-sm italic mt-1">
-                                {{ selectedAddress.instructionsForDelivery }}
-                            </p>
+                <div v-if="currentOrderType === 'delivery' && selectedAddress">
+                    <h3 class="font-bold text-xl mb-2">Delivery details</h3>
+                    <div class="flex items-start gap-2 justify-between">
+                        <div class="flex items-start gap-2">
+                            <component
+                                       :is="icons.find(icon => icon.name === selectedAddress?.icon)?.component || MapPin" />
+                            <div>
+                                <h3 class="font-medium">{{ selectedAddress.label || 'Delivery Address' }}</h3>
+                                <p class="text-sm text-muted-foreground">{{ selectedAddress.address1 }}</p>
+                                <p v-if="selectedAddress.address2"
+                                   class="text-sm text-muted-foreground">{{ selectedAddress.address2 }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ [selectedAddress.city, selectedAddress.state].filter(Boolean).join(', ') }}
+                                    {{ selectedAddress.postalCode }}
+                                </p>
+                                <p v-if="selectedAddress.instructionsForDelivery"
+                                   class="text-sm italic mt-1">
+                                    {{ selectedAddress.instructionsForDelivery }}
+                                </p>
+                            </div>
                         </div>
+                        <Pencil class="inline-block ml-2" />
                     </div>
-                    <Pencil class="inline-block ml-2" />
                 </div>
-                <div v-else-if="currentOrderType === 'pickup' && pickupNickname"
-                     class="flex items-start gap-2 justify-between">
-                    <div class="flex items-start gap-2">
-                        <User class="" />
-                        <div>
-                            <h3 class="font-medium">Pickup Name/Nickname: {{ pickupNickname }}</h3>
+                <div v-else-if="currentOrderType === 'pickup' && pickupNickname">
+                    <h3 class="font-bold text-xl mb-2">Pickup details</h3>
+                    <div class="flex items-start gap-2 justify-between">
+                        <div class="flex items-start gap-2">
+                            <User class="" />
+                            <div>
+                                <h3 class="font-medium">Pickup Name/Nickname: {{ pickupNickname }}</h3>
+                            </div>
                         </div>
+                        <Pencil class="inline-block ml-2" />
                     </div>
-                    <Pencil class="inline-block ml-2" />
                 </div>
             </CardContent>
         </Card>

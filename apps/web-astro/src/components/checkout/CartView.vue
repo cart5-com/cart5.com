@@ -158,13 +158,17 @@ const totalItem = computed(() => {
             <div class="flex-1"
                  v-if="currentCart && currentCart.items">
 
-
                 <div class="w-full flex-col cursor-pointer"
                      @click="isCollapsed = !isCollapsed">
                     <div class="flex justify-between items-center font-bold text-2xl">
-                        <div
-                             class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-2xl font-bold">
-                            {{ currentCart.storeName }}
+                        <div>
+                            <div class="max-w-full overflow-x-scroll whitespace-nowrap no-scrollbar text-2xl font-bold">
+                                {{ currentCart.storeName }}
+                            </div>
+                            <span
+                                  class="text-sm text-muted-foreground max-w-full overflow-x-scroll whitespace-nowrap no-scrollbar">
+                                {{ currentCart.storeAddress1 }}
+                            </span>
                         </div>
                         <div class="flex-shrink-0">
                             <ChevronUp class="inline-block mr-2"
@@ -173,7 +177,7 @@ const totalItem = computed(() => {
                                          v-else />
                         </div>
                     </div>
-                    <div class="text-sm text-muted-foreground p-2">
+                    <div class="text-xs text-muted-foreground">
                         {{ totalItem }} items
                     </div>
                 </div>
@@ -224,10 +228,10 @@ const totalItem = computed(() => {
                 <Drawer>
                     <DrawerTrigger as-child>
                         <Button variant="outline"
-                                class="w-full">
+                                class="w-full my-4">
                             <Pencil />
                             <div
-                                 class="max-w-full overflow-x-scroll px-2 whitespace-nowrap no-scrollbar text-xl justify-start">
+                                 class="max-w-full overflow-x-scroll whitespace-nowrap no-scrollbar text-xl justify-start">
                                 {{ currentCart?.orderNote || "Add a note" }}
                             </div>
                         </Button>
@@ -246,7 +250,7 @@ const totalItem = computed(() => {
                             </div>
                             <DrawerFooter>
                                 <DrawerClose as-child>
-                                    <Button variant="outline">
+                                    <Button variant="secondary">
                                         Close
                                     </Button>
                                 </DrawerClose>
@@ -255,7 +259,7 @@ const totalItem = computed(() => {
                     </DrawerContent>
                 </Drawer>
 
-                <div class="flex justify-between items-center px-1">
+                <div class="flex justify-between items-center">
                     <span class="">
                         Subtotal
                     </span>
@@ -263,7 +267,7 @@ const totalItem = computed(() => {
                         {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
                     </span>
                 </div>
-                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                <div class="flex justify-between items-center"
                      v-if="subTotalWithDeliveryAndServiceFees.bestDeliveryZone">
                     <span class="">
                         Delivery Fee
@@ -275,7 +279,7 @@ const totalItem = computed(() => {
 
                 <div v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
                      :key="index">
-                    <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                    <div class="flex justify-between items-center "
                          v-if="customSFee.shownFee > 0">
                         <span class="">
                             {{ customSFee.name }}
@@ -286,7 +290,7 @@ const totalItem = computed(() => {
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-1 border-t border-muted-foreground"
+                <div class="flex justify-between items-center "
                      v-if="cartBreakdown.buyerPaysTaxAndFeesShownFee > 0">
                     <span class="">
                         {{ cartBreakdown.buyerPaysTaxAndFeesName }}
@@ -352,9 +356,9 @@ const totalItem = computed(() => {
 
 
 
-                <div
-                     class="flex justify-between items-center px-1 border-t border-muted-foreground font-bold text-2xl py-4">
+                <div class="flex justify-between items-center font-bold text-2xl py-4">
                     <span>
+                        Total
                         <Popover>
                             <PopoverTrigger as-child>
                                 <Info class="inline-block mr-2" />
@@ -382,7 +386,7 @@ const totalItem = computed(() => {
                                 </div>
                             </PopoverContent>
                         </Popover>
-                        Total
+
                     </span>
                     <span class="text-right">
                         {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPays }}

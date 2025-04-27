@@ -29,6 +29,7 @@ export const getCartByStoreId = (storeId: string) => {
 export const addItemToCart = (
     storeId: string,
     storeName: string,
+    storeAddress1: string,
     cartItem: CartItem
 ) => {
     const storeCart = getCartByStoreId(storeId);
@@ -37,6 +38,7 @@ export const addItemToCart = (
         userDataStore.value!.userData!.carts![hostAndStoreId] = {
             storeId,
             storeName: storeName,
+            storeAddress1: storeAddress1,
             orderNote: "",
             lastUpdatedTS: Date.now(),
             items: [cartItem]
