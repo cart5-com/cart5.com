@@ -319,21 +319,21 @@ export const startSeed = async () => {
         storesByThush.push(store);
     }
 
-    await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
-        stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
-        isStripeEnabled: true,
-        stripeRatePerOrder: 2.9,
-        stripeFeePerOrder: 0.30,
-        whoPaysStripeFee: "CUSTOMER",
-    });
+    // await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
+    //     stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
+    //     isStripeEnabled: true,
+    //     stripeRatePerOrder: 2.9,
+    //     stripeFeePerOrder: 0.30,
+    //     whoPaysStripeFee: "CUSTOMER",
+    // });
 
-    await updateStoreStripeSettingsData_Service(`str_296_296_296`, {
-        stripeConnectAccountId: "acct_1RId8yGfFDgiaKRa", // stripe sandbox account
-        isStripeEnabled: true,
-        stripeRatePerOrder: 2.9,
-        stripeFeePerOrder: 0.30,
-        whoPaysStripeFee: "STORE",
-    });
+    // await updateStoreStripeSettingsData_Service(`str_296_296_296`, {
+    //     stripeConnectAccountId: "acct_1RId8yGfFDgiaKRa", // stripe sandbox account
+    //     isStripeEnabled: true,
+    //     stripeRatePerOrder: 2.9,
+    //     stripeFeePerOrder: 0.30,
+    //     whoPaysStripeFee: "STORE",
+    // });
 
     const flamesStore = storesByThush[4];
     await updateStore_Service(flamesStore!.id, {
@@ -342,8 +342,9 @@ export const startSeed = async () => {
     await updateStoreMenu_Service(flamesStore!.id, {
         menuRoot: sampleMenuRoot2
     });
+
     await updateStoreStripeSettingsData_Service(flamesStore!.id, {
-        stripeConnectAccountId: "acct_1RHadvGhHHWOLny2", // stripe sandbox account
+        stripeConnectAccountId: "acct_1RIjqtQBz1PsJffq", // stripe sandbox account
         isStripeEnabled: true,
         stripeRatePerOrder: 2.9,
         stripeFeePerOrder: 0.30,
