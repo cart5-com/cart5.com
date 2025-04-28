@@ -80,7 +80,8 @@ async function handleGpsClick() {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				isGpsLoading.value = false;
-				mapView?.setView([position.coords.latitude, position.coords.longitude], 18);
+				// mapView?.setView([position.coords.latitude, position.coords.longitude], 18);
+				setCenter(position.coords.latitude, position.coords.longitude)
 
 				// Check if Current Location already exists in helperBtns
 				const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
