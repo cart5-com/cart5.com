@@ -95,12 +95,54 @@ const savePaymentMethods = async () => {
 
 onMounted(() => {
     loadData();
+
+    // handle ?reason=success_url
+    const reason = new URLSearchParams(window.location.search).get('reason');
+    if (reason === 'success_url') {
+        // handleSuccessUrl();
+    }
 });
 
+// const handleSuccessUrl = async () => {
+//     const { error, data } = await (await dashboardApiClient.store[':storeId'].payment_methods.checkout_session_id.$get({
+//         param: {
+//             storeId: currentStoreId.value ?? '',
+//         }
+//     })).json();
+//     if (error) {
+//         toast.error(error.message ?? 'Failed to get Stripe Checkout session id');
+//     } else {
+//         console.log("checkout_session_id data");
+//         console.log(data);
+
+//     }
+// }
+
+const setupStripeCheckout = async () => {
+    const { error, data } = await (await dashboardApiClient.store[':storeId'].payment_methods.stripe_setup_checkout.$get({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        }
+    })).json();
+    if (error) {
+        toast.error(error.message ?? 'Failed to set up Stripe Checkout');
+        return;
+    } else {
+        if (data) {
+            window.location.href = data;
+        }
+    }
+}
 </script>
 
 <template>
     <div class="space-y-16 max-w-md mx-auto">
+        <Button @click="setupStripeCheckout"
+                :disabled="isLoading"
+                class="w-full">
+            Setup Stripe Checkout
+        </Button>
+
         <Button @click="savePaymentMethods"
                 :disabled="isLoading"
                 class="w-full">
