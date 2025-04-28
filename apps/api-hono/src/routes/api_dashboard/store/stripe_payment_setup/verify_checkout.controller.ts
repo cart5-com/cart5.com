@@ -1,19 +1,27 @@
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { Context } from "hono";
-import { getCookie } from "hono/cookie";
+import { deleteCookie, getCookie } from "hono/cookie";
 import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
 import { KNOWN_ERROR } from "@lib/types/errors";
 import { Stripe } from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import type { ErrorType } from "@lib/types/errors";
-import { updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
+import { getStoreTaxSettings_Service, updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
 
 export const verifyCheckout_Handler = async (c: Context<
     HonoVariables
 >) => {
     const storeId = c.req.param('storeId');
     const stripeCheckoutSessionId = getCookie(c, STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME);
-    // TODO: remove cookie after testing
+    const storeTaxSettings = await getStoreTaxSettings_Service(storeId, {
+        currency: true,
+    });
+    if (!storeTaxSettings?.currency) {
+        throw new KNOWN_ERROR(
+            "Store currency not found, please set the store currency first in the tax settings",
+            "STORE_CURRENCY_NOT_FOUND"
+        );
+    }
 
     if (!stripeCheckoutSessionId) {
         throw new KNOWN_ERROR(
@@ -26,12 +34,10 @@ export const verifyCheckout_Handler = async (c: Context<
             apiVersion: '2025-03-31.basil',
         });
 
-        // Step 1: Retrieve the checkout session
         const session = await stripe.checkout.sessions.retrieve(
             stripeCheckoutSessionId
         );
 
-        // Step 2: Verify session status
         if (session.status !== 'complete') {
             throw new KNOWN_ERROR(
                 "Stripe checkout session is not complete",
@@ -39,7 +45,6 @@ export const verifyCheckout_Handler = async (c: Context<
             );
         }
 
-        // Step 3: Get the setup intent from the session
         if (!session.setup_intent) {
             throw new KNOWN_ERROR(
                 "Stripe checkout session does not have a setup intent",
@@ -47,21 +52,55 @@ export const verifyCheckout_Handler = async (c: Context<
             );
         }
 
-        // Step 4: Retrieve the setup intent to check its status
         const setupIntent = await stripe.setupIntents.retrieve(
             typeof session.setup_intent === 'string'
                 ? session.setup_intent
                 : session.setup_intent.id
         );
 
-        // Step 5: Check if setup intent succeeded
-        if (setupIntent.status === 'succeeded') {
-            // Step 6: Update store record indicating chargable payment method exists
+        if (setupIntent.status === 'succeeded' && setupIntent.payment_method) {
+            const paymentMethod = await stripe.paymentMethods.retrieve(
+                setupIntent.payment_method as string
+            );
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: 10, // 0.10 GBP/USD/CAD etc..
+                currency: storeTaxSettings.currency,
+                customer: session.customer as string,
+                payment_method: setupIntent.payment_method as string,
+                off_session: true,
+                confirm: true,
+                capture_method: 'manual',
+            });
+
+
+            if (paymentIntent.status !== 'requires_capture') {
+                throw new KNOWN_ERROR(
+                    "Stripe payment intent is not succeeded",
+                    "STRIPE_PAYMENT_INTENT_NOT_SUCCEEDED"
+                );
+            }
+            // cancel the payment intent if succeeded
+            const cancelledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntent.id);
+            if (cancelledPaymentIntent.status !== 'canceled') {
+                // wait 2 seconds and try again
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                const cancelledPaymentIntent2 = await stripe.paymentIntents.cancel(paymentIntent.id);
+                if (cancelledPaymentIntent2.status !== 'canceled') {
+                    throw new KNOWN_ERROR(
+                        "Stripe payment intent is not canceled, no need to worry about it. capture must be completed within 7 days. Otherwise, as with any other uncaptured payment, the authorisation automatically expires and you can no longer capture the payment. https://docs.stripe.com/radar/reviews/auth-and-capture",
+                        "STRIPE_PAYMENT_INTENT_NOT_CANCELED"
+                    );
+                }
+            }
+
             await updateStoreAsAStripeCustomer_Service(storeId, {
                 hasChargablePaymentMethod: true,
                 lastVerifiedPaymentMethodId: setupIntent.payment_method as string,
+                paymentMethodDetails: paymentMethod,
             });
 
+            deleteCookie(c, STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME);
             return c.json({
                 data: {
                     success: true,

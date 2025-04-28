@@ -1,0 +1,1 @@
+ALTER TABLE `store_as_a_stripe_customer` ADD `payment_method_details` text;

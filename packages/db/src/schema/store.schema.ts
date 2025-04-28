@@ -83,6 +83,7 @@ export const storeAsAStripeCustomerTable = sqliteTable("store_as_a_stripe_custom
 	stripeCustomerId: text("stripe_customer_id"),
 	hasChargablePaymentMethod: integer("has_chargable_payment_method", { mode: "boolean" }).notNull().default(false),
 	lastVerifiedPaymentMethodId: text("last_verified_payment_method_id"),
+	paymentMethodDetails: text("payment_method_details", { mode: 'json' }).$type<any>(),
 });
 export const selectStoreAsAStripeCustomerSchema = createSelectSchema(storeAsAStripeCustomerTable);
 export const insertStoreAsAStripeCustomerSchema = createInsertSchema(storeAsAStripeCustomerTable);

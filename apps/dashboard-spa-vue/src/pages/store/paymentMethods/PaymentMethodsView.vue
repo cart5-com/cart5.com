@@ -98,8 +98,6 @@ onMounted(() => {
 
     // handle #success
     if (window.location.hash === '#success') {
-        // TODO: remove this after testing
-        // history.replaceState(null, '', window.location.pathname + window.location.search);
         toast.info('please wait while verifying checkout session');
         handleSuccessUrl();
     }
@@ -116,7 +114,8 @@ const handleSuccessUrl = async () => {
     } else {
         console.log("checkout_session_id data");
         console.log(data);
-
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        toast.success('Payment method verified and saved successfully');
     }
 }
 
@@ -165,8 +164,8 @@ const setupStripeCheckout = async () => {
                     or staff will handle the payment at pickup counter.
                     <br>
                     <br> -->
-                    (Online payment methods are configured in the <a class="underline"
-                       href="#">Payment Gateways</a> page
+                    (Online payment methods are configured in the <RouterLink class="underline"
+                                :to="{ name: 'store-stripe' }">Stripe</RouterLink> page
                     )
                 </CardDescription>
             </CardHeader>
