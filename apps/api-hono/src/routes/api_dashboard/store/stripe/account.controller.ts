@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { getStoreStripeSettingsData_Service, updateStoreStripeSettingsData_Service } from "@db/services/store.service";
+import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
 import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 
@@ -18,7 +18,7 @@ export const stripeAccount_Handler = async (c: Context<
         });
 
         // Check if store already has a Stripe account
-        const existingStripeData = await getStoreStripeSettingsData_Service(storeId);
+        const existingStripeData = await getStoreStripeConnectSettings_Service(storeId);
         let stripeConnectAccountId = existingStripeData?.stripeConnectAccountId;
         if (!stripeConnectAccountId) {
             // Create a Stripe Connect account
@@ -45,7 +45,7 @@ export const stripeAccount_Handler = async (c: Context<
                 },
             });
             // Store the account ID in our database
-            await updateStoreStripeSettingsData_Service(storeId, {
+            await updateStoreStripeConnectSettings_Service(storeId, {
                 stripeConnectAccountId: account.id,
             });
             stripeConnectAccountId = account.id;

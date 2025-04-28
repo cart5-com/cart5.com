@@ -3,12 +3,12 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { type ErrorType } from "@lib/types/errors";
-import { updateStoreStripeSettingsData_Service } from "@db/services/store.service";
-import { updateStoreStripeSettingsDataSchema } from "@db/schema/store.schema";
+import { updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
+import { updateStoreStripeConnectSettingsSchema } from "@db/schema/store.schema";
 
 // Schema validation for updating store stripe settings
 export const updateStoreStripeSettings_SchemaValidator = zValidator('json',
-    updateStoreStripeSettingsDataSchema.omit({
+    updateStoreStripeConnectSettingsSchema.omit({
         // unallowed fields for admins
         storeId: true,
         stripeConnectAccountId: true,
@@ -32,7 +32,7 @@ export const updateStoreStripeSettings_Handler = async (c: Context<
     } = c.req.valid('json');
 
     return c.json({
-        data: await updateStoreStripeSettingsData_Service(storeId, data),
+        data: await updateStoreStripeConnectSettings_Service(storeId, data),
         error: null as ErrorType
     }, 200);
 }

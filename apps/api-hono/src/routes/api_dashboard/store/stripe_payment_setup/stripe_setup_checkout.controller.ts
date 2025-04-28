@@ -136,7 +136,7 @@ const STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME = "STRIPE_CHECKOUT_SESSION_ID";
 //     "error": null
 // }
 
-export const stripeSetupCheckout_Handler = async (c: Context<
+export const startNewCheckout_Handler = async (c: Context<
     HonoVariables
 >) => {
     const storeId = c.req.param('storeId');

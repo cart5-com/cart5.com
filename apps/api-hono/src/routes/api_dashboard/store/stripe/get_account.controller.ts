@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { getStoreStripeSettingsData_Service, updateStoreStripeSettingsData_Service } from "@db/services/store.service";
+import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
 import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
@@ -18,7 +18,7 @@ export const stripeGetAccount_Handler = async (c: Context<
         });
 
         // Check if store already has a Stripe account
-        const existingStripeSettingsData = await getStoreStripeSettingsData_Service(storeId);
+        const existingStripeSettingsData = await getStoreStripeConnectSettings_Service(storeId);
         let stripeConnectAccountId = existingStripeSettingsData?.stripeConnectAccountId;
         if (!stripeConnectAccountId) {
             throw new KNOWN_ERROR(
@@ -29,7 +29,7 @@ export const stripeGetAccount_Handler = async (c: Context<
         const account = await stripe.accounts.retrieve(stripeConnectAccountId);
         const isReady = account.charges_enabled;
         if (!isReady && existingStripeSettingsData?.isStripeEnabled) {
-            await updateStoreStripeSettingsData_Service(storeId, {
+            await updateStoreStripeConnectSettings_Service(storeId, {
                 isStripeEnabled: false,
             });
             existingStripeSettingsData.isStripeEnabled = false;

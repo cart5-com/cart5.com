@@ -8,7 +8,8 @@ import {
     storeTaxSettingsTable,
     storeDeliveryZoneMapTable,
     storeServiceFeesTable,
-    storeStripeSettingsDataTable
+    storeStripeConnectSettingsTable,
+    storeAsAStripeCustomerTable
 } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
@@ -134,29 +135,52 @@ export const getStore_Service = async (
 }
 
 
-export const getStoreStripeSettingsData_Service = async (
+export const getStoreStripeConnectSettings_Service = async (
     storeId: string,
-    columns?: Partial<Record<keyof typeof storeStripeSettingsDataTable.$inferSelect, boolean>>
+    columns?: Partial<Record<keyof typeof storeStripeConnectSettingsTable.$inferSelect, boolean>>
 ) => {
-    return await db.query.storeStripeSettingsDataTable.findFirst({
-        where: eq(storeStripeSettingsDataTable.storeId, storeId),
+    return await db.query.storeStripeConnectSettingsTable.findFirst({
+        where: eq(storeStripeConnectSettingsTable.storeId, storeId),
         columns: columns,
     });
 }
-export const updateStoreStripeSettingsData_Service = async (
+export const updateStoreStripeConnectSettings_Service = async (
     storeId: string,
-    data: Partial<InferInsertModel<typeof storeStripeSettingsDataTable>>
+    data: Partial<InferInsertModel<typeof storeStripeConnectSettingsTable>>
 ) => {
-    const result = await db.insert(storeStripeSettingsDataTable)
+    const result = await db.insert(storeStripeConnectSettingsTable)
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
-            target: storeStripeSettingsDataTable.storeId,
+            target: storeStripeConnectSettingsTable.storeId,
             set: data
         });
     await markStoreAsUpdated(storeId);
     return result;
 }
 
+
+export const getStoreAsAStripeCustomer_Service = async (
+    storeId: string,
+    columns?: Partial<Record<keyof typeof storeAsAStripeCustomerTable.$inferSelect, boolean>>
+) => {
+    return await db.query.storeAsAStripeCustomerTable.findFirst({
+        where: eq(storeAsAStripeCustomerTable.storeId, storeId),
+        columns: columns,
+    });
+}
+
+export const updateStoreAsAStripeCustomer_Service = async (
+    storeId: string,
+    data: Partial<InferInsertModel<typeof storeAsAStripeCustomerTable>>
+) => {
+    const result = await db.insert(storeAsAStripeCustomerTable)
+        .values({ ...data, storeId: storeId })
+        .onConflictDoUpdate({
+            target: storeAsAStripeCustomerTable.storeId,
+            set: data
+        });
+    return result;
+}
 
 export const getStoreAddress_Service = async (
     storeId: string,

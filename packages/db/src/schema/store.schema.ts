@@ -62,7 +62,7 @@ export const storeRecentlyUpdatedTable = sqliteTable("store_recently_updated", {
 
 
 
-export const storeStripeSettingsDataTable = sqliteTable("store_stripe_settings_data", {
+export const storeStripeConnectSettingsTable = sqliteTable("store_stripe_connect_settings", {
 	storeId: text("store_id").notNull().unique(),
 	stripeConnectAccountId: text("stripe_connect_account_id"), // not allowed to change by store admins
 	isStripeEnabled: integer("is_stripe_enabled", { mode: "boolean" }).notNull().default(false),
@@ -72,11 +72,18 @@ export const storeStripeSettingsDataTable = sqliteTable("store_stripe_settings_d
 	// IF STORE, CALCULATION WILL ONLY SHOW STRIPE FEE IN BREAKDOWN
 	// IF CUSTOMER, CALCULATION WILL ADD STRIPE FEE TO ORDER TOTAL AND SHOW STRIPE FEES
 });
-export const selectStoreStripeSettingsDataSchema = createSelectSchema(storeStripeSettingsDataTable);
-export const insertStoreStripeSettingsDataSchema = createInsertSchema(storeStripeSettingsDataTable);
-export const updateStoreStripeSettingsDataSchema = createUpdateSchema(storeStripeSettingsDataTable);
+export const selectStoreStripeConnectSettingsSchema = createSelectSchema(storeStripeConnectSettingsTable);
+export const insertStoreStripeConnectSettingsSchema = createInsertSchema(storeStripeConnectSettingsTable);
+export const updateStoreStripeConnectSettingsSchema = createUpdateSchema(storeStripeConnectSettingsTable);
 
 
+export const storeAsAStripeCustomerTable = sqliteTable("store_as_a_stripe_customer", {
+	storeId: text("store_id").notNull().unique(),
+	stripeCustomerId: text("stripe_customer_id"),
+});
+export const selectStoreAsAStripeCustomerSchema = createSelectSchema(storeAsAStripeCustomerTable);
+export const insertStoreAsAStripeCustomerSchema = createInsertSchema(storeAsAStripeCustomerTable);
+export const updateStoreAsAStripeCustomerSchema = createUpdateSchema(storeAsAStripeCustomerTable);
 
 
 /// STORE ADDRESS TABLE START
@@ -300,8 +307,8 @@ export const storeRelations = relations(storeTable, ({
 		}),
 	stripeSettings:
 		one(
-			storeStripeSettingsDataTable, {
+			storeStripeConnectSettingsTable, {
 			fields: [storeTable.id],
-			references: [storeStripeSettingsDataTable.storeId]
+			references: [storeStripeConnectSettingsTable.storeId]
 		}),
 }));

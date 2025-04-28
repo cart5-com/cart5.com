@@ -16,7 +16,7 @@ import {
     updateStoreDeliveryZones_Service,
     updateStoreOpenHours_Service,
     updateStorePaymentMethods_Service,
-    updateStoreStripeSettingsData_Service,
+    updateStoreStripeConnectSettings_Service,
     updateStoreTaxSettings_Service
 } from "@db/services/store.service";
 import type { CloudflareObjectType } from "./CloudflareObjectType";
@@ -319,7 +319,7 @@ export const startSeed = async () => {
         storesByThush.push(store);
     }
 
-    // await updateStoreStripeSettingsData_Service(`str_299_299_299`, {
+    // await updateStoreStripeConnectSettings_Service(`str_299_299_299`, {
     //     stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
     //     isStripeEnabled: true,
     //     stripeRatePerOrder: 2.9,
@@ -327,7 +327,7 @@ export const startSeed = async () => {
     //     whoPaysStripeFee: "CUSTOMER",
     // });
 
-    // await updateStoreStripeSettingsData_Service(`str_296_296_296`, {
+    // await updateStoreStripeConnectSettings_Service(`str_296_296_296`, {
     //     stripeConnectAccountId: "acct_1RId8yGfFDgiaKRa", // stripe sandbox account
     //     isStripeEnabled: true,
     //     stripeRatePerOrder: 2.9,
@@ -343,7 +343,7 @@ export const startSeed = async () => {
         menuRoot: sampleMenuRoot2
     });
 
-    // await updateStoreStripeSettingsData_Service(flamesStore!.id, {
+    // await updateStoreStripeConnectSettings_Service(flamesStore!.id, {
     //     stripeConnectAccountId: "acct_1RIjqtQBz1PsJffq", // stripe sandbox account
     //     isStripeEnabled: true,
     //     stripeRatePerOrder: 2.9,

@@ -119,7 +119,7 @@ onMounted(() => {
 // }
 
 const setupStripeCheckout = async () => {
-    const { error, data } = await (await dashboardApiClient.store[':storeId'].payment_methods.stripe_setup_checkout.$get({
+    const { error, data } = await (await dashboardApiClient.store[':storeId'].stripe_payment_setup.start_new_checkout.$get({
         param: {
             storeId: currentStoreId.value ?? '',
         }
