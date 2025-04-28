@@ -165,9 +165,9 @@ const removeTaxCategory = (index: number) => {
                 <CardDescription>Configure your store's tax settings</CardDescription>
             </CardHeader>
             <CardContent class="space-y-6">
-                <Alert variant="destructive"
-                       class="my-4">
-                    <AlertCircle class="w-4 h-4" />
+                <Alert variant="default"
+                       class="my-4 bg-destructive text-destructive-foreground">
+                    <AlertCircle />
                     <AlertTitle>Important</AlertTitle>
                     <AlertDescription>
                         You are responsible for verifying the accuracy of all currency and tax information for your

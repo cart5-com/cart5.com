@@ -12,6 +12,8 @@ import PaymentMethodsEditor from './PaymentMethodsEditor.vue';
 import { Switch } from '@/components/ui/switch';
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 import { ResType } from '@api-client/typeUtils';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { AlertCircle } from 'lucide-vue-next'
 
 pageTitle.value = 'Payment Methods';
 
@@ -160,24 +162,98 @@ const setupStripeCheckout = async () => {
 
 <template>
     <div class="space-y-16 max-w-md mx-auto">
+        <Alert variant="default"
+               class="my-4">
+            <AlertCircle class="h-4 w-4" />
+            <AlertTitle>Important</AlertTitle>
+            <AlertDescription>
+                We charge a small service fee on all orders.
+                For in-person payments (cash, card terminal, etc.), you collect these fees directly from customers.
+                Please add a payment method so we can collect these fees from you.
+                We'll automatically charge your payment method on the 1st of each month based on your balance.
+                (We may also process charges earlier if your balance reaches a certain amount)
+            </AlertDescription>
+        </Alert>
+
+        <Alert v-if="!stripeCustomerDetails?.hasChargablePaymentMethod"
+               variant="default"
+               class="my-4 bg-destructive text-destructive-foreground">
+            <AlertCircle class="h-4 w-4" />
+            <AlertTitle>Action Required</AlertTitle>
+            <AlertDescription>
+                You must add a valid payment method before you can accept orders with physical payment options.
+                Your store will not be able to receive orders with physical payment options until this is set up.
+            </AlertDescription>
+        </Alert>
+
         <Card>
             <CardHeader>
-                <CardTitle>Payment methods handled by your staff/your delivery person</CardTitle>
+                <CardTitle>Payment Method Setup</CardTitle>
                 <CardDescription>
-                    Only in-person/physical payment methods can be configured here.
+                    A valid payment method is required to enable in-person payments
                 </CardDescription>
             </CardHeader>
             <CardContent>
+                <div v-if="stripeCustomerDetails?.hasChargablePaymentMethod"
+                     class="mb-4 rounded-md border p-4">
+                    <div class="flex items-center gap-2 text-primary">
+                        <CreditCard class="h-4 w-4" />
+                        <span class="font-medium">Payment Method Active</span>
+                    </div>
+                    <div v-if="stripeCustomerDetails?.paymentMethodDetails"
+                         class="mt-2 text-sm space-y-1 text-muted-foreground">
+                        <p><span class="font-medium">Type:</span>
+                            {{ stripeCustomerDetails.paymentMethodDetails.brand || stripeCustomerDetails.paymentMethodDetails.type }}
+                        </p>
+                        <p v-if="stripeCustomerDetails.paymentMethodDetails.last4"><span
+                                  class="font-medium">Card:</span> ••••
+                            {{ stripeCustomerDetails.paymentMethodDetails.last4 }}
+                        </p>
+                        <p
+                           v-if="stripeCustomerDetails.paymentMethodDetails.exp_month && stripeCustomerDetails.paymentMethodDetails.exp_year">
+                            <span class="font-medium">Expires:</span>
+                            {{ stripeCustomerDetails.paymentMethodDetails.exp_month }}/{{
+                                stripeCustomerDetails.paymentMethodDetails.exp_year }}
+                        </p>
+                        <details>
+                            <summary>
+                                <span class="font-medium">more</span>
+                            </summary>
+                            <pre>{{ stripeCustomerDetails.paymentMethodDetails }}</pre>
+                        </details>
+                    </div>
+                </div>
+
+                <div v-else
+                     class="mb-4 rounded-md border p-4">
+                    <div class="flex items-center gap-2 text-muted-foreground">
+                        <CreditCard class="h-4 w-4" />
+                        <span class="font-medium">Payment Method Required</span>
+                    </div>
+                    <p class="mt-2 text-sm text-muted-foreground">
+                        You must add a valid payment method before you can accept orders with physical payment options.
+                    </p>
+                </div>
+
                 <Button @click="setupStripeCheckout"
-                        :disabled="isLoading"
                         class="w-full">
-                    Add a payment method
+                    {{ stripeCustomerDetails?.hasChargablePaymentMethod ? 'Update Payment Method' : 'Add a Payment Method' }}
                 </Button>
             </CardContent>
         </Card>
 
+        <Alert v-if="!stripeCustomerDetails?.hasChargablePaymentMethod"
+               variant="default"
+               class="my-4 bg-destructive text-destructive-foreground">
+            <AlertCircle class="h-4 w-4" />
+            <AlertDescription>
+                Physical payment methods are disabled until you add a valid payment method above
+            </AlertDescription>
+        </Alert>
         <div :class="{ 'opacity-50 pointer-events-none': !stripeCustomerDetails?.hasChargablePaymentMethod }">
+
             <Button @click="savePaymentMethods"
+                    v-if="stripeCustomerDetails?.hasChargablePaymentMethod"
                     :disabled="isLoading"
                     class="w-full">
                 <Loader2 v-if="isLoading"
@@ -192,11 +268,6 @@ const setupStripeCheckout = async () => {
                         Only in-person/physical payment methods can be configured here.
                         <br>
                         <br>
-                        <!-- All payment methods added here must be handled manually by store staff.
-                    Means delivery person will handle the payment at delivery address.
-                    or staff will handle the payment at pickup counter.
-                    <br>
-                    <br> -->
                         (Online payment methods are configured in the <RouterLink class="underline"
                                     :to="{ name: 'store-stripe' }">Stripe</RouterLink> page
                         )
@@ -219,7 +290,8 @@ const setupStripeCheckout = async () => {
                         </li>
                         <li>
                             <Calculator class=" inline-block mr-2" />
-                            <CreditCard class=" inline-block mr-2" /> Card at delivery address with delivery person's
+                            <CreditCard class=" inline-block mr-2" /> Card at delivery address with delivery
+                            person's
                             terminal/device
                         </li>
                         <li>

@@ -15,9 +15,9 @@ const redactBillingDetails = (billingDetails: Stripe.PaymentMethod.BillingDetail
         phone: billingDetails.phone ? `xxx-xxx-${billingDetails.phone.slice(-4)}` : undefined,
         address: billingDetails.address ? {
             country: billingDetails.address.country,
-            postal_code: billingDetails.address.postal_code ? `${billingDetails.address.postal_code.slice(0, 1)}...` : undefined,
-            state: billingDetails.address.state,
-            city: billingDetails.address.city ? `${billingDetails.address.city.charAt(0)}...` : undefined,
+            postal_code: billingDetails.address.postal_code ? `...${billingDetails.address.postal_code.slice(-4)}` : undefined,
+            state: billingDetails.address.state || undefined,
+            city: billingDetails.address.city || undefined,
             line1: billingDetails.address.line1 ? '...' : undefined,
             line2: billingDetails.address.line2 ? '...' : undefined
         } : undefined
