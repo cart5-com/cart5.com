@@ -11,6 +11,7 @@ import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import PaymentMethodsEditor from './PaymentMethodsEditor.vue';
 import { Switch } from '@/components/ui/switch';
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+import { ResType } from '@api-client/typeUtils';
 
 pageTitle.value = 'Payment Methods';
 
@@ -100,8 +101,28 @@ onMounted(() => {
     if (window.location.hash === '#success') {
         toast.info('please wait while verifying checkout session');
         handleSuccessUrl();
+    } else {
+        getStripeCustomerDetails();
     }
+
 });
+
+const path = dashboardApiClient.store[':storeId'].stripe_payment_setup.get_details.$get;
+type DetailsType = ResType<typeof path>["data"];
+
+const stripeCustomerDetails = ref<DetailsType | null>(null);
+const getStripeCustomerDetails = async () => {
+    const { error, data } = await (await dashboardApiClient.store[':storeId'].stripe_payment_setup.get_details.$get({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        }
+    })).json();
+    if (error) {
+        toast.error(error.message ?? 'Failed to get Stripe customer details');
+    } else {
+        stripeCustomerDetails.value = data;
+    }
+}
 
 const handleSuccessUrl = async () => {
     const { error, data } = await (await dashboardApiClient.store[':storeId'].stripe_payment_setup.verify_checkout.$get({
@@ -116,6 +137,7 @@ const handleSuccessUrl = async () => {
         console.log(data);
         history.replaceState(null, '', window.location.pathname + window.location.search);
         toast.success('Payment method verified and saved successfully');
+        getStripeCustomerDetails();
     }
 }
 
@@ -138,127 +160,139 @@ const setupStripeCheckout = async () => {
 
 <template>
     <div class="space-y-16 max-w-md mx-auto">
-        <Button @click="setupStripeCheckout"
-                :disabled="isLoading"
-                class="w-full">
-            Setup Stripe Checkout
-        </Button>
-
-        <Button @click="savePaymentMethods"
-                :disabled="isLoading"
-                class="w-full">
-            <Loader2 v-if="isLoading"
-                     class="mr-2 h-4 w-4 animate-spin" />
-            Save Changes
-        </Button>
-
         <Card>
             <CardHeader>
                 <CardTitle>Payment methods handled by your staff/your delivery person</CardTitle>
                 <CardDescription>
                     Only in-person/physical payment methods can be configured here.
-                    <br>
-                    <br>
-                    <!-- All payment methods added here must be handled manually by store staff.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button @click="setupStripeCheckout"
+                        :disabled="isLoading"
+                        class="w-full">
+                    Add a payment method
+                </Button>
+            </CardContent>
+        </Card>
+
+        <div v-if="stripeCustomerDetails?.hasChargablePaymentMethod">
+            <Button @click="savePaymentMethods"
+                    :disabled="isLoading"
+                    class="w-full">
+                <Loader2 v-if="isLoading"
+                         class="mr-2 h-4 w-4 animate-spin" />
+                Save Changes
+            </Button>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Payment methods handled by your staff/your delivery person</CardTitle>
+                    <CardDescription>
+                        Only in-person/physical payment methods can be configured here.
+                        <br>
+                        <br>
+                        <!-- All payment methods added here must be handled manually by store staff.
                     Means delivery person will handle the payment at delivery address.
                     or staff will handle the payment at pickup counter.
                     <br>
                     <br> -->
-                    (Online payment methods are configured in the <RouterLink class="underline"
-                                :to="{ name: 'store-stripe' }">Stripe</RouterLink> page
-                    )
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p class="text-sm text-muted-foreground">
-                    For example:
-                </p>
-                <ul class="text-sm text-muted-foreground list-disc pl-6 mt-2 space-y-4">
-                    <li>
-                        <Banknote class="inline-block mr-2" /> Cash at pickup counter
-                    </li>
-                    <li>
-                        <Banknote class=" inline-block mr-2" /> Cash at delivery address
-                    </li>
-                    <li>
-                        <Calculator class=" inline-block mr-2" />
-                        <CreditCard class=" inline-block mr-2" /> Card at store at counter
-                    </li>
-                    <li>
-                        <Calculator class=" inline-block mr-2" />
-                        <CreditCard class=" inline-block mr-2" /> Card at delivery address with delivery person's
-                        terminal/device
-                    </li>
-                    <li>
-                        <Phone class=" inline-block mr-2" /> Call me back and I'll give you my card details
-                    </li>
-                    <li>
-                        <Landmark class=" inline-block mr-2" /> Bank transfer (manual validation by store staff)
-                    </li>
-                </ul>
-            </CardContent>
-        </Card>
+                        (Online payment methods are configured in the <RouterLink class="underline"
+                                    :to="{ name: 'store-stripe' }">Stripe</RouterLink> page
+                        )
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p class="text-sm text-muted-foreground">
+                        For example:
+                    </p>
+                    <ul class="text-sm text-muted-foreground list-disc pl-6 mt-2 space-y-4">
+                        <li>
+                            <Banknote class="inline-block mr-2" /> Cash at pickup counter
+                        </li>
+                        <li>
+                            <Banknote class=" inline-block mr-2" /> Cash at delivery address
+                        </li>
+                        <li>
+                            <Calculator class=" inline-block mr-2" />
+                            <CreditCard class=" inline-block mr-2" /> Card at store at counter
+                        </li>
+                        <li>
+                            <Calculator class=" inline-block mr-2" />
+                            <CreditCard class=" inline-block mr-2" /> Card at delivery address with delivery person's
+                            terminal/device
+                        </li>
+                        <li>
+                            <Phone class=" inline-block mr-2" /> Call me back and I'll give you my card details
+                        </li>
+                        <li>
+                            <Landmark class=" inline-block mr-2" /> Bank transfer (manual validation by store staff)
+                        </li>
+                    </ul>
+                </CardContent>
+            </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Default payment methods</CardTitle>
-                <CardDescription>Set your default payment methods</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <PaymentMethodsEditor :payment-methods="defaultMethods" />
-            </CardContent>
-        </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Default payment methods</CardTitle>
+                    <CardDescription>Set your default payment methods</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <PaymentMethodsEditor :payment-methods="defaultMethods" />
+                </CardContent>
+            </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Delivery payment methods</CardTitle>
-                <CardDescription>
-                    {{ deliveryMethods.isActive ? `(Custom delivery payment methods)` : '(Uses same methods as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="isActive"
-                            :checked="deliveryMethods.isActive"
-                            @update:checked="(checked) => deliveryMethods.isActive = checked" />
-                    <label for="isActive"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Use Custom Payment Methods
-                    </label>
-                </div>
-                <PaymentMethodsEditor :payment-methods="deliveryMethods"
-                                      card-details="(delivery person's terminal/device)" />
-            </CardContent>
-        </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Delivery payment methods</CardTitle>
+                    <CardDescription>
+                        {{ deliveryMethods.isActive ? `(Custom delivery payment methods)` : '(Uses same methods as default)' }}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex items-center space-x-2 mb-6 border-b pb-6">
+                        <Switch id="isActive"
+                                :checked="deliveryMethods.isActive"
+                                @update:checked="(checked) => deliveryMethods.isActive = checked" />
+                        <label for="isActive"
+                               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Use Custom Payment Methods
+                        </label>
+                    </div>
+                    <PaymentMethodsEditor :payment-methods="deliveryMethods"
+                                          card-details="(delivery person's terminal/device)" />
+                </CardContent>
+            </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Pickup payment methods</CardTitle>
-                <CardDescription>
-                    {{ pickupMethods.isActive ? `(Custom pickup payment methods)` : '(Uses same methods as default)' }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div class="flex items-center space-x-2 mb-6 border-b pb-6">
-                    <Switch id="isActive"
-                            :checked="pickupMethods.isActive"
-                            @update:checked="(checked) => pickupMethods.isActive = checked" />
-                    <label for="isActive"
-                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Use Custom Payment Methods
-                    </label>
-                </div>
-                <PaymentMethodsEditor :payment-methods="pickupMethods"
-                                      card-details="(in store)" />
-            </CardContent>
-        </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Pickup payment methods</CardTitle>
+                    <CardDescription>
+                        {{ pickupMethods.isActive ? `(Custom pickup payment methods)` : '(Uses same methods as default)' }}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="flex items-center space-x-2 mb-6 border-b pb-6">
+                        <Switch id="isActive"
+                                :checked="pickupMethods.isActive"
+                                @update:checked="(checked) => pickupMethods.isActive = checked" />
+                        <label for="isActive"
+                               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Use Custom Payment Methods
+                        </label>
+                    </div>
+                    <PaymentMethodsEditor :payment-methods="pickupMethods"
+                                          card-details="(in store)" />
+                </CardContent>
+            </Card>
 
-        <Button @click="savePaymentMethods"
-                :disabled="isLoading"
-                class="w-full">
-            <Loader2 v-if="isLoading"
-                     class="mr-2 h-4 w-4 animate-spin" />
-            Save Changes
-        </Button>
+            <Button @click="savePaymentMethods"
+                    :disabled="isLoading"
+                    class="w-full">
+                <Loader2 v-if="isLoading"
+                         class="mr-2 h-4 w-4 animate-spin" />
+                Save Changes
+            </Button>
+        </div>
     </div>
 </template>
