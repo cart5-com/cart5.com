@@ -13,6 +13,7 @@ import {
     createStore_Service,
     updateStore_Service,
     updateStoreAddress_Service,
+    updateStoreAsAStripeCustomer_Service,
     updateStoreDeliveryZones_Service,
     updateStoreOpenHours_Service,
     updateStorePaymentMethods_Service,
@@ -350,6 +351,10 @@ export const startSeed = async () => {
     //     stripeFeePerOrder: 0.30,
     //     whoPaysStripeFee: "CUSTOMER",
     // });
+
+    await updateStoreAsAStripeCustomer_Service(flamesStore!.id, {
+        stripeCustomerId: "cus_SDM6Yu8isCDtN1",
+    })
 
     // invite flames admin to Real Flames store
     const invitationForFlamesStoreAdminUserRes = await insertInvitation(

@@ -96,27 +96,29 @@ const savePaymentMethods = async () => {
 onMounted(() => {
     loadData();
 
-    // handle ?reason=success_url
-    const reason = new URLSearchParams(window.location.search).get('reason');
-    if (reason === 'success_url') {
-        // handleSuccessUrl();
+    // handle #success
+    if (window.location.hash === '#success') {
+        // TODO: remove this after testing
+        // history.replaceState(null, '', window.location.pathname + window.location.search);
+        toast.info('please wait while verifying checkout session');
+        handleSuccessUrl();
     }
 });
 
-// const handleSuccessUrl = async () => {
-//     const { error, data } = await (await dashboardApiClient.store[':storeId'].payment_methods.checkout_session_id.$get({
-//         param: {
-//             storeId: currentStoreId.value ?? '',
-//         }
-//     })).json();
-//     if (error) {
-//         toast.error(error.message ?? 'Failed to get Stripe Checkout session id');
-//     } else {
-//         console.log("checkout_session_id data");
-//         console.log(data);
+const handleSuccessUrl = async () => {
+    const { error, data } = await (await dashboardApiClient.store[':storeId'].stripe_payment_setup.verify_checkout.$get({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        }
+    })).json();
+    if (error) {
+        toast.error(error.message ?? 'Failed to get Stripe Checkout session id');
+    } else {
+        console.log("checkout_session_id data");
+        console.log(data);
 
-//     }
-// }
+    }
+}
 
 const setupStripeCheckout = async () => {
     const { error, data } = await (await dashboardApiClient.store[':storeId'].stripe_payment_setup.start_new_checkout.$get({

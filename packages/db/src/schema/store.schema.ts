@@ -78,8 +78,11 @@ export const updateStoreStripeConnectSettingsSchema = createUpdateSchema(storeSt
 
 
 export const storeAsAStripeCustomerTable = sqliteTable("store_as_a_stripe_customer", {
+	...autoCreatedUpdated,
 	storeId: text("store_id").notNull().unique(),
 	stripeCustomerId: text("stripe_customer_id"),
+	hasChargablePaymentMethod: integer("has_chargable_payment_method", { mode: "boolean" }).notNull().default(false),
+	lastVerifiedPaymentMethodId: text("last_verified_payment_method_id"),
 });
 export const selectStoreAsAStripeCustomerSchema = createSelectSchema(storeAsAStripeCustomerTable);
 export const insertStoreAsAStripeCustomerSchema = createInsertSchema(storeAsAStripeCustomerTable);

@@ -31,7 +31,8 @@ import { stripeAccount_Handler } from "./stripe/account.controller";
 import { stripeGetAccount_Handler } from "./stripe/get_account.controller";
 import { updateStoreStripeSettings_Handler } from "./stripe/stripe_settings_update.controller";
 import { updateStoreStripeSettings_SchemaValidator } from "./stripe/stripe_settings_update.controller";
-import { startNewCheckout_Handler } from "./stripe_payment_setup/stripe_setup_checkout.controller";
+import { startNewCheckout_Handler } from "./stripe_payment_setup/start_new_checkout.controller";
+import { verifyCheckout_Handler } from "./stripe_payment_setup/verify_checkout.controller";
 
 export const storeRouter = new Hono<HonoVariables>()
     .get(
@@ -192,6 +193,13 @@ export const storeRouter = new Hono<HonoVariables>()
             TEAM_PERMISSIONS.STORE_MANAGER
         ]),
         startNewCheckout_Handler
+    )
+    .get('/:storeId/stripe_payment_setup/verify_checkout',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER
+        ]),
+        verifyCheckout_Handler
     )
     .post('/:storeId/payment_methods/get',
         createAdminCheckStore([

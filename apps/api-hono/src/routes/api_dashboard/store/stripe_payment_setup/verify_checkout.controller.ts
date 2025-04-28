@@ -1,12 +1,94 @@
-import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { getStoreTaxSettings_Service } from "@db/services/store.service";
-import Stripe from "stripe";
+import type { Context } from "hono";
+import { getCookie } from "hono/cookie";
+import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
+import { KNOWN_ERROR } from "@lib/types/errors";
+import { Stripe } from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
-import { ENFORCE_HOSTNAME_CHECKS } from "@lib/utils/enforceHostnameChecks";
-import { setCookie } from "hono/cookie";
-const STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME = "STRIPE_CHECKOUT_SESSION_ID";
+import type { ErrorType } from "@lib/types/errors";
+import { updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
+
+export const verifyCheckout_Handler = async (c: Context<
+    HonoVariables
+>) => {
+    const storeId = c.req.param('storeId');
+    const stripeCheckoutSessionId = getCookie(c, STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME);
+    // TODO: remove cookie after testing
+
+    if (!stripeCheckoutSessionId) {
+        throw new KNOWN_ERROR(
+            "Stripe checkout session id not found",
+            "STRIPE_CHECKOUT_SESSION_ID_NOT_FOUND"
+        );
+    }
+    try {
+        const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
+            apiVersion: '2025-03-31.basil',
+        });
+
+        // Step 1: Retrieve the checkout session
+        const session = await stripe.checkout.sessions.retrieve(
+            stripeCheckoutSessionId
+        );
+
+        // Step 2: Verify session status
+        if (session.status !== 'complete') {
+            throw new KNOWN_ERROR(
+                "Stripe checkout session is not complete",
+                "STRIPE_CHECKOUT_SESSION_NOT_COMPLETE"
+            );
+        }
+
+        // Step 3: Get the setup intent from the session
+        if (!session.setup_intent) {
+            throw new KNOWN_ERROR(
+                "Stripe checkout session does not have a setup intent",
+                "STRIPE_CHECKOUT_SESSION_NO_SETUP_INTENT"
+            );
+        }
+
+        // Step 4: Retrieve the setup intent to check its status
+        const setupIntent = await stripe.setupIntents.retrieve(
+            typeof session.setup_intent === 'string'
+                ? session.setup_intent
+                : session.setup_intent.id
+        );
+
+        // Step 5: Check if setup intent succeeded
+        if (setupIntent.status === 'succeeded') {
+            // Step 6: Update store record indicating chargable payment method exists
+            await updateStoreAsAStripeCustomer_Service(storeId, {
+                hasChargablePaymentMethod: true,
+                lastVerifiedPaymentMethodId: setupIntent.payment_method as string,
+            });
+
+            return c.json({
+                data: {
+                    success: true,
+                    message: "Payment method verified and saved successfully"
+                },
+                error: null as ErrorType
+            }, 200);
+        } else {
+            throw new KNOWN_ERROR(
+                `Setup intent status is ${setupIntent.status}, not 'succeeded'`,
+                "STRIPE_SETUP_INTENT_NOT_SUCCEEDED"
+            );
+        }
+    } catch (error) {
+        console.error('Stripe payment method verification error:', error);
+
+        if (error instanceof KNOWN_ERROR) {
+            throw error;
+        }
+
+        throw new KNOWN_ERROR(
+            "Failed to verify Stripe payment method",
+            "STRIPE_ERROR"
+        );
+    }
+}
+
 
 // export const retrieveStripeCheckoutSessionId_Handler = async (c: Context<
 //     HonoVariables
@@ -135,92 +217,3 @@ const STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME = "STRIPE_CHECKOUT_SESSION_ID";
 //     },
 //     "error": null
 // }
-
-export const startNewCheckout_Handler = async (c: Context<
-    HonoVariables
->) => {
-    const storeId = c.req.param('storeId');
-    const storeTaxSettings = await getStoreTaxSettings_Service(storeId, {
-        currency: true,
-    });
-    if (!storeTaxSettings?.currency) {
-        throw new KNOWN_ERROR(
-            "Store currency not found, please set the store currency first in the tax settings",
-            "STORE_CURRENCY_NOT_FOUND"
-        );
-    }
-    try {
-        // Initialize Stripe with API key
-        const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
-            apiVersion: '2025-03-31.basil',
-        });
-        const existingCustomers = await stripe.customers.search({
-            query: `metadata["storeId"]:"${storeId}"`,
-            limit: 1,
-        });
-        let customerId = null;
-        if (existingCustomers.data.length > 0) {
-            customerId = existingCustomers.data[0].id;
-        } else {
-            const customer = await stripe.customers.create({
-                metadata: {
-                    storeId: storeId,
-                },
-            });
-            customerId = customer.id;
-        }
-        const host = c.req.header()['host'];
-        // /dashboard/store/str_4_4_4/payment-methods
-        const session = await stripe.checkout.sessions.create({
-            customer: customerId,
-            // customer_creation: 'always',
-            customer_update: {
-                name: 'auto',
-                address: 'auto',
-                shipping: 'auto',
-            },
-            metadata: {
-                storeId: storeId,
-                stripeCustomerId: customerId,
-            },
-            mode: 'setup',
-            success_url: `https://${host}/dashboard/store/${storeId}/payment-methods?reason=success_url`,
-            cancel_url: `https://${host}/dashboard/store/${storeId}/payment-methods?reason=cancel_url`,
-            ui_mode: 'hosted',
-            currency: storeTaxSettings?.currency,
-            // invoice_creation: { enabled: false },
-            locale: 'auto',
-            setup_intent_data: {
-                description: `Setup payment method for storeId:${storeId} on cart5.com`,
-                metadata: {
-                    storeId,
-                },
-            },
-            billing_address_collection: 'required',
-            automatic_tax: {
-                enabled: false,
-            },
-            tax_id_collection: {
-                enabled: false,
-            },
-        });
-
-        setCookie(c, STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME, session.id, {
-            path: "/",
-            secure: ENFORCE_HOSTNAME_CHECKS,
-            httpOnly: true,
-            maxAge: 86400, // 24 hours // stripe checkout session 'expires_at' 24 hours from creation.
-            sameSite: "strict"
-        });
-        return c.json({
-            data: session.url,
-            error: null as ErrorType
-        }, 200);
-    } catch (error) {
-        console.error('Stripe checkout setup error:', error);
-        throw new KNOWN_ERROR(
-            "Failed to setup Stripe checkout",
-            "STRIPE_ERROR"
-        );
-    }
-} 
