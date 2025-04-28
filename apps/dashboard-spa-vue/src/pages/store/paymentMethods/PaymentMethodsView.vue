@@ -176,7 +176,7 @@ const setupStripeCheckout = async () => {
             </CardContent>
         </Card>
 
-        <div v-if="stripeCustomerDetails?.hasChargablePaymentMethod">
+        <div :class="{ 'opacity-50 pointer-events-none': !stripeCustomerDetails?.hasChargablePaymentMethod }">
             <Button @click="savePaymentMethods"
                     :disabled="isLoading"
                     class="w-full">
