@@ -343,13 +343,13 @@ export const startSeed = async () => {
         menuRoot: sampleMenuRoot2
     });
 
-    await updateStoreStripeSettingsData_Service(flamesStore!.id, {
-        stripeConnectAccountId: "acct_1RIjqtQBz1PsJffq", // stripe sandbox account
-        isStripeEnabled: true,
-        stripeRatePerOrder: 2.9,
-        stripeFeePerOrder: 0.30,
-        whoPaysStripeFee: "CUSTOMER",
-    });
+    // await updateStoreStripeSettingsData_Service(flamesStore!.id, {
+    //     stripeConnectAccountId: "acct_1RIjqtQBz1PsJffq", // stripe sandbox account
+    //     isStripeEnabled: true,
+    //     stripeRatePerOrder: 2.9,
+    //     stripeFeePerOrder: 0.30,
+    //     whoPaysStripeFee: "CUSTOMER",
+    // });
 
     // invite flames admin to Real Flames store
     const invitationForFlamesStoreAdminUserRes = await insertInvitation(
