@@ -38,6 +38,8 @@ function setCenter(lat: number, lng: number) {
 	marker?.setLatLng([lat, lng])
 }
 
+const isConfirmDisabled = ref(true);
+
 onMounted(async () => {
 	const loaded = await loadLeafletCDN();
 	if (!loaded) {
@@ -70,6 +72,9 @@ onMounted(async () => {
 	// mapView.fitWorld(); // no need to load unnecessary tiles
 	mapView.setZoom(18);
 	loadHelperBtns();
+	mapView?.whenReady(() => {
+		isConfirmDisabled.value = false;
+	});
 });
 
 const isGpsLoading = ref(false);
@@ -174,8 +179,11 @@ async function loadHelperBtns() {
 				{{ props.address || "" }}
 			</p>
 
+
 			<div :id="randomId"
 				 class="relative flex-1 min-h-0">
+				<Loader2 v-if="isConfirmDisabled"
+						 class="animate-spin w-20 h-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger as-child>
@@ -219,9 +227,12 @@ async function loadHelperBtns() {
 
 			<div>
 				<Button type="button"
+						:disabled="isConfirmDisabled"
 						@click="$emit('done', { lat: mapView?.getCenter().lat ?? 0, lng: mapView?.getCenter().lng ?? 0 })"
 						class="w-full">
-					<MapPinCheckInside />
+					<Loader2 v-if="isConfirmDisabled"
+							 class="animate-spin" />
+					<MapPinCheckInside v-else />
 					{{ btnLabel || "Confirm" }}
 				</Button>
 			</div>
