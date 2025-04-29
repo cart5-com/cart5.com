@@ -96,6 +96,11 @@ export const getStoreData_Service = async (
                     stripeFeePerOrder: true,
                     whoPaysStripeFee: true,
                 }
+            },
+            asStripeCustomer: {
+                columns: {
+                    hasChargablePaymentMethod: true,
+                }
             }
         }
     });

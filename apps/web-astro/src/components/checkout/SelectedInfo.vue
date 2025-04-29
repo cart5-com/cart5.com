@@ -4,8 +4,9 @@ import { slugify } from "@lib/utils/slugify";
 import { User, Pencil } from "lucide-vue-next";
 import { Card, CardContent } from "@/components/ui/card";
 import { currentOrderType, userDataStore } from "@web-astro/stores/UserData.store";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
+import { toast } from "@/ui-plus/sonner";
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -38,6 +39,14 @@ const pickupNickname = computed(() => {
 
 const storeId = window.storeData?.id;
 const storeName = window.storeData?.name;
+
+// watch for case (currentOrderType === 'delivery' && !selectedAddress)
+watch(() => currentOrderType.value === 'delivery' && !selectedAddress.value, () => {
+    toast.error('Please add or select an address');
+    setTimeout(() => {
+        window.location.href = BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!));
+    }, 1000);
+});
 </script>
 
 <template>
@@ -47,15 +56,15 @@ const storeName = window.storeData?.name;
                 <div v-if="currentOrderType === 'delivery' && selectedAddress">
                     <h3 class="font-bold text-xl mb-2">Delivery details</h3>
                     <div class="flex items-start gap-2 justify-between">
-                        <div class="flex items-start gap-2">
+                        <div class="flex items-start gap-2 ">
                             <component
                                        :is="icons.find(icon => icon.name === selectedAddress?.icon)?.component || MapPin" />
                             <div>
                                 <h3 class="font-medium">{{ selectedAddress.label }}</h3>
-                                <p class="text-sm text-muted-foreground">{{ selectedAddress.address1 }}</p>
+                                <p class="text-sm font-bold">{{ selectedAddress.address1 }}</p>
                                 <p v-if="selectedAddress.address2"
-                                   class="text-sm text-muted-foreground">{{ selectedAddress.address2 }}</p>
-                                <p class="text-sm text-muted-foreground">
+                                   class="text-sm font-bold">{{ selectedAddress.address2 }}</p>
+                                <p class="text-sm font-bold">
                                     {{ [selectedAddress.city, selectedAddress.state].filter(Boolean).join(', ') }}
                                     {{ selectedAddress.postalCode }}
                                 </p>

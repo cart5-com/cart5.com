@@ -112,6 +112,12 @@ const addServiceFee = () => {
             ratePerOrder: 0,
             feePerOrder: 0
         });
+        setTimeout(() => {
+            const saveServiceFeesButton = document.getElementById('save-service-fees');
+            if (saveServiceFeesButton) {
+                saveServiceFeesButton.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
     }
 };
 
@@ -261,6 +267,7 @@ const removeServiceFee = (index: number) => {
 
                 <Button @click="saveServiceFees"
                         :disabled="isLoading"
+                        id="save-service-fees"
                         class="w-full">
                     <Loader2 v-if="isLoading"
                              class="animate-spin mr-2 h-4 w-4" />

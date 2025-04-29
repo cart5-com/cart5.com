@@ -167,11 +167,12 @@ const setupStripeCheckout = async () => {
             <AlertCircle class="h-4 w-4" />
             <AlertTitle>Important</AlertTitle>
             <AlertDescription>
-                We charge a small service fee on all orders.
+                According to provided services by us, we add/include a small service fee on orders as defined in your
+                settings.
                 For in-person payments (cash, card terminal, etc.), you collect these fees directly from customers.
-                Please add a payment method so we can collect these fees from you.
-                We'll automatically charge your payment method on the 1st of each month based on your balance.
-                (We may also process charges earlier if your balance reaches a certain amount)
+                You must add a valid payment method to return collected fees.
+                We'll automatically charge your payment method on the 1st of each month based on your completed orders.
+                (In some cases, we may also process charges earlier if your balance reaches a certain amount)
             </AlertDescription>
         </Alert>
 
@@ -242,14 +243,14 @@ const setupStripeCheckout = async () => {
             </CardContent>
         </Card>
 
-        <Alert v-if="!stripeCustomerDetails?.hasChargablePaymentMethod"
+        <!-- <Alert v-if="!stripeCustomerDetails?.hasChargablePaymentMethod"
                variant="default"
                class="my-4 bg-destructive text-destructive-foreground">
             <AlertCircle class="h-4 w-4" />
             <AlertDescription>
                 Physical payment methods are disabled until you add a valid payment method above
             </AlertDescription>
-        </Alert>
+        </Alert> -->
         <div :class="{ 'opacity-50 pointer-events-none': !stripeCustomerDetails?.hasChargablePaymentMethod }">
 
             <Button @click="savePaymentMethods"

@@ -315,4 +315,10 @@ export const storeRelations = relations(storeTable, ({
 			fields: [storeTable.id],
 			references: [storeStripeConnectSettingsTable.storeId]
 		}),
+	asStripeCustomer:
+		one(
+			storeAsAStripeCustomerTable, {
+			fields: [storeTable.id],
+			references: [storeAsAStripeCustomerTable.storeId]
+		}),
 }));

@@ -21,7 +21,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled || false;
-
+const hasChargablePaymentMethod = window.storeData?.asStripeCustomer?.hasChargablePaymentMethod || false;
 
 const availablePaymentMethods = computed(() => {
 
@@ -54,36 +54,35 @@ const availablePaymentMethods = computed(() => {
         });
     }
 
-    if (paymentMethods?.cash) {
-        methods.push({
-            id: 'cash',
-            name: 'Cash',
-            description: currentOrderType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
-            icon: Banknote
-        });
+    if (hasChargablePaymentMethod) {
+        if (paymentMethods?.cash) {
+            methods.push({
+                id: 'cash',
+                name: 'Cash',
+                description: currentOrderType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
+                icon: Banknote
+            });
+        }
+        if (paymentMethods?.cardTerminal) {
+            methods.push({
+                id: 'cardTerminal',
+                name: 'Card',
+                description: currentOrderType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
+                icon: Calculator
+            });
+        }
+        if (paymentMethods?.customMethods) {
+            paymentMethods.customMethods.forEach((method: CustomPaymentMethod) => {
+                if (method.isActive && method.name) {
+                    methods.push({
+                        id: method.id || crypto.randomUUID(),
+                        name: method.name,
+                        description: method.description,
+                    });
+                }
+            });
+        }
     }
-
-    if (paymentMethods?.cardTerminal) {
-        methods.push({
-            id: 'cardTerminal',
-            name: 'Card',
-            description: currentOrderType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
-            icon: Calculator
-        });
-    }
-
-    if (paymentMethods?.customMethods) {
-        paymentMethods.customMethods.forEach((method: CustomPaymentMethod) => {
-            if (method.isActive && method.name) {
-                methods.push({
-                    id: method.id || crypto.randomUUID(),
-                    name: method.name,
-                    description: method.description,
-                });
-            }
-        });
-    }
-
     return methods;
 });
 
@@ -174,7 +173,11 @@ const selectedPaymentMethod = computed(() => {
         <div v-else
              class="p-2 bg-destructive text-destructive-foreground rounded-lg">
             <OctagonX class="mr-1 inline-block" />
-            No payment methods available
+            No payment options found by store settings.
+            <br>
+            This could be a temporary issue.
+            <br>
+            Please try again later.
         </div>
     </div>
 </template>

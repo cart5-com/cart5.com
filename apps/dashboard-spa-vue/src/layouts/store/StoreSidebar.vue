@@ -119,15 +119,6 @@ const { setOpenMobile } = useSidebar()
                         </SidebarMenuItem>
 
                         <SidebarMenuItem>
-                            <RouterLink :to="{ name: 'store-payment-methods' }"
-                                        @click="setOpenMobile(false)">
-                                <SidebarMenuButton>
-                                    Payment Methods
-                                </SidebarMenuButton>
-                            </RouterLink>
-                        </SidebarMenuItem>
-
-                        <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-service-fees' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
@@ -153,6 +144,16 @@ const { setOpenMobile } = useSidebar()
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'store-payment-methods' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Payment Methods
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
+
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>

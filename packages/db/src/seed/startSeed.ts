@@ -44,7 +44,6 @@ export const startSeed = async () => {
         return;
     }
 
-    // first user kerem
     const email = "admin@mooisay.com";
     const password = "mooisaymoomoo";
     const name = "Moo";
@@ -354,6 +353,80 @@ export const startSeed = async () => {
 
     await updateStoreAsAStripeCustomer_Service(flamesStore!.id, {
         stripeCustomerId: "cus_SDM6Yu8isCDtN1",
+        hasChargablePaymentMethod: true,
+        lastVerifiedPaymentMethodId: "pm_1RIvPyGftdUvJamsyMMZ8FRa",
+        paymentMethodDetails: {
+            "id": "pm_1RIvPyGftdUvJamsyMMZ8FRa",
+            "object": "payment_method",
+            "allow_redisplay": "always",
+            "billing_details": {
+                "address": {
+                    "city": "Hove",
+                    "country": "GB",
+                    "line1": "Holmes Avenue",
+                    "line2": null,
+                    "postal_code": "BN3 7LA",
+                    "state": null
+                },
+                "email": "k...@gmail.com",
+                "name": "k...",
+                "phone": null,
+                "tax_id": null
+            },
+            "card": {
+                "brand": "visa",
+                "checks": {
+                    "address_line1_check": "pass",
+                    "address_postal_code_check": "pass",
+                    "cvc_check": "pass"
+                },
+                "country": "US",
+                "display_brand": "visa",
+                "exp_month": 2,
+                "exp_year": 2044,
+                "fingerprint": "NLP1J7l9OKv10CYL",
+                "funding": "credit",
+                "generated_from": null,
+                "last4": "4242",
+                "networks": {
+                    "available": [
+                        "visa"
+                    ],
+                    "preferred": null
+                },
+                "regulated_status": "unregulated",
+                "three_d_secure_usage": {
+                    "supported": true
+                },
+                "wallet": null
+            },
+            "created": 1745861074,
+            "customer": "cus_SDM6Yu8isCDtN1",
+            "livemode": false,
+            "metadata": {},
+            "type": "card",
+            "redacted": {
+                "billingDetails": {
+                    "address": {
+                        "city": "Hove",
+                        "country": "GB",
+                        "line1": "Holmes Avenue",
+                        "line2": null,
+                        "postal_code": "BN3 7LA",
+                        "state": null
+                    },
+                    "email": "k..@gmail.com",
+                    "name": "k..",
+                    "phone": null,
+                    "tax_id": null
+                },
+                "last4": "4242",
+                "type": "card",
+                "brand": "visa",
+                "exp_month": 2,
+                "exp_year": 2044
+            }
+        }
     })
 
     // invite flames admin to Real Flames store

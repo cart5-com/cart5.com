@@ -3,7 +3,7 @@ import type { Context } from "hono";
 import { redactEmail } from "@lib/utils/redactEmail";
 import type { Stripe } from "stripe";
 import type { ErrorType } from "@lib/types/errors";
-import { getStoreAsAStripeCustomer_Service } from "@db/services/store.service";
+import { getStoreAsAStripeCustomer_Service, getStoreTaxSettings_Service } from "@db/services/store.service";
 
 
 // Helper function to redact billing details
@@ -34,6 +34,10 @@ export const getDetails_Handler = async (c: Context<
         hasChargablePaymentMethod: true,
         // lastVerifiedPaymentMethodId: true,
     });
+    const storeTaxSettings = await getStoreTaxSettings_Service(storeId, {
+        currency: true,
+        taxRateForServiceFees: true,
+    });
     if (storeAsAStripeCustomer && storeAsAStripeCustomer.paymentMethodDetails) {
         // reomve all others but keep redacted
         const methodDetails = storeAsAStripeCustomer.paymentMethodDetails[storeAsAStripeCustomer.paymentMethodDetails.type];
@@ -52,7 +56,7 @@ export const getDetails_Handler = async (c: Context<
         storeAsAStripeCustomer.paymentMethodDetails = storeAsAStripeCustomer.paymentMethodDetails.redacted;
     }
     return c.json({
-        data: storeAsAStripeCustomer,
+        data: { ...storeAsAStripeCustomer, ...storeTaxSettings },
         error: null as ErrorType
     }, 200);
 }
