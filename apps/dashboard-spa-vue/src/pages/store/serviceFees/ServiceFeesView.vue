@@ -20,6 +20,7 @@ import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { CALCULATION_TYPE } from '@lib/zod/serviceFee';
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+import CalculationDemoView from './CalculationDemoView.vue';
 
 pageTitle.value = 'Service Fees';
 
@@ -126,6 +127,8 @@ const removeServiceFee = (index: number) => {
         serviceFees.value.customServiceFees.splice(index, 1);
     }
 };
+
+const isDemoVisible = ref(false);
 </script>
 
 <template>
@@ -169,7 +172,7 @@ const removeServiceFee = (index: number) => {
                                :disabled="serviceFees.calculationType !== 'INCLUDE'"
                                max="100" />
                         <p class="text-xs text-muted-foreground">
-                            The maximum service fee rate you're willing to accommodate.
+                            The maximum service fee rate you're willing to cover.
                             <br />
                             <br />
                             <span class="font-bold">
@@ -177,6 +180,8 @@ const removeServiceFee = (index: number) => {
                             </span>
                             If you sell on other platforms that charge fees, enter the highest fee percentage here.
                             This helps us understand how much you've already adjusted your prices.
+                            <br />
+                            <br />
                             For example, if you've increased your prices by 30% to cover fees on other platforms, enter
                             30
                             here.
@@ -265,6 +270,15 @@ const removeServiceFee = (index: number) => {
                     </div>
                 </div>
 
+                <div class="border rounded-lg p-2">
+                    <h1 class="text-lg font-bold cursor-pointer"
+                        @click="isDemoVisible = !isDemoVisible">
+                        Calculation Demo
+                    </h1>
+                    <CalculationDemoView :serviceFees="serviceFees"
+                                         v-if="isDemoVisible" />
+                </div>
+
                 <Button @click="saveServiceFees"
                         :disabled="isLoading"
                         id="save-service-fees"
@@ -275,5 +289,6 @@ const removeServiceFee = (index: number) => {
                 </Button>
             </CardContent>
         </Card>
+
     </div>
 </template>
