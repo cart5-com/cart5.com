@@ -343,13 +343,13 @@ export const startSeed = async () => {
         menuRoot: sampleMenuRoot2
     });
 
-    // await updateStoreStripeConnectSettings_Service(flamesStore!.id, {
-    //     stripeConnectAccountId: "acct_1RIjqtQBz1PsJffq", // stripe sandbox account
-    //     isStripeEnabled: true,
-    //     stripeRatePerOrder: 2.9,
-    //     stripeFeePerOrder: 0.30,
-    //     whoPaysStripeFee: "CUSTOMER",
-    // });
+    await updateStoreStripeConnectSettings_Service(flamesStore!.id, {
+        stripeConnectAccountId: "acct_1RJ28KGhYYm9KAMB", // stripe sandbox account
+        isStripeEnabled: true,
+        stripeRatePerOrder: 2.9,
+        stripeFeePerOrder: 0.30,
+        whoPaysStripeFee: "CUSTOMER",
+    });
 
     await updateStoreAsAStripeCustomer_Service(flamesStore!.id, {
         stripeCustomerId: "cus_SDM6Yu8isCDtN1",
@@ -368,7 +368,7 @@ export const startSeed = async () => {
                     "postal_code": "BN3 7LA",
                     "state": null
                 },
-                "email": "k...@gmail.com",
+                "email": "k...@mail.com",
                 "name": "k...",
                 "phone": null,
                 "tax_id": null
@@ -415,7 +415,7 @@ export const startSeed = async () => {
                         "postal_code": "BN3 7LA",
                         "state": null
                     },
-                    "email": "k..@gmail.com",
+                    "email": "k..@mail.com",
                     "name": "k..",
                     "phone": null,
                     "tax_id": null
@@ -424,7 +424,7 @@ export const startSeed = async () => {
                 "type": "card",
                 "brand": "visa",
                 "exp_month": 2,
-                "exp_year": 2044
+                "exp_year": 4242
             }
         }
     })

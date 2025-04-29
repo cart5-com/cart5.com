@@ -5,6 +5,7 @@ import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings
 import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
+import { redactEmail } from "@lib/utils/redactEmail";
 export const stripeGetAccount_Handler = async (c: Context<
     HonoVariables,
     "/:storeId/stripe/get_account"
@@ -43,7 +44,7 @@ export const stripeGetAccount_Handler = async (c: Context<
                 data: {
                     existingStripeSettingsData,
                     account: {
-                        email: account.email,
+                        email: redactEmail(account.email || ""),
                         id: account.id,
                         details_submitted: account.details_submitted,
                         charges_enabled: account.charges_enabled,

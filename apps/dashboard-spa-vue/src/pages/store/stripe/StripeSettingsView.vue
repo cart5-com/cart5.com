@@ -276,10 +276,11 @@ const isOnboardingStarted = computed(() => {
                         <div class="flex items-center gap-2 p-3 bg-muted rounded-md text-sm my-4">
                             <TriangleAlert class="h-4 min-w-4" />
                             <span>
-                                Please assume that this is an estimated calculation and the actual fee may vary
-                                according to the your stripe account settings. For example, if you have a high volume of
-                                transactions, you may be eligible for a lower fee. or if your buyer use a foreign card,
-                                the fee may be higher/updated by stripe.
+                                Please note that this is an estimated calculation and the actual fee may vary
+                                according to your Stripe account settings. For example, if you have a high volume of
+                                transactions, you may be eligible for a lower fee. Or if your buyer uses a
+                                premium card or foreign card, the rate/fee may be higher/lower/updated by
+                                Stripe.
                             </span>
                         </div>
 
