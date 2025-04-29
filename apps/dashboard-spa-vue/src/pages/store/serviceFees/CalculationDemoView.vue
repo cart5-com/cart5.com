@@ -17,7 +17,7 @@ import {
 import { Info } from 'lucide-vue-next';
 import type { OrderType } from '@lib/types/orderType';
 import { Button } from '@/components/ui/button';
-import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
+import type { ServiceFee } from "@lib/zod/serviceFee";
 
 const serviceFeesApiPath = dashboardApiClient.store[':storeId'].service_fees.get.$post;
 type ServiceFees = Partial<ResType<typeof serviceFeesApiPath>["data"]>;
@@ -53,7 +53,13 @@ const subTotal = computed<ReturnType<typeof calculateSubTotal>>(() => {
 })
 
 const platformServiceFee = ref<ServiceFee>({ ratePerOrder: 1, feePerOrder: 0 });
-const supportPartnerServiceFee = ref<ServiceFee>({ ratePerOrder: 2, feePerOrder: 0 });
+const supportPartnerServiceFee = ref<{
+    ratePerOrder?: number | undefined;
+    feePerOrder?: number | undefined;
+} | null>({
+    ratePerOrder: 2,
+    feePerOrder: 0
+});
 const marketingPartnerServiceFee = ref<ServiceFee>({ ratePerOrder: 5, feePerOrder: 0 });
 
 const cartBreakdown = computed(() => {
@@ -84,7 +90,22 @@ const cartBreakdown = computed(() => {
 
 onMounted(() => {
     loadTaxSettings();
+    loadSupportPartnerServiceFee();
 })
+
+const loadSupportPartnerServiceFee = async () => {
+    const { data, error } = await (await dashboardApiClient.store[':storeId'].support_partner_fees.$get({
+        param: {
+            storeId: currentStoreId.value ?? '',
+        },
+    })).json();
+
+    if (error) {
+        toast.error('Failed to load support partner service fee');
+    } else {
+        supportPartnerServiceFee.value = data;
+    }
+}
 
 const loadTaxSettings = async () => {
     isLoading.value = true;
@@ -158,7 +179,7 @@ const loadTaxSettings = async () => {
                 <br>
             </div>
         </div>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center border-t py-2 border-foreground">
             <span class="">
                 Subtotal
             </span>
@@ -168,7 +189,7 @@ const loadTaxSettings = async () => {
                        class="text-right max-w-24" />
             </span>
         </div>
-        <div class="flex justify-between items-center "
+        <div class="flex justify-between items-center border-t py-2 border-foreground"
              v-if="cartBreakdown.buyerPaysTaxAndFeesShownFee > 0">
             <span class="">
                 {{ cartBreakdown.buyerPaysTaxAndFeesName }}
@@ -208,7 +229,7 @@ const loadTaxSettings = async () => {
             </span>
         </div>
 
-        <div class="flex justify-between items-center font-bold text-3xl py-4">
+        <div class="flex justify-between items-center font-bold text-3xl py-8 border-t border-foreground">
             <span>
                 Buyer pays total
             </span>
@@ -216,8 +237,8 @@ const loadTaxSettings = async () => {
                 {{ taxSettings?.currencySymbol }}{{ cartBreakdown.buyerPays }}
             </span>
         </div>
-        <div class="space-y-2 border-t pt-4 border-foreground">
-            <h3 class="font-semibold">Transparency breakdown</h3>
+        <div class="space-y-2 border-t py-4 border-foreground">
+            <h3 class="font-semibold ">Transparency breakdown</h3>
             <div v-if="cartBreakdown.allTransparencyBreakdown">
                 <div v-for="(fee, index) in cartBreakdown.allTransparencyBreakdown"
                      :key="index"
@@ -236,30 +257,36 @@ const loadTaxSettings = async () => {
                 </div>
             </div>
         </div>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center border-t py-2 border-foreground">
             <span class="">
                 Platform service fee %
+                <br>
+                (real value)
             </span>
             <span class=" text-right">
                 <Input v-model="platformServiceFee.ratePerOrder"
                        type="number"
-                       disabled
                        class="text-right max-w-24" />
             </span>
         </div>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center border-t py-2 border-foreground">
             <span class="">
                 Support partner service fee %
+                <br>
+                (real value)
             </span>
             <span class=" text-right">
-                <Input v-model="supportPartnerServiceFee.ratePerOrder"
+                <Input v-if="supportPartnerServiceFee"
+                       v-model="supportPartnerServiceFee.ratePerOrder"
                        type="number"
                        class="text-right max-w-24" />
             </span>
         </div>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center border-t py-2 border-foreground">
             <span class="">
                 Marketing partner service fee %
+                <br>
+                (not a real value, this may vary according to the marketing channel)
             </span>
             <span class=" text-right">
                 <Input v-model="marketingPartnerServiceFee.ratePerOrder"

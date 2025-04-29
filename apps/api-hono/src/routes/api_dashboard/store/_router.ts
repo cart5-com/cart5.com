@@ -27,6 +27,7 @@ import { removeStoreTeamMember_SchemaValidator, removeStoreTeamMember_Handler } 
 import { updateStoreTeamMemberPermissions_SchemaValidator, updateStoreTeamMemberPermissions_Handler } from "./team/team_update_permissions.controller";
 import { getStoreServiceFees_Handler, getStoreServiceFees_SchemaValidator } from "./service_fees/service_fees_get.controller";
 import { updateStoreServiceFees_Handler, updateStoreServiceFees_SchemaValidator } from "./service_fees/service_fees_update.controller";
+import { getSupportPartnerServiceFee_Handler } from "./service_fees/support_partner_fees.controller";
 import { stripeAccount_Handler } from "./stripe/account.controller";
 import { stripeGetAccount_Handler } from "./stripe/get_account.controller";
 import { updateStoreStripeSettings_Handler } from "./stripe/stripe_settings_update.controller";
@@ -187,6 +188,13 @@ export const storeRouter = new Hono<HonoVariables>()
         ]),
         updateStoreServiceFees_SchemaValidator,
         updateStoreServiceFees_Handler
+    )
+    .get('/:storeId/support_partner_fees',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER
+        ]),
+        getSupportPartnerServiceFee_Handler
     )
     .get('/:storeId/stripe_payment_setup/start_new_checkout',
         createAdminCheckStore([
