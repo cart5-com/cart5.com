@@ -19,7 +19,7 @@ export const recursiveCartChildrenItemSummary = (
                     const innerCustomization = menuRoot.allItems?.[customizationState.itemId];
                     if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
-                        if (innerOptionItem?.defQ) {
+                        if (innerOptionItem?.defQ) { // default quantity should be 0 to remove
                             newSummary += "  ".repeat(indentLevel + 1) + '0x ' + (innerOptionItem?.lbl || '') + '\n';
                         }
                         // newSummary += " ".repeat(indentLevel + 1) + nullOptionItem.lbl + ':';
@@ -29,7 +29,12 @@ export const recursiveCartChildrenItemSummary = (
 
                 const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex]?.itemId!];
                 if (customizationState.childrenState[optionIndex]?.itemId) {
-                    const quantity = customizationState.childrenState[optionIndex]?.quantity || 0;
+                    let quantity = customizationState.childrenState[optionIndex]?.quantity || 0;
+                    // TODO: check potential state hacks like this one below: (item can be added more than max quantity)
+                    // for example total options quantity can NOT be more than choose up to value
+                    if (optionItem?.maxQ && quantity > optionItem?.maxQ) {
+                        quantity = optionItem?.maxQ;
+                    }
                     const defaultQuantity = optionItem?.defQ || 0;
                     // let chargeableQuantity = quantity;
                     // if (optionItem?.chrgAbvQ !== undefined) {
