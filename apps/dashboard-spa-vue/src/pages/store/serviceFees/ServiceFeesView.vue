@@ -148,7 +148,7 @@ const removeServiceFee = (index: number) => {
                             <SelectItem v-for="type in CALCULATION_TYPE"
                                         :key="type"
                                         :value="type">
-                                {{ type === 'INCLUDE' ? 'Include in Price' : 'Add to Price' }}
+                                {{ type === 'INCLUDE' ? 'My menu prices are able to cover some service fees' : 'Buyer pays all service fees' }}
                             </SelectItem>
                         </SelectContent>
                     </Select>

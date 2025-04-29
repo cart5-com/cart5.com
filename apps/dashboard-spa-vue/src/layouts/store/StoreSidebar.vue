@@ -119,6 +119,16 @@ const { setOpenMobile } = useSidebar()
                         </SidebarMenuItem>
 
                         <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'store-menu-editor' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Menu Editor
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
+
+
+                        <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-service-fees' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
@@ -127,14 +137,6 @@ const { setOpenMobile } = useSidebar()
                             </RouterLink>
                         </SidebarMenuItem>
 
-                        <SidebarMenuItem>
-                            <RouterLink :to="{ name: 'store-menu-editor' }"
-                                        @click="setOpenMobile(false)">
-                                <SidebarMenuButton>
-                                    Menu Editor
-                                </SidebarMenuButton>
-                            </RouterLink>
-                        </SidebarMenuItem>
 
                         <SidebarMenuItem>
                             <RouterLink :to="{ name: 'store-stripe' }"
