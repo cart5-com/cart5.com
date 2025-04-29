@@ -89,7 +89,7 @@ async function handleGpsClick() {
 				setCenter(position.coords.latitude, position.coords.longitude)
 
 				// Check if Current Location already exists in helperBtns
-				const currentLocationExists = helperBtns.value.some(btn => btn.label === "Current Location");
+				const currentLocationExists = helperBtns.value.some(btn => btn.type === "GPS");
 				if (currentLocationExists) {
 					// Update existing Current Location coordinates
 					helperBtns.value = helperBtns.value.map(btn => {
@@ -126,7 +126,8 @@ async function handleGpsClick() {
 	}
 }
 
-
+// TODO: check distance between user address lat,lng and geocoded address lat,lng
+// if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
 async function loadHelperBtns() {
 	const gecodeResult = await geocode(props.address, props.country?.toLowerCase())
 	const openStreetMapItems = await searchOpenStreetMap(props.address, props.country?.toLowerCase())
