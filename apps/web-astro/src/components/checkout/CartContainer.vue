@@ -8,8 +8,9 @@ import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import SelectedInfo from "./SelectedInfo.vue";
-import { ChevronLeft } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
+import { authGlobalApiClient } from "@api-client/auth_global";
 // import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 // import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 
@@ -27,6 +28,19 @@ onMounted(async () => {
     //     }
     // }, 1000);
 })
+
+const placeOrder = async () => {
+    const { data, error } = await (await authGlobalApiClient[':storeId'].place_order.$post({
+        param: {
+            storeId: window.storeData?.id ?? '',
+        },
+    })).json();
+    if (error) {
+        console.error(error);
+    } else {
+        console.log(data);
+    }
+}
 
 const storeId = window.storeData?.id;
 const storeName = window.storeData?.name;
@@ -68,6 +82,13 @@ const storeName = window.storeData?.name;
             <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
                 <CartView :is-collapsed="true" />
             </div>
+
+            <Button size="lg"
+                    @click="placeOrder"
+                    class="w-full text-lg font-bold">
+                Confirm order
+                <ChevronRight class="inline-block ml-2" />
+            </Button>
 
         </div>
     </div>

@@ -10,6 +10,7 @@ import { logoutAllRoute } from './logout-all.controller';
 import { getUserDataRoute, getUserData_SchemaValidator } from './user_data/get_user_data.controller';
 import { updateUserDataRoute, updateUserData_SchemaValidator } from './user_data/update_user_data.controller';
 import { phoneRoute } from './phone/_router';
+import { placeOrderRoute } from './order/place_order.controller';
 
 export const apiAuthGlobal = new Hono<HonoVariables>()
     .post(
@@ -38,6 +39,10 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
         '/update_user_data',
         updateUserData_SchemaValidator,
         updateUserDataRoute
+    )
+    .post(
+        '/:storeId/place_order',
+        placeOrderRoute
     )
     .route('/phone', phoneRoute)
 
