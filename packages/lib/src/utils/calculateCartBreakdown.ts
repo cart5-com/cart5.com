@@ -116,9 +116,9 @@ export function calculateCartBreakdown(
     let discount = 0;
     if (isOfferDiscountEnabled && tolerableAmountByStore > combinedPlatformFeeAmountIncludingTax) {
         discount = tolerableAmountByStore - combinedPlatformFeeAmountIncludingTax;
-        if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
-            discount = discount - inclusiveRate(discount, (taxSettings.taxRateForServiceFees ?? 0));
-        }
+        // if (taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
+        discount = discount - inclusiveRate(discount, (taxSettings.taxRateForServiceFees ?? 0));
+        // }
     }
 
     const totalTax = subTotal.tax + buyerPaysPlatformFee.tax;

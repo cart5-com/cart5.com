@@ -86,9 +86,14 @@ const router = createRouter({
           component: () => import('@dashboard-spa-vue/pages/store/menu/MenuEditorView.vue'),
         },
         {
-          path: 'service-fees',
-          name: 'store-service-fees',
-          component: () => import('@dashboard-spa-vue/pages/store/serviceFees/ServiceFeesView.vue'),
+          path: 'custom-service-fees',
+          name: 'custom-service-fees',
+          component: () => import('@dashboard-spa-vue/pages/store/serviceFees/CustomServiceFeesView.vue'),
+        },
+        {
+          path: 'cart-calculation-settings',
+          name: 'cart-calculation-settings',
+          component: () => import('@dashboard-spa-vue/pages/store/serviceFees/CartCalculationSettingsView.vue'),
         },
         {
           path: 'team',

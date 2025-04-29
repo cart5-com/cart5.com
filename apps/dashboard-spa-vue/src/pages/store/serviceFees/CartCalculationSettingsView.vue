@@ -12,22 +12,26 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle, Trash2, Loader2 } from 'lucide-vue-next';
+import { Loader2, Info } from 'lucide-vue-next';
 import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@api-client/dashboard';
 import type { ResType } from '@api-client/typeUtils';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
 import { CALCULATION_TYPE } from '@lib/zod/serviceFee';
-import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 import CalculationDemoView from './CalculationDemoView.vue';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
 
-pageTitle.value = 'Service Fees';
+pageTitle.value = 'Cart Calculation Settings';
 
 const isLoading = ref(false);
 
 const serviceFeesApiPath = dashboardApiClient.store[':storeId'].service_fees.get.$post;
-type ServiceFees = ResType<typeof serviceFeesApiPath>["data"];
+type ServiceFees = Partial<ResType<typeof serviceFeesApiPath>["data"]>;
 
 const serviceFees = ref<ServiceFees>();
 
@@ -47,7 +51,6 @@ const loadData = async () => {
                     calculationType: true,
                     tolerableServiceFeeRate: true,
                     offerDiscountIfPossible: true,
-                    customServiceFees: true,
                 }
             }
         })).json();
@@ -64,9 +67,8 @@ const loadData = async () => {
             serviceFees.value = {
                 storeId: currentStoreId.value ?? '',
                 calculationType: 'INCLUDE',
-                tolerableServiceFeeRate: 0,
-                offerDiscountIfPossible: false,
-                customServiceFees: []
+                tolerableServiceFeeRate: undefined,
+                offerDiscountIfPossible: true,
             };
         }
     } catch (err) {
@@ -80,16 +82,19 @@ const loadData = async () => {
 const saveServiceFees = async () => {
     isLoading.value = true;
     try {
+        // @ts-ignore
+        if (serviceFees.value?.tolerableServiceFeeRate === '') {
+            serviceFees.value.tolerableServiceFeeRate = null;
+        }
         const { error } = await (await dashboardApiClient.store[':storeId'].service_fees.update.$patch({
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: cleanEmptyProps({
+            json: {
                 calculationType: serviceFees.value?.calculationType,
-                tolerableServiceFeeRate: serviceFees.value?.tolerableServiceFeeRate,
+                tolerableServiceFeeRate: serviceFees.value?.tolerableServiceFeeRate ?? null,
                 offerDiscountIfPossible: serviceFees.value?.offerDiscountIfPossible,
-                customServiceFees: (serviceFees.value?.customServiceFees ?? [])
-            })
+            }
         })).json();
 
         if (error) {
@@ -105,29 +110,6 @@ const saveServiceFees = async () => {
     }
 };
 
-const addServiceFee = () => {
-    if (serviceFees.value && serviceFees.value.customServiceFees) {
-        serviceFees.value.customServiceFees.push({
-            id: crypto.randomUUID(),
-            name: `Service Fee ${serviceFees.value.customServiceFees.length + 1}`,
-            ratePerOrder: 0,
-            feePerOrder: 0
-        });
-        setTimeout(() => {
-            const saveServiceFeesButton = document.getElementById('save-service-fees');
-            if (saveServiceFeesButton) {
-                saveServiceFeesButton.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 100);
-    }
-};
-
-const removeServiceFee = (index: number) => {
-    if (serviceFees.value && serviceFees.value.customServiceFees) {
-        serviceFees.value.customServiceFees.splice(index, 1);
-    }
-};
-
 const isDemoVisible = ref(false);
 </script>
 
@@ -136,10 +118,66 @@ const isDemoVisible = ref(false);
          v-if="serviceFees">
         <Card>
             <CardHeader>
-                <CardTitle>Service Fees Settings</CardTitle>
-                <CardDescription>Configure your store's service fees</CardDescription>
+                <CardTitle>Cart Calculation Settings</CardTitle>
+                <CardDescription>
+                    <Popover>
+                        <PopoverTrigger as-child>
+                            <span class="cursor-pointer">
+                                <Info class="inline-block mr-2" /> Read our advice
+                            </span>
+                        </PopoverTrigger>
+                        <PopoverContent align="start">
+                            <div class="space-y-8 max-h-[30vh] overflow-y-auto">
+                                <p>
+                                    <strong>Did you know?</strong> If you're selling on platforms like UberEats (30%
+                                    commission) or
+                                    DoorDash (25-30% commission), you've likely already adjusted your menu prices to
+                                    account for
+                                    these fees.
+                                </p>
+                                <p>
+                                    Our platform's fees are significantly lower (typically 3-12%) and divided among the
+                                    platform
+                                    provider (1%), support partners (2-5%), and marketing partners (3-10%). By entering
+                                    your current
+                                    markup percentage below, you'll maintain the same net revenue while offering buyers
+                                    substantially better prices.
+                                </p>
+                                <p>
+                                    <strong>The Smart Approach:</strong> Enter the same percentage you use on other
+                                    platforms (e.g.,
+                                    30%) as your tolerable rate. This allows our system to automatically calculate
+                                    optimal pricing
+                                    that benefits everyone:
+                                </p>
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li>You receive the exact same net revenue you're accustomed to</li>
+                                    <li>Our platform fees are covered (typically just 3-8% total)</li>
+                                    <li>The remaining difference becomes an automatic discount for buyers</li>
+                                </ul>
+                                <p>
+                                    <strong>Enable the discount feature</strong> to increase your store's visibility in
+                                    search
+                                    results, attract more customers with competitive pricing, and drive higher order
+                                    volume. Stores
+                                    offering discounts typically see 30-40% more orders.
+                                </p>
+                                <p>
+                                    Every order displays a complete breakdown of fees and taxes to buyers, creating
+                                    unmatched
+                                    transparency that builds customer trust and satisfaction.
+                                </p>
+                                <p>
+                                    Try the calculator below to see exactly how different settings affect what buyers
+                                    pay and what is your net revenue.
+                                </p>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </CardDescription>
             </CardHeader>
             <CardContent class="space-y-12">
+
                 <!-- Calculation Type -->
                 <div class="space-y-2">
                     <Label>Calculation Type</Label>
@@ -167,12 +205,15 @@ const isDemoVisible = ref(false);
                         <Input v-model="serviceFees.tolerableServiceFeeRate!"
                                type="number"
                                step="1"
-                               placeholder="30"
+                               placeholder="30? Enter the maximum rate you're willing to cover"
                                min="0"
                                :disabled="serviceFees.calculationType !== 'INCLUDE'"
                                max="100" />
                         <p class="text-xs text-muted-foreground">
-                            The maximum service fee rate you're willing to cover.
+                            <span v-if="serviceFees.tolerableServiceFeeRate">
+                                20% ? - 30% ?
+                                Enter the maximum rate you're willing to cover
+                            </span>
                             <br />
                             <br />
                             <span class="font-bold">
@@ -211,69 +252,11 @@ const isDemoVisible = ref(false);
 
                 </div>
 
-                <!-- Custom Service Fees -->
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <Label>Custom Service Fees</Label>
-                        <Button variant="outline"
-                                size="sm"
-                                @click="addServiceFee">
-                            <PlusCircle class="w-4 h-4 mr-2" />
-                            Add Fee
-                        </Button>
-                    </div>
-
-                    <div v-for="(fee, index) in serviceFees.customServiceFees"
-                         :key="fee.id"
-                         class="border p-4 rounded-lg space-y-4">
-                        <div class="flex justify-between items-center">
-                            <Input v-model="fee.name"
-                                   placeholder="Service Fee Name" />
-                            <Button variant="ghost"
-                                    size="sm"
-                                    @click="removeServiceFee(index)">
-                                <Trash2 class="w-4 h-4" />
-                            </Button>
-                        </div>
-
-                        <div class="grid gap-4">
-                            <div class="space-y-2">
-                                <Label>Rate Per Order (%)</Label>
-                                <Input v-model="fee.ratePerOrder"
-                                       type="number"
-                                       step="0.1"
-                                       min="0" />
-                            </div>
-                            <div class="space-y-2">
-                                <Label>Fixed Fee Per Order</Label>
-                                <Input v-model="fee.feePerOrder"
-                                       type="number"
-                                       step="0.01"
-                                       min="0" />
-                            </div>
-                            <div class="space-y-2">
-                                <Label>Custom Tax Rate (%)</Label>
-                                <Input v-model="fee.overrideServiceFeeTaxRate"
-                                       type="number"
-                                       step="0.1"
-                                       min="0" />
-                                <p class="text-xs text-muted-foreground">
-                                    {{
-                                        !fee.overrideServiceFeeTaxRate ? '(default)' : `(custom:${fee.overrideServiceFeeTaxRate})`
-                                    }}
-                                    Optional: Override the default tax rate
-                                    "Sidemenu" -> "Tax Settings" ->
-                                    "Tax Rate for Service Fees(%)"
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="border rounded-lg p-2">
                     <h1 class="text-lg font-bold cursor-pointer"
                         @click="isDemoVisible = !isDemoVisible">
-                        Calculation Demo
+                        <Info class="inline-block mr-2" />
+                        Try in action
                     </h1>
                     <CalculationDemoView :serviceFees="serviceFees"
                                          v-if="isDemoVisible" />
@@ -281,7 +264,6 @@ const isDemoVisible = ref(false);
 
                 <Button @click="saveServiceFees"
                         :disabled="isLoading"
-                        id="save-service-fees"
                         class="w-full">
                     <Loader2 v-if="isLoading"
                              class="animate-spin mr-2 h-4 w-4" />

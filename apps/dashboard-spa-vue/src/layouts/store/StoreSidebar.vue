@@ -129,10 +129,19 @@ const { setOpenMobile } = useSidebar()
 
 
                         <SidebarMenuItem>
-                            <RouterLink :to="{ name: 'store-service-fees' }"
+                            <RouterLink :to="{ name: 'custom-service-fees' }"
                                         @click="setOpenMobile(false)">
                                 <SidebarMenuButton>
-                                    Service Fees
+                                    Custom Service Fees
+                                </SidebarMenuButton>
+                            </RouterLink>
+                        </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                            <RouterLink :to="{ name: 'cart-calculation-settings' }"
+                                        @click="setOpenMobile(false)">
+                                <SidebarMenuButton>
+                                    Cart Calculation Settings
                                 </SidebarMenuButton>
                             </RouterLink>
                         </SidebarMenuItem>

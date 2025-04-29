@@ -250,7 +250,7 @@ const isOnboardingStarted = computed(() => {
                         <div class="space-y-2">
                             <Label>Stripe Rate Per Order (%)</Label>
                             <Input v-model="stripeAccount.existingStripeSettingsData.stripeRatePerOrder!"
-                                   placeholder="2.9"
+                                   placeholder="UK: 1.5%, US: 2.9% etc.."
                                    type="number"
                                    step="0.1"
                                    min="0"
@@ -263,7 +263,7 @@ const isOnboardingStarted = computed(() => {
                         <div class="space-y-2">
                             <Label>Stripe Fixed Fee Per Order</Label>
                             <Input v-model="stripeAccount.existingStripeSettingsData.stripeFeePerOrder!"
-                                   placeholder="0.30"
+                                   placeholder="UK: 0.20, US: 0.30 etc.."
                                    type="number"
                                    step="0.01"
                                    min="0"
@@ -271,6 +271,16 @@ const isOnboardingStarted = computed(() => {
                             <p class="text-xs text-muted-foreground">
                                 The fixed fee charged by Stripe for each transaction
                             </p>
+                        </div>
+
+                        <div class="flex items-center gap-2 p-3 bg-muted rounded-md text-sm my-4">
+                            <TriangleAlert class="h-4 min-w-4" />
+                            <span>
+                                Please assume that this is an estimated calculation and the actual fee may vary
+                                according to the your stripe account settings. For example, if you have a high volume of
+                                transactions, you may be eligible for a lower fee. or if your buyer use a foreign card,
+                                the fee may be higher/updated by stripe.
+                            </span>
                         </div>
 
 
