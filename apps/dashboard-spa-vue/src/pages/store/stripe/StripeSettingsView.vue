@@ -94,7 +94,7 @@ const getStripeAccount = async () => {
 
 const isOnboardingComplete = computed(() => {
     if (!stripeAccount.value) return false;
-    return stripeAccount.value.account.charges_enabled && stripeAccount.value.account.details_submitted;
+    return stripeAccount.value.account?.charges_enabled && stripeAccount.value.account?.details_submitted;
 });
 
 const isOnboardingStarted = computed(() => {
@@ -167,16 +167,16 @@ const isOnboardingStarted = computed(() => {
                         <h2 class="text-xl font-semibold mb-2">Stripe Account Details</h2>
                         <div class="bg-muted p-4 rounded-md">
                             <div class="mb-2"><strong>Details Submitted:</strong>
-                                {{ stripeAccount.account.details_submitted ? 'Yes' : 'No' }}
+                                {{ stripeAccount.account?.details_submitted ? 'Yes' : 'No' }}
                             </div>
                             <div class="mb-2"><strong>Charges Enabled:</strong>
-                                {{ stripeAccount.account.charges_enabled ? 'Yes' : 'No' }}
+                                {{ stripeAccount.account?.charges_enabled ? 'Yes' : 'No' }}
                             </div>
                             <div class="mb-2"><strong>stripe account email:</strong>
-                                {{ stripeAccount.account.email }}
+                                {{ stripeAccount.account?.email }}
                             </div>
                             <details class="mt-4">
-                                <summary class="cursor-pointer">View Raw Account Data</summary>
+                                <summary class="cursor-pointer">View Raw Details</summary>
                                 <pre class="mt-2 text-xs overflow-auto">{{ stripeAccount }}</pre>
                             </details>
                         </div>

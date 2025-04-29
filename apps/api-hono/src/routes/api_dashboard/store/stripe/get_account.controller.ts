@@ -21,10 +21,13 @@ export const stripeGetAccount_Handler = async (c: Context<
         const existingStripeSettingsData = await getStoreStripeConnectSettings_Service(storeId);
         let stripeConnectAccountId = existingStripeSettingsData?.stripeConnectAccountId;
         if (!stripeConnectAccountId) {
-            throw new KNOWN_ERROR(
-                "Stripe account not found",
-                "STRIPE_ERROR"
-            );
+            return c.json({
+                data: {
+                    existingStripeSettingsData,
+                    account: null,
+                },
+                error: null as ErrorType
+            }, 200);
         }
         const account = await stripe.accounts.retrieve(stripeConnectAccountId);
         const isReady = account.charges_enabled;

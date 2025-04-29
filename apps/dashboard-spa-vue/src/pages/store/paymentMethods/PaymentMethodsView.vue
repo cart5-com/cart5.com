@@ -173,6 +173,11 @@ const setupStripeCheckout = async () => {
                 You must add a valid payment method to return collected fees.
                 We'll automatically charge your payment method on the 1st of each month based on your completed orders.
                 (In some cases, we may also process charges earlier if your balance reaches a certain amount)
+                <br>
+                {{ stripeCustomerDetails?.currency ? `(Currency: ${stripeCustomerDetails?.currency})` : '' }}
+                <br>
+                {{ stripeCustomerDetails?.taxRateForServiceFees ? `(Your Service Fee Sales Tax Rate is ${stripeCustomerDetails?.taxRateForServiceFees}%` +
+                    `, this rate will be used to calculate service fees on orders)` : '' }}
             </AlertDescription>
         </Alert>
 

@@ -173,7 +173,7 @@ const selectedPaymentMethod = computed(() => {
         <div v-else
              class="p-2 bg-destructive text-destructive-foreground rounded-lg">
             <OctagonX class="mr-1 inline-block" />
-            No payment options found by store settings.
+            No payment options found in store settings.
             <br>
             This could be a temporary issue.
             <br>
