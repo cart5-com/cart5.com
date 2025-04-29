@@ -1,25 +1,28 @@
-import type { ResType } from "@api-client/typeUtils";
-import { authGlobalApiClient } from "@api-client/auth_global";
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
 import { getUserData_Service } from "@db/services/user_data.service";
-import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
-import { platformServiceFee } from "@lib/platformServiceFee";
-import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
+// import type { ResType } from "@api-client/typeUtils";
+// import { authGlobalApiClient } from "@api-client/auth_global";
+// import { platformServiceFee } from "@lib/platformServiceFee";
+// import { zValidator } from "@hono/zod-validator";
+// import { z } from "zod";
+// import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
+import {
+    calculateCartItemPrice,
+    // calculateCartTotalPrice
+} from "@lib/utils/calculateCartItemPrice";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
-    getSupportTeamServiceFee_Service,
+    // getSupportTeamServiceFee_Service,
     getWebsiteByDefaultHostname,
-    getWebsiteTeamServiceFee_Service
+    // getWebsiteTeamServiceFee_Service
 } from "@db/services/website.service";
 import { generateCartId } from "@lib/utils/generateCartId";
 import type { CartItem } from "@lib/zod/cartItemState";
-type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
+// type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 
 // export const placeOrder_SchemaValidator = zValidator('json', z.object({
 //     storeId: z.string(),
@@ -87,16 +90,16 @@ export const placeOrderRoute = async (c: Context<
     if (!menuRoot) {
         throw new KNOWN_ERROR("Menu root not found", "MENU_ROOT_NOT_FOUND");
     }
-    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
+    // const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
     const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
     if (!WEBSITE || !WEBSITE.id) {
         throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
     }
-    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
-        WEBSITE?.id ?? "",
-        storeId,
-        WEBSITE?.defaultMarketplaceFee ?? null
-    )
+    // const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
+    //     WEBSITE?.id ?? "",
+    //     storeId,
+    //     WEBSITE?.defaultMarketplaceFee ?? null
+    // )
 
     const orderedItems: {
         name: string;
