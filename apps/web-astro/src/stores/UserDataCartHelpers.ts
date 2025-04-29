@@ -3,6 +3,7 @@ import { type CartItem } from "@lib/zod/cartItemState";
 import { showItemModal } from "../components/store-page/menu/item/showItemModal";
 import { computed } from "vue";
 import { type Cart } from "@lib/zod/cartItemState";
+import { generateCartId } from "@lib/utils/generateCartId";
 
 export const currentWebsiteCarts = computed(() => {
     const filteredCarts: Record<string, Cart> = {};
@@ -16,7 +17,7 @@ export const currentWebsiteCarts = computed(() => {
 
 /////////////CART ACTIONS/////////////
 export const genCartId = (storeId: string) => {
-    return `${window.location.host}_-_${storeId}`;
+    return generateCartId(window.location.host, storeId);
 }
 export const getCartByStoreId = (storeId: string) => {
     const hostAndStoreId = genCartId(storeId);
