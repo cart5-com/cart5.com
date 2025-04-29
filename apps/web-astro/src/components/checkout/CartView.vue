@@ -29,6 +29,7 @@ import { Textarea } from '@/components/ui/textarea'
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
+import { platformServiceFee } from "@lib/platformServiceFee";
 import {
     calculateCartBreakdown
 } from "@lib/utils/calculateCartBreakdown";
@@ -57,10 +58,6 @@ const tolerableServiceFeeRate = window.storeData?.serviceFees?.tolerableServiceF
 const offerDiscountIfPossible = window.storeData?.serviceFees?.offerDiscountIfPossible ?? true;
 const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? [];
 
-const platformServiceFee: ServiceFee | null = {
-    ratePerOrder: 1,
-    feePerOrder: 0,
-};
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
 const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceFee;
 

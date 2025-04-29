@@ -18,6 +18,7 @@ import { Info } from 'lucide-vue-next';
 import type { OrderType } from '@lib/types/orderType';
 import { Button } from '@/components/ui/button';
 import type { ServiceFee } from "@lib/zod/serviceFee";
+import { platformServiceFee } from "@lib/platformServiceFee";
 
 const serviceFeesApiPath = dashboardApiClient.store[':storeId'].service_fees.get.$post;
 type ServiceFees = Partial<ResType<typeof serviceFeesApiPath>["data"]>;
@@ -52,7 +53,7 @@ const subTotal = computed<ReturnType<typeof calculateSubTotal>>(() => {
     }
 })
 
-const platformServiceFee = ref<ServiceFee>({ ratePerOrder: 1, feePerOrder: 0 });
+const platformSerFee = ref<ServiceFee>(platformServiceFee || { ratePerOrder: 1, feePerOrder: 0 });
 const supportPartnerServiceFee = ref<{
     ratePerOrder?: number | undefined;
     feePerOrder?: number | undefined;
@@ -76,7 +77,7 @@ const cartBreakdown = computed(() => {
 
     return calculateCartBreakdown(
         subTotal.value,
-        platformServiceFee.value,
+        platformSerFee.value,
         supportPartnerServiceFee.value,
         marketingPartnerServiceFee.value,
         taxSettingsForCalc,
@@ -264,7 +265,7 @@ const loadTaxSettings = async () => {
                 (real value)
             </span>
             <span class=" text-right">
-                <Input v-model="platformServiceFee.ratePerOrder"
+                <Input v-model="platformSerFee.ratePerOrder"
                        type="number"
                        class="text-right max-w-24" />
             </span>
