@@ -53,7 +53,7 @@ export function calculateCartBreakdown(
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         platformFeeBreakdown.platform = {
             name: "Platform Team",
-            note: "nerds 🤓 who develops and maintains the website",
+            note: "tech team that builds and maintains this website",
             totalWithTax: roundTo2Decimals(feeAmount),
             itemTotal: roundTo2Decimals(feeAmount - feeTax),
             tax: roundTo2Decimals(feeTax),

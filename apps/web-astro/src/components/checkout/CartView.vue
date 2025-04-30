@@ -2,7 +2,7 @@
 import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
-import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX, ChevronDown, ChevronUp } from "lucide-vue-next";
+import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX, ChevronDown, ChevronUp, Clock } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -60,6 +60,23 @@ const customServiceFees = window.storeData?.serviceFees?.customServiceFees ?? []
 
 const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee;
 const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceFee;
+
+const estimatedTime = computed(() => {
+    const isDelivery = currentOrderType.value === 'delivery';
+    const time = isDelivery
+        ? (subTotalWithDeliveryAndServiceFees.value.bestDeliveryZone?.customEstimatedDeliveryTime || window.storeData?.defaultEstimatedDeliveryTime)
+        : window.storeData?.defaultEstimatedPickupTime;
+
+    if (!time) return null;
+
+    const times = [
+        time.min,
+        time.max
+    ].filter(Boolean);
+
+    const timeLabel = isDelivery ? 'Estimated Delivery Time' : 'Estimated Preparation Time';
+    return times.length ? `${timeLabel}: ${times.join('-')} ${time.unit || ''}` : null;
+})
 
 const cartBreakdown = computed(() => {
     return calculateCartBreakdown(
@@ -255,6 +272,11 @@ const totalItem = computed(() => {
                         </div>
                     </DrawerContent>
                 </Drawer>
+                <div v-if="estimatedTime"
+                     class="text-sm text-muted-foreground my-4">
+                    <Clock class="mr-1 inline-block" />
+                    {{ estimatedTime }}
+                </div>
                 <div
                      v-if="currentOrderType === 'delivery' && cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)">
                     <div class="p-2 bg-destructive text-destructive-foreground">
@@ -359,8 +381,6 @@ const totalItem = computed(() => {
                     <OctagonX class="mr-1 inline-block" />
                     Pickup disabled by store
                 </div>
-
-
 
                 <div class="flex justify-between items-center font-bold text-2xl py-4">
                     <span>
