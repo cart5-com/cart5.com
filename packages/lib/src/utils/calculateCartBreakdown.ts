@@ -208,7 +208,7 @@ export function calculateCartBreakdown(
     }
 
     const buyerPaysTaxAndFeesName = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
-        `Taxes${buyerPaysPlatformFee.shownFee > 0 ? ' & Other Fees' : ''}` :
+        `Taxes${(buyerPaysPlatformFee.shownFee > 0 || paymentProcessorFee > 0) ? ' & Other Fees' : ''}` :
         'Other Fees';
 
 
