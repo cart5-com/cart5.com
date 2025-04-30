@@ -27,6 +27,7 @@ import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import {
     calculateCartBreakdown
 } from "@lib/utils/calculateCartBreakdown";
+import { isStoreOpenNow } from '@lib/utils/isOpenNow';
 
 // type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 // export const placeOrder_SchemaValidator = zValidator('json', z.object({
@@ -87,6 +88,14 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Store does not offer delivery", "STORE_DOES_NOT_OFFER_DELIVERY");
     }
     const currentOrderType = userData.rememberLastOrderType;
+    const isStoreOpen = isStoreOpenNow(currentOrderType, storeData?.openHours ?? null);
+    if (
+        !isStoreOpen
+        // TODO: What about scheduled orders? we do not have scheduled orders yet. maybe later
+    ) {
+        throw new KNOWN_ERROR("Store is not open", "STORE_IS_NOT_OPEN");
+    }
+
     const deliveryAddress = currentOrderType === 'delivery' && userData.rememberLastAddressId && userData.addresses ?
         userData.addresses[userData.rememberLastAddressId] : undefined;
 
@@ -105,42 +114,11 @@ export const placeOrderRoute = async (c: Context<
     if (!menuRoot) {
         throw new KNOWN_ERROR("Menu root not found", "MENU_ROOT_NOT_FOUND");
     }
-    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
+
     const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
     if (!WEBSITE || !WEBSITE.id) {
         throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
     }
-    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
-        WEBSITE?.id ?? "",
-        storeId,
-        WEBSITE?.defaultMarketplaceFee ?? null
-    )
-    const supportPartnerServiceFee: ServiceFee | null = supportTeamServiceFee;
-    const marketingPartnerServiceFee: ServiceFee | null = websiteTeamServiceFee;
-
-    const orderedItems: {
-        name: string;
-        quantity: number;
-        details: string;
-        shownFee: string;
-    }[] = [];
-
-    currentCart.items.forEach((item: CartItem) => {
-        const menuItem = menuRoot.allItems?.[item.itemId!];
-        if (menuItem && menuItem.lbl) {
-            const price = calculateCartItemPrice(item, menuRoot, taxSettings, userData.rememberLastOrderType ?? 'delivery');
-            orderedItems.push({
-                name: menuItem.lbl ?? '',
-                quantity: item.quantity ?? 1,
-                details: generateCartItemTextSummary(item, menuRoot),
-                shownFee: (taxSettings.currencySymbol ?? '') + price.shownFee,
-            });
-        }
-    });
-    const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";
-    const tolerableServiceFeeRate = storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
-    const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
-    const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
 
     if (!userData.rememberLastPaymentMethodId) {
         throw new KNOWN_ERROR("Payment method not selected", "PAYMENT_METHOD_NOT_SELECTED");
@@ -183,6 +161,39 @@ export const placeOrderRoute = async (c: Context<
         !storeData?.asStripeCustomer?.hasChargablePaymentMethod) {
         throw new KNOWN_ERROR("Store does not support selected payment method", "STORE_DOES_NOT_SUPPORT_PAYMENT_METHOD");
     }
+
+    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
+        WEBSITE?.id ?? "",
+        storeId,
+        WEBSITE?.defaultMarketplaceFee ?? null
+    )
+    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
+    const supportPartnerServiceFee: ServiceFee | null = supportTeamServiceFee;
+    const marketingPartnerServiceFee: ServiceFee | null = websiteTeamServiceFee;
+
+    const orderedItems: {
+        name: string;
+        quantity: number;
+        details: string;
+        shownFee: string;
+    }[] = [];
+
+    currentCart.items.forEach((item: CartItem) => {
+        const menuItem = menuRoot.allItems?.[item.itemId!];
+        if (menuItem && menuItem.lbl) {
+            const price = calculateCartItemPrice(item, menuRoot, taxSettings, userData.rememberLastOrderType ?? 'delivery');
+            orderedItems.push({
+                name: menuItem.lbl ?? '',
+                quantity: item.quantity ?? 1,
+                details: generateCartItemTextSummary(item, menuRoot),
+                shownFee: (taxSettings.currencySymbol ?? '') + price.shownFee,
+            });
+        }
+    });
+    const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";
+    const tolerableServiceFeeRate = storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
+    const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
+    const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
 
     // TODO: check distance between user address lat,lng and geocoded address lat,lng
     // if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
@@ -231,6 +242,7 @@ export const placeOrderRoute = async (c: Context<
         subtotalDetails: subTotalWithDeliveryAndServiceFees,
         cartBreakdown,
         finalAmount: cartBreakdown.buyerPays,
+        orderNote: currentCart.orderNote,
         paymentId: userData?.rememberLastPaymentMethodId,
         paymentDetails: {
             isStripeEnabled: storeData?.stripeSettings?.isStripeEnabled ?? false,
