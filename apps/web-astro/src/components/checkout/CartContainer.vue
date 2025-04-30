@@ -11,25 +11,34 @@ import SelectedInfo from "./SelectedInfo.vue";
 import { ChevronLeft, ChevronRight, CheckCircle } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { authGlobalApiClient } from "@api-client/auth_global";
-// import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
-// import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
+import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
+import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
+import { toast } from "@/ui-plus/sonner";
+
 
 onMounted(async () => {
     await waitUntilUserDataReady();
+    // TODO: do I still need this check?
     // Check if delivery is selected but no address is set
     if (currentOrderType.value === 'delivery' && !userDataStore.value.userData?.rememberLastAddressId) {
         // Redirect to confirm info page
         window.location.href = BASE_LINKS.CONFIRM_INFO(window.storeData?.id!, slugify(window.storeData?.name!));
         return;
     }
-    // setTimeout(async () => {
-    //     if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
-    //         showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
-    //     }
-    // }, 1000);
 })
 
 const placeOrder = async () => {
+    if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
+        const result = await showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
+        if (result === 1) {
+            userDataStore.value.user.hasVerifiedPhoneNumber = 1;
+            toast.success('Phone number verified, now you can place your order');
+            return;
+        } else {
+            toast.error('Phone number verification failed');
+            return;
+        }
+    }
     const { data, error } = await (await authGlobalApiClient[':storeId'].place_order.$post({
         param: {
             storeId: window.storeData?.id ?? '',
@@ -89,6 +98,7 @@ const storeName = window.storeData?.name;
                 Confirm order
                 <ChevronRight class="inline-block ml-2" />
             </Button>
+            hasVerifiedPhoneNumber:{{ userDataStore.user!.hasVerifiedPhoneNumber }}
 
             <div class="text-xs text-muted-foreground my-4"
                  v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">
