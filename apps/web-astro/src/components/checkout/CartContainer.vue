@@ -8,7 +8,7 @@ import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import SelectedInfo from "./SelectedInfo.vue";
-import { ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, CheckCircle } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { authGlobalApiClient } from "@api-client/auth_global";
 // import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
@@ -89,6 +89,14 @@ const storeName = window.storeData?.name;
                 Confirm order
                 <ChevronRight class="inline-block ml-2" />
             </Button>
+
+            <div class="text-xs text-muted-foreground my-4"
+                 v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">
+                <!-- TODO: add link to terms and conditions -->
+                <CheckCircle class="inline-block mr-2" />
+                By placing this order, you agree to accept full responsibility.
+                All orders are final and non-refundable to prevent abuse.
+            </div>
 
         </div>
     </div>
