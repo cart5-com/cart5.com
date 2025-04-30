@@ -18,7 +18,7 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
 </script>
 <template>
     <Card :key="zone.id"
-          class="shadow-sm">
+          class="shadow-sm max-w-xl mx-auto">
         <CardContent class="p-4">
             <div class="flex items-center justify-between">
                 <div class="space-y-1">
@@ -74,7 +74,7 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                 <AccordionItem value="details">
                     <AccordionTrigger>Zone Details</AccordionTrigger>
                     <AccordionContent>
-                        <div class="space-y-4 px-1 max-w-xs mx-auto">
+                        <div class="space-y-4 px-1 max-w-lg mx-auto">
                             <div class="grid gap-4">
                                 <div class="grid gap-2">
                                     <Label for="name">Zone Name</Label>
@@ -96,34 +96,36 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                     </p>
                                 </div>
 
-                                <div class="grid gap-2 border-t pt-4">
-                                    <Label for="deliveryFee">Delivery Fee</Label>
-                                    <Input id="deliveryFee"
-                                           type="number"
-                                           v-model="zone.deliveryFee"
-                                           placeholder="0.00" />
+                                <div class="border border-foreground rounded-md p-2">
                                     <p class="text-xs">
                                         You can set a tax rate for the Delivery Fee in the "Sidemenu" -> "Tax
                                         Settings" -> "Tax Rate for Delivery fees(%)"
                                     </p>
+                                    <p class="text-xs my-2">
+                                        Calculation: Base Fee + (Distance in km × Fee per km) + Tax
+                                    </p>
+                                    <div class="grid gap-2 pt-4">
+                                        <Label for="deliveryFee">Delivery Base Fee</Label>
+                                        <Input id="deliveryFee"
+                                               type="number"
+                                               v-model="zone.deliveryFee"
+                                               placeholder="0.00" />
+                                    </div>
+
+                                    <div class="grid gap-2 my-4 border-t pt-4">
+                                        <Label for="deliveryFeePerKm">Delivery Fee per KM
+                                            <Bird class="inline-block" />
+                                        </Label>
+                                        <p class="text-xs">
+                                            This is the delivery fee per kilometer as the crow flies.
+                                        </p>
+                                        <Input id="deliveryFeePerKm"
+                                               type="number"
+                                               v-model="zone.deliveryFeePerKm"
+                                               placeholder="0.00" />
+                                    </div>
                                 </div>
 
-                                <div class="grid gap-2 my-4 border-t pt-4">
-                                    <Label for="deliveryFeePerKm">Delivery Fee per KM
-                                        <Bird class="inline-block" />
-                                    </Label>
-                                    <p class="text-xs">
-                                        This is the delivery fee per kilometer as the crow flies.
-                                    </p>
-                                    <Input id="deliveryFeePerKm"
-                                           type="number"
-                                           v-model="zone.deliveryFeePerKm"
-                                           placeholder="0.00" />
-                                    <p class="text-xs">
-                                        You can set a tax rate for the Delivery Fee per KM in the "Sidemenu" -> "Tax
-                                        Settings" -> "Tax Rate for Delivery fees(%)"
-                                    </p>
-                                </div>
                             </div>
 
                             <div class="flex justify-between items-center">
