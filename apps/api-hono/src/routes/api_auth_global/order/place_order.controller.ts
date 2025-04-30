@@ -142,6 +142,48 @@ export const placeOrderRoute = async (c: Context<
     const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
     const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
 
+    if (!userData.rememberLastPaymentMethodId) {
+        throw new KNOWN_ERROR("Payment method not selected", "PAYMENT_METHOD_NOT_SELECTED");
+    }
+
+    // Validate that the selected payment method is available for the current order type
+    const paymentMethods = currentOrderType === 'delivery'
+        ? (storeData.paymentMethods?.deliveryPaymentMethods?.isActive
+            ? storeData.paymentMethods.deliveryPaymentMethods
+            : storeData.paymentMethods?.defaultPaymentMethods)
+        : (storeData.paymentMethods?.pickupPaymentMethods?.isActive
+            ? storeData.paymentMethods.pickupPaymentMethods
+            : storeData.paymentMethods?.defaultPaymentMethods);
+
+    if (!paymentMethods) {
+        throw new KNOWN_ERROR("Payment methods not configured for store", "PAYMENT_METHODS_NOT_CONFIGURED");
+    }
+
+    // Check if the selected payment method is valid
+    let isValidPaymentMethod = false;
+
+    if (userData.rememberLastPaymentMethodId === 'stripe' && storeData?.stripeSettings?.isStripeEnabled) {
+        isValidPaymentMethod = true;
+    } else if (userData.rememberLastPaymentMethodId === 'cash' && paymentMethods.cash) {
+        isValidPaymentMethod = true;
+    } else if (userData.rememberLastPaymentMethodId === 'cardTerminal' && paymentMethods.cardTerminal) {
+        isValidPaymentMethod = true;
+    } else if (paymentMethods.customMethods) {
+        isValidPaymentMethod = paymentMethods.customMethods.some(
+            method => method.id === userData.rememberLastPaymentMethodId && method.isActive
+        );
+    }
+
+    if (!isValidPaymentMethod) {
+        throw new KNOWN_ERROR("Selected payment method is not available", "INVALID_PAYMENT_METHOD");
+    }
+
+    // Ensure Stripe customer has a chargeable payment method if needed
+    if (userData.rememberLastPaymentMethodId !== 'stripe' &&
+        !storeData?.asStripeCustomer?.hasChargablePaymentMethod) {
+        throw new KNOWN_ERROR("Store does not support selected payment method", "STORE_DOES_NOT_SUPPORT_PAYMENT_METHOD");
+    }
+
     // TODO: check distance between user address lat,lng and geocoded address lat,lng
     // if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
     const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
@@ -160,7 +202,6 @@ export const placeOrderRoute = async (c: Context<
         customServiceFees
     );
 
-    // TODO: check if paymentId is enabled for the store or maybe restricted to certain payment methods
     const cartBreakdown = calculateCartBreakdown(
         subTotalWithDeliveryAndServiceFees,
         platformServiceFee,
@@ -191,6 +232,17 @@ export const placeOrderRoute = async (c: Context<
         cartBreakdown,
         finalAmount: cartBreakdown.buyerPays,
         paymentId: userData?.rememberLastPaymentMethodId,
+        paymentDetails: {
+            isStripeEnabled: storeData?.stripeSettings?.isStripeEnabled ?? false,
+            hasChargablePaymentMethod: storeData?.asStripeCustomer?.hasChargablePaymentMethod ?? false,
+            paymentMethods: storeData?.paymentMethods,
+            selectedPaymentMethodName: userData?.rememberLastPaymentMethodId === 'stripe' ? 'Pay online' :
+                userData?.rememberLastPaymentMethodId === 'cash' ? 'Cash' :
+                    userData?.rememberLastPaymentMethodId === 'cardTerminal' ? 'Card' :
+                        storeData?.paymentMethods?.defaultPaymentMethods?.customMethods?.find(
+                            m => m.id === userData?.rememberLastPaymentMethodId
+                        )?.name ?? 'Unknown payment method'
+        },
         storeName: storeData?.name,
         storeAddress1: storeData?.address?.address1,
         deliveryAddress,
