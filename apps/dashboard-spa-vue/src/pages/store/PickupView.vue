@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EstimatedTimeEdit from '@/ui-plus/EstimatedTimeEdit.vue';
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-vue-next'
@@ -9,9 +10,12 @@ import { toast } from '@/ui-plus/sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore'
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+import { EstimatedTime } from '@lib/zod/deliverySchema';
+import Badge from '@/components/ui/badge/Badge.vue';
 
 const isLoading = ref(false)
 const offersPickup = ref(false)
+const defaultEstimatedPickupTime = ref<EstimatedTime | null>(null)
 
 const loadData = async () => {
     isLoading.value = true
@@ -23,6 +27,7 @@ const loadData = async () => {
             json: {
                 columns: {
                     offersPickup: true,
+                    defaultEstimatedPickupTime: true,
                 }
             }
         })).json()
@@ -31,6 +36,11 @@ const loadData = async () => {
             toast.error('Failed to load pickup settings')
         } else if (data) {
             offersPickup.value = data.offersPickup
+            defaultEstimatedPickupTime.value = data.defaultEstimatedPickupTime || {
+                min: 30,
+                max: 60,
+                unit: 'minutes'
+            }
         }
     } catch (error) {
         console.error('Error loading pickup settings:', error)
@@ -48,7 +58,8 @@ const savePickupOption = async () => {
                 storeId: currentStoreId.value ?? '',
             },
             json: cleanEmptyProps({
-                offersPickup: offersPickup.value
+                offersPickup: offersPickup.value,
+                defaultEstimatedPickupTime: defaultEstimatedPickupTime.value
             })
         })).json()
 
@@ -98,6 +109,22 @@ onMounted(() => {
                                 <span class="font-medium">{{ offersPickup ? 'Yes' : 'No' }}</span>
                             </div>
                         </label>
+
+                        <div v-if="offersPickup">
+                            <div class="space-y-6">
+                                <div class="space-y-2">
+                                    Estimated preparation time to show buyers
+                                    <Badge v-if="defaultEstimatedPickupTime"
+                                           variant="outline">
+                                        {{ defaultEstimatedPickupTime.min }} -
+                                        {{ defaultEstimatedPickupTime.max }}
+                                        {{ defaultEstimatedPickupTime.unit }}
+                                    </Badge>
+                                    <EstimatedTimeEdit v-if="defaultEstimatedPickupTime"
+                                                       :estimatedTime="defaultEstimatedPickupTime" />
+                                </div>
+                            </div>
+                        </div>
 
                         <Button @click="savePickupOption"
                                 :disabled="isLoading"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { type DeliveryZone } from '@lib/zod/deliverySchema';
+import EstimatedTimeEdit from '@/ui-plus/EstimatedTimeEdit.vue';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -48,6 +49,12 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                    variant="outline">
                                 fee/km: {{ zone.deliveryFeePerKm }}
                             </Badge>
+                            <Badge v-if="zone.customEstimatedDeliveryTime"
+                                   variant="outline">
+                                {{ zone.customEstimatedDeliveryTime.min }} -
+                                {{ zone.customEstimatedDeliveryTime.max }}
+                                {{ zone.customEstimatedDeliveryTime.unit }}
+                            </Badge>
                         </div>
                     </div>
                     <p class="text-sm text-muted-foreground capitalize">
@@ -75,6 +82,12 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                     <AccordionTrigger>Zone Details</AccordionTrigger>
                     <AccordionContent>
                         <div class="space-y-4 px-1 max-w-lg mx-auto">
+                            <div class="flex justify-between items-center">
+                                <Label for="activeStatus">Active Status</Label>
+                                <Switch id="activeStatus"
+                                        :checked="zone.isActive"
+                                        @update:checked="zone.isActive = $event" />
+                            </div>
                             <div class="grid gap-4">
                                 <div class="grid gap-2">
                                     <Label for="name">Zone Name</Label>
@@ -125,14 +138,31 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                                placeholder="0.00" />
                                     </div>
                                 </div>
+                                <div class="grid gap-2 pt-4">
+                                    <div class="flex items-center space-x-2">
+                                        <Switch id="customEstimatedDeliveryTime"
+                                                :checked="zone.customEstimatedDeliveryTime !== undefined"
+                                                @update:checked="(checked: boolean) => {
+                                                    if (checked) {
+                                                        zone.customEstimatedDeliveryTime = {
+                                                            min: 30,
+                                                            max: 50,
+                                                            unit: 'minutes'
+                                                        }
+                                                    } else {
+                                                        zone.customEstimatedDeliveryTime = undefined
+                                                    }
+                                                }">
+                                        </Switch>
+                                        <Label for="customEstimatedDeliveryTime"> Custom Estimated Delivery
+                                            Time for this zone</Label>
+                                    </div>
+                                    <EstimatedTimeEdit v-if="zone.customEstimatedDeliveryTime"
+                                                       :estimatedTime="zone.customEstimatedDeliveryTime" />
+                                </div>
 
                             </div>
 
-                            <div class="flex justify-between items-center">
-                                <Label>Active Status</Label>
-                                <Switch :checked="zone.isActive"
-                                        @update:checked="zone.isActive = $event" />
-                            </div>
                         </div>
                     </AccordionContent>
                 </AccordionItem>

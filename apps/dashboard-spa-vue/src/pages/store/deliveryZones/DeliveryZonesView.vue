@@ -13,6 +13,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Dialog,
     DialogContent,
@@ -24,7 +25,7 @@ import {
 import { toast } from '@/ui-plus/sonner';
 import { dashboardApiClient } from '@api-client/dashboard';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
-import { type DeliveryZone } from '@lib/zod/deliverySchema';
+import { type DeliveryZone, type EstimatedTime } from '@lib/zod/deliverySchema';
 import { Check, Loader2, Plus } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { pageTitle } from '@dashboard-spa-vue/stores/LayoutStore';
@@ -32,6 +33,8 @@ import { useRouter } from 'vue-router';
 import { Switch } from '@/components/ui/switch';
 import { loadLeafletDrawCDN } from './loadLeafletDrawCDN';
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+import EstimatedTimeEdit from '@/ui-plus/EstimatedTimeEdit.vue';
+import Badge from '@/components/ui/badge/Badge.vue';
 
 const router = useRouter();
 
@@ -44,11 +47,12 @@ const selectedZone = ref<DeliveryZone | null>(null)
 const zoneToDelete = ref<DeliveryZone | null>(null)
 const isLoading = ref(false);
 const offersDelivery = ref(false)
+const defaultEstimatedDeliveryTime = ref<EstimatedTime | null>(null)
 const deliveryZones = ref<DeliveryZone[]>([])
 
 let ignoreAutoSave = true;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
-watch([deliveryZones, offersDelivery], () => {
+watch([deliveryZones, offersDelivery, defaultEstimatedDeliveryTime], () => {
     if (ignoreAutoSave) return;
     if (debounceTimer) {
         clearTimeout(debounceTimer)
@@ -84,6 +88,7 @@ const loadData = async () => {
             json: {
                 columns: {
                     offersDelivery: true,
+                    defaultEstimatedDeliveryTime: true,
                 },
             }
         })).json(),
@@ -119,6 +124,11 @@ const loadDeliveryZones = async () => {
         }
         deliveryZones.value = deliveryZonesData?.zones ?? [];
         offersDelivery.value = offersDeliveryData?.offersDelivery ?? false;
+        defaultEstimatedDeliveryTime.value = offersDeliveryData?.defaultEstimatedDeliveryTime || {
+            min: 30,
+            max: 50,
+            unit: 'minutes'
+        };
         if (storeLocation.lat === 0 && storeLocation.lng === 0) {
             toast.error('Set your address first');
             router.push({ name: 'store-address' });
@@ -266,7 +276,8 @@ const saveData = async () => {
         (await apiPath.$patch({
             param,
             json: cleanEmptyProps({
-                offersDelivery: offersDelivery.value
+                offersDelivery: offersDelivery.value,
+                defaultEstimatedDeliveryTime: defaultEstimatedDeliveryTime.value
             })
         })).json(),
     ])
@@ -301,22 +312,45 @@ onMounted(() => {
 
 <template>
     <div>
-        <label for="offersDelivery"
-               class="flex items-center justify-between p-4 border rounded-lg cursor-pointer max-w-sm mx-auto">
-            <div class="space-y-0.5">
-                <h3 class="text-lg font-medium">Delivery status</h3>
-                <p class="text-muted-foreground">Do you offer food delivery?</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <Switch id="offersDelivery"
-                        :checked="offersDelivery"
-                        @update:checked="(checked: boolean) => offersDelivery = checked"
-                        :disabled="isLoading"
-                        class="scale-125">
-                </Switch>
-                <span class="font-medium">{{ offersDelivery ? 'Yes' : 'No' }}</span>
-            </div>
-        </label>
+        <Card class="max-w-xl mx-auto">
+            <CardHeader>
+                <CardTitle>Delivery Settings</CardTitle>
+                <CardDescription>Configure if you offer delivery</CardDescription>
+            </CardHeader>
+            <CardContent>
+
+                <label for="offersDelivery"
+                       class="flex items-center justify-between p-4 border rounded-lg cursor-pointer max-w-sm mx-auto">
+                    <div class="space-y-0.5">
+                        <h3 class="text-lg font-medium">Delivery status</h3>
+                        <p class="text-muted-foreground">Do you offer food delivery?</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <Switch id="offersDelivery"
+                                :checked="offersDelivery"
+                                @update:checked="(checked: boolean) => offersDelivery = checked"
+                                :disabled="isLoading"
+                                class="scale-125">
+                        </Switch>
+                        <span class="font-medium">{{ offersDelivery ? 'Yes' : 'No' }}</span>
+                    </div>
+                </label>
+                <div v-if="offersDelivery"
+                     class="mt-8">
+                    Estimated delivery time to show buyers
+                    <Badge v-if="defaultEstimatedDeliveryTime"
+                           variant="outline">
+                        {{ defaultEstimatedDeliveryTime.min }} -
+                        {{ defaultEstimatedDeliveryTime.max }}
+                        {{ defaultEstimatedDeliveryTime.unit }}
+                    </Badge>
+                    <EstimatedTimeEdit v-if="defaultEstimatedDeliveryTime"
+                                       :estimatedTime="defaultEstimatedDeliveryTime" />
+                </div>
+
+            </CardContent>
+        </Card>
+
         <div v-if="offersDelivery"
              class="space-y-4 p-4">
             <div class="flex justify-between items-center">

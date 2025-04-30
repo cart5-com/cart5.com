@@ -12,6 +12,7 @@ export const verifyCheckout_Handler = async (c: Context<
     HonoVariables
 >) => {
     const storeId = c.req.param('storeId');
+    // TODO: check metadata for the storeId
     const stripeCheckoutSessionId = getCookie(c, STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME);
     const storeTaxSettings = await getStoreTaxSettings_Service(storeId, {
         currency: true,

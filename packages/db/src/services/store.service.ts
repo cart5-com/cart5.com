@@ -29,7 +29,9 @@ export const getStoreData_Service = async (
             defaultPhoneNumber: true,
             extraPhoneNumbers: true,
             offersPickup: true,
+            defaultEstimatedPickupTime: true,
             offersDelivery: true,
+            defaultEstimatedDeliveryTime: true,
             cuisines: true,
         },
         with: {

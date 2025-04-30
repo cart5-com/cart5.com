@@ -24,7 +24,8 @@ import type { CloudflareObjectType } from "./CloudflareObjectType";
 import { faker } from '@faker-js/faker';
 import { getNearbyStores_Service } from "@db/services/distance.service";
 import type {
-    DeliveryZone
+    DeliveryZone,
+    EstimatedTime
 } from "@lib/zod/deliverySchema";
 import { calcDiamondShapePolygon } from "@lib/utils/calcDiamondShapePolygon";
 import { processDataToSaveDeliveryZones } from "@lib/utils/calculateDeliveryZoneMinsMaxs";
@@ -161,9 +162,29 @@ export const startSeed = async () => {
             offersPickup = true;
         }
 
+        let defaultEstimatedPickupTime: EstimatedTime | null = null;
+        if (offersPickup) {
+            defaultEstimatedPickupTime = {
+                min: 30,
+                max: 50,
+                unit: 'minutes'
+            }
+        }
+
+        let defaultEstimatedDeliveryTime: EstimatedTime | null = null;
+        if (offersDelivery) {
+            defaultEstimatedDeliveryTime = {
+                min: 30,
+                max: 50,
+                unit: 'minutes'
+            }
+        }
+
         await updateStore_Service(store!.id, {
             offersDelivery,
             offersPickup,
+            defaultEstimatedPickupTime,
+            defaultEstimatedDeliveryTime,
         })
 
         await updateStoreTaxSettings_Service(store!.id, getAsTaxSettings(cfRaw.country, cfRaw.regionCode))

@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { generateKey } from "@lib/utils/generateKey";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import {
+	type EstimatedTime,
+	EstimatedTimeSchema,
 	type DeliveryZone,
 	DeliveryZoneSchema
 } from "@lib/zod/deliverySchema";
@@ -30,7 +32,10 @@ export const storeTable = sqliteTable("store", {
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
 	offersPickup: integer("offers_pickup", { mode: "boolean" }).notNull().default(false),
+	defaultEstimatedPickupTime: text("default_estimated_pickup_time", { mode: 'json' }).$type<EstimatedTime>(),
+
 	offersDelivery: integer("offers_delivery", { mode: "boolean" }).notNull().default(false),
+	defaultEstimatedDeliveryTime: text("default_estimated_delivery_time", { mode: 'json' }).$type<EstimatedTime>(),
 
 	ownerTeamId: text("owner_team_id").notNull(),
 	supportTeamId: text("support_team_id"), // website team can become support team for other stores with their owner team id
@@ -38,17 +43,15 @@ export const storeTable = sqliteTable("store", {
 });
 
 export const selectStoreSchema = createSelectSchema(storeTable);
-export const insertStoreSchema = createInsertSchema(storeTable, {
-	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
+const overrideStoreTableSchema = {
+	name: z.string().min(3, { message: "min 3" }).max(510, { message: "max 510" }),
 	extraPhoneNumbers: z.array(z.string()).default([]),
 	cuisines: z.array(z.string()).default([]),
-});
-export const updateStoreSchema = createUpdateSchema(storeTable, {
-	name: (schema) => schema.min(3, { message: "min 3" }).max(510, { message: "max 510" }),
-	extraPhoneNumbers: z.array(z.string()).default([]),
-	cuisines: z.array(z.string()).default([]),
-});
-
+	defaultEstimatedPickupTime: EstimatedTimeSchema.nullable(),
+	defaultEstimatedDeliveryTime: EstimatedTimeSchema.nullable(),
+}
+export const insertStoreSchema = createInsertSchema(storeTable, overrideStoreTableSchema);
+export const updateStoreSchema = createUpdateSchema(storeTable, overrideStoreTableSchema);
 /// STORE TABLE END
 
 
