@@ -4,6 +4,7 @@ import { menuRoot } from "../../MenuRootStore";
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import HoverCustomizationOptions from "./HoverCustomizationOptions.vue";
+import RelationViewer from '../RelationViewer.vue';
 
 
 const props = defineProps<{
@@ -19,27 +20,29 @@ const currentItem = computed(() => {
 </script>
 
 <template>
-    <div class="border rounded-md p-1 my-6 border-card-foreground"
-         v-if="currentItem">
+    <div v-if="currentItem">
+        <RelationViewer :item-id="itemId!"
+                        name="customization" />
+        <div class="border rounded-md p-1 my-6 border-card-foreground">
+            <Badge v-if="currentItem?.minQ && currentItem?.minQ > 0"
+                   variant="outline"
+                   class="inline-block">
+                ✅Required
+            </Badge>
 
-        <Badge v-if="currentItem?.minQ && currentItem?.minQ > 0"
-               variant="outline"
-               class="inline-block">
-            ✅Required
-        </Badge>
+            <span class="capitalize text-lg block">
+                {{ currentItem?.lbl || 'Name:' }}
+            </span>
 
-        <span class="capitalize text-lg block">
-            {{ currentItem?.lbl || 'Name:' }}
-        </span>
+            <HoverCustomizationOptions :item-id="itemId" />
 
-        <HoverCustomizationOptions :item-id="itemId" />
+            <!-- <ItemPreviewCustomizationOptions v-model="modelValue"
+                                             :is-draggable="isDraggable"
+                                             :item-id="itemId" />
+    
+            <RecursiveCustomizations v-model="modelValue"
+                                     :item-id="itemId" /> -->
 
-        <!-- <ItemPreviewCustomizationOptions v-model="modelValue"
-                                         :is-draggable="isDraggable"
-                                         :item-id="itemId" />
-
-        <RecursiveCustomizations v-model="modelValue"
-                                 :item-id="itemId" /> -->
-
+        </div>
     </div>
 </template>

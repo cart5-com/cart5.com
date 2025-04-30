@@ -4,6 +4,7 @@ import { type ItemId } from "@lib/zod/menuRootSchema";
 import { Banknote, ListTodo } from "lucide-vue-next";
 import { computed } from "vue";
 import HoverCustomizationCard from "./HoverCustomizationCard.vue";
+import RelationViewer from "../RelationViewer.vue";
 
 const props = defineProps<{
     itemId?: ItemId
@@ -21,6 +22,8 @@ const currentItem = computed(() => {
 <template>
     <div class="w-full"
          v-if="currentItem">
+        <RelationViewer :item-id="itemId!"
+                        name="item" />
         <div class="">
             <div class="space-y-4">
                 <span class="capitalize text-2xl font-bold">

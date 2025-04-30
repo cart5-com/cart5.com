@@ -33,6 +33,9 @@ const isRadioMode = computed(() => {
                  :key="optionItemId">
 
                 <div class="border border-card-foreground rounded-md my-2 overflow-hidden">
+                    <!-- it becomes an infinite loop, when we show the option in RelationViewer
+                     <RelationViewer :item-id="optionItemId"
+                                    name="option" /> -->
                     <div class="items-center p-1 bg-card grid grid-cols-8 gap-1"
                          :class="[
                             // (isMaxQuantity() && !isRadioMode) ? 'opacity-40 text-xs   ' : '',

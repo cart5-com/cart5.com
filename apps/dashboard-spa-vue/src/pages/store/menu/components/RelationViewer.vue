@@ -50,7 +50,7 @@ const getItemWhoHasThisItemAsChild = computed(() => {
                              class="w-full">
                             {{ item.name }}
                         </div>
-                        <div>
+                        <div v-if="item.type !== 'ct'">
                             <Popover>
                                 <PopoverTrigger as-child>
                                     <Eye @click.stop />
