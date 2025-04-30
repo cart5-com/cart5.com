@@ -98,6 +98,7 @@ const storeName = window.storeData?.name;
                 Confirm order
                 <ChevronRight class="inline-block ml-2" />
             </Button>
+            <!-- TODO: remove this -->
             hasVerifiedPhoneNumber:{{ userDataStore.user!.hasVerifiedPhoneNumber }}
 
             <div class="text-xs text-muted-foreground my-4"
