@@ -87,6 +87,16 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Store does not offer delivery", "STORE_DOES_NOT_OFFER_DELIVERY");
     }
     const currentOrderType = userData.rememberLastOrderType;
+    const deliveryAddress = currentOrderType === 'delivery' && userData.rememberLastAddressId && userData.addresses ?
+        userData.addresses[userData.rememberLastAddressId] : undefined;
+
+    const pickupNickname = currentOrderType === 'pickup' ?
+        (userData.rememberLastNickname || user.name || undefined) : 'undefined';
+
+    if (currentOrderType === 'delivery' && !deliveryAddress) {
+        throw new KNOWN_ERROR("Delivery address not found", "DELIVERY_ADDRESS_NOT_FOUND");
+    }
+
     const taxSettings = storeData?.taxSettings as TaxSettings;
     if (!taxSettings) {
         throw new KNOWN_ERROR("Tax settings not found", "TAX_SETTINGS_NOT_FOUND");
@@ -151,7 +161,6 @@ export const placeOrderRoute = async (c: Context<
     );
 
     // TODO: check if paymentId is enabled for the store or maybe restricted to certain payment methods
-
     const cartBreakdown = calculateCartBreakdown(
         subTotalWithDeliveryAndServiceFees,
         platformServiceFee,
@@ -171,6 +180,7 @@ export const placeOrderRoute = async (c: Context<
     )
 
 
+
     const result = {
         storeId,
         orderType: currentOrderType,
@@ -183,6 +193,8 @@ export const placeOrderRoute = async (c: Context<
         paymentId: userData?.rememberLastPaymentMethodId,
         storeName: storeData?.name,
         storeAddress1: storeData?.address?.address1,
+        deliveryAddress,
+        pickupNickname,
     }
 
     return c.json({
