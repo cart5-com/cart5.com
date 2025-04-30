@@ -5,25 +5,30 @@ import { getUserData_Service } from "@db/services/user_data.service";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
 // import type { ResType } from "@api-client/typeUtils";
 // import { authGlobalApiClient } from "@api-client/auth_global";
-// import { platformServiceFee } from "@lib/platformServiceFee";
 // import { zValidator } from "@hono/zod-validator";
 // import { z } from "zod";
 // import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
+import { platformServiceFee } from "@lib/platformServiceFee";
+import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
     calculateCartItemPrice,
-    // calculateCartTotalPrice
+    calculateCartTotalPrice
 } from "@lib/utils/calculateCartItemPrice";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
-    // getSupportTeamServiceFee_Service,
+    getSupportTeamServiceFee_Service,
     getWebsiteByDefaultHostname,
-    // getWebsiteTeamServiceFee_Service
+    getWebsiteTeamServiceFee_Service
 } from "@db/services/website.service";
 import { generateCartId } from "@lib/utils/generateCartId";
 import type { CartItem } from "@lib/zod/cartItemState";
-// type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
+import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
+import {
+    calculateCartBreakdown
+} from "@lib/utils/calculateCartBreakdown";
 
+// type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 // export const placeOrder_SchemaValidator = zValidator('json', z.object({
 //     storeId: z.string(),
 // }));
@@ -81,7 +86,7 @@ export const placeOrderRoute = async (c: Context<
     ) {
         throw new KNOWN_ERROR("Store does not offer delivery", "STORE_DOES_NOT_OFFER_DELIVERY");
     }
-
+    const currentOrderType = userData.rememberLastOrderType;
     const taxSettings = storeData?.taxSettings as TaxSettings;
     if (!taxSettings) {
         throw new KNOWN_ERROR("Tax settings not found", "TAX_SETTINGS_NOT_FOUND");
@@ -90,16 +95,18 @@ export const placeOrderRoute = async (c: Context<
     if (!menuRoot) {
         throw new KNOWN_ERROR("Menu root not found", "MENU_ROOT_NOT_FOUND");
     }
-    // const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
+    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
     const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
     if (!WEBSITE || !WEBSITE.id) {
         throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
     }
-    // const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
-    //     WEBSITE?.id ?? "",
-    //     storeId,
-    //     WEBSITE?.defaultMarketplaceFee ?? null
-    // )
+    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
+        WEBSITE?.id ?? "",
+        storeId,
+        WEBSITE?.defaultMarketplaceFee ?? null
+    )
+    const supportPartnerServiceFee: ServiceFee | null = supportTeamServiceFee;
+    const marketingPartnerServiceFee: ServiceFee | null = websiteTeamServiceFee;
 
     const orderedItems: {
         name: string;
@@ -108,7 +115,6 @@ export const placeOrderRoute = async (c: Context<
         shownFee: string;
     }[] = [];
 
-    // v-for="(item, index) in currentCart?.items"
     currentCart.items.forEach((item: CartItem) => {
         const menuItem = menuRoot.allItems?.[item.itemId!];
         if (menuItem && menuItem.lbl) {
@@ -121,10 +127,56 @@ export const placeOrderRoute = async (c: Context<
             });
         }
     });
+    const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";
+    const tolerableServiceFeeRate = storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
+    const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
+    const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
+
+    // TODO: check distance between user address lat,lng and geocoded address lat,lng
+    // if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
+    const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
+    const subtotalShownFee = `${taxSettings.currencySymbol}${cartTotals.shownFee}`
+    const subTotalWithDeliveryAndServiceFees = calculateSubTotal(
+        currentCart, menuRoot ?? undefined, taxSettings, currentOrderType,
+        {
+            lat: userData.rememberLastLat!,
+            lng: userData.rememberLastLng!
+        },
+        storeData.deliveryZones?.zones ?? [],
+        {
+            lat: storeData.address?.lat!,
+            lng: storeData.address?.lng!
+        },
+        customServiceFees
+    );
+
+    // TODO: check if paymentId is enabled for the store or maybe restricted to certain payment methods
+
+    const cartBreakdown = calculateCartBreakdown(
+        subTotalWithDeliveryAndServiceFees,
+        platformServiceFee,
+        supportPartnerServiceFee,
+        marketingPartnerServiceFee,
+        taxSettings,
+        calculationType,
+        tolerableServiceFeeRate,
+        offerDiscountIfPossible,
+        userData?.rememberLastPaymentMethodId === "stripe" && (storeData?.stripeSettings?.isStripeEnabled ?? false),
+        {
+            name: "Stripe Fee",
+            ratePerOrder: storeData?.stripeSettings?.stripeRatePerOrder ?? 0,
+            feePerOrder: storeData?.stripeSettings?.stripeFeePerOrder ?? 0,
+            whoPaysFee: storeData?.stripeSettings?.whoPaysStripeFee ?? "STORE"
+        }
+    )
 
     return c.json({
         data: {
             orderedItems,
+            subtotalShownFee,
+            subTotalWithDeliveryAndServiceFees,
+            cartBreakdown,
+            paymentId: userData?.rememberLastPaymentMethodId
         },
         error: null as ErrorType
     }, 200);
