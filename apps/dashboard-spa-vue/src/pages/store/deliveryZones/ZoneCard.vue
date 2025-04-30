@@ -84,7 +84,7 @@ const emit = defineEmits(['openDialog', 'confirmDelete'])
                                 </div>
 
                                 <div class="grid gap-2 my-8 border-t pt-4">
-                                    <Label for="minCart">Minimum Cart Value</Label>
+                                    <Label for="minCart">Minimum Subtotal Value</Label>
                                     <Input id="minCart"
                                            type="number"
                                            v-model="zone.minCart"

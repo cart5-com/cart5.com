@@ -255,7 +255,16 @@ const totalItem = computed(() => {
                         </div>
                     </DrawerContent>
                 </Drawer>
-
+                <div
+                     v-if="currentOrderType === 'delivery' && cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)">
+                    <div class="p-2 bg-destructive text-destructive-foreground">
+                        <span class="">
+                            Minimum Subtotal:
+                            {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart }}
+                            Please add more items to your cart.
+                        </span>
+                    </div>
+                </div>
                 <div class="flex justify-between items-center">
                     <span class="">
                         Subtotal
