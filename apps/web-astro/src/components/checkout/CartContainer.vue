@@ -92,7 +92,7 @@ const storeName = window.storeData?.name;
 
             <div class="text-xs text-muted-foreground my-4"
                  v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">
-                <!-- TODO: add link to terms and conditions -->
+                <!-- TODO: show terms and conditions -->
                 <CheckCircle class="inline-block mr-2" />
                 By placing this order, you agree to accept full responsibility.
                 All orders are final and non-refundable to prevent abuse.
