@@ -170,14 +170,23 @@ export const placeOrderRoute = async (c: Context<
         }
     )
 
+
+    const result = {
+        storeId,
+        orderType: currentOrderType,
+        userId: user.id,
+        orderedItems,
+        subtotalShownFee,
+        subtotalDetails: subTotalWithDeliveryAndServiceFees,
+        cartBreakdown,
+        finalAmount: cartBreakdown.buyerPays,
+        paymentId: userData?.rememberLastPaymentMethodId,
+        storeName: storeData?.name,
+        storeAddress1: storeData?.address?.address1,
+    }
+
     return c.json({
-        data: {
-            orderedItems,
-            subtotalShownFee,
-            subTotalWithDeliveryAndServiceFees,
-            cartBreakdown,
-            paymentId: userData?.rememberLastPaymentMethodId
-        },
+        data: result,
         error: null as ErrorType
     }, 200);
 }

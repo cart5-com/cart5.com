@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
-import { User, Pencil } from "lucide-vue-next";
+import { User, Pencil, MapPinOff } from "lucide-vue-next";
 import { Card, CardContent } from "@/components/ui/card";
 import { currentOrderType, userDataStore } from "@web-astro/stores/UserData.store";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
-import { toast } from "@/ui-plus/sonner";
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -34,19 +33,19 @@ const selectedAddress = computed(() => {
 });
 
 const pickupNickname = computed(() => {
-    return userDataStore.value.userData?.rememberLastNickname || userDataStore.value.user?.name || '';
+    return userDataStore.value.userData?.rememberLastNickname || userDataStore.value.user?.name || 'undefined';
 });
 
 const storeId = window.storeData?.id;
 const storeName = window.storeData?.name;
 
-// watch for case (currentOrderType === 'delivery' && !selectedAddress)
-watch(() => currentOrderType.value === 'delivery' && !selectedAddress.value, () => {
-    toast.error('Please add or select an address');
-    setTimeout(() => {
-        window.location.href = BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!));
-    }, 1000);
-});
+// // watch for case (currentOrderType === 'delivery' && !selectedAddress)
+// watch(() => currentOrderType.value === 'delivery' && !selectedAddress.value, () => {
+//     toast.error('Please add or select an address');
+//     setTimeout(() => {
+//         window.location.href = BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!));
+//     }, 1000);
+// });
 </script>
 
 <template>
@@ -77,6 +76,12 @@ watch(() => currentOrderType.value === 'delivery' && !selectedAddress.value, () 
                         <Pencil class="inline-block ml-2" />
                     </div>
                 </div>
+                <div v-else-if="currentOrderType === 'delivery' && !selectedAddress">
+                    <div class="p-2 bg-destructive text-destructive-foreground rounded-md">
+                        <MapPinOff class="mr-1 inline-block" />
+                        Missing address click here to add or select an address
+                    </div>
+                </div>
                 <div v-else-if="currentOrderType === 'pickup' && pickupNickname">
                     <h3 class="font-bold text-xl mb-2">Pickup details</h3>
                     <div class="flex items-start gap-2 justify-between">
@@ -91,5 +96,6 @@ watch(() => currentOrderType.value === 'delivery' && !selectedAddress.value, () 
                 </div>
             </CardContent>
         </Card>
+
     </a>
 </template>
