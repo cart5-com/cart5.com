@@ -6,8 +6,8 @@ const dialog = useDialog();
 export function showPhoneValidationForm(pageUrl: string) {
     return new Promise((resolve) => {
         dialog.show({
-            title: 'One time phone verification',
-            description: 'please enter your mobile phone number for one time verification',
+            title: 'One-time phone verification',
+            description: 'Please enter your mobile phone number for verification. This is a one-time process and will not be required in the future.',
             component: PhoneValidationForm,
             props: {
                 pageUrl: pageUrl,

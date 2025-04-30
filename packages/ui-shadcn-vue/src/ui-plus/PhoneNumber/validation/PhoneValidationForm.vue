@@ -26,15 +26,17 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 })
 
-const { isLoading, globalError, handleError, withSubmit } = useFormPlus(form, {
+const { isLoading, globalError, handleError, withSubmit, restoreValues } = useFormPlus(form, {
     persistenceFields: {
         phoneNumber: REMEMBER_LAST_PHONE_NUMBER
     }
 });
 
+const isRetryDisabled = ref(false);
+const retryCountdown = ref(0);
+
 async function onSendOtpSubmit(values: z.infer<typeof schema>) {
     await withSubmit(async () => {
-        console.log('values', values);
         let turnstile;
         try {
             turnstile = await showTurnstilePopup(
@@ -55,6 +57,7 @@ async function onSendOtpSubmit(values: z.infer<typeof schema>) {
             handleError(error, form);
         } else {
             isSendOtpFormVisible.value = false;
+            startRetryCountdown();
             setTimeout(() => {
                 const pinInput = document.querySelector<HTMLInputElement>('[placeholder="○"]');
                 if (pinInput) {
@@ -65,13 +68,33 @@ async function onSendOtpSubmit(values: z.infer<typeof schema>) {
     })
 }
 
+function startRetryCountdown() {
+    isRetryDisabled.value = true;
+    retryCountdown.value = 10;
+
+    const timer = setInterval(() => {
+        retryCountdown.value -= 1;
+        if (retryCountdown.value <= 0) {
+            clearInterval(timer);
+            isRetryDisabled.value = false;
+        }
+    }, 1000);
+}
+
+async function handleRetry() {
+    if (isRetryDisabled.value) return;
+
+    isSendOtpFormVisible.value = true;
+    setTimeout(() => {
+        restoreValues();
+    }, 100);
+}
+
 const isSendOtpFormVisible = ref(true);
 onMounted(() => {
     setTimeout(() => {
-        console.log('focusing phone number input');
         const phoneNumberInput = document.querySelector<HTMLInputElement>('[name="phoneNumber"]');
         if (phoneNumberInput) {
-            console.log('focusing phone number input222', phoneNumberInput);
             phoneNumberInput.focus();
         }
     }, 500);
@@ -108,8 +131,20 @@ onMounted(() => {
                 </Button>
             </div>
         </AutoForm>
-        <PhoneValidationCodeForm v-else
-                                 :page-url="pageUrl"
-                                 @success="$emit('close', $event)" />
+        <div v-else>
+            <PhoneValidationCodeForm :page-url="pageUrl"
+                                     @success="$emit('close', $event)" />
+            <div class="mt-4">
+                <Button variant="outline"
+                        class="w-full"
+                        :disabled="isRetryDisabled || isLoading"
+                        @click="handleRetry">
+                    <Loader2 v-if="isLoading"
+                             class="mr-2 animate-spin" />
+                    <span v-if="isRetryDisabled">Resend code ({{ retryCountdown }}s)</span>
+                    <span v-else>Resend verification code</span>
+                </Button>
+            </div>
+        </div>
     </div>
 </template>

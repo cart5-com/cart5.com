@@ -93,6 +93,19 @@ export function useFormPlus(form?: ReturnType<typeof useForm>, options?: Persist
         }
     }
 
+    const restoreValues = () => {
+        if (!options?.persistenceFields || !form) return;
+        if (typeof window !== 'undefined' && window.localStorage) {
+            Object.entries(options.persistenceFields).forEach(([fieldName, storageKey]) => {
+                const savedValue = localStorage.getItem(storageKey);
+                if (savedValue) {
+                    form.setFieldValue(fieldName, savedValue);
+                }
+            });
+        }
+    };
+
+
     const startWatchingPersistenceFields = () => {
         if (typeof window === "undefined") return;
         if (!options?.persistenceFields) return;
@@ -110,18 +123,6 @@ export function useFormPlus(form?: ReturnType<typeof useForm>, options?: Persist
             { deep: true }
         );
 
-        // Restore values from storage
-        const restoreValues = () => {
-            if (typeof window !== 'undefined' && window.localStorage) {
-                Object.entries(options.persistenceFields).forEach(([fieldName, storageKey]) => {
-                    const savedValue = localStorage.getItem(storageKey);
-                    if (savedValue) {
-                        form.setFieldValue(fieldName, savedValue);
-                    }
-                });
-            }
-        };
-
         setTimeout(() => {
             restoreValues();
         }, 100);
@@ -134,6 +135,7 @@ export function useFormPlus(form?: ReturnType<typeof useForm>, options?: Persist
         globalError,
         handleError,
         clearError,
-        withSubmit
+        withSubmit,
+        restoreValues
     }
 }
