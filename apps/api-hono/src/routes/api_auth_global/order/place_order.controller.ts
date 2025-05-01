@@ -39,6 +39,10 @@ export const placeOrderRoute = async (c: Context<
 // '/:storeId/place_order',
 // ValidatorContext<typeof placeOrder_SchemaValidator>
 >) => {
+    const storeId = c.req.param('storeId');
+    if (!storeId) {
+        throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
+    }
     const host = c.req.header()['host'];
     const user = c.get("USER");
     if (!user || !user.id) {
@@ -46,10 +50,6 @@ export const placeOrderRoute = async (c: Context<
     }
     if (user.hasVerifiedPhoneNumber === 0) {
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
-    }
-    const storeId = c.req.param('storeId');
-    if (!storeId) {
-        throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
     }
     const userData = await getUserData_Service(user.id, {
         rememberLastAddress: true,
@@ -94,7 +94,7 @@ export const placeOrderRoute = async (c: Context<
     const isStoreOpen = isStoreOpenNow(currentOrderType, storeData?.openHours ?? null);
     if (
         !isStoreOpen
-        // TODO: What about scheduled orders? we do not have scheduled orders yet. maybe later
+        // What about scheduled orders? we do not have scheduled orders yet. maybe later
     ) {
         throw new KNOWN_ERROR("Store is not open", "STORE_IS_NOT_OPEN");
     }

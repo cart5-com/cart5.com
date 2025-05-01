@@ -140,7 +140,10 @@ const getPrice = (itemIndex: number) => {
 
 const subTotalWithDeliveryAndServiceFees = computed(() => {
     return calculateSubTotal(
-        currentCart.value, menuRoot ?? undefined, taxSettings, currentOrderType.value,
+        currentCart.value,
+        menuRoot ?? undefined,
+        taxSettings,
+        currentOrderType.value,
         {
             lat: userDataStore.value.userData?.rememberLastLat!,
             lng: userDataStore.value.userData?.rememberLastLng!
