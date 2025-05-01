@@ -54,7 +54,9 @@ const removeAllItemsFromCart = () => {
       <div class="flex-1"
            v-if="currentCart && currentCart.items">
 
-        <CartView />
+        <div class="px-2">
+          <CartView />
+        </div>
 
         <div
              class="bg-card text-card-foreground relative sticky bottom-0 z-40 max-w-full flex justify-between items-center p-4">
