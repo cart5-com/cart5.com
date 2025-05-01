@@ -26,7 +26,7 @@ export const recursiveCartChildrenItemSummary = (
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                         if (innerOptionItem?.defQ) { // default quantity should be 0 to remove
                             let helperText = '';
-                            if (upperOptionIndex && upperOptionLength) {
+                            if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
                                 helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
                             }
                             newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
@@ -86,7 +86,7 @@ export const recursiveCartChildrenItemSummary = (
                     const defaultQuantity = optionItem?.defQ || 0;
                     if (defaultQuantity !== quantity) {
                         let helperText = '';
-                        if (upperOptionIndex && upperOptionLength) {
+                        if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
                             helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
                         }
                         newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}${quantity}x ${optionItem?.lbl || ''}\n`;
@@ -101,7 +101,7 @@ export const recursiveCartChildrenItemSummary = (
                                     const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                                     if (innerOptionItem?.defQ) {
                                         let helperText = '';
-                                        if (upperOptionIndex && upperOptionLength) {
+                                        if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
                                             helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
                                         }
                                         newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
