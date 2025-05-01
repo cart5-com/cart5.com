@@ -4,7 +4,7 @@ import { useDialog } from '@/ui-plus/dialog/use-dialog';
 import ItemModal from './ItemModal.vue';
 import { addItemToCart, updateItemInCart } from '@web-astro/stores/UserDataCartHelpers';
 import { openRightDrawer } from '@web-astro/utils/openRightDrawer';
-
+import { sanitizeCartState } from '@lib/utils/sanitizeCartState';
 const dialog = useDialog();
 
 export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: number) {
@@ -18,11 +18,12 @@ export function showItemModal(itemId: ItemId, cartItem?: CartItem, itemIndex?: n
             cartItem: cartItem,
             isEdit: cartItem ? true : false
         },
-        onSuccess: async (values) => {
+        onSuccess: async (cartItemState) => {
+            const sanitizedCartItemState = sanitizeCartState(cartItemState, window.storeData?.menu?.menuRoot!);
             if (cartItem) {
-                updateItemInCart(window.storeData?.id!, itemIndex!, values);
+                updateItemInCart(window.storeData?.id!, itemIndex!, sanitizedCartItemState);
             } else {
-                addItemToCart(window.storeData?.id!, window.storeData?.name!, window.storeData?.address.address1!, values);
+                addItemToCart(window.storeData?.id!, window.storeData?.name!, window.storeData?.address.address1!, sanitizedCartItemState);
                 openRightDrawer();
             }
         },

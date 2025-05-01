@@ -8,11 +8,25 @@ import { inclusiveRate, exclusiveRate } from "./rateCalc";
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
     if (customizationState.itemId) {
+        // const customizationItem = menuRoot.allItems?.[customizationState.itemId];
+        // let countQuantity = 0;
+        // if (customizationItem?.maxQ) {
+        //     // console.log('customizationItem?.maxQ', customizationItem?.maxQ);
+        // }
         if (customizationState.childrenState) {
             for (const optionIndex in customizationState.childrenState) {
                 const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex]?.itemId!];
                 if (customizationState.childrenState[optionIndex]?.itemId) {
                     const quantity = customizationState.childrenState[optionIndex]?.quantity || 0;
+
+                    // countQuantity += quantity;
+                    // if (countQuantity > customizationItem?.maxQ!) {
+                    //     // console.log('countQuantity > customizationItem?.maxQ', countQuantity, customizationItem?.maxQ);
+                    // }
+
+                    // if (optionItem?.maxQ && quantity > optionItem?.maxQ) {
+                    //     quantity = optionItem?.maxQ;
+                    // }
                     if (optionItem?.opPrc) {
                         let chargeableQuantity = quantity;
 
