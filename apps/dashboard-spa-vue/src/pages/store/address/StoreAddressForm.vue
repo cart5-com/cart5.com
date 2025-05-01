@@ -16,13 +16,13 @@ import { Loader2 } from 'lucide-vue-next'
 import AutoFormFieldCountry from '@/ui-plus/auto-form/AutoFormFieldCountry.vue'
 import { onMounted, ref, watch } from 'vue';
 import { toast } from '@/ui-plus/sonner';
-import { fetchCountryCode } from '@/ui-plus/PhoneNumber/basePhoneInput/helpers/use-phone-input';
 import { currentStoreId, loadMyStores } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { dashboardApiClient } from '@api-client/dashboard';
 import { DependencyType } from '@/ui-plus/auto-form/interface';
 import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
 import GeolocationMap from '@/ui-plus/geolocation-selection-map/GeolocationMap.vue';
 import { loadLeafletCDN } from '@/ui-plus/geolocation-selection-map/loadLeafletCDN';
+import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 
 const schema = z.object({
     country: z.string().min(1, 'Required'),
@@ -30,7 +30,7 @@ const schema = z.object({
     address2: z.string().optional(),
     city: z.string().min(1, 'Required'),
     state: z.string().optional(),
-    postalCode: z.string().min(1, 'Postal code is required'),
+    postalCode: z.string().min(1, 'Required'),
 })
 
 const form = useForm({
@@ -123,9 +123,9 @@ const loadData = async () => {
             lng = address.lng;
         }
         if (!address || !address.country) {
-            fetchCountryCode().then(countryCode => {
-                form.setFieldValue('country', countryCode);
-            });
+            const { country_code, region_code } = await ipwhois()
+            form.setFieldValue('country', country_code);
+            form.setFieldValue('state', region_code);
         }
     }
     isLoading.value = false;

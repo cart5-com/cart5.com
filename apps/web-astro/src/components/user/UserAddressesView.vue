@@ -4,6 +4,7 @@ import UserAddressForm from './UserAddressForm.vue';
 import { handleDataChangeNow, userDataStore } from '@web-astro/stores/UserData.store';
 import type { AddressType } from '@lib/zod/userAddressSchema';
 import { Button } from '@/components/ui/button';
+import { ipwhois } from '@/ui-plus/geolocation-selection-map/ipwhois';
 import {
     Card,
     CardContent,
@@ -65,7 +66,8 @@ async function selectAddress(address: AddressType) {
     emit('selectAddress', address);
 }
 
-function newAddress() {
+async function newAddress() {
+    const ip = await ipwhois();
     const userHasAddress = userDataStore.value.userData?.addresses && Object.keys(userDataStore.value.userData?.addresses).length > 0;
     dialog.show<AddressType>({
         title: 'Add Address',
@@ -73,10 +75,12 @@ function newAddress() {
         props: {
             address: {
                 nickname: userDataStore.value.user?.name || '',
-                country: userDataStore.value.userData?.rememberLastCountry || '',
                 address1: userHasAddress ? '' : userDataStore.value.userData?.rememberLastAddress || '',
                 lat: userDataStore.value.userData?.rememberLastLat || 0,
                 lng: userDataStore.value.userData?.rememberLastLng || 0,
+                country: userDataStore.value.userData?.rememberLastCountry || ip.country_code || '',
+                state: ip.region_code || '',
+                city: ip.city || '',
             },
         },
         onSuccess: async (address) => {

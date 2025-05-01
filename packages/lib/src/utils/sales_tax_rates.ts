@@ -1,7 +1,7 @@
 import salesTaxRatesJson from 'sales-tax/res/sales_tax_rates.json';
 import currencySymbolMap from 'currency-symbol-map';
 import type { TaxSettings } from '@lib/zod/taxSchema';
-
+import allTaxStatesJson from './all-tax-states.json';
 // override sales tax rates settings to make it clear and easy to use.
 // @ts-ignore
 // salesTaxRatesJson["US"].states["DE"] = {
@@ -30,6 +30,14 @@ export const salesTaxRates: Record<string, {
         rate: number;
     }>;
 }> = salesTaxRatesJson;
+
+export const countriesWithMultipleSalesTaxJurisdiction = [
+    'US',
+    'CA',
+    'ES',
+];
+
+export const allCountriesAndStatesWithMultipleSalesTaxJurisdiction: Record<string, Record<string, string>> = allTaxStatesJson;
 
 const getSalesTaxRate = (countryCode: string, regionCode: string) => {
     if (salesTaxRates[countryCode]) {

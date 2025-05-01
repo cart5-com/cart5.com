@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-vue-next';
-import { salesTaxRates } from '@lib/utils/sales_tax_rates';
+import { salesTaxRates, allCountriesAndStatesWithMultipleSalesTaxJurisdiction } from '@lib/utils/sales_tax_rates';
 import {
     Select,
     SelectContent,
@@ -31,7 +31,7 @@ const states = computed(() => {
     if (!selectedCountry.value || !salesTaxRates[selectedCountry.value]?.states) {
         return [];
     }
-    return Object.keys(salesTaxRates[selectedCountry.value].states || {}).sort();
+    return Object.keys(allCountriesAndStatesWithMultipleSalesTaxJurisdiction[selectedCountry.value] || {}).sort();
 });
 
 const hasStates = computed(() => {
@@ -84,7 +84,7 @@ const applyTaxSettings = () => {
                             <SelectItem v-for="code in states"
                                         :key="code"
                                         :value="code">
-                                {{ code }}
+                                {{ allCountriesAndStatesWithMultipleSalesTaxJurisdiction[selectedCountry][code] }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
