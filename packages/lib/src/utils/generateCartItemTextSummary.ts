@@ -6,7 +6,9 @@ import { type CartChildrenItemState, type CartItem } from "@lib/zod/cartItemStat
 export const recursiveCartChildrenItemSummary = (
     customizationState: CartChildrenItemState,
     menuRoot: MenuRoot,
-    indentLevel: number = 0
+    indentLevel: number = 0,
+    upperOptionIndex?: number,
+    upperOptionLength?: number
 ) => {
     let summary = '';
     if (customizationState.itemId) {
@@ -23,7 +25,11 @@ export const recursiveCartChildrenItemSummary = (
                     if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                         if (innerOptionItem?.defQ) { // default quantity should be 0 to remove
-                            newSummary += "  ".repeat(indentLevel + 1) + '0x ' + (innerOptionItem?.lbl || '') + '\n';
+                            let helperText = '';
+                            if (upperOptionIndex && upperOptionLength) {
+                                helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                            }
+                            newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                         }
                         // newSummary += " ".repeat(indentLevel + 1) + nullOptionItem.lbl + ':';
                     }
@@ -46,7 +52,6 @@ export const recursiveCartChildrenItemSummary = (
                     if (optionItem?.maxQ && quantity > optionItem?.maxQ) {
                         quantity = optionItem?.maxQ;
                     }
-                    const defaultQuantity = optionItem?.defQ || 0;
                     // let chargeableQuantity = quantity;
                     // if (optionItem?.chrgAbvQ !== undefined) {
                     //     chargeableQuantity = Math.max(0, quantity - optionItem.chrgAbvQ);
@@ -58,9 +63,36 @@ export const recursiveCartChildrenItemSummary = (
                     // if (quantity < 0) {
                     //     return newSummary;
                     // }
+
+
+                    // const defaultQuantity = optionItem?.defQ || 0;
+
+                    // // Don't use position labels here - they're not needed in this context
+                    // if (defaultQuantity !== quantity) {
+                    //     newSummary += "  ".repeat(indentLevel + 1) + quantity + 'x ' + (optionItem?.lbl || '') + '\n';
+
+                    //     // Add position tracking for customized items
+                    //     if (quantity > 1) {
+                    //         for (let i = 1; i <= quantity; i++) {
+                    //             if (i === 2) { // Assuming the 2nd item has the customization
+                    //                 newSummary += "  ".repeat(indentLevel + 2) + `(${i}/${quantity}) 6x Salt [0.0 Cals]\n`;
+                    //             } else {
+                    //                 newSummary += "  ".repeat(indentLevel + 2) + `(${i}/${quantity}) no change\n`;
+                    //             }
+                    //         }
+                    //     }
+                    // }
+
+                    const defaultQuantity = optionItem?.defQ || 0;
                     if (defaultQuantity !== quantity) {
-                        newSummary += "  ".repeat(indentLevel + 1) + quantity + 'x ' + (optionItem?.lbl || '') + '\n';
+                        let helperText = '';
+                        if (upperOptionIndex && upperOptionLength) {
+                            helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                        }
+                        newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}${quantity}x ${optionItem?.lbl || ''}\n`;
                     }
+
+
                     if (customizationState.childrenState[optionIndex].childrenState) {
                         for (const quantityRepeatedChildStateIndex in customizationState.childrenState[optionIndex].childrenState) {
                             if (customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex] === null) {
@@ -68,7 +100,11 @@ export const recursiveCartChildrenItemSummary = (
                                 if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                                     const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                                     if (innerOptionItem?.defQ) {
-                                        newSummary += "  ".repeat(indentLevel + 1) + '0x ' + (innerOptionItem?.lbl || '') + '\n';
+                                        let helperText = '';
+                                        if (upperOptionIndex && upperOptionLength) {
+                                            helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                                        }
+                                        newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                                     }
                                 }
                             }
@@ -76,7 +112,14 @@ export const recursiveCartChildrenItemSummary = (
                                 for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                     const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
                                     if (deepOptionSetState) {
-                                        newSummary += recursiveCartChildrenItemSummary(deepOptionSetState, menuRoot, indentLevel + 1)
+                                        debugger;
+                                        newSummary += recursiveCartChildrenItemSummary(
+                                            deepOptionSetState,
+                                            menuRoot,
+                                            indentLevel + 1,
+                                            Number(quantityRepeatedChildStateIndex) + 1,
+                                            quantity
+                                        )
                                     }
                                 }
 
@@ -88,7 +131,7 @@ export const recursiveCartChildrenItemSummary = (
         }
         if (newSummary.length > 0) {
             if (menuRoot.allItems?.[customizationState.itemId]?.lbl) {
-                summary += " ".repeat(indentLevel) + (menuRoot.allItems?.[customizationState.itemId]?.lbl) + '\n';
+                summary += `${" ".repeat(indentLevel)}${menuRoot.allItems?.[customizationState.itemId]?.lbl}\n`;
             }
             summary += newSummary;
         }
