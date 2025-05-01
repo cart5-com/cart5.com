@@ -5,7 +5,7 @@ export const ItemSchema = z.object({
     lbl: z.string().optional(), // label, title, name
     dsc: z.string().optional(), // description
     prc: z.number().optional(), // price
-    pickupPrc: z.number().optional(), // pickup price
+    pickupPrc: z.number().optional(), // override pickup price
 
     cIds: z.array(z.string()).optional(), // children ids
 

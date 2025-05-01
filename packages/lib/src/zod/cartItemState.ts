@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Define interface for CartChildrenItemState for better type safety
-interface CartChildrenItemStateType {
+export interface CartChildrenItemStateType {
     itemId?: string;
     childrenState?: (ChildStateItem | null)[];
 }

@@ -185,12 +185,14 @@ export const placeOrderRoute = async (c: Context<
         const menuItem = menuRoot.allItems?.[item.itemId!];
         if (menuItem && menuItem.lbl) {
             const price = calculateCartItemPrice(item, menuRoot, taxSettings, userData.rememberLastOrderType ?? 'delivery');
-            orderedItems.push({
-                name: menuItem.lbl ?? '',
-                quantity: item.quantity ?? 1,
-                details: generateCartItemTextSummary(item, menuRoot),
-                shownFee: (taxSettings.currencySymbol ?? '') + price.shownFee,
-            });
+            if (price.isValid) {
+                orderedItems.push({
+                    name: menuItem.lbl ?? '',
+                    quantity: item.quantity ?? 1,
+                    details: generateCartItemTextSummary(item, menuRoot),
+                    shownFee: (taxSettings.currencySymbol ?? '') + price.shownFee,
+                });
+            }
         }
     });
     const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";

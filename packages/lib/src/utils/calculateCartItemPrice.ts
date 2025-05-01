@@ -4,6 +4,7 @@ import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { inclusiveRate, exclusiveRate } from "./rateCalc";
+import { verifyCartItemState } from "./verifyCartItemState";
 
 export const recursiveCartChildrenItemState = (customizationState: CartChildrenItemState, menuRoot: MenuRoot) => {
     let total = 0;
@@ -142,12 +143,24 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     const totalWithTax = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total + tax : total;
     const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total : totalWithTax;
     const itemTotal = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? total : total - tax;
-    return {
-        itemTotal: roundTo2Decimals(itemTotal),
-        tax: roundTo2Decimals(tax),
-        totalWithTax: roundTo2Decimals(totalWithTax),
-        shownFee: roundTo2Decimals(shownFee),
-    };
+    const isValid = verifyCartItemState(cartItem, menuRoot);
+    if (isValid) {
+        return {
+            itemTotal: roundTo2Decimals(itemTotal),
+            tax: roundTo2Decimals(tax),
+            totalWithTax: roundTo2Decimals(totalWithTax),
+            shownFee: roundTo2Decimals(shownFee),
+            isValid: true,
+        };
+    } else {
+        return {
+            itemTotal: 0,
+            tax: 0,
+            totalWithTax: 0,
+            shownFee: 0,
+            isValid: false,
+        };
+    }
 }
 
 export const calculateCartTotalPrice = (cart: Cart | undefined, menuRoot: MenuRoot | undefined, taxSettings: TaxSettings | undefined, orderType: OrderType = 'delivery') => {

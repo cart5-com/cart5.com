@@ -200,40 +200,53 @@ const totalItem = computed(() => {
                      v-for="(item, index) in currentCart?.items"
                      class="border-t border-muted-foreground pb-2"
                      :key="index">
-                    <div class="whitespace-pre-wrap px-2">
-                        <div class="cursor-pointer"
-                             @click="openCartItem(index)">
-                            <div class="font-bold text-lg">
-                                {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
-                            </div>
-                            {{ generateCartItemTextSummary(item, menuRoot) }}
-                        </div>
+
+                    <div v-if="!itemPrices[index]?.isValid"
+                         class="bg-destructive text-destructive-foreground">
+                        Item changed or expired. it will be ignored. Please remove and add it again.
+                        <Button @click="() => { item.quantity = 0; updateCartItemQuantity(item, index) }"
+                                variant="outline"
+                                size="sm">
+                            Remove
+                        </Button>
                     </div>
-                    <div class="flex justify-between items-center px-1">
-                        <NumberField id="quantity"
-                                     class="max-w-40 border border-foreground rounded-md bg-background"
-                                     v-model="item.quantity!"
-                                     :default-value="1"
-                                     @update:model-value="updateCartItemQuantity(item, index)"
-                                     :step="1"
-                                     :max="100"
-                                     :min="0">
-                            <NumberFieldContent>
-                                <NumberFieldDecrement
-                                                      class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer">
-                                    <Trash2 class="h-4 w-4"
-                                            v-if="item.quantity! === 1" />
-                                    <Minus class="h-4 w-4"
-                                           v-else />
-                                </NumberFieldDecrement>
-                                <NumberFieldInput />
-                                <NumberFieldIncrement
-                                                      class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
-                            </NumberFieldContent>
-                        </NumberField>
-                        <div>
-                            <div class="font-medium">
-                                {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
+
+                    <div :class="{ 'line-through text-destructive opacity-70': !itemPrices[index]?.isValid }">
+                        <div class="whitespace-pre-wrap px-2">
+                            <div class="cursor-pointer"
+                                 @click="openCartItem(index)">
+                                <div class="font-bold text-lg">
+                                    {{ menuRoot.allItems?.[item.itemId!]?.lbl }}
+                                </div>
+                                {{ generateCartItemTextSummary(item, menuRoot) }}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center px-1">
+                            <NumberField id="quantity"
+                                         class="max-w-40 border border-foreground rounded-md bg-background"
+                                         v-model="item.quantity!"
+                                         :default-value="1"
+                                         @update:model-value="updateCartItemQuantity(item, index)"
+                                         :step="1"
+                                         :max="100"
+                                         :min="0">
+                                <NumberFieldContent>
+                                    <NumberFieldDecrement
+                                                          class="bg-secondary rounded-l-md hover:bg-secondary/60 cursor-pointer">
+                                        <Trash2 class="h-4 w-4"
+                                                v-if="item.quantity! === 1" />
+                                        <Minus class="h-4 w-4"
+                                               v-else />
+                                    </NumberFieldDecrement>
+                                    <NumberFieldInput />
+                                    <NumberFieldIncrement
+                                                          class="bg-secondary rounded-r-md hover:bg-secondary/60 cursor-pointer" />
+                                </NumberFieldContent>
+                            </NumberField>
+                            <div>
+                                <div class="font-medium">
+                                    {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
+                                </div>
                             </div>
                         </div>
                     </div>
