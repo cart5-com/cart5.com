@@ -7,8 +7,8 @@ export const recursiveCartChildrenItemSummary = (
     customizationState: CartChildrenItemState,
     menuRoot: MenuRoot,
     indentLevel: number = 0,
-    upperOptionIndex?: number,
-    upperOptionLength?: number
+    // upperOptionIndex?: number,
+    // upperOptionLength?: number
 ) => {
     let summary = '';
     if (customizationState.itemId) {
@@ -69,8 +69,8 @@ export const recursiveCartChildrenItemSummary = (
                                             deepOptionSetState,
                                             menuRoot,
                                             indentLevel + 1,
-                                            Number(quantityRepeatedChildStateIndex) + 1,
-                                            quantity
+                                            // Number(quantityRepeatedChildStateIndex) + 1,
+                                            // quantity
                                         )
                                     }
                                 }
