@@ -112,7 +112,6 @@ export const recursiveCartChildrenItemSummary = (
                                 for (const childStateIndex in customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex]) {
                                     const deepOptionSetState = customizationState.childrenState[optionIndex].childrenState[quantityRepeatedChildStateIndex][childStateIndex]
                                     if (deepOptionSetState) {
-                                        debugger;
                                         newSummary += recursiveCartChildrenItemSummary(
                                             deepOptionSetState,
                                             menuRoot,

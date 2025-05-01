@@ -53,6 +53,7 @@ const cartItemTotalPriceDelivery = ref<ReturnType<typeof calculateCartItemPrice>
     tax: 0,
     totalWithTax: 0,
     shownFee: 0,
+    isValid: false,
 });
 
 const cartItemTotalPricePickup = ref<ReturnType<typeof calculateCartItemPrice>>({
@@ -60,6 +61,7 @@ const cartItemTotalPricePickup = ref<ReturnType<typeof calculateCartItemPrice>>(
     tax: 0,
     totalWithTax: 0,
     shownFee: 0,
+    isValid: false,
 });
 
 
