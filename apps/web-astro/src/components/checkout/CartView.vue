@@ -2,7 +2,7 @@
 import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import { removeItemFromCart, openItemInCart, genCartId } from "../../stores/UserDataCartHelpers";
 import { computed, ref } from "vue";
-import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX, ChevronDown, ChevronUp, Clock } from "lucide-vue-next";
+import { Minus, Trash2, Pencil, Info, Moon, MapPinOff, OctagonX, ChevronDown, ChevronUp, Clock, TriangleAlert } from "lucide-vue-next";
 import { type MenuRoot } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice, calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
@@ -44,6 +44,7 @@ import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
 const props = defineProps<{
     isCollapsed?: boolean;
+    hideFeeDetails?: boolean;
 }>();
 
 const isStoreOpen = computed(() => {
@@ -202,8 +203,9 @@ const totalItem = computed(() => {
                      :key="index">
 
                     <div v-if="!itemPrices[index]?.isValid"
-                         class="bg-destructive text-destructive-foreground">
-                        Item changed or expired. it will be ignored. Please remove and add it again.
+                         class="bg-destructive text-destructive-foreground p-1">
+                        <TriangleAlert class="inline-block mr-2" />
+                        Item changed/expired. it will be ignored. Please remove and add it again.
                         <Button @click="() => { item.quantity = 0; updateCartItemQuantity(item, index) }"
                                 variant="outline"
                                 size="sm">
@@ -285,11 +287,15 @@ const totalItem = computed(() => {
                         </div>
                     </DrawerContent>
                 </Drawer>
-                <div v-if="estimatedTime"
+
+                <!-- Estimated Time -->
+                <div v-if="estimatedTime && !hideFeeDetails"
                      class="text-sm text-muted-foreground my-4">
                     <Clock class="mr-1 inline-block" />
                     {{ estimatedTime }}
                 </div>
+
+                <!-- Minimum Subtotal -->
                 <div
                      v-if="currentOrderType === 'delivery' && cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)">
                     <div class="p-2 bg-destructive text-destructive-foreground">
@@ -300,6 +306,8 @@ const totalItem = computed(() => {
                         </span>
                     </div>
                 </div>
+
+                <!-- Subtotal -->
                 <div class="flex justify-between items-center">
                     <span class="">
                         Subtotal
@@ -308,59 +316,66 @@ const totalItem = computed(() => {
                         {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
                     </span>
                 </div>
-                <div class="flex justify-between items-center"
-                     v-if="subTotalWithDeliveryAndServiceFees.bestDeliveryZone">
-                    <span class="">
-                        Delivery Fee
-                    </span>
-                    <span class=" text-right">
-                        {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
-                    </span>
-                </div>
 
-                <div v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
-                     :key="index">
-                    <div class="flex justify-between items-center "
-                         v-if="customSFee.shownFee > 0">
+                <div v-if="!hideFeeDetails">
+                    <!-- Delivery Fee -->
+                    <div class="flex justify-between items-center"
+                         v-if="subTotalWithDeliveryAndServiceFees.bestDeliveryZone">
                         <span class="">
-                            {{ customSFee.name }}
+                            Delivery Fee
                         </span>
                         <span class=" text-right">
-                            {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
+                            {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
+                        </span>
+                    </div>
+
+                    <!-- Custom Service Fees -->
+                    <div v-for="(customSFee, index) in subTotalWithDeliveryAndServiceFees.calculatedCustomServiceFees"
+                         :key="index">
+                        <div class="flex justify-between items-center "
+                             v-if="customSFee.shownFee > 0">
+                            <span class="">
+                                {{ customSFee.name }}
+                            </span>
+                            <span class=" text-right">
+                                {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tax and Fees -->
+                    <div class="flex justify-between items-center "
+                         v-if="cartBreakdown.buyerPaysTaxAndFeesShownFee > 0">
+                        <span class="">
+                            {{ cartBreakdown.buyerPaysTaxAndFeesName }}
+
+                            <Popover>
+                                <PopoverTrigger as-child>
+                                    <Info class="inline-block ml-2" />
+                                </PopoverTrigger>
+                                <PopoverContent align="start">
+                                    <div class="space-y-2">
+                                        <h3 class="font-semibold">What's included?</h3>
+                                        <div v-for="(fee, index) in cartBreakdown.buyerPaysTaxAndFees"
+                                             :key="index">
+                                            <div class="flex justify-between items-center">
+                                                <div class="font-medium">{{ fee.name }}</div>
+                                                <div>{{ fee.currencyShownFee }}</div>
+                                            </div>
+                                            <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+
+                        </span>
+                        <span class=" text-right">
+                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPaysTaxAndFeesShownFee }}
                         </span>
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center "
-                     v-if="cartBreakdown.buyerPaysTaxAndFeesShownFee > 0">
-                    <span class="">
-                        {{ cartBreakdown.buyerPaysTaxAndFeesName }}
-
-                        <Popover>
-                            <PopoverTrigger as-child>
-                                <Info class="inline-block ml-2" />
-                            </PopoverTrigger>
-                            <PopoverContent align="start">
-                                <div class="space-y-2">
-                                    <h3 class="font-semibold">What's included?</h3>
-                                    <div v-for="(fee, index) in cartBreakdown.buyerPaysTaxAndFees"
-                                         :key="index">
-                                        <div class="flex justify-between items-center">
-                                            <div class="font-medium">{{ fee.name }}</div>
-                                            <div>{{ fee.currencyShownFee }}</div>
-                                        </div>
-                                        <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
-                                    </div>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-
-                    </span>
-                    <span class=" text-right">
-                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPaysTaxAndFeesShownFee }}
-                    </span>
-                </div>
-
+                <!-- Discount -->
                 <div class="flex justify-between items-center p-2 text-xl font-bold text-primary"
                      v-if="cartBreakdown.discount > 0">
                     <span class="">
@@ -395,7 +410,9 @@ const totalItem = computed(() => {
                     Pickup disabled by store
                 </div>
 
-                <div class="flex justify-between items-center font-bold text-2xl py-4">
+                <!-- Total -->
+                <div class="flex justify-between items-center font-bold text-2xl py-4"
+                     v-if="!hideFeeDetails">
                     <span>
                         Total
                         <Popover>

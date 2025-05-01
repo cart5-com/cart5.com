@@ -98,8 +98,6 @@ const storeName = window.storeData?.name;
                 Place order
                 <ChevronRight class="inline-block ml-2" />
             </Button>
-            <!-- TODO: remove this -->
-            hasVerifiedPhoneNumber:{{ userDataStore.user!.hasVerifiedPhoneNumber }}
 
             <div class="text-xs text-muted-foreground my-4"
                  v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">

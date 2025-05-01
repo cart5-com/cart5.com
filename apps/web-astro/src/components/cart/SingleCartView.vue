@@ -55,7 +55,7 @@ const removeAllItemsFromCart = () => {
            v-if="currentCart && currentCart.items">
 
         <div class="px-2">
-          <CartView />
+          <CartView :hide-fee-details="true" />
         </div>
 
         <div

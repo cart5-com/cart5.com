@@ -195,6 +195,9 @@ export const placeOrderRoute = async (c: Context<
             }
         }
     });
+    if (orderedItems.length === 0) {
+        throw new KNOWN_ERROR("Cart is empty", "CART_EMPTY");
+    }
     const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";
     const tolerableServiceFeeRate = storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
     const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
