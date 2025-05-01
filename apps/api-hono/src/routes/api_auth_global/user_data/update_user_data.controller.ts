@@ -36,9 +36,8 @@ export const updateUserDataRoute = async (c: Context<
             const cart = data.carts[cartKey];
             if (cart.items) {
                 if (data.carts[cartKey].items) {
-                    data.carts[cartKey].items = cart.items.map(item =>
-                        cartItemSchema.parse(item)
-                    );
+                    data.carts[cartKey].items = cart.items
+                        .map(item => cartItemSchema.parse(item));
                 }
             }
         }
