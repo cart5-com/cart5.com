@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 
 const selectAddress = () => {
     window.location.href = BASE_LINKS.CHECKOUT(window.storeData?.id!, slugify(window.storeData?.name!));
@@ -25,7 +25,7 @@ const storeName = window.storeData?.name;
                     :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
                     class="">
                 <ChevronLeft class="inline-block mr-2" />
-                Back to store
+                Back to {{ storeName }}
             </Button>
             <div class="mt-8">
                 Please login or register before checking out
@@ -39,7 +39,7 @@ const storeName = window.storeData?.name;
                         :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
                         class="w-full mr-4">
                     <ChevronLeft class="inline-block mr-2" />
-                    Back to store
+                    Back to {{ storeName }}
                 </Button>
                 <OrderTypeWidget />
             </div>
@@ -51,11 +51,12 @@ const storeName = window.storeData?.name;
                 <div v-if="currentOrderType === 'delivery'">
                     <UserAddressesView @selectAddress="selectAddress" />
                     <div class="relative sticky bottom-0 z-40 max-w-full flex justify-between items-center mt-8 ">
-                        <Button variant="default"
+                        <Button size="lg"
                                 :disabled="!userDataStore.userData?.rememberLastAddressId"
                                 @click="selectAddress"
-                                class="w-full">
+                                class="w-full text-lg font-bold">
                             Confirm
+                            <ChevronRight class="inline-block ml-2" />
                         </Button>
                     </div>
                 </div>
@@ -68,11 +69,12 @@ const storeName = window.storeData?.name;
                                v-model="userDataStore.userData.rememberLastNickname!" />
                     </div>
                     <div class="relative sticky bottom-0 z-40 max-w-full flex justify-between items-center mt-8 ">
-                        <Button variant="default"
+                        <Button size="lg"
                                 :disabled="!userDataStore.userData.rememberLastNickname"
                                 @click="selectAddress"
-                                class="w-full">
+                                class="w-full text-lg font-bold">
                             Confirm
+                            <ChevronRight class="inline-block ml-2" />
                         </Button>
                     </div>
                 </div>

@@ -63,7 +63,7 @@ const storeName = window.storeData?.name;
                     :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
                     class="">
                 <ChevronLeft class="inline-block mr-2" />
-                Back to store
+                Back to {{ storeName }}
             </Button>
             <div class="mt-8">
                 Please login or register before checking out
@@ -77,7 +77,7 @@ const storeName = window.storeData?.name;
                         :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
                         class="w-full mr-4">
                     <ChevronLeft class="inline-block mr-2" />
-                    Back to store
+                    Back to {{ storeName }}
                 </Button>
                 <OrderTypeWidget />
             </div>
@@ -95,7 +95,7 @@ const storeName = window.storeData?.name;
             <Button size="lg"
                     @click="placeOrder"
                     class="w-full text-lg font-bold">
-                Confirm order
+                Place order
                 <ChevronRight class="inline-block ml-2" />
             </Button>
             <!-- TODO: remove this -->
