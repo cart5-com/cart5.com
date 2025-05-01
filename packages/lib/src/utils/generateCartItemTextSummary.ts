@@ -27,7 +27,7 @@ export const recursiveCartChildrenItemSummary = (
                         if (innerOptionItem?.defQ) { // default quantity should be 0 to remove
                             let helperText = '';
                             if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                                helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                                helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
                             }
                             newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                         }
@@ -87,7 +87,7 @@ export const recursiveCartChildrenItemSummary = (
                     if (defaultQuantity !== quantity) {
                         let helperText = '';
                         if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                            helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                            helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
                         }
                         newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}${quantity}x ${optionItem?.lbl || ''}\n`;
                     }
@@ -102,7 +102,7 @@ export const recursiveCartChildrenItemSummary = (
                                     if (innerOptionItem?.defQ) {
                                         let helperText = '';
                                         if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                                            helperText = `[${upperOptionIndex}/${upperOptionLength}]`;
+                                            helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
                                         }
                                         newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                                     }
