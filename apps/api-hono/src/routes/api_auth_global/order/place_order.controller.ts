@@ -3,11 +3,6 @@ import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { getUserData_Service } from "@db/services/user_data.service";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
-// import type { ResType } from "@api-client/typeUtils";
-// import { authGlobalApiClient } from "@api-client/auth_global";
-// import { zValidator } from "@hono/zod-validator";
-// import { z } from "zod";
-// import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { platformServiceFee } from "@lib/platformServiceFee";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import {
@@ -32,15 +27,8 @@ import { calculateDistance } from '@lib/utils/calculateDistance';
 import { handleGeocode } from '@api-hono/routes/gmaps/mapsRoute.controller';
 import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
 
-// type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
-// export const placeOrder_SchemaValidator = zValidator('json', z.object({
-//     storeId: z.string(),
-// }));
-
 export const placeOrderRoute = async (c: Context<
     HonoVariables
-// '/:storeId/place_order',
-// ValidatorContext<typeof placeOrder_SchemaValidator>
 >) => {
     const storeId = c.req.param('storeId');
     if (!storeId) {
