@@ -256,7 +256,7 @@ const isDemoVisible = ref(false);
                     <h1 class="text-lg font-bold cursor-pointer"
                         @click="isDemoVisible = !isDemoVisible">
                         <Info class="inline-block mr-2" />
-                        Try in action
+                        Try your calculation in action
                     </h1>
                     <CalculationDemoView :serviceFees="serviceFees"
                                          v-if="isDemoVisible" />

@@ -54,14 +54,9 @@ const subTotal = computed<ReturnType<typeof calculateSubTotal>>(() => {
 })
 
 const platformSerFee = ref<ServiceFee>(platformServiceFee || { ratePerOrder: 1, feePerOrder: 0 });
-const supportPartnerServiceFee = ref<{
-    ratePerOrder?: number | undefined;
-    feePerOrder?: number | undefined;
-} | null>({
-    ratePerOrder: 2,
-    feePerOrder: 0
-});
 const marketingPartnerServiceFee = ref<ServiceFee>({ ratePerOrder: 5, feePerOrder: 0 });
+
+const supportPartnerServiceFee = ref<ServiceFee | null>(null);
 
 const cartBreakdown = computed(() => {
     // Create a properly typed tax settings object for the cart calculation
