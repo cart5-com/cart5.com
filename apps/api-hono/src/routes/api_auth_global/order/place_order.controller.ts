@@ -28,6 +28,8 @@ import {
     calculateCartBreakdown
 } from "@lib/utils/calculateCartBreakdown";
 import { isStoreOpenNow } from '@lib/utils/isOpenNow';
+import { calculateDistance } from '@lib/utils/calculateDistance';
+import { handleGeocode } from '@api-hono/routes/gmaps/mapsRoute.controller';
 
 // type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 // export const placeOrder_SchemaValidator = zValidator('json', z.object({
@@ -44,6 +46,13 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
     }
     const host = c.req.header()['host'];
+    if (!host) {
+        throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
+    }
+    const origin = c.req.header()['origin'];
+    if (!origin) {
+        throw new KNOWN_ERROR("Origin not found", "ORIGIN_NOT_FOUND");
+    }
     const user = c.get("USER");
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -101,13 +110,30 @@ export const placeOrderRoute = async (c: Context<
 
     const deliveryAddress = currentOrderType === 'delivery' && userData.rememberLastAddressId && userData.addresses ?
         userData.addresses[userData.rememberLastAddressId] : undefined;
+    if (currentOrderType === 'delivery' && !deliveryAddress) {
+        throw new KNOWN_ERROR("Delivery address not found", "DELIVERY_ADDRESS_NOT_FOUND");
+    }
+    if (currentOrderType === 'delivery' && deliveryAddress) {
+        const mapResult = await handleGeocode(origin + '/__p_api/gmaps/geocode?address=' + deliveryAddress.address1 + '&components=country:' + deliveryAddress.country);
+        const firstResult = mapResult.data.results[0]
+        if (firstResult && !firstResult.partial_match) {
+            const geocodedAddress = firstResult;
+            const distance = calculateDistance(
+                { lat: deliveryAddress.lat!, lng: deliveryAddress.lng! },
+                { lat: Number(geocodedAddress.geometry.location.lat), lng: Number(geocodedAddress.geometry.location.lng) }
+            );
+            if (distance > 0.3) {
+                throw new KNOWN_ERROR("Delivery address is too far from geocoded address", "DELIVERY_ADDRESS_TOO_FAR_FROM_GEOCODED_ADDRESS");
+            }
+        } else {
+            throw new KNOWN_ERROR("Delivery address is invalid", "DELIVERY_ADDRESS_INVALID");
+        }
+    }
 
     const pickupNickname = currentOrderType === 'pickup' ?
         (userData.rememberLastNickname || user.name || undefined) : 'undefined';
 
-    if (currentOrderType === 'delivery' && !deliveryAddress) {
-        throw new KNOWN_ERROR("Delivery address not found", "DELIVERY_ADDRESS_NOT_FOUND");
-    }
+
 
     const taxSettings = storeData?.taxSettings as TaxSettings;
     if (!taxSettings) {
@@ -213,8 +239,8 @@ export const placeOrderRoute = async (c: Context<
     const subTotalWithDeliveryAndServiceFees = calculateSubTotal(
         currentCart, menuRoot ?? undefined, taxSettings, currentOrderType,
         {
-            lat: userData.rememberLastLat!,
-            lng: userData.rememberLastLng!
+            lat: deliveryAddress?.lat ?? userData.rememberLastLat!,
+            lng: deliveryAddress?.lng ?? userData.rememberLastLng!
         },
         storeData.deliveryZones?.zones ?? [],
         {

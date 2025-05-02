@@ -139,7 +139,8 @@ async function onMapConfirm(result: { lat: number, lng: number }) {
                         <FormItem>
                             <FormControl>
                                 <slot v-bind="slotProps">
-                                    <Input v-bind="{ ...slotProps.componentField as any }"
+                                    <Input placeholder="Enter your address"
+                                           v-bind="{ ...slotProps.componentField as any }"
                                            autocomplete="street-address" />
                                 </slot>
                             </FormControl>

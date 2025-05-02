@@ -63,54 +63,57 @@ export const apiGMaps = new Hono<HonoVariables>()
                 // address,
                 // components, language, region
             } = c.req.valid('query');
-            let reqUrl = new URL(c.req.url);
-            reqUrl.protocol = 'https';
-            reqUrl.hostname = 'maps.googleapis.com';
-            reqUrl.pathname = '/maps/api/geocode/json';
-            reqUrl.searchParams.delete('key');
-            reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
-
-            // Check if the request is cached
-            // Create a cache key without the API key for security
-            const cacheKeyUrl = new URL(reqUrl.toString());
-            cacheKeyUrl.searchParams.delete('key');
-            const cacheKey = cacheKeyUrl.toString();
-            const cachedResult = await getGeocodingCache_Service(cacheKey);
-
-            if (
-                cachedResult &&
-                cachedResult.response &&
-                cachedResult.response.results.length > 0
-            ) {
-                // 30 days
-                const isExpired = cachedResult.created_at_ts + 31_536_000_000 < Date.now();
-                // Use cached response
-                if (!isExpired) {
-                    return c.json({
-                        data: cachedResult.response as google.maps.GeocoderResponse,
-                        error: null as ErrorType,
-                        fromCache: true,
-                    }, 200);
-                }
-            }
-
-            // Fetch from Google Maps API
-            const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
-
-            // Cache the response
-            if (response && typeof response === 'object' && 'status' in response && response.status === 'OK') {
-                await saveGeocodingCache_Service(cacheKey, response);
-            }
-
-            return c.json({
-                data: response as google.maps.GeocoderResponse,
-                error: null as ErrorType,
-                fromCache: false,
-            }, 200);
+            return c.json(await handleGeocode(c.req.url), 200);
         }
     )
 
 
+export const handleGeocode = async (url: string) => {
+    let reqUrl = new URL(url);
+    reqUrl.protocol = 'https';
+    reqUrl.hostname = 'maps.googleapis.com';
+    reqUrl.pathname = '/maps/api/geocode/json';
+    reqUrl.searchParams.delete('key');
+    reqUrl.searchParams.append('key', getEnvVariable("GOOGLE_MAPS_KEY")!);
+
+    // Check if the request is cached
+    // Create a cache key without the API key for security
+    const cacheKeyUrl = new URL(reqUrl.toString());
+    cacheKeyUrl.searchParams.delete('key');
+    const cacheKey = cacheKeyUrl.toString();
+    const cachedResult = await getGeocodingCache_Service(cacheKey);
+
+    if (
+        cachedResult &&
+        cachedResult.response &&
+        cachedResult.response.results.length > 0
+    ) {
+        // 30 days
+        const isExpired = cachedResult.created_at_ts + 31_536_000_000 < Date.now();
+        // Use cached response
+        if (!isExpired) {
+            return {
+                data: cachedResult.response as google.maps.GeocoderResponse,
+                error: null as ErrorType,
+                fromCache: true,
+            };
+        }
+    }
+
+    // Fetch from Google Maps API
+    const response = (await (await fetch(reqUrl.toString())).json()) as google.maps.GeocoderResponse;
+
+    // Cache the response
+    if (response && typeof response === 'object' && 'status' in response && response.status === 'OK') {
+        await saveGeocodingCache_Service(cacheKey, response);
+    }
+
+    return {
+        data: response as google.maps.GeocoderResponse,
+        error: null as ErrorType,
+        fromCache: false,
+    };
+}
 
 // docs: https://developers.google.com/maps/documentation/places/web-service/autocomplete
 // export type predictionType = ResType<

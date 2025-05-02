@@ -7,9 +7,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { onMounted, onUnmounted, ref } from "vue";
 import { toast } from '@/ui-plus/sonner';
 import { geocode } from "./geocode";
-import { searchOpenStreetMap } from "./searchOpenStreetMap";
-import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
+// import { searchOpenStreetMap } from "./searchOpenStreetMap";
+// import { ipwhois } from "@/ui-plus/geolocation-selection-map/ipwhois";
 import { calculateDistance } from "@lib/utils/calculateDistance";
+import Badge from "@/components/ui/badge/Badge.vue";
 
 const props = defineProps<{
 	address: string;
@@ -23,9 +24,16 @@ const randomId = `map-${Math.random().toString(36).substring(2, 15)}`;
 const helperBtns = ref<HelperBtns[]>([]);
 let mapView: L.Map | null = null;
 let marker: L.Marker | null = null;
+let circleRef: L.Circle | null = null;
+
+const isConfirmDisabled = ref(true);
+const isOutOfRange = ref(false);
+const isInvalidAddress = ref(false);
+const isGpsLoading = ref(false);
 
 const mapMoveListener = () => {
 	marker?.setLatLng([mapView?.getCenter().lat ?? 0, mapView?.getCenter().lng ?? 0])
+	validateMarkerPosition(mapView?.getCenter().lat ?? 0, mapView?.getCenter().lng ?? 0)
 }
 
 onUnmounted(() => {
@@ -33,12 +41,26 @@ onUnmounted(() => {
 	mapView?.off('resize', mapMoveListener)
 })
 
+function validateMarkerPosition(lat: number, lng: number) {
+	if (circleRef) {
+		const distance = calculateDistance(
+			{ lat, lng },
+			{ lat: circleRef.getLatLng().lat, lng: circleRef.getLatLng().lng }
+		)
+		if (distance > 0.3) {
+			circleRef.setStyle({ color: 'red' });
+			isOutOfRange.value = true
+		} else {
+			circleRef.setStyle({ color: 'lightgreen' });
+			isOutOfRange.value = false
+		}
+	}
+}
 function setCenter(lat: number, lng: number) {
 	mapView?.setView([Number(lat), Number(lng)]);
 	marker?.setLatLng([lat, lng])
+	validateMarkerPosition(lat, lng)
 }
-
-const isConfirmDisabled = ref(true);
 
 onMounted(async () => {
 	const loaded = await loadLeafletCDN();
@@ -48,7 +70,7 @@ onMounted(async () => {
 
 	mapView = window.L.map(randomId);
 	marker = window.L.marker([0, 0]).addTo(mapView)
-	marker.setOpacity(0.8)
+	// marker.setOpacity(1)
 	mapView?.on('move', mapMoveListener)
 	mapView?.on('resize', mapMoveListener)
 	mapView.attributionControl.setPrefix(false);
@@ -77,7 +99,7 @@ onMounted(async () => {
 	});
 });
 
-const isGpsLoading = ref(false);
+
 async function handleGpsClick() {
 	isGpsLoading.value = true;
 	await new Promise((resolve) => setTimeout(resolve, 500));
@@ -130,46 +152,95 @@ async function handleGpsClick() {
 // if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
 async function loadHelperBtns() {
 	const gecodeResult = await geocode(props.address, props.country?.toLowerCase())
-	const openStreetMapItems = await searchOpenStreetMap(props.address, props.country?.toLowerCase())
-	const ipwho = await ipwhois()
-	helperBtns.value = [
-		...gecodeResult.data.results.map(item => ({
-			label: item.formatted_address || props.address,
-			lat: item.geometry.location.lat,
-			lng: item.geometry.location.lng,
-			type: 'geocode' as const
-		})),
-		...openStreetMapItems.map(item => ({
-			label: item.label,
-			lat: item.lat,
-			lng: item.lng,
-			type: 'openstreetmap' as const
-		})),
-	]
-	if (helperBtns.value.length === 0) {
-		if (ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip) {
-			helperBtns.value.push({
-				label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
-				lat: ipwho.latitude ?? 0,
-				lng: ipwho.longitude ?? 0,
-				type: 'ipwhois' as const
-			})
+
+	// Draw 300m circle if geocode result exists
+	const firstResult = gecodeResult.data.results[0]
+	if (firstResult && !firstResult.partial_match) {
+		const lat = firstResult.geometry.location.lat;
+		const lng = firstResult.geometry.location.lng;
+
+		// Remove existing circle if it exists
+		if (circleRef) {
+			mapView?.removeLayer(circleRef);
 		}
-		handleGpsClick()
-	}
-	if (props.lat && props.lng) {
-		// remember last location
-		setCenter(props.lat, props.lng)
-		// but if the distance is greater than 0.3 km use geocode
-		if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
-			const distance = calculateDistance({ lat: props.lat, lng: props.lng }, { lat: helperBtns.value[0].lat, lng: helperBtns.value[0].lng })
-			if (distance > 0.3) {
-				setCenter(helperBtns.value[0].lat!, helperBtns.value[0].lng!)
+
+		// Create new circle with 300m radius
+		circleRef = window.L.circle([lat, lng], {
+			radius: 300,
+			color: 'lightgreen',
+			fillOpacity: 0,
+			weight: 5,
+		}).addTo(mapView!);
+
+		helperBtns.value = [
+			{
+				label: firstResult.formatted_address || props.address,
+				lat: firstResult.geometry.location.lat,
+				lng: firstResult.geometry.location.lng,
+				type: 'geocode' as const
+			},
+		]
+		if (props.lat && props.lng) {
+			setCenter(props.lat, props.lng)
+			if (helperBtns.value[0] && helperBtns.value[0].lat && helperBtns.value[0].lng) {
+				const distance = calculateDistance(
+					{ lat: props.lat, lng: props.lng },
+					{ lat: helperBtns.value[0].lat, lng: helperBtns.value[0].lng }
+				)
+				if (distance > 0.3) {
+					setCenter(helperBtns.value[0].lat!, helperBtns.value[0].lng!)
+				}
 			}
+		} else {
+			setCenter(firstResult.geometry.location.lat, firstResult.geometry.location.lng)
 		}
-	} else if (helperBtns.value[0].lat && helperBtns.value[0].lng) {
-		setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
+	} else if (firstResult && firstResult.partial_match) {
+		isInvalidAddress.value = true
+		isOutOfRange.value = true
+		setCenter(firstResult.geometry.location.lat, firstResult.geometry.location.lng)
+	} else {
+		isOutOfRange.value = true
+		// const openStreetMapItems = await searchOpenStreetMap(props.address, props.country?.toLowerCase())
+		// const ipwho = await ipwhois()
+		// helperBtns.value = [
+		// 	...gecodeResult.data.results.map(item => ({
+		// 		label: item.formatted_address || props.address,
+		// 		lat: item.geometry.location.lat,
+		// 		lng: item.geometry.location.lng,
+		// 		type: 'geocode' as const
+		// 	})),
+		// 	...openStreetMapItems.map(item => ({
+		// 		label: item.label,
+		// 		lat: item.lat,
+		// 		lng: item.lng,
+		// 		type: 'openstreetmap' as const
+		// 	})),
+		// ]
+		// if (helperBtns.value.length === 0) {
+		// 	if (ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip) {
+		// 		helperBtns.value.push({
+		// 			label: ipwho.postal || ipwho.city || ipwho.country || ipwho.region || ipwho.ip,
+		// 			lat: ipwho.latitude ?? 0,
+		// 			lng: ipwho.longitude ?? 0,
+		// 			type: 'ipwhois' as const
+		// 		})
+		// 	}
+		// 	handleGpsClick()
+		// }
 	}
+	// if (props.lat && props.lng) {
+	// 	// remember last location
+	// 	setCenter(props.lat, props.lng)
+	// 	// but if the distance is greater than 0.3 km use geocode
+	// 	if (helperBtns.value[0] && helperBtns.value[0].lat && helperBtns.value[0].lng) {
+	// 		const distance = calculateDistance({ lat: props.lat, lng: props.lng }, { lat: helperBtns.value[0].lat, lng: helperBtns.value[0].lng })
+	// 		if (distance > 0.3) {
+	// 			setCenter(helperBtns.value[0].lat!, helperBtns.value[0].lng!)
+	// 		}
+	// 	}
+	// } else if (helperBtns.value[0] && helperBtns.value[0].lat && helperBtns.value[0].lng) {
+	// 	setCenter(helperBtns.value[0].lat, helperBtns.value[0].lng)
+	// }
 }
 
 </script>
@@ -178,6 +249,8 @@ async function loadHelperBtns() {
 		<div class="flex h-full flex-col">
 			<p class="address-value border p-1 text-sm font-extrabold shrink-0">
 				{{ props.address || "" }}
+				<Badge v-if="isInvalidAddress"
+					   variant="destructive">Invalid</Badge>
 			</p>
 
 
@@ -228,9 +301,10 @@ async function loadHelperBtns() {
 
 			<div>
 				<Button type="button"
-						:disabled="isConfirmDisabled"
+						size="lg"
+						:disabled="isConfirmDisabled || isOutOfRange"
 						@click="$emit('done', { lat: mapView?.getCenter().lat ?? 0, lng: mapView?.getCenter().lng ?? 0 })"
-						class="w-full">
+						class="w-full text-lg font-bold">
 					<Loader2 v-if="isConfirmDisabled"
 							 class="animate-spin" />
 					<MapPinCheckInside v-else />
@@ -240,7 +314,13 @@ async function loadHelperBtns() {
 		</div>
 	</div>
 </template>
-
+<style>
+.leaflet-marker-icon {
+	filter: hue-rotate(150deg) saturate(1.5);
+	color: red;
+	fill: red;
+}
+</style>
 <style scoped>
 #gps-btn-container {
 	position: absolute;
