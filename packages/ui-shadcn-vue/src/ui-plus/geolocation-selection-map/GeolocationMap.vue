@@ -69,7 +69,7 @@ onMounted(async () => {
 	}
 
 	mapView = window.L.map(randomId);
-	marker = window.L.marker([0, 0]).addTo(mapView).bindPopup("move to your entrance/door location").openPopup()
+	marker = window.L.marker([0, 0]).addTo(mapView)
 	// marker.setOpacity(1)
 	mapView?.on('move', mapMoveListener)
 	mapView?.on('resize', mapMoveListener)
