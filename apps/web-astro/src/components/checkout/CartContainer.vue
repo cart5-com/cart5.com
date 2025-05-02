@@ -7,7 +7,7 @@ import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import SelectedInfo from "./SelectedInfo.vue";
-import { ChevronLeft, ChevronRight, CheckCircle } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, CheckCircle, Loader2 } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { authGlobalApiClient } from "@api-client/auth_global";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
@@ -20,7 +20,10 @@ import { checkGeocodeDistance } from "@lib/utils/checkGeocodeDistance";
 import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 
+const isPlaceOrderLoading = ref(false);
+
 const placeOrder = async () => {
+    isPlaceOrderLoading.value = true;
     // console.log(selectedInfo.value?.selectedAddress);
     // console.log(selectedInfo.value?.pickupNickname);
     if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
@@ -40,11 +43,13 @@ const placeOrder = async () => {
             window.location.host,
             window.storeData?.id ?? ''
         );
-        const mapResult = await geocode(deliveryAddress?.address1 ?? '', deliveryAddress?.country ?? '');
-        checkGeocodeDistance(mapResult.data as any, {
-            lat: deliveryAddress?.lat!,
-            lng: deliveryAddress?.lng!
-        });
+        if (currentOrderType.value === 'delivery') {
+            const mapResult = await geocode(deliveryAddress?.address1 ?? '', deliveryAddress?.country ?? '');
+            checkGeocodeDistance(mapResult.data as any, {
+                lat: deliveryAddress?.lat!,
+                lng: deliveryAddress?.lng!
+            });
+        }
         if (cartView.value?.orderedItems.length === 0) {
             toast.error('Please add items to your cart');
             return;
@@ -65,9 +70,11 @@ const placeOrder = async () => {
             console.error(error);
             toast.error('An unknown error occurred');
         }
+        isPlaceOrderLoading.value = false;
         return;
     }
 
+    toast.info('Placing order...');
     const { data, error } = await (await authGlobalApiClient[':storeId'].place_order.$post({
         param: {
             storeId: window.storeData?.id ?? '',
@@ -79,6 +86,9 @@ const placeOrder = async () => {
     } else {
         console.log(data);
     }
+    setTimeout(() => {
+        isPlaceOrderLoading.value = false;
+    }, 1000);
 }
 
 const storeId = window.storeData?.id;
@@ -129,7 +139,10 @@ const cartView = ref<InstanceType<typeof CartView> | null>(null);
 
             <Button size="lg"
                     @click="placeOrder"
+                    :disabled="isPlaceOrderLoading"
                     class="w-full text-lg font-bold">
+                <Loader2 class="animate-spin inline-block mr-2"
+                         v-if="isPlaceOrderLoading" />
                 Place order
                 <ChevronRight class="inline-block ml-2" />
             </Button>

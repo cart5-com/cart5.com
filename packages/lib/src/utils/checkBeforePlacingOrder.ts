@@ -105,7 +105,6 @@ export const checkStoreDataBeforePlacingOrder = (
     };
 }
 
-
 export const checkMinimumOrderValueForDelivery = (
     subTotalWithDeliveryAndServiceFees: ReturnType<typeof calculateSubTotal>,
     taxSettings: TaxSettings,
