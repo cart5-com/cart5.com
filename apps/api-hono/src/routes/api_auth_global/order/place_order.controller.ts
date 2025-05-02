@@ -30,6 +30,7 @@ import {
 import { isStoreOpenNow } from '@lib/utils/isOpenNow';
 import { calculateDistance } from '@lib/utils/calculateDistance';
 import { handleGeocode } from '@api-hono/routes/gmaps/mapsRoute.controller';
+import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
 
 // type UserDataStoreType = ResType<typeof authGlobalApiClient.get_user_data.$post>["data"];
 // export const placeOrder_SchemaValidator = zValidator('json', z.object({
@@ -266,9 +267,10 @@ export const placeOrderRoute = async (c: Context<
         }
     )
 
-
+    const allVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
 
     const result = {
+        allVerifiedPhoneNumbers,
         storeId,
         orderType: currentOrderType,
         userId: user.id,

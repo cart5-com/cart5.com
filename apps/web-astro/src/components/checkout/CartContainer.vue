@@ -31,8 +31,8 @@ const placeOrder = async () => {
         const result = await showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
         if (result === 1) {
             userDataStore.value.user.hasVerifiedPhoneNumber = 1;
-            toast.success('Phone number verified, now you can place your order');
-            return;
+            // toast.success('Phone number verified, now you can place your order');
+            // return;
         } else {
             toast.error('Phone number verification failed');
             return;

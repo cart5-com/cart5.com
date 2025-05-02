@@ -69,7 +69,7 @@ onMounted(async () => {
 	}
 
 	mapView = window.L.map(randomId);
-	marker = window.L.marker([0, 0]).addTo(mapView)
+	marker = window.L.marker([0, 0]).addTo(mapView).bindPopup("move to your entrance/door location").openPopup()
 	// marker.setOpacity(1)
 	mapView?.on('move', mapMoveListener)
 	mapView?.on('resize', mapMoveListener)
@@ -315,8 +315,6 @@ async function loadHelperBtns() {
 <style>
 .leaflet-marker-icon {
 	filter: hue-rotate(150deg) saturate(1.5);
-	color: red;
-	fill: red;
 }
 </style>
 <style scoped>

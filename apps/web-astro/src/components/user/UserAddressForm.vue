@@ -19,6 +19,9 @@ import GeolocationMap from "@/ui-plus/geolocation-selection-map/GeolocationMap.v
 import { loadLeafletCDN } from "@/ui-plus/geolocation-selection-map/loadLeafletCDN";
 import { addressSchema, type AddressType } from "@lib/zod/userAddressSchema";
 import { DoorOpen } from "lucide-vue-next";
+import AutoFormFieldPhone from "@/ui-plus/PhoneNumber/AutoFormFieldPhone.vue";
+
+const REMEMBER_LAST_PHONE_NUMBER = "REMEMBER_LAST_PHONE_NUMBER_INPUT_VALUE"
 
 const props = defineProps<{
     address?: Partial<AddressType>;
@@ -47,7 +50,11 @@ const form = useForm({
     validationSchema: toTypedSchema(schema),
 });
 
-const { withSubmit } = useFormPlus(form);
+const { withSubmit } = useFormPlus(form, {
+    persistenceFields: {
+        phoneNumber: REMEMBER_LAST_PHONE_NUMBER
+    }
+});
 
 // Form labels
 const address1Label = ref('Street address (Address 1)');
@@ -200,6 +207,10 @@ onMounted(() => {
                         inputProps: {
                             placeholder: 'Buzzer code, landmark, etc.',
                         },
+                    },
+                    phoneNumber: {
+                        label: 'Contact Number',
+                        component: AutoFormFieldPhone
                     },
                 }"
                   :form="form"

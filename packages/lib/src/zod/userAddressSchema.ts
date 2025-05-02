@@ -21,6 +21,7 @@ export const addressSchema = z.object({
     lng: z.number().optional(),
     dropoffOption: z.enum(dropoffOptions).optional(),
     instructionsForDelivery: z.string().optional(),
+    phoneNumber: z.string().optional(),
     label: z.string().optional(),
     icon: z.string().optional(),
     lastUpdatedTS: z.number().optional(),

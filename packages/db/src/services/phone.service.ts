@@ -23,3 +23,8 @@ export const isPhoneNumberVerified_Service = async (phoneNumber: string) => {
         ));
     return result.length > 0;
 }
+
+export const getAllVerifiedPhoneNumbers_Service = async (userId: string) => {
+    return await db.select().from(verifiedPhoneNumberTable)
+        .where(eq(verifiedPhoneNumberTable.userId, userId));
+}
