@@ -52,6 +52,9 @@ const selectedPaymentMethod = computed(() => {
     return availablePaymentMethods.value[0];
 });
 
+defineExpose({
+    selectedPaymentMethod
+})
 </script>
 
 <template>

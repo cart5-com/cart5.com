@@ -9,24 +9,23 @@ import {
     calculateCartItemPrice,
     calculateCartTotalPrice
 } from "@lib/utils/calculateCartItemPrice";
-import type { TaxSettings } from "@lib/zod/taxSchema";
+
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
     getSupportTeamServiceFee_Service,
     getWebsiteByDefaultHostname,
     getWebsiteTeamServiceFee_Service
 } from "@db/services/website.service";
-import { generateCartId } from "@lib/utils/generateCartId";
 import type { CartItem } from "@lib/zod/cartItemState";
 import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import {
     calculateCartBreakdown
 } from "@lib/utils/calculateCartBreakdown";
-import { isStoreOpenNow } from '@lib/utils/isOpenNow';
-import { calculateDistance } from '@lib/utils/calculateDistance';
+
 import { handleGeocode } from '@api-hono/routes/gmaps/mapsRoute.controller';
 import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
-import { listAvailablePaymentMethods } from '@lib/utils/listAvailablePaymentMethods';
+import { checkUserDataBeforePlacingOrder, checkStoreDataBeforePlacingOrder, checkMinimumOrderValueForDelivery } from "@lib/utils/checkBeforePlacingOrder";
+import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -50,10 +49,7 @@ export const placeOrderRoute = async (c: Context<
     if (user.hasVerifiedPhoneNumber === 0) {
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
     }
-    const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
-    if (!WEBSITE || !WEBSITE.id) {
-        throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
-    }
+
     const userData = await getUserData_Service(user.id, {
         rememberLastAddress: true,
         rememberLastCountry: true,
@@ -66,121 +62,28 @@ export const placeOrderRoute = async (c: Context<
         addresses: true,
         carts: true,
     });
-    if (!userData) {
-        throw new KNOWN_ERROR("User data not found", "USER_DATA_NOT_FOUND");
-    }
-    if (!userData.rememberLastPaymentMethodId) {
-        throw new KNOWN_ERROR("Payment method not selected", "PAYMENT_METHOD_NOT_SELECTED");
-    }
-    if (!userData.rememberLastOrderType) {
-        throw new KNOWN_ERROR("Order type not found", "ORDER_TYPE_NOT_FOUND");
-    }
-    const currentCart = userData.carts?.[generateCartId(host ?? '', storeId)];
-    if (!currentCart) {
-        throw new KNOWN_ERROR("Cart not found", "CART_NOT_FOUND");
-    }
-    if (!currentCart.items) {
-        throw new KNOWN_ERROR("Cart is empty", "CART_EMPTY");
-    }
-    const storeData = await getStoreData_CacheJSON(storeId);
-    if (!storeData) {
-        throw new KNOWN_ERROR("Store data not found", "STORE_DATA_NOT_FOUND");
-    }
-    if (
-        userData.rememberLastOrderType === 'pickup' && !storeData.offersPickup
-    ) {
-        throw new KNOWN_ERROR("Store does not offer pickup", "STORE_DOES_NOT_OFFER_PICKUP");
-    }
-    if (
-        userData.rememberLastOrderType === 'delivery' && !storeData.offersDelivery
-    ) {
-        throw new KNOWN_ERROR("Store does not offer delivery", "STORE_DOES_NOT_OFFER_DELIVERY");
-    }
-    const currentOrderType = userData.rememberLastOrderType;
-    if (currentOrderType !== 'delivery' && currentOrderType !== 'pickup') {
-        throw new KNOWN_ERROR("Invalid order type", "INVALID_ORDER_TYPE");
-    }
-    const isStoreOpen = isStoreOpenNow(currentOrderType, storeData?.openHours ?? null);
-    if (
-        !isStoreOpen
-        // What about scheduled orders? we do not have scheduled orders yet. maybe later
-    ) {
-        throw new KNOWN_ERROR("Store is not open", "STORE_IS_NOT_OPEN");
-    }
-
-    const deliveryAddress = currentOrderType === 'delivery' && userData.rememberLastAddressId && userData.addresses ?
-        userData.addresses[userData.rememberLastAddressId] : undefined;
-    if (currentOrderType === 'delivery' && !deliveryAddress) {
-        throw new KNOWN_ERROR("Delivery address not found", "DELIVERY_ADDRESS_NOT_FOUND");
-    }
-    if (currentOrderType === 'delivery' && !deliveryAddress?.address1) {
-        throw new KNOWN_ERROR("Delivery address1 is required", "DELIVERY_ADDRESS1_REQUIRED");
-    }
-    if (currentOrderType === 'delivery' && !deliveryAddress?.country) {
-        throw new KNOWN_ERROR("Delivery address country is required", "DELIVERY_ADDRESS_COUNTRY_REQUIRED");
-    }
-    if (currentOrderType === 'delivery' && !deliveryAddress?.lat && !deliveryAddress?.lng) {
-        throw new KNOWN_ERROR("Delivery address coordinates are required", "DELIVERY_ADDRESS_COORDINATES_REQUIRED");
-    }
+    const { currentCart, currentOrderType, deliveryAddress } = checkUserDataBeforePlacingOrder(userData, host, storeId);
     // check address location is close(300 meters) to geocoded address lat,lng
     if (currentOrderType === 'delivery' && deliveryAddress) {
         const mapResult = await handleGeocode(origin + '/__p_api/gmaps/geocode?address=' + deliveryAddress.address1 + '&components=country:' + deliveryAddress.country);
-        const firstResult = mapResult.data.results[0]
-        if (firstResult && !firstResult.partial_match) {
-            const geocodedAddress = firstResult;
-            const distance = calculateDistance(
-                { lat: deliveryAddress.lat!, lng: deliveryAddress.lng! },
-                { lat: Number(geocodedAddress.geometry.location.lat), lng: Number(geocodedAddress.geometry.location.lng) }
-            );
-            if (distance > 0.3) {
-                throw new KNOWN_ERROR("Delivery address is too far from geocoded address", "DELIVERY_ADDRESS_TOO_FAR_FROM_GEOCODED_ADDRESS");
-            }
-        } else {
-            throw new KNOWN_ERROR("Delivery address is invalid", "DELIVERY_ADDRESS_INVALID");
-        }
+        checkGeocodeDistance(mapResult.data, {
+            lat: deliveryAddress.lat!,
+            lng: deliveryAddress.lng!
+        });
     }
-
-    const pickupNickname = (userData.rememberLastNickname || user.name || undefined);
-
-    const taxSettings = storeData?.taxSettings as TaxSettings;
-    if (!taxSettings) {
-        throw new KNOWN_ERROR("Tax settings not found", "TAX_SETTINGS_NOT_FOUND");
-    }
-    const menuRoot = storeData?.menu?.menuRoot;
-    if (!menuRoot) {
-        throw new KNOWN_ERROR("Menu root not found", "MENU_ROOT_NOT_FOUND");
-    }
-
-    const availablePaymentMethods = listAvailablePaymentMethods(storeData, currentOrderType);
-    if (!availablePaymentMethods || availablePaymentMethods.length === 0) {
-        throw new KNOWN_ERROR("Payment methods not configured for store", "PAYMENT_METHODS_NOT_CONFIGURED");
-    }
-    const currentPaymentMethod = availablePaymentMethods.find(method => method.id === userData.rememberLastPaymentMethodId);
-    if (!currentPaymentMethod) {
-        throw new KNOWN_ERROR("Invalid payment method", "INVALID_PAYMENT_METHOD");
-    }
-
-
-    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
-        WEBSITE?.id ?? "",
-        storeId,
-        WEBSITE?.defaultMarketplaceFee ?? null
-    )
-    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
-    const supportPartnerServiceFee: ServiceFee | null = supportTeamServiceFee;
-    const marketingPartnerServiceFee: ServiceFee | null = websiteTeamServiceFee;
-
+    const pickupNickname = (userData?.rememberLastNickname || user.name || 'unknown');
+    const storeData = await getStoreData_CacheJSON(storeId);
+    const { menuRoot, taxSettings, currentPaymentMethod } = checkStoreDataBeforePlacingOrder(storeData, currentOrderType, userData);
     const orderedItems: {
         name: string;
         quantity: number;
         details: string;
         shownFee: string;
     }[] = [];
-
-    currentCart.items.forEach((item: CartItem) => {
+    currentCart.items?.forEach((item: CartItem) => {
         const menuItem = menuRoot.allItems?.[item.itemId!];
         if (menuItem && menuItem.lbl) {
-            const price = calculateCartItemPrice(item, menuRoot, taxSettings, userData.rememberLastOrderType ?? 'delivery');
+            const price = calculateCartItemPrice(item, menuRoot, taxSettings, userData?.rememberLastOrderType ?? 'delivery');
             if (price.isValid) {
                 orderedItems.push({
                     name: menuItem.lbl ?? '',
@@ -194,41 +97,50 @@ export const placeOrderRoute = async (c: Context<
     if (orderedItems.length === 0) {
         throw new KNOWN_ERROR("Cart is empty", "CART_EMPTY");
     }
+
+
     const calculationType: CalculationType = storeData?.serviceFees?.calculationType ?? "INCLUDE";
     const tolerableServiceFeeRate = storeData?.serviceFees?.tolerableServiceFeeRate ?? 0;
     const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
-    const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
+    const customServiceFees = storeData?.serviceFees?.customServiceFees ?? [];
 
     const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
-    if (currentOrderType === 'delivery' && cartTotals.shownFee < (storeData.deliveryZones?.zones?.[0]?.minCart ?? 0)) {
-        throw new KNOWN_ERROR(`Cart subtotal is less than minimum cart value: ${taxSettings.currencySymbol}${storeData.deliveryZones?.zones?.[0]?.minCart}`, "CART_SUBTOTAL_LESS_THAN_MINIMUM_CART_VALUE");
-    }
     const subtotalShownFee = `${taxSettings.currencySymbol}${cartTotals.shownFee}`
     const subTotalWithDeliveryAndServiceFees = calculateSubTotal(
         currentCart, menuRoot ?? undefined, taxSettings, currentOrderType,
         {
-            lat: deliveryAddress?.lat ?? userData.rememberLastLat!,
-            lng: deliveryAddress?.lng ?? userData.rememberLastLng!
+            lat: deliveryAddress?.lat ?? userData?.rememberLastLat!,
+            lng: deliveryAddress?.lng ?? userData?.rememberLastLng!
         },
-        storeData.deliveryZones?.zones ?? [],
+        storeData?.deliveryZones?.zones ?? [],
         {
-            lat: storeData.address?.lat!,
-            lng: storeData.address?.lng!
+            lat: storeData?.address?.lat!,
+            lng: storeData?.address?.lng!
         },
         customServiceFees
     );
 
-    if (currentOrderType === 'delivery') {
-        if (!subTotalWithDeliveryAndServiceFees.bestDeliveryZone) {
-            throw new KNOWN_ERROR("Out of delivery zone", "OUT_OF_DELIVERY_ZONE");
-        }
-        if (cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)) {
-            const errorMessage = `Minimum Subtotal:
-                            ${taxSettings.currencySymbol}${subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart}
-                            Please add more items to your cart.`
-            throw new KNOWN_ERROR(errorMessage, "CART_SUBTOTAL_LESS_THAN_MINIMUM_CART_VALUE");
-        }
+    checkMinimumOrderValueForDelivery(
+        subTotalWithDeliveryAndServiceFees,
+        taxSettings,
+        currentOrderType,
+        cartTotals
+    );
+    // ALL CHECKS UNTIL HERE ARE ALSO CHECKING IN CLIENTSIDE (CartContainer.vue)
+
+
+    const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
+    if (!WEBSITE || !WEBSITE.id) {
+        throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
     }
+    const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
+        WEBSITE?.id ?? "",
+        storeId,
+        WEBSITE?.defaultMarketplaceFee ?? null
+    )
+    const supportTeamServiceFee = await getSupportTeamServiceFee_Service(storeId);
+    const supportPartnerServiceFee: ServiceFee | null = supportTeamServiceFee;
+    const marketingPartnerServiceFee: ServiceFee | null = websiteTeamServiceFee;
 
     const cartBreakdown = calculateCartBreakdown(
         subTotalWithDeliveryAndServiceFees,
@@ -262,7 +174,7 @@ export const placeOrderRoute = async (c: Context<
         finalAmount: cartBreakdown.buyerPays,
         orderNote: currentCart.orderNote,
         paymentId: userData?.rememberLastPaymentMethodId,
-        currentPaymentMethod: currentPaymentMethod,
+        currentPaymentMethod,
         storeName: storeData?.name,
         storeAddress1: storeData?.address?.address1,
         deliveryAddress,

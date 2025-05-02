@@ -29,7 +29,7 @@ export const listAvailablePaymentMethods = (
             isOnline: false,
             id: 'stripe',
             name: 'Pay online',
-            description: 'Stripe checkout (Credit/Debit Card, Apple Pay, Google Pay, etc.)',
+            description: 'Stripe checkout (Credit/Debit Card, Apple Pay, Google Pay, Link...)',
             icon: 'CreditCard'
         });
     }

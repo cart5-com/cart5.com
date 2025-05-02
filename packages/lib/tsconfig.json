@@ -36,6 +36,9 @@
       "@db/*": [
         "../db/src/*"
       ],
+      "@api-hono/*": [
+        "../../apps/api-hono/src/*"
+      ],
     },
     // Report errors for fallthrough cases in switch statements
     "noFallthroughCasesInSwitch": true,

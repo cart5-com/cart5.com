@@ -166,6 +166,19 @@ const totalItem = computed(() => {
     return currentCart.value?.items?.reduce((acc: number, item: CartItem) => acc + (item.quantity ?? 0), 0) ?? 0;
 });
 
+const orderedItems = computed(() => {
+    return itemPrices.value.filter((price) => price.isValid);
+})
+
+defineExpose({
+    isStoreOpen,
+    subTotalWithDeliveryAndServiceFees,
+    cartBreakdown,
+    orderedItems,
+    cartTotals,
+    // itemPrices,
+    // getPrice,
+})
 
 </script>
 

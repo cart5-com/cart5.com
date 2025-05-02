@@ -13,20 +13,16 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import { showPhoneValidationForm } from "@/ui-plus/PhoneNumber/validation/PhoneValidation";
 import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 import { toast } from "@/ui-plus/sonner";
-
-
-// onMounted(async () => {
-//     await waitUntilUserDataReady();
-//     // do I still need this check? No
-//     // Check if delivery is selected but no address is set
-//     if (currentOrderType.value === 'delivery' && !userDataStore.value.userData?.rememberLastAddressId) {
-//         // Redirect to confirm info page
-//         window.location.href = BASE_LINKS.CONFIRM_INFO(window.storeData?.id!, slugify(window.storeData?.name!));
-//         return;
-//     }
-// })
+import { ref } from "vue";
+import { KNOWN_ERROR } from '@lib/types/errors';
+import { checkMinimumOrderValueForDelivery, checkUserDataBeforePlacingOrder } from "@lib/utils/checkBeforePlacingOrder";
+import { checkGeocodeDistance } from "@lib/utils/checkGeocodeDistance";
+import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 
 const placeOrder = async () => {
+    // console.log(selectedInfo.value?.selectedAddress);
+    // console.log(selectedInfo.value?.pickupNickname);
     if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {
         const result = await showPhoneValidationForm(getTurnstileUrl(import.meta.env.PUBLIC_DOMAIN_NAME))
         if (result === 1) {
@@ -38,6 +34,40 @@ const placeOrder = async () => {
             return;
         }
     }
+    try {
+        const { deliveryAddress } = checkUserDataBeforePlacingOrder(
+            userDataStore.value.userData!,
+            window.location.host,
+            window.storeData?.id ?? ''
+        );
+        const mapResult = await geocode(deliveryAddress?.address1 ?? '', deliveryAddress?.country ?? '');
+        checkGeocodeDistance(mapResult.data as any, {
+            lat: deliveryAddress?.lat!,
+            lng: deliveryAddress?.lng!
+        });
+        if (cartView.value?.orderedItems.length === 0) {
+            toast.error('Please add items to your cart');
+            return;
+        }
+        if (cartView.value?.subTotalWithDeliveryAndServiceFees) {
+            checkMinimumOrderValueForDelivery(
+                cartView.value?.subTotalWithDeliveryAndServiceFees!,
+                window.storeData?.taxSettings as TaxSettings,
+                currentOrderType.value,
+                cartView.value?.cartTotals
+            );
+        }
+        // ALL CHECKS UNTIL HERE ARE ALSO CHECKING IN SERVERSIDE (place_order.controller.ts)
+    } catch (error) {
+        if (error instanceof KNOWN_ERROR) {
+            toast.error(error.message);
+        } else {
+            console.error(error);
+            toast.error('An unknown error occurred');
+        }
+        return;
+    }
+
     const { data, error } = await (await authGlobalApiClient[':storeId'].place_order.$post({
         param: {
             storeId: window.storeData?.id ?? '',
@@ -45,6 +75,7 @@ const placeOrder = async () => {
     })).json();
     if (error) {
         console.error(error);
+        toast.error(error.message ?? 'An unknown error occurred');
     } else {
         console.log(data);
     }
@@ -52,6 +83,10 @@ const placeOrder = async () => {
 
 const storeId = window.storeData?.id;
 const storeName = window.storeData?.name;
+// currentOrderType
+const selectedInfo = ref<InstanceType<typeof SelectedInfo> | null>(null);
+const paymentMethods = ref<InstanceType<typeof PaymentMethods> | null>(null);
+const cartView = ref<InstanceType<typeof CartView> | null>(null);
 </script>
 
 <template>
@@ -83,12 +118,13 @@ const storeName = window.storeData?.name;
 
 
             <!-- Display selected address or pickup name -->
-            <SelectedInfo />
+            <SelectedInfo ref="selectedInfo" />
 
-            <PaymentMethods />
+            <PaymentMethods ref="paymentMethods" />
 
             <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
-                <CartView :is-collapsed="true" />
+                <CartView :is-collapsed="true"
+                          ref="cartView" />
             </div>
 
             <Button size="lg"

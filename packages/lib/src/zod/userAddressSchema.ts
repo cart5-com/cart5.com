@@ -10,7 +10,6 @@ export const dropoffOptions = [
 
 export const addressSchema = z.object({
     addressId: z.string(),
-    nickname: z.string().optional(),
     country: z.string(),
     address1: z.string(),
     address2: z.string().optional(),
@@ -21,9 +20,10 @@ export const addressSchema = z.object({
     lng: z.number().optional(),
     dropoffOption: z.enum(dropoffOptions).optional(),
     instructionsForDelivery: z.string().optional(),
-    phoneNumber: z.string().optional(),
     label: z.string().optional(),
     icon: z.string().optional(),
+    phoneNumber: z.string().optional(),
+    nickname: z.string().optional(),
     lastUpdatedTS: z.number().optional(),
 })
 export type AddressType = z.infer<typeof addressSchema>;

@@ -33,7 +33,7 @@ const selectedAddress = computed(() => {
 });
 
 const pickupNickname = computed(() => {
-    return userDataStore.value.userData?.rememberLastNickname || userDataStore.value.user?.name || 'undefined';
+    return userDataStore.value.userData?.rememberLastNickname || userDataStore.value.user?.name || 'unknown';
 });
 
 const storeId = window.storeData?.id;
@@ -46,6 +46,11 @@ const storeName = window.storeData?.name;
 //         window.location.href = BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!));
 //     }, 1000);
 // });
+
+defineExpose({
+    selectedAddress,
+    pickupNickname
+})
 </script>
 
 <template>
