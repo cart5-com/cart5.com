@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import { Banknote, CreditCard, Calculator, OctagonX, Pencil } from 'lucide-vue-next';
-import type { PhysicalPaymentMethods, CustomPaymentMethod } from '@lib/zod/paymentMethodsSchema'
+import { Banknote, CreditCard, Calculator, OctagonX, Pencil, WalletCards } from 'lucide-vue-next';
 import {
     RadioGroup,
     RadioGroupItem,
@@ -19,71 +18,16 @@ import {
     DialogScrollContent,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button';
+import { listAvailablePaymentMethods } from '@lib/utils/listAvailablePaymentMethods';
 
-const isStripeEnabled = window.storeData?.stripeSettings?.isStripeEnabled || false;
-const hasChargablePaymentMethod = window.storeData?.asStripeCustomer?.hasChargablePaymentMethod || false;
+const icons = [
+    { name: 'CreditCard', component: CreditCard },
+    { name: 'Banknote', component: Banknote },
+    { name: 'Calculator', component: Calculator },
+]
 
 const availablePaymentMethods = computed(() => {
-
-    let paymentMethods: PhysicalPaymentMethods | null = null;
-
-    if (!window.storeData?.paymentMethods) {
-        return [];
-    }
-
-    if (currentOrderType.value === 'delivery') {
-        paymentMethods = window.storeData.paymentMethods.deliveryPaymentMethods?.isActive ?
-            window.storeData.paymentMethods.deliveryPaymentMethods || null :
-            window.storeData.paymentMethods.defaultPaymentMethods || null;
-    } else if (currentOrderType.value === 'pickup') {
-        paymentMethods = window.storeData.paymentMethods.pickupPaymentMethods?.isActive ?
-            window.storeData.paymentMethods.pickupPaymentMethods || null :
-            window.storeData.paymentMethods.defaultPaymentMethods || null;
-    } else {
-        paymentMethods = window.storeData.paymentMethods.defaultPaymentMethods || null;
-    }
-
-    const methods = [];
-
-    if (isStripeEnabled) {
-        methods.push({
-            id: 'stripe',
-            name: 'Pay online',
-            description: 'Stripe checkout (Credit/Debit Card, Apple Pay, Google Pay, etc.)',
-            icon: CreditCard
-        });
-    }
-
-    if (hasChargablePaymentMethod) {
-        if (paymentMethods?.cash) {
-            methods.push({
-                id: 'cash',
-                name: 'Cash',
-                description: currentOrderType.value === 'delivery' ? 'Pay with cash on delivery' : 'Pay with cash at pickup',
-                icon: Banknote
-            });
-        }
-        if (paymentMethods?.cardTerminal) {
-            methods.push({
-                id: 'cardTerminal',
-                name: 'Card',
-                description: currentOrderType.value === 'delivery' ? 'Pay with card on delivery' : 'Pay with card at pickup',
-                icon: Calculator
-            });
-        }
-        if (paymentMethods?.customMethods) {
-            paymentMethods.customMethods.forEach((method: CustomPaymentMethod) => {
-                if (method.isActive && method.name) {
-                    methods.push({
-                        id: method.id || crypto.randomUUID(),
-                        name: method.name,
-                        description: method.description,
-                    });
-                }
-            });
-        }
-    }
-    return methods;
+    return listAvailablePaymentMethods(window.storeData, currentOrderType.value);
 });
 
 onMounted(async () => {
@@ -119,8 +63,7 @@ const selectedPaymentMethod = computed(() => {
                     <div>
                         <h3 class="font-bold text-xl mb-2">Payment</h3>
                         <div class="font-medium flex items-center">
-                            <component :is="selectedPaymentMethod?.icon"
-                                       v-if="selectedPaymentMethod?.icon"
+                            <component :is="icons.find(icon => icon.name === selectedPaymentMethod?.icon)?.component || WalletCards"
                                        class="mr-2 flex-shrink-0" />
                             {{ selectedPaymentMethod?.name }}
                         </div>
@@ -147,8 +90,7 @@ const selectedPaymentMethod = computed(() => {
                                         class="shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white" />
                         <div class="grid gap-1 font-normal">
                             <div class="font-medium flex items-center">
-                                <component :is="method.icon"
-                                           v-if="method.icon"
+                                <component :is="icons.find(icon => icon.name === method.icon)?.component || WalletCards"
                                            class="mr-2" />
                                 {{ method.name }}
                             </div>
@@ -158,6 +100,7 @@ const selectedPaymentMethod = computed(() => {
                             </div>
                         </div>
                     </Label>
+
                 </RadioGroup>
 
                 <DialogFooter>

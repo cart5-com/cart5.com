@@ -32,7 +32,10 @@
     "paths": {
       "@lib/*": [
         "./src/*"
-      ]
+      ],
+      "@db/*": [
+        "../db/src/*"
+      ],
     },
     // Report errors for fallthrough cases in switch statements
     "noFallthroughCasesInSwitch": true,

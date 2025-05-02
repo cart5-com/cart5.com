@@ -26,6 +26,7 @@ import { isStoreOpenNow } from '@lib/utils/isOpenNow';
 import { calculateDistance } from '@lib/utils/calculateDistance';
 import { handleGeocode } from '@api-hono/routes/gmaps/mapsRoute.controller';
 import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
+import { listAvailablePaymentMethods } from '@lib/utils/listAvailablePaymentMethods';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -49,6 +50,10 @@ export const placeOrderRoute = async (c: Context<
     if (user.hasVerifiedPhoneNumber === 0) {
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
     }
+    const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
+    if (!WEBSITE || !WEBSITE.id) {
+        throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
+    }
     const userData = await getUserData_Service(user.id, {
         rememberLastAddress: true,
         rememberLastCountry: true,
@@ -63,6 +68,9 @@ export const placeOrderRoute = async (c: Context<
     });
     if (!userData) {
         throw new KNOWN_ERROR("User data not found", "USER_DATA_NOT_FOUND");
+    }
+    if (!userData.rememberLastPaymentMethodId) {
+        throw new KNOWN_ERROR("Payment method not selected", "PAYMENT_METHOD_NOT_SELECTED");
     }
     if (!userData.rememberLastOrderType) {
         throw new KNOWN_ERROR("Order type not found", "ORDER_TYPE_NOT_FOUND");
@@ -89,6 +97,9 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Store does not offer delivery", "STORE_DOES_NOT_OFFER_DELIVERY");
     }
     const currentOrderType = userData.rememberLastOrderType;
+    if (currentOrderType !== 'delivery' && currentOrderType !== 'pickup') {
+        throw new KNOWN_ERROR("Invalid order type", "INVALID_ORDER_TYPE");
+    }
     const isStoreOpen = isStoreOpenNow(currentOrderType, storeData?.openHours ?? null);
     if (
         !isStoreOpen
@@ -102,6 +113,16 @@ export const placeOrderRoute = async (c: Context<
     if (currentOrderType === 'delivery' && !deliveryAddress) {
         throw new KNOWN_ERROR("Delivery address not found", "DELIVERY_ADDRESS_NOT_FOUND");
     }
+    if (currentOrderType === 'delivery' && !deliveryAddress?.address1) {
+        throw new KNOWN_ERROR("Delivery address1 is required", "DELIVERY_ADDRESS1_REQUIRED");
+    }
+    if (currentOrderType === 'delivery' && !deliveryAddress?.country) {
+        throw new KNOWN_ERROR("Delivery address country is required", "DELIVERY_ADDRESS_COUNTRY_REQUIRED");
+    }
+    if (currentOrderType === 'delivery' && !deliveryAddress?.lat && !deliveryAddress?.lng) {
+        throw new KNOWN_ERROR("Delivery address coordinates are required", "DELIVERY_ADDRESS_COORDINATES_REQUIRED");
+    }
+    // check address location is close(300 meters) to geocoded address lat,lng
     if (currentOrderType === 'delivery' && deliveryAddress) {
         const mapResult = await handleGeocode(origin + '/__p_api/gmaps/geocode?address=' + deliveryAddress.address1 + '&components=country:' + deliveryAddress.country);
         const firstResult = mapResult.data.results[0]
@@ -119,10 +140,7 @@ export const placeOrderRoute = async (c: Context<
         }
     }
 
-    const pickupNickname = currentOrderType === 'pickup' ?
-        (userData.rememberLastNickname || user.name || undefined) : 'undefined';
-
-
+    const pickupNickname = (userData.rememberLastNickname || user.name || undefined);
 
     const taxSettings = storeData?.taxSettings as TaxSettings;
     if (!taxSettings) {
@@ -133,52 +151,15 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Menu root not found", "MENU_ROOT_NOT_FOUND");
     }
 
-    const WEBSITE = await getWebsiteByDefaultHostname(host ?? '');
-    if (!WEBSITE || !WEBSITE.id) {
-        throw new KNOWN_ERROR("Website not found", "WEBSITE_NOT_FOUND");
-    }
-
-    if (!userData.rememberLastPaymentMethodId) {
-        throw new KNOWN_ERROR("Payment method not selected", "PAYMENT_METHOD_NOT_SELECTED");
-    }
-
-    // Validate that the selected payment method is available for the current order type
-    const paymentMethods = currentOrderType === 'delivery'
-        ? (storeData.paymentMethods?.deliveryPaymentMethods?.isActive
-            ? storeData.paymentMethods.deliveryPaymentMethods
-            : storeData.paymentMethods?.defaultPaymentMethods)
-        : (storeData.paymentMethods?.pickupPaymentMethods?.isActive
-            ? storeData.paymentMethods.pickupPaymentMethods
-            : storeData.paymentMethods?.defaultPaymentMethods);
-
-    if (!paymentMethods) {
+    const availablePaymentMethods = listAvailablePaymentMethods(storeData, currentOrderType);
+    if (!availablePaymentMethods || availablePaymentMethods.length === 0) {
         throw new KNOWN_ERROR("Payment methods not configured for store", "PAYMENT_METHODS_NOT_CONFIGURED");
     }
-
-    // Check if the selected payment method is valid
-    let isValidPaymentMethod = false;
-
-    if (userData.rememberLastPaymentMethodId === 'stripe' && storeData?.stripeSettings?.isStripeEnabled) {
-        isValidPaymentMethod = true;
-    } else if (userData.rememberLastPaymentMethodId === 'cash' && paymentMethods.cash) {
-        isValidPaymentMethod = true;
-    } else if (userData.rememberLastPaymentMethodId === 'cardTerminal' && paymentMethods.cardTerminal) {
-        isValidPaymentMethod = true;
-    } else if (paymentMethods.customMethods) {
-        isValidPaymentMethod = paymentMethods.customMethods.some(
-            method => method.id === userData.rememberLastPaymentMethodId && method.isActive
-        );
+    const currentPaymentMethod = availablePaymentMethods.find(method => method.id === userData.rememberLastPaymentMethodId);
+    if (!currentPaymentMethod) {
+        throw new KNOWN_ERROR("Invalid payment method", "INVALID_PAYMENT_METHOD");
     }
 
-    if (!isValidPaymentMethod) {
-        throw new KNOWN_ERROR("Selected payment method is not available", "INVALID_PAYMENT_METHOD");
-    }
-
-    // Ensure Stripe customer has a chargeable payment method if needed
-    if (userData.rememberLastPaymentMethodId !== 'stripe' &&
-        !storeData?.asStripeCustomer?.hasChargablePaymentMethod) {
-        throw new KNOWN_ERROR("Store does not support selected payment method", "STORE_DOES_NOT_SUPPORT_PAYMENT_METHOD");
-    }
 
     const websiteTeamServiceFee = await getWebsiteTeamServiceFee_Service(
         WEBSITE?.id ?? "",
@@ -237,6 +218,18 @@ export const placeOrderRoute = async (c: Context<
         customServiceFees
     );
 
+    if (currentOrderType === 'delivery') {
+        if (!subTotalWithDeliveryAndServiceFees.bestDeliveryZone) {
+            throw new KNOWN_ERROR("Out of delivery zone", "OUT_OF_DELIVERY_ZONE");
+        }
+        if (cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)) {
+            const errorMessage = `Minimum Subtotal:
+                            ${taxSettings.currencySymbol}${subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart}
+                            Please add more items to your cart.`
+            throw new KNOWN_ERROR(errorMessage, "CART_SUBTOTAL_LESS_THAN_MINIMUM_CART_VALUE");
+        }
+    }
+
     const cartBreakdown = calculateCartBreakdown(
         subTotalWithDeliveryAndServiceFees,
         platformServiceFee,
@@ -269,17 +262,7 @@ export const placeOrderRoute = async (c: Context<
         finalAmount: cartBreakdown.buyerPays,
         orderNote: currentCart.orderNote,
         paymentId: userData?.rememberLastPaymentMethodId,
-        paymentDetails: {
-            isStripeEnabled: storeData?.stripeSettings?.isStripeEnabled ?? false,
-            hasChargablePaymentMethod: storeData?.asStripeCustomer?.hasChargablePaymentMethod ?? false,
-            paymentMethods: storeData?.paymentMethods,
-            selectedPaymentMethodName: userData?.rememberLastPaymentMethodId === 'stripe' ? 'Pay online' :
-                userData?.rememberLastPaymentMethodId === 'cash' ? 'Cash' :
-                    userData?.rememberLastPaymentMethodId === 'cardTerminal' ? 'Card' :
-                        storeData?.paymentMethods?.defaultPaymentMethods?.customMethods?.find(
-                            m => m.id === userData?.rememberLastPaymentMethodId
-                        )?.name ?? 'Unknown payment method'
-        },
+        currentPaymentMethod: currentPaymentMethod,
         storeName: storeData?.name,
         storeAddress1: storeData?.address?.address1,
         deliveryAddress,
