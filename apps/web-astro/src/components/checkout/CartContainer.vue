@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { currentOrderType, userDataStore, waitUntilUserDataReady } from "../../stores/UserData.store";
+import { currentOrderType, userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
-import { onMounted } from "vue";
 import OrderTypeWidget from "../OrderTypeWidget.vue";
 import PaymentMethods from './PaymentMethods.vue';
 import { BASE_LINKS } from "@web-astro/utils/links";
@@ -16,16 +15,16 @@ import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 import { toast } from "@/ui-plus/sonner";
 
 
-onMounted(async () => {
-    await waitUntilUserDataReady();
-    // TODO: do I still need this check?
-    // Check if delivery is selected but no address is set
-    if (currentOrderType.value === 'delivery' && !userDataStore.value.userData?.rememberLastAddressId) {
-        // Redirect to confirm info page
-        window.location.href = BASE_LINKS.CONFIRM_INFO(window.storeData?.id!, slugify(window.storeData?.name!));
-        return;
-    }
-})
+// onMounted(async () => {
+//     await waitUntilUserDataReady();
+//     // do I still need this check? No
+//     // Check if delivery is selected but no address is set
+//     if (currentOrderType.value === 'delivery' && !userDataStore.value.userData?.rememberLastAddressId) {
+//         // Redirect to confirm info page
+//         window.location.href = BASE_LINKS.CONFIRM_INFO(window.storeData?.id!, slugify(window.storeData?.name!));
+//         return;
+//     }
+// })
 
 const placeOrder = async () => {
     if (userDataStore.value.user?.hasVerifiedPhoneNumber === 0) {

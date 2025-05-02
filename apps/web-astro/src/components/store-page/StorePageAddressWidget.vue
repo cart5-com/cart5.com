@@ -7,7 +7,6 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from '@/components/ui/drawer'
-// import AddressForm from '../AddressForm.vue';
 import { userDataStore } from "@web-astro/stores/UserData.store";
 import { MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
@@ -34,10 +33,6 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                 </span>
             </Button>
         </DrawerTrigger>
-        <!-- <DrawerContent align="start">
-            <AddressForm button-label="Update"
-                         @done="onMapConfirm" />
-        </DrawerContent> -->
 
         <DrawerContent>
             <div class="mx-auto w-full max-w-sm py-20">
@@ -46,8 +41,6 @@ const onMapConfirm = (_result: { lat: number, lng: number }) => {
                     <!-- <DrawerDescription></DrawerDescription> -->
                 </DrawerHeader>
                 <div class="p-4 pb-0">
-                    <!-- <AddressForm button-label="Update"
-                                 @done="onMapConfirm" /> -->
                     <NewAddressForm button-label="Update"
                                     @done="onMapConfirm" />
                 </div>

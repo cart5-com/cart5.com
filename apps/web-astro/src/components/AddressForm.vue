@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import GeolocationMap from "ui-shadcn-vue/src/ui-plus/geolocation-selection-map/GeolocationMap.vue";
@@ -69,4 +69,4 @@ const onSubmit = () => {
             </Button>
         </form>
     </div>
-</template>
+</template> -->

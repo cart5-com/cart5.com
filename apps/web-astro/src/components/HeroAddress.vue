@@ -55,7 +55,6 @@ const onMapConfirm = async (result: { lat: number, lng: number }) => {
 
 <template>
     <div v-if="userDataStore.userData">
-        <!-- <AddressForm @done="onMapConfirm" /> -->
         <NewAddressForm @done="onMapConfirm" />
     </div>
 </template>

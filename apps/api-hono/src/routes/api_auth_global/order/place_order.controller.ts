@@ -229,8 +229,6 @@ export const placeOrderRoute = async (c: Context<
     const offerDiscountIfPossible = storeData?.serviceFees?.offerDiscountIfPossible ?? true;
     const customServiceFees = storeData.serviceFees?.customServiceFees ?? [];
 
-    // TODO: check distance between user address lat,lng and geocoded address lat,lng
-    // if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng in delivery zone calculation
     const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
     if (currentOrderType === 'delivery' && cartTotals.shownFee < (storeData.deliveryZones?.zones?.[0]?.minCart ?? 0)) {
         throw new KNOWN_ERROR(`Cart subtotal is less than minimum cart value: ${taxSettings.currencySymbol}${storeData.deliveryZones?.zones?.[0]?.minCart}`, "CART_SUBTOTAL_LESS_THAN_MINIMUM_CART_VALUE");

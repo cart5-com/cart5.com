@@ -148,8 +148,6 @@ async function handleGpsClick() {
 	}
 }
 
-// TODO: check distance between user address lat,lng and geocoded address lat,lng
-// if it is more than 300 meters, then ignore user lat,lng and use geocoded address lat,lng
 async function loadHelperBtns() {
 	const gecodeResult = await geocode(props.address, props.country?.toLowerCase())
 
