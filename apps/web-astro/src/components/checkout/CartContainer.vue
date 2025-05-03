@@ -15,7 +15,7 @@ import { getTurnstileUrl } from "@lib/clientUtils/getAuthOrigin";
 import { toast } from "@/ui-plus/sonner";
 import { ref } from "vue";
 import { KNOWN_ERROR } from '@lib/types/errors';
-import { checkMinimumOrderValueForDelivery, checkUserDataBeforePlacingOrder } from "@lib/utils/checkBeforePlacingOrder";
+import { checkMinimumOrderValueForDelivery, checkStoreDataBeforePlacingOrder, checkUserDataBeforePlacingOrder } from "@lib/utils/checkBeforePlacingOrder";
 import { checkGeocodeDistance } from "@lib/utils/checkGeocodeDistance";
 import { geocode } from "@/ui-plus/geolocation-selection-map/geocode";
 import type { TaxSettings } from "@lib/zod/taxSchema";
@@ -50,6 +50,11 @@ const placeOrder = async () => {
                 lng: deliveryAddress?.lng!
             });
         }
+        checkStoreDataBeforePlacingOrder(
+            window.storeData,
+            currentOrderType.value,
+            userDataStore.value.userData!
+        );
         if (cartView.value?.orderedItems.length === 0) {
             toast.error('Please add items to your cart');
             return;
