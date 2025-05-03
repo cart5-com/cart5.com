@@ -26,6 +26,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
+import MapEmbed from "@web-astro/components/MapEmbed.vue";
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -122,7 +123,6 @@ const orderedQuantity = () => {
                     <div class="flex justify-center items-center text-2xl font-bold my-4">
                         Thank you for your order!
                     </div>
-
                 </CardContent>
             </Card>
             <Card class="my-4">
@@ -185,6 +185,18 @@ const orderedQuantity = () => {
                     </div>
                 </CardContent>
             </Card>
+            <!-- <Card class="my-4">
+                <CardContent class="p-4">
+                </CardContent>
+            </Card> -->
+            <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
+                 class="mt-3 overflow-hidden rounded-lg">
+                <MapEmbed :storeLat="orderDetails.storeLocationLat"
+                          :storeLng="orderDetails.storeLocationLng"
+                          :destinationLat="orderDetails.deliveryAddressJSON?.lat"
+                          :destinationLng="orderDetails.deliveryAddressJSON?.lng"
+                          :isLink="true" />
+            </div>
 
             <!-- Payment Information -->
             <Card class="my-4">
