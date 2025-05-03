@@ -42,6 +42,7 @@ export const orderTable = sqliteTable("orders", {
 
     // Pickup Information
     pickupNickname: text("pickup_nickname").notNull(),
+    estimatedTimeText: text("estimated_time_text"),
 
     // Payment Information
     paymentId: text("payment_id").notNull(),

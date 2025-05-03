@@ -3,7 +3,7 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { toast } from "@/ui-plus/sonner";
 import { onMounted, ref } from "vue";
-import { userDataStore } from "@web-astro/stores/UserData.store";
+import { userDataStore, waitUntilUserDataReady } from "@web-astro/stores/UserData.store";
 import UserMenu from "@web-astro/components/user/UserMenu.vue";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
@@ -36,7 +36,8 @@ const loadData = async () => {
     isLoading.value = false;
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await waitUntilUserDataReady();
     if (userDataStore.value.user) {
         loadData();
     }

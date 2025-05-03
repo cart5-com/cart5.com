@@ -30,6 +30,7 @@ import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
 import { checkUserDataBeforePlacingOrder, checkStoreDataBeforePlacingOrder, checkMinimumOrderValueForDelivery } from "@lib/utils/checkBeforePlacingOrder";
 import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
+import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 
 export const getOrderData_Service = async (
     orderId: string,
@@ -170,7 +171,12 @@ export const generateOrderData_Service = async (
     const userVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
     const supportTeamWebsite = await getSupportTeamWebsite_Service(storeId);
     const subtotalJSON = subTotalWithDeliveryAndServiceFees;
-
+    const estimatedTime = estimatedTimeText(
+        currentOrderType,
+        subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.customEstimatedDeliveryTime,
+        storeData?.defaultEstimatedDeliveryTime ?? undefined,
+        storeData?.defaultEstimatedPickupTime ?? undefined
+    )
     return {
         order: {
             userId: user.id,
@@ -192,6 +198,7 @@ export const generateOrderData_Service = async (
             isOnlinePayment: currentPaymentMethod.isOnline,
             orderNote: currentCart.orderNote,
             finalAmount: cartBreakdown.buyerPays,
+            estimatedTimeText: estimatedTime,
             // JSONs
             orderedItemsJSON: orderedItems,
             subtotalJSON,

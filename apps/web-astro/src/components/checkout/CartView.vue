@@ -39,7 +39,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-
+import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
 
@@ -64,20 +64,26 @@ const supportPartnerServiceFee: ServiceFee | null = window.supportTeamServiceFee
 const marketingPartnerServiceFee: ServiceFee | null = window.websiteTeamServiceFee;
 
 const estimatedTime = computed(() => {
-    const isDelivery = currentOrderType.value === 'delivery';
-    const time = isDelivery
-        ? (subTotalWithDeliveryAndServiceFees.value.bestDeliveryZone?.customEstimatedDeliveryTime || window.storeData?.defaultEstimatedDeliveryTime)
-        : window.storeData?.defaultEstimatedPickupTime;
+    // const isDelivery = currentOrderType.value === 'delivery';
+    // const time = isDelivery
+    //     ? (subTotalWithDeliveryAndServiceFees.value.bestDeliveryZone?.customEstimatedDeliveryTime || window.storeData?.defaultEstimatedDeliveryTime)
+    //     : window.storeData?.defaultEstimatedPickupTime;
 
-    if (!time) return null;
+    // if (!time) return null;
 
-    const times = [
-        time.min,
-        time.max
-    ].filter(Boolean);
+    // const times = [
+    //     time.min,
+    //     time.max
+    // ].filter(Boolean);
 
-    const timeLabel = isDelivery ? 'Estimated Delivery Time' : 'Estimated Preparation Time';
-    return times.length ? `${timeLabel}: ${times.join('-')} ${time.unit || ''}` : null;
+    // const timeLabel = isDelivery ? 'Estimated Delivery Time' : 'Estimated Preparation Time';
+    // return times.length ? `${timeLabel}: ${times.join('-')} ${time.unit || ''}` : null;
+    return estimatedTimeText(
+        currentOrderType.value,
+        subTotalWithDeliveryAndServiceFees.value.bestDeliveryZone?.customEstimatedDeliveryTime,
+        window.storeData?.defaultEstimatedDeliveryTime ?? undefined,
+        window.storeData?.defaultEstimatedPickupTime ?? undefined
+    )
 })
 
 const cartBreakdown = computed(() => {
