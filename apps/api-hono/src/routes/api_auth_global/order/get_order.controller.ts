@@ -24,7 +24,7 @@ export const getOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     }
     if (order.userId !== user.id) {
-        throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
+        throw new KNOWN_ERROR("Permission denied", "PERMISSION_DENIED");
     }
     return c.json({
         data: order,
