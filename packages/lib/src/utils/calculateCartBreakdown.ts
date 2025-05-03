@@ -212,6 +212,21 @@ export function calculateCartBreakdown(
         'Other Fees';
 
 
+    const applicationFeeWithTax = (
+        (platformFeeBreakdown.platform?.totalWithTax ?? 0) +
+        (platformFeeBreakdown.support?.totalWithTax ?? 0) +
+        (platformFeeBreakdown.marketing?.totalWithTax ?? 0)
+    );
+    const applicationFeeWithoutTax = (
+        (platformFeeBreakdown.platform?.itemTotal ?? 0) +
+        (platformFeeBreakdown.support?.itemTotal ?? 0) +
+        (platformFeeBreakdown.marketing?.itemTotal ?? 0)
+    );
+    const applicationFeeTax = (
+        (platformFeeBreakdown.platform?.tax ?? 0) +
+        (platformFeeBreakdown.support?.tax ?? 0) +
+        (platformFeeBreakdown.marketing?.tax ?? 0)
+    );
     return {
         buyerPays: roundTo2Decimals(buyerTotal),
         allTransparencyBreakdown,
@@ -220,5 +235,8 @@ export function calculateCartBreakdown(
         buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
         discount: roundTo2Decimals(discount),
         platformFeeBreakdown, // we need this for saving order data
+        applicationFeeWithTax: roundTo2Decimals(applicationFeeWithTax),
+        applicationFeeWithoutTax: roundTo2Decimals(applicationFeeWithoutTax),
+        applicationFeeTax: roundTo2Decimals(applicationFeeTax),
     };
 }

@@ -70,6 +70,8 @@ export const calculateSubTotal = (
     result.totalWithTax = cartTotalValues.totalWithTax + (result.bestDeliveryZone?.totalWithTax ?? 0);
     result.itemTotal = cartTotalValues.itemTotal + (result.bestDeliveryZone?.itemTotal ?? 0);
     result.tax = cartTotalValues.tax + (result.bestDeliveryZone?.tax ?? 0);
+    result.shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
+        result.itemTotal : result.totalWithTax
 
     // Calculate service fees
     calculateServiceFees(result, customServiceFees, taxSettings);
