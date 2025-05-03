@@ -124,8 +124,6 @@ defineExpose({
             This could be a temporary issue.
             <br>
             Please try again later.
-            <br>
-            If you are a store admin, please check your dashboard for payment methods.
         </div>
     </div>
 </template>
