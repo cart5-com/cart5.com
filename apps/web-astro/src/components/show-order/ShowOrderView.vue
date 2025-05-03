@@ -16,7 +16,9 @@ import {
 import {
     Clock, Info, User, CreditCard,
     Banknote, Calculator, WalletCards, ShoppingBag,
-    CheckCircle
+    CheckCircle,
+    ChevronUp,
+    ChevronDown
 } from "lucide-vue-next";
 import {
     Popover,
@@ -54,7 +56,8 @@ const props = defineProps<{
 
 const orderDetailsApiPath = authGlobalApiClient[":orderId"].details.$get;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"];
-let orderDetails = ref<OrderType | null>(null);
+const orderDetails = ref<OrderType | null>(null);
+const isCollapsed = ref(true);
 
 const isLoading = ref(true);
 const loadData = async () => {
@@ -83,20 +86,14 @@ onMounted(async () => {
     }
 });
 
-const getPaymentIcon = (paymentId: string) => {
-    // Simple mapping of payment methods to icons
-    const iconMap: Record<string, any> = {
-        'cash': Banknote,
-        'card': CreditCard,
-        'stripe': CreditCard,
-        'pos': Calculator,
-    };
-    return iconMap[paymentId] || WalletCards;
-};
 
 const formatCurrency = (amount: number) => {
     if (!orderDetails.value?.taxSettingsJSON?.currencySymbol) return amount;
     return `${orderDetails.value.taxSettingsJSON.currencySymbol}${amount}`;
+};
+
+const orderedQuantity = () => {
+    return orderDetails.value?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
 };
 
 </script>
@@ -136,7 +133,8 @@ const formatCurrency = (amount: number) => {
                         Placed on {{ formatDate(orderDetails.created_at_ts) }}
                     </div>
                     <div class="mt-2 text-md font-medium">
-                        Status: <span class="capitalize font-bold">{{ orderDetails.orderStatus.toLowerCase() }}</span>
+                        Status: <span
+                              class="capitalize font-bold border border-muted-foreground rounded-md px-2 py-1">{{ orderDetails.orderStatus.toLowerCase() }}</span>
                     </div>
                     <div v-if="orderDetails.estimatedTimeText"
                          class="text-sm text-muted-foreground mt-1">
@@ -220,15 +218,29 @@ const formatCurrency = (amount: number) => {
 
             <!-- Order Items -->
             <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
-                <h3 class="font-bold text-xl mb-4 flex items-center">
-                    <ShoppingBag class="mr-2" />
-                    Order Items
-                </h3>
+                <div class="flex justify-between items-center cursor-pointer"
+                     @click="isCollapsed = !isCollapsed">
+
+                    <h3 class="font-bold text-xl mb-4 flex items-center">
+                        <ShoppingBag class="mr-2" />
+                        Order Items
+                        <span class="text-sm text-muted-foreground ml-2">
+                            ({{ orderedQuantity() }} items)
+                        </span>
+                    </h3>
+                    <div class="flex-shrink-0">
+                        <ChevronUp class="inline-block mr-2"
+                                   v-if="!isCollapsed" />
+                        <ChevronDown class="inline-block mr-2"
+                                     v-else />
+                    </div>
+                </div>
 
                 <!-- Order Items List -->
                 <div v-for="(item, index) in orderDetails.orderedItemsJSON"
                      :key="index"
-                     class="border-t border-muted-foreground pt-3 pb-3">
+                     class="border-t border-muted-foreground pt-3 pb-3"
+                     v-if="!isCollapsed">
                     <div class="whitespace-pre-wrap px-2">
                         <div class="font-bold text-xl">
                             {{ item.name }}
