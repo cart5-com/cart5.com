@@ -562,6 +562,24 @@ export const getWebsiteTeamServiceFee_Service = async (
     return websiteStore?.overrideMarketplaceFee || defaultMarketplaceFee || null;
 }
 
+
+export const getSupportTeam_Service = async (storeId: string) => {
+    const storeData = await getStore_Service(storeId, { supportTeamId: true });
+    const supportTeamWebsite = await db.query.websitesTable.findFirst({
+        where: eq(websitesTable.ownerTeamId, storeData?.supportTeamId ?? ""),
+        columns: {
+            id: true,
+            name: true,
+            isPartner: true,
+            defaultHostname: true,
+        }
+    });
+    if (!supportTeamWebsite?.isPartner) {
+        return null;
+    }
+    return supportTeamWebsite;
+}
+
 export const getSupportTeamServiceFee_Service = async (storeId: string) => {
     // find support team id from store
     const storeData = await getStore_Service(storeId, { supportTeamId: true });
@@ -572,8 +590,12 @@ export const getSupportTeamServiceFee_Service = async (storeId: string) => {
             name: true,
             defaultHostname: true,
             defaultPartnerFee: true,
+            isPartner: true,
         }
     });
+    if (!supportTeamWebsite?.isPartner) {
+        return null;
+    }
     //override from partnerStoreMapTable if exists
     const partnerStore = await db.query.partnerStoreMapTable.findFirst({
         where: and(

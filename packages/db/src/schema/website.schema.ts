@@ -25,7 +25,7 @@ export const websitesTable = sqliteTable("websites", {
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
     defaultMarketplaceFee: text("default_marketplace_fee", { mode: 'json' }).$type<ServiceFee>(),
 
-    isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false),
+    isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false), // only can be updated by db admin for now
     defaultPartnerFee: text("default_partner_fee", { mode: 'json' }).$type<ServiceFee>(),
 
 });
