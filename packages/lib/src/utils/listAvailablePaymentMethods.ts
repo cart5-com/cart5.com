@@ -22,7 +22,13 @@ export const listAvailablePaymentMethods = (
         }
     }
 
-    const methods = [];
+    const methods: {
+        isOnline: boolean;
+        id: string;
+        name: string;
+        description?: string;
+        icon?: string;
+    }[] = [];
 
     if (isStripeEnabled) {
         methods.push({
