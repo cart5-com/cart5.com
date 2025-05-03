@@ -12,6 +12,7 @@ import {
 
 import { generateCartItemTextSummary } from "@lib/utils/generateCartItemTextSummary";
 import {
+    getSupportTeamWebsite_Service,
     getSupportTeamServiceFee_Service,
     getWebsiteByDefaultHostname,
     getWebsiteTeamServiceFee_Service
@@ -105,7 +106,11 @@ export const placeOrderRoute = async (c: Context<
     const customServiceFees = storeData?.serviceFees?.customServiceFees ?? [];
 
     const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
-    const subtotalShownFee = `${taxSettings.currencySymbol}${cartTotals.shownFee}`
+    // const subtotalShownFee = `${taxSettings.currencySymbol}${cartTotals.shownFee}`
+    const storeLocation = {
+        lat: storeData?.address?.lat!,
+        lng: storeData?.address?.lng!
+    }
     const subTotalWithDeliveryAndServiceFees = calculateSubTotal(
         currentCart, menuRoot ?? undefined, taxSettings, currentOrderType,
         {
@@ -113,10 +118,7 @@ export const placeOrderRoute = async (c: Context<
             lng: deliveryAddress?.lng ?? userData?.rememberLastLng!
         },
         storeData?.deliveryZones?.zones ?? [],
-        {
-            lat: storeData?.address?.lat!,
-            lng: storeData?.address?.lng!
-        },
+        storeLocation,
         customServiceFees
     );
 
@@ -160,25 +162,43 @@ export const placeOrderRoute = async (c: Context<
         }
     )
 
-    const allVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
+    const userVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
+    const supportTeamWebsite = await getSupportTeamWebsite_Service(storeId);
+    const subtotalJson = {
+        ...subTotalWithDeliveryAndServiceFees,
+        bestDeliveryZone: subTotalWithDeliveryAndServiceFees.bestDeliveryZone ?
+            {
+                itemTotal: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.itemTotal,
+                tax: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.tax,
+                totalWithTax: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.totalWithTax,
+                shownFee: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.shownFee,
+                distanceFromStoreKm: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.distanceFromStoreKm,
+                totalDeliveryFee: subTotalWithDeliveryAndServiceFees.bestDeliveryZone.totalDeliveryFee,
+            }
+            : undefined
+    };
 
     const result = {
-        allVerifiedPhoneNumbers,
+        userId: user.id,
+        userVerifiedPhoneNumber: userVerifiedPhoneNumbers.map(phone => phone.phoneNumber).join('|'),
+        websiteId: WEBSITE.id,
+        websiteDefaultHostname: WEBSITE.defaultHostname,
+        supportTeamWebsiteId: supportTeamWebsite?.id,
+        supportTeamWebsiteDefaultHostname: supportTeamWebsite?.defaultHostname,
         storeId,
         orderType: currentOrderType,
-        userId: user.id,
-        orderedItems,
-        subtotalShownFee,
-        subtotalDetails: subTotalWithDeliveryAndServiceFees,
-        cartBreakdown,
-        finalAmount: cartBreakdown.buyerPays,
-        orderNote: currentCart.orderNote,
-        paymentId: userData?.rememberLastPaymentMethodId,
-        currentPaymentMethod,
-        storeName: storeData?.name,
-        storeAddress1: storeData?.address?.address1,
+        orderedItemsJson: orderedItems,
+        subtotalJson,
+        cartBreakdownJson: cartBreakdown,
         deliveryAddress,
         pickupNickname,
+        storeLocation,
+        storeName: storeData?.name,
+        storeAddress1: storeData?.address?.address1,
+        currentPaymentMethod,
+        paymentId: userData?.rememberLastPaymentMethodId,
+        orderNote: currentCart.orderNote,
+        finalAmount: cartBreakdown.buyerPays,
     }
 
     return c.json({

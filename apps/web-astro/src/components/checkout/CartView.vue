@@ -31,7 +31,8 @@ import { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { ServiceFee, CalculationType } from "@lib/zod/serviceFee";
 import { platformServiceFee } from "@lib/platformServiceFee";
 import {
-    calculateCartBreakdown
+    calculateCartBreakdown,
+    feeBreakdownNameMap
 } from "@lib/utils/calculateCartBreakdown";
 import {
     Popover,
@@ -375,10 +376,11 @@ defineExpose({
                                         <div v-for="(fee, index) in cartBreakdown.buyerPaysTaxAndFees"
                                              :key="index">
                                             <div class="flex justify-between items-center">
-                                                <div class="font-medium">{{ fee.name }}</div>
+                                                <div class="font-medium">{{ feeBreakdownNameMap[fee.type].name }}</div>
                                                 <div>{{ fee.currencyShownFee }}</div>
                                             </div>
-                                            <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
+                                            <div class="text-sm text-muted-foreground">
+                                                {{ feeBreakdownNameMap[fee.type].note }}</div>
                                         </div>
                                     </div>
                                 </PopoverContent>
@@ -444,14 +446,14 @@ defineExpose({
                                              class="my-4">
                                             <div class="flex justify-between items-center">
                                                 <div class="font-medium">
-                                                    {{ fee.name }}
+                                                    {{ feeBreakdownNameMap[fee.type].name }}
                                                 </div>
                                                 <div>
                                                     {{ fee.currencyShownFee }}
                                                 </div>
                                             </div>
                                             <div class="text-sm text-muted-foreground">
-                                                {{ fee.note }}
+                                                {{ feeBreakdownNameMap[fee.type].note }}
                                             </div>
                                         </div>
                                     </div>

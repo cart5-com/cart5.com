@@ -47,7 +47,11 @@ export function getBestDeliveryZoneWithTaxDetails(
         tax: roundTo2Decimals(tax),
         totalWithTax: roundTo2Decimals(totalWithTax),
         shownFee: roundTo2Decimals(shownFee),
-        ...bestZone,
+        totalDeliveryFee: bestZone.totalDeliveryFee,
+        distanceFromStoreKm: bestZone.distanceFromStoreKm,
+        customEstimatedDeliveryTime: bestZone.customEstimatedDeliveryTime,
+        minCart: bestZone.minCart,
+        // ...bestZone,
     };
 }
 

@@ -70,7 +70,7 @@ async function onSendOtpSubmit(values: z.infer<typeof schema>) {
 
 function startRetryCountdown() {
     isRetryDisabled.value = true;
-    retryCountdown.value = 10;
+    retryCountdown.value = 45;
 
     const timer = setInterval(() => {
         retryCountdown.value -= 1;

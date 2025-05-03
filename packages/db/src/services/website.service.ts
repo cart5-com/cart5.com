@@ -563,7 +563,7 @@ export const getWebsiteTeamServiceFee_Service = async (
 }
 
 
-export const getSupportTeam_Service = async (storeId: string) => {
+export const getSupportTeamWebsite_Service = async (storeId: string) => {
     const storeData = await getStore_Service(storeId, { supportTeamId: true });
     const supportTeamWebsite = await db.query.websitesTable.findFirst({
         where: eq(websitesTable.ownerTeamId, storeData?.supportTeamId ?? ""),

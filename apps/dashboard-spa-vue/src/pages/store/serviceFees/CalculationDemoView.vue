@@ -4,7 +4,7 @@ import { ResType } from '@api-client/typeUtils';
 import { ref, onMounted, computed } from 'vue';
 import { currentStoreId } from '@dashboard-spa-vue/stores/MyStoresStore';
 import { toast } from '@/ui-plus/sonner';
-import { calculateCartBreakdown } from '@lib/utils/calculateCartBreakdown';
+import { calculateCartBreakdown, feeBreakdownNameMap } from '@lib/utils/calculateCartBreakdown';
 import { calculateSubTotal } from '@lib/utils/calculateSubTotal';
 import { inclusiveRate } from '@lib/utils/rateCalc';
 import type { TaxSettings as LibTaxSettings } from '@lib/zod/taxSchema';
@@ -200,10 +200,11 @@ const loadTaxSettings = async () => {
                             <div v-for="(fee, index) in cartBreakdown.buyerPaysTaxAndFees"
                                  :key="index">
                                 <div class="flex justify-between items-center">
-                                    <div class="font-medium">{{ fee.name }}</div>
+                                    <div class="font-medium">{{ feeBreakdownNameMap[fee.type].name }}</div>
                                     <div>{{ fee.currencyShownFee }}</div>
                                 </div>
-                                <div class="text-sm text-muted-foreground">{{ fee.note }}</div>
+                                <div class="text-sm text-muted-foreground">{{ feeBreakdownNameMap[fee.type].note }}
+                                </div>
                             </div>
                         </div>
                     </PopoverContent>
@@ -241,14 +242,14 @@ const loadTaxSettings = async () => {
                      class="my-4">
                     <div class="flex justify-between items-center">
                         <div class="font-medium">
-                            {{ fee.name }}
+                            {{ feeBreakdownNameMap[fee.type].name }}
                         </div>
                         <div>
                             {{ fee.currencyShownFee }}
                         </div>
                     </div>
                     <div class="text-sm text-muted-foreground">
-                        {{ fee.note }}
+                        {{ feeBreakdownNameMap[fee.type].note }}
                     </div>
                 </div>
             </div>

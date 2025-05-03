@@ -26,7 +26,7 @@ export const listAvailablePaymentMethods = (
 
     if (isStripeEnabled) {
         methods.push({
-            isOnline: false,
+            isOnline: true,
             id: 'stripe',
             name: 'Pay online',
             description: 'Stripe checkout (Credit/Debit Card, Apple Pay, Google Pay, Link...)',
