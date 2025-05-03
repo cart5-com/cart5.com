@@ -22,9 +22,14 @@ export const websitesTable = sqliteTable("websites", {
 
     // if false, the website will use websiteStoreMapTable to show only selected stores
     // has no connection with marketplace fees, only for store selection
+    // TODO: rename to isAllStoresMode
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
+
+    // TODO: add a new column like isMarketingTeamPartner to validate to use it in queries
+    // most important is order placing details and frontend/backend calculations
     defaultMarketplaceFee: text("default_marketplace_fee", { mode: 'json' }).$type<ServiceFee>(),
 
+    // TODO: rename to isSupportTeamPartner
     isPartner: integer("is_partner", { mode: "boolean" }).notNull().default(false), // only can be updated by db admin for now
     defaultPartnerFee: text("default_partner_fee", { mode: 'json' }).$type<ServiceFee>(),
 
