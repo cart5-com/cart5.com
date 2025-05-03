@@ -368,7 +368,7 @@ defineExpose({
 
                             <Popover>
                                 <PopoverTrigger as-child>
-                                    <Info class="inline-block ml-2" />
+                                    <Info class="inline-block" />
                                 </PopoverTrigger>
                                 <PopoverContent align="start">
                                     <div class="space-y-2">
@@ -380,7 +380,8 @@ defineExpose({
                                                 <div>{{ fee.currencyShownFee }}</div>
                                             </div>
                                             <div class="text-sm text-muted-foreground">
-                                                {{ feeBreakdownNameMap[fee.type].note }}</div>
+                                                {{ feeBreakdownNameMap[fee.type].note }}
+                                            </div>
                                         </div>
                                     </div>
                                 </PopoverContent>
@@ -435,7 +436,7 @@ defineExpose({
                         Total
                         <Popover>
                             <PopoverTrigger as-child>
-                                <Info class="inline-block mr-2" />
+                                <Info class="inline-block" />
                             </PopoverTrigger>
                             <PopoverContent align="start">
                                 <div class="space-y-2">

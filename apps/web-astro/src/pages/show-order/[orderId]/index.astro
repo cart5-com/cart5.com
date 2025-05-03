@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@web-astro/layout/BaseLayout.astro";
+// import CartContainer from "@web-astro/components/checkout/CartContainer.vue";
+import ShowOrderView from "@web-astro/components/show-order/ShowOrderView.vue";
+const { orderId } = Astro.params;
+---
+
+<BaseLayout title={`order details`}>
+	<ShowOrderView client:only="vue" order-id={orderId} />
+</BaseLayout>

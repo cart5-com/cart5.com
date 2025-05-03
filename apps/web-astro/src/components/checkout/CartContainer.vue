@@ -90,7 +90,7 @@ const placeOrder = async () => {
         toast.error(error.message ?? 'An unknown error occurred');
     } else {
         console.log(data);
-        window.location.href = BASE_LINKS.ORDER_DETAILS(data.newOrderId);
+        window.location.href = BASE_LINKS.SHOW_ORDER(data.newOrderId);
     }
     setTimeout(() => {
         isPlaceOrderLoading.value = false;

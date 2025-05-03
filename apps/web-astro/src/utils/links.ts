@@ -13,7 +13,7 @@ export const BASE_LINKS = {
     CONFIRM_INFO: function (id: string, slug?: string) {
         return `/confirm-info/${id}${slug ? `/${slug}` : ""}`;
     },
-    ORDER_DETAILS: function (id: string) {
-        return `/order/${id}`;
+    SHOW_ORDER: function (id: string) {
+        return `/show-order/${id}`;
     },
 }
