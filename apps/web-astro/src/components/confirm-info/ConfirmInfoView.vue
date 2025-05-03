@@ -33,15 +33,17 @@ const storeName = window.storeData?.name;
             <UserMenu />
         </div>
         <div v-else>
-            <div class="flex justify-between items-center">
-                <Button variant="outline"
-                        as="a"
-                        :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
-                        class="w-full mr-4">
-                    <ChevronLeft class="inline-block mr-2" />
-                    Back to {{ storeName }}
-                </Button>
-                <OrderTypeWidget />
+            <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap no-scrollbar">
+                <div class="flex justify-between items-center  sm:flex-row flex-col">
+                    <Button variant="outline"
+                            as="a"
+                            :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
+                            class="w-full mr-4">
+                        <ChevronLeft class="inline-block mr-2" />
+                        Back to {{ storeName }}
+                    </Button>
+                    <OrderTypeWidget />
+                </div>
             </div>
 
             <div class="mt-8">
