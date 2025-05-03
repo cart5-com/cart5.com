@@ -1,0 +1,32 @@
+CREATE TABLE `orders` (
+	`created_at_ts` integer NOT NULL,
+	`updated_at_ts` integer NOT NULL,
+	`order_id` text PRIMARY KEY NOT NULL,
+	`short_otp` text NOT NULL,
+	`order_type` text,
+	`order_note` text,
+	`order_status` text DEFAULT 'CREATED' NOT NULL,
+	`user_id` text NOT NULL,
+	`user_email` text,
+	`user_verified_phone_number` text,
+	`website_id` text NOT NULL,
+	`website_default_hostname` text NOT NULL,
+	`support_team_website_id` text,
+	`support_team_website_default_hostname` text,
+	`store_id` text NOT NULL,
+	`store_name` text,
+	`store_address1` text,
+	`store_location_lat` real,
+	`store_location_lng` real,
+	`pickup_nickname` text,
+	`payment_id` text,
+	`is_online_payment` integer,
+	`final_amount` real,
+	`ordered_items_json` text,
+	`subtotal_json` text,
+	`cart_breakdown_json` text,
+	`delivery_address_json` text,
+	`tax_settings_json` text
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `orders_order_id_unique` ON `orders` (`order_id`);

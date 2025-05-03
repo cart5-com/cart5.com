@@ -1,17 +1,22 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { ORDER_TYPE } from "@lib/types/orderType";
 import { ORDER_STATUS } from "@lib/types/orderStatus";
 import { generateKey } from "@lib/utils/generateKey";
 import { generateOTPJsOnly } from "@api-hono/utils/generateRandomOtp";
+import type { OrderedItemsType } from "@lib/types/orderedItemsType";
+import type { calculateSubTotal } from "@lib/utils/calculateSubTotal";
+import type { calculateCartBreakdown } from "@lib/utils/calculateCartBreakdown";
+import type { AddressType } from "@lib/zod/userAddressSchema";
+import type { TaxSettings } from "@lib/zod/taxSchema";
 
 export const orderTable = sqliteTable("orders", {
     ...autoCreatedUpdated,
-    id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('ord')),
+    orderId: text("order_id").notNull().primaryKey().unique().$defaultFn(() => generateKey('ord')),
     shortOtp: text("short_otp").notNull().$defaultFn(() => generateOTPJsOnly()),
 
     // Order Details
-    orderType: text("order_type", { enum: ORDER_TYPE }).notNull(),
+    orderType: text("order_type", { enum: ORDER_TYPE }),
     orderNote: text("order_note"),
 
     // Order Status
@@ -19,9 +24,35 @@ export const orderTable = sqliteTable("orders", {
 
     // Customer Information
     userId: text("user_id").notNull(),
-    userEmail: text("user_email"),
+    userEmail: text("user_email").notNull(),
+    userVerifiedPhoneNumbers: text("user_verified_phone_number").notNull(), // .join('|')
 
+    // Website Information
+    websiteId: text("website_id").notNull(),
+    websiteDefaultHostname: text("website_default_hostname").notNull(),
+    supportTeamWebsiteId: text("support_team_website_id"),
+    supportTeamWebsiteDefaultHostname: text("support_team_website_default_hostname"),
 
-    orderedItemsJSON: text("ordered_items_json", { mode: "json" }).notNull(),
+    // Store Information
+    storeId: text("store_id").notNull(),
+    storeName: text("store_name").notNull(),
+    storeAddress1: text("store_address1").notNull(),
+    storeLocationLat: real("store_location_lat").notNull(),
+    storeLocationLng: real("store_location_lng").notNull(),
+
+    // Pickup Information
+    pickupNickname: text("pickup_nickname").notNull(),
+
+    // Payment Information
+    paymentId: text("payment_id").notNull(),
+    isOnlinePayment: integer("is_online_payment", { mode: "boolean" }).notNull().default(false),
+    finalAmount: real("final_amount").notNull(),
+
+    // JSON Data
+    orderedItemsJSON: text("ordered_items_json", { mode: "json" }).$type<OrderedItemsType>(),
+    subtotalJSON: text("subtotal_json", { mode: "json" }).$type<ReturnType<typeof calculateSubTotal>>(),
+    cartBreakdownJSON: text("cart_breakdown_json", { mode: "json" }).$type<ReturnType<typeof calculateCartBreakdown>>(),
+    deliveryAddressJSON: text("delivery_address_json", { mode: "json" }).$type<AddressType>(),
+    taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
 });
 
