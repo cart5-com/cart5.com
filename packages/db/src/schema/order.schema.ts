@@ -3,17 +3,19 @@ import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { ORDER_TYPE } from "@lib/types/orderType";
 import { ORDER_STATUS } from "@lib/types/orderStatus";
 import { generateKey } from "@lib/utils/generateKey";
-import { generateOTPJsOnly } from "@api-hono/utils/generateRandomOtp";
+import { generateNumberOnlyOtp } from "@api-hono/utils/generateRandomOtp";
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import type { calculateSubTotal } from "@lib/utils/calculateSubTotal";
 import type { calculateCartBreakdown } from "@lib/utils/calculateCartBreakdown";
 import type { AddressType } from "@lib/zod/userAddressSchema";
 import type { TaxSettings } from "@lib/zod/taxSchema";
+import type { calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
+import type { PaymentMethodType } from "@lib/types/paymentMethodType";
 
 export const orderTable = sqliteTable("orders", {
     ...autoCreatedUpdated,
     orderId: text("order_id").notNull().primaryKey().unique().$defaultFn(() => generateKey('ord')),
-    shortOtp: text("short_otp").notNull().$defaultFn(() => generateOTPJsOnly()),
+    shortOtp: text("short_otp").notNull().$defaultFn(() => generateNumberOnlyOtp(6)),
 
     // Order Details
     orderType: text("order_type", { enum: ORDER_TYPE }),
@@ -50,7 +52,9 @@ export const orderTable = sqliteTable("orders", {
     finalAmount: real("final_amount").notNull(),
 
     // JSON Data
+    paymentMethodJSON: text("payment_method_json", { mode: "json" }).$type<PaymentMethodType>(),
     orderedItemsJSON: text("ordered_items_json", { mode: "json" }).$type<OrderedItemsType>(),
+    cartTotalsJSON: text("cart_total_json", { mode: "json" }).$type<ReturnType<typeof calculateCartTotalPrice>>(),
     subtotalJSON: text("subtotal_json", { mode: "json" }).$type<ReturnType<typeof calculateSubTotal>>(),
     cartBreakdownJSON: text("cart_breakdown_json", { mode: "json" }).$type<ReturnType<typeof calculateCartBreakdown>>(),
     deliveryAddressJSON: text("delivery_address_json", { mode: "json" }).$type<AddressType>(),

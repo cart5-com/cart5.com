@@ -1,3 +1,4 @@
+import type { PaymentMethodType } from "@lib/types/paymentMethodType";
 import type { CustomPaymentMethod, PhysicalPaymentMethods } from "@lib/zod/paymentMethodsSchema";
 type storeDataType = Awaited<ReturnType<typeof import("@db/services/store.service").getStoreData_Service>>;
 
@@ -22,13 +23,7 @@ export const listAvailablePaymentMethods = (
         }
     }
 
-    const methods: {
-        isOnline: boolean;
-        id: string;
-        name: string;
-        description?: string;
-        icon?: string;
-    }[] = [];
+    const methods: PaymentMethodType[] = [];
 
     if (isStripeEnabled) {
         methods.push({
