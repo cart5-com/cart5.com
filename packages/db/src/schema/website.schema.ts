@@ -22,7 +22,7 @@ export const websitesTable = sqliteTable("websites", {
 
     // if false, the website will use websiteStoreMapTable to show only selected stores
     // has no connection with marketplace fees, only for store selection
-    // TODO: rename to isAllStoresMode
+    // TODO: rename to areAllStoresListedMode
     isMarketplace: integer("is_marketplace", { mode: "boolean" }).notNull().default(true),
 
     // TODO: add a new column like isMarketingTeamPartner to validate to use it in queries
