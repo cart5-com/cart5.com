@@ -7,8 +7,8 @@ export const recursiveCartChildrenItemSummary = (
     customizationState: CartChildrenItemState,
     menuRoot: MenuRoot,
     indentLevel: number = 0,
-    // upperOptionIndex?: number,
-    // upperOptionLength?: number
+    upperOptionIndex?: number,
+    upperOptionLength?: number
 ) => {
     let summary = '';
     if (customizationState.itemId) {
@@ -22,11 +22,12 @@ export const recursiveCartChildrenItemSummary = (
                     if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                         const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                         if (innerOptionItem?.defQ) { // default quantity should be 0 to remove
-                            // let helperText = '';
-                            // if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                            //     helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
-                            // }
-                            newSummary += `${"  ".repeat(indentLevel + 1)}0x ${innerOptionItem?.lbl || ''}\n`;
+                            let helperText = '';
+                            if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
+                                helperText = `[1]:`;
+                                // helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
+                            }
+                            newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                         }
                     }
                 }
@@ -38,11 +39,12 @@ export const recursiveCartChildrenItemSummary = (
 
                     const defaultQuantity = optionItem?.defQ || 0;
                     if (defaultQuantity !== quantity) {
-                        // let helperText = '';
-                        // if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                        //     helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
-                        // }
-                        newSummary += `${"  ".repeat(indentLevel + 1)}${quantity}x ${optionItem?.lbl || ''}\n`;
+                        let helperText = '';
+                        if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
+                            helperText = `[1]:`;
+                            // helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
+                        }
+                        newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}${quantity}x ${optionItem?.lbl || ''}\n`;
                     }
 
 
@@ -53,11 +55,12 @@ export const recursiveCartChildrenItemSummary = (
                                 if (innerCustomization && innerCustomization.cIds && innerCustomization.cIds[optionIndex]) {
                                     const innerOptionItem = menuRoot.allItems?.[innerCustomization.cIds[optionIndex]];
                                     if (innerOptionItem?.defQ) {
-                                        // let helperText = '';
-                                        // if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
-                                        //     helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
-                                        // }
-                                        newSummary += `${"  ".repeat(indentLevel + 1)}0x ${innerOptionItem?.lbl || ''}\n`;
+                                        let helperText = '';
+                                        if (upperOptionIndex && upperOptionLength && upperOptionLength > 1) {
+                                            helperText = `[1]:`;
+                                            // helperText = `[${upperOptionIndex}/${upperOptionLength}]:`;
+                                        }
+                                        newSummary += `${"  ".repeat(indentLevel + 1)}${helperText}0x ${innerOptionItem?.lbl || ''}\n`;
                                     }
                                 }
                             }
@@ -69,8 +72,8 @@ export const recursiveCartChildrenItemSummary = (
                                             deepOptionSetState,
                                             menuRoot,
                                             indentLevel + 1,
-                                            // Number(quantityRepeatedChildStateIndex) + 1,
-                                            // quantity
+                                            Number(quantityRepeatedChildStateIndex) + 1,
+                                            quantity
                                         )
                                     }
                                 }
@@ -93,13 +96,13 @@ export const recursiveCartChildrenItemSummary = (
 
 export const generateCartItemTextSummary = (cartItem: CartItem, menuRoot: MenuRoot) => {
     let summary = '';
-    if (cartItem.itemId) {
-        const item = menuRoot.allItems?.[cartItem.itemId];
-        if (item) {
-            // summary += (cartItem.quantity || 1) + 'x ' + item.lbl + '\n';
-            // summary += `${cartItem.quantity || 1}x ${item.lbl}\n`;
-        }
-    }
+    // if (cartItem.itemId) {
+    //     const item = menuRoot.allItems?.[cartItem.itemId];
+    //     if (item) {
+    //         // summary += (cartItem.quantity || 1) + 'x ' + item.lbl + '\n';
+    //         // summary += `${cartItem.quantity || 1}x ${item.lbl}\n`;
+    //     }
+    // }
     if (cartItem.childrenState) {
         for (const index in cartItem.childrenState) {
             const optionSetState = cartItem.childrenState[index];

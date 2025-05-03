@@ -11,10 +11,14 @@ export const verifyCartItemState = (
     if (cartItem.quantity && cartItem.quantity > 100) {
         return false;
     }
+    const item = menuRoot.allItems?.[cartItem.itemId!];
     if (cartItem.childrenState) {
         for (const index in cartItem.childrenState) {
             const optionSetState = cartItem.childrenState[index];
-            if (optionSetState) {
+            if (optionSetState && optionSetState?.itemId) {
+                if (!item?.cIds?.includes(optionSetState?.itemId)) {
+                    return false;
+                }
                 return verifyRecursiveChildrenState(optionSetState, menuRoot)
             }
         }
@@ -50,6 +54,9 @@ const verifyRecursiveChildrenState = (
             if (customizationState.childrenState) {
                 for (const optionIndex in customizationState.childrenState) {
                     if (customizationState.childrenState[optionIndex]?.itemId) {
+                        if (!item?.cIds?.includes(customizationState.childrenState[optionIndex]?.itemId)) {
+                            return false;
+                        }
                         const optionItem = menuRoot.allItems?.[customizationState.childrenState[optionIndex]?.itemId!];
                         if (optionItem) {
                             if (optionItem.maxQ) {

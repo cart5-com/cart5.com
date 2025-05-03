@@ -30,13 +30,18 @@ export const placeOrderRoute = async (c: Context<
     }
     const newOrderId = generateKey('ord');
     const { order, carts } = await generateOrderData_Service(user, host, storeId, origin);
-    // const orderData =
+    // save order data
     await updateOrderData_Service(newOrderId, order);
+
+    // delete cart current cart
     const cartId = generateCartId(host ?? '', storeId);
     delete carts?.[cartId];
     await updateUserData_Service(user.id, { carts });
 
+
     // TODO: if stripe return checkout url,
+
+    // TODO: send email notification to user once store approves/rejects order
     return c.json({
         data: {
             newOrderId
