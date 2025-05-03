@@ -59,6 +59,7 @@ export const generateOrderData_Service = async (
     user: User,
     host: string,
     storeId: string,
+    origin: string
 ) => {
     const userData = await getUserData_Service(user.id, {
         rememberLastAddress: true,
@@ -171,30 +172,33 @@ export const generateOrderData_Service = async (
     const subtotalJSON = subTotalWithDeliveryAndServiceFees;
 
     return {
-        userId: user.id,
-        userEmail: user.email,
-        userVerifiedPhoneNumbers: userVerifiedPhoneNumbers.map(phone => phone.phoneNumber).join('|'),
-        websiteId: WEBSITE.id,
-        websiteDefaultHostname: WEBSITE.defaultHostname,
-        supportTeamWebsiteId: supportTeamWebsite?.id,
-        supportTeamWebsiteDefaultHostname: supportTeamWebsite?.defaultHostname,
-        storeId,
-        orderType: currentOrderType,
-        pickupNickname,
-        storeLocationLat: storeLocation.lat,
-        storeLocationLng: storeLocation.lng,
-        storeName: storeData?.name,
-        storeAddress1: storeData?.address?.address1 ?? '',
-        paymentId: userData?.rememberLastPaymentMethodId ?? '',
-        currentPaymentMethod,
-        isOnlinePayment: currentPaymentMethod.isOnline,
-        orderNote: currentCart.orderNote,
-        finalAmount: cartBreakdown.buyerPays,
-        // JSONs
-        orderedItemsJSON: orderedItems,
-        subtotalJSON,
-        cartBreakdownJSON: cartBreakdown,
-        deliveryAddressJSON: deliveryAddress,
-        taxSettingsJSON: taxSettings,
+        order: {
+            userId: user.id,
+            userEmail: user.email,
+            userVerifiedPhoneNumbers: userVerifiedPhoneNumbers.map(phone => phone.phoneNumber).join('|'),
+            websiteId: WEBSITE.id,
+            websiteDefaultHostname: WEBSITE.defaultHostname,
+            supportTeamWebsiteId: supportTeamWebsite?.id,
+            supportTeamWebsiteDefaultHostname: supportTeamWebsite?.defaultHostname,
+            storeId,
+            orderType: currentOrderType,
+            pickupNickname,
+            storeLocationLat: storeLocation.lat,
+            storeLocationLng: storeLocation.lng,
+            storeName: storeData?.name,
+            storeAddress1: storeData?.address?.address1 ?? '',
+            paymentId: userData?.rememberLastPaymentMethodId ?? '',
+            currentPaymentMethod,
+            isOnlinePayment: currentPaymentMethod.isOnline,
+            orderNote: currentCart.orderNote,
+            finalAmount: cartBreakdown.buyerPays,
+            // JSONs
+            orderedItemsJSON: orderedItems,
+            subtotalJSON,
+            cartBreakdownJSON: cartBreakdown,
+            deliveryAddressJSON: deliveryAddress,
+            taxSettingsJSON: taxSettings,
+        },
+        carts: userData?.carts
     }
 }

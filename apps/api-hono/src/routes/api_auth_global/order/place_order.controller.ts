@@ -3,6 +3,8 @@ import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { generateOrderData_Service, updateOrderData_Service } from '@db/services/order.service';
 import { generateKey } from '@lib/utils/generateKey';
+import { generateCartId } from '@lib/utils/generateCartId';
+import { updateUserData_Service } from '@db/services/user_data.service';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -26,9 +28,19 @@ export const placeOrderRoute = async (c: Context<
     if (user.hasVerifiedPhoneNumber === 0) {
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
     }
-    const order = await updateOrderData_Service(generateKey('ord'), await generateOrderData_Service(user, host, storeId));
+    const newOrderId = generateKey('ord');
+    const { order, carts } = await generateOrderData_Service(user, host, storeId, origin);
+    // const orderData =
+    await updateOrderData_Service(newOrderId, order);
+    const cartId = generateCartId(host ?? '', storeId);
+    delete carts?.[cartId];
+    await updateUserData_Service(user.id, { carts });
+
+    // TODO: if stripe return checkout url,
     return c.json({
-        data: order,
+        data: {
+            newOrderId
+        },
         error: null as ErrorType
     }, 200);
 }

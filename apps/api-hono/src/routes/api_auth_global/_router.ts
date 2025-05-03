@@ -11,6 +11,7 @@ import { getUserDataRoute, getUserData_SchemaValidator } from './user_data/get_u
 import { updateUserDataRoute, updateUserData_SchemaValidator } from './user_data/update_user_data.controller';
 import { phoneRoute } from './phone/_router';
 import { placeOrderRoute } from './order/place_order.controller';
+import { getOrderRoute } from './order/get_order.controller';
 
 export const apiAuthGlobal = new Hono<HonoVariables>()
     .post(
@@ -43,6 +44,10 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
     .post(
         '/:storeId/place_order',
         placeOrderRoute
+    )
+    .get(
+        '/:orderId/details',
+        getOrderRoute
     )
     .route('/phone', phoneRoute)
 
