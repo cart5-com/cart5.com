@@ -28,7 +28,7 @@
 		}
 		handle {
 			header Content-Type application/json
-			respond `{"error": {"message": "An error occurred. Please try again later. status_code:'{err.status_code}' status_text:'{err.status_text}'", "code": "{err.status_code}"}}` {err.status_code}
+			respond `{"error": {"message": "An error occurred. Please try again later. status_code:'{err.status_code}' status_text:'{err.status_text}' (dev help:check your docker ports)", "code": "{err.status_code}"}}` {err.status_code}
 		}
 	}
 }
