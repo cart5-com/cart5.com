@@ -125,13 +125,12 @@ export const r2PurgeCache = async (urls: string[]) => {
             "files": urls
         })
     })
-    console.log("Purge cache response:", await res.text());
-    console.log("Purge cache response:");
+    return await res.text();
 }
 
 export const cfPurgeAllEdgeCache = async () => {
     const purgeUrl = `https://api.cloudflare.com/client/v4/zones/${getEnvVariable("CLOUDFLARE_PURGE_CACHE_ZONE_ID")}/purge_cache`
-    const res = await fetch(purgeUrl, {
+    return await (await fetch(purgeUrl, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${getEnvVariable("CLOUDFLARE_PURGE_CACHE_TOKEN")}`,
@@ -140,8 +139,7 @@ export const cfPurgeAllEdgeCache = async () => {
         body: JSON.stringify({
             "purge_everything": true
         })
-    })
-    console.log("Purge all cache response:", await res.text());
+    })).text()
 }
 
 /*/
