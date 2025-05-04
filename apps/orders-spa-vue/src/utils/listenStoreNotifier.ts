@@ -1,11 +1,12 @@
 import { createOrdersApiClient } from '@api-client/orders';
+import { ref } from 'vue';
 
 // Map of store IDs to their EventSource instances
-export const storeEventSources = new Map<string, EventSource>();
+export const storeEventSources = ref<Map<string, EventSource>>(new Map());
 
 export const listenStoreNotifier = (storeId: string) => {
     // Don't create duplicate connections
-    if (storeEventSources.has(storeId)) return;
+    if (storeEventSources.value.has(storeId)) return;
 
     const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].notify.$url({
         param: {
@@ -34,21 +35,21 @@ export const listenStoreNotifier = (storeId: string) => {
         }, 30_000);
     };
 
-    storeEventSources.set(storeId, eventSource);
+    storeEventSources.value.set(storeId, eventSource);
 }
 
 export const disconnectStore = (storeId: string) => {
-    const eventSource = storeEventSources.get(storeId);
+    const eventSource = storeEventSources.value.get(storeId);
     if (eventSource) {
         eventSource.close();
-        storeEventSources.delete(storeId);
+        storeEventSources.value.delete(storeId);
     }
-    console.log(`Store ${storeId} disconnected`, storeEventSources);
+    console.log(`Store ${storeId} disconnected`, storeEventSources.value);
 }
 
 export const disconnectAllStores = () => {
-    for (const [_storeId, eventSource] of storeEventSources.entries()) {
+    for (const [_storeId, eventSource] of storeEventSources.value.entries()) {
         eventSource.close();
     }
-    storeEventSources.clear();
+    storeEventSources.value.clear();
 }

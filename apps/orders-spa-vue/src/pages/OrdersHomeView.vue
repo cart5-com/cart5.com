@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
+import { storeEventSources } from "@orders-spa-vue/utils/listenStoreNotifier";
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -47,6 +48,12 @@ const reload = () => {
                     @click="reload()">
                 Refresh this page once you are a manager
             </Button>
+        </div>
+        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
+             v-if="myStores.length > 0 && storeEventSources.size === 0 && !isMyStoresLoading">
+            You are not listening to any stores.
+            <br>
+            Please enable below to start getting new orders.
         </div>
         <div class="mb-4"
              v-if="myStores.length > 9 || IS_DEV">
