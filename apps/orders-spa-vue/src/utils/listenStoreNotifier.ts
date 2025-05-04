@@ -43,6 +43,7 @@ export const disconnectStore = (storeId: string) => {
         eventSource.close();
         storeEventSources.delete(storeId);
     }
+    console.log(`Store ${storeId} disconnected`, storeEventSources);
 }
 
 export const disconnectAllStores = () => {

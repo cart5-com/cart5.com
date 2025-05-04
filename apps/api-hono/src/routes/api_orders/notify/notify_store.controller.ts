@@ -50,6 +50,7 @@ export const notifyStore_Handler = async (c: Context<
                 }
                 isActive = false
             })
+
             while (isActive) {
                 try {
                     stream.writeSSE({ data: 'ping' })

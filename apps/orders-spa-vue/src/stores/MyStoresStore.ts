@@ -6,6 +6,11 @@ export type storeListType = ResType<
     typeof dashboardApiClient.store.my_stores.$get
 >["data"];
 
+// type storeListType = {
+//     id: string;
+//     name: string;
+//     address1: string | null;
+// }[]
 
 export const myStores = ref<storeListType>([]);
 export const isMyStoresLoading = ref(true);
@@ -31,7 +36,7 @@ export async function loadMyStores() {
         console.error(response.error)
         return
     } else {
-        myStores.value = response.data
+        myStores.value = response.data.sort((a, b) => a.name.localeCompare(b.name));
     }
     isMyStoresLoading.value = false;
 }

@@ -6,7 +6,8 @@ import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@ord
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { addListeningStore, listeningStores, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
+import { Label } from "@/components/ui/label";
+import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -53,7 +54,7 @@ const reload = () => {
                    placeholder="Search by name or address"
                    class="max-w-sm" />
         </div>
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-h-96 overflow-y-auto">
             <div v-for="store in myStoresFiltered"
                  :key="store.id"
                  class="block">
@@ -66,14 +67,20 @@ const reload = () => {
                         <CardDescription>{{ store.address1 }}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Switch :checked="listeningStores[store.id]?.isEnabled"
-                                @update:checked="($event) => {
-                                    if ($event) {
-                                        addListeningStore(store.id);
-                                    } else {
-                                        removeListeningStore(store.id);
-                                    }
-                                }" />
+                        <div class="flex items-center gap-2">
+                            <Label for="store-{{ store.id }}">
+                                {{ MySettingsStore[store.id]?.isEnabled ? 'Enabled' : 'Disabled' }}
+                            </Label>
+                            <Switch id="store-{{ store.id }}"
+                                    :checked="MySettingsStore[store.id]?.isEnabled"
+                                    @update:checked="($event) => {
+                                        if ($event) {
+                                            addListeningStore(store.id);
+                                        } else {
+                                            removeListeningStore(store.id);
+                                        }
+                                    }" />
+                        </div>
                     </CardFooter>
                 </Card>
             </div>

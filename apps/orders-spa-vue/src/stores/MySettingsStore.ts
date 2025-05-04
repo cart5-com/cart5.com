@@ -1,3 +1,4 @@
+import { listenStoreNotifier, disconnectStore } from '@orders-spa-vue/utils/listenStoreNotifier';
 import { ref, watch } from 'vue';
 
 export type listeningStoresType = {
@@ -6,22 +7,24 @@ export type listeningStoresType = {
 }
 
 // record of storeId to isEnabled
-export const listeningStores = ref<Record<string, listeningStoresType>>({});
+export const MySettingsStore = ref<Record<string, listeningStoresType>>({});
 
 export const addListeningStore = (storeId: string) => {
-    if (!listeningStores.value[storeId]) {
-        listeningStores.value[storeId] = {
+    if (!MySettingsStore.value[storeId]) {
+        MySettingsStore.value[storeId] = {
             storeId,
             isEnabled: true
         };
     } else {
-        listeningStores.value[storeId].storeId = storeId;
-        listeningStores.value[storeId].isEnabled = true;
+        MySettingsStore.value[storeId].storeId = storeId;
+        MySettingsStore.value[storeId].isEnabled = true;
     }
+    listenStoreNotifier(storeId);
 }
 
 export const removeListeningStore = (storeId: string) => {
-    listeningStores.value[storeId].isEnabled = false;
+    MySettingsStore.value[storeId].isEnabled = false;
+    disconnectStore(storeId);
 }
 
 const getLocalStorageKey = () => {
@@ -34,9 +37,16 @@ const getLocalStorageKey = () => {
 function initListeningStores() {
     console.log('initListeningStores');
     if (localStorage.hasOwnProperty(getLocalStorageKey())) {
-        listeningStores.value = JSON.parse(localStorage.getItem(getLocalStorageKey()) || '{}');
+        MySettingsStore.value = JSON.parse(localStorage.getItem(getLocalStorageKey()) || '{}');
     }
-    watch(listeningStores, (newVal) => {
+    for (const storeId in MySettingsStore.value) {
+        if (!MySettingsStore.value[storeId].isEnabled) {
+            disconnectStore(storeId);
+        } else {
+            listenStoreNotifier(storeId);
+        }
+    }
+    watch(MySettingsStore, (newVal) => {
         localStorage.setItem(getLocalStorageKey(), JSON.stringify(newVal));
     }, { deep: true });
 }
