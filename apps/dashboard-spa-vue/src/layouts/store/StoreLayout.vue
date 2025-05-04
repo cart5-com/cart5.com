@@ -35,6 +35,12 @@ const connectToNotifyStore = () => {
     storeEventSource.onerror = (event) => {
         console.log("onerror");
         console.log(event);
+        if (storeEventSource) {
+            storeEventSource.close();
+            setTimeout(() => {
+                connectToNotifyStore();
+            }, 30_000);
+        }
     };
 }
 
