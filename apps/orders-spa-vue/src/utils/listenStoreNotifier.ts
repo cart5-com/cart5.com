@@ -3,7 +3,7 @@ import { createOrdersApiClient } from '@api-client/orders';
 // Map of store IDs to their EventSource instances
 const storeEventSources = new Map<string, EventSource>();
 
-export const connectToNotifyStore = (storeId: string) => {
+export const listenStoreNotifier = (storeId: string) => {
     // Don't create duplicate connections
     if (storeEventSources.has(storeId)) return;
 
@@ -14,7 +14,9 @@ export const connectToNotifyStore = (storeId: string) => {
     })
 
     const eventSource = new EventSource(url.toString());
-
+    eventSource.onopen = () => {
+        console.log(`Store ${storeId} connection opened`);
+    }
     eventSource.onmessage = (event) => {
         if (event.data === 'ping') {
             return
@@ -28,7 +30,7 @@ export const connectToNotifyStore = (storeId: string) => {
 
         disconnectStore(storeId);
         setTimeout(() => {
-            connectToNotifyStore(storeId);
+            listenStoreNotifier(storeId);
         }, 30_000);
     };
 

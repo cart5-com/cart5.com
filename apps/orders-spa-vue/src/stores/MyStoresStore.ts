@@ -8,6 +8,8 @@ export type storeListType = ResType<
 
 
 export const myStores = ref<storeListType>([]);
+export const isMyStoresLoading = ref(true);
+
 export const searchQuery = ref('')
 export const myStoresFiltered = computed(() =>
     myStores.value.filter(store =>
@@ -23,7 +25,7 @@ export const currentStore = computed(() => {
 });
 
 export async function loadMyStores() {
-    console.log('loadMyStores');
+    isMyStoresLoading.value = true;
     const response = await (await dashboardApiClient.store.my_stores.$get()).json()
     if (response.error) {
         console.error(response.error)
@@ -31,6 +33,7 @@ export async function loadMyStores() {
     } else {
         myStores.value = response.data
     }
+    isMyStoresLoading.value = false;
 }
 
 export function setCurrentStoreId(storeId: string) {
