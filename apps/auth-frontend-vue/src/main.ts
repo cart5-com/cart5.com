@@ -79,7 +79,8 @@ refreshUserData().then(() => {
     if (import.meta.env.PROD) {
         Sentry.init({
             app,
-            dsn: "https://ebdb35d9ab81ac229ec1c04dc67518d0@o4509024863518720.ingest.us.sentry.io/4509025435189248"
+            dsn: "https://ebdb35d9ab81ac229ec1c04dc67518d0@o4509024863518720.ingest.us.sentry.io/4509025435189248",
+            sendDefaultPii: true
         });
     }
     app.use(i18n)

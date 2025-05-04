@@ -64,6 +64,11 @@ export default defineConfig({
           changeOrigin: false,
           // rewrite: (path) => path.replace(/^\/dashboard/, '')
         },
+        '/orders/': {
+          target: 'http://127.0.0.1:3005',
+          changeOrigin: false,
+          // rewrite: (path) => path.replace(/^\/dashboard/, '')
+        },
         // '/__p_ecom': {
         //   target: 'http://127.0.0.1:3003',
         //   changeOrigin: false,

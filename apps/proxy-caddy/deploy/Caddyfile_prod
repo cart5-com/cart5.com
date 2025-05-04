@@ -62,6 +62,13 @@
 	}
 }
 
+(orders-spa-vue) {
+	handle_path /orders/* {
+		#orders-spa-vue
+		reverse_proxy http://127.0.0.1:3005
+	}
+}
+
 # redirect to HTTPS
 :80 {
 	redir https://{host}{uri}
@@ -87,6 +94,7 @@ https://{$PUBLIC_DOMAIN_NAME} {
 	import handleErrors
 	import api-hono-proxy
 	import dashboard-spa-vue
+	import orders-spa-vue
 	handle_path /* {
 		#web-astro
 		reverse_proxy http://127.0.0.1:3002

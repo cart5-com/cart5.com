@@ -331,7 +331,7 @@ onMounted(() => {
     if (!script) {
         const script = document.createElement('script')
         script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=drawing,geometry&v=weekly`
-        // remove VITE_PUBLIC_GOOGLE_MAPS_JS_LIB_KEY and invalidate from google cloud console
+        // TODO: remove VITE_PUBLIC_GOOGLE_MAPS_JS_LIB_KEY and invalidate from google cloud console
         // script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_PUBLIC_GOOGLE_MAPS_JS_LIB_KEY}&libraries=drawing,geometry&v=weekly`
         script.id = 'google-maps-script'
         document.head.appendChild(script)

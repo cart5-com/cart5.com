@@ -5,13 +5,6 @@
 	}
 }
 
-(dashboard-spa-vue) {
-	handle_path /dashboard/* {
-		#dashboard-spa-vue
-		reverse_proxy http://127.0.0.1:3004
-	}
-}
-
 # redirect to HTTPS
 :80 {
 	redir https://{host}{uri}
@@ -40,12 +33,27 @@ https://auth.{$PUBLIC_DOMAIN_NAME} {
 	}
 }
 
+
 #	https://dashboard.{$PUBLIC_DOMAIN_NAME} {
 #		tls internal
 #		import api-hono-proxy
 #		handle_path /* {
 #			#auth-frontend-vue
 #			reverse_proxy http://127.0.0.1:3004
+#		}
+#	}
+
+#	(dashboard-spa-vue) {
+#		handle_path /dashboard/* {
+#			#dashboard-spa-vue
+#			reverse_proxy http://127.0.0.1:3004
+#		}
+#	}
+#	
+#	(orders-spa-vue) {
+#		handle_path /orders/* {
+#			#orders-spa-vue
+#			reverse_proxy http://127.0.0.1:3005
 #		}
 #	}
 
@@ -79,7 +87,10 @@ www.pubo-store.com,
 :443 {
 	tls internal
 	import api-hono-proxy
+	# dev server proxy managed in apps/web-astro/astro.config.mjs, not here
+	# because I could not fix hot module replacement with caddy proxy
 	# import dashboard-spa-vue
+	# import orders-spa-vue
 	handle_path /* {
 		#web-astro
 		reverse_proxy http://127.0.0.1:3002
