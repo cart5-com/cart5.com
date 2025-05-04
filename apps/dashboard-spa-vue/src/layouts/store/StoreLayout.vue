@@ -18,6 +18,7 @@ setCurrentStoreId(storeId as string);
 
 let storeEventSource: EventSource | null = null
 const connectToNotifyStore = () => {
+    // const connectToNotifyStore = () => {
     console.log("connectToNotifyStore")
     const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].notify.$url({
         param: {
