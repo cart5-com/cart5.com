@@ -1,12 +1,16 @@
 import { createOrdersApiClient } from '@api-client/orders';
+import { MySettingsStore } from '@orders-spa-vue/stores/MySettingsStore';
 import { ref } from 'vue';
 
 // Map of store IDs to their EventSource instances
 export const storeEventSources = ref<Map<string, EventSource>>(new Map());
+export const hasConnectionError = ref<boolean>(false);
 
 export const listenStoreNotifier = (storeId: string) => {
     // Don't create duplicate connections
     if (storeEventSources.value.has(storeId)) return;
+
+    if (!MySettingsStore.value[storeId]?.isEnabled) return;
 
     const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].notify.$url({
         param: {
@@ -28,11 +32,12 @@ export const listenStoreNotifier = (storeId: string) => {
     eventSource.onerror = (event) => {
         console.log(`Store ${storeId} connection error`);
         console.log(event);
-
+        hasConnectionError.value = true;
         disconnectStore(storeId);
         setTimeout(() => {
+            hasConnectionError.value = false;
             listenStoreNotifier(storeId);
-        }, 30_000);
+        }, import.meta.env.DEV ? 3_000 : 30_000);
     };
 
     storeEventSources.value.set(storeId, eventSource);

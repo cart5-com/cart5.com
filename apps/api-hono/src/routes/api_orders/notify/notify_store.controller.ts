@@ -3,6 +3,8 @@ import { type Context } from 'hono'
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR } from '@lib/types/errors';
 
+// This is not scalable, but it is ok for now
+// maybe we can create an internal webhook for this later?
 const stores_Connections = new Map<string, Map<string, SSEStreamingApi>>()
 
 export const sendNotifyToStore = (storeId: string, data: any) => {
@@ -70,37 +72,3 @@ export const notifyStore_Handler = async (c: Context<
         }
     )
 }
-
-// export const notifyStore_Handler = async (c: Context<
-//     HonoVariables
-// >) => {
-//     const storeId = c.req.param('storeId');
-//     if (!storeId) {
-//         throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
-//     }
-
-//     return streamSSE(
-//         c,
-//         async (stream: SSEStreamingApi) => {
-//             // await stream.write(
-//             //     new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f])
-//             // )
-//             // while (true) {
-//             //     const message = `It is ${new Date().toISOString()}`
-//             //     await stream.writeSSE({
-//             //         data: message,
-//             //         event: 'time-update',
-//             //         id: String(),
-//             //     })
-//             //     await stream.sleep(1000)
-//             // }
-
-//         },
-//         (e, stream) => {
-//             console.log('streamSSE onError!')
-//             console.error(e)
-//             stream.writeln('An error occurred!')
-//             return Promise.resolve()
-//         }
-//     )
-// }

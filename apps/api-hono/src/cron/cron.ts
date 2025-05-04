@@ -4,7 +4,7 @@ import { cfPurgeAllEdgeCache } from "@lib/upload/r2actions";
 import { listAndUploadAllUpdatedStores } from "@db/cache_json/store.cache_json";
 
 const runCron = getEnvVariable("RUN_CRON");
-
+// This is not scalable, but it is ok for now
 export const startCrons = async () => {
     if (runCron !== "1") {
         console.log("Cron is not running 💤");

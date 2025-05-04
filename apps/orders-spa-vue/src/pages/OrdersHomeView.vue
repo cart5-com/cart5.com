@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2, Store } from "lucide-vue-next";
+import { AlertCircle, Loader2, Store } from "lucide-vue-next";
 import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
-import { storeEventSources } from "@orders-spa-vue/utils/listenStoreNotifier";
+import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -49,11 +49,21 @@ const reload = () => {
                 Refresh this page once you are a manager
             </Button>
         </div>
+
         <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
-             v-if="myStores.length > 0 && storeEventSources.size === 0 && !isMyStoresLoading">
+             v-if="myStores.length > 0 && !hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
             You are not listening to any stores.
             <br>
             Please enable below to start getting new orders.
+        </div>
+        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
+             v-if="myStores.length > 0 && hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
+            Connection error, will try to reconnect in 30 seconds.
+        </div>
+        <div class="mb-4 border border-bg-foreground rounded-md p-4 font-bold"
+             v-else>
+            <AlertCircle class="mr-2 inline-block" />
+            Keep open this tab to receive new orders in real time.
         </div>
         <div class="mb-4"
              v-if="myStores.length > 9 || IS_DEV">
