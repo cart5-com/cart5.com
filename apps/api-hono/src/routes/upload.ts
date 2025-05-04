@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import type { HonoVariables } from "../types/HonoVariables";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { r2ImgUpload } from "@lib/upload/r2actions";
+// import { r2ImgUpload } from "@lib/upload/r2actions";
 const MAX_FILE_SIZE = 5_242_880; // 5MB (5 * 1024 * 1024)
 const MAX_FILE_SIZE_MB = 5;
 
