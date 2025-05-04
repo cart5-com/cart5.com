@@ -1,0 +1,87 @@
+import { SSEStreamingApi, streamSSE } from 'hono/streaming'
+import { type Context } from 'hono'
+import type { HonoVariables } from "@api-hono/types/HonoVariables";
+import { KNOWN_ERROR } from '@lib/types/errors';
+
+const stores_Connections = new Map<string, Map<string, SSEStreamingApi>>()
+
+export const sendNotifyToStore = (storeId: string, data: any) => {
+    const storeConnections = stores_Connections.get(storeId);
+    if (storeConnections) {
+        storeConnections.forEach((stream) => {
+            try {
+                stream.writeSSE({
+                    data: JSON.stringify(data),
+                    // event: 'new-order',
+                })
+            } catch (e) {
+                console.error("stream error", storeId, stream)
+                console.error(e)
+            }
+        });
+    }
+}
+
+export const notifyStore_Handler = async (c: Context<
+    HonoVariables
+>) => {
+    const storeId = c.req.param('storeId');
+    if (!storeId) {
+        throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
+    }
+    const clientId = crypto.randomUUID()
+    return streamSSE(
+        c,
+        async (stream) => {
+            if (!stores_Connections.has(storeId)) {
+                stores_Connections.set(storeId, new Map())
+            }
+            stores_Connections.get(storeId)?.set(clientId, stream)
+            stream.onAbort(() => {
+                stores_Connections.get(storeId)?.delete(clientId)
+            })
+            await stream.sleep(600_000)
+        },
+        (e, stream) => {
+            stores_Connections.get(storeId)?.delete(clientId)
+            console.log('streamSSE onError!')
+            console.error(e)
+            stream.writeln('An error occurred11!')
+            return Promise.resolve()
+        }
+    )
+}
+
+// export const notifyStore_Handler = async (c: Context<
+//     HonoVariables
+// >) => {
+//     const storeId = c.req.param('storeId');
+//     if (!storeId) {
+//         throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
+//     }
+
+//     return streamSSE(
+//         c,
+//         async (stream: SSEStreamingApi) => {
+//             // await stream.write(
+//             //     new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f])
+//             // )
+//             // while (true) {
+//             //     const message = `It is ${new Date().toISOString()}`
+//             //     await stream.writeSSE({
+//             //         data: message,
+//             //         event: 'time-update',
+//             //         id: String(),
+//             //     })
+//             //     await stream.sleep(1000)
+//             // }
+
+//         },
+//         (e, stream) => {
+//             console.log('streamSSE onError!')
+//             console.error(e)
+//             stream.writeln('An error occurred!')
+//             return Promise.resolve()
+//         }
+//     )
+// }

@@ -16,6 +16,7 @@ import { apiDashboard } from './routes/api_dashboard/_router';
 import { apiGMaps } from './routes/gmaps/mapsRoute.controller';
 import { validateDomainForTLS } from './routes/validate_domain';
 import { apiUpload } from '@api-hono/routes/upload';
+import { apiOrders } from './routes/api_orders/_router';
 
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
@@ -40,7 +41,7 @@ app.route('/auth', apiAuth)
 app.route('/auth_global', apiAuthGlobal)
 app.route('/dashboard', apiDashboard)
 app.route('/gmaps', apiGMaps)
-
+app.route('/orders', apiOrders)
 
 const port = 3000;
 export let server: ReturnType<typeof serve>;

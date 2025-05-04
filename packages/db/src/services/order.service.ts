@@ -87,6 +87,7 @@ export const generateOrderData_Service = async (
     const storeData = await getStoreData_CacheJSON(storeId);
     const { menuRoot, taxSettings, currentPaymentMethod } = checkStoreDataBeforePlacingOrder(storeData, currentOrderType, userData);
     const orderedItems: OrderedItemsType = [];
+    // TODO: should I save cart state to have a reorder button?
     currentCart.items?.forEach((item: CartItem) => {
         const menuItem = menuRoot.allItems?.[item.itemId!];
         if (menuItem && menuItem.lbl) {

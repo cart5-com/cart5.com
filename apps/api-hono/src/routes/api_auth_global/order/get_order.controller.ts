@@ -18,7 +18,7 @@ export const getOrderRoute = async (c: Context<
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
     }
-
+    // TODO: should I select only userId to check permission/ then select all fields?
     const order = await getOrderData_Service(orderId);
     if (!order) {
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");

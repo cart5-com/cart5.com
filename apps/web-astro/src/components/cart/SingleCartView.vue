@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import CartView from "@web-astro/components/checkout/CartView.vue";
+import { authGlobalApiClient } from "@api-client/auth_global";
 
 const currentCart = computed(() => {
   return userDataStore.value.userData?.carts?.[genCartId(window.storeData?.id!)];
@@ -16,7 +17,18 @@ const currentCart = computed(() => {
 const removeAllItemsFromCart = () => {
   clearCartByStoreId(currentCart.value?.storeId!);
 }
-
+const fakePlaceOrder = async () => {
+  const { data, error } = await (await authGlobalApiClient[':storeId'].fake_place_order.$post({
+    param: {
+      storeId: window.storeData?.id ?? '',
+    },
+  })).json();
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(data);
+  }
+}
 
 </script>
 
@@ -74,8 +86,8 @@ const removeAllItemsFromCart = () => {
         Click
         <Plus class="inline-block border border-foreground rounded-md" />
         to add items to cart
+        <button @click="fakePlaceOrder">.</button>
       </div>
     </div>
-
   </div>
 </template>
