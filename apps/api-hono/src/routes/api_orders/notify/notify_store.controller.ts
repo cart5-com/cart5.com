@@ -57,7 +57,7 @@ export const notifyStore_Handler = async (c: Context<
                     isActive = false
                     break
                 }
-                await stream.sleep(60_000)
+                await stream.sleep(30_000)
             }
         },
         (e, stream) => {
