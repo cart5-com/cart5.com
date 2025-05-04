@@ -37,11 +37,13 @@ export const notifyStore_Handler = async (c: Context<
                 stores_Connections.set(storeId, new Map())
             }
             stores_Connections.get(storeId)?.set(clientId, stream)
+            let isActive = true
             stream.onAbort(() => {
                 stores_Connections.get(storeId)?.delete(clientId)
+                isActive = false
             })
-            while (true) {
-                await stream.sleep(600_000)
+            while (isActive) {
+                await stream.sleep(60_000)
             }
         },
         (e, stream) => {
