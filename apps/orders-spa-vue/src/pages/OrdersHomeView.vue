@@ -45,7 +45,7 @@ const reload = () => {
             <Button class=""
                     variant="outline"
                     @click="reload()">
-                Refresh to check again
+                Refresh this page once you are a manager
             </Button>
         </div>
         <div class="mb-4"

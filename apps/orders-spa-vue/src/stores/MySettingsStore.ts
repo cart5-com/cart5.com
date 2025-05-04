@@ -1,6 +1,7 @@
 import { listenStoreNotifier, disconnectStore } from '@orders-spa-vue/utils/listenStoreNotifier';
 import { ref, watch } from 'vue';
 
+// TODO: do I need more details than a boolean?
 export type listeningStoresType = {
     storeId: string;
     isEnabled: boolean;
@@ -39,13 +40,12 @@ function initListeningStores() {
     if (localStorage.hasOwnProperty(getLocalStorageKey())) {
         MySettingsStore.value = JSON.parse(localStorage.getItem(getLocalStorageKey()) || '{}');
     }
-    for (const storeId in MySettingsStore.value) {
-        if (!MySettingsStore.value[storeId].isEnabled) {
-            disconnectStore(storeId);
-        } else {
-            listenStoreNotifier(storeId);
-        }
-    }
+    // for (const storeId in MySettingsStore.value) {
+    //     if (MySettingsStore.value[storeId].isEnabled) {
+    //         listenStoreNotifier(storeId);
+    //     }
+    // }
+
     watch(MySettingsStore, (newVal) => {
         localStorage.setItem(getLocalStorageKey(), JSON.stringify(newVal));
     }, { deep: true });

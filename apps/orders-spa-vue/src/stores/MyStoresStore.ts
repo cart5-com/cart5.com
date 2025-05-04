@@ -1,16 +1,12 @@
 import { ref, computed } from 'vue'
 import { type ResType } from '@api-client/typeUtils';
 import { dashboardApiClient } from '@api-client/dashboard';
+import { MySettingsStore } from '@orders-spa-vue/stores/MySettingsStore';
+import { listenStoreNotifier } from '@orders-spa-vue/utils/listenStoreNotifier';
 
 export type storeListType = ResType<
     typeof dashboardApiClient.store.my_stores.$get
 >["data"];
-
-// type storeListType = {
-//     id: string;
-//     name: string;
-//     address1: string | null;
-// }[]
 
 export const myStores = ref<storeListType>([]);
 export const isMyStoresLoading = ref(true);
@@ -36,7 +32,17 @@ export async function loadMyStores() {
         console.error(response.error)
         return
     } else {
-        myStores.value = response.data.sort((a, b) => a.name.localeCompare(b.name));
+        myStores.value = response.data.filter(store => store.id === 'str_4_4_4').sort((
+            a,
+            // _b
+        ) => {
+            return MySettingsStore.value[a.id]?.isEnabled ? -1 : 1;
+        });
+        for (const store of myStores.value) {
+            if (MySettingsStore.value[store.id]?.isEnabled) {
+                listenStoreNotifier(store.id);
+            }
+        }
     }
     isMyStoresLoading.value = false;
 }

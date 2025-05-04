@@ -1,7 +1,7 @@
 import { createOrdersApiClient } from '@api-client/orders';
 
 // Map of store IDs to their EventSource instances
-const storeEventSources = new Map<string, EventSource>();
+export const storeEventSources = new Map<string, EventSource>();
 
 export const listenStoreNotifier = (storeId: string) => {
     // Don't create duplicate connections
