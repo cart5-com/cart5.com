@@ -22,7 +22,7 @@ const IS_DEV = import.meta.env.DEV;
             </div>
         </div>
         <div class="mb-4"
-             v-if="myStores.length > 3 || IS_DEV">
+             v-if="myStores.length > 9 || IS_DEV">
             <Input v-model="searchQuery"
                    placeholder="Search by name or address"
                    class="max-w-sm" />
