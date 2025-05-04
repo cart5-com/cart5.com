@@ -30,6 +30,9 @@ const connectToNotifyStore = () => {
     });
 
     storeEventSource.onmessage = (event) => {
+        if (event.data === 'ping') {
+            return
+        }
         console.log(JSON.parse(event.data));
     };
 

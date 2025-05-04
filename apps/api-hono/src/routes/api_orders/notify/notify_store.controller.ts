@@ -12,7 +12,6 @@ export const sendNotifyToStore = (storeId: string, data: any) => {
             try {
                 stream.writeSSE({
                     data: JSON.stringify(data),
-                    // event: 'new-order',
                 })
             } catch (e) {
                 console.error("stream error", storeId, stream)
@@ -29,6 +28,11 @@ export const notifyStore_Handler = async (c: Context<
     if (!storeId) {
         throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
     }
+    if (stores_Connections.get(storeId)?.size &&
+        stores_Connections.get(storeId)!.size >= 100
+    ) {
+        throw new KNOWN_ERROR("Too many connections", "TOO_MANY_CONNECTIONS");
+    }
     const clientId = crypto.randomUUID()
     return streamSSE(
         c,
@@ -40,9 +44,19 @@ export const notifyStore_Handler = async (c: Context<
             let isActive = true
             stream.onAbort(() => {
                 stores_Connections.get(storeId)?.delete(clientId)
+                // Clean up empty maps
+                if (stores_Connections.get(storeId)?.size === 0) {
+                    stores_Connections.delete(storeId)
+                }
                 isActive = false
             })
             while (isActive) {
+                try {
+                    stream.writeSSE({ data: 'ping' })
+                } catch (e) {
+                    isActive = false
+                    break
+                }
                 await stream.sleep(60_000)
             }
         },
