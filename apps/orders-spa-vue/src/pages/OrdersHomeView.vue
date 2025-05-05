@@ -11,6 +11,8 @@ import { addListeningStore, MySettingsStore, removeListeningStore } from "@order
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
 import { onMounted } from "vue";
 import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
+import { cachedStoreOrders } from "@orders-spa-vue/stores/RecentOrdersStore";
+import { formatDate } from "@lib/utils/formatDate";
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -121,6 +123,15 @@ onMounted(() => {
                         </div>
                     </CardFooter>
                 </Card>
+            </div>
+        </div>
+
+        <div class="">
+            <div v-for="order in cachedStoreOrders"
+                 :key="order.orderId"
+                 class="block">
+                {{ order.orderId }}
+                {{ formatDate(order.created_at_ts) }}
             </div>
         </div>
     </HeaderOnly>

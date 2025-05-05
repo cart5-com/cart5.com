@@ -41,7 +41,10 @@ export const isOpenNow = function (
         return false;
     }
     const storeTimeNow = getCurrentTimeNow(timezone);
-    const dayOfWeek = storeTimeNow.weekday.toString();
+    let dayOfWeek = storeTimeNow.weekday.toString();
+    if (dayOfWeek === "7") {
+        dayOfWeek = "0";
+    }
 
     // Check current day's hours
     const workingHours = weeklyHours.days?.[dayOfWeek as keyof WeeklySchedule];
@@ -58,7 +61,10 @@ export const isOpenNow = function (
     }
 
     // Check if we're in an overnight period from the previous day
-    const yesterdayDayOfWeek = storeTimeNow.minus({ days: 1 }).weekday.toString();
+    let yesterdayDayOfWeek = storeTimeNow.minus({ days: 1 }).weekday.toString();
+    if (yesterdayDayOfWeek === "7") {
+        yesterdayDayOfWeek = "0";
+    }
     const yesterdayWorkingHours = weeklyHours.days?.[yesterdayDayOfWeek as keyof WeeklySchedule];
 
     if (yesterdayWorkingHours?.hours) {

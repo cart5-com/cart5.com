@@ -2,7 +2,7 @@ import db from "@db/drizzle";
 import { KNOWN_ERROR } from '@lib/types/errors';
 import { orderTable } from "@db/schema/order.schema";
 import type { User } from "@lib/types/UserType";
-import { and, desc, eq, gte } from "drizzle-orm";
+import { and, desc, eq, gte, inArray } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { getUserData_Service } from "./user_data.service";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
@@ -34,10 +34,22 @@ import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 
 export const getOrderData_Service = async (
     orderId: string,
+    userId: string,
     columns?: Partial<Record<keyof typeof orderTable.$inferSelect, boolean>>
 ) => {
     return await db.query.orderTable.findFirst({
-        where: eq(orderTable.orderId, orderId),
+        where: and(eq(orderTable.orderId, orderId), eq(orderTable.userId, userId)),
+        columns: columns,
+    });
+}
+
+export const getStoreOrders_Service = async (
+    storeId: string,
+    orderIds: string[],
+    columns?: Partial<Record<keyof typeof orderTable.$inferSelect, boolean>>
+) => {
+    return await db.query.orderTable.findMany({
+        where: and(eq(orderTable.storeId, storeId), inArray(orderTable.orderId, orderIds)),
         columns: columns,
     });
 }
@@ -64,6 +76,7 @@ export const getRecentOrders_Service = async (
     return await db.query.orderTable.findMany({
         columns: {
             orderId: true,
+            created_at_ts: true,
         },
         where: and(
             eq(orderTable.storeId, storeId),

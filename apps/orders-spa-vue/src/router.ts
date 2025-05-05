@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// TODO: do i need vue-router?
 const router = createRouter({
   scrollBehavior(_to, _from, _savedPosition) {
     if (_savedPosition) {

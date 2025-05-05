@@ -9,10 +9,10 @@ export const playBlankAudioLoop = () => {
             .then(() => {
                 isAbleToPlayAudio.value = true;
             })
-            .catch((error) => {
+            .catch(() => {
                 isAbleToPlayAudio.value = false;
-                console.warn('📣📣📣Audio permission denied📣📣📣');
-                console.error(error);
+                // console.warn('📣📣📣Audio permission denied📣📣📣');
+                // console.error(error);
             });
     }
     playNotificationAudio();
@@ -26,10 +26,10 @@ export const playNotificationAudio = () => {
             .then(() => {
                 isAbleToPlayAudio.value = true;
             })
-            .catch((error) => {
+            .catch(() => {
                 isAbleToPlayAudio.value = false;
-                console.warn('📣📣📣Audio permission denied📣📣📣');
-                console.error(error);
+                // console.warn('📣📣📣Audio permission denied📣📣📣');
+                // console.error(error);
             });
     }
 }

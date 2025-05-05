@@ -275,30 +275,15 @@ importers:
       '@sentry/vue':
         specifier: ^9.8.0
         version: 9.8.0(vue@3.5.13(typescript@5.7.2))
-      '@types/google.maps':
-        specifier: ^3.58.1
-        version: 3.58.1
-      '@types/leaflet':
-        specifier: ^1.9.16
-        version: 1.9.16
-      '@types/leaflet-draw':
-        specifier: ^1.0.11
-        version: 1.0.11
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
-      '@vee-validate/zod':
-        specifier: ^4.14.7
-        version: 4.15.0(vue@3.5.13(typescript@5.7.2))(zod@3.24.2)
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.1(vite@6.2.2(@types/node@22.10.1)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
-      '@vueuse/core':
-        specifier: ^12.0.0
-        version: 12.8.2(typescript@5.7.2)
       api-client:
         specifier: workspace:*
         version: link:../../packages/api-client
@@ -323,9 +308,6 @@ importers:
       ui-shadcn-vue:
         specifier: workspace:*
         version: link:../../packages/ui-shadcn-vue
-      vee-validate:
-        specifier: ^4.14.7
-        version: 4.15.0(vue@3.5.13(typescript@5.7.2))
       vite:
         specifier: ^6.0.5
         version: 6.2.2(@types/node@22.10.1)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)(yaml@2.7.0)
@@ -338,15 +320,9 @@ importers:
       vue-tsc:
         specifier: ^2.2.0
         version: 2.2.8(typescript@5.7.2)
-      vuedraggable:
-        specifier: ^4.1.0
-        version: 4.1.0(vue@3.5.13(typescript@5.7.2))
       wrangler:
         specifier: ^4.3.0
         version: 4.3.0
-      zod:
-        specifier: ^3.23.8
-        version: 3.24.2
 
   apps/proxy-caddy:
     devDependencies:

@@ -4,6 +4,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { generateKey } from '@lib/utils/generateKey';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen/listen_store.controller';
 
+// TODO: remove this, do i need this?
 export const fakePlaceOrderRoute = async (c: Context<
     HonoVariables
 >) => {

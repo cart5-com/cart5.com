@@ -6,12 +6,8 @@ import { getRecentOrders_Service } from '@db/services/order.service';
 export const getRecentOrders_Route = async (c: Context<
     HonoVariables
 >) => {
-    const storeId = c.req.param('storeId');
-    if (!storeId) {
-        throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
-    }
     return c.json({
-        data: await getRecentOrders_Service(storeId),
+        data: await getRecentOrders_Service(c.req.param('storeId')),
         error: null as ErrorType
     }, 200);
 }

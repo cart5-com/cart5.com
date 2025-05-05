@@ -11,6 +11,8 @@ import type { AddressType } from "@lib/zod/userAddressSchema";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import type { calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice";
 import type { PaymentMethodType } from "@lib/types/paymentMethodType";
+// import { z } from 'zod';
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 export const orderTable = sqliteTable("orders", {
     ...autoCreatedUpdated,
@@ -61,3 +63,7 @@ export const orderTable = sqliteTable("orders", {
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
 });
 
+export const selectOrderSchema = createSelectSchema(orderTable);
+// TODO: do I need to update zod for JSON fields?
+// export const insertOrderSchema = createInsertSchema(orderTable, {});
+// export const updateOrderSchema = createUpdateSchema(orderTable, {});
