@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Loader2, Play, Store } from "lucide-vue-next";
+import { AlertCircle, Eye, Loader2, Play, Store } from "lucide-vue-next";
 import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,15 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
 import { cachedStoreOrders } from "@orders-spa-vue/stores/RecentOrdersStore";
 import { formatDate } from "@lib/utils/formatDate";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -22,6 +27,10 @@ const reload = () => {
 
 onMounted(() => {
     playBlankAudioLoop();
+});
+
+const orders = computed(() => {
+    return Object.values(cachedStoreOrders.value).sort((a, b) => b.created_at_ts - a.created_at_ts);
 });
 
 </script>
@@ -127,9 +136,17 @@ onMounted(() => {
         </div>
 
         <div class="">
-            <div v-for="order in cachedStoreOrders"
+            <div v-for="order in orders"
                  :key="order.orderId"
                  class="block">
+                <Popover>
+                    <PopoverTrigger as-child>
+                        <Eye class="inline-block mr-1" />
+                    </PopoverTrigger>
+                    <PopoverContent class="max-w-xl w-full max-h-96 overflow-y-auto">
+                        <pre>{{ order }}</pre>
+                    </PopoverContent>
+                </Popover>
                 {{ order.orderId }}
                 {{ formatDate(order.created_at_ts) }}
             </div>

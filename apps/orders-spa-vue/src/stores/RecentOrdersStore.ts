@@ -9,7 +9,7 @@ const recentOrdersIds = ref<{
     created_at_ts: number;
     orderId: string;
 }[]>([]);
-export const cachedStoreOrders = ref<RecentOrdersType>([]);
+export const cachedStoreOrders = ref<Record<string, RecentOrdersType[number]>>({});
 
 export const loadAndSetRecentOrdersIds = async (storeId: string) => {
     const { data, error } = await (await ordersApiClient[":storeId"].recent_orders.$get({
@@ -22,7 +22,9 @@ export const loadAndSetRecentOrdersIds = async (storeId: string) => {
         const newOrderIds: string[] = [];
         recentOrdersIds.value = data;
         data.forEach((order) => {
-            if (!cachedStoreOrders.value.find((o) => o.orderId === order.orderId)) {
+            // check order updated_at_ts is different from cached order updated_at_ts
+            const cachedOrder = cachedStoreOrders.value[order.orderId];
+            if (!cachedOrder || cachedOrder.updated_at_ts !== order.updated_at_ts) {
                 newOrderIds.push(order.orderId);
             }
         });
@@ -50,8 +52,11 @@ export const loadAndSetRecentOrdersIds = async (storeId: string) => {
                 toast.error(error.message ?? "Error fetching recent orders");
                 return;
             } else {
-                cachedStoreOrders.value = [...data, ...cachedStoreOrders.value]
-                    .sort((a, b) => b.created_at_ts - a.created_at_ts);
+                data.forEach((order) => {
+                    cachedStoreOrders.value[order.orderId] = order;
+                });
+                // cachedStoreOrders.value = [...data, ...cachedStoreOrders.value]
+                //     .sort((a, b) => b.created_at_ts - a.created_at_ts);
             }
         }
     }

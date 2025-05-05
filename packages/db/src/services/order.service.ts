@@ -77,6 +77,7 @@ export const getRecentOrders_Service = async (
         columns: {
             orderId: true,
             created_at_ts: true,
+            updated_at_ts: true,
         },
         where: and(
             eq(orderTable.storeId, storeId),
