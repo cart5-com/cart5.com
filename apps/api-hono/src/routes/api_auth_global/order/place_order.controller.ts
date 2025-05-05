@@ -40,7 +40,6 @@ export const placeOrderRoute = async (c: Context<
     await updateUserData_Service(user.id, { carts });
 
     sendNotificationToStore(storeId, {
-        type: 'order_placed',
         orderId: newOrderId
     });
     // TODO: if stripe return checkout url,

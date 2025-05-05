@@ -48,11 +48,27 @@ export const getStoreOrders_Service = async (
     orderIds: string[],
     columns?: Partial<Record<keyof typeof orderTable.$inferSelect, boolean>>
 ) => {
+    // TODO: is using inArray secure to prevent reading other store's orders?
     return await db.query.orderTable.findMany({
         where: and(eq(orderTable.storeId, storeId), inArray(orderTable.orderId, orderIds)),
         columns: columns,
     });
 }
+
+export const acceptOrder_Service = async (
+    storeId: string,
+    orderId: string
+) => {
+    return await db.update(orderTable).set({ orderStatus: "PREPARING" })
+        .where(
+            and(
+                eq(orderTable.orderId, orderId),
+                eq(orderTable.storeId, storeId),
+                eq(orderTable.orderStatus, "CREATED")
+            )
+        );
+}
+
 
 
 export const updateOrderData_Service = async (

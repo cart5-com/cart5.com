@@ -17,6 +17,7 @@ import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, Di
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SettingsView from "./SettingsView.vue";
+import { OrderStatus } from "@lib/types/orderStatus";
 
 const reload = () => {
     window.location.reload();
@@ -32,13 +33,11 @@ const orders = computed(() => {
 
 const isSettingsDialogOpen = ref(false);
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: OrderStatus) => {
     switch (status) {
         case 'CREATED':
             return 'bg-blue-500';
-        case 'CONFIRMED':
-            return 'bg-green-500';
-        case 'COMPLETED':
+        case 'PREPARING':
             return 'bg-green-700';
         case 'CANCELLED':
             return 'bg-red-500';

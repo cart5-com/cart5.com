@@ -14,7 +14,6 @@ export const fakePlaceOrderRoute = async (c: Context<
     }
     const newOrderId = generateKey('ord');
     sendNotificationToStore(storeId, {
-        type: 'order_placed',
         orderId: newOrderId
     });
     return c.json({
