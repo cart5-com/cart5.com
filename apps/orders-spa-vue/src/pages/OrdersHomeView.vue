@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Ear, Loader2, Store } from "lucide-vue-next";
+import { AlertCircle, Loader2, Play, Store } from "lucide-vue-next";
 import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ onMounted(() => {
             <Button class="mt-2"
                     variant="outline"
                     @click="playBlankAudioLoop()">
-                <Ear class="inline-block mr-1" />
+                <Play class="inline-block mr-1" />
                 Enable audio notifications
             </Button>
         </div>
