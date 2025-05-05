@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Loader2, Store } from "lucide-vue-next";
+import { AlertCircle, Ear, Loader2, Store } from "lucide-vue-next";
 import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,19 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
+import { onMounted, ref } from "vue";
+import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
 
 const IS_DEV = import.meta.env.DEV;
 
 const reload = () => {
     window.location.reload();
 }
+
+
+onMounted(() => {
+    playBlankAudioLoop();
+});
 
 </script>
 
@@ -30,10 +37,25 @@ const reload = () => {
                     below.</p>
             </div>
         </div> -->
+
         <div v-if="isMyStoresLoading">
             <div class="flex justify-center items-center h-screen">
                 <Loader2 class="w-20 h-20 animate-spin" />
             </div>
+        </div>
+
+        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-2 text-sm"
+             v-if="!isMyStoresLoading && !isAbleToPlayAudio">
+            To enable audio notifications, please click the button
+            <br>
+            or enable the audio permission in your browser settings.
+            <br>
+            <Button class="mt-2"
+                    variant="outline"
+                    @click="playBlankAudioLoop()">
+                <Ear class="inline-block mr-1" />
+                Enable audio notifications
+            </Button>
         </div>
 
         <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"

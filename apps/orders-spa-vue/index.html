@@ -35,10 +35,33 @@
                         background-color: black;
                   }
 
+                  .audio-class {
+                        display: none;
+                        position: absolute;
+                        top: -1000px;
+                        left: -1000px;
+                  }
+
             </style>
       </head>
 
       <body>
+            <audio src="/audio/5-seconds-of-silence.mp3"
+                   webkit-playsinline
+                   preload="auto"
+                   disableWebAudio="true"
+                   loop
+                   autoplay
+                   class="audio-class"
+                   id="blank-loop">
+            </audio>
+            <audio src="/audio/notification.mp3"
+                   webkit-playsinline
+                   preload="auto"
+                   disableWebAudio="true"
+                   class="audio-class"
+                   id="notification-audio">
+            </audio>
             <div id="app"></div>
             <script type="module"
                     src="./src/main.ts"></script>
