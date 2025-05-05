@@ -1,7 +1,7 @@
 import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { ORDER_TYPE } from "@lib/types/orderType";
-import { ORDER_STATUS } from "@lib/types/orderStatus";
+import { ORDER_STATUS, ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { generateKey } from "@lib/utils/generateKey";
 import { generateNumberOnlyOtp } from "@api-hono/utils/generateRandomOtp";
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
@@ -24,7 +24,7 @@ export const orderTable = sqliteTable("orders", {
     orderNote: text("order_note"),
 
     // Order Status
-    orderStatus: text("order_status", { enum: ORDER_STATUS }).notNull().default("CREATED"),
+    orderStatus: text("order_status", { enum: ORDER_STATUS }).notNull().default(ORDER_STATUS_OBJ.CREATED),
 
     // Customer Information
     userId: text("user_id").notNull(),

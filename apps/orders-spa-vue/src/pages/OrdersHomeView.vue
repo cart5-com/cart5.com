@@ -17,7 +17,7 @@ import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, Di
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SettingsView from "./SettingsView.vue";
-import { OrderStatus } from "@lib/types/orderStatus";
+import { OrderStatus, ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { ordersApiClient } from "@api-client/orders";
 import { toast } from "@/ui-plus/sonner";
 
@@ -37,11 +37,11 @@ const isSettingsDialogOpen = ref(false);
 
 const getStatusColor = (status: OrderStatus) => {
     switch (status) {
-        case 'CREATED':
+        case ORDER_STATUS_OBJ.CREATED:
             return 'bg-blue-500';
-        case 'PREPARING':
+        case ORDER_STATUS_OBJ.PREPARING:
             return 'bg-green-700';
-        case 'CANCELLED':
+        case ORDER_STATUS_OBJ.CANCELLED:
             return 'bg-red-500';
         default:
             return 'bg-gray-500';

@@ -31,6 +31,7 @@ import { checkUserDataBeforePlacingOrder, checkStoreDataBeforePlacingOrder, chec
 import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
+import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 
 export const getOrderData_Service = async (
     orderId: string,
@@ -59,12 +60,12 @@ export const acceptOrder_Service = async (
     storeId: string,
     orderId: string
 ) => {
-    return await db.update(orderTable).set({ orderStatus: "PREPARING" })
+    return await db.update(orderTable).set({ orderStatus: ORDER_STATUS_OBJ.PREPARING })
         .where(
             and(
                 eq(orderTable.orderId, orderId),
                 eq(orderTable.storeId, storeId),
-                eq(orderTable.orderStatus, "CREATED")
+                eq(orderTable.orderStatus, ORDER_STATUS_OBJ.CREATED)
             )
         );
 }
