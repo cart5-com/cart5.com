@@ -16,6 +16,3 @@ export const ORDER_STATUS_OBJ = ORDER_STATUS.reduce((acc, status) => {
     acc[status] = status;
     return acc;
 }, {} as Record<OrderStatus, OrderStatus>);
-
-console.log("ORDER_STATUS_OBJ...")
-console.log(ORDER_STATUS_OBJ)
