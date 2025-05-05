@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
 
 const IS_DEV = import.meta.env.DEV;
@@ -17,7 +17,6 @@ const IS_DEV = import.meta.env.DEV;
 const reload = () => {
     window.location.reload();
 }
-
 
 onMounted(() => {
     playBlankAudioLoop();
