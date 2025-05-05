@@ -1,15 +1,10 @@
 <script lang="ts" setup>
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { AlertCircle, Eye, Loader2, Play, Store } from "lucide-vue-next";
-import { myStoresFiltered, myStores, searchQuery, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
+import { AlertCircle, Eye, Loader2, Play, Settings2 } from "lucide-vue-next";
+import { myStores, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
 import { cachedStoreOrders } from "@orders-spa-vue/stores/RecentOrdersStore";
 import { formatDate } from "@lib/utils/formatDate";
@@ -18,8 +13,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-
-const IS_DEV = import.meta.env.DEV;
+import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import SettingsView from "./SettingsView.vue";
 
 const reload = () => {
     window.location.reload();
@@ -32,6 +27,8 @@ onMounted(() => {
 const orders = computed(() => {
     return Object.values(cachedStoreOrders.value).sort((a, b) => b.created_at_ts - a.created_at_ts);
 });
+
+const isSettingsDialogOpen = ref(false);
 
 </script>
 
@@ -84,9 +81,15 @@ const orders = computed(() => {
 
         <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
              v-if="myStores.length > 0 && !hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
-            You are not listening to any stores.
+            There is no store enabled.
             <br>
-            Please enable below to start getting new orders.
+            Please open the settings and enable a store to receive orders in real time.
+            <br>
+            <Button @click="isSettingsDialogOpen = true;"
+                    variant="outline">
+                <Settings2 class="inline-block mr-1" />
+                Settings
+            </Button>
         </div>
         <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
              v-if="myStores.length > 0 && hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
@@ -97,43 +100,33 @@ const orders = computed(() => {
             <AlertCircle class="mr-2 inline-block" />
             Keep open this tab to receive new orders in real time.
         </div>
-        <div class="mb-4"
-             v-if="myStores.length > 9 || IS_DEV">
-            <Input v-model="searchQuery"
-                   placeholder="Search by name or address"
-                   class="max-w-sm" />
-        </div>
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-h-96 overflow-y-auto">
-            <div v-for="store in myStoresFiltered"
-                 :key="store.id"
-                 class="block">
-                <Card class="hover:bg-card/70 transition-colors">
-                    <CardHeader>
-                        <CardTitle class="text-lg">
-                            <Store class="inline-block mr-1" />
-                            {{ store.name }}
-                        </CardTitle>
-                        <CardDescription>{{ store.address1 }}</CardDescription>
-                    </CardHeader>
-                    <CardFooter>
-                        <div class="flex items-center gap-2">
-                            <Label for="store-{{ store.id }}">
-                                {{ MySettingsStore[store.id]?.isEnabled ? 'Enabled' : 'Disabled' }}
-                            </Label>
-                            <Switch id="store-{{ store.id }}"
-                                    :checked="MySettingsStore[store.id]?.isEnabled"
-                                    @update:checked="($event) => {
-                                        if ($event) {
-                                            addListeningStore(store.id);
-                                        } else {
-                                            removeListeningStore(store.id);
-                                        }
-                                    }" />
-                        </div>
-                    </CardFooter>
-                </Card>
-            </div>
-        </div>
+
+        <Dialog v-model:open="isSettingsDialogOpen">
+            <DialogTrigger>
+                <Button variant="outline">
+                    <Settings2 class="inline-block mr-1" />
+                    Settings
+                </Button>
+            </DialogTrigger>
+            <DialogScrollContent class="w-full max-w-7xl">
+                <DialogHeader>
+                    <DialogTitle>Settings</DialogTitle>
+                    <DialogDescription />
+                </DialogHeader>
+
+                <SettingsView />
+
+                <DialogFooter>
+                    <DialogClose as-child>
+                        <Button variant="secondary"
+                                class="w-full">
+                            Close
+                        </Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogScrollContent>
+        </Dialog>
+
 
         <div class="">
             <div v-for="order in orders"
