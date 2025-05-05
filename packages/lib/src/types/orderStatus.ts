@@ -1,8 +1,7 @@
 
 
 export const ORDER_STATUS = [
-    // DO NOT SHOW IN STORE ORDERS UI
-    "PENDING_PAYMENT",   // Initial state when online paid order is created 
+    "PENDING_PAYMENT",   // Initial state when online paid order is created // DO NOT SHOW IN STORE ORDERS UI
     "CREATED",           // created by customer
     "PREPARING",         // Order is being prepared
     "REJECTED",          // Store has rejected the order
