@@ -18,6 +18,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SettingsView from "./SettingsView.vue";
 import { OrderStatus } from "@lib/types/orderStatus";
+import { ordersApiClient } from "@api-client/orders";
+import { toast } from "@/ui-plus/sonner";
 
 const reload = () => {
     window.location.reload();
@@ -46,13 +48,23 @@ const getStatusColor = (status: OrderStatus) => {
     }
 }
 
-const handleAccept = (orderId: string) => {
+const handleAccept = async (orderId: string, storeId: string) => {
     console.log('Accept order', orderId);
     // Implement accept logic
+    const { data, error } = await (await ordersApiClient[":storeId"].accept_order.$post({
+        param: { storeId },
+        json: { orderId }
+    })).json();
+    if (error) {
+        toast.error(error.message ?? "Error accepting order");
+    } else {
+        console.log(data)
+        console.log('Accept order', data);
+    }
 }
 
-const handleReject = (orderId: string) => {
-    console.log('Reject order', orderId);
+const handleReject = (orderId: string, storeId: string) => {
+    console.log('Reject order', orderId, storeId);
     // Implement reject logic
 }
 
@@ -189,13 +201,13 @@ const handleReject = (orderId: string) => {
                                 <div v-if="order.orderStatus === 'CREATED'"
                                      class="flex gap-2">
                                     <Button size="sm"
-                                            @click="handleAccept(order.orderId)">
+                                            @click="handleAccept(order.orderId, order.storeId)">
                                         <CheckCircle class="h-4 w-4 mr-1" />
                                         Accept
                                     </Button>
                                     <Button variant="destructive"
                                             size="sm"
-                                            @click="handleReject(order.orderId)">
+                                            @click="handleReject(order.orderId, order.storeId)">
                                         <XCircle class="h-4 w-4 mr-1" />
                                         Reject
                                     </Button>

@@ -23,7 +23,6 @@ export const refreshRecentOrderIds = async (storeId: string) => {
     })).json();
     if (error) {
         toast.error(error.message ?? "Error fetching recent orders");
-        return;
     } else {
         const newOrderIds: string[] = [];
         recentOrdersIds.value = data;

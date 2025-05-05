@@ -6,6 +6,7 @@ import { createAdminCheckStore } from '@api-hono/utils/checkStorePermissions';
 import { mustHaveUser } from '@api-hono/middlewares/mustHaveUser';
 import { getRecentOrders_Route } from '@api-hono/routes/api_orders/get_recent_orders.controller';
 import { getStoreOrders_Handler, getStoreOrders_SchemaValidator } from '@api-hono/routes/api_orders/store_orders.controller';
+import { acceptOrder_Handler, acceptOrder_SchemaValidator } from './accept_order.controller';
 export const apiOrders = new Hono<HonoVariables>()
     .use(mustHaveUser)
     .get(
@@ -36,7 +37,16 @@ export const apiOrders = new Hono<HonoVariables>()
         getStoreOrders_SchemaValidator,
         getStoreOrders_Handler
     )
-
+    .post(
+        '/:storeId/accept_order',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER,
+            TEAM_PERMISSIONS.ORDERS_MANAGER
+        ]),
+        acceptOrder_SchemaValidator,
+        acceptOrder_Handler
+    )
 export type ApiOrdersType = typeof apiOrders;
 
 
