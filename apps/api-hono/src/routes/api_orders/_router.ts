@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { listenStore_Handler } from './listen/listen_store.controller';
+import { listenStore_Handler } from './listen_store.controller';
 import { TEAM_PERMISSIONS } from '@lib/consts';
 import { createAdminCheckStore } from '@api-hono/utils/checkStorePermissions';
 import { mustHaveUser } from '@api-hono/middlewares/mustHaveUser';
