@@ -2,6 +2,7 @@ import { toast } from "@/ui-plus/sonner";
 import { ordersApiClient } from "@api-client/orders";
 import { ref } from "vue";
 import type { ResType } from "@api-client/typeUtils";
+import { MySettingsStore } from "@orders-spa-vue/stores/MySettingsStore";
 const ApiPath = ordersApiClient[":storeId"].get_by_order_ids.$post;
 type RecentOrdersType = ResType<typeof ApiPath>["data"];
 
@@ -11,7 +12,12 @@ const recentOrdersIds = ref<{
 }[]>([]);
 export const cachedStoreOrders = ref<Record<string, RecentOrdersType[number]>>({});
 
-export const loadAndSetRecentOrdersIds = async (storeId: string) => {
+let autoLoadTimer: ReturnType<typeof setTimeout> | null = null
+export const refreshRecentOrderIds = async (storeId: string) => {
+    if (autoLoadTimer) {
+        clearTimeout(autoLoadTimer);
+    }
+    if (!MySettingsStore.value[storeId]?.isEnabled) return;
     const { data, error } = await (await ordersApiClient[":storeId"].recent_orders.$get({
         param: { storeId }
     })).json();
@@ -22,43 +28,51 @@ export const loadAndSetRecentOrdersIds = async (storeId: string) => {
         const newOrderIds: string[] = [];
         recentOrdersIds.value = data;
         data.forEach((order) => {
-            // check order updated_at_ts is different from cached order updated_at_ts
+            // filter new and updated orders from cached orders
             const cachedOrder = cachedStoreOrders.value[order.orderId];
             if (!cachedOrder || cachedOrder.updated_at_ts !== order.updated_at_ts) {
                 newOrderIds.push(order.orderId);
             }
         });
+        // load new and updated orders
         if (newOrderIds.length > 0) {
-            const { data, error } = await (await ordersApiClient[":storeId"].get_by_order_ids.$post({
-                param: { storeId },
-                json: {
-                    orderIds: newOrderIds,
-                    // columns: {
-                    //     orderId: true,
-                    //     orderType: true,
-                    //     orderStatus: true,
-                    //     orderTotal: true,
-                    //     orderNote: true,
-                    //     orderCreatedAtTs: true,
-                    //     orderUpdatedAtTs: true,
-                    //     orderCreatedAt: true,
-                    //     orderUpdatedAt: true,
-                    //     created_at_ts: true,
-                    // }
-                },
-
-            })).json();
-            if (error) {
-                toast.error(error.message ?? "Error fetching recent orders");
-                return;
-            } else {
-                data.forEach((order) => {
-                    cachedStoreOrders.value[order.orderId] = order;
-                });
-                // cachedStoreOrders.value = [...data, ...cachedStoreOrders.value]
-                //     .sort((a, b) => b.created_at_ts - a.created_at_ts);
-            }
+            loadOrders(storeId, newOrderIds);
         }
     }
+
+    console.log("TIMER_STARTED: refreshRecentOrderIds refreshing recent order ids with setTimeout in 5 minutes");
+    autoLoadTimer = setTimeout(() => {
+        console.log("RUNNING: refreshRecentOrderIds refreshing recent order ids with setTimeout in 5 minutes");
+        refreshRecentOrderIds(storeId);
+    }, 5 * 60_000); // 5 minutes
 }
 
+export const loadOrders = async (storeId: string, newOrderIds: string[]) => {
+    const { data, error } = await (await ordersApiClient[":storeId"].get_by_order_ids.$post({
+        param: { storeId },
+        json: {
+            orderIds: newOrderIds,
+            // columns: {
+            //     orderId: true,
+            //     orderType: true,
+            //     orderStatus: true,
+            //     orderTotal: true,
+            //     orderNote: true,
+            //     orderCreatedAtTs: true,
+            //     orderUpdatedAtTs: true,
+            //     orderCreatedAt: true,
+            //     orderUpdatedAt: true,
+            //     created_at_ts: true,
+            // }
+        },
+
+    })).json();
+    if (error) {
+        toast.error(error.message ?? "Error fetching recent orders");
+        return;
+    } else {
+        data.forEach((order) => {
+            cachedStoreOrders.value[order.orderId] = order;
+        });
+    }
+}

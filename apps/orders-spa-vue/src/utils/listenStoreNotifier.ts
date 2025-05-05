@@ -1,6 +1,6 @@
 import { createOrdersApiClient } from '@api-client/orders';
 import { MySettingsStore } from '@orders-spa-vue/stores/MySettingsStore';
-import { loadAndSetRecentOrdersIds } from '@orders-spa-vue/stores/RecentOrdersStore';
+import { refreshRecentOrderIds, loadOrders } from '@orders-spa-vue/stores/RecentOrdersStore';
 import { ref } from 'vue';
 
 // Map of store IDs to their EventSource instances
@@ -12,6 +12,8 @@ export const listenStoreNotifier = (storeId: string) => {
     if (storeEventSources.value.has(storeId)) return;
 
     if (!MySettingsStore.value[storeId]?.isEnabled) return;
+    console.log("LISTENING: storeId refreshRecentOrderIds 1111", storeId);
+    refreshRecentOrderIds(storeId);
 
     const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].listen.$url({
         param: {
@@ -20,16 +22,23 @@ export const listenStoreNotifier = (storeId: string) => {
     })
 
     const eventSource = new EventSource(url.toString());
-    eventSource.onopen = () => {
-        console.log(`Store ${storeId} connection opened`);
-        loadAndSetRecentOrdersIds(storeId);
-    }
+    // eventSource.onopen = () => {
+    //     console.log(`Store ${storeId} connection opened`);
+    // }
     eventSource.onmessage = (event) => {
         if (event.data === 'ping') {
             return
         }
-        // console.log(storeId, JSON.parse(event.data));
-        loadAndSetRecentOrdersIds(storeId);
+        try {
+            const data = JSON.parse(event.data);
+            if (data.orderId) {
+                loadOrders(storeId, [data.orderId]);
+            }
+        } catch (error) {
+            console.error(error);
+            console.log("LISTENING: storeId refreshRecentOrderIds 2222", storeId);
+            refreshRecentOrderIds(storeId);
+        }
     };
 
     eventSource.onerror = (event) => {
@@ -55,9 +64,9 @@ export const disconnectStore = (storeId: string) => {
     console.log(`Store ${storeId} disconnected`, storeEventSources.value);
 }
 
-export const disconnectAllStores = () => {
-    for (const [_storeId, eventSource] of storeEventSources.value.entries()) {
-        eventSource.close();
-    }
-    storeEventSources.value.clear();
-}
+// export const disconnectAllStores = () => {
+//     for (const [_storeId, eventSource] of storeEventSources.value.entries()) {
+//         eventSource.close();
+//     }
+//     storeEventSources.value.clear();
+// }

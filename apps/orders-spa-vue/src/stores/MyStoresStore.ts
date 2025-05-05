@@ -32,7 +32,7 @@ export async function loadMyStores() {
         console.error(response.error)
         return
     } else {
-        myStores.value = response.data.filter(store => store.id === 'str_4_4_4').sort((
+        myStores.value = response.data.sort((
             a,
             // _b
         ) => {
