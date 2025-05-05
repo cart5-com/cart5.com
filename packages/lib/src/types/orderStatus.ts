@@ -1,9 +1,8 @@
 export const ORDER_STATUS = [
     "CREATED",           // created by customer
-    "PENDING",           // Initial state when order is created
-    "ACCEPTED",          // Store has accepted the order
-    "REJECTED",          // Store has rejected the order
+    "PENDING_PAYMENT",   // Initial state when order is created
     "PREPARING",         // Order is being prepared
+    "REJECTED",          // Store has rejected the order
     "COMPLETED",         // Order fulfilled and completed
     "CANCELLED",         // Order was cancelled
     "REFUNDED",          // Order was refunded

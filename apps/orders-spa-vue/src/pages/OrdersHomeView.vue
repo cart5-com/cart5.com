@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AlertCircle, Eye, Loader2, Play, Settings2 } from "lucide-vue-next";
+import { AlertCircle, Eye, Loader2, Play, Settings2, CheckCircle, XCircle, ExternalLink } from "lucide-vue-next";
 import { myStores, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import SettingsView from "./SettingsView.vue";
 
 const reload = () => {
@@ -29,6 +31,31 @@ const orders = computed(() => {
 });
 
 const isSettingsDialogOpen = ref(false);
+
+const getStatusColor = (status: string) => {
+    switch (status) {
+        case 'CREATED':
+            return 'bg-blue-500';
+        case 'CONFIRMED':
+            return 'bg-green-500';
+        case 'COMPLETED':
+            return 'bg-green-700';
+        case 'CANCELLED':
+            return 'bg-red-500';
+        default:
+            return 'bg-gray-500';
+    }
+}
+
+const handleAccept = (orderId: string) => {
+    console.log('Accept order', orderId);
+    // Implement accept logic
+}
+
+const handleReject = (orderId: string) => {
+    console.log('Reject order', orderId);
+    // Implement reject logic
+}
 
 </script>
 
@@ -127,21 +154,75 @@ const isSettingsDialogOpen = ref(false);
             </DialogScrollContent>
         </Dialog>
 
-
-        <div class="">
+        <div class="space-y-4">
             <div v-for="order in orders"
                  :key="order.orderId"
                  class="block">
-                <Popover>
-                    <PopoverTrigger as-child>
-                        <Eye class="inline-block mr-1" />
-                    </PopoverTrigger>
-                    <PopoverContent class="max-w-xl w-full max-h-96 overflow-y-auto">
-                        <pre>{{ order }}</pre>
-                    </PopoverContent>
-                </Popover>
-                {{ order.orderId }}
-                {{ formatDate(order.created_at_ts) }}
+                <Card>
+                    <CardContent class="p-4">
+                        <div class="flex flex-col md:flex-row justify-between gap-4">
+                            <!-- Order Info -->
+                            <div class="space-y-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="text-lg font-bold">#{{ order.shortOtp || 'N/A' }}</h3>
+                                    <Badge :class="getStatusColor(order.orderStatus)">
+                                        {{ order.orderStatus }}
+                                    </Badge>
+                                    <Badge variant="outline"
+                                           class="capitalize">
+                                        {{ order.orderType || 'N/A' }}
+                                    </Badge>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">
+                                        {{
+                                            order.deliveryAddressJSON?.nickname ||
+                                            order.pickupNickname ||
+                                            order.userEmail || 'unknown'
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-muted-foreground">{{ formatDate(order.created_at_ts) }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex flex-wrap gap-2 items-center">
+                                <div v-if="order.orderStatus === 'CREATED'"
+                                     class="flex gap-2">
+                                    <Button size="sm"
+                                            @click="handleAccept(order.orderId)">
+                                        <CheckCircle class="h-4 w-4 mr-1" />
+                                        Accept
+                                    </Button>
+                                    <Button variant="destructive"
+                                            size="sm"
+                                            @click="handleReject(order.orderId)">
+                                        <XCircle class="h-4 w-4 mr-1" />
+                                        Reject
+                                    </Button>
+                                </div>
+
+                                <Button variant="outline"
+                                        size="sm">
+                                    <ExternalLink class="h-4 w-4 mr-1" />
+                                    Details
+                                </Button>
+
+                                <Popover>
+                                    <PopoverTrigger as-child>
+                                        <Button variant="ghost"
+                                                size="sm">
+                                            <Eye class="h-4 w-4" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent class="max-w-xl w-full max-h-96 overflow-y-auto">
+                                        <pre class="text-xs">{{ order }}</pre>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     </HeaderOnly>

@@ -2,7 +2,7 @@ import db from "@db/drizzle";
 import { KNOWN_ERROR } from '@lib/types/errors';
 import { orderTable } from "@db/schema/order.schema";
 import type { User } from "@lib/types/UserType";
-import { and, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { getUserData_Service } from "./user_data.service";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
@@ -73,6 +73,7 @@ export const getRecentOrders_Service = async (
 ) => {
     // last 6 hours
     const sixHoursAgo = new Date(Date.now() - RECENT_ORDERS_TIME_FRAME);
+    // but status can not be PENDING_PAYMENT
     return await db.query.orderTable.findMany({
         columns: {
             orderId: true,
@@ -81,7 +82,8 @@ export const getRecentOrders_Service = async (
         },
         where: and(
             eq(orderTable.storeId, storeId),
-            gte(orderTable.created_at_ts, sixHoursAgo.getTime())
+            gte(orderTable.created_at_ts, sixHoursAgo.getTime()),
+            ne(orderTable.orderStatus, "PENDING_PAYMENT")
         ),
         orderBy: [desc(orderTable.created_at_ts)],
     });
