@@ -2,7 +2,7 @@ import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { generateKey } from '@lib/utils/generateKey';
-import { sendNotifyToStore } from '@api-hono/routes/api_orders/notify/notify_store.controller';
+import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen/listen_store.controller';
 
 export const fakePlaceOrderRoute = async (c: Context<
     HonoVariables
@@ -12,7 +12,7 @@ export const fakePlaceOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("Store ID not found", "STORE_ID_NOT_FOUND");
     }
     const newOrderId = generateKey('ord');
-    sendNotifyToStore(storeId, {
+    sendNotificationToStore(storeId, {
         type: 'order_placed',
         orderId: newOrderId
     });

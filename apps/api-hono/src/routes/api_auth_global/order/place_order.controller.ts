@@ -5,7 +5,7 @@ import { generateOrderData_Service, updateOrderData_Service } from '@db/services
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
-import { sendNotifyToStore } from '@api-hono/routes/api_orders/notify/notify_store.controller';
+import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen/listen_store.controller';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -39,7 +39,7 @@ export const placeOrderRoute = async (c: Context<
     delete carts?.[cartId];
     await updateUserData_Service(user.id, { carts });
 
-    sendNotifyToStore(storeId, {
+    sendNotificationToStore(storeId, {
         type: 'order_placed',
         orderId: newOrderId
     });

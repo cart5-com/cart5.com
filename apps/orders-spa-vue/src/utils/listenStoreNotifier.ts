@@ -12,7 +12,7 @@ export const listenStoreNotifier = (storeId: string) => {
 
     if (!MySettingsStore.value[storeId]?.isEnabled) return;
 
-    const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].notify.$url({
+    const url = createOrdersApiClient(`${window.location.origin}/__p_api/orders/`)[":storeId"].listen.$url({
         param: {
             storeId: storeId as string
         }

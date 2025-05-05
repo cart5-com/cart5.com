@@ -7,7 +7,7 @@ import { KNOWN_ERROR } from '@lib/types/errors';
 // maybe we can create an internal webhook for this later?
 const stores_Connections = new Map<string, Map<string, SSEStreamingApi>>()
 
-export const sendNotifyToStore = (storeId: string, data: any) => {
+export const sendNotificationToStore = (storeId: string, data: any) => {
     const storeConnections = stores_Connections.get(storeId);
     if (storeConnections) {
         storeConnections.forEach((stream) => {
@@ -23,7 +23,7 @@ export const sendNotifyToStore = (storeId: string, data: any) => {
     }
 }
 
-export const notifyStore_Handler = async (c: Context<
+export const listenStore_Handler = async (c: Context<
     HonoVariables
 >) => {
     const storeId = c.req.param('storeId');

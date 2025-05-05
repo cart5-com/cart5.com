@@ -2,7 +2,7 @@ import db from "@db/drizzle";
 import { KNOWN_ERROR } from '@lib/types/errors';
 import { orderTable } from "@db/schema/order.schema";
 import type { User } from "@lib/types/UserType";
-import { eq } from "drizzle-orm";
+import { and, desc, eq, gte } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { getUserData_Service } from "./user_data.service";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
@@ -55,6 +55,23 @@ export const updateOrderData_Service = async (
         });
 }
 
+const RECENT_ORDERS_TIME_FRAME = 21_600_000; // 6 hours //6 * 60 * 60 * 1000;
+export const getRecentOrders_Service = async (
+    storeId: string
+) => {
+    // last 6 hours
+    const sixHoursAgo = new Date(Date.now() - RECENT_ORDERS_TIME_FRAME);
+    return await db.query.orderTable.findMany({
+        columns: {
+            orderId: true,
+        },
+        where: and(
+            eq(orderTable.storeId, storeId),
+            gte(orderTable.created_at_ts, sixHoursAgo.getTime())
+        ),
+        orderBy: [desc(orderTable.created_at_ts)],
+    });
+}
 
 export const generateOrderData_Service = async (
     user: User,
