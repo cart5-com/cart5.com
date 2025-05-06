@@ -44,6 +44,7 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
 
     // Header
     let output = '';
+    output += `${orderDetails.storeName}|${orderDetails.storeAddress1}`;
     output += `<p>#${orderDetails.shortOtp}</p>`;
     if (orderDetails.orderType === 'pickup') {
         output += `<p>${orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</p>`;
@@ -63,7 +64,6 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     // Delivery or Pickup details
     if (orderDetails.orderType === 'delivery' && orderDetails.deliveryAddressJSON) {
         output += `DELIVERY TO:\n`;
-        output += `${orderDetails.deliveryAddressJSON.label}\n`;
         output += `${orderDetails.deliveryAddressJSON.address1}\n`;
         if (orderDetails.deliveryAddressJSON.address2) {
             output += `${orderDetails.deliveryAddressJSON.address2}\n`;

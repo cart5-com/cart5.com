@@ -121,18 +121,8 @@ const orderedQuantity = () => {
                 </div>
             </CardContent>
         </Card>
-        <!-- <Card class="my-4">
-                <CardContent class="p-4">
-                </CardContent>
-            </Card> -->
-        <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
-             class="mt-3 overflow-hidden rounded-lg">
-            <MapEmbed :storeLat="orderDetails.storeLocationLat"
-                      :storeLng="orderDetails.storeLocationLng"
-                      :destinationLat="orderDetails.deliveryAddressJSON?.lat"
-                      :destinationLng="orderDetails.deliveryAddressJSON?.lng"
-                      :isLink="true" />
-        </div>
+
+
 
         <!-- Payment Information -->
         <Card class="my-4">
@@ -300,6 +290,15 @@ const orderedQuantity = () => {
                     <span>{{ formatCurrency(orderDetails.finalAmount) }}</span>
                 </div>
             </div>
+        </div>
+
+        <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
+             class="mt-3 overflow-hidden rounded-lg">
+            <MapEmbed :storeLat="orderDetails.storeLocationLat"
+                      :storeLng="orderDetails.storeLocationLng"
+                      :destinationLat="orderDetails.deliveryAddressJSON?.lat"
+                      :destinationLng="orderDetails.deliveryAddressJSON?.lng"
+                      :isLink="true" />
         </div>
     </div>
 </template>

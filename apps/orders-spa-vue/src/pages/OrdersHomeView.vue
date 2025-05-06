@@ -39,12 +39,12 @@ const orders = computed(() => {
 
 const isSettingsDialogOpen = ref(false);
 
-let isAcceptingOrder = false;
+let isAcceptingOrder = ref(false);
 const handleAccept = async (orderId: string, storeId: string) => {
-    if (isAcceptingOrder) {
+    if (isAcceptingOrder.value) {
         return;
     }
-    isAcceptingOrder = true;
+    isAcceptingOrder.value = true;
     const { data, error } = await (await ordersApiClient[":storeId"].accept_order.$post({
         param: { storeId },
         json: { orderId }
@@ -56,22 +56,22 @@ const handleAccept = async (orderId: string, storeId: string) => {
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.ACCEPTED;
         }
     }
-    isAcceptingOrder = false;
+    isAcceptingOrder.value = false;
 }
 
-let isCancellingOrder = false;
+let isCancellingOrder = ref(false);
 const handleCancel = async (orderId: string, storeId: string) => {
-    if (isCancellingOrder) {
+    if (isCancellingOrder.value) {
         return;
     }
-    isCancellingOrder = true;
+    isCancellingOrder.value = true;
     if (!confirm(`
 🚨This action cannot be undone🚨
 🚨Your store still will be charged for the service fees🚨
 🚨if order has online payment, it will be refunded to customer🚨
 
 Are you sure you want to cancel this order?`)) {
-        isCancellingOrder = false;
+        isCancellingOrder.value = false;
         return;
     }
 
@@ -87,7 +87,7 @@ Are you sure you want to cancel this order?`)) {
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
         }
     }
-    isCancellingOrder = false;
+    isCancellingOrder.value = false;
 }
 
 const IS_DEV = import.meta.env.DEV;
@@ -95,7 +95,10 @@ const IS_DEV = import.meta.env.DEV;
 
 <template>
     <HeaderOnly>
-        <!-- <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="max-w-3xl mx-auto">
+
+
+            <!-- <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex flex-col gap-1">
                 <h3 class="text-2xl font-bold tracking-tight">
                     <Store class="inline-block mr-1" />
@@ -106,152 +109,104 @@ const IS_DEV = import.meta.env.DEV;
             </div>
         </div> -->
 
-        <div v-if="isMyStoresLoading">
-            <div class="flex justify-center items-center h-screen">
-                <Loader2 class="w-20 h-20 animate-spin" />
+            <div v-if="isMyStoresLoading">
+                <div class="flex justify-center items-center h-screen">
+                    <Loader2 class="w-20 h-20 animate-spin" />
+                </div>
             </div>
-        </div>
 
-        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-2 text-sm"
-             v-if="!isMyStoresLoading && !isAbleToPlayAudio">
-            To enable audio notifications, please click the button
-            <br>
-            or enable the audio permission in your browser settings.
-            <br>
-            <Button class="mt-2"
-                    variant="outline"
-                    @click="playBlankAudioLoop()">
-                <Play class="inline-block mr-1" />
-                Enable audio notifications
-            </Button>
-        </div>
+            <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-2 text-sm"
+                 v-if="!isMyStoresLoading && !isAbleToPlayAudio">
+                To enable audio notifications, please click the button
+                <br>
+                or enable the audio permission in your browser settings.
+                <br>
+                <Button class="mt-2"
+                        variant="outline"
+                        @click="playBlankAudioLoop()">
+                    <Play class="inline-block mr-1" />
+                    Enable audio notifications
+                </Button>
+            </div>
 
-        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
-             v-if="myStores.length === 0 && !isMyStoresLoading">
-            You are not a order manager for any stores.
-            <br>
-            To manage orders for your stores, please contact your support or
-            administrator.
-            <br>
-            <Button class=""
-                    variant="outline"
-                    @click="reload()">
-                Refresh this page once you are a manager
-            </Button>
-        </div>
+            <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
+                 v-if="myStores.length === 0 && !isMyStoresLoading">
+                You are not a order manager for any stores.
+                <br>
+                To manage orders for your stores, please contact your support or
+                administrator.
+                <br>
+                <Button class=""
+                        variant="outline"
+                        @click="reload()">
+                    Refresh this page once you are a manager
+                </Button>
+            </div>
 
-        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
-             v-if="myStores.length > 0 && !hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
-            There is no store enabled.
-            <br>
-            Please open the settings and enable a store to receive orders in real time.
-            <br>
-            <Button @click="isSettingsDialogOpen = true;"
-                    variant="outline">
-                <Settings2 class="inline-block mr-1" />
-                Settings
-            </Button>
-        </div>
-        <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
-             v-if="myStores.length > 0 && hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
-            Connection error, will try to reconnect in 30 seconds.
-        </div>
-        <div class="mb-4 border border-bg-foreground rounded-md p-4 font-bold"
-             v-else>
-            <AlertCircle class="mr-2 inline-block" />
-            Keep open this tab to receive new orders in real time.
-        </div>
-
-        <Dialog v-model:open="isSettingsDialogOpen">
-            <DialogTrigger>
-                <Button variant="outline"
-                        class="mb-4">
+            <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
+                 v-if="myStores.length > 0 && !hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
+                There is no store enabled.
+                <br>
+                Please open the settings and enable a store to receive orders in real time.
+                <br>
+                <Button @click="isSettingsDialogOpen = true;"
+                        variant="outline">
                     <Settings2 class="inline-block mr-1" />
                     Settings
                 </Button>
-            </DialogTrigger>
-            <DialogScrollContent class="w-full max-w-7xl">
-                <DialogHeader>
-                    <DialogTitle>Settings</DialogTitle>
-                    <DialogDescription />
-                </DialogHeader>
+            </div>
+            <div class="mb-4 bg-destructive text-destructive-foreground rounded-md p-4 font-bold"
+                 v-if="myStores.length > 0 && hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
+                Connection error, will try to reconnect in 30 seconds.
+            </div>
+            <div class="mb-4 border border-bg-foreground rounded-md p-4 font-bold"
+                 v-else>
+                <AlertCircle class="mr-2 inline-block" />
+                Keep open this tab to receive new orders in real time.
+            </div>
 
-                <SettingsView />
+            <Dialog v-model:open="isSettingsDialogOpen">
+                <DialogTrigger>
+                    <Button variant="outline"
+                            class="mb-4">
+                        <Settings2 class="inline-block mr-1" />
+                        Settings
+                    </Button>
+                </DialogTrigger>
+                <DialogScrollContent class="w-full max-w-7xl">
+                    <DialogHeader>
+                        <DialogTitle>Settings</DialogTitle>
+                        <DialogDescription />
+                    </DialogHeader>
 
-                <DialogFooter>
-                    <DialogClose as-child>
-                        <Button variant="secondary"
-                                class="w-full">
-                            Close
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogScrollContent>
-        </Dialog>
+                    <SettingsView />
 
-        <div class="space-y-4">
-            <div v-for="order in orders"
-                 :key="order.orderId"
-                 class="block">
-                <Card>
-                    <CardContent class="p-4">
-                        <div class="flex flex-col md:flex-row justify-between gap-4">
-                            <!-- Order Info -->
-                            <div class="space-y-2 flex-grow">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <h3 class="text-lg font-bold">#{{ order.shortOtp || 'N/A' }}</h3>
-                                    <Badge
-                                           :variant="`${order.orderStatus === ORDER_STATUS_OBJ.CANCELLED ? 'destructive' : 'outline'}`">
-                                        {{ order.orderStatus }}
-                                    </Badge>
-                                    <Badge variant="outline"
-                                           class="capitalize">
-                                        {{ order.orderType || 'N/A' }}
-                                    </Badge>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium">
-                                        {{
-                                            order.deliveryAddressJSON?.nickname ||
-                                            order.pickupNickname ||
-                                            order.userEmail || 'unknown'
-                                        }}
-                                    </p>
-                                    <p class="text-xs text-muted-foreground">{{ formatDate(order.created_at_ts) }}</p>
-                                </div>
-                            </div>
+                    <DialogFooter>
+                        <DialogClose as-child>
+                            <Button variant="secondary"
+                                    class="w-full">
+                                Close
+                            </Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogScrollContent>
+            </Dialog>
 
-                            <!-- Actions -->
-                            <div class="flex flex-wrap gap-2 items-center">
-                                <div class="flex gap-2"
-                                     v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
-                                    <Button size="sm"
-                                            @click="handleAccept(order.orderId, order.storeId)">
-                                        <CheckCircle class="h-4 w-4 mr-1" />
-                                        Accept
-                                    </Button>
-                                </div>
-
-                                <Button variant="secondary"
-                                        size="sm"
-                                        @click="printOrder(order)">
-                                    <Printer class="mr-1" />
-                                    Print
-                                </Button>
-
+            <div class="space-y-4">
+                <div v-for="order in orders"
+                     :key="order.orderId"
+                     class="block">
+                    <Card class="p-2">
+                        <CardContent class="p-0">
+                            <div class="flex flex-col md:flex-row justify-between gap-4">
                                 <Dialog>
-                                    <DialogTrigger>
-                                        <Button variant="outline"
-                                                size="sm">
-                                            Show
-                                        </Button>
-                                    </DialogTrigger>
                                     <DialogScrollContent class="w-fit">
                                         <DialogHeader>
                                             <DialogTitle></DialogTitle>
                                             <DialogDescription />
                                             <div class="flex gap-2 justify-between">
                                                 <Button class="w-full text-xl font-bold"
+                                                        :disabled="isAcceptingOrder"
                                                         v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                         @click="handleAccept(order.orderId, order.storeId)">
                                                     <CheckCircle class="h-4 w-4 mr-1" />
@@ -270,6 +225,7 @@ const IS_DEV = import.meta.env.DEV;
 
                                         <div class="flex gap-2 justify-between">
                                             <Button class="w-full"
+                                                    :disabled="isAcceptingOrder"
                                                     v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                     @click="handleAccept(order.orderId, order.storeId)">
                                                 <CheckCircle class="h-4 w-4 mr-1" />
@@ -283,32 +239,95 @@ const IS_DEV = import.meta.env.DEV;
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="start">
-                                                    <DropdownMenuItem @click="handleCancel(order.orderId, order.storeId)"
+                                                    <DropdownMenuItem :disabled="isCancellingOrder"
+                                                                      @click="handleCancel(order.orderId, order.storeId)"
                                                                       class="bg-destructive text-destructive-foreground">
                                                         Are you sure?
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
-
                                     </DialogScrollContent>
-                                </Dialog>
 
-                                <Popover v-if="IS_DEV">
-                                    <PopoverTrigger as-child>
-                                        <Button variant="ghost"
-                                                size="sm">
-                                            <Eye class="h-4 w-4" />
+                                    <!-- Order Info -->
+                                    <DialogTrigger as-child
+                                                   class="w-full cursor-pointer">
+                                        <div
+                                             class="space-y-2 flex-grow hover:bg-secondary/50 transition-colors p-2 rounded-md ">
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <h3 class="text-lg font-bold">#{{ order.shortOtp || 'N/A' }}</h3>
+                                                <Badge
+                                                       :variant="`${order.orderStatus === ORDER_STATUS_OBJ.CANCELLED ? 'destructive' : 'secondary'}`">
+                                                    {{ order.orderStatus }}
+                                                </Badge>
+                                                <Badge variant="secondary"
+                                                       class="capitalize">
+                                                    {{ order.orderType || 'N/A' }}
+                                                </Badge>
+                                            </div>
+                                            <div class="text-left text-xs text-muted-foreground">
+                                                <p>
+                                                    {{
+                                                        order.deliveryAddressJSON?.nickname ||
+                                                        order.pickupNickname ||
+                                                        order.userName ||
+                                                        order.userEmail || 'unknown'
+                                                    }}
+                                                </p>
+                                                <p>
+                                                    {{ formatDate(order.created_at_ts) }}
+                                                </p>
+                                                <p>
+                                                    {{ order.storeName }}
+                                                    ({{ order.storeAddress1 }})
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </DialogTrigger>
+
+                                    <!-- Actions -->
+                                    <div class="flex flex-wrap gap-2 items-center">
+                                        <div class="flex gap-2"
+                                             v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
+                                            <Button size="sm"
+                                                    :disabled="isAcceptingOrder"
+                                                    @click="handleAccept(order.orderId, order.storeId)">
+                                                <CheckCircle class="mr-1" />
+                                                Accept
+                                            </Button>
+                                        </div>
+
+                                        <Button variant="secondary"
+                                                size="sm"
+                                                @click="printOrder(order)">
+                                            <Printer class="mr-1" />
+                                            Print
                                         </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent class="max-w-xl w-full max-h-96 overflow-y-auto">
-                                        <pre class="text-xs">{{ order }}</pre>
-                                    </PopoverContent>
-                                </Popover>
+
+                                        <DialogTrigger>
+                                            <Button variant="outline"
+                                                    size="sm">
+                                                Show
+                                            </Button>
+                                        </DialogTrigger>
+
+                                        <Popover v-if="IS_DEV">
+                                            <PopoverTrigger as-child>
+                                                <Button variant="ghost"
+                                                        size="sm">
+                                                    <Eye class="h-4 w-4" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent class="max-w-xl w-full max-h-96 overflow-y-auto">
+                                                <pre class="text-xs">{{ order }}</pre>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                </Dialog>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     </HeaderOnly>

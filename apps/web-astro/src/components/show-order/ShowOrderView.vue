@@ -189,14 +189,6 @@ const orderedQuantity = () => {
                 <CardContent class="p-4">
                 </CardContent>
             </Card> -->
-            <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
-                 class="mt-3 overflow-hidden rounded-lg">
-                <MapEmbed :storeLat="orderDetails.storeLocationLat"
-                          :storeLng="orderDetails.storeLocationLng"
-                          :destinationLat="orderDetails.deliveryAddressJSON?.lat"
-                          :destinationLng="orderDetails.deliveryAddressJSON?.lng"
-                          :isLink="true" />
-            </div>
 
             <!-- Payment Information -->
             <Card class="my-4">
@@ -374,7 +366,7 @@ const orderedQuantity = () => {
                 </div>
             </div>
             <!-- Store link -->
-            <div class="">
+            <div>
                 <span>
                     <Button variant="outline"
                             as="a"
@@ -390,6 +382,19 @@ const orderedQuantity = () => {
                 <CheckCircle class="inline-block mr-2" />
                 By placing this order, you agreed to accept full responsibility.
                 All orders are final and non-refundable to prevent abuse.
+            </div>
+            <p class="text-xs text-muted-foreground my-4"
+               v-if="orderDetails.orderType === 'delivery'">
+                Please note that the map below is only a shortcut to view the location. Any arrival time shown on the
+                map is not the actual estimated delivery time for your order.
+            </p>
+            <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
+                 class="mt-3 overflow-hidden rounded-lg">
+                <MapEmbed :storeLat="orderDetails.storeLocationLat"
+                          :storeLng="orderDetails.storeLocationLng"
+                          :destinationLat="orderDetails.deliveryAddressJSON?.lat"
+                          :destinationLng="orderDetails.deliveryAddressJSON?.lng"
+                          :isLink="true" />
             </div>
         </div>
 
