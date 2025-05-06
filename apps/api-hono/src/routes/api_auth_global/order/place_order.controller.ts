@@ -31,8 +31,12 @@ export const placeOrderRoute = async (c: Context<
     }
     const newOrderId = generateKey('ord');
     const { order, carts } = await generateOrderData_Service(user, host, storeId, origin);
+    const ipAddress = c.req.header()['x-forwarded-for'];
     // save order data
-    await updateOrderData_Service(newOrderId, order);
+    await updateOrderData_Service(newOrderId, {
+        ...order,
+        ipAddress
+    });
 
     // delete cart current cart
     const cartId = generateCartId(host ?? '', storeId);

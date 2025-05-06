@@ -232,6 +232,13 @@
       "when": 1746303635166,
       "tag": "0032_bumpy_silver_sable",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1746502446837,
+      "tag": "0033_smart_absorbing_man",
+      "breakpoints": true
     }
   ]
 }

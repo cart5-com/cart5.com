@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { currentOrderType, userDataStore } from "@web-astro/stores/UserData.store";
 import { computed } from "vue";
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
-import MapEmbed from "@web-astro/components/MapEmbed.vue";
+// import MapEmbed from "@web-astro/components/MapEmbed.vue";
 
 const icons = [
     { name: 'MapPin', component: MapPin },
@@ -59,14 +59,14 @@ defineExpose({
 <template>
     <div>
         <a :href="BASE_LINKS.CONFIRM_INFO(storeId!, slugify(storeName!))">
-            <div v-if="storeLocationLat && storeLocationLng"
+            <!-- <div v-if="storeLocationLat && storeLocationLng"
                  class="mt-3 overflow-hidden rounded-lg">
                 <MapEmbed :storeLat="storeLocationLat"
                           :storeLng="storeLocationLng"
                           :destinationLat="currentOrderType === 'delivery' ? selectedAddress?.lat : undefined"
                           :destinationLng="currentOrderType === 'delivery' ? selectedAddress?.lng : undefined"
                           :isLink="false" />
-            </div>
+            </div> -->
             <Card class="my-4 hover:bg-card/80">
                 <CardContent class="p-4">
                     <div v-if="currentOrderType === 'delivery' && selectedAddress">

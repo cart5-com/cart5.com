@@ -18,6 +18,8 @@ export const refreshRecentOrderIds = async (storeId: string) => {
         clearTimeout(autoLoadTimer);
     }
     if (!MySettingsStore.value[storeId]?.isEnabled) return;
+    console.log("RUNNING: refreshRecentOrderIds refreshing recent order ids");
+    toast.info("Refreshing recent order ids");
     const { data, error } = await (await ordersApiClient[":storeId"].recent_orders.$get({
         param: { storeId }
     })).json();
