@@ -246,6 +246,13 @@
       "when": 1746503040327,
       "tag": "0034_awesome_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "6",
+      "when": 1746509093080,
+      "tag": "0035_friendly_franklin_storm",
+      "breakpoints": true
     }
   ]
 }

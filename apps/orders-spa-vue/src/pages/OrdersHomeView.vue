@@ -17,7 +17,7 @@ import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, Di
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import SettingsView from "./SettingsView.vue";
-import { OrderStatus, ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
+import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { ordersApiClient } from "@api-client/orders";
 import { toast } from "@/ui-plus/sonner";
 
@@ -45,16 +45,35 @@ const handleAccept = async (orderId: string, storeId: string) => {
     if (error) {
         toast.error(error.message ?? "Error accepting order");
     } else {
-        console.log(data)
-        console.log('Accept order', data);
+        if (data === 1) {
+            cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.ACCEPTED;
+        }
     }
 }
 
-const handleReject = (orderId: string, storeId: string) => {
-    console.log('Reject order', orderId, storeId);
-    // Implement reject logic
-}
+const handleReject = async (orderId: string, storeId: string) => {
+    if (!confirm(`
+🚨This action cannot be undone🚨
+🚨Your store still will be charged for the service fees(platform team only)🚨
+🚨if order has online payment, it will be refunded to customer🚨
 
+Are you sure you want to reject this order?`)) {
+        return;
+    }
+
+    // Implement reject logic
+    const { data, error } = await (await ordersApiClient[":storeId"].cancel_order.$post({
+        param: { storeId },
+        json: { orderId }
+    })).json();
+    if (error) {
+        toast.error(error.message ?? "Error rejecting order");
+    } else {
+        if (data === 1) {
+            cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
+        }
+    }
+}
 </script>
 
 <template>
@@ -164,7 +183,7 @@ const handleReject = (orderId: string, storeId: string) => {
                                 <div class="flex flex-wrap items-center gap-2">
                                     <h3 class="text-lg font-bold">#{{ order.shortOtp || 'N/A' }}</h3>
                                     <Badge
-                                           :variant="`${order.orderStatus === ORDER_STATUS_OBJ.REJECTED ? 'destructive' : 'outline'}`">
+                                           :variant="`${order.orderStatus === ORDER_STATUS_OBJ.CANCELLED ? 'destructive' : 'outline'}`">
                                         {{ order.orderStatus }}
                                     </Badge>
                                     <Badge variant="outline"

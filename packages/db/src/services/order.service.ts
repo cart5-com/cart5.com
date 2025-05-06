@@ -70,7 +70,10 @@ export const acceptOrder_Service = async (
     storeId: string,
     orderId: string
 ) => {
-    return await db.update(orderTable).set({ orderStatus: ORDER_STATUS_OBJ.PREPARING })
+    return await db.update(orderTable).set({
+        orderStatus: ORDER_STATUS_OBJ.ACCEPTED,
+        orderAcceptedAtTs: Date.now()
+    })
         .where(
             and(
                 eq(orderTable.orderId, orderId),
@@ -80,7 +83,42 @@ export const acceptOrder_Service = async (
         );
 }
 
+export const completeOrder_Service = async (
+    storeId: string,
+    orderId: string
+) => {
+    return await db.update(orderTable).set({
+        orderStatus: ORDER_STATUS_OBJ.COMPLETED,
+        orderCompletedAtTs: Date.now()
+    })
+        .where(
+            and(
+                eq(orderTable.orderId, orderId),
+                eq(orderTable.storeId, storeId),
+                eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED)
+            )
+        );
+}
 
+export const cancelOrder_Service = async (
+    storeId: string,
+    orderId: string
+) => {
+    return await db.update(orderTable).set({
+        orderStatus: ORDER_STATUS_OBJ.CANCELLED,
+        orderCancelledAtTs: Date.now()
+    }).where(
+        and(
+            eq(orderTable.orderId, orderId),
+            eq(orderTable.storeId, storeId),
+            ne(orderTable.orderStatus, ORDER_STATUS_OBJ.CANCELLED)
+            // inArray(orderTable.orderStatus, [
+            //     ORDER_STATUS_OBJ.CREATED,
+            //     ORDER_STATUS_OBJ.ACCEPTED,
+            // ])
+        )
+    );
+}
 
 export const updateOrderData_Service = async (
     orderId: string,
@@ -100,7 +138,7 @@ export const getRecentOrders_Service = async (
 ) => {
     // last 6 hours
     const sixHoursAgo = new Date(Date.now() - RECENT_ORDERS_TIME_FRAME);
-    // but status can not be PENDING_PAYMENT
+    // but status can not be PENDING_PAYMENT_AUTHORIZATION
     return await db.query.orderTable.findMany({
         columns: {
             orderId: true,
@@ -110,7 +148,7 @@ export const getRecentOrders_Service = async (
         where: and(
             eq(orderTable.storeId, storeId),
             gte(orderTable.created_at_ts, sixHoursAgo.getTime()),
-            ne(orderTable.orderStatus, ORDER_STATUS_OBJ.PENDING_PAYMENT)
+            ne(orderTable.orderStatus, ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION)
         ),
         orderBy: [desc(orderTable.created_at_ts)],
     });

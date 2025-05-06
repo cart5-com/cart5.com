@@ -25,6 +25,10 @@ export const orderTable = sqliteTable("orders", {
 
     // Order Status
     orderStatus: text("order_status", { enum: ORDER_STATUS }).notNull().default(ORDER_STATUS_OBJ.CREATED),
+    orderAcceptedAtTs: integer("order_accepted_at_ts"),
+    orderCompletedAtTs: integer("order_completed_at_ts"),
+    orderCancelledAtTs: integer("order_cancelled_at_ts"),
+    // if we need more ts like this, may be we can add a new table for order_status_history
 
     // Customer Information
     userId: text("user_id").notNull(),

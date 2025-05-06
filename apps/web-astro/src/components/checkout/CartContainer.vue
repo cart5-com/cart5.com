@@ -155,12 +155,11 @@ const cartView = ref<InstanceType<typeof CartView> | null>(null);
                 <ChevronRight class="inline-block ml-2" />
             </Button>
 
-            <div class="text-xs text-muted-foreground my-4"
-                 v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">
+            <div class="text-xs text-muted-foreground my-4">
                 <!-- TODO: show terms and conditions -->
                 <CheckCircle class="inline-block mr-2" />
                 By placing this order, you agree to accept full responsibility.
-                All orders are final and non-refundable to prevent abuse.
+                All orders are final and non-cancellable and non-refundable to prevent abuse.
             </div>
 
         </div>

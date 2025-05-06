@@ -4,31 +4,30 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import type { ErrorType } from "@lib/types/errors";
-import { acceptOrder_Service } from '@db/services/order.service';
+import { cancelOrder_Service } from '@db/services/order.service';
 import { sendNotificationToStore } from "./listen_store.controller";
 
-export const acceptOrder_SchemaValidator = zValidator('json', z.object({
+export const cancelOrder_SchemaValidator = zValidator('json', z.object({
     orderId: z.string(),
 }));
 
-export const acceptOrder_Handler = async (c: Context<
+export const cancelOrder_Handler = async (c: Context<
     HonoVariables,
-    "/:storeId/accept_order",
-    ValidatorContext<typeof acceptOrder_SchemaValidator>
+    "/:storeId/cancel_order",
+    ValidatorContext<typeof cancelOrder_SchemaValidator>
 >) => {
 
-    const acceptedOrderResult = await acceptOrder_Service(
+    const cancelledOrderResult = await cancelOrder_Service(
         c.req.param('storeId'),
         c.req.valid('json').orderId
     )
-    if (acceptedOrderResult.rowsAffected === 1) {
+    if (cancelledOrderResult.rowsAffected === 1) {
         sendNotificationToStore(c.req.param('storeId'), {
             orderId: c.req.valid('json').orderId
         });
-        // TODO: send email notification to user once store approves/rejects order
     }
     return c.json({
-        data: acceptedOrderResult.rowsAffected,
+        data: cancelledOrderResult.rowsAffected,
         error: null as ErrorType
     }, 200);
 }
