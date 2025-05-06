@@ -21,7 +21,12 @@ const style = `
         overflow-wrap: break-word;
         font-weight: bold;
     }
-    pre p {
+    pre h6 {
+        margin: 0px;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+    pre h5 {
         margin: 0px;
         font-size: 1.5rem;
         font-weight: bold;
@@ -45,12 +50,15 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     // Header
     let output = '';
     output += `${orderDetails.storeName}|${orderDetails.storeAddress1}`;
-    output += `<p>#${orderDetails.shortOtp}</p>`;
+    output += `<h5>#${orderDetails.shortOtp}</h5>`;
     if (orderDetails.orderType === 'pickup') {
-        output += `<p>${orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</p>`;
+        output += `<h5>${orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</h5>`;
     } else if (orderDetails.orderType === 'delivery') {
-        output += `<p>${orderDetails.deliveryAddressJSON?.nickname || orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</p>`;
+        output += `<h5>${orderDetails.deliveryAddressJSON?.nickname || orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</h5>`;
     }
+    output += `<hr>`;
+    output += `<h6>${orderDetails?.paymentMethodJSON?.isOnline ? '[PAID-ONLINE]' : '[NOT PAID]'}|${orderDetails?.paymentMethodJSON?.name}</h6>`;
+    output += `<hr>`;
     if (orderDetails.userVerifiedPhoneNumbers) {
         output += `${orderDetails.userVerifiedPhoneNumbers}\n`;
     }
@@ -75,11 +83,6 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
         output += `<hr>`;
     }
 
-    // Payment
-    output += `PAYMENT: ${orderDetails?.paymentMethodJSON?.name}\n`;
-    output += `${orderDetails?.paymentMethodJSON?.isOnline ? 'PAID ONLINE' : 'PAYMENT REQUIRED'}`;
-    output += `<hr>`;
-
     // Order Notes
     if (orderDetails.orderNote) {
         output += `NOTE: ${orderDetails.orderNote}`;
@@ -95,7 +98,7 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
         output += orderDetails.orderedItemsJSON.map(item => {
             let result = `${item.quantity}x ${item.name}\n`;
             if (item.details) {
-                result += ` ${item.details}\n`;
+                result += ` ${item.details}`;
             }
             result += ` ${item.shownFee}`;
             return result;
