@@ -19,10 +19,6 @@ export const placeOrderRoute = async (c: Context<
     if (!host) {
         throw new KNOWN_ERROR("Host not found", "HOST_NOT_FOUND");
     }
-    const origin = c.req.header()['origin'];
-    if (!origin) {
-        throw new KNOWN_ERROR("Origin not found", "ORIGIN_NOT_FOUND");
-    }
     const user = c.get("USER");
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
@@ -31,7 +27,7 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
     }
     const newOrderId = generateKey('ord');
-    const { order, carts } = await generateOrderData_Service(user, host, storeId, origin);
+    const { order, carts } = await generateOrderData_Service(user, host, storeId);
     const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
     // save order data

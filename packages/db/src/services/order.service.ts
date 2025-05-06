@@ -32,7 +32,7 @@ import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
-
+import { getEnvVariable } from "@lib/utils/getEnvVariable";
 export const logOrderStatusChange_Service = async ({
     orderId,
     newStatus,
@@ -237,7 +237,6 @@ export const generateOrderData_Service = async (
     user: User,
     host: string,
     storeId: string,
-    origin: string
 ) => {
     const userData = await getUserData_Service(user.id, {
         rememberLastAddress: true,
@@ -254,7 +253,8 @@ export const generateOrderData_Service = async (
     const { currentCart, currentOrderType, deliveryAddress } = checkUserDataBeforePlacingOrder(userData, host, storeId);
     // check address location is close(300 meters) to geocoded address lat,lng
     if (currentOrderType === 'delivery' && deliveryAddress) {
-        const mapResult = await handleGeocode(origin + '/__p_api/gmaps/geocode?address=' + deliveryAddress.address1 + '&components=country:' + deliveryAddress.country);
+        const url = 'https://' + getEnvVariable('PUBLIC_DOMAIN_NAME') + '/__p_api/gmaps/geocode?address=' + deliveryAddress.address1 + '&components=country:' + deliveryAddress.country
+        const mapResult = await handleGeocode(url);
         checkGeocodeDistance(mapResult.data, {
             lat: deliveryAddress.lat!,
             lng: deliveryAddress.lng!
