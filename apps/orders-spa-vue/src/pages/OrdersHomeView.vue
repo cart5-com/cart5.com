@@ -5,7 +5,7 @@ import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
 import { storeEventSources, hasConnectionError } from "@orders-spa-vue/utils/listenStoreNotifier";
 import { computed, onMounted, ref } from "vue";
-import { playBlankAudioLoop, isAbleToPlayAudio } from "@orders-spa-vue/utils/playAudio";
+import { playBlankAudioLoop, isAbleToPlayAudio, watchNewOrders } from "@orders-spa-vue/utils/playAudio";
 import { cachedStoreOrders } from "@orders-spa-vue/stores/RecentOrdersStore";
 import { formatDate } from "@lib/utils/formatDate";
 import {
@@ -29,6 +29,7 @@ const reload = () => {
 
 onMounted(() => {
     playBlankAudioLoop();
+    watchNewOrders();
 });
 
 const orders = computed(() => {
