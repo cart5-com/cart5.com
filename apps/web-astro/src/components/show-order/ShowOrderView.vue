@@ -113,7 +113,6 @@ const orderedQuantity = () => {
             Loading order details...
         </div>
         <div v-else-if="orderDetails">
-            <!-- Order ID and Date -->
             <Card class="my-4">
                 <CardContent class="p-4">
                     <!-- centered big checkmark -->
@@ -125,6 +124,7 @@ const orderedQuantity = () => {
                     </div>
                 </CardContent>
             </Card>
+            <!-- Order ID and Date -->
             <Card class="my-4">
                 <CardContent class="p-4">
                     <h2 class="text-xl font-bold mb-2">Order #{{ orderDetails.shortOtp }}</h2>

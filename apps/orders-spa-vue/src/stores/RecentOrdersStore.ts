@@ -18,8 +18,6 @@ export const refreshRecentOrderIds = async (storeId: string) => {
         clearTimeout(autoLoadTimer);
     }
     if (!MySettingsStore.value[storeId]?.isEnabled) return;
-    console.log("RUNNING: refreshRecentOrderIds refreshing recent order ids");
-    toast.info("Refreshing recent order ids");
     const { data, error } = await (await ordersApiClient[":storeId"].recent_orders.$get({
         param: { storeId }
     })).json();
@@ -41,9 +39,7 @@ export const refreshRecentOrderIds = async (storeId: string) => {
         }
     }
 
-    console.log("TIMER_STARTED: refreshRecentOrderIds refreshing recent order ids with setTimeout in 5 minutes");
     autoLoadTimer = setTimeout(() => {
-        console.log("RUNNING: refreshRecentOrderIds refreshing recent order ids with setTimeout in 5 minutes");
         refreshRecentOrderIds(storeId);
     }, 5 * 60_000); // 5 minutes
 }

@@ -20,6 +20,7 @@ import SettingsView from "./SettingsView.vue";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { ordersApiClient } from "@api-client/orders";
 import { toast } from "@/ui-plus/sonner";
+import ShowOrderView from "@orders-spa-vue/components/ShowOrderView.vue";
 
 const reload = () => {
     window.location.reload();
@@ -51,29 +52,31 @@ const handleAccept = async (orderId: string, storeId: string) => {
     }
 }
 
-const handleReject = async (orderId: string, storeId: string) => {
+const handleCancel = async (orderId: string, storeId: string) => {
     if (!confirm(`
 🚨This action cannot be undone🚨
-🚨Your store still will be charged for the service fees(platform team only)🚨
+🚨Your store still will be charged for the service fees🚨
 🚨if order has online payment, it will be refunded to customer🚨
 
-Are you sure you want to reject this order?`)) {
+Are you sure you want to cancel this order?`)) {
         return;
     }
 
-    // Implement reject logic
+    // Implement cancel logic
     const { data, error } = await (await ordersApiClient[":storeId"].cancel_order.$post({
         param: { storeId },
         json: { orderId }
     })).json();
     if (error) {
-        toast.error(error.message ?? "Error rejecting order");
+        toast.error(error.message ?? "Error cancelling order");
     } else {
         if (data === 1) {
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
         }
     }
 }
+
+const IS_DEV = import.meta.env.DEV;
 </script>
 
 <template>
@@ -207,26 +210,68 @@ Are you sure you want to reject this order?`)) {
                             <div class="flex flex-wrap gap-2 items-center">
                                 <div v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                      class="flex gap-2">
+                                    <Button variant="destructive"
+                                            size="sm"
+                                            @click="handleCancel(order.orderId, order.storeId)">
+                                        <XCircle class="h-4 w-4 mr-1" />
+                                        Cancel
+                                    </Button>
                                     <Button size="sm"
                                             @click="handleAccept(order.orderId, order.storeId)">
                                         <CheckCircle class="h-4 w-4 mr-1" />
                                         Accept
                                     </Button>
-                                    <Button variant="destructive"
-                                            size="sm"
-                                            @click="handleReject(order.orderId, order.storeId)">
-                                        <XCircle class="h-4 w-4 mr-1" />
-                                        Reject
-                                    </Button>
                                 </div>
 
-                                <Button variant="outline"
-                                        size="sm">
-                                    <ExternalLink class="h-4 w-4 mr-1" />
-                                    Details
-                                </Button>
 
-                                <Popover>
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <Button variant="outline"
+                                                size="sm">
+                                            Show
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogScrollContent class="w-fit">
+                                        <DialogHeader>
+                                            <DialogTitle></DialogTitle>
+                                            <DialogDescription />
+                                            <div class="flex gap-2 justify-between"
+                                                 v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
+                                                <Button variant="destructive"
+                                                        class="w-full text-xl font-bold"
+                                                        @click="handleCancel(order.orderId, order.storeId)">
+                                                    <XCircle class="h-4 w-4 mr-1" />
+                                                    Cancel
+                                                </Button>
+                                                <Button class="w-full text-xl font-bold"
+                                                        @click="handleAccept(order.orderId, order.storeId)">
+                                                    <CheckCircle class="h-4 w-4 mr-1" />
+                                                    Accept
+                                                </Button>
+                                            </div>
+                                        </DialogHeader>
+
+                                        <ShowOrderView :orderDetails="order" />
+
+                                        <div class="flex gap-2 justify-between">
+                                            <Button variant="destructive"
+                                                    size="sm"
+                                                    @click="handleCancel(order.orderId, order.storeId)">
+                                                <XCircle class="h-4 w-4 mr-1" />
+                                                Cancel Order
+                                            </Button>
+                                            <Button size="sm"
+                                                    v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
+                                                    @click="handleAccept(order.orderId, order.storeId)">
+                                                <CheckCircle class="h-4 w-4 mr-1" />
+                                                Accept
+                                            </Button>
+                                        </div>
+
+                                    </DialogScrollContent>
+                                </Dialog>
+
+                                <Popover v-if="IS_DEV">
                                     <PopoverTrigger as-child>
                                         <Button variant="ghost"
                                                 size="sm">
