@@ -84,7 +84,7 @@ export const updateOrderData_Service = async (
         });
 }
 
-const RECENT_ORDERS_TIME_FRAME = 21_600_000; // 6 hours //6 * 60 * 60 * 1000;
+const RECENT_ORDERS_TIME_FRAME = 60 * 60 * 1000 * 24; // 24 hours
 export const getRecentOrders_Service = async (
     storeId: string
 ) => {
@@ -100,7 +100,7 @@ export const getRecentOrders_Service = async (
         where: and(
             eq(orderTable.storeId, storeId),
             gte(orderTable.created_at_ts, sixHoursAgo.getTime()),
-            ne(orderTable.orderStatus, "PENDING_PAYMENT")
+            ne(orderTable.orderStatus, ORDER_STATUS_OBJ.PENDING_PAYMENT)
         ),
         orderBy: [desc(orderTable.created_at_ts)],
     });

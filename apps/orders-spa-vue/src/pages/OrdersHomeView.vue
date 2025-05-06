@@ -35,19 +35,6 @@ const orders = computed(() => {
 
 const isSettingsDialogOpen = ref(false);
 
-const getStatusColor = (status: OrderStatus) => {
-    switch (status) {
-        case ORDER_STATUS_OBJ.CREATED:
-            return 'bg-blue-500';
-        case ORDER_STATUS_OBJ.PREPARING:
-            return 'bg-green-700';
-        case ORDER_STATUS_OBJ.CANCELLED:
-            return 'bg-red-500';
-        default:
-            return 'bg-gray-500';
-    }
-}
-
 const handleAccept = async (orderId: string, storeId: string) => {
     console.log('Accept order', orderId);
     // Implement accept logic
@@ -176,7 +163,8 @@ const handleReject = (orderId: string, storeId: string) => {
                             <div class="space-y-2 flex-grow">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <h3 class="text-lg font-bold">#{{ order.shortOtp || 'N/A' }}</h3>
-                                    <Badge :class="getStatusColor(order.orderStatus)">
+                                    <Badge
+                                           :variant="`${order.orderStatus === ORDER_STATUS_OBJ.REJECTED ? 'destructive' : 'outline'}`">
                                         {{ order.orderStatus }}
                                     </Badge>
                                     <Badge variant="outline"
@@ -198,7 +186,7 @@ const handleReject = (orderId: string, storeId: string) => {
 
                             <!-- Actions -->
                             <div class="flex flex-wrap gap-2 items-center">
-                                <div v-if="order.orderStatus === 'CREATED'"
+                                <div v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                      class="flex gap-2">
                                     <Button size="sm"
                                             @click="handleAccept(order.orderId, order.storeId)">
