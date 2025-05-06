@@ -92,7 +92,7 @@ export const watchNewOrders = () => {
         }
 
         // Set up interval only if there are new orders
-        if (hasNewOrders && isAbleToPlayAudio.value) {
+        if (hasNewOrders) {
             // Play immediately when detected
             playNotificationAudio();
 
