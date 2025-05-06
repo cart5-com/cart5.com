@@ -22,6 +22,7 @@ import { ordersApiClient } from "@api-client/orders";
 import { toast } from "@/ui-plus/sonner";
 import ShowOrderView from "@orders-spa-vue/components/ShowOrderView.vue";
 import { printOrder } from "@orders-spa-vue/utils/printOrder";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const reload = () => {
     window.location.reload();
@@ -210,14 +211,8 @@ const IS_DEV = import.meta.env.DEV;
 
                             <!-- Actions -->
                             <div class="flex flex-wrap gap-2 items-center">
-                                <div v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
-                                     class="flex gap-2">
-                                    <Button variant="destructive"
-                                            size="sm"
-                                            @click="handleCancel(order.orderId, order.storeId)">
-                                        <XCircle class="h-4 w-4 mr-1" />
-                                        Cancel
-                                    </Button>
+                                <div class="flex gap-2"
+                                     v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
                                     <Button size="sm"
                                             @click="handleAccept(order.orderId, order.storeId)">
                                         <CheckCircle class="h-4 w-4 mr-1" />
@@ -237,15 +232,9 @@ const IS_DEV = import.meta.env.DEV;
                                         <DialogHeader>
                                             <DialogTitle></DialogTitle>
                                             <DialogDescription />
-                                            <div class="flex gap-2 justify-between"
-                                                 v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
-                                                <Button variant="destructive"
-                                                        class="w-full text-xl font-bold"
-                                                        @click="handleCancel(order.orderId, order.storeId)">
-                                                    <XCircle class="h-4 w-4 mr-1" />
-                                                    Cancel
-                                                </Button>
+                                            <div class="flex gap-2 justify-between">
                                                 <Button class="w-full text-xl font-bold"
+                                                        v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                         @click="handleAccept(order.orderId, order.storeId)">
                                                     <CheckCircle class="h-4 w-4 mr-1" />
                                                     Accept
@@ -262,19 +251,26 @@ const IS_DEV = import.meta.env.DEV;
                                         <ShowOrderView :orderDetails="order" />
 
                                         <div class="flex gap-2 justify-between">
-                                            <Button variant="destructive"
-                                                    size="sm"
-                                                    v-if="order.orderStatus !== ORDER_STATUS_OBJ.CANCELLED"
-                                                    @click="handleCancel(order.orderId, order.storeId)">
-                                                <XCircle class="h-4 w-4 mr-1" />
-                                                Cancel Order
-                                            </Button>
-                                            <Button size="sm"
+                                            <Button class="w-full"
                                                     v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                     @click="handleAccept(order.orderId, order.storeId)">
                                                 <CheckCircle class="h-4 w-4 mr-1" />
                                                 Accept
                                             </Button>
+                                            <DropdownMenu v-if="order.orderStatus !== ORDER_STATUS_OBJ.CANCELLED">
+                                                <DropdownMenuTrigger as-child>
+                                                    <Button variant="destructive"
+                                                            size="sm">
+                                                        <XCircle /> Cancel Order
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="start">
+                                                    <DropdownMenuItem @click="handleCancel(order.orderId, order.storeId)"
+                                                                      class="bg-destructive text-destructive-foreground">
+                                                        Are you sure?
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </div>
 
                                     </DialogScrollContent>

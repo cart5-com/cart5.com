@@ -376,7 +376,7 @@ const orderedQuantity = () => {
             <!-- Store link -->
             <div class="">
                 <span>
-                    <Button variant="link"
+                    <Button variant="outline"
                             as="a"
                             :href="BASE_LINKS.STORE(orderDetails.storeId, slugify(orderDetails.storeName), orderDetails.orderType!)"
                             class="w-full mr-4">
