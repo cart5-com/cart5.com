@@ -86,6 +86,10 @@ export const watchNewOrders = () => {
             titleInterval = null;
             document.title = originalTitle;
         }
+        if (hasNewOrders) {
+            // Flash title with count of new orders
+            flashTitle(newOrders.length);
+        }
 
         // Set up interval only if there are new orders
         if (hasNewOrders && isAbleToPlayAudio.value) {
@@ -95,10 +99,8 @@ export const watchNewOrders = () => {
             // Then set up interval to play every 5 seconds
             soundInterval = setInterval(() => {
                 playNotificationAudio();
-            }, 5_000);
+            }, 30_000);
 
-            // Flash title with count of new orders
-            flashTitle(newOrders.length);
         }
     });
 }

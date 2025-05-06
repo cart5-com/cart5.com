@@ -15,6 +15,11 @@ const style = `
         padding: 2px;
         margin: 0px;
         max-width: fit-content;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        font-weight: bold;
     }
     hr {
         border: 1px dashed #000;
@@ -39,7 +44,7 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     if (orderDetails.estimatedTimeText) {
         output += `${orderDetails.estimatedTimeText}\n`;
     }
-    output += `\n`;
+    output += `<hr>`;
 
     // Delivery or Pickup details
     if (orderDetails.orderType === 'delivery' && orderDetails.deliveryAddressJSON) {
@@ -53,36 +58,41 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
         if (orderDetails.deliveryAddressJSON.instructionsForDelivery) {
             output += `Instructions: ${orderDetails.deliveryAddressJSON.instructionsForDelivery}\n`;
         }
-        output += `\n`;
+        output += `<hr>`;
     } else if (orderDetails.orderType === 'pickup') {
-        output += `PICKUP NAME: ${orderDetails.pickupNickname}\n`;
-        output += `\n`;
+        output += `PICKUP NAME: ${orderDetails.pickupNickname}`;
+        output += `<hr>`;
     }
 
     // Payment
     output += `PAYMENT: [${orderDetails?.paymentMethodJSON?.name}]\n`;
-    output += `${orderDetails?.paymentMethodJSON?.isOnline ? 'Online payment' : 'In-person payment'}\n`;
-    output += `\n`;
+    output += `${orderDetails?.paymentMethodJSON?.isOnline ? 'Online payment' : 'In-person payment'}`;
+    output += `<hr>`;
 
     // Order Notes
     if (orderDetails.orderNote) {
-        output += `NOTE: ${orderDetails.orderNote}\n`;
-        output += `\n`;
+        output += `NOTE: ${orderDetails.orderNote}`;
+        output += `<hr>`;
     }
 
     // Order Items
+    output += `\n`;
     output += `ITEMS (${orderedQuantity()}):\n`;
     output += `<hr>`;
+
     if (orderDetails.orderedItemsJSON?.length) {
-        orderDetails.orderedItemsJSON.forEach(item => {
-            output += `${item.quantity}x ${item.name}\n`;
+        output += orderDetails.orderedItemsJSON.map(item => {
+            let result = `${item.quantity}x ${item.name}\n`;
             if (item.details) {
-                output += `  ${item.details}\n`;
+                result += ` ${item.details}\n`;
             }
-            output += `  ${item.shownFee}\n`;
-        });
+            result += ` ${item.shownFee}`;
+            return result;
+        }).join('<hr>');
     }
+
     output += `<hr>`;
+    output += `\n`;
     if (orderDetails.cartTotalsJSON) {
         output += `Subtotal: ${formatCurrency(orderDetails.cartTotalsJSON.shownFee)}\n`;
     }
