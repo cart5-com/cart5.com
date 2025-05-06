@@ -1,6 +1,6 @@
 import db from "@db/drizzle";
 import { KNOWN_ERROR } from '@lib/types/errors';
-import { orderTable } from "@db/schema/order.schema";
+import { orderTable, orderStatusHistoryTable } from "@db/schema/order.schema";
 import type { User } from "@lib/types/UserType";
 import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
@@ -31,7 +31,35 @@ import { checkUserDataBeforePlacingOrder, checkStoreDataBeforePlacingOrder, chec
 import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
-import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
+import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
+
+export const logOrderStatusChange_Service = async ({
+    orderId,
+    newStatus,
+    changedByUserId,
+    changedByIpAddress,
+    changeMethod = 'user',
+    changeReason,
+    metaData
+}: {
+    orderId: string;
+    newStatus: OrderStatus;
+    changedByUserId?: string;
+    changedByIpAddress?: string;
+    changeMethod?: 'user' | 'automatic' | 'system' | string;
+    changeReason?: string;
+    metaData?: Record<string, any>;
+}) => {
+    return await db.insert(orderStatusHistoryTable).values({
+        orderId,
+        newStatus,
+        changedByUserId,
+        changedByIpAddress,
+        changeMethod,
+        changeReason,
+        metaData: metaData ? JSON.stringify(metaData) : null
+    });
+}
 
 export const getUserOrderData_Service = async (
     orderId: string,
@@ -68,11 +96,15 @@ export const getStoreOrders_Service = async (
 
 export const acceptOrder_Service = async (
     storeId: string,
-    orderId: string
+    orderId: string,
+    changedByUserId?: string,
+    changedByIpAddress?: string
 ) => {
-    return await db.update(orderTable).set({
-        orderStatus: ORDER_STATUS_OBJ.ACCEPTED,
-        orderAcceptedAtTs: Date.now()
+    const newStatus = ORDER_STATUS_OBJ.ACCEPTED;
+
+    // Update order status
+    const result = await db.update(orderTable).set({
+        orderStatus: newStatus,
     })
         .where(
             and(
@@ -81,15 +113,33 @@ export const acceptOrder_Service = async (
                 eq(orderTable.orderStatus, ORDER_STATUS_OBJ.CREATED)
             )
         );
+
+    // Log status change if update was successful
+    if (result.rowsAffected > 0) {
+        await logOrderStatusChange_Service({
+            orderId,
+            newStatus,
+            changedByUserId,
+            changedByIpAddress,
+            changeMethod: changedByUserId ? 'user' : 'system',
+            changeReason: changedByUserId ? 'Manual acceptance by store' : 'System acceptance'
+        });
+    }
+
+    return result;
 }
 
 export const completeOrder_Service = async (
     storeId: string,
-    orderId: string
+    orderId: string,
+    changedByUserId?: string,
+    changedByIpAddress?: string
 ) => {
-    return await db.update(orderTable).set({
-        orderStatus: ORDER_STATUS_OBJ.COMPLETED,
-        orderCompletedAtTs: Date.now()
+    const newStatus = ORDER_STATUS_OBJ.COMPLETED;
+
+    // Update order status
+    const result = await db.update(orderTable).set({
+        orderStatus: newStatus,
     })
         .where(
             and(
@@ -98,26 +148,55 @@ export const completeOrder_Service = async (
                 eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED)
             )
         );
+
+    // Log status change if update was successful
+    if (result.rowsAffected > 0) {
+        await logOrderStatusChange_Service({
+            orderId,
+            newStatus,
+            changedByUserId,
+            changedByIpAddress,
+            changeMethod: changedByUserId ? 'user' : 'system',
+            changeReason: changedByUserId ? 'Manual completion by store' : 'System completion'
+        });
+    }
+
+    return result;
 }
 
 export const cancelOrder_Service = async (
     storeId: string,
-    orderId: string
+    orderId: string,
+    changedByUserId?: string,
+    changedByIpAddress?: string,
+    changeReason?: string
 ) => {
-    return await db.update(orderTable).set({
-        orderStatus: ORDER_STATUS_OBJ.CANCELLED,
-        orderCancelledAtTs: Date.now()
+    const newStatus = ORDER_STATUS_OBJ.CANCELLED;
+
+    // Update order status
+    const result = await db.update(orderTable).set({
+        orderStatus: newStatus,
     }).where(
         and(
             eq(orderTable.orderId, orderId),
             eq(orderTable.storeId, storeId),
             ne(orderTable.orderStatus, ORDER_STATUS_OBJ.CANCELLED)
-            // inArray(orderTable.orderStatus, [
-            //     ORDER_STATUS_OBJ.CREATED,
-            //     ORDER_STATUS_OBJ.ACCEPTED,
-            // ])
         )
     );
+
+    // Log status change if update was successful
+    if (result.rowsAffected > 0) {
+        await logOrderStatusChange_Service({
+            orderId,
+            newStatus,
+            changedByUserId,
+            changedByIpAddress,
+            changeMethod: changedByUserId ? 'user' : 'system',
+            changeReason: changeReason || (changedByUserId ? 'Manual cancellation by store' : 'System cancellation')
+        });
+    }
+
+    return result;
 }
 
 export const updateOrderData_Service = async (

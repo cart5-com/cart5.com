@@ -1,4 +1,5 @@
 import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
+import { relations } from 'drizzle-orm';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { ORDER_TYPE } from "@lib/types/orderType";
 import { ORDER_STATUS, ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
@@ -25,10 +26,6 @@ export const orderTable = sqliteTable("orders", {
 
     // Order Status
     orderStatus: text("order_status", { enum: ORDER_STATUS }).notNull().default(ORDER_STATUS_OBJ.CREATED),
-    orderAcceptedAtTs: integer("order_accepted_at_ts"),
-    orderCompletedAtTs: integer("order_completed_at_ts"),
-    orderCancelledAtTs: integer("order_cancelled_at_ts"),
-    // if we need more ts like this, may be we can add a new table for order_status_history
 
     // Customer Information
     userId: text("user_id").notNull(),
@@ -67,4 +64,40 @@ export const orderTable = sqliteTable("orders", {
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
 });
 
+export const orderStatusHistoryTable = sqliteTable("order_status_history", {
+    ...autoCreatedUpdated,
+    id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('osh')),
+
+    // Order Information
+    orderId: text("order_id").notNull(),
+
+    // Status Information
+    newStatus: text("new_status", { enum: ORDER_STATUS }).notNull(),
+
+    // Change Information
+    changedByUserId: text("changed_by_user_id"),
+    changedByIpAddress: text("changed_by_ip_address"),
+    changeMethod: text("change_method"), // 'user', 'automatic', 'system', etc.
+    changeReason: text("change_reason"), // Record reason for automatic changes
+
+    // Additional Data
+    metaData: text("meta_data", { mode: "json" }), // For any additional data we might want to store
+});
+
 export const selectOrderSchema = createSelectSchema(orderTable);
+
+export const orderRelations = relations(orderTable, ({
+    // one,
+    many
+}) => ({
+    statusHistory: many(orderStatusHistoryTable),
+}));
+
+export const orderStatusHistoryRelations = relations(orderStatusHistoryTable, ({
+    one
+}) => ({
+    order: one(orderTable, {
+        fields: [orderStatusHistoryTable.orderId],
+        references: [orderTable.orderId],
+    }),
+}));

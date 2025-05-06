@@ -1,11 +1,12 @@
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { generateOrderData_Service, updateOrderData_Service } from '@db/services/order.service';
+import { generateOrderData_Service, updateOrderData_Service, logOrderStatusChange_Service } from '@db/services/order.service';
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
+import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -31,9 +32,20 @@ export const placeOrderRoute = async (c: Context<
     }
     const newOrderId = generateKey('ord');
     const { order, carts } = await generateOrderData_Service(user, host, storeId, origin);
-    // const ipAddress = c.req.header()['x-forwarded-for'];
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
+
     // save order data
     await updateOrderData_Service(newOrderId, order);
+
+    // Log the initial order creation status
+    await logOrderStatusChange_Service({
+        orderId: newOrderId,
+        newStatus: ORDER_STATUS_OBJ.CREATED,
+        changedByUserId: user.id,
+        changedByIpAddress: ipAddress,
+        changeMethod: 'user',
+        changeReason: 'Initial order placement'
+    });
 
     // delete cart current cart
     const cartId = generateCartId(host ?? '', storeId);

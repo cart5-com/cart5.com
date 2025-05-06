@@ -16,10 +16,14 @@ export const cancelOrder_Handler = async (c: Context<
     "/:storeId/cancel_order",
     ValidatorContext<typeof cancelOrder_SchemaValidator>
 >) => {
+    const user = c.get("USER");
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
     const cancelledOrderResult = await cancelOrder_Service(
         c.req.param('storeId'),
-        c.req.valid('json').orderId
+        c.req.valid('json').orderId,
+        user?.id,
+        ipAddress
     )
     if (cancelledOrderResult.rowsAffected === 1) {
         sendNotificationToStore(c.req.param('storeId'), {

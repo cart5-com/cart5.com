@@ -16,10 +16,14 @@ export const acceptOrder_Handler = async (c: Context<
     "/:storeId/accept_order",
     ValidatorContext<typeof acceptOrder_SchemaValidator>
 >) => {
+    const user = c.get("USER");
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
     const acceptedOrderResult = await acceptOrder_Service(
         c.req.param('storeId'),
-        c.req.valid('json').orderId
+        c.req.valid('json').orderId,
+        user?.id,
+        ipAddress
     )
     if (acceptedOrderResult.rowsAffected === 1) {
         sendNotificationToStore(c.req.param('storeId'), {

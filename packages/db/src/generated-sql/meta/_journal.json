@@ -253,6 +253,20 @@
       "when": 1746509093080,
       "tag": "0035_friendly_franklin_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1746510823524,
+      "tag": "0036_pink_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1746511380441,
+      "tag": "0037_mushy_rogue",
+      "breakpoints": true
     }
   ]
 }
