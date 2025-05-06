@@ -5,6 +5,10 @@ import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 export const isAbleToPlayAudio = ref(true);
 // Sound interval reference to clear when needed
 let soundInterval: ReturnType<typeof setInterval> | null = null;
+// Title flashing interval
+let titleInterval: ReturnType<typeof setInterval> | null = null;
+// Store original document title
+let originalTitle = document.title;
 
 export const playBlankAudioLoop = () => {
     const audio = document.getElementById('blank-loop') as HTMLAudioElement;
@@ -38,12 +42,37 @@ export const playNotificationAudio = () => {
     }
 }
 
+// Toggle document title for new orders alert
+const flashTitle = (newOrdersCount: number) => {
+    // Store original title when first called
+    if (!titleInterval) {
+        originalTitle = document.title;
+    }
+
+    // Clear existing interval if any
+    if (titleInterval) {
+        clearInterval(titleInterval);
+    }
+
+    let isAlert = false;
+    titleInterval = setInterval(() => {
+        if (isAlert) {
+            document.title = originalTitle;
+        } else {
+            document.title = `🚨 ${newOrdersCount} new ${newOrdersCount === 1 ? 'order' : 'orders'}`;
+        }
+        isAlert = !isAlert;
+    }, 2000);
+}
+
 // Watch for orders with "CREATED" status and play notification sounds
 export const watchNewOrders = () => {
     watchEffect(() => {
-        const hasNewOrders = Object.values(cachedStoreOrders.value).some(
+        const newOrders = Object.values(cachedStoreOrders.value).filter(
             order => order.orderStatus === ORDER_STATUS_OBJ.CREATED
         );
+
+        const hasNewOrders = newOrders.length > 0;
 
         // Clear existing interval if any
         if (soundInterval) {
@@ -51,15 +80,25 @@ export const watchNewOrders = () => {
             soundInterval = null;
         }
 
+        // Stop title flashing if no new orders
+        if (!hasNewOrders && titleInterval) {
+            clearInterval(titleInterval);
+            titleInterval = null;
+            document.title = originalTitle;
+        }
+
         // Set up interval only if there are new orders
         if (hasNewOrders && isAbleToPlayAudio.value) {
             // Play immediately when detected
             playNotificationAudio();
 
-            // Then set up interval to play every 30 seconds
+            // Then set up interval to play every 5 seconds
             soundInterval = setInterval(() => {
                 playNotificationAudio();
             }, 5_000);
+
+            // Flash title with count of new orders
+            flashTitle(newOrders.length);
         }
     });
 }
