@@ -21,6 +21,11 @@ const style = `
         overflow-wrap: break-word;
         font-weight: bold;
     }
+    pre p {
+        margin: 0px;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
     hr {
         border: 1px dashed #000;
     }
@@ -39,7 +44,16 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
 
     // Header
     let output = '';
-    output += `ORDER #${orderDetails.shortOtp} | ${orderDetails.orderStatus.toUpperCase()}\n`;
+    output += `<p>#${orderDetails.shortOtp}</p>`;
+    if (orderDetails.orderType === 'pickup') {
+        output += `<p>${orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</p>`;
+    } else if (orderDetails.orderType === 'delivery') {
+        output += `<p>${orderDetails.deliveryAddressJSON?.nickname || orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</p>`;
+    }
+    if (orderDetails.userVerifiedPhoneNumbers) {
+        output += `${orderDetails.userVerifiedPhoneNumbers}\n`;
+    }
+    // TODO: add phone number
     output += `${formatDate(orderDetails.created_at_ts)}\n`;
     if (orderDetails.estimatedTimeText) {
         output += `${orderDetails.estimatedTimeText}\n`;
@@ -54,19 +68,16 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
         if (orderDetails.deliveryAddressJSON.address2) {
             output += `${orderDetails.deliveryAddressJSON.address2}\n`;
         }
-        output += `${[orderDetails.deliveryAddressJSON.city, orderDetails.deliveryAddressJSON.state].filter(Boolean).join(', ')} ${orderDetails.deliveryAddressJSON.postalCode}\n`;
+        // output += `${[orderDetails.deliveryAddressJSON.city, orderDetails.deliveryAddressJSON.state].filter(Boolean).join(', ')} ${orderDetails.deliveryAddressJSON.postalCode}\n`;
         if (orderDetails.deliveryAddressJSON.instructionsForDelivery) {
             output += `Instructions: ${orderDetails.deliveryAddressJSON.instructionsForDelivery}\n`;
         }
         output += `<hr>`;
-    } else if (orderDetails.orderType === 'pickup') {
-        output += `PICKUP NAME: ${orderDetails.pickupNickname}`;
-        output += `<hr>`;
     }
 
     // Payment
-    output += `PAYMENT: [${orderDetails?.paymentMethodJSON?.name}]\n`;
-    output += `${orderDetails?.paymentMethodJSON?.isOnline ? 'Online payment' : 'In-person payment'}`;
+    output += `PAYMENT: ${orderDetails?.paymentMethodJSON?.name}\n`;
+    output += `${orderDetails?.paymentMethodJSON?.isOnline ? 'PAID ONLINE' : 'PAYMENT REQUIRED'}`;
     output += `<hr>`;
 
     // Order Notes

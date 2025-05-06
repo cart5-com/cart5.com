@@ -29,6 +29,7 @@ export const orderTable = sqliteTable("orders", {
 
     // Customer Information
     userId: text("user_id").notNull(),
+    userName: text("user_name").notNull().default(''),
     userEmail: text("user_email").notNull(),
     userVerifiedPhoneNumbers: text("user_verified_phone_number").notNull(), // .join('|')
 

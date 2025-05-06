@@ -267,6 +267,13 @@
       "when": 1746511380441,
       "tag": "0037_mushy_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "6",
+      "when": 1746562768324,
+      "tag": "0038_glossy_tinkerer",
+      "breakpoints": true
     }
   ]
 }

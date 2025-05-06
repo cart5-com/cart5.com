@@ -23,7 +23,13 @@ export const playBlankAudioLoop = () => {
                 // console.error(error);
             });
     }
-    playNotificationAudio();
+    // Play new order audio with volume 0 and then increase to 1 after 2 seconds
+    // maybe this can warm up the tab to play audio later
+    const newOrderAudio = playNotificationAudio();
+    newOrderAudio.volume = 0;
+    setTimeout(() => {
+        newOrderAudio.volume = 1;
+    }, 2000);
 }
 
 export const playNotificationAudio = () => {
@@ -32,6 +38,7 @@ export const playNotificationAudio = () => {
         audio.currentTime = 0;
         audio.play()
             .then(() => {
+                console.log('📣📣📣Audio played📣📣📣');
                 isAbleToPlayAudio.value = true;
             })
             .catch(() => {
@@ -40,6 +47,7 @@ export const playNotificationAudio = () => {
                 // console.error(error);
             });
     }
+    return audio;
 }
 
 // Toggle document title for new orders alert

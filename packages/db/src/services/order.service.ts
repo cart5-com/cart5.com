@@ -361,6 +361,7 @@ export const generateOrderData_Service = async (
             userId: user.id,
             userEmail: user.email,
             userVerifiedPhoneNumbers: userVerifiedPhoneNumbers.map(phone => phone.phoneNumber).join('|'),
+            userName: user.name,
             websiteId: WEBSITE.id,
             websiteDefaultHostname: WEBSITE.defaultHostname,
             supportTeamWebsiteId: supportTeamWebsite?.id,

@@ -39,9 +39,12 @@ const orders = computed(() => {
 
 const isSettingsDialogOpen = ref(false);
 
+let isAcceptingOrder = false;
 const handleAccept = async (orderId: string, storeId: string) => {
-    console.log('Accept order', orderId);
-    // Implement accept logic
+    if (isAcceptingOrder) {
+        return;
+    }
+    isAcceptingOrder = true;
     const { data, error } = await (await ordersApiClient[":storeId"].accept_order.$post({
         param: { storeId },
         json: { orderId }
@@ -53,15 +56,22 @@ const handleAccept = async (orderId: string, storeId: string) => {
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.ACCEPTED;
         }
     }
+    isAcceptingOrder = false;
 }
 
+let isCancellingOrder = false;
 const handleCancel = async (orderId: string, storeId: string) => {
+    if (isCancellingOrder) {
+        return;
+    }
+    isCancellingOrder = true;
     if (!confirm(`
 🚨This action cannot be undone🚨
 🚨Your store still will be charged for the service fees🚨
 🚨if order has online payment, it will be refunded to customer🚨
 
 Are you sure you want to cancel this order?`)) {
+        isCancellingOrder = false;
         return;
     }
 
@@ -77,6 +87,7 @@ Are you sure you want to cancel this order?`)) {
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
         }
     }
+    isCancellingOrder = false;
 }
 
 const IS_DEV = import.meta.env.DEV;
@@ -153,7 +164,8 @@ const IS_DEV = import.meta.env.DEV;
 
         <Dialog v-model:open="isSettingsDialogOpen">
             <DialogTrigger>
-                <Button variant="outline">
+                <Button variant="outline"
+                        class="mb-4">
                     <Settings2 class="inline-block mr-1" />
                     Settings
                 </Button>
@@ -220,6 +232,12 @@ const IS_DEV = import.meta.env.DEV;
                                     </Button>
                                 </div>
 
+                                <Button variant="secondary"
+                                        size="sm"
+                                        @click="printOrder(order)">
+                                    <Printer class="mr-1" />
+                                    Print
+                                </Button>
 
                                 <Dialog>
                                     <DialogTrigger>

@@ -89,7 +89,7 @@ const orderedQuantity = () => {
                     <component :is="icons.find(icon => icon.name === orderDetails?.deliveryAddressJSON?.icon)?.component || MapPin"
                                class="mt-1 flex-shrink-0" />
                     <div>
-                        <h3 class="font-medium">{{ orderDetails.deliveryAddressJSON.label }}</h3>
+                        <!-- <h3 class="font-medium">{{ orderDetails.deliveryAddressJSON.label }}</h3> -->
                         <p class="text-sm font-bold">{{ orderDetails.deliveryAddressJSON.address1 }}</p>
                         <p v-if="orderDetails.deliveryAddressJSON.address2"
                            class="text-sm font-bold">
