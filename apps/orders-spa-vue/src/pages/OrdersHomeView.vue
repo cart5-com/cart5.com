@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AlertCircle, Eye, Loader2, Play, Settings2, CheckCircle, XCircle, ExternalLink } from "lucide-vue-next";
+import { AlertCircle, Eye, Loader2, Play, Settings2, CheckCircle, XCircle, Printer } from "lucide-vue-next";
 import { myStores, isMyStoresLoading } from '@orders-spa-vue/stores/MyStoresStore'
 import HeaderOnly from '@orders-spa-vue/layouts/HeaderOnly.vue';
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { ordersApiClient } from "@api-client/orders";
 import { toast } from "@/ui-plus/sonner";
 import ShowOrderView from "@orders-spa-vue/components/ShowOrderView.vue";
+import { printOrder } from "@orders-spa-vue/utils/printOrder";
 
 const reload = () => {
     window.location.reload();
@@ -249,6 +250,12 @@ const IS_DEV = import.meta.env.DEV;
                                                     Accept
                                                 </Button>
                                             </div>
+                                            <Button variant="secondary"
+                                                    class="w-full text-xl font-bold"
+                                                    @click="printOrder(order)">
+                                                <Printer class="mr-1" />
+                                                Print
+                                            </Button>
                                         </DialogHeader>
 
                                         <ShowOrderView :orderDetails="order" />
@@ -256,6 +263,7 @@ const IS_DEV = import.meta.env.DEV;
                                         <div class="flex gap-2 justify-between">
                                             <Button variant="destructive"
                                                     size="sm"
+                                                    v-if="order.orderStatus !== ORDER_STATUS_OBJ.CANCELLED"
                                                     @click="handleCancel(order.orderId, order.storeId)">
                                                 <XCircle class="h-4 w-4 mr-1" />
                                                 Cancel Order

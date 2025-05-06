@@ -6,7 +6,7 @@ export const formatDate = function (date: number): string {
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit",
+        // second: "2-digit",
         hour12: false
     }
     return `${dateObj.toLocaleDateString(undefined, options)}[${timeDifference(date)}]`;
@@ -23,19 +23,33 @@ export const timeDifference = function (date: number): string {
     const isFuture = elapsed < 0;
     elapsed = Math.abs(elapsed);
 
-    const getTimeString = (value: number, unit: string) => `${Math.round(value)} ${unit}${isFuture ? ' from now' : ' ago'}`;
+    // Create RelativeTimeFormat with browser's default locale
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+
+    // Format based on elapsed time
+    let value: number;
+    let unit: Intl.RelativeTimeFormatUnit;
 
     if (elapsed < msPerMinute) {
-        return getTimeString(elapsed / 1000, 'sec.');
+        value = Math.round(elapsed / 1000);
+        unit = 'second';
     } else if (elapsed < msPerHour) {
-        return getTimeString(elapsed / msPerMinute, 'min.');
+        value = Math.round(elapsed / msPerMinute);
+        unit = 'minute';
     } else if (elapsed < msPerDay) {
-        return getTimeString(elapsed / msPerHour, 'hours');
+        value = Math.round(elapsed / msPerHour);
+        unit = 'hour';
     } else if (elapsed < msPerMonth) {
-        return getTimeString(elapsed / msPerDay, 'days');
+        value = Math.round(elapsed / msPerDay);
+        unit = 'day';
     } else if (elapsed < msPerYear) {
-        return getTimeString(elapsed / msPerMonth, 'months');
+        value = Math.round(elapsed / msPerMonth);
+        unit = 'month';
     } else {
-        return getTimeString(elapsed / msPerYear, 'years');
+        value = Math.round(elapsed / msPerYear);
+        unit = 'year';
     }
+
+    // Negate value for past dates
+    return rtf.format(isFuture ? value : -value, unit);
 }

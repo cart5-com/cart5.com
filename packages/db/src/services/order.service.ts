@@ -349,6 +349,7 @@ export const generateOrderData_Service = async (
     const userVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
     const supportTeamWebsite = await getSupportTeamWebsite_Service(storeId);
     const subtotalJSON = subTotalWithDeliveryAndServiceFees;
+    // TODO: I also need to save the estimated time settings, text is not enough
     const estimatedTime = estimatedTimeText(
         currentOrderType,
         subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.customEstimatedDeliveryTime,

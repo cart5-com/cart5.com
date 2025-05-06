@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
-import { ref } from "vue";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@lib/utils/formatDate";
 import MapEmbed from "./MapEmbed.vue";
@@ -11,8 +10,6 @@ import {
 import {
     Clock, Info, User, CreditCard,
     Banknote, Calculator, WalletCards, ShoppingBag,
-    ChevronUp,
-    ChevronDown
 } from "lucide-vue-next";
 import {
     Popover,

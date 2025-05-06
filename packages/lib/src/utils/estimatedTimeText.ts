@@ -20,6 +20,6 @@ export const estimatedTimeText = (
         time.max
     ].filter(Boolean);
 
-    const timeLabel = isDelivery ? 'Estimated Delivery Time' : 'Estimated Preparation Time';
+    const timeLabel = isDelivery ? 'Estimated Delivery' : 'Estimated Preparation';
     return times.length ? `${timeLabel}: ${times.join('-')} ${time.unit || ''}` : null;
 }
