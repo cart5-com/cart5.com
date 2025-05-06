@@ -61,8 +61,6 @@ export const orderTable = sqliteTable("orders", {
     cartBreakdownJSON: text("cart_breakdown_json", { mode: "json" }).$type<ReturnType<typeof calculateCartBreakdown>>(),
     deliveryAddressJSON: text("delivery_address_json", { mode: "json" }).$type<AddressType>(),
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
-    actionLogsJSON: text("action_logs_json", { mode: "json" }),
-    ipAddress: text("ip_address"),
 });
 
 export const selectOrderSchema = createSelectSchema(orderTable);

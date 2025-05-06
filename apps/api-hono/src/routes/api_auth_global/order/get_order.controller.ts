@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { getOrderData_Service } from '@db/services/order.service';
+import { getUserOrderData_Service } from '@db/services/order.service';
 
 export const getOrderRoute = async (c: Context<
     HonoVariables
@@ -19,7 +19,7 @@ export const getOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
     }
     // TODO: should I select only userId to check permission/ then select all fields?
-    const order = await getOrderData_Service(orderId, user.id);
+    const order = await getUserOrderData_Service(orderId, user.id);
     if (!order) {
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     }

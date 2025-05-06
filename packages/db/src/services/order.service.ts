@@ -33,13 +33,23 @@ import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 
-export const getOrderData_Service = async (
+export const getUserOrderData_Service = async (
     orderId: string,
     userId: string,
     columns?: Partial<Record<keyof typeof orderTable.$inferSelect, boolean>>
 ) => {
     return await db.query.orderTable.findFirst({
         where: and(eq(orderTable.orderId, orderId), eq(orderTable.userId, userId)),
+        columns: columns,
+    });
+}
+
+export const getOrderData_Service = async (
+    orderId: string,
+    columns?: Partial<Record<keyof typeof orderTable.$inferSelect, boolean>>
+) => {
+    return await db.query.orderTable.findFirst({
+        where: eq(orderTable.orderId, orderId),
         columns: columns,
     });
 }
