@@ -7,18 +7,21 @@ import type { ErrorType } from "@lib/types/errors";
 import { findDeviceByDeviceId } from "./device_connections";
 import { KNOWN_ERROR } from "@lib/types/errors";
 
-export const setPrinters_SchemaValidator = zValidator('json', z.object({
-    printers: z.array(z.any()).optional()
+export const setSecret_SchemaValidator = zValidator('json', z.object({
+    secretKey: z.string()
 }));
 
 // Controller for getting Store address details
-export const setPrinters_Handler = async (c: Context<
+export const setSecret_Handler = async (c: Context<
     HonoVariables,
-    "/set_printers",
-    ValidatorContext<typeof setPrinters_SchemaValidator>
+    "/set_secret",
+    ValidatorContext<typeof setSecret_SchemaValidator>
 >) => {
-    const deviceId = c.req.header('X-device-id');
-    const printers = c.req.valid('json').printers;
+    const { secretKey } = c.req.valid('json');
+    const deviceId = c.req.header()['x-device-id'];
+    if (!deviceId) {
+        throw new KNOWN_ERROR("missing_headers", "UNAUTHORIZED");
+    }
     if (!deviceId) {
         throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
     }
@@ -26,7 +29,16 @@ export const setPrinters_Handler = async (c: Context<
     if (!deviceInfo) {
         throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
     }
-    deviceInfo.printers = printers;
+    if (!secretKey) {
+        throw new KNOWN_ERROR("secret_key_not_found", "SECRET_KEY_NOT_FOUND");
+    }
+    if (Date.now() - deviceInfo.timestamp > 10_000) {
+        throw new KNOWN_ERROR("expired", "EXPIRED");
+    }
+    if (deviceInfo.secretKey) {
+        throw new KNOWN_ERROR("secret_key_already_set", "SECRET_KEY_ALREADY_SET");
+    }
+    deviceInfo.secretKey = secretKey;
     return c.json({
         data: 1,
         error: null as ErrorType

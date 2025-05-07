@@ -6,6 +6,25 @@ import { myStoresFiltered, myStores, searchQuery } from '@orders-spa-vue/stores/
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
+import { Button } from "@/components/ui/button";
+import { ordersApiClient } from "@api-client/orders";
+
+const pairAutoprintDevice = async (storeId: string) => {
+    const otp = prompt("one-time-pairing-code ?");
+    if (!otp) {
+        return;
+    }
+    const { data, error } = await (await ordersApiClient[":storeId"].pair_autoprint_device.$post({
+        param: { storeId },
+        json: { otp }
+    })).json();
+    if (error) {
+        console.error(error)
+    }
+    if (data) {
+        console.log(data)
+    }
+}
 
 const IS_DEV = import.meta.env.DEV;
 </script>
@@ -43,6 +62,11 @@ const IS_DEV = import.meta.env.DEV;
                                             removeListeningStore(store.id);
                                         }
                                     }" />
+                            <Button variant="outline"
+                                    size="sm"
+                                    @click="pairAutoprintDevice(store.id)">
+                                Pair Autoprint Device
+                            </Button>
                         </div>
                     </CardFooter>
                 </Card>

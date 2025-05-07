@@ -31,7 +31,7 @@ export const setPrinters = async () => {
     const message = `${deviceId!}-${timestamp}`;
     const signature = await createHmacSignature(message, deviceSecretKey!);
 
-    const { data, error } = await (await autoprintApiClient.set_printers.$post({
+    const { error } = await (await autoprintApiClient.set_printers.$post({
         json: {
             printers
         }
@@ -45,9 +45,27 @@ export const setPrinters = async () => {
     if (error) {
         setStatus(`Failed to set printers: ${error.message}`, "red");
     }
-    if (data) {
-        addStatus(`send printers names: ${data === 1 ? "success" : "failed"}`);
+    // if (data) {
+    //     addStatus(`send printers names: ${data === 1 ? "success" : "failed"}`);
+    // }
+}
+
+export const setSecret = async () => {
+    const { error } = await (await autoprintApiClient.set_secret.$post({
+        json: {
+            secretKey: deviceSecretKey!
+        }
+    }, {
+        headers: {
+            'X-device-id': deviceId!,
+        }
+    })).json();
+    if (error) {
+        setStatus(`Failed to set secret: ${error.message}`, "red");
     }
+    // if (data) {
+    //     addStatus(`send secret: ${data === 1 ? "success" : "failed"}`);
+    // }
 }
 
 let eventSource: EventSource | null = null;
@@ -63,7 +81,6 @@ export const onClickPairDevice = async () => {
         query: {
             name,
             deviceId: deviceId!,
-            secretKey: deviceSecretKey!,
             otp
         }
     })
@@ -73,6 +90,7 @@ export const onClickPairDevice = async () => {
     eventSource = new EventSource(url.toString());
     eventSource.onopen = () => {
         setStatus(`one-time-pairing-code: <b style="font-size: 20px;">${otp}</b>`);
+        setSecret();
         setPrinters();
     }
     eventSource.onmessage = (event) => {
@@ -82,6 +100,14 @@ export const onClickPairDevice = async () => {
         try {
             const data = JSON.parse(event.data);
             console.log(data);
+            if (data.status === "SUCCESS") {
+                setStatus(`PAIRED TO STORE: ${data.storeName}`, "green");
+                addStatus(`now you can close this window`);
+                if (timeOutId) {
+                    clearTimeout(timeOutId);
+                }
+                eventSource?.close();
+            }
         } catch (error) {
             console.error(error);
         }

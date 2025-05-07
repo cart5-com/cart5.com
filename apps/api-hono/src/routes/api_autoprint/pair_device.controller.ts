@@ -9,7 +9,7 @@ import { device_Connections } from "./device_connections";
 export const pairDevice_SchemaValidator = zValidator('query', z.object({
     name: z.string(),
     deviceId: z.string(),
-    secretKey: z.string(),
+    // secretKey: z.string(),
     otp: z.string(),
 }));
 
@@ -21,7 +21,7 @@ export const pairDevice_Handler = async (c: Context<
     const {
         name,
         deviceId,
-        secretKey,
+        // secretKey,
         otp,
     } = c.req.valid('query');
 
@@ -41,8 +41,9 @@ export const pairDevice_Handler = async (c: Context<
                 stream,
                 name,
                 deviceId,
-                secretKey,
+                // secretKey,
                 otp,
+                timestamp: Date.now(),
             });
 
             let isActive = true;

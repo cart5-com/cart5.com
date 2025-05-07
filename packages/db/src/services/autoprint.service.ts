@@ -1,4 +1,4 @@
-import { autoprintDeviceTable } from "@db/schema/autoprint.schema";
+import { autoprintDeviceStoreMapTable, autoprintDeviceTable } from "@db/schema/autoprint.schema";
 import db from '@db/drizzle';
 import { eq, type InferInsertModel } from 'drizzle-orm';
 
@@ -22,4 +22,11 @@ export const updateAutoPrintDevice_Service = async (
             target: autoprintDeviceTable.autoprintDeviceId,
             set: data
         });
+}
+
+export const addAutoprintDeviceToStore_Service = async (
+    autoprintDeviceId: string,
+    storeId: string
+) => {
+    return await db.insert(autoprintDeviceStoreMapTable).values({ autoprintDeviceId, storeId });
 }

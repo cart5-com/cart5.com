@@ -6,20 +6,23 @@ import { setPrinters_Handler } from './set_printers.controller';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { KNOWN_ERROR } from "@lib/types/errors";
 import { findDeviceByDeviceId } from './device_connections';
-
+import { setSecret_SchemaValidator } from './set_secret.controller';
+import { setSecret_Handler } from './set_secret.controller';
 
 export const apiAutoprint = new Hono<HonoVariables>()
     .use(async (c, next) => {
         // ignore pair_device
         if (c.req.path === '/autoprint/pair_device') {
             return next();
+        } else if (c.req.path === '/autoprint/set_secret') {
+            return next();
         } else {
-            const deviceId = c.req.header('X-device-id');
-            const timestamp = c.req.header('X-timestamp');
+            const deviceId = c.req.header()['x-device-id'];
+            const timestamp = c.req.header()['x-timestamp'];
             if (Date.now() - Number(timestamp) > 5 * 60 * 1000) {
                 throw new KNOWN_ERROR("timestamp_expired", "TIMESTAMP_EXPIRED");
             }
-            const signatureHeader = c.req.header('X-signature');
+            const signatureHeader = c.req.header()['x-signature'];
             if (!deviceId || !timestamp || !signatureHeader) {
                 throw new KNOWN_ERROR("missing_headers", "UNAUTHORIZED");
             }
@@ -50,6 +53,11 @@ export const apiAutoprint = new Hono<HonoVariables>()
         '/set_printers',
         setPrinters_SchemaValidator,
         setPrinters_Handler
+    )
+    .post(
+        '/set_secret',
+        setSecret_SchemaValidator,
+        setSecret_Handler
     )
 
 export type ApiAutoprintType = typeof apiAutoprint;

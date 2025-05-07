@@ -9,6 +9,8 @@ import { getStoreOrders_Handler, getStoreOrders_SchemaValidator } from '@api-hon
 import { acceptOrder_Handler, acceptOrder_SchemaValidator } from './accept_order.controller';
 import { completeOrder_Handler, completeOrder_SchemaValidator } from './complete_order.controller';
 import { cancelOrder_Handler, cancelOrder_SchemaValidator } from './cancel_order.controller';
+import { pairAutoprintDevice_Handler, pairAutoprintDevice_SchemaValidator } from './pair_autoprint_device.controller';
+
 
 export const apiOrders = new Hono<HonoVariables>()
     .use(mustHaveUser)
@@ -69,6 +71,16 @@ export const apiOrders = new Hono<HonoVariables>()
         ]),
         cancelOrder_SchemaValidator,
         cancelOrder_Handler
+    )
+    .post(
+        '/:storeId/pair_autoprint_device',
+        createAdminCheckStore([
+            TEAM_PERMISSIONS.FULL_ACCESS,
+            TEAM_PERMISSIONS.STORE_MANAGER,
+            TEAM_PERMISSIONS.ORDERS_MANAGER
+        ]),
+        pairAutoprintDevice_SchemaValidator,
+        pairAutoprintDevice_Handler
     )
 
 export type ApiOrdersType = typeof apiOrders;

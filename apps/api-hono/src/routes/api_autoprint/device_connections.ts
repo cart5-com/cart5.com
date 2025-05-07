@@ -5,8 +5,9 @@ interface DeviceInfo {
     stream: SSEStreamingApi;
     name: string;
     deviceId: string;
-    secretKey: string;
     otp: string;
+    timestamp: number;
+    secretKey?: string;
     printers?: any[];
 }
 

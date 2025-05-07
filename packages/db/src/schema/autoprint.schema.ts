@@ -1,9 +1,11 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { relations } from 'drizzle-orm';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { generateKey } from "@lib/utils/generateKey";
 import { z } from "zod";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { createSelectSchema } from "drizzle-zod";
+import { storeTable } from "./store.schema";
 
 export const autoprintDeviceTable = sqliteTable("autoprint_device", {
     ...autoCreatedUpdated,
@@ -24,3 +26,31 @@ const overrideAutoprintDeviceTableSchema = {
 }
 export const insertAutoprintDeviceSchema = createInsertSchema(autoprintDeviceTable, overrideAutoprintDeviceTableSchema);
 export const updateAutoprintDeviceSchema = createUpdateSchema(autoprintDeviceTable, overrideAutoprintDeviceTableSchema);
+
+// store can have multiple autoprint devices, autoprint device can be paired with multiple stores
+export const autoprintDeviceStoreMapTable = sqliteTable("autoprint_device_store_map", {
+    autoprintDeviceId: text("autoprint_device_id").notNull(),
+    storeId: text("store_id").notNull(),
+}, (table) => [
+    primaryKey({ columns: [table.autoprintDeviceId, table.storeId] })
+]);
+
+export const autoprintDeviceRelations = relations(autoprintDeviceTable, ({ many }) => ({
+    storeMap: many(autoprintDeviceStoreMapTable),
+}));
+
+export const autoprintDeviceStoreMapRelations = relations(autoprintDeviceStoreMapTable, ({ one }) => ({
+    device: one(autoprintDeviceTable, {
+        fields: [autoprintDeviceStoreMapTable.autoprintDeviceId],
+        references: [autoprintDeviceTable.autoprintDeviceId],
+    }),
+    store: one(storeTable, {
+        fields: [autoprintDeviceStoreMapTable.storeId],
+        references: [storeTable.id],
+    }),
+}));
+
+// Add to store.schema.ts
+export const storeRelations = relations(storeTable, ({ many }) => ({
+    autoprintDeviceMap: many(autoprintDeviceStoreMapTable),
+}));
