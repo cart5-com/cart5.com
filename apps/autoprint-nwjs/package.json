@@ -1,0 +1,10 @@
+{
+  "name": "autoprint",
+  "version": "1.0.0",
+  "scripts": {
+    "runapp": "nw ./app"
+  },
+  "devDependencies": {
+    "nw": "0.99.0-sdk"
+  }
+}

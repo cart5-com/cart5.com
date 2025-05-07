@@ -61,6 +61,12 @@ export default defineConfig(({ mode }) => ({
   build: {
     minify: true,
     sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        autoprint: fileURLToPath(new URL('./autoprint.html', import.meta.url))
+      }
+    }
   },
   plugins: [
     vue(),
