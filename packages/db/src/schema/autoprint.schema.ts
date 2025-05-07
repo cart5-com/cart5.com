@@ -12,7 +12,7 @@ export const autoprintDeviceTable = sqliteTable("autoprint_device", {
     // status: text("status", { enum: ['ONLINE', 'OFFLINE'] }).notNull().default('OFFLINE'),
     // ipAddress: text("ip_address").notNull(),
     secretKey: text("secret_key").notNull(),
-    printers: text("printers", { mode: 'json' }).$type<[any]>(),
+    printers: text("printers", { mode: 'json' }).$type<any[]>(),
 });
 
 export const selectAutoprintDeviceSchema = createSelectSchema(autoprintDeviceTable);

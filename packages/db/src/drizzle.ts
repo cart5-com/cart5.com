@@ -8,6 +8,7 @@ import * as websiteSchema from './schema/website.schema';
 import * as teamSchema from './schema/team.schema';
 import * as userDataSchema from './schema/userData.schema';
 import * as orderSchema from './schema/order.schema';
+import * as autoprintSchema from './schema/autoprint.schema';
 // import { createClient } from '@libsql/client';
 
 export const schema = {
@@ -16,7 +17,8 @@ export const schema = {
     ...websiteSchema,
     ...teamSchema,
     ...userDataSchema,
-    ...orderSchema
+    ...orderSchema,
+    ...autoprintSchema
 };
 
 export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema>> {
