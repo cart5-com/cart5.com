@@ -58,6 +58,7 @@ export const listenStore_Handler = async (c: Context<
                     stream.writeSSE({ data: 'ping' })
                 } catch (e) {
                     isActive = false
+                    stores_Connections.get(storeId)?.delete(clientId)
                     break
                 }
                 await stream.sleep(30_000)

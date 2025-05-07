@@ -2,10 +2,19 @@
 <html lang="en">
 
     <head>
+        <script>
+            // const os = require('os');
+
+            // const hostname = os.hostname();
+            // console.log('Hostname:', hostname);
+        </script>
     </head>
 
     <body>
-        <div id="app">autoprint app</div>
+        <div id="app">
+            <button id="pair-device">Pair Device</button>
+            <div id="pairing-status"></div>
+        </div>
         <script type="module"
                 src="./src/autoprint/autoprint-main.ts"></script>
     </body>

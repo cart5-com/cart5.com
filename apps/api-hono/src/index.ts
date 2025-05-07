@@ -17,7 +17,9 @@ import { apiGMaps } from './routes/gmaps/mapsRoute.controller';
 import { validateDomainForTLS } from './routes/validate_domain';
 import { apiUpload } from '@api-hono/routes/upload';
 import { apiOrders } from './routes/api_orders/_router';
-
+import { createHmac, timingSafeEqual } from "crypto"
+import { apiAutoprint } from './routes/api_autoprint/_router';
+import { paths } from './paths';
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
 	app.use(sentryMiddleware);
@@ -29,6 +31,31 @@ app.use(authChecks);
 app.use(secureHeaders());
 
 
+const deviceUUID = '9dcd9db4-77b7-426a-8c25-eb38425276ff';
+const timestamp = Date.now();
+const sharedSecret = '1234567890';
+
+// Create HMAC signature
+const message = `${deviceUUID}:${timestamp}:${JSON.stringify({ sample: 1 })}`;
+const message2 = `${deviceUUID}:${timestamp + 10}:${JSON.stringify({ sample: 1 })}`;
+const signature = createHmac('sha256', sharedSecret)
+	.update(message)
+	.digest('hex');
+console.log(signature);
+
+const expectedSignature = createHmac('sha256', sharedSecret)
+	.update(message2)
+	.digest('hex');
+
+const isSignatureValid = timingSafeEqual(
+	Buffer.from(signature, 'hex'),
+	Buffer.from(expectedSignature, 'hex')
+);
+console.log('isSignatureValid');
+console.log(isSignatureValid);
+
+
+
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);
 });
@@ -36,12 +63,13 @@ app.get(
 	'/validate_tls',
 	validateDomainForTLS
 )
-app.route('/upload', apiUpload)
-app.route('/auth', apiAuth)
-app.route('/auth_global', apiAuthGlobal)
-app.route('/dashboard', apiDashboard)
-app.route('/gmaps', apiGMaps)
-app.route('/orders', apiOrders)
+app.route(paths.upload, apiUpload)
+app.route(paths.auth, apiAuth)
+app.route(paths.auth_global, apiAuthGlobal)
+app.route(paths.dashboard, apiDashboard)
+app.route(paths.gmaps, apiGMaps)
+app.route(paths.orders, apiOrders)
+app.route(paths.autoprint, apiAutoprint)
 
 const port = 3000;
 export let server: ReturnType<typeof serve>;
