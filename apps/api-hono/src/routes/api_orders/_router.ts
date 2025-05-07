@@ -10,10 +10,15 @@ import { acceptOrder_Handler, acceptOrder_SchemaValidator } from './accept_order
 import { completeOrder_Handler, completeOrder_SchemaValidator } from './complete_order.controller';
 import { cancelOrder_Handler, cancelOrder_SchemaValidator } from './cancel_order.controller';
 import { pairAutoprintDevice_Handler, pairAutoprintDevice_SchemaValidator } from './pair_autoprint_device.controller';
+import { getMyOrderStores_Handler } from './my_order_stores.controller';
 
 
 export const apiOrders = new Hono<HonoVariables>()
     .use(mustHaveUser)
+    .get(
+        '/my_order_stores',
+        getMyOrderStores_Handler
+    )
     .get(
         '/:storeId/listen',
         createAdminCheckStore([

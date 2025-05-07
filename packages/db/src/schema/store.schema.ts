@@ -18,6 +18,7 @@ import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSche
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { CustomServiceFeeSchema, type CustomServiceFee, CALCULATION_TYPE } from "@lib/zod/serviceFee";
+import { autoprintDeviceStoreMapTable } from "./autoprint.schema";
 
 /// STORE TABLE START
 export const storeTable = sqliteTable("store", {
@@ -268,7 +269,7 @@ export const updateStoreDeliveryZoneMapSchema = createUpdateSchema(storeDelivery
 
 export const storeRelations = relations(storeTable, ({
 	one,
-	// many
+	many
 }) => ({
 	address:
 		one(
@@ -324,4 +325,5 @@ export const storeRelations = relations(storeTable, ({
 			fields: [storeTable.id],
 			references: [storeAsAStripeCustomerTable.storeId]
 		}),
+	autoprintDeviceMap: many(autoprintDeviceStoreMapTable),
 }));

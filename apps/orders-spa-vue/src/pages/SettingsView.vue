@@ -2,12 +2,13 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Store } from "lucide-vue-next";
-import { myStoresFiltered, myStores, searchQuery } from '@orders-spa-vue/stores/MyStoresStore'
+import { myStoresFiltered, myStores, searchQuery, loadMyStores } from '@orders-spa-vue/stores/MyStoresStore'
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { Button } from "@/components/ui/button";
 import { ordersApiClient } from "@api-client/orders";
+import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
 
 const pairAutoprintDevice = async (storeId: string) => {
     const otp = prompt("one-time-pairing-code ?");
@@ -23,6 +24,7 @@ const pairAutoprintDevice = async (storeId: string) => {
     }
     if (data) {
         console.log(data)
+        loadMyStores()
     }
 }
 
@@ -62,11 +64,55 @@ const IS_DEV = import.meta.env.DEV;
                                             removeListeningStore(store.id);
                                         }
                                     }" />
-                            <Button variant="outline"
-                                    size="sm"
-                                    @click="pairAutoprintDevice(store.id)">
-                                Pair Autoprint Device
-                            </Button>
+
+
+                            <Dialog>
+                                <DialogTrigger>
+                                    <Button variant="outline"
+                                            size="lg">
+                                        Autoprint Settings
+                                        <span v-if="store.autoprintDevices?.length"
+                                              class="text-xs text-muted-foreground">
+                                            ({{ store.autoprintDevices?.length }})
+                                        </span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogScrollContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Autoprint Settings</DialogTitle>
+                                        <DialogDescription />
+                                    </DialogHeader>
+
+                                    <Button variant="outline"
+                                            size="lg"
+                                            @click="pairAutoprintDevice(store.id)">
+                                        Pair a new Autoprint Device
+                                    </Button>
+
+                                    <div class="flex flex-col gap-2">
+                                        <div v-for="device in store.autoprintDevices"
+                                             :key="device.autoprintDeviceId">
+                                            {{ device.name }}
+                                            <!-- {{ device.autoprintDeviceId }} -->
+                                            <div v-for="(printer, index) in device.printers"
+                                                 :key="index">
+                                                {{ index + 1 }}. {{ printer.deviceName }}
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <DialogFooter>
+                                        <DialogClose as-child>
+                                            <Button variant="secondary"
+                                                    class="w-full">
+                                                Close
+                                            </Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogScrollContent>
+                            </Dialog>
+
                         </div>
                     </CardFooter>
                 </Card>

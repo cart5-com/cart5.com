@@ -49,8 +49,3 @@ export const autoprintDeviceStoreMapRelations = relations(autoprintDeviceStoreMa
         references: [storeTable.id],
     }),
 }));
-
-// Add to store.schema.ts
-export const storeRelations = relations(storeTable, ({ many }) => ({
-    autoprintDeviceMap: many(autoprintDeviceStoreMapTable),
-}));

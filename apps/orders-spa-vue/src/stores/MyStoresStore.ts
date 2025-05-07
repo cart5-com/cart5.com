@@ -1,11 +1,11 @@
 import { ref, computed } from 'vue'
 import { type ResType } from '@api-client/typeUtils';
-import { dashboardApiClient } from '@api-client/dashboard';
+import { ordersApiClient } from '@api-client/orders';
 import { MySettingsStore } from '@orders-spa-vue/stores/MySettingsStore';
 import { listenStoreNotifier } from '@orders-spa-vue/utils/listenStoreNotifier';
 
 export type storeListType = ResType<
-    typeof dashboardApiClient.store.my_stores.$get
+    typeof ordersApiClient.my_order_stores.$get
 >["data"];
 
 export const myStores = ref<storeListType>([]);
@@ -27,7 +27,7 @@ export const currentStore = computed(() => {
 
 export async function loadMyStores() {
     isMyStoresLoading.value = true;
-    const response = await (await dashboardApiClient.store.my_stores.$get()).json()
+    const response = await (await ordersApiClient.my_order_stores.$get()).json()
     if (response.error) {
         console.error(response.error)
         return
