@@ -18,8 +18,9 @@ import { validateDomainForTLS } from './routes/validate_domain';
 import { apiUpload } from '@api-hono/routes/upload';
 import { apiOrders } from './routes/api_orders/_router';
 import { createHmac, timingSafeEqual } from "crypto"
-import { apiAutoprint } from './routes/api_autoprint/_router';
+import { apiAutoprintPairing } from './routes/api_autoprint_pairing/_router';
 import { paths } from './paths';
+
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
 	app.use(sentryMiddleware);
@@ -69,7 +70,7 @@ app.route(paths.auth_global, apiAuthGlobal)
 app.route(paths.dashboard, apiDashboard)
 app.route(paths.gmaps, apiGMaps)
 app.route(paths.orders, apiOrders)
-app.route(paths.autoprint, apiAutoprint)
+app.route(paths.autoprint_pairing, apiAutoprintPairing)
 
 const port = 3000;
 export let server: ReturnType<typeof serve>;

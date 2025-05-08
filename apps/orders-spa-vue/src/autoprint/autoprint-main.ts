@@ -3,7 +3,7 @@ import { killApp } from "./killApp";
 import { getMainWindow } from "./mainWindow";
 import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
 import { onClickPairDevice, stopPairing } from "./pairing";
-import { testPrint } from "./printHtml";
+import { testPrint } from "./printHTML";
 
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 if (typeof global !== "undefined") {

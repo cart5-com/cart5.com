@@ -1,4 +1,4 @@
-import { autoprintApiClient, createAutoprintApiClient } from "@api-client/autoprint";
+import { autoprintPairingApiClient, createAutoprintPairingApiClient } from "@api-client/autoprint";
 import { getHostname, getPrinters } from "./mainWindow";
 import { generateOTPJsOnly } from "@api-hono/utils/generateRandomOtp";
 import { createHmacSignature } from "./createHmacSignature";
@@ -31,7 +31,7 @@ export const setPrinters = async () => {
     const message = `${deviceId!}-${timestamp}`;
     const signature = await createHmacSignature(message, deviceSecretKey!);
 
-    const { error } = await (await autoprintApiClient.set_printers.$post({
+    const { error } = await (await autoprintPairingApiClient.set_printers.$post({
         json: {
             printers
         }
@@ -51,7 +51,7 @@ export const setPrinters = async () => {
 }
 
 export const setSecret = async () => {
-    const { error } = await (await autoprintApiClient.set_secret.$post({
+    const { error } = await (await autoprintPairingApiClient.set_secret.$post({
         json: {
             secretKey: deviceSecretKey!
         }
@@ -111,7 +111,7 @@ export const onClickPairDevice = async () => {
     const name = getHostname();
     const otp = generateOTPJsOnly(6);
 
-    const url = createAutoprintApiClient(`${window.location.origin}/__p_api/autoprint/`).pair_device.$url({
+    const url = createAutoprintPairingApiClient(`${window.location.origin}/__p_api/autoprint_pairing/`).pair_device.$url({
         query: {
             name,
             deviceId: deviceId!,

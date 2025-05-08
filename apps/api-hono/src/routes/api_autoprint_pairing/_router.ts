@@ -5,16 +5,17 @@ import { setPrinters_SchemaValidator } from './set_printers.controller';
 import { setPrinters_Handler } from './set_printers.controller';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { KNOWN_ERROR } from "@lib/types/errors";
-import { findDeviceByDeviceId } from './device_connections';
+import { findPairingDeviceByDeviceId } from './device_pairing_connections';
 import { setSecret_SchemaValidator } from './set_secret.controller';
 import { setSecret_Handler } from './set_secret.controller';
+import { paths } from '@api-hono/paths';
 
-export const apiAutoprint = new Hono<HonoVariables>()
+export const apiAutoprintPairing = new Hono<HonoVariables>()
     .use(async (c, next) => {
         // ignore pair_device
-        if (c.req.path === '/autoprint/pair_device') {
+        if (c.req.path === `${paths.autoprint_pairing}/pair_device`) {
             return next();
-        } else if (c.req.path === '/autoprint/set_secret') {
+        } else if (c.req.path === `${paths.autoprint_pairing}/set_secret`) {
             return next();
         } else {
             const deviceId = c.req.header()['x-device-id'];
@@ -26,11 +27,13 @@ export const apiAutoprint = new Hono<HonoVariables>()
             if (!deviceId || !timestamp || !signatureHeader) {
                 throw new KNOWN_ERROR("missing_headers", "UNAUTHORIZED");
             }
-            const deviceInfo = findDeviceByDeviceId(deviceId);
+            const deviceInfo = findPairingDeviceByDeviceId(deviceId);
+            // **************** in memory, secretKey
             if (!deviceInfo || !deviceInfo.secretKey) {
                 throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
             }
             const message = `${deviceId}-${timestamp}`;
+            // ******************************************* in memory, secretKey
             const expectedSignature = createHmac('sha256', deviceInfo.secretKey)
                 .update(message)
                 .digest('hex');
@@ -60,6 +63,6 @@ export const apiAutoprint = new Hono<HonoVariables>()
         setSecret_Handler
     )
 
-export type ApiAutoprintType = typeof apiAutoprint;
+export type ApiAutoprintPairingType = typeof apiAutoprintPairing;
 
 

@@ -5,6 +5,6 @@ export const paths = {
     dashboard: '/dashboard',
     gmaps: '/gmaps',
     orders: '/orders',
-    autoprint: '/autoprint',
+    autoprint_pairing: '/autoprint_pairing',
     stripe: '/stripe'
 }

@@ -6,9 +6,10 @@ import { paths } from "../paths";
 export const csrfChecks = createMiddleware<HonoVariables>(async (c, next) => {
 	if (c.req.method === "GET") {
 		await next();
-	} else if (c.req.path.startsWith(paths.autoprint)) {
+	} else if (c.req.path.startsWith(paths.autoprint_pairing)) {
 		await next();
 	} else if (c.req.path === `${paths.stripe}/webhook`) {
+		// TODO: add stripe webhook
 		await next();
 	} else {
 		const originHeader = c.req.header()['origin'] ?? null;

@@ -1,6 +1,6 @@
-import { sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, primaryKey, integer } from "drizzle-orm/sqlite-core";
 import { relations } from 'drizzle-orm';
-import { autoCreatedUpdated } from "./helpers/auto-created-updated";
+import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { generateKey } from "@lib/utils/generateKey";
 import { z } from "zod";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
@@ -35,8 +35,21 @@ export const autoprintDeviceStoreMapTable = sqliteTable("autoprint_device_store_
     primaryKey({ columns: [table.autoprintDeviceId, table.storeId] })
 ]);
 
+// TODO: should be expired after 20 minutes and store should be notified
+export const autoprintDeviceTaskTable = sqliteTable("autoprint_device_task", {
+    ...autoCreated,
+    taskId: text("task_id").notNull().primaryKey().unique().$defaultFn(() => generateKey('apt')),
+    autoprintDeviceId: text("autoprint_device_id").notNull(),
+    printerName: text("printer_name").notNull(),
+    copies: integer("copies").notNull().default(1),
+    storeId: text("store_id").notNull(),
+    orderId: text("order_id").notNull(),
+    html: text("html"),
+});
+
 export const autoprintDeviceRelations = relations(autoprintDeviceTable, ({ many }) => ({
     storeMap: many(autoprintDeviceStoreMapTable),
+    task: many(autoprintDeviceTaskTable),
 }));
 
 export const autoprintDeviceStoreMapRelations = relations(autoprintDeviceStoreMapTable, ({ one }) => ({

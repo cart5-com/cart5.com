@@ -4,7 +4,7 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { KNOWN_ERROR } from "@lib/types/errors";
-import { findDeviceByOtp, sendNotificationToDevice } from "../api_autoprint/device_connections";
+import { findPairingDeviceByOtp, sendPairingNotificationToDevice } from "../api_autoprint_pairing/device_pairing_connections";
 import type { ErrorType } from "@lib/types/errors";
 import { updateAutoPrintDevice_Service, addAutoprintDeviceToStore_Service } from "@db/services/autoprint.service";
 import { getStore_Service } from "@db/services/store.service";
@@ -19,7 +19,7 @@ export const pairAutoprintDevice_Handler = async (c: Context<
     ValidatorContext<typeof pairAutoprintDevice_SchemaValidator>
 >) => {
     const { otp } = c.req.valid('json');
-    const deviceInfo = findDeviceByOtp(otp);
+    const deviceInfo = findPairingDeviceByOtp(otp);
     if (!deviceInfo || !deviceInfo.secretKey || !deviceInfo.deviceId || !deviceInfo.printers) {
         throw new KNOWN_ERROR("invalid_device", "INVALID_DEVICE");
     }
@@ -28,7 +28,7 @@ export const pairAutoprintDevice_Handler = async (c: Context<
     const store = await getStore_Service(storeId, {
         name: true
     });
-    sendNotificationToDevice(deviceInfo.deviceId, {
+    sendPairingNotificationToDevice(deviceInfo.deviceId, {
         status: "SUCCESS",
         storeName: store?.name,
     })

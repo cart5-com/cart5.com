@@ -1,11 +1,11 @@
-import type { ApiAutoprintType } from '../../../apps/api-hono/src/routes/api_autoprint/_router'
+import type { ApiAutoprintPairingType } from '../../../apps/api-hono/src/routes/api_autoprint_pairing/_router'
 import { hc } from 'hono/client'
 
-const client = hc<ApiAutoprintType>('')
+const client = hc<ApiAutoprintPairingType>('')
 type Client = typeof client
 
-export const createAutoprintApiClient = (...args: Parameters<typeof hc>): Client => {
-    return hc<ApiAutoprintType>(...args)
+export const createAutoprintPairingApiClient = (...args: Parameters<typeof hc>): Client => {
+    return hc<ApiAutoprintPairingType>(...args)
 }
 
-export const autoprintApiClient = createAutoprintApiClient('/__p_api/autoprint/')
+export const autoprintPairingApiClient = createAutoprintPairingApiClient('/__p_api/autoprint_pairing/')

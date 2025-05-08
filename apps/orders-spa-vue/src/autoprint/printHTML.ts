@@ -136,12 +136,12 @@ export const testPrint = function () {
         border: 1px dashed #000;
     }
 </style>
-${`<pre>Flames Store|122 Noemie Crossing<h5>#225500</h5><h5>kerem</h5><hr><h6>[NOT PAID]|Cash</h6><hr>+16474250116
+${`<pre>Flames Store|122 Noemie Crossing<h5>#225500</h5><h5>Henry</h5><hr><h6>[NOT PAID]|Cash</h6><hr>+16473331122
 May 08, 25, 01:34[13 hours ago]
 Estimated Delivery: 30-50 minutes
 <hr>DELIVERY TO:
-25 The Esplanade
-Unit 604
+85 The Esplanade
+Unit 684
 Instructions: leave at door
 <hr>
 ITEMS (1):

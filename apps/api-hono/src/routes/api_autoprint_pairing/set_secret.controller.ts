@@ -4,7 +4,7 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import type { ErrorType } from "@lib/types/errors";
-import { findDeviceByDeviceId } from "./device_connections";
+import { findPairingDeviceByDeviceId } from "./device_pairing_connections";
 import { KNOWN_ERROR } from "@lib/types/errors";
 
 export const setSecret_SchemaValidator = zValidator('json', z.object({
@@ -25,7 +25,7 @@ export const setSecret_Handler = async (c: Context<
     if (!deviceId) {
         throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
     }
-    const deviceInfo = findDeviceByDeviceId(deviceId);
+    const deviceInfo = findPairingDeviceByDeviceId(deviceId);
     if (!deviceInfo) {
         throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
     }

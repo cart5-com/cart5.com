@@ -4,7 +4,7 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { streamSSE } from 'hono/streaming';
-import { device_Connections } from "./device_connections";
+import { device_pairing_connections } from "./device_pairing_connections";
 
 export const pairDevice_SchemaValidator = zValidator('query', z.object({
     name: z.string(),
@@ -25,7 +25,7 @@ export const pairDevice_Handler = async (c: Context<
         otp,
     } = c.req.valid('query');
 
-    if (device_Connections.has(deviceId)) {
+    if (device_pairing_connections.has(deviceId)) {
         // Device already connected, reject the new connection attempt
         return c.json({
             error: "Device with this ID is already connected",
@@ -37,7 +37,7 @@ export const pairDevice_Handler = async (c: Context<
         c,
         async (stream) => {
             // Store the connection with complete device info
-            device_Connections.set(deviceId, {
+            device_pairing_connections.set(deviceId, {
                 stream,
                 name,
                 deviceId,
@@ -48,7 +48,7 @@ export const pairDevice_Handler = async (c: Context<
 
             let isActive = true;
             stream.onAbort(() => {
-                device_Connections.delete(deviceId);
+                device_pairing_connections.delete(deviceId);
                 isActive = false;
             });
 
@@ -58,14 +58,14 @@ export const pairDevice_Handler = async (c: Context<
                     stream.writeSSE({ data: 'ping' });
                 } catch (e) {
                     isActive = false;
-                    device_Connections.delete(deviceId);
+                    device_pairing_connections.delete(deviceId);
                     break;
                 }
                 await stream.sleep(30_000);
             }
         },
         (e, stream) => {
-            device_Connections.delete(deviceId);
+            device_pairing_connections.delete(deviceId);
             console.error('SSE error in device pairing:', e);
             stream.writeln('Connection error!');
             return Promise.resolve();
