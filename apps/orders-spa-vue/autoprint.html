@@ -96,11 +96,26 @@
                 display: none;
             }
 
+            #is-active-checkbox {
+                transform: scale(1.5);
+                margin-right: 10px;
+                cursor: pointer;
+            }
+
+            label[for="is-active-checkbox"] {
+                font-size: 1.2em;
+                cursor: pointer;
+            }
+
         </style>
     </head>
 
     <body>
         <div id="app">
+            <input type="checkbox"
+                   id="is-active-checkbox" />
+            <label for="is-active-checkbox">Active</label>
+
             <button id="kill-app">QUIT (KILL AUTO PRINT APP)</button>
             <button id="pair-device">Pair your device</button>
             <button id="stop-pairing">Stop pairing</button>

@@ -136,7 +136,11 @@ export const onClickPairDevice = async () => {
             console.log(data);
             if (data.status === "SUCCESS") {
                 setStatus(`PAIRED TO STORE: ${data.storeName}`, "green");
-                addStatus(`now you can close this window`);
+                addStatus(`now you can close this window`, "green");
+                const isActiveCheckbox = document.querySelector<HTMLInputElement>('#is-active-checkbox');
+                if (isActiveCheckbox) {
+                    isActiveCheckbox.checked = true;
+                }
                 if (timeOutId) {
                     clearTimeout(timeOutId);
                     timeOutId = null;
