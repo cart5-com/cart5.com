@@ -52,10 +52,6 @@ import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
                                     <Button variant="outline"
                                             size="lg">
                                         Autoprint Settings
-                                        <span v-if="store.autoprintDevices?.length"
-                                              class="text-xs text-muted-foreground">
-                                            ({{ store.autoprintDevices?.length }})
-                                        </span>
                                     </Button>
                                 </DialogTrigger>
                                 <DialogScrollContent>
