@@ -288,6 +288,13 @@
       "when": 1746648753392,
       "tag": "0040_giant_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "6",
+      "when": 1746664431248,
+      "tag": "0041_lucky_wiccan",
+      "breakpoints": true
     }
   ]
 }

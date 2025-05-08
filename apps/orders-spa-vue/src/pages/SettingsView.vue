@@ -2,31 +2,13 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Store } from "lucide-vue-next";
-import { myStoresFiltered, myStores, searchQuery, loadMyStores } from '@orders-spa-vue/stores/MyStoresStore'
+import { myStoresFiltered, myStores, searchQuery } from '@orders-spa-vue/stores/MyStoresStore'
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { addListeningStore, MySettingsStore, removeListeningStore } from "@orders-spa-vue/stores/MySettingsStore";
 import { Button } from "@/components/ui/button";
-import { ordersApiClient } from "@api-client/orders";
-import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
-
-const pairAutoprintDevice = async (storeId: string) => {
-    const otp = prompt("one-time-pairing-code ?");
-    if (!otp) {
-        return;
-    }
-    const { data, error } = await (await ordersApiClient[":storeId"].pair_autoprint_device.$post({
-        param: { storeId },
-        json: { otp }
-    })).json();
-    if (error) {
-        console.error(error)
-    }
-    if (data) {
-        console.log(data)
-        loadMyStores()
-    }
-}
+import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent } from "@/components/ui/dialog";
+import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
 
 </script>
 <template>
@@ -82,22 +64,8 @@ const pairAutoprintDevice = async (storeId: string) => {
                                         <DialogDescription />
                                     </DialogHeader>
 
-                                    <Button variant="outline"
-                                            size="lg"
-                                            @click="pairAutoprintDevice(store.id)">
-                                        Pair a new Autoprint Device
-                                    </Button>
+                                    <AutomationRulesView :store-id="store.id" />
 
-
-
-                                    <DialogFooter>
-                                        <DialogClose as-child>
-                                            <Button variant="secondary"
-                                                    class="w-full">
-                                                Close
-                                            </Button>
-                                        </DialogClose>
-                                    </DialogFooter>
                                 </DialogScrollContent>
                             </Dialog>
 
