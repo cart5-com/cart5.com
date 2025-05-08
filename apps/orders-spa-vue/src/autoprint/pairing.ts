@@ -70,10 +70,44 @@ export const setSecret = async () => {
 
 let eventSource: EventSource | null = null;
 let timeOutId: NodeJS.Timeout | null = null;
+let isPairing = false;
+
+export const stopPairing = () => {
+    if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+    }
+
+    if (timeOutId) {
+        clearTimeout(timeOutId);
+        timeOutId = null;
+    }
+
+    isPairing = false;
+    setStatus('Pairing stopped', 'blue');
+
+    // Hide stop button, show pair button
+    const stopButton = document.querySelector<HTMLButtonElement>('#stop-pairing');
+    const pairButton = document.querySelector<HTMLButtonElement>('#pair-device');
+
+    if (stopButton) stopButton.style.display = 'none';
+    if (pairButton) pairButton.style.display = 'inline-block';
+}
+
 export const onClickPairDevice = async () => {
     if (eventSource) {
         eventSource.close();
     }
+
+    isPairing = true;
+
+    // Show stop button, hide pair button
+    const stopButton = document.querySelector<HTMLButtonElement>('#stop-pairing');
+    const pairButton = document.querySelector<HTMLButtonElement>('#pair-device');
+
+    if (stopButton) stopButton.style.display = 'inline-block';
+    if (pairButton) pairButton.style.display = 'none';
+
     const name = getHostname();
     const otp = generateOTPJsOnly(6);
 
@@ -88,10 +122,10 @@ export const onClickPairDevice = async () => {
     // wait for 1 second
     await new Promise(resolve => setTimeout(resolve, 1000));
     eventSource = new EventSource(url.toString());
-    eventSource.onopen = () => {
+    eventSource.onopen = async () => {
         setStatus(`one-time-pairing-code: <b style="font-size: 20px;">${otp}</b>`);
-        setSecret();
-        setPrinters();
+        await setSecret();
+        await setPrinters();
     }
     eventSource.onmessage = (event) => {
         if (event.data === 'ping') {
@@ -105,8 +139,18 @@ export const onClickPairDevice = async () => {
                 addStatus(`now you can close this window`);
                 if (timeOutId) {
                     clearTimeout(timeOutId);
+                    timeOutId = null;
                 }
                 eventSource?.close();
+                eventSource = null;
+                isPairing = false;
+
+                // Hide stop button, show pair button
+                const stopButton = document.querySelector<HTMLButtonElement>('#stop-pairing');
+                const pairButton = document.querySelector<HTMLButtonElement>('#pair-device');
+
+                if (stopButton) stopButton.style.display = 'none';
+                if (pairButton) pairButton.style.display = 'inline-block';
             }
         } catch (error) {
             console.error(error);
@@ -117,9 +161,15 @@ export const onClickPairDevice = async () => {
         console.log(`Pairing Connection error`);
         console.log(event);
         eventSource?.close();
+        eventSource = null;
+
+        if (!isPairing) return;
+
         setStatus(`Pairing failed. it will try again in 3 seconds`, "red");
         setTimeout(() => {
-            onClickPairDevice();
+            if (isPairing) {
+                onClickPairDevice();
+            }
         }, 3_000);
     };
 
@@ -127,6 +177,8 @@ export const onClickPairDevice = async () => {
         clearTimeout(timeOutId);
     }
     timeOutId = setTimeout(() => {
-        onClickPairDevice();
+        if (isPairing) {
+            onClickPairDevice();
+        }
     }, 300_000); // 5 minutes
 }

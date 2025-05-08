@@ -5,3 +5,7 @@ interface Window {
     USER: import("@lib/types/UserType").User | undefined;
     // L: typeof import('@types/leaflet-draw');
 }
+
+declare namespace global {
+    var mainWindow: NWJS_Helpers.win | undefined;
+}

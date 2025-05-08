@@ -1,14 +1,25 @@
+import { focusGlobalWindow } from "./focusGlobalWindow";
+import { killApp } from "./killApp";
 import { getMainWindow } from "./mainWindow";
-import { onClickPairDevice } from "./pairing";
+import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
+import { onClickPairDevice, stopPairing } from "./pairing";
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 
 if (typeof global !== "undefined") {
+    global.mainWindow = getMainWindow();
+    global.mainWindow.on('closed', function () {
+        global.mainWindow?.hide();
+    });
+    global.mainWindow.on('close', function () {
+        global.mainWindow?.hide();
+    });
     // document.querySelector<HTMLDivElement>('#app')!.innerHTML += `I have global with nw.js`
     if (import.meta.env.DEV) {
-        console.log('dev mode');
-        getMainWindow().showDevTools();
+        global.mainWindow.showDevTools();
     }
+    focusGlobalWindow();
+    openAlwaysTopOnWindow();
 }
-
-
 document.querySelector<HTMLButtonElement>('#pair-device')!.addEventListener('click', onClickPairDevice);
+document.querySelector<HTMLButtonElement>('#stop-pairing')!.addEventListener('click', stopPairing);
+document.querySelector<HTMLButtonElement>('#kill-app')!.addEventListener('click', killApp);
