@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { generateOrderData_Service, updateOrderData_Service, logOrderStatusChange_Service, acceptOrder_Service } from '@db/services/order.service';
+import { generateOrderData_Service, saveOrderDataTransactional_Service } from '@db/services/order.service';
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
@@ -31,18 +31,28 @@ export const placeOrderRoute = async (c: Context<
     const { order, carts } = await generateOrderData_Service(user, host, storeId);
     const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
-    // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
-    // save order data TODO: use transaction for saving..
-    await updateOrderData_Service(newOrderId, order);
-
-    // Log the initial order creation status
-    await logOrderStatusChange_Service({
-        orderId: newOrderId,
-        newStatus: ORDER_STATUS_OBJ.CREATED,
-        changedByUserId: user.id,
-        changedByIpAddress: ipAddress,
-        type: 'user',
+    // Get store automation rules
+    const storeAutomationRules = await getStoreAutomationRules_Service(storeId, {
+        autoAcceptOrders: true,
     });
+
+    // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
+    await saveOrderDataTransactional_Service(
+        newOrderId,
+        order,
+        {
+            newStatus: ORDER_STATUS_OBJ.CREATED,
+            changedByUserId: user.id,
+            changedByIpAddress: ipAddress,
+            type: 'user',
+        },
+        storeAutomationRules?.autoAcceptOrders ? {
+            storeId,
+            changedByUserId: undefined,
+            changedByIpAddress: undefined,
+            type: 'automatic_rule'
+        } : undefined
+    );
 
     // delete cart current cart
     const cartId = generateCartId(host ?? '', storeId);
@@ -52,12 +62,6 @@ export const placeOrderRoute = async (c: Context<
     sendNotificationToStore(storeId, {
         orderId: newOrderId
     });
-    const storeAutomationRules = await getStoreAutomationRules_Service(storeId, {
-        autoAcceptOrders: true,
-    });
-    if (storeAutomationRules?.autoAcceptOrders) {
-        await acceptOrder_Service(storeId, newOrderId, undefined, undefined, 'automatic_rule');
-    }
 
     // TODO: send email notification to user once store approves/rejects order
     return c.json({

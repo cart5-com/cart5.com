@@ -8,12 +8,13 @@ type OrderType = ResType<typeof orderDetailsApiPath>["data"];
 const style = `
 <style>
     body {
-        padding: 2px;
+        padding: 0px;
         margin: 0px;
     }
     pre {
-        padding: 2px;
-        margin: 0px;
+        width: 230px;
+        margin: 15px;
+        overflow: hidden;
         max-width: fit-content;
         font-family: monospace;
         white-space: pre-wrap;
