@@ -1,4 +1,6 @@
-let alwaysTopOnWindow: NWJS_Helpers.win | undefined;
+import { isOnlineCheckbox } from "./isOnlineCheckbox";
+
+export let alwaysTopOnWindow: NWJS_Helpers.win | undefined;
 export const openAlwaysTopOnWindow = function () {
     if (typeof global === "undefined") {
         return;
@@ -11,7 +13,7 @@ export const openAlwaysTopOnWindow = function () {
     nw.Window.open(window.location.href.replace('autoprint.html', 'always_top_on.html'), {
         // "max_width": 60,
         // "max_height": 40,
-        "width": 60,
+        "width": 90,
         "height": 40,
         "show": true,
         "frame": false,
@@ -52,9 +54,17 @@ export const openAlwaysTopOnWindow = function () {
             setTimeout(function () {
                 alwaysTopOnWindow?.setAlwaysOnTop(true);
                 alwaysTopOnWindow?.focus();
+                setOnlineStatus(isOnlineCheckbox.checked ? '✅' : '❌');
             }, 500);
         } else {
             alert('AutoPrint UNDEFINED ERROR please restart the AutoPrint app');
         }
     });
+}
+
+export const setOnlineStatus = (status: string) => {
+    const elem = alwaysTopOnWindow?.window.document.getElementById('is-online-status');
+    if (elem) {
+        elem.textContent = status;
+    }
 }

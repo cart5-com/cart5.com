@@ -137,9 +137,11 @@ export const onClickPairDevice = async () => {
             if (data.status === "SUCCESS") {
                 setStatus(`PAIRED TO STORE: ${data.storeName}`, "green");
                 addStatus(`now you can close this window`, "green");
-                const isActiveCheckbox = document.querySelector<HTMLInputElement>('#is-active-checkbox');
-                if (isActiveCheckbox) {
-                    isActiveCheckbox.checked = true;
+                const isOnlineCheckbox = document.querySelector<HTMLInputElement>('#is-online-checkbox');
+                if (isOnlineCheckbox) {
+                    isOnlineCheckbox.checked = true;
+                    // fire event to save
+                    isOnlineCheckbox.dispatchEvent(new Event('change'));
                 }
                 if (timeOutId) {
                     clearTimeout(timeOutId);

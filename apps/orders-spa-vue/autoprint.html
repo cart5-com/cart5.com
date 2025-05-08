@@ -96,13 +96,13 @@
                 display: none;
             }
 
-            #is-active-checkbox {
+            #is-online-checkbox {
                 transform: scale(1.5);
                 margin-right: 10px;
                 cursor: pointer;
             }
 
-            label[for="is-active-checkbox"] {
+            label[for="is-online-checkbox"] {
                 font-size: 1.2em;
                 cursor: pointer;
             }
@@ -112,14 +112,21 @@
 
     <body>
         <div id="app">
-            <input type="checkbox"
-                   id="is-active-checkbox" />
-            <label for="is-active-checkbox">Active</label>
-
+            <h1>Auto Print</h1>
+            <div>
+                <div>
+                    Once paired, make sure to check the "Online" checkbox to start printing.
+                </div>
+                <button id="pair-device">Pair your device</button>
+                <button id="stop-pairing">Stop pairing</button>
+                <div id="pairing-status"></div>
+            </div>
+            <div>
+                <input type="checkbox"
+                       id="is-online-checkbox" />
+                <label for="is-online-checkbox">Keep Online</label>
+            </div>
             <button id="kill-app">QUIT (KILL AUTO PRINT APP)</button>
-            <button id="pair-device">Pair your device</button>
-            <button id="stop-pairing">Stop pairing</button>
-            <div id="pairing-status"></div>
         </div>
         <script type="module"
                 src="./src/autoprint/autoprint-main.ts"></script>
