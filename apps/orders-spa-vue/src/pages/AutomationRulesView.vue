@@ -9,8 +9,13 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusIcon, Trash2Icon, Save } from 'lucide-vue-next';
+import { PlusIcon, Trash2Icon, Save, Info } from 'lucide-vue-next';
 import { generateKey } from '@lib/utils/generateKey';
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from '@/components/ui/hover-card'
 
 const ApiPath = ordersApiClient[":storeId"].automation_rules.get.$post;
 type AutomationRulesType = ResType<typeof ApiPath>["data"];
@@ -125,6 +130,18 @@ function removeRule(index: number) {
     if (!automationRules.value?.autoPrintRules) return;
     automationRules.value.autoPrintRules.splice(index, 1);
 }
+
+const disableOtherRules = (ruleId?: string) => {
+    if (!automationRules.value?.autoPrintRules) return;
+    if (ruleId) {
+        automationRules.value.autoAcceptOrders = false;
+    }
+    automationRules.value.autoPrintRules.forEach(rule => {
+        if (rule.id !== ruleId) {
+            rule.autoAcceptOrderAfterPrint = false;
+        }
+    });
+}
 </script>
 
 <template>
@@ -168,15 +185,20 @@ function removeRule(index: number) {
                 <h3 class="text-lg font-medium mb-4">Automation Rules</h3>
                 <div class="flex items-center space-x-2 ">
                     <Switch id="auto-accept-orders"
-                            v-model:checked="automationRules.autoAcceptOrders" />
+                            v-model:checked="automationRules.autoAcceptOrders"
+                            @update:checked="(checked: boolean) => {
+                                if (checked) {
+                                    disableOtherRules();
+                                }
+                            }" />
                     <Label for="auto-accept-orders">
                         Automatically accept all incoming orders
                     </Label>
                 </div>
                 <p class="text-sm text-muted-foreground mt-2 mb-6">
-                    If enabled, all incoming orders will be automatically accepted.
-                    even you are offline and/or orders not printed.
-                    this rule not connected to any other print rule.
+                    When turned on, new orders will be automatically accepted without your intervention.
+                    This happens even when you're offline or if the orders aren't being printed.
+                    This setting works independently from any print rules you set up.
                 </p>
 
                 <div class="mb-4 flex justify-between items-center">
@@ -264,8 +286,28 @@ function removeRule(index: number) {
 
                             <div class="flex items-center space-x-2">
                                 <Switch :id="`auto-accept-${rule.id}`"
-                                        v-model:checked="rule.autoAcceptOrderAfterPrint" />
-                                <Label :for="`auto-accept-${rule.id}`">Auto accept order after print</Label>
+                                        v-model:checked="rule.autoAcceptOrderAfterPrint"
+                                        @update:checked="(checked: boolean) => {
+                                            if (checked) {
+                                                disableOtherRules(rule.id);
+                                            }
+                                        }" />
+                                <Label :for="`auto-accept-${rule.id}`">
+                                    Auto accept order after print
+                                    <HoverCard>
+                                        <HoverCardTrigger as-child>
+                                            <Info class="inline-block" />
+                                        </HoverCardTrigger>
+                                        <HoverCardContent align="start">
+                                            <p>
+                                                When enabled, orders will be automatically marked as accepted after
+                                                the print job is sent. Note that this happens regardless of whether
+                                                the print was successful, as the system cannot verify the printer's
+                                                actual status.
+                                            </p>
+                                        </HoverCardContent>
+                                    </HoverCard>
+                                </Label>
                             </div>
                         </div>
                     </div>

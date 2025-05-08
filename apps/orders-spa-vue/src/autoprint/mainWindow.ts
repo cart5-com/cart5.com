@@ -4,6 +4,12 @@ export const getMainWindow = function () {
     return nw.Window.get();
 }
 
+export const printMainWindow = function () {
+    return nw.Window.get().print({
+
+    });
+}
+
 export const getHostname = function () {
     try {
         return `${require('os').hostname()}-${Date.now()}`;
