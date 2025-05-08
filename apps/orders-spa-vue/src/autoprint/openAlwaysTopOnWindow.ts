@@ -1,8 +1,21 @@
 import { isOnlineCheckbox } from "./isOnlineCheckbox";
 
-export let alwaysTopOnWindow: NWJS_Helpers.win | undefined;
+let alwaysTopOnWindow: NWJS_Helpers.win | undefined;
+let iframe: HTMLIFrameElement | undefined;
 export const openAlwaysTopOnWindow = function () {
     if (typeof global === "undefined") {
+        // add it as iframe
+        iframe = document.createElement('iframe');
+        iframe.src = window.location.href.replace('autoprint.html', 'always_top_on.html');
+        iframe.style.position = 'fixed';
+        iframe.style.bottom = '0';
+        iframe.style.right = '0';
+        iframe.style.width = '90px';
+        iframe.style.height = '40px';
+        document.body.appendChild(iframe);
+        setTimeout(function () {
+            setOnlineStatus(isOnlineCheckbox.checked ? '✅' : '❌');
+        }, 1000);
         return;
     }
     // global.mainWindow.setShowInTaskbar(true);
@@ -63,6 +76,15 @@ export const openAlwaysTopOnWindow = function () {
 }
 
 export const setOnlineStatus = (status: string) => {
+    if (typeof global === "undefined") {
+        if (iframe) {
+            const elem = iframe.contentWindow?.document.getElementById('is-online-status');
+            if (elem) {
+                elem.textContent = status;
+            }
+        }
+        return;
+    }
     const elem = alwaysTopOnWindow?.window.document.getElementById('is-online-status');
     if (elem) {
         elem.textContent = status;

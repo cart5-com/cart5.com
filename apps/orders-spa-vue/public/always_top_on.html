@@ -72,6 +72,10 @@
         </style>
         <script>
             function onPrinterButtonClick() {
+                if (typeof global === "undefined") {
+                    alert('focus global window');
+                    return;
+                }
                 if (global.mainWindow) {
                     global.mainWindow.show();
                     global.mainWindow.focus();

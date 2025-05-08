@@ -2,13 +2,7 @@
 <html lang="en">
 
     <head>
-        <script>
-            // const os = require('os');
-
-            // const hostname = os.hostname();
-            // console.log('Hostname:', hostname);
-        </script>
-        <style>
+        <style id="autoprint-style">
             .audio-class {
                 display: none;
                 position: absolute;
@@ -115,7 +109,7 @@
             <h1>Auto Print</h1>
             <div>
                 <div>
-                    Once paired, make sure to check the "Online" checkbox to start printing.
+                    Once paired, make sure to check the "Keep Online" checkbox to start printing.
                 </div>
                 <button id="pair-device">Pair your device</button>
                 <button id="stop-pairing">Stop pairing</button>
@@ -127,6 +121,7 @@
                 <label for="is-online-checkbox">Keep Online</label>
             </div>
             <button id="kill-app">QUIT (KILL AUTO PRINT APP)</button>
+            <button id="test-print">TEST PRINT</button>
         </div>
         <script type="module"
                 src="./src/autoprint/autoprint-main.ts"></script>

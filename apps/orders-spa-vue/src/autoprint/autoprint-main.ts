@@ -3,6 +3,7 @@ import { killApp } from "./killApp";
 import { getMainWindow } from "./mainWindow";
 import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
 import { onClickPairDevice, stopPairing } from "./pairing";
+import { testPrint } from "./printHtml";
 
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 if (typeof global !== "undefined") {
@@ -18,10 +19,11 @@ if (typeof global !== "undefined") {
         global.mainWindow.showDevTools();
     }
     focusGlobalWindow();
-    openAlwaysTopOnWindow();
 }
+openAlwaysTopOnWindow();
 
 
 document.querySelector<HTMLButtonElement>('#pair-device')!.addEventListener('click', onClickPairDevice);
 document.querySelector<HTMLButtonElement>('#stop-pairing')!.addEventListener('click', stopPairing);
 document.querySelector<HTMLButtonElement>('#kill-app')!.addEventListener('click', killApp);
+document.querySelector<HTMLButtonElement>('#test-print')!.addEventListener('click', testPrint);
