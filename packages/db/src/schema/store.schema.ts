@@ -15,6 +15,7 @@ import {
 } from "@lib/zod/paymentMethodsSchema";
 import { TAX_TYPE, TaxCategorySchema, type TaxCategory } from "@lib/zod/taxSchema";
 import { WeeklyHoursSchema, type WeeklyHours } from "@lib/zod/weeklyScheduleSchema";
+import { AutoprintRulesListSchema, type AutoprintRulesListType } from "@lib/zod/AutoprintRules";
 import { MenuRootSchema, type MenuRoot } from "@lib/zod/menuRootSchema";
 import { autoCreated, autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { CustomServiceFeeSchema, type CustomServiceFee, CALCULATION_TYPE } from "@lib/zod/serviceFee";
@@ -265,6 +266,23 @@ export const updateStoreDeliveryZoneMapSchema = createUpdateSchema(storeDelivery
 /// DELIVERY ZONES END
 
 
+/// AUTOPRINT RULES START
+export const storeAutomationRulesTable = sqliteTable("store_automation_rules", {
+	storeId: text("store_id").notNull().unique(),
+	autoAcceptOrders: integer("auto_accept_order_after_print", { mode: "boolean" }).notNull().default(false),
+	autoPrintRules: text('auto_print_rules', { mode: 'json' }).$type<AutoprintRulesListType>(),
+});
+export const selectStoreAutomationRulesSchema = createSelectSchema(storeAutomationRulesTable);
+const overrideStoreAutomationRulesSchema = {
+	autoPrintRules: AutoprintRulesListSchema.nullable(),
+}
+export const insertStoreAutomationRulesSchema = createInsertSchema(storeAutomationRulesTable, overrideStoreAutomationRulesSchema);
+export const updateStoreAutomationRulesSchema = createUpdateSchema(storeAutomationRulesTable, overrideStoreAutomationRulesSchema);
+/// AUTOPRINT RULES END
+
+
+
+
 
 
 export const storeRelations = relations(storeTable, ({
@@ -312,6 +330,12 @@ export const storeRelations = relations(storeTable, ({
 			storeDeliveryZoneMapTable, {
 			fields: [storeTable.id],
 			references: [storeDeliveryZoneMapTable.storeId]
+		}),
+	automationRules:
+		one(
+			storeAutomationRulesTable, {
+			fields: [storeTable.id],
+			references: [storeAutomationRulesTable.storeId]
 		}),
 	stripeSettings:
 		one(

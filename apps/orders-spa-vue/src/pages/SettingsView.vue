@@ -28,12 +28,11 @@ const pairAutoprintDevice = async (storeId: string) => {
     }
 }
 
-const IS_DEV = import.meta.env.DEV;
 </script>
 <template>
     <div>
         <div class="mb-4"
-             v-if="myStores.length > 9 || IS_DEV">
+             v-if="myStores.length > 9">
             <Input v-model="searchQuery"
                    placeholder="Search by name or address"
                    class="max-w-sm" />
@@ -89,18 +88,7 @@ const IS_DEV = import.meta.env.DEV;
                                         Pair a new Autoprint Device
                                     </Button>
 
-                                    <div class="flex flex-col gap-2">
-                                        <div v-for="device in store.autoprintDevices"
-                                             :key="device.autoprintDeviceId">
-                                            {{ device.name }}
-                                            <!-- {{ device.autoprintDeviceId }} -->
-                                            <div v-for="(printer, index) in device.printers"
-                                                 :key="index">
-                                                {{ index + 1 }}. {{ printer.deviceName }}
-                                            </div>
 
-                                        </div>
-                                    </div>
 
                                     <DialogFooter>
                                         <DialogClose as-child>

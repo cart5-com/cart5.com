@@ -9,7 +9,8 @@ import {
     storeDeliveryZoneMapTable,
     storeServiceFeesTable,
     storeStripeConnectSettingsTable,
-    storeAsAStripeCustomerTable
+    storeAsAStripeCustomerTable,
+    storeAutomationRulesTable
 } from "@db/schema/store.schema";
 import { createTeamTransactional_Service, createTeamWithoutOwner_Service, isAdminCheck } from "./team.service";
 import type { TEAM_PERMISSIONS } from "@lib/consts";
@@ -357,6 +358,31 @@ export const updateStoreDeliveryZones_Service = async (
         .values({ ...data, storeId: storeId })
         .onConflictDoUpdate({
             target: storeDeliveryZoneMapTable.storeId,
+            set: data
+        });
+
+    await markStoreAsUpdated(storeId);
+    return result;
+}
+
+export const getStoreAutomationRules_Service = async (
+    storeId: string,
+    columns?: Partial<Record<keyof typeof storeAutomationRulesTable.$inferSelect, boolean>>
+) => {
+    return await db.query.storeAutomationRulesTable.findFirst({
+        where: eq(storeAutomationRulesTable.storeId, storeId),
+        columns: columns,
+    });
+}
+
+export const updateStoreAutomationRules_Service = async (
+    storeId: string,
+    data: Partial<InferInsertModel<typeof storeAutomationRulesTable>>
+) => {
+    const result = await db.insert(storeAutomationRulesTable)
+        .values({ ...data, storeId: storeId })
+        .onConflictDoUpdate({
+            target: storeAutomationRulesTable.storeId,
             set: data
         });
 

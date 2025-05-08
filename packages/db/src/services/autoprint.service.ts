@@ -32,29 +32,7 @@ export const addAutoprintDeviceToStore_Service = async (
 }
 
 
-// export const getAutoprintDevices_ByStoreIds_Service = async (
-//     storeIds: string[]
-// ) => {
-//     const mappings = await db.query.autoprintDeviceStoreMapTable.findMany({
-//         where: inArray(autoprintDeviceStoreMapTable.storeId, storeIds),
-//         with: {
-//             device: {
-//                 columns: {
-//                     autoprintDeviceId: true,
-//                     name: true,
-//                     printers: true
-//                 }
-//             }
-//         }
-//     });
-//     let result: Record<string, typeof mappings[0]['device'][]> = {};
-//     for (const mapping of mappings) {
-//         result[mapping.storeId] = mapping.device;
-//     }
-//     return result;
-// }
-
-export const getAutoprintDevices_ByStoreIds_Service_old = async (
+export const getAutoprintDevices_ByStoreIds_Service = async (
     storeIds: string[]
 ) => {
     const stores = storeIds.map(async (storeId) => {

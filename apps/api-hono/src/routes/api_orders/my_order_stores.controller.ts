@@ -2,7 +2,7 @@ import { type Context } from 'hono';
 import type { HonoVariables } from '@api-hono/types/HonoVariables';
 import { type ErrorType } from '@lib/types/errors';
 import { getAllStoresThatUserHasAccessTo } from '@db/services/store.service';
-import { getAutoprintDevices_ByStoreIds_Service_old } from '@db/services/autoprint.service';
+import { getAutoprintDevices_ByStoreIds_Service } from '@db/services/autoprint.service';
 
 export const getMyOrderStores_Handler = async (c: Context<HonoVariables>) => {
     const stores: {
@@ -12,7 +12,7 @@ export const getMyOrderStores_Handler = async (c: Context<HonoVariables>) => {
     }[] = await getAllStoresThatUserHasAccessTo(
         c.get('USER')?.id!
     )
-    const autoprintDevices = await getAutoprintDevices_ByStoreIds_Service_old(stores.map(store => store.id));
+    const autoprintDevices = await getAutoprintDevices_ByStoreIds_Service(stores.map(store => store.id));
     return c.json({
         data: stores.map(store => {
             return {
