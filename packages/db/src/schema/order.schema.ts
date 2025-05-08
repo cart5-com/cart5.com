@@ -68,18 +68,14 @@ export const orderTable = sqliteTable("orders", {
 export const orderStatusHistoryTable = sqliteTable("order_status_history", {
     ...autoCreatedUpdated,
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('osh')),
-
     // Order Information
     orderId: text("order_id").notNull(),
-
     // Status Information
     newStatus: text("new_status", { enum: ORDER_STATUS }).notNull(),
-
     // Change Information
+    type: text("type", { enum: ["user", "automatic_rule", "system"] }),
     changedByUserId: text("changed_by_user_id"),
     changedByIpAddress: text("changed_by_ip_address"),
-    changeMethod: text("change_method"), // 'user', 'automatic', 'system', etc.
-    changeReason: text("change_reason"), // Record reason for automatic changes
 
     // Additional Data
     metaData: text("meta_data", { mode: "json" }), // For any additional data we might want to store

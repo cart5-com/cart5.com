@@ -33,30 +33,28 @@ import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
+
 export const logOrderStatusChange_Service = async ({
     orderId,
     newStatus,
     changedByUserId,
     changedByIpAddress,
-    changeMethod = 'user',
-    changeReason,
+    type,
     metaData
 }: {
     orderId: string;
     newStatus: OrderStatus;
     changedByUserId?: string;
     changedByIpAddress?: string;
-    changeMethod?: 'user' | 'automatic' | 'system' | string;
-    changeReason?: string;
+    type: 'user' | 'automatic_rule' | 'system';
     metaData?: Record<string, any>;
 }) => {
     return await db.insert(orderStatusHistoryTable).values({
         orderId,
         newStatus,
+        type: type ?? 'user',
         changedByUserId,
         changedByIpAddress,
-        changeMethod,
-        changeReason,
         metaData: metaData ? JSON.stringify(metaData) : null
     });
 }
@@ -98,7 +96,8 @@ export const acceptOrder_Service = async (
     storeId: string,
     orderId: string,
     changedByUserId?: string,
-    changedByIpAddress?: string
+    changedByIpAddress?: string,
+    type: 'user' | 'automatic_rule' | 'system' = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.ACCEPTED;
 
@@ -121,8 +120,7 @@ export const acceptOrder_Service = async (
             newStatus,
             changedByUserId,
             changedByIpAddress,
-            changeMethod: changedByUserId ? 'user' : 'system',
-            changeReason: changedByUserId ? 'Manual acceptance by store' : 'System acceptance'
+            type,
         });
     }
 
@@ -133,7 +131,8 @@ export const completeOrder_Service = async (
     storeId: string,
     orderId: string,
     changedByUserId?: string,
-    changedByIpAddress?: string
+    changedByIpAddress?: string,
+    type: 'user' | 'automatic_rule' | 'system' = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.COMPLETED;
 
@@ -156,8 +155,7 @@ export const completeOrder_Service = async (
             newStatus,
             changedByUserId,
             changedByIpAddress,
-            changeMethod: changedByUserId ? 'user' : 'system',
-            changeReason: changedByUserId ? 'Manual completion by store' : 'System completion'
+            type,
         });
     }
 
@@ -169,7 +167,7 @@ export const cancelOrder_Service = async (
     orderId: string,
     changedByUserId?: string,
     changedByIpAddress?: string,
-    changeReason?: string
+    type: 'user' | 'automatic_rule' | 'system' = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.CANCELLED;
 
@@ -191,8 +189,7 @@ export const cancelOrder_Service = async (
             newStatus,
             changedByUserId,
             changedByIpAddress,
-            changeMethod: changedByUserId ? 'user' : 'system',
-            changeReason: changeReason || (changedByUserId ? 'Manual cancellation by store' : 'System cancellation')
+            type,
         });
     }
 
