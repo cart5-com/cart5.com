@@ -1,4 +1,4 @@
-import { autoprintPairingApiClient, createAutoprintPairingApiClient } from "@api-client/autoprint";
+import { autoprintPairingApiClient, createAutoprintPairingApiClient } from "@api-client/autoprint_pairing";
 import { getHostname, getPrinters } from "./mainWindow";
 import { generateOTPJsOnly } from "@api-hono/utils/generateRandomOtp";
 import { createHmacSignature } from "./createHmacSignature";

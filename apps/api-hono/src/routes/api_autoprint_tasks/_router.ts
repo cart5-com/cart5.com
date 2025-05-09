@@ -7,7 +7,7 @@ import { listenTasks_Handler } from './listen_tasks.controller';
 import { getTasks_Handler } from './getTasks.controller';
 import { deleteTask_Handler } from './deleteTask.controller';
 
-export const apiAutoprintPairing = new Hono<HonoVariables>()
+export const apiAutoprintTasks = new Hono<HonoVariables>()
     .use(async (c, next) => {
         // almost same as pairing middleware but this one uses db to get secretKey not memory
         const deviceId = c.req.header()['x-device-id'];
@@ -52,6 +52,6 @@ export const apiAutoprintPairing = new Hono<HonoVariables>()
         deleteTask_Handler
     )
 
-export type ApiAutoprintPairingType = typeof apiAutoprintPairing;
+export type ApiAutoprintTasksType = typeof apiAutoprintTasks;
 
 

@@ -20,6 +20,7 @@ import { apiOrders } from './routes/api_orders/_router';
 import { createHmac, timingSafeEqual } from "crypto"
 import { apiAutoprintPairing } from './routes/api_autoprint_pairing/_router';
 import { paths } from './paths';
+import { apiAutoprintTasks } from './routes/api_autoprint_tasks/_router';
 
 const app = new Hono<HonoVariables>();
 if (IS_PROD) {
@@ -71,6 +72,7 @@ app.route(paths.dashboard, apiDashboard)
 app.route(paths.gmaps, apiGMaps)
 app.route(paths.orders, apiOrders)
 app.route(paths.autoprint_pairing, apiAutoprintPairing)
+app.route(paths.autoprint_tasks, apiAutoprintTasks)
 
 const port = 3000;
 export let server: ReturnType<typeof serve>;
