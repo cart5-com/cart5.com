@@ -1,7 +1,8 @@
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { generateOrderData_Service, saveOrderDataTransactional_Service } from '@db/services/order.service';
+import { generateOrderData_Service } from '@db/services/order.service';
+import { saveOrderDataTransactional_Service } from '@db/services/order.transactional.service';
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
@@ -34,6 +35,7 @@ export const placeOrderRoute = async (c: Context<
     // Get store automation rules
     const storeAutomationRules = await getStoreAutomationRules_Service(storeId, {
         autoAcceptOrders: true,
+        autoPrintRules: true
     });
 
     // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'

@@ -20,6 +20,10 @@ export const sendNotificationToTaskListenerDevice = (deviceId: string, data: any
             // Remove the connection if there's an error
             taskListenerDevices_Connections.delete(deviceId)
         }
+        return true;
+    } else {
+        // if offline, this is unexpected. warn store
+        return false;
     }
 }
 

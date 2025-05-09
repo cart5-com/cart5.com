@@ -15,6 +15,7 @@ export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
         throw new KNOWN_ERROR("Task ID not found", "TASK_ID_NOT_FOUND");
     }
 
+    // TODO: check automation rule to accept order here
     await deleteTask_Service(taskId, deviceId);
 
     return c.json({

@@ -1,9 +1,21 @@
-import { getMainWindow } from "./mainWindow";
+import {
+    getMainWindow,
+    // getPrinters
+} from "./mainWindow";
 
-export const printHTML = async function (html: string, copies: number = 1) {
+export const printHTML = async function (
+    html: string,
+    printer: string,
+    copies: number = 1,
+) {
     // const mainWindow = getMainWindow();
     // mainWindow.hide();
     // getMainWindow().hide();
+
+    // TODO: check if printer is in the list of printers, maybe we should report it sender store email.
+    // const printers = await getPrinters();
+    // console.log(printers);
+
     const style = document.getElementById('autoprint-style');
     if (!style) {
         return;
@@ -51,7 +63,7 @@ export const printHTML = async function (html: string, copies: number = 1) {
                 getMainWindow().print({
                     autoprint: true,
                     silent: true,
-                    printer: "HP_DeskJet_2700_series", // "Save as PDF"
+                    printer: printer, //"HP_DeskJet_2700_series", // "Save as PDF"
                     // pdf_path: not working with mac, I don't know why
                     headerFooterEnabled: false,
                     landscape: true,
@@ -102,58 +114,3 @@ export const printHTML = async function (html: string, copies: number = 1) {
     // Append to body after setup is complete
     document.body.appendChild(iframe);
 };
-
-
-export const testPrint = function () {
-    printHTML(`<html><body>
-<style>
-    body {
-        padding: 0px;
-        margin: 0px;
-    }
-    pre {
-        width: 230px;
-        margin: 15px;
-        overflow: hidden;
-        max-width: fit-content;
-        font-family: monospace;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        font-weight: bold;
-    }
-    pre h6 {
-        margin: 0px;
-        font-size: 1rem;
-        font-weight: bold;
-    }
-    pre h5 {
-        margin: 0px;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-    hr {
-        border: 1px dashed #000;
-    }
-</style>
-${`<pre>Flames Store|122 Noemie Crossing<h5>#225500</h5><h5>Henry</h5><hr><h6>[NOT PAID]|Cash</h6><hr>+16473331122
-May 08, 25, 01:34[13 hours ago]
-Estimated Delivery: 30-50 minutes
-<hr>DELIVERY TO:
-85 The Esplanade
-Unit 684
-Instructions: leave at door
-<hr>
-ITEMS (1):
-<hr>1x Big Mac Extra Value Meal [710-1140 Cals]
- Drink
-  1x Juice/Milk/Water
-    1x Dasani Water [0.0 Cals]
- $10<hr>
-Subtotal: $10
-Delivery Fee: $4.23
-Service Fee 1: $1.61
-Taxes & Other Fees: $3.49
-<hr>TOTAL: $19.33
-<hr></pre>`.repeat(1)}</body></html>`);
-}

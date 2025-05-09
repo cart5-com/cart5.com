@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { createSelectSchema } from "drizzle-zod";
 import { storeTable } from "./store.schema";
+import { orderTable } from "./order.schema";
 
 export const autoprintDeviceTable = sqliteTable("autoprint_device", {
     ...autoCreatedUpdated,
@@ -45,11 +46,27 @@ export const autoprintDeviceTaskTable = sqliteTable("autoprint_device_task", {
     storeId: text("store_id").notNull(),
     orderId: text("order_id").notNull(),
     html: text("html"),
+    autoAcceptOrderAfterPrint: integer("auto_accept_order_after_print", { mode: "boolean" }).notNull().default(false),
 });
 
+export const taskRelations = relations(autoprintDeviceTaskTable, ({ one }) => ({
+    device: one(autoprintDeviceTable, {
+        fields: [autoprintDeviceTaskTable.autoprintDeviceId],
+        references: [autoprintDeviceTable.autoprintDeviceId],
+    }),
+    store: one(storeTable, {
+        fields: [autoprintDeviceTaskTable.storeId],
+        references: [storeTable.id],
+    }),
+    order: one(orderTable, {
+        fields: [autoprintDeviceTaskTable.orderId],
+        references: [orderTable.orderId],
+    }),
+}));
+
 export const autoprintDeviceRelations = relations(autoprintDeviceTable, ({ many }) => ({
-    storeMap: many(autoprintDeviceStoreMapTable),
-    task: many(autoprintDeviceTaskTable),
+    storeMaps: many(autoprintDeviceStoreMapTable),
+    tasks: many(autoprintDeviceTaskTable),
 }));
 
 export const autoprintDeviceStoreMapRelations = relations(autoprintDeviceStoreMapTable, ({ one }) => ({

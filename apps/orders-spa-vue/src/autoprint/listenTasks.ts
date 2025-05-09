@@ -14,7 +14,6 @@ export let printedTaskIds: string[] = [];
 
 let eventSource: ReturnType<typeof createCustomEventSource> | null = null;
 let isConnected = false;
-let hasConnectionError = false;
 let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -39,34 +38,31 @@ export const listenTasks = async () => {
     eventSource = createCustomEventSource(url.toString(), await generateSignatureHeaders());
 
     // Add headers via fetch API before creating EventSource
-
-    eventSource.onopen = () => {
+    eventSource.onopen(() => {
         console.log('Task listener connected');
         setStatus('Connected to server', 'green');
         isConnected = true;
-        hasConnectionError = false;
         fetchTasks(); // Fetch tasks immediately on connection
-    };
+    });
 
-    eventSource.onmessage = (event) => {
-        if (event.data === 'ping') {
+    eventSource.onmessage((data) => {
+        if (data === 'ping') {
             return;
         }
 
         try {
-            const data = JSON.parse(event.data);
-            console.log('Received notification:', data);
+            const parsedData = JSON.parse(data);
+            console.log('Received notification:', parsedData);
             // Notification received, fetch tasks
             fetchTasks();
         } catch (error) {
             console.error('Error parsing task notification:', error);
         }
-    };
+    });
 
-    eventSource.onerror = (event) => {
-        console.error('Task listener error:', event);
+    eventSource.onerror((error) => {
+        console.error('Task listener error:', error);
         isConnected = false;
-        hasConnectionError = true;
         disconnectListener();
 
         // Attempt to reconnect after delay
@@ -74,10 +70,9 @@ export const listenTasks = async () => {
             clearTimeout(reconnectTimeout);
         }
         reconnectTimeout = setTimeout(() => {
-            hasConnectionError = false;
             listenTasks();
         }, import.meta.env.DEV ? 3_000 : 30_000); // 3s in dev, 30s in prod
-    };
+    });
 };
 
 const disconnectListener = () => {
@@ -135,7 +130,7 @@ const startProcessingTasks = async () => {
             await deleteTask(task.taskId);
             continue;
         }
-        await printHTML(task.html || 'error-with-html', task.copies || 1);
+        await printHTML(task.html || 'error-with-html', task.printerName, task.copies || 1);
         await deleteTask(task.taskId);
         printedTaskIds.push(task.taskId);
         await new Promise(resolve => setTimeout(resolve, 1000))
