@@ -28,7 +28,8 @@ export const addStatus = (status: string, color: string = "black") => {
 export const setPrinters = async () => {
     const printers = await getPrinters();
     const timestamp = Date.now();
-    const message = `${deviceId!}-${timestamp}`;
+    const nonce = crypto.randomUUID();
+    const message = `${deviceId!}-${timestamp}-${nonce}`;
     const signature = await createHmacSignature(message, deviceSecretKey!);
 
     const { error } = await (await autoprintPairingApiClient.set_printers.$post({
@@ -39,6 +40,7 @@ export const setPrinters = async () => {
         headers: {
             'X-device-id': deviceId!,
             'X-timestamp': timestamp.toString(),
+            'X-nonce': nonce,
             'X-signature': signature,
         }
     })).json();

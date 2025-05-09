@@ -20,6 +20,7 @@ export const apiAutoprintPairing = new Hono<HonoVariables>()
         } else {
             const deviceId = c.req.header()['x-device-id'];
             const timestamp = c.req.header()['x-timestamp'];
+            const nonce = c.req.header()['x-nonce'];
             if (Date.now() - Number(timestamp) > 5 * 60 * 1000) {
                 throw new KNOWN_ERROR("timestamp_expired", "TIMESTAMP_EXPIRED");
             }
@@ -32,7 +33,7 @@ export const apiAutoprintPairing = new Hono<HonoVariables>()
             if (!deviceInfo || !deviceInfo.secretKey) {
                 throw new KNOWN_ERROR("device_not_found", "DEVICE_NOT_FOUND");
             }
-            const message = `${deviceId}-${timestamp}`;
+            const message = `${deviceId}-${timestamp}-${nonce}`;
             // ******************************************* in memory, secretKey
             const expectedSignature = createHmac('sha256', deviceInfo.secretKey)
                 .update(message)

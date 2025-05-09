@@ -1,6 +1,23 @@
-import { autoprintDeviceStoreMapTable, autoprintDeviceTable } from "@db/schema/autoprint.schema";
+import { autoprintDeviceStoreMapTable, autoprintDeviceTable, autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
 import db from '@db/drizzle';
-import { eq, type InferInsertModel } from 'drizzle-orm';
+import { eq, type InferInsertModel, and } from 'drizzle-orm';
+
+
+export const getDeviceTasks_Service = async (
+    autoprintDeviceId: string
+) => {
+    return await db.query.autoprintDeviceTaskTable.findMany({
+        where: eq(autoprintDeviceTaskTable.autoprintDeviceId, autoprintDeviceId),
+    });
+}
+
+// delete task by taskId and autoprintDeviceId
+export const deleteTask_Service = async (
+    taskId: string,
+    autoprintDeviceId: string
+) => {
+    return await db.delete(autoprintDeviceTaskTable).where(and(eq(autoprintDeviceTaskTable.taskId, taskId), eq(autoprintDeviceTaskTable.autoprintDeviceId, autoprintDeviceId)));
+}
 
 export const getAutoPrintDevice_Service = async (
     autoprintDeviceId: string,

@@ -4,7 +4,8 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import { streamSSE } from 'hono/streaming';
-import { device_pairing_connections } from "./device_pairing_connections";
+import { device_pairing_connections, findPairingDeviceByOtp } from "./device_pairing_connections";
+import { KNOWN_ERROR } from "@lib/types/errors";
 
 export const pairDevice_SchemaValidator = zValidator('query', z.object({
     name: z.string(),
@@ -26,11 +27,10 @@ export const pairDevice_Handler = async (c: Context<
     } = c.req.valid('query');
 
     if (device_pairing_connections.has(deviceId)) {
-        // Device already connected, reject the new connection attempt
-        return c.json({
-            error: "Device with this ID is already connected",
-            data: null
-        }, 409); // 409 Conflict status code
+        throw new KNOWN_ERROR("device_id_conflict", "DEVICE_CONFLICT");
+    }
+    if (findPairingDeviceByOtp(otp)) {
+        throw new KNOWN_ERROR("device_id_conflict", "DEVICE_CONFLICT");
     }
 
     return streamSSE(
