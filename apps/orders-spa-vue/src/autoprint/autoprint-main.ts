@@ -4,6 +4,7 @@ import { getMainWindow } from "./mainWindow";
 import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
 import { onClickPairDevice, stopPairing } from "./pairing";
 import { testPrint } from "./printHTML";
+import { initTaskListener } from "./listenTasks";
 
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 if (typeof global !== "undefined") {
@@ -22,6 +23,8 @@ if (typeof global !== "undefined") {
 }
 openAlwaysTopOnWindow();
 
+// Initialize task listener
+initTaskListener();
 
 document.querySelector<HTMLButtonElement>('#pair-device')!.addEventListener('click', onClickPairDevice);
 document.querySelector<HTMLButtonElement>('#stop-pairing')!.addEventListener('click', stopPairing);

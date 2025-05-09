@@ -20,6 +20,7 @@ export const listenStoreNotifier = (storeId: string) => {
             storeId: storeId as string
         }
     })
+    url.searchParams.append('_', Date.now().toString()); // Cache buster
 
     const eventSource = new EventSource(url.toString());
     // eventSource.onopen = () => {

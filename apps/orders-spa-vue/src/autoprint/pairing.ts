@@ -8,6 +8,8 @@ const DEVICE_SECRET_KEY = "DEVICE_SECRET_KEY";
 export let deviceId = localStorage.getItem(DEVICE_ID_KEY);
 export let deviceSecretKey = localStorage.getItem(DEVICE_SECRET_KEY);
 
+console.log("pairing.ts running🟪🟪🟪");
+
 if (!deviceId) {
     deviceId = crypto.randomUUID();
     localStorage.setItem(DEVICE_ID_KEY, deviceId);

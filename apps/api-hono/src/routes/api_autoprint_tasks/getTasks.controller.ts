@@ -1,7 +1,7 @@
 import { type Context } from 'hono';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { getDeviceTasks_Service } from '@db/services/autoprint.service';
-import { KNOWN_ERROR } from '@lib/types/errors';
+import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 
 export const getTasks_Handler = async (c: Context<HonoVariables>) => {
     const deviceId = c.req.param('deviceId');
@@ -13,7 +13,7 @@ export const getTasks_Handler = async (c: Context<HonoVariables>) => {
     const tasks = await getDeviceTasks_Service(deviceId);
 
     return c.json({
-        success: true,
-        data: tasks
+        data: tasks,
+        error: null as ErrorType
     });
 };

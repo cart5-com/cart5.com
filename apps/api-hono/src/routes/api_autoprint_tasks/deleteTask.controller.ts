@@ -1,7 +1,7 @@
 import { type Context } from 'hono';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { deleteTask_Service } from '@db/services/autoprint.service';
-import { KNOWN_ERROR } from '@lib/types/errors';
+import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 
 export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
     const deviceId = c.req.param('deviceId');
@@ -18,7 +18,7 @@ export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
     await deleteTask_Service(taskId, deviceId);
 
     return c.json({
-        success: true,
-        message: "Task deleted successfully"
+        data: "success",
+        error: null as ErrorType
     });
 }; 
