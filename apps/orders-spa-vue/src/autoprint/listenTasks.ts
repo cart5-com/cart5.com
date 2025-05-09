@@ -1,4 +1,4 @@
-import { addStatus, deviceId, deviceSecretKey, setStatus } from './pairing';
+import { deviceId, deviceSecretKey, setStatus } from './pairing';
 import { printHTML } from './printHTML';
 import { generateSignatureHeaders } from './generateSignatureHeaders';
 import { createAutoprintTasksApiClient } from '@api-client/autoprint_tasks';

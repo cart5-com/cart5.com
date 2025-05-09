@@ -87,7 +87,9 @@ export const saveOrderDataTransactional_Service = async (
                 rule.isActive && rule.autoprintDeviceId && rule.printerDeviceName);
 
             if (activeRules.length > 0) {
-                const html = thermalPrinterFormat({ ...orderData, shortOtp });
+                orderData.shortOtp = shortOtp;
+                type inputType = Parameters<typeof thermalPrinterFormat>[0];
+                const html = thermalPrinterFormat(orderData as inputType);
                 const uniqueDeviceIds: Record<string, boolean> = {};
                 for (const rule of activeRules) {
                     await tx.insert(autoprintDeviceTaskTable).values({
