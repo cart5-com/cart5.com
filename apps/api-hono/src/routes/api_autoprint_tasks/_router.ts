@@ -13,10 +13,10 @@ export const apiAutoprintTasks = new Hono<HonoVariables>()
         const deviceId = c.req.header()['x-device-id'];
         const timestamp = c.req.header()['x-timestamp'];
         const nonce = c.req.header()['x-nonce'];
+        const signatureHeader = c.req.header()['x-signature'];
         if (Date.now() - Number(timestamp) > 5 * 60 * 1000) {
             throw new KNOWN_ERROR("timestamp_expired", "TIMESTAMP_EXPIRED");
         }
-        const signatureHeader = c.req.header()['x-signature'];
         if (!deviceId || !timestamp || !signatureHeader) {
             throw new KNOWN_ERROR("missing_headers", "UNAUTHORIZED");
         }
@@ -40,7 +40,7 @@ export const apiAutoprintTasks = new Hono<HonoVariables>()
         return next();
     })
     .get(
-        '/listen/:deviceId',
+        '/listen_tasks/:deviceId',
         listenTasks_Handler
     )
     .get(

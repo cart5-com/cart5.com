@@ -92,6 +92,7 @@ export const getStoreOrders_Service = async (
     });
 }
 
+// TODO: sendNotificationToStore when status change?
 export const acceptOrder_Service = async (
     storeId: string,
     orderId: string,

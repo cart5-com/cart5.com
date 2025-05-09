@@ -9,6 +9,7 @@ import { updateUserData_Service } from '@db/services/user_data.service';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { getStoreAutomationRules_Service } from '@db/services/store.service';
+import { generateNumberOnlyOtp } from '@api-hono/utils/generateRandomOtp';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -39,8 +40,10 @@ export const placeOrderRoute = async (c: Context<
     });
 
     // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
+
     await saveOrderDataTransactional_Service(
         newOrderId,
+        generateNumberOnlyOtp(6),
         order,
         {
             newStatus: ORDER_STATUS_OBJ.CREATED,

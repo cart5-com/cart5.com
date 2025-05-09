@@ -19,6 +19,29 @@ export const deleteTask_Service = async (
     return await db.delete(autoprintDeviceTaskTable).where(and(eq(autoprintDeviceTaskTable.taskId, taskId), eq(autoprintDeviceTaskTable.autoprintDeviceId, autoprintDeviceId)));
 }
 
+export const getAutoprintDeviceTask_Service = async (
+    taskId: string,
+    autoprintDeviceId: string,
+    columns?: Partial<Record<keyof typeof autoprintDeviceTaskTable.$inferSelect, boolean>>
+) => {
+    return await db.query.autoprintDeviceTaskTable.findFirst({
+        where: and(eq(autoprintDeviceTaskTable.taskId, taskId), eq(autoprintDeviceTaskTable.autoprintDeviceId, autoprintDeviceId)),
+        columns: columns,
+    });
+}
+
+export const updateAutoprintDeviceTask_Service = async (
+    taskId: string,
+    data: Partial<InferInsertModel<typeof autoprintDeviceTaskTable>>
+) => {
+    return await db.insert(autoprintDeviceTaskTable)
+        .values({ ...data, taskId } as InferInsertModel<typeof autoprintDeviceTaskTable>)
+        .onConflictDoUpdate({
+            target: autoprintDeviceTaskTable.taskId,
+            set: data
+        });
+}
+
 export const getAutoPrintDevice_Service = async (
     autoprintDeviceId: string,
     columns?: Partial<Record<keyof typeof autoprintDeviceTable.$inferSelect, boolean>>

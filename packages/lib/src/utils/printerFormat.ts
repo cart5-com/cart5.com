@@ -64,7 +64,7 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
         output += `${orderDetails.userVerifiedPhoneNumbers}\n`;
     }
     // TODO: add phone number
-    output += `${formatDate(orderDetails.created_at_ts)}\n`;
+    output += `${formatDate(orderDetails.created_at_ts || Date.now())}\n`;
     if (orderDetails.estimatedTimeText) {
         output += `${orderDetails.estimatedTimeText}\n`;
     }

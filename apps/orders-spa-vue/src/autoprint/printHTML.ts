@@ -58,7 +58,7 @@ export const printHTML = async function (
                 return;
             }
             if (typeof global === "undefined") {
-                iframeWindow.print();
+                // iframeWindow.print();
             } else {
                 getMainWindow().print({
                     autoprint: true,

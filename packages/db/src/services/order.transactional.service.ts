@@ -6,9 +6,12 @@ import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
 import { autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
 import type { AutoprintRulesListType } from "@lib/zod/AutoprintRules";
 import { generateKey } from "@lib/utils/generateKey";
+import { thermalPrinterFormat } from "@lib/utils/printerFormat";
+import { sendNotificationToTaskListenerDevice } from "@api-hono/routes/api_autoprint_tasks/listen_tasks.controller";
 
 export const saveOrderDataTransactional_Service = async (
     orderId: string,
+    shortOtp: string,
     orderData: Partial<InferInsertModel<typeof orderTable>>,
     statusChange?: {
         newStatus: OrderStatus,
@@ -31,7 +34,7 @@ export const saveOrderDataTransactional_Service = async (
     return await db.transaction(async (tx) => {
         // Step 1: Update order data
         await tx.insert(orderTable)
-            .values({ ...orderData, orderId } as InferInsertModel<typeof orderTable>)
+            .values({ ...orderData, orderId, shortOtp } as InferInsertModel<typeof orderTable>)
             .onConflictDoUpdate({
                 target: orderTable.orderId,
                 set: orderData
@@ -83,17 +86,27 @@ export const saveOrderDataTransactional_Service = async (
             const activeRules = autoPrintParams.autoPrintRules.filter(rule =>
                 rule.isActive && rule.autoprintDeviceId && rule.printerDeviceName);
 
-            for (const rule of activeRules) {
-                await tx.insert(autoprintDeviceTaskTable).values({
-                    taskId: generateKey('apt'),
-                    autoprintDeviceId: rule.autoprintDeviceId as string,
-                    printerName: rule.printerDeviceName as string,
-                    copies: rule.copies || 1,
-                    storeId: autoPrintParams.storeId,
-                    orderId: orderId,
-                    autoAcceptOrderAfterPrint: rule.autoAcceptOrderAfterPrint || false,
-                    html: null // HTML content will be generated separately
-                });
+            if (activeRules.length > 0) {
+                const html = thermalPrinterFormat({ ...orderData, shortOtp });
+                const uniqueDeviceIds: Record<string, boolean> = {};
+                for (const rule of activeRules) {
+                    await tx.insert(autoprintDeviceTaskTable).values({
+                        taskId: generateKey('apt'),
+                        autoprintDeviceId: rule.autoprintDeviceId as string,
+                        printerName: rule.printerDeviceName as string,
+                        copies: rule.copies || 1,
+                        storeId: autoPrintParams.storeId,
+                        orderId: orderId,
+                        autoAcceptOrderAfterPrint: rule.autoAcceptOrderAfterPrint || false,
+                        html
+                    });
+                    uniqueDeviceIds[rule.autoprintDeviceId as string] = true;
+                }
+                for (const deviceId of Object.keys(uniqueDeviceIds)) {
+                    sendNotificationToTaskListenerDevice(deviceId, {
+                        message: 'new task'
+                    });
+                }
             }
         }
 

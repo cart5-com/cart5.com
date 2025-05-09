@@ -1,94 +1,65 @@
-import { deviceId, deviceSecretKey, setStatus } from './pairing';
+import { addStatus, deviceId, deviceSecretKey, setStatus } from './pairing';
 import { printHTML } from './printHTML';
 import { generateSignatureHeaders } from './generateSignatureHeaders';
 import { createAutoprintTasksApiClient } from '@api-client/autoprint_tasks';
 import type { ResType } from "@api-client/typeUtils";
-import { createCustomEventSource } from './createCustomEventSource';
+import { EventSourceWithHeaders } from './EventSourceWithHeaders';
 
 // Create API client
-const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/api_autoprint_tasks`);
-
+const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/autoprint_tasks`);
+const isOnlineCheckbox = document.querySelector<HTMLInputElement>('#is-online-checkbox');
 type TasksType = ResType<typeof apiClient["tasks"][":deviceId"]["$get"]>["data"]
 export let currentPrintTasks: TasksType = [];
 export let printedTaskIds: string[] = [];
-
-let eventSource: ReturnType<typeof createCustomEventSource> | null = null;
-let isConnected = false;
-let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
-export const listenTasks = async () => {
-    // Don't create duplicate connections
-    if (eventSource && isConnected) return;
 
-    if (!deviceId || !deviceSecretKey) {
-        console.error('Device not configured properly');
-        setStatus('Device not configured properly', 'red');
+let eventSource: EventSourceWithHeaders | null = null;
+const listenTasks = async () => {
+    // do not duplicate connection
+    if (eventSource) {
         return;
     }
+    // do not connect if online unchecked
+    if (!isOnlineCheckbox?.checked) {
+        return;
+    }
+    fetchTasks();
 
-    disconnectListener(); // Close any existing connection
-
-    // Get URL from API client
-    const url = apiClient["listen"][":deviceId"].$url({
-        param: { deviceId: deviceId }
+    const url = apiClient["listen_tasks"][":deviceId"].$url({
+        param: { deviceId: deviceId as string }
     });
     url.searchParams.append('_', Date.now().toString()); // Cache buster
 
-    eventSource = createCustomEventSource(url.toString(), await generateSignatureHeaders());
-
-    // Add headers via fetch API before creating EventSource
-    eventSource.onopen(() => {
-        console.log('Task listener connected');
-        setStatus('Connected to server', 'green');
-        isConnected = true;
-        fetchTasks(); // Fetch tasks immediately on connection
-    });
-
-    eventSource.onmessage((data) => {
-        if (data === 'ping') {
-            return;
+    eventSource = new EventSourceWithHeaders(url.toString(), await generateSignatureHeaders());
+    eventSource.onmessage = (event) => {
+        if (event.data === 'ping') {
+            return
         }
-
-        try {
-            const parsedData = JSON.parse(data);
-            console.log('Received notification:', parsedData);
-            // Notification received, fetch tasks
-            fetchTasks();
-        } catch (error) {
-            console.error('Error parsing task notification:', error);
-        }
-    });
-
-    eventSource.onerror((error) => {
-        console.error('Task listener error:', error);
-        isConnected = false;
-        disconnectListener();
-
-        // Attempt to reconnect after delay
-        if (reconnectTimeout) {
-            clearTimeout(reconnectTimeout);
-        }
-        reconnectTimeout = setTimeout(() => {
-            listenTasks();
-        }, import.meta.env.DEV ? 3_000 : 30_000); // 3s in dev, 30s in prod
-    });
-};
-
-const disconnectListener = () => {
-    if (eventSource) {
-        eventSource.close();
+        fetchTasks();
+        // there is no other type of event, just fetch and print new ones
+        // try {
+        //     const data = JSON.parse(event.data);
+        //     console.log('data', data);
+        // } catch (error) {
+        //     console.error(error);
+        //     fetchTasks();
+        // }
+    }
+    eventSource.onopen = (_event) => {
+        setStatus('Ready to print', 'green');
+    }
+    eventSource.onerror = (_event) => {
+        eventSource?.close();
         eventSource = null;
+        setStatus('error, trying to reconnect...', 'red');
+        setTimeout(() => {
+            listenTasks();
+        }, import.meta.env.DEV ? 3_000 : 30_000);
     }
-    isConnected = false;
-    console.log('Task listener disconnected');
+}
 
-    // Clear auto-refresh timeout when disconnecting
-    if (autoRefreshTimeout) {
-        clearTimeout(autoRefreshTimeout);
-        autoRefreshTimeout = null;
-    }
-};
+
 
 const fetchTasks = async () => {
     // Clear any existing timeout before setting a new one
@@ -107,17 +78,19 @@ const fetchTasks = async () => {
     })).json();
     if (error) {
         console.error('Error fetching tasks:', error);
-        return;
+    } else { }
+    currentPrintTasks = (data || []).sort((a, b) => a.created_at_ts - b.created_at_ts)
+
+    if (currentPrintTasks.length > 0) {
+        startProcessingTasks()
     }
-    currentPrintTasks = data.sort((a, b) => a.created_at_ts - b.created_at_ts)
-    startProcessingTasks()
 
     // Set up auto-refresh timeout
     autoRefreshTimeout = setTimeout(() => {
-        if (isConnected) {
+        if (isOnlineCheckbox?.checked) {
             fetchTasks();
         }
-    }, 5 * 60_000); // 5 minutes
+    }, 300_000); // 5 minutes
 };
 
 const startProcessingTasks = async () => {
@@ -169,7 +142,6 @@ export const initTaskListener = () => {
             if (isOnlineCheckbox.checked) {
                 listenTasks();
             } else {
-                disconnectListener();
                 setStatus('Offline', 'red');
             }
         });
