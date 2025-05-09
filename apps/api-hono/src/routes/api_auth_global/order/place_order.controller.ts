@@ -53,6 +53,10 @@ export const placeOrderRoute = async (c: Context<
             changedByUserId: undefined,
             changedByIpAddress: undefined,
             type: 'automatic_rule'
+        } : undefined,
+        storeAutomationRules?.autoPrintRules ? {
+            storeId,
+            autoPrintRules: storeAutomationRules.autoPrintRules
         } : undefined
     );
 

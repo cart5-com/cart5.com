@@ -3,6 +3,9 @@ import { orderTable, orderStatusHistoryTable } from "@db/schema/order.schema";
 import { and, eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
+import { autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
+import type { AutoprintRulesListType } from "@lib/zod/AutoprintRules";
+import { generateKey } from "@lib/utils/generateKey";
 
 export const saveOrderDataTransactional_Service = async (
     orderId: string,
@@ -19,6 +22,10 @@ export const saveOrderDataTransactional_Service = async (
         changedByUserId?: string,
         changedByIpAddress?: string,
         type?: 'user' | 'automatic_rule' | 'system'
+    },
+    autoPrintParams?: {
+        storeId: string,
+        autoPrintRules?: AutoprintRulesListType
     }
 ) => {
     return await db.transaction(async (tx) => {
@@ -67,6 +74,25 @@ export const saveOrderDataTransactional_Service = async (
                     changedByUserId: acceptParams.changedByUserId,
                     changedByIpAddress: acceptParams.changedByIpAddress,
                     metaData: null
+                });
+            }
+        }
+
+        // Step 4: Create autoprint tasks if requested
+        if (autoPrintParams?.autoPrintRules && autoPrintParams.autoPrintRules.length > 0) {
+            const activeRules = autoPrintParams.autoPrintRules.filter(rule =>
+                rule.isActive && rule.autoprintDeviceId && rule.printerDeviceName);
+
+            for (const rule of activeRules) {
+                await tx.insert(autoprintDeviceTaskTable).values({
+                    taskId: generateKey('apt'),
+                    autoprintDeviceId: rule.autoprintDeviceId as string,
+                    printerName: rule.printerDeviceName as string,
+                    copies: rule.copies || 1,
+                    storeId: autoPrintParams.storeId,
+                    orderId: orderId,
+                    autoAcceptOrderAfterPrint: rule.autoAcceptOrderAfterPrint || false,
+                    html: null // HTML content will be generated separately
                 });
             }
         }
