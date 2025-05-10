@@ -2,9 +2,11 @@
   "name": "autoprint",
   "version": "1.0.0",
   "scripts": {
-    "runapp": "nw ./app"
+    "runapp": "nw ./app",
+    "bw": "./build.sh"
   },
   "devDependencies": {
-    "nw": "0.99.0-sdk"
+    "nw": "0.99.0-sdk",
+    "nw-builder": "^4.13.13"
   }
 }
