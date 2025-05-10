@@ -64,7 +64,8 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        autoprint: fileURLToPath(new URL('./autoprint.html', import.meta.url))
+        autoprint: fileURLToPath(new URL('./autoprint.html', import.meta.url)),
+        always_top_on: fileURLToPath(new URL('./always_top_on.html', import.meta.url))
       }
     }
   },

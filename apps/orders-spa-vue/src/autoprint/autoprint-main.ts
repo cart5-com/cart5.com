@@ -1,12 +1,11 @@
-import { focusGlobalWindow } from "./focusGlobalWindow";
-import { killApp } from "./killApp";
-import { getMainWindow } from "./mainWindow";
-import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
-import { onClickPairDevice, stopPairing } from "./pairing";
-import { initTaskListener } from "./listenTasks";
-import { restartApp } from "./restartApp";
+import "@/index.css";
+import * as Sentry from "@sentry/vue";
+import { createApp } from 'vue'
+import AutoprintView from './AutoprintView.vue'
+import { getMainWindow } from './mainWindow';
+import { focusGlobalWindow } from './focusGlobalWindow';
+import { openAlwaysTopOnWindow } from './openAlwaysTopOnWindow';
 
-// document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 if (typeof global !== "undefined") {
     global.mainWindow = getMainWindow();
     global.mainWindow.on('closed', function () {
@@ -24,14 +23,13 @@ if (typeof global !== "undefined") {
 }
 openAlwaysTopOnWindow();
 
-// Initialize task listener
-initTaskListener();
-
-document.querySelector<HTMLButtonElement>('#pair-device')!.addEventListener('click', onClickPairDevice);
-document.querySelector<HTMLButtonElement>('#stop-pairing')!.addEventListener('click', stopPairing);
-document.querySelector<HTMLButtonElement>('#kill-app')!.addEventListener('click', killApp);
-document.querySelector<HTMLButtonElement>('#restart-app')!.addEventListener('click', restartApp);
-// restart app after 6 hours
-setTimeout(() => {
-    restartApp();
-}, 6 * 60 * 60 * 1000);
+const app = createApp(AutoprintView);
+if (import.meta.env.PROD) {
+    console.error("Sentry is not initialized for orders-spa-vue");
+    Sentry.init({
+        app,
+        dsn: "https://777dc381fa51711fceabc8ad5ff3ab18@o4509024863518720.ingest.us.sentry.io/4509266332876800",
+        sendDefaultPii: true
+    });
+}
+app.mount('#app');

@@ -15,11 +15,11 @@ export const printHTML = async function (
     // const printers = await getPrinters();
     // console.log(printers);
 
-    const style = document.getElementById('autoprint-style');
-    if (!style) {
-        return;
-    }
-    style.remove();
+    // const style = document.getElementById('autoprint-style');
+    // if (!style) {
+    //     return;
+    // }
+    // style.remove();
     const app = document.getElementById('app');
     if (!app) {
         return;
@@ -105,7 +105,7 @@ export const printHTML = async function (
                 document.body.removeChild(iframe);
                 URL.revokeObjectURL(url); // Clean up the blob URL
                 app.style.display = oldDisplay;
-                document.head.appendChild(style);
+                // document.head.appendChild(style);
             }, 500);
         }, 100);
     };
