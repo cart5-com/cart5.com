@@ -73,25 +73,10 @@
         <script>
             function onPrinterButtonClick() {
                 if (typeof global === "undefined") {
-                    alert('focus global window');
                     return;
                 }
-                if (global.mainWindow) {
-                    global.mainWindow.show();
-                    global.mainWindow.focus();
-                    global.mainWindow.requestAttention(3);
-                    // global.mainWindow.maximize();
-                    global.mainWindow.setAlwaysOnTop(true);
-                    setTimeout(function () {
-                        global.mainWindow.show();
-                        global.mainWindow.setAlwaysOnTop(false);
-                        global.mainWindow.focus();
-                    }, 1000);
-                } else {
-                    setTimeout(function () {
-                        chrome.runtime.reload();
-                        // require('nw.gui').App.quit();
-                    }, 1000)
+                if (global.focusGlobalWindow) {
+                    global.focusGlobalWindow();
                 }
             }
         </script>

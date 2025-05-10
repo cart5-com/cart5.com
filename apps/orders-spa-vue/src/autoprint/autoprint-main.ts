@@ -20,6 +20,7 @@ if (typeof global !== "undefined") {
         global.mainWindow.showDevTools();
     }
     focusGlobalWindow();
+    (global as any).focusGlobalWindow = focusGlobalWindow;
 }
 openAlwaysTopOnWindow();
 

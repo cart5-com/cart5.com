@@ -5,10 +5,10 @@ export const focusGlobalWindow = function () {
     if (!global.mainWindow) {
         return;
     }
-    global.mainWindow.x = 0;
-    global.mainWindow.y = 0;
-    global.mainWindow.height = 450;
-    global.mainWindow.width = 350;
+    global.mainWindow.x = 40;
+    global.mainWindow.y = 40;
+    global.mainWindow.height = 600;
+    global.mainWindow.width = 600;
     global.mainWindow.show();
     global.mainWindow.focus();
     global.mainWindow.requestAttention(3);
@@ -18,10 +18,10 @@ export const focusGlobalWindow = function () {
         if (!global.mainWindow) {
             return;
         }
-        global.mainWindow.x = 0;
-        global.mainWindow.y = 0;
-        global.mainWindow.height = 450;
-        global.mainWindow.width = 350;
+        global.mainWindow.x = 40;
+        global.mainWindow.y = 40;
+        global.mainWindow.height = 600;
+        global.mainWindow.width = 600;
         global.mainWindow.show();
         global.mainWindow.setAlwaysOnTop(false);
         global.mainWindow.focus();

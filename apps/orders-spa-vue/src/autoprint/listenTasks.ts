@@ -14,7 +14,6 @@ export let currentPrintTasks: TasksType = [];
 export let printedTaskIds: string[] = [];
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
-
 let eventSource: EventSourceWithHeaders | null = null;
 const listenTasks = async () => {
     // do not duplicate connection
@@ -51,13 +50,17 @@ const listenTasks = async () => {
         setStatus('Ready to print', 'green');
     }
     eventSource.onerror = (_event) => {
-        // console.log('eventSource.onerror', _event);
-        // console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
+        console.log('eventSource.onerror', _event);
+        console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
         const error = (_event as CustomEvent).detail.error;
         if (error.code === 'INVALID_SIGNATURE') {
             isOnlineCheckbox.checked = false;
             isOnlineCheckbox.dispatchEvent(new Event('change'));
-            setStatus('Not paired', 'red');
+            setStatus('Not paired(Signature)', 'red');
+        } else if (error.code === 'DEVICE_NOT_FOUND') {
+            isOnlineCheckbox.checked = false;
+            isOnlineCheckbox.dispatchEvent(new Event('change'));
+            setStatus('Not paired(Device)', 'red');
         } else {
             eventSource?.close();
             eventSource = null;
