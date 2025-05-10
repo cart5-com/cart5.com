@@ -51,13 +51,13 @@ const listenTasks = async () => {
         setStatus('Ready to print', 'green');
     }
     eventSource.onerror = (_event) => {
-        console.log('eventSource.onerror', _event);
-        console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
+        // console.log('eventSource.onerror', _event);
+        // console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
         const error = (_event as CustomEvent).detail.error;
         if (error.code === 'INVALID_SIGNATURE') {
             isOnlineCheckbox.checked = false;
             isOnlineCheckbox.dispatchEvent(new Event('change'));
-            setStatus('Device not paired', 'red');
+            setStatus('Not paired', 'red');
         } else {
             eventSource?.close();
             eventSource = null;
