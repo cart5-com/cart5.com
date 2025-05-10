@@ -7,7 +7,7 @@ export const restartApp = async () => {
         isAbleToRestartNow = false;
     }
     if (isAbleToRestartNow) {
-        if (typeof global !== "undefined") {
+        if (typeof global === "undefined") {
             window.location.reload();
         } else if (process.platform === "win32") {
             const path = require('path');
