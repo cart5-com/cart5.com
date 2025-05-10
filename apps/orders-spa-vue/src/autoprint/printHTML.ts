@@ -1,6 +1,5 @@
 import {
     getMainWindow,
-    // getPrinters
 } from "./mainWindow";
 
 export const printHTML = async function (

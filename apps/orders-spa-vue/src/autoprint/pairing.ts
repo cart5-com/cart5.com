@@ -1,5 +1,6 @@
 import { autoprintPairingApiClient, createAutoprintPairingApiClient } from "@api-client/autoprint_pairing";
-import { getHostname, getPrinters } from "./mainWindow";
+import { getHostname } from "./mainWindow";
+import { getPrinters } from "./getPrinters";
 import { generateOTPJsOnly } from "@api-hono/utils/generateRandomOtp";
 import { createHmacSignature } from "./createHmacSignature";
 const DEVICE_ID_KEY = "DEVICE_ID";

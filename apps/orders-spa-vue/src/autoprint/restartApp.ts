@@ -1,5 +1,4 @@
 import { currentPrintTasks } from "./listenTasks";
-import { getMainWindow } from "./mainWindow";
 
 export const restartApp = async () => {
     var isAbleToRestartNow = true;
@@ -9,19 +8,20 @@ export const restartApp = async () => {
     if (isAbleToRestartNow) {
         if (typeof global === "undefined") {
             window.location.reload();
-        } else if (process.platform === "win32") {
-            var child = require("child_process").spawn(
-                process.execPath,
-                require('nw.gui').App.argv, {
-                cwd: require('path').dirname(process.cwd()),
-                detached: true,
-                stdio: "inherit"
-            });
-            //Don't wait for it
-            child.unref();
-            require('nw.gui').App.quit();
+            // } else if (process.platform === "win32") {
+            // it seems unnecessary, nw.Window.get().reload(); can handle this
+            //     var child = require("child_process").spawn(
+            //         process.execPath,
+            //         require('nw.gui').App.argv, {
+            //         cwd: require('path').dirname(process.cwd()),
+            //         detached: true,
+            //         stdio: "inherit"
+            //     });
+            //     //Don't wait for it
+            //     child.unref();
+            //     require('nw.gui').App.quit();
         } else {
-            getMainWindow().reload();
+            nw.Window.get().reload();
         }
     } else {
         console.log('there are waiting task, wait 5 secs then try again');
