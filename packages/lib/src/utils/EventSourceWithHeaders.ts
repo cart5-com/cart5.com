@@ -32,7 +32,12 @@ export class EventSourceWithHeaders implements EventTarget {
             });
 
             if (!response.ok) {
-                this.dispatchErrorEvent(`HTTP error: ${response.status}`);
+                try {
+                    const errorJson = await response.json();
+                    this.dispatchErrorEvent(errorJson);
+                } catch (error) {
+                    this.dispatchErrorEvent(`HTTP error: ${response.status}`);
+                }
                 return;
             }
 
@@ -83,9 +88,12 @@ export class EventSourceWithHeaders implements EventTarget {
         if (this.onopen) this.onopen(event);
     }
 
-    private dispatchErrorEvent(message: string) {
-        const event = new Event('error');
-        console.error('EventSourceWithHeaders error:', message);
+    private dispatchErrorEvent(error: unknown) {
+        // Create a custom error event with the error data
+        const event = new CustomEvent('error', {
+            detail: error
+        });
+        console.error('EventSourceWithHeaders error:', error);
         this.dispatchEvent(event);
         if (this.onerror) this.onerror(event);
     }

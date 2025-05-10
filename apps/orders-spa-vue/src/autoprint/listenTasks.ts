@@ -3,13 +3,14 @@ import { printHTML } from './printHTML';
 import { generateSignatureHeaders } from './generateSignatureHeaders';
 import { createAutoprintTasksApiClient } from '@api-client/autoprint_tasks';
 import type { ResType } from "@api-client/typeUtils";
-import { EventSourceWithHeaders } from './EventSourceWithHeaders';
+import { EventSourceWithHeaders } from '@lib/utils/EventSourceWithHeaders';
 
 // Create API client
 const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/autoprint_tasks`);
 const isOnlineCheckbox = document.querySelector<HTMLInputElement>('#is-online-checkbox');
 type TasksType = ResType<typeof apiClient["tasks"][":deviceId"]["$get"]>["data"]
 export let currentPrintTasks: TasksType = [];
+// TODO: save last 1 day of printed tasks and remove old ones
 export let printedTaskIds: string[] = [];
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -50,12 +51,21 @@ const listenTasks = async () => {
         setStatus('Ready to print', 'green');
     }
     eventSource.onerror = (_event) => {
-        eventSource?.close();
-        eventSource = null;
-        setStatus('error, trying to reconnect...', 'red');
-        setTimeout(() => {
-            listenTasks();
-        }, import.meta.env.DEV ? 3_000 : 30_000);
+        console.log('eventSource.onerror', _event);
+        console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
+        const error = (_event as CustomEvent).detail.error;
+        if (error.code === 'INVALID_SIGNATURE') {
+            isOnlineCheckbox.checked = false;
+            isOnlineCheckbox.dispatchEvent(new Event('change'));
+            setStatus('Device not paired', 'red');
+        } else {
+            eventSource?.close();
+            eventSource = null;
+            setStatus('error, trying to reconnect...', 'red');
+            setTimeout(() => {
+                listenTasks();
+            }, import.meta.env.DEV ? 3_000 : 30_000);
+        }
     }
 }
 
