@@ -8,5 +8,15 @@
   "devDependencies": {
     "nw": "0.99.0-sdk",
     "nw-builder": "^4.13.13"
+  },
+  "main": "https://www.cart5dev.com/orders/autoprint.html",
+  "chromium-args": "--kiosk-printing",
+  "node-remote": "<all_urls>",
+  "window": {
+    "show": true,
+    "frame": true,
+    "width": 600,
+    "height": 600,
+    "icon": "./tray.png"
   }
 }

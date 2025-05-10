@@ -4,6 +4,7 @@ import { getMainWindow } from "./mainWindow";
 import { openAlwaysTopOnWindow } from "./openAlwaysTopOnWindow";
 import { onClickPairDevice, stopPairing } from "./pairing";
 import { initTaskListener } from "./listenTasks";
+import { restartApp } from "./restartApp";
 
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `autoprint`
 if (typeof global !== "undefined") {
@@ -28,3 +29,8 @@ initTaskListener();
 document.querySelector<HTMLButtonElement>('#pair-device')!.addEventListener('click', onClickPairDevice);
 document.querySelector<HTMLButtonElement>('#stop-pairing')!.addEventListener('click', stopPairing);
 document.querySelector<HTMLButtonElement>('#kill-app')!.addEventListener('click', killApp);
+document.querySelector<HTMLButtonElement>('#restart-app')!.addEventListener('click', restartApp);
+// restart app after 6 hours
+setTimeout(() => {
+    restartApp();
+}, 6 * 60 * 60 * 1000);
