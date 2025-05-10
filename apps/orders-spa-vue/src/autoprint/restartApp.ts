@@ -10,13 +10,12 @@ export const restartApp = async () => {
         if (typeof global === "undefined") {
             window.location.reload();
         } else if (process.platform === "win32") {
-            const path = require('path');
             var child = require("child_process").spawn(
                 process.execPath,
                 require('nw.gui').App.argv, {
-                cwd: path.dirname(process.cwd()),
+                cwd: require('path').dirname(process.cwd()),
                 detached: true,
-                // stdio: "inherit"
+                stdio: "inherit"
             });
             //Don't wait for it
             child.unref();
