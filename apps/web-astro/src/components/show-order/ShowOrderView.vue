@@ -18,7 +18,8 @@ import {
     Banknote, Calculator, WalletCards, ShoppingBag,
     CheckCircle,
     ChevronUp,
-    ChevronDown
+    ChevronDown,
+    Loader2
 } from "lucide-vue-next";
 import {
     Popover,

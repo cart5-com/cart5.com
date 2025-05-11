@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-vue-next";
 
 const selectAddress = () => {
     window.location.href = BASE_LINKS.CHECKOUT(window.storeData?.id!, slugify(window.storeData?.name!));

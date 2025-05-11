@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import DarkModeToggle from "@/ui-plus/DarkModeToggle.vue";
 import UserMenu from "./user/UserMenu.vue";
 import { isUserDataReady } from "@web-astro/stores/UserData.store";
+import { Loader2 } from "lucide-vue-next";
 
 onMounted(() => {
     console.log("Drawer mounted");
