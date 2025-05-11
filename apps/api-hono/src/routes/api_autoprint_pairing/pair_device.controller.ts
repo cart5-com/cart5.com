@@ -29,7 +29,7 @@ export const pairDevice_Handler = async (c: Context<
     if (device_pairing_connections.has(deviceId)) {
         throw new KNOWN_ERROR("device_id_conflict", "DEVICE_CONFLICT");
     }
-    if (findPairingDeviceByOtp(otp)) {
+    if (findPairingDeviceByOtp(otp.toUpperCase().trim())) {
         throw new KNOWN_ERROR("device_id_conflict", "DEVICE_CONFLICT");
     }
 

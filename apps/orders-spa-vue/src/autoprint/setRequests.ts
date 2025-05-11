@@ -1,27 +1,16 @@
 import { getPrinters } from "./utils/getPrinters";
 import { toast } from "@/ui-plus/sonner";
 import { deviceId, deviceSecretKey } from "./pairing";
-import { createHmacSignature } from "@lib/utils/createHmacSignature";
 import { autoprintPairingApiClient } from "@api-client/autoprint_pairing";
+import { generateSignatureHeaders } from "./utils/generateSignatureHeaders";
 
 export const setPrinters = async () => {
-    const printers = await getPrinters();
-    const timestamp = Date.now();
-    const nonce = crypto.randomUUID();
-    const message = `${deviceId!}-${timestamp}-${nonce}`;
-    const signature = await createHmacSignature(message, deviceSecretKey!);
-
     const { error } = await (await autoprintPairingApiClient.set_printers.$post({
         json: {
-            printers
+            printers: await getPrinters()
         }
     }, {
-        headers: {
-            'X-device-id': deviceId!,
-            'X-timestamp': timestamp.toString(),
-            'X-nonce': nonce,
-            'X-signature': signature,
-        }
+        headers: await generateSignatureHeaders()
     })).json();
     if (error) {
         toast.error(`Failed to set printers: ${error.message} please restart the app`);

@@ -29,8 +29,8 @@ import { currentPrinters } from "./stores/currentPrinters";
             {{ globalErrorText }}
         </div>
         <div class="border rounded-lg p-4 border-foreground">
-            <p class="text-sm text-muted-foreground">
-                (you may pair with multiple stores if needed)
+            <p class="text-xs text-muted-foreground">
+                (you may pair this device with a single store or multiple stores)
             </p>
             <Button @click="onClickPairDevice"
                     variant="secondary"
@@ -56,6 +56,9 @@ import { currentPrinters } from "./stores/currentPrinters";
                 <br>
                 <br>
                 once asked to pair with a store, please paste the code above.
+                <br>
+                <br>
+                after pairing, you may close this window. closing this window will NOT quit the app.
             </div>
         </div>
         <div class="border rounded-lg p-4 border-foreground">
@@ -68,8 +71,9 @@ import { currentPrinters } from "./stores/currentPrinters";
                     {{ printer.deviceName }}
                 </li>
             </ul>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-xs text-muted-foreground">
                 These printers will become available for printing automations after pairing with a store.
+                (if you add a new printer, quit and restart the app)
             </p>
         </div>
         <LayoutHelpers />
