@@ -9,7 +9,7 @@
     "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
     "builddev": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
     "cf:pages:deploy": "dotenvx run -f .env.production -- wrangler pages deploy dist --project-name=cart5-auth-frontend-prod --branch=main --no-bundle",
-    "start": "http-server dist -s -p 3001 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3001?"
+    "start": "http-server dist -s -p 3001 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3001? -c 120"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",

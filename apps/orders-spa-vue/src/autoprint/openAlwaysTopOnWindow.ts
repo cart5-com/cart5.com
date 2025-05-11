@@ -16,7 +16,7 @@ export const openAlwaysTopOnWindow = function () {
         iframe.style.bottom = '0';
         iframe.style.right = '0';
         iframe.style.width = '60px';
-        iframe.style.height = '25px';
+        iframe.style.height = '22px';
         document.body.appendChild(iframe);
         return;
     }
@@ -29,7 +29,7 @@ export const openAlwaysTopOnWindow = function () {
         // "max_width": 60,
         // "max_height": 40,
         "width": 60,
-        "height": 25,
+        "height": 22,
         "show": true,
         "frame": false,
         // "transparent": true,

@@ -14,6 +14,7 @@ import type { calculateCartTotalPrice } from "@lib/utils/calculateCartItemPrice"
 import type { PaymentMethodType } from "@lib/types/paymentMethodType";
 // import { z } from 'zod';
 import { createSelectSchema } from "drizzle-zod";
+import type { EstimatedTime } from "@lib/zod/deliverySchema";
 
 export const orderTable = sqliteTable("orders", {
     ...autoCreatedUpdated,
@@ -45,10 +46,11 @@ export const orderTable = sqliteTable("orders", {
     storeAddress1: text("store_address1").notNull(),
     storeLocationLat: real("store_location_lat").notNull(),
     storeLocationLng: real("store_location_lng").notNull(),
+    storeTimezone: text("store_timezone"),
 
     // Pickup Information
     pickupNickname: text("pickup_nickname").notNull(),
-    estimatedTimeText: text("estimated_time_text"),
+    estimatedTimeJSON: text("estimated_time_json", { mode: "json" }).$type<EstimatedTime>(),
 
     // Payment Information
     paymentId: text("payment_id").notNull(),

@@ -30,7 +30,7 @@ import { getAllVerifiedPhoneNumbers_Service } from '@db/services/phone.service';
 import { checkUserDataBeforePlacingOrder, checkStoreDataBeforePlacingOrder, checkMinimumOrderValueForDelivery } from "@lib/utils/checkBeforePlacingOrder";
 import { checkGeocodeDistance } from '@lib/utils/checkGeocodeDistance';
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
-import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
+import { getEstimatedTimeJSON } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 
@@ -260,7 +260,7 @@ export const generateOrderData_Service = async (
     }
     const pickupNickname = (userData?.rememberLastNickname || user.name || 'unknown');
     const storeData = await getStoreData_CacheJSON(storeId);
-    const { menuRoot, taxSettings, currentPaymentMethod } = checkStoreDataBeforePlacingOrder(storeData, currentOrderType, userData);
+    const { menuRoot, taxSettings, currentPaymentMethod, storeTimezone } = checkStoreDataBeforePlacingOrder(storeData, currentOrderType, userData);
     const orderedItems: OrderedItemsType = [];
     // TODO: should I save cart state to have a reorder button?
     currentCart.items?.forEach((item: CartItem) => {
@@ -347,8 +347,7 @@ export const generateOrderData_Service = async (
     const userVerifiedPhoneNumbers = await getAllVerifiedPhoneNumbers_Service(user.id);
     const supportTeamWebsite = await getSupportTeamWebsite_Service(storeId);
     const subtotalJSON = subTotalWithDeliveryAndServiceFees;
-    // TODO: I also need to save the estimated time settings, text is not enough
-    const estimatedTime = estimatedTimeText(
+    const estimatedTimeJSON = getEstimatedTimeJSON(
         currentOrderType,
         subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.customEstimatedDeliveryTime,
         storeData?.defaultEstimatedDeliveryTime ?? undefined,
@@ -371,11 +370,12 @@ export const generateOrderData_Service = async (
             storeLocationLng: storeLocation.lng,
             storeName: storeData?.name,
             storeAddress1: storeData?.address?.address1 ?? '',
+            storeTimezone: storeTimezone,
             paymentId: userData?.rememberLastPaymentMethodId ?? '',
             isOnlinePayment: currentPaymentMethod.isOnline,
             orderNote: currentCart.orderNote,
             finalAmount: cartBreakdown.buyerPays,
-            estimatedTimeText: estimatedTime,
+            estimatedTimeJSON,
             // JSONs
             paymentMethodJSON: currentPaymentMethod,
             orderedItemsJSON: orderedItems,

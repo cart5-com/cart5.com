@@ -1,7 +1,7 @@
 import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { formatDate } from "./formatDate";
-
+import { estimatedTimeText1 } from "./estimatedTimeText";
 const orderDetailsApiPath = authGlobalApiClient[":orderId"].details.$get;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"];
 
@@ -63,10 +63,14 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     if (orderDetails.userVerifiedPhoneNumbers) {
         output += `${orderDetails.userVerifiedPhoneNumbers}\n`;
     }
-    // TODO: add phone number
-    output += `${formatDate(orderDetails.created_at_ts || Date.now())}\n`;
-    if (orderDetails.estimatedTimeText) {
-        output += `${orderDetails.estimatedTimeText}\n`;
+    // TODO: fix with store timezone
+    output += `${formatDate(
+        orderDetails.created_at_ts || Date.now(),
+        orderDetails.storeTimezone || undefined,
+        false
+    )}\n`;
+    if (orderDetails.estimatedTimeJSON) {
+        output += `${estimatedTimeText1(orderDetails.orderType!, orderDetails.estimatedTimeJSON)}\n`;
     }
     output += `<hr>`;
 
@@ -135,6 +139,7 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     output += `<hr>`;
     output += `TOTAL: ${formatCurrency(orderDetails.finalAmount)}\n`;
     output += `<hr>`;
+    output += `\n\n\n`;
 
     return `<html><body>${style}<pre>${output}</pre></body></html>`;
 }

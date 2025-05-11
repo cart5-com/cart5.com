@@ -3,6 +3,7 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@lib/utils/formatDate";
+import { estimatedTimeText1 } from "@lib/utils/estimatedTimeText";
 import MapEmbed from "./MapEmbed.vue";
 import {
     feeBreakdownNameMap
@@ -72,10 +73,10 @@ const orderedQuantity = () => {
                     Status: <span
                           class="capitalize font-bold border border-muted-foreground rounded-md px-2 py-1">{{ orderDetails.orderStatus.toLowerCase() }}</span>
                 </div>
-                <div v-if="orderDetails.estimatedTimeText"
+                <div v-if="orderDetails.estimatedTimeJSON"
                      class="text-sm text-muted-foreground mt-1">
                     <Clock class="inline-block mr-1 h-4 w-4" />
-                    {{ orderDetails.estimatedTimeText }}
+                    {{ estimatedTimeText1(orderDetails.orderType!, orderDetails.estimatedTimeJSON) }}
                 </div>
             </CardContent>
         </Card>

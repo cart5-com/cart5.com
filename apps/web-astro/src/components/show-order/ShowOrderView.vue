@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/popover'
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 import MapEmbed from "@web-astro/components/MapEmbed.vue";
-
+import { estimatedTimeText1 } from "@lib/utils/estimatedTimeText";
 const icons = [
     { name: 'MapPin', component: MapPin },
     { name: 'House', component: House },
@@ -136,10 +136,10 @@ const orderedQuantity = () => {
                         Status: <span
                               class="capitalize font-bold border border-muted-foreground rounded-md px-2 py-1">{{ orderDetails.orderStatus.toLowerCase() }}</span>
                     </div>
-                    <div v-if="orderDetails.estimatedTimeText"
+                    <div v-if="orderDetails.estimatedTimeJSON"
                          class="text-sm text-muted-foreground mt-1">
                         <Clock class="inline-block mr-1 h-4 w-4" />
-                        {{ orderDetails.estimatedTimeText }}
+                        {{ estimatedTimeText1(orderDetails.orderType!, orderDetails.estimatedTimeJSON) }}
                     </div>
                 </CardContent>
             </Card>

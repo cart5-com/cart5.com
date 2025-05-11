@@ -102,6 +102,7 @@ export const checkStoreDataBeforePlacingOrder = (
         menuRoot,
         taxSettings,
         currentPaymentMethod,
+        storeTimezone: storeData.openHours?.timezone,
     };
 }
 

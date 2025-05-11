@@ -1,4 +1,4 @@
-export const formatDate = function (date: number): string {
+export const formatDate = function (date: number, timezone?: string, includeTimeDifference?: boolean): string {
     const dateObj = new Date(date);
     const options: Intl.DateTimeFormatOptions = {
         month: 'short',
@@ -9,7 +9,10 @@ export const formatDate = function (date: number): string {
         // second: "2-digit",
         hour12: false
     }
-    return `${dateObj.toLocaleDateString(undefined, options)}[${timeDifference(date)}]`;
+    if (timezone) {
+        options.timeZone = timezone;
+    }
+    return `${dateObj.toLocaleDateString(undefined, options)}${includeTimeDifference ? `[${timeDifference(date)}]` : ''}`;
 }
 
 export const timeDifference = function (date: number): string {
