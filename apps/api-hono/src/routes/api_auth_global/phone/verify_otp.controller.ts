@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { decryptAndVerifyJwt } from '@api-hono/utils/jwt';
 import { PHONE_OTP_COOKIE_NAME } from '@lib/consts';
-import { validateTurnstile } from '@api-hono/utils/validateTurnstile';
+import { validateCrossDomainTurnstile } from '@api-hono/utils/validateTurnstile';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
@@ -25,7 +25,15 @@ export const verifyPhoneOtpRoute = async (
     >
 ) => {
     const { code, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    const { userId: requestUserId } = await validateCrossDomainTurnstile(
+        turnstile,
+        c.req.header()['x-forwarded-for'],
+        c.req.header()['user-agent'],
+        c.req.header()['host']
+    );
+    if (requestUserId !== c.get('USER')?.id!) {
+        throw new KNOWN_ERROR("Invalid user, please make sure logout and login again", "INVALID_USER");
+    }
 
     // Get the user session to ensure they're logged in
     const session = c.var.SESSION;
