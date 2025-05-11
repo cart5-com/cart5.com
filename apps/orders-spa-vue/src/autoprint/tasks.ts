@@ -5,6 +5,7 @@ import { printHTML } from "./utils/printHTML";
 import { isPairedBefore } from "./stores/isPairedBefore";
 import { createAutoprintTasksApiClient } from "@api-client/autoprint_tasks";
 import { printedTaskIds } from "./stores/printedTaskIds";
+import { getPrinters } from "./utils/getPrinters";
 
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/autoprint_tasks`);
@@ -80,3 +81,17 @@ const deleteTask = async (taskId: string) => {
         return;
     }
 };
+
+export const updatePrintersDataOnServer = async () => {
+    const printers = await getPrinters();
+    if (printers && printers.length > 0) {
+        const { error } = await (await apiClient["set_printers"].$post({
+            json: { printers },
+        }, {
+            headers: await generateSignatureHeaders()
+        })).json();
+        if (error) {
+            console.error('Error updating printers data on server:', error);
+        }
+    }
+}

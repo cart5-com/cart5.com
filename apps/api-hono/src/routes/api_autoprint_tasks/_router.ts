@@ -6,6 +6,7 @@ import { getAutoPrintDevice_Service } from '@db/services/autoprint.service';
 import { listenTasks_Handler } from './listen_tasks.controller';
 import { getTasks_Handler } from './getTasks.controller';
 import { deleteTask_Handler } from './deleteTask.controller';
+import { setPrinters_Handler, setPrinters_SchemaValidator } from './set_printers.controller';
 
 export const apiAutoprintTasks = new Hono<HonoVariables>()
     .use(async (c, next) => {
@@ -50,6 +51,11 @@ export const apiAutoprintTasks = new Hono<HonoVariables>()
     .delete(
         '/tasks/:deviceId/:taskId',
         deleteTask_Handler
+    )
+    .post(
+        '/set_printers',
+        setPrinters_SchemaValidator,
+        setPrinters_Handler
     )
 
 export type ApiAutoprintTasksType = typeof apiAutoprintTasks;

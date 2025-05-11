@@ -1,6 +1,7 @@
 import { autoprintDeviceStoreMapTable, autoprintDeviceTable, autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
 import db from '@db/drizzle';
 import { eq, type InferInsertModel, and } from 'drizzle-orm';
+import type { PrintersType } from "@lib/zod/Printers";
 
 
 export const getDeviceTasks_Service = async (
@@ -100,4 +101,13 @@ export const getAutoprintDevicesByStore_Service = async (
         }
     });
     return mappings.map(mapping => mapping.device);
+}
+
+export const setPrinters_Service = async (
+    autoprintDeviceId: string,
+    printers: PrintersType
+) => {
+    return await db.update(autoprintDeviceTable).set({
+        printers
+    }).where(eq(autoprintDeviceTable.autoprintDeviceId, autoprintDeviceId));
 }

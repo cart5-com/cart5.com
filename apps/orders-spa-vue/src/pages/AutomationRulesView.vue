@@ -53,6 +53,7 @@ const pairAutoprintDevice = async (storeId: string) => {
         console.error(error)
     }
     if (data) {
+        toast.success("Paired successfully");
         console.log(data)
         loadMyStores()
     }

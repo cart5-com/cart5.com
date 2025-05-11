@@ -1,4 +1,5 @@
 import { SSEStreamingApi } from 'hono/streaming';
+import { type PrintersType } from '@lib/zod/Printers';
 
 // Define device info type
 interface PairingDeviceInfo {
@@ -8,7 +9,7 @@ interface PairingDeviceInfo {
     otp: string;
     timestamp: number;
     secretKey?: string;
-    printers?: any[];
+    printers?: PrintersType;
 }
 
 export const device_pairing_connections = new Map<string, PairingDeviceInfo>();
