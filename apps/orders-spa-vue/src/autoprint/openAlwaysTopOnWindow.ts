@@ -4,14 +4,19 @@ let iframe: HTMLIFrameElement | undefined;
 
 export const openAlwaysTopOnWindow = function () {
     if (typeof global === "undefined") {
+        // check if iframe is already in the document
+        if (document.getElementById('autoprint-always-top-on-window')) {
+            return;
+        }
         // add it as iframe
         iframe = document.createElement('iframe');
+        iframe.id = 'autoprint-always-top-on-window';
         iframe.src = window.location.href.replace('autoprint.html', 'autoprint-alwaysTopOn.html');
         iframe.style.position = 'fixed';
         iframe.style.bottom = '0';
         iframe.style.right = '0';
-        iframe.style.width = '30px';
-        iframe.style.height = '20px';
+        iframe.style.width = '60px';
+        iframe.style.height = '25px';
         document.body.appendChild(iframe);
         return;
     }
@@ -23,8 +28,8 @@ export const openAlwaysTopOnWindow = function () {
     nw.Window.open(window.location.href.replace('autoprint.html', 'autoprint-alwaysTopOn.html'), {
         // "max_width": 60,
         // "max_height": 40,
-        "width": 30,
-        "height": 20,
+        "width": 60,
+        "height": 25,
         "show": true,
         "frame": false,
         // "transparent": true,
@@ -35,7 +40,7 @@ export const openAlwaysTopOnWindow = function () {
             win.x = 220;
             win.y = 0;
             if (import.meta.env.DEV) {
-                win.y = 40;
+                win.y = 50;
             }
             // win.width = 60;
             // win.height = 40;
