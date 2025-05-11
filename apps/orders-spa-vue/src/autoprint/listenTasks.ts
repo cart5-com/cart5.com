@@ -13,6 +13,7 @@ type TasksType = ResType<typeof apiClient["tasks"][":deviceId"]["$get"]>["data"]
 export const currentPrintTasks = ref<TasksType>([]);
 
 let eventSource: EventSourceWithHeaders | null = null;
+let errorCount = 0;
 
 export const listenTasks = async () => {
     // do not duplicate connection
@@ -32,6 +33,7 @@ export const listenTasks = async () => {
 
     eventSource = new EventSourceWithHeaders(url.toString(), await generateSignatureHeaders());
     eventSource.onmessage = (event) => {
+        errorCount = 0;
         if (event.data === 'ping') {
             return
         }
@@ -46,17 +48,22 @@ export const listenTasks = async () => {
         // }
     }
     eventSource.onopen = (_event) => {
+        errorCount = 0;
         globalErrorText.value = '';
         toast.success('Ready to print');
     }
     eventSource.onerror = (_event) => {
-        globalErrorText.value = 'print task listener error';
+        errorCount++;
+        if ((errorCount * 2) > 300) {
+            errorCount = 150; // 5 minutes
+        }
+        globalErrorText.value = `print task listener error, trying to reconnect in ${errorCount * 2} seconds`;
         eventSource?.close();
         eventSource = null;
         // toast.error('error, trying to reconnect...');
         setTimeout(() => {
             listenTasks();
-        }, import.meta.env.DEV ? 3_000 : 30_000);
+        }, errorCount * 2_000);
         console.log('eventSource.onerror', _event);
         console.log('eventSource.onerror.detail', (_event as CustomEvent).detail);
         if (

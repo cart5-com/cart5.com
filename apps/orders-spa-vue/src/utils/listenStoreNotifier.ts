@@ -6,6 +6,7 @@ import { ref } from 'vue';
 // Map of store IDs to their EventSource instances
 export const storeEventSources = ref<Map<string, EventSource>>(new Map());
 export const hasConnectionError = ref<boolean>(false);
+let errorCount = 0;
 
 export const listenStoreNotifier = (storeId: string) => {
     // Don't create duplicate connections
@@ -27,6 +28,7 @@ export const listenStoreNotifier = (storeId: string) => {
     //     console.log(`Store ${storeId} connection opened`);
     // }
     eventSource.onmessage = (event) => {
+        errorCount = 0;
         if (event.data === 'ping') {
             return
         }
@@ -43,6 +45,10 @@ export const listenStoreNotifier = (storeId: string) => {
     };
 
     eventSource.onerror = (event) => {
+        errorCount++;
+        if ((errorCount * 2) > 300) {
+            errorCount = 150; // 5 minutes
+        }
         console.log(`Store ${storeId} connection error`);
         console.log(event);
         hasConnectionError.value = true;
@@ -50,7 +56,7 @@ export const listenStoreNotifier = (storeId: string) => {
         setTimeout(() => {
             hasConnectionError.value = false;
             listenStoreNotifier(storeId);
-        }, import.meta.env.DEV ? 3_000 : 30_000);
+        }, errorCount * 2_000);
     };
 
     storeEventSources.value.set(storeId, eventSource);
