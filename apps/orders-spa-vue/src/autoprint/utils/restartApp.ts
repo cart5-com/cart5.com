@@ -1,11 +1,8 @@
-import { currentPrintTasks } from "./listenTasks";
+import { toast } from "@/ui-plus/sonner";
+import { currentPrintTasks } from "../listenTasks";
 
 export const restartApp = async () => {
-    var isAbleToRestartNow = true;
-    if (currentPrintTasks.length > 0) {
-        isAbleToRestartNow = false;
-    }
-    if (isAbleToRestartNow) {
+    if (currentPrintTasks.value.length === 0) {
         if (typeof global === "undefined") {
             window.location.reload();
             // } else if (process.platform === "win32") {
@@ -24,7 +21,7 @@ export const restartApp = async () => {
             nw.Window.get().reload();
         }
     } else {
-        console.log('there are waiting task, wait 5 secs then try again');
+        toast.info('restarting app in 5 seconds. once all tasks are done');
         await new Promise(resolve => setTimeout(resolve, 5000));
         restartApp();
     }

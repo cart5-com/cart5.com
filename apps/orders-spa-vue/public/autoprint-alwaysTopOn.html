@@ -5,9 +5,10 @@
         <style>
             body {
                 margin: 0px;
-                padding: 0px;
+                padding: 2px;
                 overflow: hidden;
                 cursor: pointer;
+                background-color: #fff;
             }
 
         </style>
@@ -26,9 +27,8 @@
     </head>
 
     <body onclick="javascript:onPrinterButtonClick();">
-        <div id="app"></div>
-        <script type="module"
-                src="./src/autoprint/always_top_on_main.ts"></script>
+        <img src="tray.png" />
+        <span id="is-online-status"></span>
     </body>
 
 </html>

@@ -1,5 +1,5 @@
-import { createHmacSignature } from "./createHmacSignature";
-import { deviceId, deviceSecretKey } from "./pairing";
+import { createHmacSignature } from "@lib/utils/createHmacSignature";
+import { deviceId, deviceSecretKey } from "../pairing";
 
 export const generateSignatureHeaders = async () => {
     const timestamp = Date.now();

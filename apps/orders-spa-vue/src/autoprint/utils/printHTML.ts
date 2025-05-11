@@ -1,6 +1,8 @@
 import {
     getMainWindow,
 } from "./mainWindow";
+import { toast } from "@/ui-plus/sonner";
+
 
 export const printHTML = async function (
     html: string,
@@ -57,7 +59,8 @@ export const printHTML = async function (
                 return;
             }
             if (typeof global === "undefined") {
-                // iframeWindow.print();
+                toast.message('simulating print...');
+                iframeWindow.print();
             } else {
                 getMainWindow().print({
                     autoprint: true,

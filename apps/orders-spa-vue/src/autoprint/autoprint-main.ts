@@ -2,19 +2,22 @@ import "@/index.css";
 import * as Sentry from "@sentry/vue";
 import { createApp } from 'vue'
 import AutoprintView from './AutoprintView.vue'
-import { getMainWindow } from './mainWindow';
-import { focusGlobalWindow } from './focusGlobalWindow';
+import { getMainWindow } from './utils/mainWindow';
+import { focusGlobalWindow } from './utils/focusGlobalWindow';
+import { restartApp } from "./utils/restartApp";
 import { openAlwaysTopOnWindow } from './openAlwaysTopOnWindow';
 
 if (typeof global !== "undefined") {
     global.mainWindow = getMainWindow();
+    setTimeout(() => {
+        global.mainWindow?.hide();
+    });
     global.mainWindow.on('closed', function () {
         global.mainWindow?.hide();
     });
     global.mainWindow.on('close', function () {
         global.mainWindow?.hide();
     });
-    // document.querySelector<HTMLDivElement>('#app')!.innerHTML += `I have global with nw.js`
     if (import.meta.env.DEV) {
         global.mainWindow.showDevTools();
     }
@@ -33,3 +36,9 @@ if (import.meta.env.PROD) {
     });
 }
 app.mount('#app');
+
+
+// restart app after 6 hours
+setTimeout(() => {
+    restartApp();
+}, 6 * 60 * 60 * 1000);
