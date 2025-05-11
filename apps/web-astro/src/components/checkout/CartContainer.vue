@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { currentOrderType, userDataStore } from "../../stores/UserData.store";
+import { currentOrderType, isUserDataReady, userDataStore } from "../../stores/UserData.store";
 import CartView from "./CartView.vue";
 import UserMenu from "../user/UserMenu.vue";
 import OrderTypeWidget from "../OrderTypeWidget.vue";
@@ -107,61 +107,66 @@ const cartView = ref<InstanceType<typeof CartView> | null>(null);
 
 <template>
     <div class="max-w-lg mx-auto">
-        <div v-if="!userDataStore.user">
-            <Button variant="outline"
-                    as="a"
-                    :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
-                    class="">
-                <ChevronLeft class="inline-block mr-2" />
-                Back to {{ storeName }}
-            </Button>
-            <div class="mt-8">
-                Please login or register before checking out
-            </div>
-            <UserMenu />
+        <div v-if="!isUserDataReady">
+            <Loader2 class="animate-spin w-20 h-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
         </div>
         <div v-else>
-            <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap no-scrollbar">
-                <div class="flex justify-between items-center sm:flex-row flex-col">
-                    <Button variant="outline"
-                            as="a"
-                            :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
-                            class="w-full mr-4">
-                        <ChevronLeft class="inline-block mr-2" />
-                        Back to {{ storeName }}
-                    </Button>
-                    <OrderTypeWidget />
+            <div v-if="!userDataStore.user">
+                <Button variant="outline"
+                        as="a"
+                        :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
+                        class="">
+                    <ChevronLeft class="inline-block mr-2" />
+                    Back to {{ storeName }}
+                </Button>
+                <div class="mt-8">
+                    Please login or register before checking out
                 </div>
+                <UserMenu />
             </div>
+            <div v-else>
+                <div class="overflow-x-auto overflow-y-hidden whitespace-nowrap no-scrollbar">
+                    <div class="flex justify-between items-center sm:flex-row flex-col">
+                        <Button variant="outline"
+                                as="a"
+                                :href="BASE_LINKS.STORE(storeId!, slugify(storeName!), currentOrderType)"
+                                class="w-full mr-4">
+                            <ChevronLeft class="inline-block mr-2" />
+                            Back to {{ storeName }}
+                        </Button>
+                        <OrderTypeWidget />
+                    </div>
+                </div>
 
 
-            <!-- Display selected address or pickup name -->
-            <SelectedInfo ref="selectedInfo" />
+                <!-- Display selected address or pickup name -->
+                <SelectedInfo ref="selectedInfo" />
 
-            <PaymentMethods ref="paymentMethods" />
+                <PaymentMethods ref="paymentMethods" />
 
-            <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
-                <CartView :is-collapsed="true"
-                          ref="cartView" />
+                <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
+                    <CartView :is-collapsed="true"
+                              ref="cartView" />
+                </div>
+
+                <Button size="lg"
+                        @click="placeOrder"
+                        :disabled="isPlaceOrderLoading"
+                        class="w-full text-lg font-bold">
+                    <Loader2 class="animate-spin inline-block mr-2"
+                             v-if="isPlaceOrderLoading" />
+                    Place order
+                    <ChevronRight class="inline-block ml-2" />
+                </Button>
+
+                <div class="text-xs text-muted-foreground my-4">
+                    <!-- TODO: show terms and conditions -->
+                    <CheckCircle class="inline-block mr-2" />
+                    By placing this order, you agree to accept full responsibility.
+                    All orders are final and non-cancellable and non-refundable to prevent abuse.
+                </div>
+
             </div>
-
-            <Button size="lg"
-                    @click="placeOrder"
-                    :disabled="isPlaceOrderLoading"
-                    class="w-full text-lg font-bold">
-                <Loader2 class="animate-spin inline-block mr-2"
-                         v-if="isPlaceOrderLoading" />
-                Place order
-                <ChevronRight class="inline-block ml-2" />
-            </Button>
-
-            <div class="text-xs text-muted-foreground my-4">
-                <!-- TODO: show terms and conditions -->
-                <CheckCircle class="inline-block mr-2" />
-                By placing this order, you agree to accept full responsibility.
-                All orders are final and non-cancellable and non-refundable to prevent abuse.
-            </div>
-
         </div>
     </div>
 </template>

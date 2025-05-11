@@ -57,7 +57,7 @@ export type AnonUserDataType = Pick<NonNullable<UserDataType>,
 >;
 
 export const ON_USER_DATA_READY = "ON_USER_DATA_READY";
-export let isUserDataReady = false;
+export const isUserDataReady = ref(false);
 export const userDataStore = ref<UserDataStoreType>({
     user: null,
     userData: null,
@@ -235,7 +235,7 @@ const loadUserData = async () => {
         watch(userDataStore, handleDataChange, { deep: true, immediate: false });
         setTimeout(() => {
             window.dispatchEvent(new Event(ON_USER_DATA_READY));
-            isUserDataReady = true;
+            isUserDataReady.value = true;
             if (userDataStore.value.userData && !userDataStore.value.userData.rememberLastNickname) {
                 userDataStore.value.userData.rememberLastNickname = userDataStore.value.user?.name;
             }
@@ -248,7 +248,7 @@ const loadUserData = async () => {
 
 export const waitUntilUserDataReady = () => {
     return new Promise((resolve) => {
-        if (isUserDataReady) {
+        if (isUserDataReady.value) {
             resolve(true);
         } else {
             window.addEventListener(ON_USER_DATA_READY, resolve);

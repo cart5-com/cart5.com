@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import DarkModeToggle from "@/ui-plus/DarkModeToggle.vue";
 import UserMenu from "./user/UserMenu.vue";
+import { isUserDataReady } from "@web-astro/stores/UserData.store";
 
 onMounted(() => {
     console.log("Drawer mounted");
@@ -11,9 +12,14 @@ onMounted(() => {
 
 <template>
     <div class="p-1">
-        <UserMenu />
-        <div class="mt-2 flex justify-center">
-            <DarkModeToggle />
+        <div v-if="!isUserDataReady">
+            <Loader2 class="animate-spin w-20 h-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        </div>
+        <div v-else>
+            <UserMenu />
+            <div class="mt-2 flex justify-center">
+                <DarkModeToggle />
+            </div>
         </div>
     </div>
 </template>
