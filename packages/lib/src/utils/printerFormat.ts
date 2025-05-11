@@ -139,7 +139,6 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     output += `<hr>`;
     output += `TOTAL: ${formatCurrency(orderDetails.finalAmount)}\n`;
     output += `<hr>`;
-    output += `\n\n\n`;
 
     return `<html><body>${style}<pre>${output}</pre></body></html>`;
 }

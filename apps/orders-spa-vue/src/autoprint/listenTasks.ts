@@ -7,7 +7,7 @@ import { ref } from 'vue';
 import { toast } from '@/ui-plus/sonner';
 import { isPairedBefore } from './stores/isPairedBefore';
 import { globalErrorText } from './stores/globalErrorText';
-import { fetchTasks, updatePrintersDataOnServer } from './tasks';
+import { fetchTasks } from './tasks';
 
 const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/autoprint_tasks`);
 type TasksType = ResType<typeof apiClient["tasks"][":deviceId"]["$get"]>["data"]
@@ -52,9 +52,6 @@ export const listenTasks = async () => {
         errorCount = 0;
         globalErrorText.value = '';
         toast.success('Ready to print');
-        setTimeout(() => {
-            updatePrintersDataOnServer();
-        }, 1000);
     }
     eventSource.onerror = (_event) => {
         errorCount++;

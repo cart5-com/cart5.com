@@ -8,6 +8,8 @@ import CopyButton from "@/ui-plus/CopyButton.vue";
 import { isPairedBefore } from "./stores/isPairedBefore";
 import { globalErrorText } from "./stores/globalErrorText";
 import { currentPrinters } from "./stores/currentPrinters";
+import { updatePrintersDataOnServer } from "./tasks";
+
 
 </script>
 
@@ -75,6 +77,10 @@ import { currentPrinters } from "./stores/currentPrinters";
                 These printers will become available for printing automations after pairing with a store.
                 (if you add a new printer, quit and restart the app)
             </p>
+            <Button @click="updatePrintersDataOnServer"
+                    variant="outline">
+                refresh printers
+            </Button>
         </div>
         <LayoutHelpers />
     </div>
