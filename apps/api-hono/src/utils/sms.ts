@@ -7,14 +7,16 @@ export const sendUserOtpSms = async (
 ) => {
     const to = number;
     const textMessage = `${code}`;
+    console.log(`✉️📞☎️to: ${to}`);
+    console.log(`✉️📞☎️ SMS: ${textMessage}`);
     if (IS_PROD) {
         // TODO: send sms
-        console.log(`to: ${to}`);
-        console.log(`textMessage: ${textMessage}`);
-        throw new Error('SMS not implemented');
+        // console.log(`to: ${to}`);
+        // console.log(`textMessage: ${textMessage}`);
+        // throw new Error('SMS not implemented');
     } else {
-        console.log(`✉️📞☎️to: ${to}`);
-        console.log(`✉️📞☎️ SMS: ${textMessage}`);
+        // console.log(`✉️📞☎️to: ${to}`);
+        // console.log(`✉️📞☎️ SMS: ${textMessage}`);
     }
     return 200;
 

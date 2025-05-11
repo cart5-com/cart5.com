@@ -168,11 +168,11 @@ const removeServiceFee = (index: number) => {
                                        min="0" />
                                 <p class="text-xs text-muted-foreground">
                                     {{
-                                        !fee.overrideServiceFeeTaxRate ? '(default)' : `(custom:${fee.overrideServiceFeeTaxRate})`
+                                        !fee.overrideServiceFeeTaxRate ? '(uses default)' : `(uses custom:${fee.overrideServiceFeeTaxRate})`
                                     }}
-                                    Optional: Override the default tax rate
-                                    "Sidemenu" -> "Tax Settings" ->
-                                    "Tax Rate for Service Fees(%)"
+                                    Optional: Please enter to override the default Service fee tax rate
+                                    ("Sidemenu" -> "Tax Settings" ->
+                                    "Tax Rate for Service Fees(%)")
                                 </p>
                             </div>
                         </div>
