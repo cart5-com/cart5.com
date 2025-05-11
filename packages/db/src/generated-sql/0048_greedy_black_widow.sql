@@ -1,0 +1,1 @@
+ALTER TABLE `autoprint_device_task` RENAME COLUMN "printer_name" TO "device_name";

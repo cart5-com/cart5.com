@@ -38,7 +38,7 @@ export const autoprintDeviceTaskTable = sqliteTable("autoprint_device_task", {
     ...autoCreated,
     taskId: text("task_id").notNull().primaryKey().unique().$defaultFn(() => generateKey('apt')),
     autoprintDeviceId: text("autoprint_device_id").notNull(),
-    deviceName: text("printer_name").notNull(),
+    deviceName: text("device_name").notNull(),
     copies: integer("copies").notNull().default(1),
     storeId: text("store_id").notNull(),
     orderId: text("order_id").notNull(),
