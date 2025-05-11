@@ -20,7 +20,7 @@ const startProcessingTasks = async () => {
             await deleteTask(task.taskId);
             continue;
         }
-        await printHTML(task.html || 'error-with-html', task.printerName, task.copies || 1);
+        await printHTML(task.html || 'error-with-html', task.deviceName, task.copies || 1);
         printedTaskIds.value.push({
             taskId: task.taskId,
             printedAtTs: Date.now()

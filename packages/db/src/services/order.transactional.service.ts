@@ -95,7 +95,7 @@ export const saveOrderDataTransactional_Service = async (
                     await tx.insert(autoprintDeviceTaskTable).values({
                         taskId: generateKey('apt'),
                         autoprintDeviceId: rule.autoprintDeviceId as string,
-                        printerName: rule.printerDeviceName as string,
+                        deviceName: rule.printerDeviceName as string,
                         copies: rule.copies || 1,
                         storeId: autoPrintParams.storeId,
                         orderId: orderId,
