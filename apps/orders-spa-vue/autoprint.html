@@ -6,25 +6,6 @@
 
     <body>
         <div id="app"></div>
-        <div id="app-2"
-             style="display: none;">
-            <h1>Auto Print</h1>
-            <div>
-                <div>
-                    Once paired, make sure to check the "Keep Online" checkbox to start printing.
-                </div>
-                <button id="pair-device">Pair your device</button>
-                <button id="stop-pairing">Stop pairing</button>
-                <div id="pairing-status"></div>
-            </div>
-            <div>
-                <input type="checkbox"
-                       id="is-online-checkbox" />
-                <label for="is-online-checkbox">Keep Online</label>
-            </div>
-            <button id="kill-app">QUIT (KILL AUTO PRINT APP)</button>
-            <button id="restart-app">RESTART</button>
-        </div>
         <script type="module"
                 src="./src/autoprint/autoprint-main.ts"></script>
     </body>

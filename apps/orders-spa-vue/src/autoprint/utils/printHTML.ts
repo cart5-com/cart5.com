@@ -17,11 +17,16 @@ export const printHTML = async function (
     // const printers = await getPrinters();
     // console.log(printers);
 
-    // const style = document.getElementById('autoprint-style');
-    // if (!style) {
-    //     return;
-    // }
-    // style.remove();
+    const styles = document.querySelectorAll('style');
+    styles.forEach(style => {
+        style.remove();
+    });
+
+    const links = document.querySelectorAll('link[rel="stylesheet"]');
+    links.forEach(link => {
+        link.remove();
+    });
+
     const app = document.getElementById('app');
     if (!app) {
         return;
@@ -68,10 +73,10 @@ export const printHTML = async function (
                     printer: printer, //"HP_DeskJet_2700_series", // "Save as PDF"
                     // pdf_path: not working with mac, I don't know why
                     headerFooterEnabled: false,
-                    landscape: false,
                     shouldPrintBackgrounds: false,
                     marginsType: 1,
                     copies: copies,
+                    // landscape: false,
                     // scaleFactor
                     // headerString
                     // footerString
@@ -103,12 +108,17 @@ export const printHTML = async function (
 
                 });
             }
-            // Clean up after printing dialog is closed
             setTimeout(() => {
                 document.body.removeChild(iframe);
                 URL.revokeObjectURL(url); // Clean up the blob URL
                 app.style.display = oldDisplay;
                 // document.head.appendChild(style);
+                styles.forEach(style => {
+                    document.head.appendChild(style);
+                });
+                links.forEach(link => {
+                    document.head.appendChild(link);
+                });
             }, 500);
         }, 100);
     };
