@@ -20,11 +20,11 @@ const startProcessingTasks = async () => {
             continue;
         }
         await printHTML(task.html || 'error-with-html', task.printerName, task.copies || 1);
-        await deleteTask(task.taskId);
         printedTaskIds.value.push({
             taskId: task.taskId,
             printedAtTs: Date.now()
         });
+        await deleteTask(task.taskId);
         await new Promise(resolve => setTimeout(resolve, 1000))
     }
 }

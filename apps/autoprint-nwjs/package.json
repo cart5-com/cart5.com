@@ -2,7 +2,7 @@
   "name": "autoprint",
   "version": "1.0.0",
   "scripts": {
-    "runapp": "nw ./app",
+    "runapp": "nw ./",
     "bw": "./build.sh"
   },
   "devDependencies": {

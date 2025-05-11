@@ -68,7 +68,7 @@ export const printHTML = async function (
                     printer: printer, //"HP_DeskJet_2700_series", // "Save as PDF"
                     // pdf_path: not working with mac, I don't know why
                     headerFooterEnabled: false,
-                    landscape: true,
+                    landscape: false,
                     shouldPrintBackgrounds: false,
                     marginsType: 1,
                     copies: copies,
