@@ -11,7 +11,7 @@ export const pairDevice_SchemaValidator = zValidator('query', z.object({
     name: z.string(),
     deviceId: z.string(),
     // secretKey: z.string(),
-    otp: z.string(),
+    otp: z.string().min(6).max(6),
 }));
 
 export const pairDevice_Handler = async (c: Context<
@@ -42,7 +42,7 @@ export const pairDevice_Handler = async (c: Context<
                 name,
                 deviceId,
                 // secretKey,
-                otp,
+                otp: otp.toUpperCase().trim(),
                 timestamp: Date.now(),
             });
 

@@ -19,7 +19,7 @@ export const pairAutoprintDevice_Handler = async (c: Context<
     ValidatorContext<typeof pairAutoprintDevice_SchemaValidator>
 >) => {
     const { otp } = c.req.valid('json');
-    const deviceInfo = findPairingDeviceByOtp(otp);
+    const deviceInfo = findPairingDeviceByOtp(otp.toUpperCase().trim());
     if (!deviceInfo || !deviceInfo.secretKey || !deviceInfo.deviceId || !deviceInfo.printers) {
         throw new KNOWN_ERROR("invalid_device", "INVALID_DEVICE");
     }
