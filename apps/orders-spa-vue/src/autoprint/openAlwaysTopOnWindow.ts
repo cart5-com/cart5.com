@@ -10,8 +10,8 @@ export const openAlwaysTopOnWindow = function () {
         iframe.style.position = 'fixed';
         iframe.style.bottom = '0';
         iframe.style.right = '0';
-        iframe.style.width = '60px';
-        iframe.style.height = '25px';
+        iframe.style.width = '30px';
+        iframe.style.height = '20px';
         document.body.appendChild(iframe);
         return;
     }
@@ -23,8 +23,8 @@ export const openAlwaysTopOnWindow = function () {
     nw.Window.open(window.location.href.replace('autoprint.html', 'autoprint-alwaysTopOn.html'), {
         // "max_width": 60,
         // "max_height": 40,
-        "width": 60,
-        "height": 25,
+        "width": 30,
+        "height": 20,
         "show": true,
         "frame": false,
         // "transparent": true,
