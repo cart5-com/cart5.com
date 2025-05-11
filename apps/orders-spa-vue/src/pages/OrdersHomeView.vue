@@ -24,6 +24,8 @@ import ShowOrderView from "@orders-spa-vue/components/ShowOrderView.vue";
 import { printOrder } from "@orders-spa-vue/utils/printOrder";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
+// const user = window.USER;
+
 const reload = () => {
     window.location.reload();
 }
@@ -231,6 +233,11 @@ const IS_DEV = import.meta.env.DEV;
                                                 <CheckCircle class="h-4 w-4 mr-1" />
                                                 Accept
                                             </Button>
+                                            <!-- <br>
+                                            order.userId: {{ order.userId }}
+                                            <br>
+                                            user.id: {{ user?.id }}
+                                            <br> -->
                                             <DropdownMenu v-if="order.orderStatus !== ORDER_STATUS_OBJ.CANCELLED">
                                                 <DropdownMenuTrigger as-child>
                                                     <Button variant="destructive"
