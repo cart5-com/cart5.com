@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ========================================================================
+# Ubuntu 24.04 ===========================================================
 # Ubuntu Server Setup Script
 # ========================================================================
 # This script performs the following setup tasks:
@@ -124,6 +125,7 @@ sudo apt install xcaddy -y
 
 # install caddy-ratelimit https://github.com/mholt/caddy-ratelimit
 # and cache plugin https://github.com/darkweak/souin/plugins/caddy
+# and dns plugin https://github.com/caddy-dns/cloudflare
 # it takes a while to build ⏳🥲
 xcaddy build --with github.com/mholt/caddy-ratelimit --with github.com/darkweak/souin/plugins/caddy --with github.com/caddy-dns/cloudflare
 # # CF_API_TOKEN permissions from cloudflare: (Zone.Zone, Zone.DNS) for All zones
@@ -210,7 +212,7 @@ sudo ln -s $(which pnpm) /usr/bin/pnpm
 
 
 # ========================================================================
-# SHARED IP BLOCK FOLDER
-sudo mkdir -p /var/lib/shared-data-folder # Create the shared folder:
-sudo chmod 7777 /var/lib/shared-data-folder # Set the permissions to allow all users to read, write, and execute files in the shared folder.
+# SHARED IP BLOCK FOLDER, not using anymore
+# sudo mkdir -p /var/lib/shared-data-folder # Create the shared folder:
+# sudo chmod 7777 /var/lib/shared-data-folder # Set the permissions to allow all users to read, write, and execute files in the shared folder.
 # ========================================================================
