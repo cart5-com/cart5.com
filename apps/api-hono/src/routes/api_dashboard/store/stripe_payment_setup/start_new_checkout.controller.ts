@@ -61,7 +61,7 @@ export const startNewCheckout_Handler = async (c: Context<
             ui_mode: 'hosted',
             currency: storeTaxSettings?.currency,
             // invoice_creation: { enabled: false },
-            locale: 'auto',
+            // locale: 'auto',
             setup_intent_data: {
                 description: `Setup payment method for storeId:${storeId} on cart5.com`,
                 metadata: {

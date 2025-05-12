@@ -11,7 +11,6 @@ import { sendNotificationToTaskListenerDevice } from "@api-hono/routes/api_autop
 
 export const saveOrderDataTransactional_Service = async (
     orderId: string,
-    shortOtp: string,
     orderData: Partial<InferInsertModel<typeof orderTable>>,
     statusChange?: {
         newStatus: OrderStatus,
@@ -34,7 +33,7 @@ export const saveOrderDataTransactional_Service = async (
     return await db.transaction(async (tx) => {
         // Step 1: Update order data
         await tx.insert(orderTable)
-            .values({ ...orderData, orderId, shortOtp } as InferInsertModel<typeof orderTable>)
+            .values({ ...orderData, orderId } as InferInsertModel<typeof orderTable>)
             .onConflictDoUpdate({
                 target: orderTable.orderId,
                 set: orderData
@@ -87,22 +86,21 @@ export const saveOrderDataTransactional_Service = async (
                 rule.isActive && rule.autoprintDeviceId && rule.printerDeviceName);
 
             if (activeRules.length > 0) {
-                orderData.shortOtp = shortOtp;
                 type inputType = Parameters<typeof thermalPrinterFormat>[0];
                 const html = thermalPrinterFormat(orderData as inputType);
                 const uniqueDeviceIds: Record<string, boolean> = {};
                 for (const rule of activeRules) {
                     await tx.insert(autoprintDeviceTaskTable).values({
                         taskId: generateKey('apt'),
-                        autoprintDeviceId: rule.autoprintDeviceId as string,
-                        deviceName: rule.printerDeviceName as string,
+                        autoprintDeviceId: rule.autoprintDeviceId,
+                        deviceName: rule.printerDeviceName,
                         copies: rule.copies || 1,
                         storeId: autoPrintParams.storeId,
                         orderId: orderId,
                         autoAcceptOrderAfterPrint: rule.autoAcceptOrderAfterPrint || false,
                         html
                     });
-                    uniqueDeviceIds[rule.autoprintDeviceId as string] = true;
+                    uniqueDeviceIds[rule.autoprintDeviceId] = true;
                 }
                 for (const deviceId of Object.keys(uniqueDeviceIds)) {
                     sendNotificationToTaskListenerDevice(deviceId, {

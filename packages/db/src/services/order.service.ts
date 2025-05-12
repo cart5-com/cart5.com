@@ -33,6 +33,7 @@ import type { OrderedItemsType } from "@lib/types/orderedItemsType";
 import { getEstimatedTimeJSON } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
+import { generateNumberOnlyOtp } from "@api-hono/utils/generateRandomOtp";
 
 export const logOrderStatusChange_Service = async ({
     orderId,
@@ -356,6 +357,7 @@ export const generateOrderData_Service = async (
     const orderStatus = currentPaymentMethod.id === 'stripe' ? ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION : ORDER_STATUS_OBJ.CREATED;
     return {
         order: {
+            shortOtp: generateNumberOnlyOtp(6),
             orderStatus,
             userId: user.id,
             userEmail: user.email,
@@ -387,6 +389,7 @@ export const generateOrderData_Service = async (
             deliveryAddressJSON: deliveryAddress,
             taxSettingsJSON: taxSettings,
         },
-        carts: userData?.carts
+        carts: userData?.carts,
+        storeData
     }
 }

@@ -4,4 +4,6 @@ export type PaymentMethodType = {
     name: string;
     description?: string;
     icon?: string;
+
+    paymentReferenceId?: string; // for 'stripe' -> checkout.session.id
 }

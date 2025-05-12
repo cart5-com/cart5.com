@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
@@ -7,9 +8,9 @@ import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
-import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
-import { getStoreAutomationRules_Service } from '@db/services/store.service';
-import { generateNumberOnlyOtp } from '@api-hono/utils/generateRandomOtp';
+import { getStoreAutomationRules_Service, getStoreStripeConnectSettings_Service } from '@db/services/store.service';
+import { createPaymentSession } from '@api-hono/utils/stripe';
+import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -30,9 +31,10 @@ export const placeOrderRoute = async (c: Context<
         throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
     }
     const newOrderId = generateKey('ord');
-    const { order, carts } = await generateOrderData_Service(user, host, storeId);
-    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
+    const { order, carts, storeData } = await generateOrderData_Service(user, host, storeId);
+    // order.orderStatus is CREATED (or PENDING_PAYMENT_AUTHORIZATION for stripe)
 
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
     // Get store automation rules
     const storeAutomationRules = await getStoreAutomationRules_Service(storeId, {
         autoAcceptOrders: true,
@@ -40,27 +42,64 @@ export const placeOrderRoute = async (c: Context<
     });
 
     // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
+    let paymentSession: Stripe.Checkout.Session | null = null;
+    const IS_STRIPE_PAYMENT = order.paymentId === 'stripe';
+    if (IS_STRIPE_PAYMENT) {
+        const stripeConnectAccountId = (await getStoreStripeConnectSettings_Service(storeId, {
+            stripeConnectAccountId: true
+        }))?.stripeConnectAccountId;
+        if (!stripeConnectAccountId) {
+            throw new KNOWN_ERROR("Store not connected to stripe", "STORE_NOT_CONNECTED_TO_STRIPE");
+        }
+        if (!order.taxSettingsJSON?.currency) {
+            throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
+        }
+        paymentSession = await createPaymentSession(
+            `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-success`,
+            `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-cancel`,
+            newOrderId,
+            user.email,
+            order.userVerifiedPhoneNumbers,
+            user.id,
+            (order.cartBreakdownJSON?.applicationFeeWithTax),
+            storeId,
+            stripeConnectAccountId,
+            order.taxSettingsJSON?.currency,
+            order.finalAmount,
+            `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`,
+            1,
+            `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`,
+            `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`
+        )
+        order.paymentMethodJSON.paymentReferenceId = paymentSession.id;
+    }
+
 
     await saveOrderDataTransactional_Service(
         newOrderId,
-        generateNumberOnlyOtp(6),
         order,
         {
-            newStatus: ORDER_STATUS_OBJ.CREATED,
+            newStatus: order.orderStatus,
             changedByUserId: user.id,
             changedByIpAddress: ipAddress,
             type: 'user',
         },
-        storeAutomationRules?.autoAcceptOrders ? {
-            storeId,
-            changedByUserId: undefined,
-            changedByIpAddress: undefined,
-            type: 'automatic_rule'
-        } : undefined,
-        storeAutomationRules?.autoPrintRules ? {
-            storeId,
-            autoPrintRules: storeAutomationRules.autoPrintRules
-        } : undefined
+        (!IS_STRIPE_PAYMENT && storeAutomationRules?.autoAcceptOrders) ?
+            {
+                storeId,
+                changedByUserId: undefined,
+                changedByIpAddress: undefined,
+                type: 'automatic_rule'
+            }
+            :
+            undefined,
+        (!IS_STRIPE_PAYMENT && storeAutomationRules?.autoPrintRules) ?
+            {
+                storeId,
+                autoPrintRules: storeAutomationRules.autoPrintRules
+            }
+            :
+            undefined
     );
 
     // delete cart current cart
@@ -68,14 +107,18 @@ export const placeOrderRoute = async (c: Context<
     delete carts?.[cartId];
     await updateUserData_Service(user.id, { carts });
 
-    sendNotificationToStore(storeId, {
-        orderId: newOrderId
-    });
+
+    if (!IS_STRIPE_PAYMENT) {
+        sendNotificationToStore(storeId, {
+            orderId: newOrderId
+        });
+    }
 
     // TODO: send email notification to user once store approves/rejects order
     return c.json({
         data: {
-            newOrderId
+            newOrderId,
+            paymentSessionUrl: paymentSession?.url ?? null
         },
         error: null as ErrorType
     }, 200);

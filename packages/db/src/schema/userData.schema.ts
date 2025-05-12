@@ -1,4 +1,4 @@
-import { sqliteTable, text, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, real, primaryKey } from "drizzle-orm/sqlite-core";
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import {
@@ -37,3 +37,12 @@ const overrideSchema = {
 export const selectUserDataSchema = createSelectSchema(userDataTable);
 export const insertUserDataSchema = createInsertSchema(userDataTable, overrideSchema);
 export const updateUserDataSchema = createUpdateSchema(userDataTable, overrideSchema);
+
+
+export const userAsAStripeCustomerTable = sqliteTable("user_as_a_stripe_customer", {
+    ...autoCreatedUpdated,
+    userId: text("user_id").notNull().unique(),
+    stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+}, (table) => [
+    primaryKey({ columns: [table.userId, table.stripeCustomerId] }),
+]);
