@@ -353,8 +353,10 @@ export const generateOrderData_Service = async (
         storeData?.defaultEstimatedDeliveryTime ?? undefined,
         storeData?.defaultEstimatedPickupTime ?? undefined
     )
+    const orderStatus = currentPaymentMethod.id === 'stripe' ? ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION : ORDER_STATUS_OBJ.CREATED;
     return {
         order: {
+            orderStatus,
             userId: user.id,
             userEmail: user.email,
             userVerifiedPhoneNumbers: userVerifiedPhoneNumbers.map(phone => phone.phoneNumber).join('|'),

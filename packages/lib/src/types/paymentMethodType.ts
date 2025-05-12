@@ -1,6 +1,6 @@
 export type PaymentMethodType = {
     isOnline: boolean;
-    id: string;
+    id: 'stripe' | 'cash' | 'cardTerminal' | string;
     name: string;
     description?: string;
     icon?: string;
