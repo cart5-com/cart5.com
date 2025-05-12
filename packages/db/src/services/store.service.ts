@@ -94,6 +94,7 @@ export const getStoreData_Service = async (
             },
             stripeSettings: {
                 columns: {
+                    stripeConnectAccountId: true,
                     isStripeEnabled: true,
                     stripeRatePerOrder: true,
                     stripeFeePerOrder: true,

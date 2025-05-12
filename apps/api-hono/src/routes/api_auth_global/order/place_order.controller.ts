@@ -8,8 +8,8 @@ import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
-import { getStoreAutomationRules_Service, getStoreStripeConnectSettings_Service } from '@db/services/store.service';
-import { createPaymentSession } from '@api-hono/utils/stripe';
+import { getStoreAutomationRules_Service } from '@db/services/store.service';
+import { createCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/createCheckoutSession_inStripeConnectedAccount';
 import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
 
 export const placeOrderRoute = async (c: Context<
@@ -42,19 +42,16 @@ export const placeOrderRoute = async (c: Context<
     });
 
     // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
-    let paymentSession: Stripe.Checkout.Session | null = null;
+    let checkoutSession: Stripe.Checkout.Session | null = null;
     const IS_STRIPE_PAYMENT = order.paymentId === 'stripe';
     if (IS_STRIPE_PAYMENT) {
-        const stripeConnectAccountId = (await getStoreStripeConnectSettings_Service(storeId, {
-            stripeConnectAccountId: true
-        }))?.stripeConnectAccountId;
-        if (!stripeConnectAccountId) {
+        if (!storeData?.stripeSettings?.stripeConnectAccountId) {
             throw new KNOWN_ERROR("Store not connected to stripe", "STORE_NOT_CONNECTED_TO_STRIPE");
         }
         if (!order.taxSettingsJSON?.currency) {
             throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
         }
-        paymentSession = await createPaymentSession(
+        checkoutSession = await createCheckoutSession_inStripeConnectedAccount(
             `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-success`,
             `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-cancel`,
             newOrderId,
@@ -63,7 +60,7 @@ export const placeOrderRoute = async (c: Context<
             user.id,
             (order.cartBreakdownJSON?.applicationFeeWithTax),
             storeId,
-            stripeConnectAccountId,
+            storeData?.stripeSettings?.stripeConnectAccountId,
             order.taxSettingsJSON?.currency,
             order.finalAmount,
             `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`,
@@ -71,7 +68,10 @@ export const placeOrderRoute = async (c: Context<
             `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`,
             `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`
         )
-        order.paymentMethodJSON.paymentReferenceId = paymentSession.id;
+        order.paymentMethodJSON.stripe = {
+            checkoutSessionId: checkoutSession.id,
+            isPaymentAuthorizationVerified: false
+        };
     }
 
 
@@ -118,7 +118,7 @@ export const placeOrderRoute = async (c: Context<
     return c.json({
         data: {
             newOrderId,
-            paymentSessionUrl: paymentSession?.url ?? null
+            paymentSessionUrl: checkoutSession?.url ?? null
         },
         error: null as ErrorType
     }, 200);

@@ -5,5 +5,8 @@ export type PaymentMethodType = {
     description?: string;
     icon?: string;
 
-    paymentReferenceId?: string; // for 'stripe' -> checkout.session.id
+    stripe?: {
+        checkoutSessionId?: string; // for 'stripe' -> checkout.session.id
+        isPaymentAuthorizationVerified?: boolean; // for 'stripe' -> checkout.session.payment_intent
+    }
 }

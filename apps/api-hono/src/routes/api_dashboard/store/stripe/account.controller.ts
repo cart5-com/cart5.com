@@ -2,7 +2,7 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
-import { stripe } from "@api-hono/utils/stripe";
+import { stripe } from "@api-hono/utils/stripe/stripe";
 
 export const stripeAccount_Handler = async (c: Context<
     HonoVariables,

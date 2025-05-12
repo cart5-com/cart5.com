@@ -56,7 +56,7 @@ const props = defineProps<{
     orderId?: string;
 }>();
 
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].details.$get;
+const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"];
 const orderDetails = ref<OrderType | null>(null);
 const isCollapsed = ref(true);
@@ -65,7 +65,7 @@ const isLoading = ref(true);
 const loadData = async () => {
     isLoading.value = true;
     const { data, error } = await (
-        await authGlobalApiClient[":orderId"].details.$get({
+        await authGlobalApiClient[":orderId"].get_order.$get({
             param: {
                 orderId: props.orderId ?? ""
             }

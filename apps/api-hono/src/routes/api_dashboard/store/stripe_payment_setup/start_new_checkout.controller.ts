@@ -5,7 +5,7 @@ import { getStoreAsAStripeCustomer_Service, getStoreTaxSettings_Service, updateS
 import { ENFORCE_HOSTNAME_CHECKS } from "@lib/utils/enforceHostnameChecks";
 import { setCookie } from "hono/cookie";
 import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
-import { stripe } from "@api-hono/utils/stripe";
+import { stripe } from "@api-hono/utils/stripe/stripe";
 
 
 export const startNewCheckout_Handler = async (c: Context<

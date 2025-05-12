@@ -1,39 +1,8 @@
-import Stripe from "stripe";
-import { getEnvVariable } from "@lib/utils/getEnvVariable";
-import { getUserAsAStripeCustomer_Service, updateUserAsAStripeCustomer_Service } from "@db/services/user_data.service";
+import { formatAmountForStripe } from "@lib/utils/formatAmountForStripe";
+import { getStripeCustomerId_inStripePlatformAccount } from "./getStripeCustomerId_inStripePlatformAccount";
+import { stripe } from "./stripe";
 
-export const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
-    apiVersion: '2025-03-31.basil',
-});
-
-export const getStripeCustomerId = async (
-    userId: string,
-    email: string,
-    userVerifiedPhoneNumbers: string
-) => {
-    const userAsAStripeCustomer = await getUserAsAStripeCustomer_Service(userId, {
-        stripeCustomerId: true,
-    });
-    let customerId = userAsAStripeCustomer?.stripeCustomerId ?? null;
-    if (!customerId) {
-        const customer = await stripe.customers.create({
-            email: email,
-            phone: userVerifiedPhoneNumbers,
-            metadata: {
-                userVerifiedPhoneNumbers,
-                userId: userId,
-                email: email,
-            },
-        });
-        await updateUserAsAStripeCustomer_Service(userId, customer.id, {
-            stripeCustomerId: customer.id
-        });
-        customerId = customer.id;
-    }
-    return customerId;
-}
-
-export const createPaymentSession = async (
+export const createCheckoutSession_inStripeConnectedAccount = async (
     success_url: string,
     cancel_url: string,
     orderId: string,
@@ -58,7 +27,7 @@ export const createPaymentSession = async (
     if (statement_descriptor_suffix.length > 22) {
         statement_descriptor_suffix = statement_descriptor_suffix.substring(0, 22);
     }
-    const stripeCustomerId = await getStripeCustomerId(userId, userEmail, userVerifiedPhoneNumbers);
+    const stripeCustomerId_inStripePlatformAccount = await getStripeCustomerId_inStripePlatformAccount(userId, userEmail, userVerifiedPhoneNumbers);
     const session = await stripe.checkout.sessions.create({
         success_url,
         cancel_url,
@@ -98,7 +67,7 @@ export const createPaymentSession = async (
         custom_text: {
             terms_of_service_acceptance: {
                 // message2: 'All orders are final and non-refundable to prevent dispute abuses. If you need ask refund, please contact the store directly by phone or in person.',
-                message: 'All sales are final and non-refundable. You agree to contact the merchant by calling/in person for any issues rather than filing payment disputes.'
+                message: 'All sales are final and non-refundable. You agree to contact the merchant by phone call or in person for any issues rather than filing payment disputes.'
             },
             after_submit: {
                 message: 'Please wait for the next page to fully load to complete your order.',
@@ -117,7 +86,7 @@ export const createPaymentSession = async (
                 storeId,
                 userId,
                 userEmail,
-                stripeCustomerId,
+                stripeCustomerId_inStripePlatformAccount,
                 storeStripeConnectAccountId,
             },
         },
@@ -130,7 +99,7 @@ export const createPaymentSession = async (
             storeId,
             userId,
             userEmail,
-            stripeCustomerId,
+            stripeCustomerId_inStripePlatformAccount,
             storeStripeConnectAccountId,
         },
         tax_id_collection: {
@@ -140,30 +109,4 @@ export const createPaymentSession = async (
         stripeAccount: storeStripeConnectAccountId,
     });
     return session;
-}
-
-
-
-// List of zero-decimal currencies according to Stripe docs
-const ZERO_DECIMAL_CURRENCIES = [
-    'bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw',
-    'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv',
-    'xaf', 'xof', 'xpf'
-];
-
-// List of special case currencies that should be treated as zero-decimal
-const SPECIAL_ZERO_DECIMAL_CURRENCIES = [
-    'isk', // Icelandic Króna - technically has 2 decimals but used as zero-decimal
-    // Note: HUF and TWD are special cases for payouts but use 2 decimals for charges
-];
-
-// Format the amount for Stripe based on currency
-function formatAmountForStripe(amount: number, currency: string): number {
-    const lowerCaseCurrency = currency.toLowerCase();
-
-    if (ZERO_DECIMAL_CURRENCIES.includes(lowerCaseCurrency) ||
-        SPECIAL_ZERO_DECIMAL_CURRENCIES.includes(lowerCaseCurrency)) {
-        return Math.round(amount);
-    }
-    return Math.round(amount * 100);
 }

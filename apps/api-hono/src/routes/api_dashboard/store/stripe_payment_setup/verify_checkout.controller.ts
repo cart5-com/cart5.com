@@ -3,7 +3,7 @@ import type { Context } from "hono";
 import { deleteCookie, getCookie } from "hono/cookie";
 import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
 import { KNOWN_ERROR } from "@lib/types/errors";
-import { stripe } from "@api-hono/utils/stripe";
+import { stripe } from "@api-hono/utils/stripe/stripe";
 import type { ErrorType } from "@lib/types/errors";
 import { getStoreTaxSettings_Service, updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
 

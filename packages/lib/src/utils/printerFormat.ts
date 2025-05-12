@@ -2,7 +2,7 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { formatDate } from "./formatDate";
 import { estimatedTimeText1 } from "./estimatedTimeText";
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].details.$get;
+const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"];
 
 const style = `

@@ -80,10 +80,14 @@ export const markStoreAsUpdated = async (storeId: string) => {
     if (process.env.npm_lifecycle_event === 'dev:seed') {
         return;
     } else if (IS_PROD) {
-        await db
-            .insert(storeRecentlyUpdatedTable)
-            .values({ storeId })
-            .onConflictDoNothing();
+        // add to the refresh cache queue
+        // await db
+        //     .insert(storeRecentlyUpdatedTable)
+        //     .values({ storeId })
+        //     .onConflictDoNothing();
+
+        // TODO: should I refresh the cache immediately in prod?
+        await getStoreData_CacheJSON(storeId, true);
     } else {
         // Refresh the cache immediately in dev
         await getStoreData_CacheJSON(storeId, true);

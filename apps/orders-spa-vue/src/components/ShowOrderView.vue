@@ -42,7 +42,7 @@ const paymentIcons = [
     { name: 'Calculator', component: Calculator },
 ]
 
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].details.$get;
+const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"];
 
 const props = defineProps<{

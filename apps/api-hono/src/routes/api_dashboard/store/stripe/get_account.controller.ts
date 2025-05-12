@@ -3,7 +3,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
-import { stripe } from "@api-hono/utils/stripe";
+import { stripe } from "@api-hono/utils/stripe/stripe";
 import { redactEmail } from "@lib/utils/redactEmail";
 
 export const stripeGetAccount_Handler = async (c: Context<
