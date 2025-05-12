@@ -2,11 +2,10 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getStoreAsAStripeCustomer_Service, getStoreTaxSettings_Service, updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
-import Stripe from "stripe";
-import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { ENFORCE_HOSTNAME_CHECKS } from "@lib/utils/enforceHostnameChecks";
 import { setCookie } from "hono/cookie";
 import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
+import { stripe } from "@api-hono/utils/stripe";
 
 
 export const startNewCheckout_Handler = async (c: Context<
@@ -23,10 +22,6 @@ export const startNewCheckout_Handler = async (c: Context<
         );
     }
     try {
-        // Initialize Stripe with API key
-        const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
-            apiVersion: '2025-03-31.basil',
-        });
         // const existingCustomers = await stripe.customers.search({
         //     query: `metadata["storeId"]:"${storeId}"`,
         //     limit: 1,

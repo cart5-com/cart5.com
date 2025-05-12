@@ -2,8 +2,7 @@ import type { Context } from "hono";
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getStoreStripeConnectSettings_Service, updateStoreStripeConnectSettings_Service } from "@db/services/store.service";
-import Stripe from "stripe";
-import { getEnvVariable } from "@lib/utils/getEnvVariable";
+import { stripe } from "@api-hono/utils/stripe";
 
 export const stripeAccount_Handler = async (c: Context<
     HonoVariables,
@@ -12,10 +11,6 @@ export const stripeAccount_Handler = async (c: Context<
     const { storeId } = c.req.param();
 
     try {
-        // Initialize Stripe with API key
-        const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
-            apiVersion: '2025-03-31.basil',
-        });
 
         // Check if store already has a Stripe account
         const existingStripeData = await getStoreStripeConnectSettings_Service(storeId);

@@ -3,8 +3,7 @@ import type { Context } from "hono";
 import { deleteCookie, getCookie } from "hono/cookie";
 import { STRIPE_CHECKOUT_SESSION_ID_COOKIE_NAME } from "./consts";
 import { KNOWN_ERROR } from "@lib/types/errors";
-import { Stripe } from "stripe";
-import { getEnvVariable } from "@lib/utils/getEnvVariable";
+import { stripe } from "@api-hono/utils/stripe";
 import type { ErrorType } from "@lib/types/errors";
 import { getStoreTaxSettings_Service, updateStoreAsAStripeCustomer_Service } from "@db/services/store.service";
 
@@ -31,10 +30,6 @@ export const verifyCheckout_Handler = async (c: Context<
         );
     }
     try {
-        const stripe = new Stripe(getEnvVariable("STRIPE_SECRET_KEY"), {
-            apiVersion: '2025-03-31.basil',
-        });
-
         const session = await stripe.checkout.sessions.retrieve(
             stripeCheckoutSessionId
         );
