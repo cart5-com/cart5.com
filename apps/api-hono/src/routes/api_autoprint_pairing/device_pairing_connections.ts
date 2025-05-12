@@ -12,6 +12,7 @@ interface PairingDeviceInfo {
     printers?: PrintersType;
 }
 
+// This is not scalable, but it is ok for now
 export const device_pairing_connections = new Map<string, PairingDeviceInfo>();
 
 export const sendPairingNotificationToDevice = (deviceId: string, data: any) => {
