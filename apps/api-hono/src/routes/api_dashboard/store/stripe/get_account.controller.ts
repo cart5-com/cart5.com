@@ -6,6 +6,7 @@ import Stripe from "stripe";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
 import { redactEmail } from "@lib/utils/redactEmail";
+
 export const stripeGetAccount_Handler = async (c: Context<
     HonoVariables,
     "/:storeId/stripe/get_account"
