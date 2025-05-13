@@ -85,6 +85,7 @@ export const saveOrderAfterStipePaymentVerification_Service = async (
         await tx.update(orderTable).set({
             orderStatus: ORDER_STATUS_OBJ.CREATED,
             isOnlinePaymentVerified: true,
+            created_at_ts: Date.now(),
         }).where(eq(orderTable.orderId, orderId));
         // await tx.insert(orderTable)
         //     .values({ ...orderData, orderId } as InferInsertModel<typeof orderTable>)

@@ -165,7 +165,7 @@ const orderedQuantity = () => {
                         <h2 class="text-xl font-bold mb-2">Order #{{ orderDetails.shortOtp }}</h2>
                         <div class="text-sm text-muted-foreground">
                             <Clock class="inline-block mr-1 h-4 w-4" />
-                            Placed on {{ formatDate(orderDetails.created_at_ts) }}
+                            Placed on {{ formatDate(orderDetails.created_at_ts, undefined, true) }}
                         </div>
                         <div class="mt-2 text-md font-medium">
                             Status: <span

@@ -56,6 +56,7 @@ export const getOrderRoute = async (
         if (!error) {
             order.orderStatus = ORDER_STATUS_OBJ.CREATED;
             order.isOnlinePaymentVerified = true;
+            order.created_at_ts = Date.now();
             // means success
             const storeAutomationRules = await getStoreAutomationRules_Service(order.storeId, {
                 autoAcceptOrders: true,

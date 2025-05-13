@@ -182,3 +182,40 @@
 		/* Firefox */
 	}
 }
+
+
+.pulse {
+	box-shadow: 0 0 0 hsl(var(--destructive) / 0.6);
+	animation: pulse 2s infinite;
+}
+
+@-webkit-keyframes pulse {
+	0% {
+		-webkit-box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.6);
+	}
+
+	70% {
+		-webkit-box-shadow: 0 0 0 10px hsl(var(--destructive) / 0.3);
+	}
+
+	100% {
+		-webkit-box-shadow: 0 0 0 0 hsl(var(--destructive) / 0);
+	}
+}
+
+@keyframes pulse {
+	0% {
+		-moz-box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.6);
+		box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.6);
+	}
+
+	70% {
+		-moz-box-shadow: 0 0 0 10px hsl(var(--destructive) / 0.3);
+		box-shadow: 0 0 0 10px hsl(var(--destructive) / 0.3);
+	}
+
+	100% {
+		-moz-box-shadow: 0 0 0 0 hsl(var(--destructive) / 0);
+		box-shadow: 0 0 0 0 hsl(var(--destructive) / 0);
+	}
+}

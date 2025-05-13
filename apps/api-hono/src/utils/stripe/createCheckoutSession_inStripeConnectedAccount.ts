@@ -28,9 +28,12 @@ export const createCheckoutSession_inStripeConnectedAccount = async (
         statement_descriptor_suffix = statement_descriptor_suffix.substring(0, 22);
     }
     const stripeCustomerId_inStripePlatformAccount = await getStripeCustomerId_inStripePlatformAccount(userId, userEmail, userVerifiedPhoneNumbers);
+    //The Epoch time in seconds at which the Checkout Session will expire. It can be anywhere from 30 minutes to 24 hours after Checkout Session creation. By default, this value is 24 hours from creation.
+    const expires_at = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour from now in seconds
     const session = await stripe.checkout.sessions.create({
         success_url,
         cancel_url,
+        expires_at,
         allow_promotion_codes: false,
         adaptive_pricing: { enabled: false },
         automatic_tax: {

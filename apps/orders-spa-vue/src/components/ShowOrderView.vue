@@ -84,6 +84,17 @@ const orderedQuantity = () => {
             </CardContent>
         </Card>
 
+        <!-- Order Notes -->
+        <Card class="my-4 pulse"
+              v-if="orderDetails.orderNote">
+            <CardContent class="p-4">
+                <h3 class="font-bold text-xl mb-2">Order Notes</h3>
+                <div class="flex items-center gap-2">
+                    {{ orderDetails.orderNote }}
+                </div>
+            </CardContent>
+        </Card>
+
         <!-- Delivery or Pickup Info -->
         <Card class="my-4"
               v-if="orderDetails.orderType === 'delivery' && orderDetails.deliveryAddressJSON">
@@ -143,17 +154,6 @@ const orderedQuantity = () => {
                         </p>
 
                     </div>
-                </div>
-            </CardContent>
-        </Card>
-
-        <!-- Order Notes -->
-        <Card class="my-4"
-              v-if="orderDetails.orderNote">
-            <CardContent class="p-4">
-                <h3 class="font-bold text-xl mb-2">Order Notes</h3>
-                <div class="flex items-center gap-2">
-                    {{ orderDetails.orderNote }}
                 </div>
             </CardContent>
         </Card>
