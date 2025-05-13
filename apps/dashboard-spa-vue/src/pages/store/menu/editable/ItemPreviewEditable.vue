@@ -17,6 +17,8 @@ import {
     NumberFieldInput,
 } from '@/components/ui/number-field'
 import type { TaxSettings } from "@lib/zod/taxSchema";
+import { formatCurrency } from "@lib/utils/formatCurrency";
+
 const props = defineProps<{
     itemId?: ItemId
 }>()
@@ -141,23 +143,23 @@ const checkCartItem = () => {
                     <tr class="border-b">
                         <td class="font-medium">Delivery Price:</td>
                         <td class="font-bold text-right">
-                            {{ taxSettings?.currencySymbol }}{{ cartItemTotalPriceDelivery.shownFee }}
+                            {{ formatCurrency(cartItemTotalPriceDelivery.shownFee, taxSettings?.currency) }}
                         </td>
                         <td class="text-muted-foreground">
                             {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'
-                                ? `+ ${taxSettings?.currencySymbol}${cartItemTotalPriceDelivery.tax} tax`
-                                : `(tax included: ${taxSettings?.currencySymbol}${cartItemTotalPriceDelivery.tax})` }}
+                                ? `+ ${formatCurrency(cartItemTotalPriceDelivery.tax, taxSettings?.currency)} tax`
+                                : `(tax included: ${formatCurrency(cartItemTotalPriceDelivery.tax, taxSettings?.currency)})` }}
                         </td>
                     </tr>
                     <tr>
                         <td class="font-medium">Pickup Price:</td>
                         <td class="font-bold text-right">
-                            {{ taxSettings?.currencySymbol }}{{ cartItemTotalPricePickup.shownFee }}
+                            {{ formatCurrency(cartItemTotalPricePickup.shownFee, taxSettings?.currency) }}
                         </td>
                         <td class="text-muted-foreground">
                             {{ taxSettings?.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES'
-                                ? `+ ${taxSettings?.currencySymbol}${cartItemTotalPricePickup.tax} tax`
-                                : `(tax included: ${taxSettings?.currencySymbol}${cartItemTotalPricePickup.tax})` }}
+                                ? `+ ${formatCurrency(cartItemTotalPricePickup.tax, taxSettings?.currency)} tax`
+                                : `(tax included: ${formatCurrency(cartItemTotalPricePickup.tax, taxSettings?.currency)})` }}
                         </td>
                     </tr>
                 </tbody>

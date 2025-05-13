@@ -2,7 +2,6 @@ import type { ItemId, MenuRoot } from "@lib/zod/menuRootSchema";
 import type { CartChildrenItemState, CartItem, Cart } from "@lib/zod/cartItemState";
 import type { OrderType } from "@lib/types/orderType";
 import type { TaxSettings } from "@lib/zod/taxSchema";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { inclusiveRate, exclusiveRate } from "./rateCalc";
 import { verifyCartItemState } from "./verifyCartItemState";
 
@@ -108,7 +107,7 @@ const calculateCartItemTax = (
             }
         }
     }
-    return roundTo2Decimals(total);
+    return (total);
 }
 
 export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, taxSettings: TaxSettings, orderType: OrderType = 'delivery') => {
@@ -146,10 +145,10 @@ export const calculateCartItemPrice = (cartItem: CartItem, menuRoot: MenuRoot, t
     const isValid = verifyCartItemState(cartItem, menuRoot);
     if (isValid) {
         return {
-            itemTotal: roundTo2Decimals(itemTotal),
-            tax: roundTo2Decimals(tax),
-            totalWithTax: roundTo2Decimals(totalWithTax),
-            shownFee: roundTo2Decimals(shownFee),
+            itemTotal: (itemTotal),
+            tax: (tax),
+            totalWithTax: (totalWithTax),
+            shownFee: (shownFee),
             isValid: true,
         };
     } else {
@@ -183,9 +182,9 @@ export const calculateCartTotalPrice = (cart: Cart | undefined, menuRoot: MenuRo
     })
 
     return {
-        itemTotal: roundTo2Decimals(result.itemTotal),
-        tax: roundTo2Decimals(result.tax),
-        totalWithTax: roundTo2Decimals(result.totalWithTax),
-        shownFee: roundTo2Decimals(result.shownFee),
+        itemTotal: (result.itemTotal),
+        tax: (result.tax),
+        totalWithTax: (result.totalWithTax),
+        shownFee: (result.shownFee),
     };
 }

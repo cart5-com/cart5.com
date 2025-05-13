@@ -30,6 +30,7 @@ import { getEstimatedTimeJSON } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { generateNumberOnlyOtp } from "@api-hono/utils/generateRandomOtp";
+import { formatCurrency } from "@lib/utils/formatCurrency";
 
 export const generateOrderData_Service = async (
     user: User,
@@ -72,7 +73,7 @@ export const generateOrderData_Service = async (
                     name: menuItem.lbl ?? '',
                     quantity: item.quantity ?? 1,
                     details: generateCartItemTextSummary(item, menuRoot),
-                    shownFee: (taxSettings.currencySymbol ?? '') + price.shownFee,
+                    shownFee: formatCurrency(price.shownFee, taxSettings.currency),
                 });
             }
         }
@@ -88,7 +89,7 @@ export const generateOrderData_Service = async (
     const customServiceFees = storeData?.serviceFees?.customServiceFees ?? [];
 
     const cartTotals = calculateCartTotalPrice(currentCart, menuRoot ?? undefined, taxSettings, currentOrderType)
-    // const subtotalShownFee = `${taxSettings.currencySymbol}${cartTotals.shownFee}`
+    // const subtotalShownFee = `${formatCurrency(cartTotals.shownFee, taxSettings.currency)}`
     const storeLocation = {
         lat: storeData?.address?.lat ?? 0,
         lng: storeData?.address?.lng ?? 0

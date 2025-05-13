@@ -10,6 +10,7 @@ import { slugify } from "@lib/utils/slugify";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@lib/utils/formatDate";
+import { formatCurrency } from "@lib/utils/formatCurrency";
 import {
     feeBreakdownNameMap
 } from "@lib/utils/calculateCartBreakdown";
@@ -102,11 +103,6 @@ onMounted(async () => {
 });
 
 
-const formatCurrency = (amount: number) => {
-    if (!orderDetails.value?.taxSettingsJSON?.currencySymbol) return amount;
-    return `${orderDetails.value.taxSettingsJSON.currencySymbol}${amount}`;
-};
-
 const orderedQuantity = () => {
     return orderDetails.value?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
 };
@@ -147,12 +143,17 @@ const orderedQuantity = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <div v-if="stripeCheckoutSessionUrl">
+                <div>
                     <div v-if="stripeError && stripeError.code"
                          class="bg-destructive text-destructive-foreground p-4 rounded-md my-4">
                         {{ stripeError.code }}
+                        <div v-if="!stripeCheckoutSessionUrl"
+                             class="font-bold">
+                            PAYMENT LINK EXPIRED (please place a new order)
+                        </div>
                     </div>
-                    <a :href="stripeCheckoutSessionUrl"
+                    <a v-if="stripeCheckoutSessionUrl"
+                       :href="stripeCheckoutSessionUrl"
                        class="w-full mr-4">
                         <Button class="w-full font-bold text-2xl">
                             Pay now
@@ -306,13 +307,13 @@ const orderedQuantity = () => {
                         <div class="flex justify-between items-center py-1"
                              v-if="orderDetails.cartTotalsJSON">
                             <span>Subtotal</span>
-                            <span>{{ formatCurrency(orderDetails.cartTotalsJSON.shownFee) }}</span>
+                            <span>{{ formatCurrency(orderDetails.cartTotalsJSON.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                         </div>
 
                         <div class="flex justify-between items-center py-1"
                              v-if="orderDetails.subtotalJSON?.bestDeliveryZone">
                             <span>Delivery Fee</span>
-                            <span>{{ formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee) }}</span>
+                            <span>{{ formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                         </div>
 
                         <!-- Custom Service Fees -->
@@ -321,7 +322,7 @@ const orderedQuantity = () => {
                             <div class="flex justify-between items-center py-1"
                                  v-if="customFee.shownFee > 0">
                                 <span>{{ customFee.name }}</span>
-                                <span>{{ formatCurrency(customFee.shownFee) }}</span>
+                                <span>{{ formatCurrency(customFee.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                             </div>
                         </div>
 
@@ -354,14 +355,15 @@ const orderedQuantity = () => {
                                     </PopoverContent>
                                 </Popover>
                             </span>
-                            <span>{{ formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee) }}</span>
+                            <span>{{ formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                         </div>
 
                         <!-- Discount -->
                         <div class="flex justify-between items-center py-1 text-xl font-bold text-primary"
                              v-if="orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.discount > 0">
                             <span>Discount</span>
-                            <span>-{{ formatCurrency(orderDetails.cartBreakdownJSON.discount) }}</span>
+                            <span>-{{ formatCurrency(orderDetails.cartBreakdownJSON.discount,
+                                orderDetails.taxSettingsJSON?.currency) }}</span>
                         </div>
 
                         <!-- Total -->
@@ -397,7 +399,7 @@ const orderedQuantity = () => {
                                     </PopoverContent>
                                 </Popover>
                             </span>
-                            <span>{{ formatCurrency(orderDetails.finalAmount) }}</span>
+                            <span>{{ formatCurrency(orderDetails.finalAmount, orderDetails.taxSettingsJSON?.currency) }}</span>
                         </div>
                     </div>
                 </div>

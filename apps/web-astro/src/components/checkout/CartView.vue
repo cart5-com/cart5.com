@@ -40,8 +40,8 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { estimatedTimeText } from "@lib/utils/estimatedTimeText";
-
 import { isStoreOpenNow } from "@lib/utils/isOpenNow";
+import { formatCurrency } from "@lib/utils/formatCurrency";
 
 const props = defineProps<{
     isCollapsed?: boolean;
@@ -270,7 +270,7 @@ defineExpose({
                             </NumberField>
                             <div>
                                 <div class="font-medium">
-                                    {{ taxSettings.currencySymbol }}{{ getPrice(index).shownFee }}
+                                    {{ formatCurrency(getPrice(index).shownFee, taxSettings?.currency) }}
                                 </div>
                             </div>
                         </div>
@@ -324,7 +324,7 @@ defineExpose({
                     <div class="p-2 bg-destructive text-destructive-foreground">
                         <span class="">
                             Minimum Subtotal:
-                            {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart }}
+                            {{ formatCurrency(subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart, taxSettings?.currency) }}
                             Please add more items to your cart.
                         </span>
                     </div>
@@ -336,7 +336,7 @@ defineExpose({
                         Subtotal
                     </span>
                     <span class=" text-right">
-                        {{ taxSettings.currencySymbol }}{{ cartTotals.shownFee }}
+                        {{ formatCurrency(cartTotals.shownFee, taxSettings?.currency) }}
                     </span>
                 </div>
 
@@ -348,7 +348,7 @@ defineExpose({
                             Delivery Fee
                         </span>
                         <span class=" text-right">
-                            {{ taxSettings.currencySymbol }}{{ subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee }}
+                            {{ formatCurrency(subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.shownFee, taxSettings?.currency) }}
                         </span>
                     </div>
 
@@ -361,7 +361,7 @@ defineExpose({
                                 {{ customSFee.name }}
                             </span>
                             <span class=" text-right">
-                                {{ taxSettings.currencySymbol }}{{ customSFee.shownFee }}
+                                {{ formatCurrency(customSFee.shownFee, taxSettings?.currency) }}
                             </span>
                         </div>
                     </div>
@@ -395,7 +395,7 @@ defineExpose({
 
                         </span>
                         <span class=" text-right">
-                            {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPaysTaxAndFeesShownFee }}
+                            {{ formatCurrency(cartBreakdown.buyerPaysTaxAndFeesShownFee, taxSettings?.currency) }}
                         </span>
                     </div>
                 </div>
@@ -407,7 +407,7 @@ defineExpose({
                         Discount
                     </span>
                     <span class=" text-right">
-                        -{{ taxSettings.currencySymbol }}{{ cartBreakdown.discount }}
+                        -{{ formatCurrency(cartBreakdown.discount, taxSettings?.currency) }}
                     </span>
                 </div>
 
@@ -470,7 +470,7 @@ defineExpose({
 
                     </span>
                     <span class="text-right">
-                        {{ taxSettings.currencySymbol }}{{ cartBreakdown.buyerPays }}
+                        {{ formatCurrency(cartBreakdown.buyerPays, taxSettings?.currency) }}
                     </span>
                 </div>
 

@@ -50,7 +50,8 @@ defineExpose({
                     <Button variant="ghost"
                             size="sm"
                             class="w-9 p-0">
-                        // <ChevronsUpDown class="h-4 w-4" />
+                        //
+                        <ChevronsUpDown class="h-4 w-4" />
                         <HelpCircle />
                         <span class="sr-only">Toggle</span>
                     </Button>
@@ -108,7 +109,7 @@ defineExpose({
                             </div>
                             <div class="p-3 bg-secondary/40 rounded-lg">
                                 <div class="text-sm text-muted-foreground">Tax Rate</div>
-                                <div class="font-medium">{{ (salesTaxRates[country].rate * 100).toFixed(0) }}%</div>
+                                <div class="font-medium">{{ Math.round(salesTaxRates[country].rate * 100) }}%</div>
                             </div>
                             <div class="p-3 bg-secondary/40 rounded-lg">
                                 <div class="text-sm text-muted-foreground">Currency</div>
@@ -134,10 +135,10 @@ defineExpose({
                                         <TableCell>{{ salesTaxRates[country].states![key].type.toUpperCase() }}
                                         </TableCell>
                                         <TableCell>
-                                            {{ (salesTaxRates[country].states![key].rate * 100).toFixed(0) }}%
+                                            {{ Math.round(salesTaxRates[country].states![key].rate * 100) }}%
                                         </TableCell>
                                         <TableCell>
-                                            {{ ((salesTaxRates[country].states![key].rate * 100) + (salesTaxRates[country].rate * 100)).toFixed(0) }}%
+                                            {{ Math.round((salesTaxRates[country].states![key].rate * 100) + (salesTaxRates[country].rate * 100)) }}%
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>

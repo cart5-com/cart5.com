@@ -2,7 +2,6 @@
 import { type ItemId } from "@lib/zod/menuRootSchema";
 import { type CartItem } from "@lib/zod/cartItemState";
 import { calculateCartItemPrice } from "@lib/utils/calculateCartItemPrice";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { computed, ref } from "vue";
 import { toast } from "@/ui-plus/sonner";
 import {
@@ -17,6 +16,8 @@ import ItemHeader from "./ItemHeader.vue";
 import ItemCustomizations from "./ItemCustomizations.vue";
 import type { TaxSettings } from "@lib/zod/taxSchema";
 import { currentOrderType } from "@web-astro/stores/UserData.store";
+import { formatCurrency } from "@lib/utils/formatCurrency";
+
 
 const props = defineProps<{
     itemId?: ItemId,
@@ -39,13 +40,16 @@ const cartItem = ref<CartItem>(props.cartItem || {
 
 let taxSettings = window.storeData?.taxSettings as TaxSettings;
 const cartItemTotalPrice = computed(() => {
-    return roundTo2Decimals(
-        calculateCartItemPrice(
-            cartItem.value,
-            window.storeData?.menu?.menuRoot!,
-            taxSettings,
-            currentOrderType.value
-        ).itemTotal
+    return formatCurrency(
+        (
+            calculateCartItemPrice(
+                cartItem.value,
+                window.storeData?.menu?.menuRoot!,
+                taxSettings,
+                currentOrderType.value
+            ).itemTotal
+        ),
+        taxSettings?.currency
     );
 });
 

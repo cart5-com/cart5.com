@@ -15,7 +15,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { roundTo2Decimals } from '@lib/utils/roundTo2Decimals'
+import { formatCurrency } from '@lib/utils/formatCurrency'
+import { taxSettings } from '@dashboard-spa-vue/pages/store/menu/TaxSettingsStore'
 const searchQuery = ref('')
 
 const filteredItems = computed(() => {
@@ -147,7 +148,7 @@ const onClickDeleteItem = (itemId: string) => {
                             {{ getChildNames(item.cIds) }}
                         </span>
                     </TableCell>
-                    <TableCell>{{ roundTo2Decimals(item.prc ?? 0) }}</TableCell>
+                    <TableCell>{{ formatCurrency(item.prc ?? 0, taxSettings?.currency) }}</TableCell>
                     <TableCell class="space-x-2 flex items-center md:flex-row flex-col gap-2">
                         <Button variant="outline"
                                 size="sm"

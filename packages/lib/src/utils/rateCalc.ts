@@ -1,5 +1,3 @@
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
-
 
 /**
  * Reverse the fee calculation
@@ -17,7 +15,7 @@ export const reverseFeeCalculation = (
     ratePerPayment: number = 2.9,
     feePerPayment: number = 0.30
 ) => {
-    return roundTo2Decimals(
+    return (
         (
             (
                 100 * (totalBeforeFee + feePerPayment)
@@ -31,7 +29,7 @@ export const reverseFeeCalculation = (
 }
 
 export const inclusiveRate = (gross: number, rate: number) => {
-    return roundTo2Decimals(
+    return (
         gross - (gross / (1 + (rate / 100)))
         // (gross * rate) / (100 + rate) // This is mathematically correct, but can produce rounding errors for certain combinations of values
 
@@ -39,7 +37,7 @@ export const inclusiveRate = (gross: number, rate: number) => {
 }
 
 export const exclusiveRate = (total: number, rate: number) => {
-    return roundTo2Decimals(
+    return (
         total * (
             rate / 100
         )

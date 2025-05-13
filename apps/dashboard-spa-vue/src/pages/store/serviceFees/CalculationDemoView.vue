@@ -19,19 +19,18 @@ import type { OrderType } from '@lib/types/orderType';
 import { Button } from '@/components/ui/button';
 import type { ServiceFee } from "@lib/zod/serviceFee";
 import { platformServiceFee } from "@lib/platformServiceFee";
-
+import { loadTaxSettings, taxSettings } from "../menu/TaxSettingsStore";
+import { formatCurrency } from "@lib/utils/formatCurrency";
 const serviceFeesApiPath = dashboardApiClient.store[':storeId'].service_fees.get.$post;
 type ServiceFees = Partial<ResType<typeof serviceFeesApiPath>["data"]>;
 
-const taxSettingsApiPath = dashboardApiClient.store[':storeId'].tax_settings.get.$post;
-type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
+// const taxSettingsApiPath = dashboardApiClient.store[':storeId'].tax_settings.get.$post;
+// type TaxSettings = ResType<typeof taxSettingsApiPath>["data"];
 
 const props = defineProps<{
     serviceFees: ServiceFees;
 }>();
 
-const isLoading = ref(false);
-const taxSettings = ref<TaxSettings>();
 const subtotalWithTax = ref(100);
 const currentOrderType = ref<OrderType>('delivery');
 
@@ -62,7 +61,6 @@ const cartBreakdown = computed(() => {
     // Create a properly typed tax settings object for the cart calculation
     const taxSettingsForCalc: LibTaxSettings = {
         currency: taxSettings.value?.currency || undefined,
-        currencySymbol: taxSettings.value?.currencySymbol || undefined,
         salesTaxType: taxSettings.value?.salesTaxType || undefined,
         taxName: taxSettings.value?.taxName || undefined,
         taxRateForDelivery: taxSettings.value?.taxRateForDelivery || undefined,
@@ -84,9 +82,10 @@ const cartBreakdown = computed(() => {
     )
 })
 
-onMounted(() => {
-    loadTaxSettings();
-    loadSupportPartnerServiceFee();
+onMounted(async () => {
+    await loadTaxSettings();
+    subtotalWithTax.value = Math.round((100 * (1 + taxRate.value / 100)) * 100) / 100;
+    await loadSupportPartnerServiceFee();
 })
 
 const loadSupportPartnerServiceFee = async () => {
@@ -103,37 +102,6 @@ const loadSupportPartnerServiceFee = async () => {
     }
 }
 
-const loadTaxSettings = async () => {
-    isLoading.value = true;
-    const { data, error } = await (await dashboardApiClient.store[':storeId'].tax_settings.get.$post({
-        param: {
-            storeId: currentStoreId.value ?? '',
-        },
-        json: {
-            columns: {
-                taxCategories: true,
-                currency: true,
-                currencySymbol: true,
-                salesTaxType: true,
-                taxName: true,
-                taxRateForDelivery: true,
-                taxRateForServiceFees: true,
-            }
-        }
-    })).json();
-
-    if (error) {
-        toast.error('Failed to load tax settings');
-    } else {
-        if (data) {
-            taxSettings.value = data;
-            subtotalWithTax.value = parseFloat((100 * (1 + taxRate.value / 100)).toFixed(2));
-        } else {
-            toast.error('Failed to load tax settings');
-        }
-    }
-    isLoading.value = false;
-}
 
 
 </script>
@@ -212,7 +180,7 @@ const loadTaxSettings = async () => {
 
             </span>
             <span class=" text-right">
-                {{ taxSettings?.currencySymbol }}{{ cartBreakdown.buyerPaysTaxAndFeesShownFee }}
+                {{ formatCurrency(cartBreakdown.buyerPaysTaxAndFeesShownFee, taxSettings?.currency) }}
             </span>
         </div>
 
@@ -222,7 +190,7 @@ const loadTaxSettings = async () => {
                 Discount
             </span>
             <span class=" text-right">
-                -{{ taxSettings?.currencySymbol }}{{ cartBreakdown.discount }}
+                -{{ formatCurrency(cartBreakdown.discount, taxSettings?.currency) }}
             </span>
         </div>
 
@@ -231,7 +199,7 @@ const loadTaxSettings = async () => {
                 Buyer pays total
             </span>
             <span class="text-right">
-                {{ taxSettings?.currencySymbol }}{{ cartBreakdown.buyerPays }}
+                {{ formatCurrency(cartBreakdown.buyerPays, taxSettings?.currency) }}
             </span>
         </div>
         <div class="space-y-2 border-t py-4 border-foreground">
@@ -245,7 +213,7 @@ const loadTaxSettings = async () => {
                             {{ feeBreakdownNameMap[fee.type].name }}
                         </div>
                         <div>
-                            {{ fee.currencyShownFee }}
+                            {{ formatCurrency(fee.currencyShownFee, taxSettings?.currency) }}
                         </div>
                     </div>
                     <div class="text-sm text-muted-foreground">

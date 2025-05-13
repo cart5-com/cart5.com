@@ -226,7 +226,6 @@ export const updateStorePaymentMethodsSchema = createUpdateSchema(storePaymentMe
 export const storeTaxSettingsTable = sqliteTable('store_tax_settings', {
 	storeId: text("store_id").notNull().unique(),
 	currency: text('currency'),
-	currencySymbol: text('currency_symbol'),
 	salesTaxType: text('sales_tax_type', { enum: TAX_TYPE }),
 	taxName: text('tax_name'),
 	taxRateForDelivery: real('tax_rate_for_delivery'),

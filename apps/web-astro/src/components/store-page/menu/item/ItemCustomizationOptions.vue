@@ -2,7 +2,7 @@
 import { useVModel } from '@vueuse/core'
 import { type ItemId } from "@lib/zod/menuRootSchema";
 import { type CartChildrenItemState } from "@lib/zod/cartItemState";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
+import { formatCurrency } from "@lib/utils/formatCurrency";
 import { computed, onMounted } from 'vue';
 import {
     Minus,
@@ -37,6 +37,8 @@ const currentItem = computed(() => {
     }
     return undefined
 })
+
+const taxSettings = window.storeData?.taxSettings
 
 const getTotalQuantity = () => {
     const itemState = JSON.parse(JSON.stringify(modelValue.value?.childrenState || [])) as CartChildrenItemState['childrenState']
@@ -213,10 +215,13 @@ const addQuantityClick = (optionItemIndex: number, optionItemId: ItemId) => {
                         <div class="col-span-6 text-right"
                              v-if="menuRoot.allItems?.[optionItemId!]?.opPrc">
                             {{
-                                roundTo2Decimals(
-                                    (menuRoot.allItems?.[optionItemId!]?.opPrc!)
-                                    *
-                                    (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                formatCurrency(
+                                    (
+                                        (menuRoot.allItems?.[optionItemId!]?.opPrc!)
+                                        *
+                                        (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                    ),
+                                    taxSettings?.currency
                                 )
                             }}
                         </div>

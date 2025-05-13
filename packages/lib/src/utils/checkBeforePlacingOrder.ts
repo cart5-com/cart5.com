@@ -6,6 +6,7 @@ import { isStoreOpenNow } from '@lib/utils/isOpenNow';
 import { listAvailablePaymentMethods } from '@lib/utils/listAvailablePaymentMethods';
 import type { calculateSubTotal } from './calculateSubTotal';
 import type { calculateCartTotalPrice } from './calculateCartItemPrice';
+import { formatCurrency } from './formatCurrency';
 
 type storeDataType = Awaited<ReturnType<typeof import("@db/services/store.service").getStoreData_Service>>;
 type userDataType = Awaited<ReturnType<typeof import("@db/services/user_data.service").getUserData_Service>>;
@@ -118,7 +119,7 @@ export const checkMinimumOrderValueForDelivery = (
         }
         if (cartTotals.shownFee < (subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart || 0)) {
             const errorMessage = `Minimum Subtotal:
-                            ${taxSettings.currencySymbol}${subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart}
+                            ${formatCurrency(subTotalWithDeliveryAndServiceFees.bestDeliveryZone?.minCart, taxSettings.currency)}
                             Please add more items to your cart.`
             throw new KNOWN_ERROR(errorMessage, "CART_SUBTOTAL_LESS_THAN_MINIMUM_CART_VALUE");
         }

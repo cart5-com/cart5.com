@@ -1,9 +1,8 @@
 import type { CalculationType, ServiceFee } from "@lib/zod/serviceFee";
 import { exclusiveRate, inclusiveRate, reverseFeeCalculation } from "./rateCalc";
-import { roundTo2Decimals } from "./roundTo2Decimals";
 import type { calculateSubTotal } from "./calculateSubTotal";
 import { type TaxSettings } from "../zod/taxSchema"
-
+import { formatCurrency } from "./formatCurrency";
 
 export function calculateCartBreakdown(
     subTotal: ReturnType<typeof calculateSubTotal>,
@@ -51,9 +50,9 @@ export function calculateCartBreakdown(
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         platformFeeBreakdown.platform = {
 
-            totalWithTax: roundTo2Decimals(feeAmount),
-            itemTotal: roundTo2Decimals(feeAmount - feeTax),
-            tax: roundTo2Decimals(feeTax),
+            totalWithTax: feeAmount,
+            itemTotal: feeAmount - feeTax,
+            tax: feeTax,
         };
     }
     if (supportPartnerServiceFee) {
@@ -61,9 +60,9 @@ export function calculateCartBreakdown(
             (supportPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         platformFeeBreakdown.support = {
-            totalWithTax: roundTo2Decimals(feeAmount),
-            itemTotal: roundTo2Decimals(feeAmount - feeTax),
-            tax: roundTo2Decimals(feeTax),
+            totalWithTax: feeAmount,
+            itemTotal: feeAmount - feeTax,
+            tax: feeTax,
         };
     }
     if (marketingPartnerServiceFee) {
@@ -71,9 +70,9 @@ export function calculateCartBreakdown(
             (marketingPartnerServiceFee.feePerOrder ?? 0);
         const feeTax = inclusiveRate(feeAmount, (taxSettings.taxRateForServiceFees ?? 0));
         platformFeeBreakdown.marketing = {
-            totalWithTax: roundTo2Decimals(feeAmount),
-            itemTotal: roundTo2Decimals(feeAmount - feeTax),
-            tax: roundTo2Decimals(feeTax),
+            totalWithTax: feeAmount,
+            itemTotal: feeAmount - feeTax,
+            tax: feeTax,
         };
     }
 
@@ -135,35 +134,35 @@ export function calculateCartBreakdown(
 
     const allTransparencyBreakdown: {
         type: keyof typeof feeBreakdownNameMap,
-        currencyShownFee: string, // currencySymbol+fee
+        currencyShownFee: string, // formatted currency fee
         // note: string,
     }[] = [];
 
     if (totalTax > 0) {
         allTransparencyBreakdown.push({
             type: 'tax',
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax),
+            currencyShownFee: formatCurrency(totalTax, taxSettings.currency),
 
         });
     }
     if (paymentProcessorFee > 0) {
         allTransparencyBreakdown.push({
             type: 'paymentProcessorFee',
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee),
+            currencyShownFee: formatCurrency(paymentProcessorFee, taxSettings.currency),
         });
     }
     Object.entries(platformFeeBreakdown).forEach(([_key, fee]) => {
         allTransparencyBreakdown.push({
             type: _key as 'platform' | 'support' | 'marketing',
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(fee.itemTotal),
+            currencyShownFee: formatCurrency(fee.itemTotal, taxSettings.currency),
         });
     });
-    const netStoreRevenue = roundTo2Decimals(
+    const netStoreRevenue = (
         buyerTotal - combinedPlatformFeeWithoutTax - totalTax - paymentProcessorFee
     );
     allTransparencyBreakdown.push({
         type: 'store',
-        currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(netStoreRevenue),
+        currencyShownFee: formatCurrency(netStoreRevenue, taxSettings.currency),
     });
 
     let buyerPaysTaxAndFeesShownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ?
@@ -172,25 +171,25 @@ export function calculateCartBreakdown(
 
     const buyerPaysTaxAndFees: {
         type: keyof typeof feeBreakdownNameMap,
-        currencyShownFee: string, // currencySymbol+fee
+        currencyShownFee: string, // formatted currency fee
     }[] = [];
     if (totalTax > 0 && taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES') {
         buyerPaysTaxAndFees.push({
             type: `tax`,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(totalTax),
+            currencyShownFee: formatCurrency(totalTax, taxSettings.currency),
         });
     }
     if (paymentProcessorFee > 0 && paymentProcesssorSettings.whoPaysFee === "CUSTOMER") {
         buyerPaysTaxAndFeesShownFee += paymentProcessorFee;
         buyerPaysTaxAndFees.push({
             type: `paymentProcessorFee`,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(paymentProcessorFee),
+            currencyShownFee: formatCurrency(paymentProcessorFee, taxSettings.currency),
         });
     }
     if (buyerPaysPlatformFee.shownFee > 0) {
         buyerPaysTaxAndFees.push({
             type: `serviceFee`,
-            currencyShownFee: (taxSettings.currencySymbol ?? '') + roundTo2Decimals(buyerPaysPlatformFee.shownFee),
+            currencyShownFee: formatCurrency(buyerPaysPlatformFee.shownFee, taxSettings.currency),
         });
     }
 
@@ -215,20 +214,20 @@ export function calculateCartBreakdown(
         (platformFeeBreakdown.marketing?.tax ?? 0)
     );
     return {
-        buyerPays: roundTo2Decimals(buyerTotal),
-        tax: roundTo2Decimals(totalTax),
-        paymentProcessorFee: roundTo2Decimals(paymentProcessorFee),
-        storeRevenue: roundTo2Decimals(netStoreRevenue),
+        buyerPays: (buyerTotal),
+        tax: (totalTax),
+        paymentProcessorFee: (paymentProcessorFee),
+        storeRevenue: (netStoreRevenue),
 
         allTransparencyBreakdown,
         buyerPaysTaxAndFeesName,
         buyerPaysTaxAndFees,
-        buyerPaysTaxAndFeesShownFee: roundTo2Decimals(buyerPaysTaxAndFeesShownFee),
-        discount: roundTo2Decimals(discount),
+        buyerPaysTaxAndFeesShownFee: (buyerPaysTaxAndFeesShownFee),
+        discount: (discount),
         platformFeeBreakdown, // we need this for saving order data
-        applicationFeeWithTax: roundTo2Decimals(applicationFeeWithTax),
-        applicationFeeWithoutTax: roundTo2Decimals(applicationFeeWithoutTax),
-        applicationFeeTax: roundTo2Decimals(applicationFeeTax),
+        applicationFeeWithTax: (applicationFeeWithTax),
+        applicationFeeWithoutTax: (applicationFeeWithoutTax),
+        applicationFeeTax: (applicationFeeTax),
     };
 }
 

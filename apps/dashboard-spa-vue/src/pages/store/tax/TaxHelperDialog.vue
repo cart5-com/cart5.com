@@ -104,11 +104,11 @@ const applyTaxSettings = () => {
                             </span>
                         </p>
                         <p>Currency: {{ salesTaxRates[selectedCountry]?.currency || '' }}</p>
-                        <p>Base Rate: {{ ((salesTaxRates[selectedCountry]?.rate || 0) * 100).toFixed(0) }}%</p>
+                        <p>Base Rate: {{ Math.round((salesTaxRates[selectedCountry]?.rate || 0) * 100) }}%</p>
                         <p
                            v-if="selectedState && selectedCountry && salesTaxRates[selectedCountry]?.states && Object.prototype.hasOwnProperty.call(salesTaxRates[selectedCountry].states, selectedState)">
                             + State Rate:
-                            {{ ((salesTaxRates[selectedCountry]?.states?.[selectedState]?.rate || 0) * 100).toFixed(0) }}%
+                            {{ Math.round((salesTaxRates[selectedCountry]?.states?.[selectedState]?.rate || 0) * 100) }}%
                         </p>
                     </div>
                 </div>

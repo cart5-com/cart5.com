@@ -2,6 +2,8 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { formatDate } from "./formatDate";
 import { estimatedTimeText1 } from "./estimatedTimeText";
+import { formatCurrency } from "./formatCurrency";
+
 const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$post;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"]['order'];
 
@@ -39,11 +41,6 @@ const style = `
 `
 
 export const thermalPrinterFormat = (orderDetails: OrderType) => {
-    const formatCurrency = (amount: number) => {
-        if (!orderDetails?.taxSettingsJSON?.currencySymbol) return amount.toString();
-        return `${orderDetails.taxSettingsJSON.currencySymbol}${amount}`;
-    };
-
     const orderedQuantity = () => {
         return orderDetails?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
     };
@@ -113,31 +110,31 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     output += `<hr>`;
     output += `\n`;
     if (orderDetails.cartTotalsJSON) {
-        output += `Subtotal: ${formatCurrency(orderDetails.cartTotalsJSON.shownFee)}\n`;
+        output += `Subtotal: ${formatCurrency(orderDetails.cartTotalsJSON.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
     }
 
     if (orderDetails.subtotalJSON?.bestDeliveryZone) {
-        output += `Delivery Fee: ${formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee)}\n`;
+        output += `Delivery Fee: ${formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
     }
 
     if (orderDetails.subtotalJSON?.calculatedCustomServiceFees?.length) {
         orderDetails.subtotalJSON.calculatedCustomServiceFees.forEach(fee => {
             if (fee.shownFee > 0) {
-                output += `${fee.name}: ${formatCurrency(fee.shownFee)}\n`;
+                output += `${fee.name}: ${formatCurrency(fee.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
             }
         });
     }
 
     if (orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee > 0) {
-        output += `${orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesName}: ${formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee)}\n`;
+        output += `${orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesName}: ${formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
     }
 
     if (orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.discount > 0) {
-        output += `Discount: -${formatCurrency(orderDetails.cartBreakdownJSON.discount)}\n`;
+        output += `Discount: -${formatCurrency(orderDetails.cartBreakdownJSON.discount, orderDetails.taxSettingsJSON?.currency)}\n`;
     }
 
     output += `<hr>`;
-    output += `TOTAL: ${formatCurrency(orderDetails.finalAmount)}\n`;
+    output += `TOTAL: ${formatCurrency(orderDetails.finalAmount, orderDetails.taxSettingsJSON?.currency)}\n`;
     output += `<hr>`;
 
     return `<html><body>${style}<pre>${output}</pre></body></html>`;

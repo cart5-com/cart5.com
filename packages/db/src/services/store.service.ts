@@ -64,7 +64,6 @@ export const getStoreData_Service = async (
             taxSettings: {
                 columns: {
                     currency: true,
-                    currencySymbol: true,
                     salesTaxType: true,
                     taxCategories: true,
                     taxName: true,

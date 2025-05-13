@@ -1,5 +1,4 @@
 import type { Point, DeliveryZone } from "@lib/zod/deliverySchema";
-import { roundTo2Decimals } from "./roundTo2Decimals";
 import { isInsideCircle } from "./isInsideCircle";
 import { isInsideRectangle } from "./isInsideRectangle";
 import { isInsidePolygon } from "./isInsidePolygon";
@@ -43,10 +42,10 @@ export function getBestDeliveryZoneWithTaxDetails(
     const shownFee = taxSettings.salesTaxType === 'APPLY_TAX_ON_TOP_OF_PRICES' ? itemTotal : totalWithTax;
 
     return {
-        itemTotal: roundTo2Decimals(itemTotal),
-        tax: roundTo2Decimals(tax),
-        totalWithTax: roundTo2Decimals(totalWithTax),
-        shownFee: roundTo2Decimals(shownFee),
+        itemTotal: (itemTotal),
+        tax: (tax),
+        totalWithTax: (totalWithTax),
+        shownFee: (shownFee),
         totalDeliveryFee: bestZone.totalDeliveryFee,
         distanceFromStoreKm: bestZone.distanceFromStoreKm,
         customEstimatedDeliveryTime: bestZone.customEstimatedDeliveryTime,
@@ -65,13 +64,13 @@ export function getBestDeliveryZone(
         return null;
     }
 
-    const distance = roundTo2Decimals(calculateDistance(userLocation, storeLocation));
+    const distance = (calculateDistance(userLocation, storeLocation));
 
     // Calculate total delivery fees
     const zonesWithFees = availableZones.map((zone) => {
         const baseFee = zone.deliveryFee || 0;
         const distanceFee = zone.deliveryFeePerKm ? zone.deliveryFeePerKm * distance : 0;
-        const totalDeliveryFee = roundTo2Decimals(baseFee + distanceFee);
+        const totalDeliveryFee = (baseFee + distanceFee);
 
         return {
             ...zone,

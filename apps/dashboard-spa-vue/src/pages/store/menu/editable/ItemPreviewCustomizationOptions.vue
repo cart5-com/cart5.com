@@ -2,7 +2,6 @@
 import { useVModel } from '@vueuse/core'
 import { type ItemId } from "@lib/zod/menuRootSchema";
 import { type CartChildrenItemState } from "@lib/zod/cartItemState";
-import { roundTo2Decimals } from "@lib/utils/roundTo2Decimals";
 import { menuRoot } from "../MenuRootStore";
 import { computed, onMounted, ref } from 'vue';
 import {
@@ -24,6 +23,8 @@ import { Button } from '@/components/ui/button';
 import SelectWithSearch from '@/ui-plus/SelectWithSearch/SelectWithSearch.vue';
 import { addChildItem, createNewItem, previewItem } from '../helpers';
 import RelationViewer from '../components/RelationViewer.vue';
+import { formatCurrency } from '@lib/utils/formatCurrency';
+import { taxSettings } from '../TaxSettingsStore';
 
 import {
     DropdownMenu,
@@ -448,10 +449,13 @@ onMounted(() => {
                             <div class="col-span-6 text-right"
                                  v-if="menuRoot.allItems?.[optionItemId!].opPrc">
                                 {{
-                                    roundTo2Decimals(
-                                        (menuRoot.allItems?.[optionItemId!].opPrc!)
-                                        *
-                                        (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                    formatCurrency(
+                                        (
+                                            (menuRoot.allItems?.[optionItemId!].opPrc!)
+                                            *
+                                            (modelValue?.childrenState?.[optionItemIndex]?.quantity!)
+                                        ),
+                                        taxSettings?.currency
                                     )
                                 }}
                             </div>

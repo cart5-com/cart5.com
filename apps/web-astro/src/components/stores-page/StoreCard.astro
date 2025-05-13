@@ -35,7 +35,7 @@ const { store, measure = "km", orderType = "delivery" } = Astro.props;
 						{store.address1 || ""}
 					</span>
 					<span class="text-muted-foreground text-sm">
-						{store.distance.toFixed(2)}
+						{Math.round(store.distance * 100) / 100}
 						{measure}
 					</span>
 				</div>

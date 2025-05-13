@@ -18,6 +18,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { formatCurrency } from "@lib/utils/formatCurrency";
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 
 const icons = [
@@ -52,11 +53,6 @@ const props = defineProps<{
     orderDetails: OrderType[number];
 }>();
 
-
-const formatCurrency = (amount: number) => {
-    if (!props.orderDetails?.taxSettingsJSON?.currencySymbol) return amount;
-    return `${props.orderDetails.taxSettingsJSON.currencySymbol}${amount}`;
-};
 
 const orderedQuantity = () => {
     return props.orderDetails?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
@@ -201,13 +197,13 @@ const orderedQuantity = () => {
                 <div class="flex justify-between items-center py-1"
                      v-if="orderDetails.cartTotalsJSON">
                     <span>Subtotal</span>
-                    <span>{{ formatCurrency(orderDetails.cartTotalsJSON.shownFee) }}</span>
+                    <span>{{ formatCurrency(orderDetails.cartTotalsJSON.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                 </div>
 
                 <div class="flex justify-between items-center py-1"
                      v-if="orderDetails.subtotalJSON?.bestDeliveryZone">
                     <span>Delivery Fee</span>
-                    <span>{{ formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee) }}</span>
+                    <span>{{ formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                 </div>
 
                 <!-- Custom Service Fees -->
@@ -216,7 +212,7 @@ const orderedQuantity = () => {
                     <div class="flex justify-between items-center py-1"
                          v-if="customFee.shownFee > 0">
                         <span>{{ customFee.name }}</span>
-                        <span>{{ formatCurrency(customFee.shownFee) }}</span>
+                        <span>{{ formatCurrency(customFee.shownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                     </div>
                 </div>
 
@@ -248,14 +244,15 @@ const orderedQuantity = () => {
                             </PopoverContent>
                         </Popover>
                     </span>
-                    <span>{{ formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee) }}</span>
+                    <span>{{ formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee, orderDetails.taxSettingsJSON?.currency) }}</span>
                 </div>
 
                 <!-- Discount -->
                 <div class="flex justify-between items-center py-1 text-xl font-bold text-primary"
                      v-if="orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.discount > 0">
                     <span>Discount</span>
-                    <span>-{{ formatCurrency(orderDetails.cartBreakdownJSON.discount) }}</span>
+                    <span>-{{ formatCurrency(orderDetails.cartBreakdownJSON.discount,
+                        orderDetails.taxSettingsJSON?.currency) }}</span>
                 </div>
 
                 <!-- Total -->
@@ -291,7 +288,7 @@ const orderedQuantity = () => {
                             </PopoverContent>
                         </Popover>
                     </span>
-                    <span>{{ formatCurrency(orderDetails.finalAmount) }}</span>
+                    <span>{{ formatCurrency(orderDetails.finalAmount, orderDetails.taxSettingsJSON?.currency) }}</span>
                 </div>
             </div>
         </div>

@@ -55,7 +55,7 @@ export const r2ImgUpload = async (file: File, key: string) => {
 
         // const optimizedSize = optimizedBuffer.byteLength;
         // const savedSize = originalSize - optimizedSize;
-        // const savingsPercentage = ((savedSize / originalSize) * 100).toFixed(2);
+        // const savingsPercentage = Math.round((savedSize / originalSize) * 100);
 
         const url = getEnvVariable("PUBLIC_CLOUDFLARE_R2_PUBLIC_HOST") + "/" + key
         if (IS_PROD) {

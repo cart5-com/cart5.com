@@ -6,7 +6,6 @@ import { type OrderType } from "../types/orderType"
 import { getBestDeliveryZoneWithTaxDetails } from "./getBestDeliveryZone"
 import type { Point, DeliveryZone } from "@lib/zod/deliverySchema";
 import { calculateFeeTax } from "./calculateFeeTax"
-import { roundTo2Decimals } from "./roundTo2Decimals"
 import type { CustomServiceFee } from "../zod/serviceFee";
 import { exclusiveRate } from "./rateCalc"
 
@@ -77,16 +76,16 @@ export const calculateSubTotal = (
     calculateServiceFees(result, customServiceFees, taxSettings);
 
     // Apply rounding only at the end
-    result.totalWithTax = roundTo2Decimals(result.totalWithTax);
-    result.tax = roundTo2Decimals(result.tax);
-    result.itemTotal = roundTo2Decimals(result.itemTotal);
+    result.totalWithTax = (result.totalWithTax);
+    result.tax = (result.tax);
+    result.itemTotal = (result.itemTotal);
 
     result.calculatedCustomServiceFees = result.calculatedCustomServiceFees.map(fee => ({
         ...fee,
-        itemTotal: roundTo2Decimals(fee.itemTotal),
-        tax: roundTo2Decimals(fee.tax),
-        totalWithTax: roundTo2Decimals(fee.totalWithTax),
-        shownFee: roundTo2Decimals(fee.shownFee)
+        itemTotal: (fee.itemTotal),
+        tax: (fee.tax),
+        totalWithTax: (fee.totalWithTax),
+        shownFee: (fee.shownFee)
     }));
 
     return result;

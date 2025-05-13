@@ -48,7 +48,6 @@ function convert_GetSalesTaxRate_2_TaxSettings(salesTaxRate: ReturnType<typeof g
             pickupRate: salesTaxRate.taxRate,
         }],
         currency: salesTaxRate.raw.currency,
-        currencySymbol: salesTaxRate.raw.currencySymbol ?? null,
         salesTaxType: salesTaxRate.raw.isTaxAppliesAtCheckout ? "APPLY_TAX_ON_TOP_OF_PRICES" : "ITEMS_PRICES_ALREADY_INCLUDE_TAXES",
         taxName: salesTaxRate.taxName,
         taxRateForDelivery: salesTaxRate.taxRate,
@@ -67,7 +66,6 @@ const loadData = async () => {
             columns: {
                 taxCategories: true,
                 currency: true,
-                currencySymbol: true,
                 salesTaxType: true,
                 taxName: true,
                 taxRateForDelivery: true,
@@ -109,7 +107,6 @@ const saveTaxSettings = async () => {
             },
             json: cleanEmptyProps({
                 currency: taxSettings.value?.currency,
-                currencySymbol: taxSettings.value?.currencySymbol,
                 salesTaxType: taxSettings.value?.salesTaxType,
                 taxName: taxSettings.value?.taxName,
                 taxRateForDelivery: taxSettings.value?.taxRateForDelivery,
@@ -214,12 +211,6 @@ const removeTaxCategory = (index: number) => {
                     <Label>Tax Name</Label>
                     <Input v-model="taxSettings.taxName!"
                            placeholder="e.g., VAT, GST, HST" />
-                </div>
-
-                <div class="space-y-2">
-                    <Label>Currency Symbol</Label>
-                    <Input v-model="taxSettings.currencySymbol!"
-                           placeholder="e.g., £, $" />
                 </div>
 
                 <!-- Tax Categories -->

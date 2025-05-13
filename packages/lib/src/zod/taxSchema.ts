@@ -12,7 +12,6 @@ export const TaxCategorySchema = z.object({
 
 export const TaxSettingsSchema = z.object({
     currency: z.string().optional(),
-    currencySymbol: z.string().optional(),
     salesTaxType: z.enum(TAX_TYPE).optional(),
     taxName: z.string().optional(),
     taxRateForDelivery: z.number().min(0).max(100).optional(),
