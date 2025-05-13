@@ -100,7 +100,7 @@ onMounted(() => {
     loadData();
 
     // handle #success
-    if (window.location.hash === '#success') {
+    if (window.location.hash === '#stripe-success') {
         toast.info('please wait while verifying checkout session');
         handleSuccessUrl();
     } else {

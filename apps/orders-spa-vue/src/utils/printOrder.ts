@@ -1,8 +1,8 @@
 import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { thermalPrinterFormat } from "@lib/utils/printerFormat";
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
-type OrderType = ResType<typeof orderDetailsApiPath>["data"];
+const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$post;
+type OrderType = ResType<typeof orderDetailsApiPath>["data"]['order'];
 
 export const printOrder = (orderDetails: OrderType) => {
     const html = thermalPrinterFormat(orderDetails);

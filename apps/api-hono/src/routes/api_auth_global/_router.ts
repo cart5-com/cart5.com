@@ -50,7 +50,7 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
     //     '/:storeId/fake_place_order',
     //     fakePlaceOrderRoute
     // )
-    .get(
+    .post(
         '/:orderId/get_order',
         getOrder_SchemaValidator,
         getOrderRoute

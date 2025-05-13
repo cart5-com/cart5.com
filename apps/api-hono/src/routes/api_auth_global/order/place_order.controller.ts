@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
-import { generateOrderData_Service } from '@db/services/order.service';
+import { generateOrderData_Service } from '@db/services/order.generate.service';
 import { saveOrderDataTransactional_Service } from '@db/services/order.transactional.service';
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
@@ -41,7 +41,7 @@ export const placeOrderRoute = async (c: Context<
         autoPrintRules: true
     });
 
-    // TODO: if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
+    // if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
     let checkoutSession: Stripe.Checkout.Session | null = null;
     const IS_STRIPE_PAYMENT = order.paymentId === 'stripe';
     if (IS_STRIPE_PAYMENT) {
@@ -49,7 +49,7 @@ export const placeOrderRoute = async (c: Context<
             throw new KNOWN_ERROR("Store not connected to stripe", "STORE_NOT_CONNECTED_TO_STRIPE");
         }
         if (!order.taxSettingsJSON?.currency) {
-            throw new KNOWN_ERROR("User phone number not verified", "USER_PHONE_NUMBER_NOT_VERIFIED");
+            throw new KNOWN_ERROR("Store currency not set", "STORE_CURRENCY_NOT_SET");
         }
         checkoutSession = await createCheckoutSession_inStripeConnectedAccount(
             `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-success`,
@@ -70,7 +70,6 @@ export const placeOrderRoute = async (c: Context<
         )
         order.paymentMethodJSON.stripe = {
             checkoutSessionId: checkoutSession.id,
-            isPaymentAuthorizationVerified: false
         };
     }
 

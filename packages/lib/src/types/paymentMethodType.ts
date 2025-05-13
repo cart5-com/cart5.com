@@ -7,6 +7,5 @@ export type PaymentMethodType = {
 
     stripe?: {
         checkoutSessionId?: string; // for 'stripe' -> checkout.session.id
-        isPaymentAuthorizationVerified?: boolean; // for 'stripe' -> checkout.session.payment_intent
     }
 }

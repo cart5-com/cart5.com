@@ -282,7 +282,7 @@ const IS_DEV = import.meta.env.DEV;
                                                     }}
                                                 </p>
                                                 <p>
-                                                    {{ formatDate(order.created_at_ts) }}
+                                                    {{ formatDate(order.created_at_ts, undefined, true) }}
                                                 </p>
                                                 <p>
                                                     {{ order.storeName }}

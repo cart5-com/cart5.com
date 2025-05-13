@@ -29,6 +29,7 @@ import {
 import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School, University, Landmark, Store, Castle, Warehouse, Hospital } from 'lucide-vue-next'
 import MapEmbed from "@web-astro/components/MapEmbed.vue";
 import { estimatedTimeText1 } from "@lib/utils/estimatedTimeText";
+import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 const icons = [
     { name: 'MapPin', component: MapPin },
     { name: 'House', component: House },
@@ -56,18 +57,28 @@ const props = defineProps<{
     orderId?: string;
 }>();
 
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
-type OrderType = ResType<typeof orderDetailsApiPath>["data"];
+const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$post;
+type ResultType = ResType<typeof orderDetailsApiPath>["data"];
+type OrderType = ResultType['order'];
+type StripeCheckoutSessionUrlType = ResultType['stripeCheckoutSessionUrl'];
+type StripeErrorType = ResultType['stripeError'];
+
 const orderDetails = ref<OrderType | null>(null);
+const stripeCheckoutSessionUrl = ref<StripeCheckoutSessionUrlType | null>(null);
+const stripeError = ref<StripeErrorType | null>(null);
 const isCollapsed = ref(true);
 
+// const isStripeSuccessLink = (window.location.hash === '#stripe-success');
 const isLoading = ref(true);
 const loadData = async () => {
     isLoading.value = true;
     const { data, error } = await (
-        await authGlobalApiClient[":orderId"].get_order.$get({
+        await authGlobalApiClient[":orderId"].get_order.$post({
             param: {
                 orderId: props.orderId ?? ""
+            },
+            json: {
+                // checkStripePaymentStatus: isStripeSuccessLink ? true : undefined
             }
         })
     ).json();
@@ -76,7 +87,9 @@ const loadData = async () => {
         toast.error(error.message ?? "An unknown error occurred");
     } else {
         console.log(data);
-        orderDetails.value = data;
+        orderDetails.value = data.order;
+        stripeCheckoutSessionUrl.value = data.stripeCheckoutSessionUrl;
+        stripeError.value = data.stripeError;
     }
     isLoading.value = false;
 }
@@ -119,7 +132,11 @@ const orderedQuantity = () => {
                 Loading order details...
             </div>
             <div v-else-if="orderDetails">
-                <Card class="my-4">
+                <Card class="my-4"
+                      v-if="orderDetails.orderStatus === ORDER_STATUS_OBJ.CREATED ||
+                        orderDetails.orderStatus === ORDER_STATUS_OBJ.ACCEPTED ||
+                        orderDetails.orderStatus === ORDER_STATUS_OBJ.COMPLETED
+                    ">
                     <CardContent class="p-4">
                         <!-- centered big checkmark -->
                         <div class="flex justify-center items-center">
@@ -130,6 +147,18 @@ const orderedQuantity = () => {
                         </div>
                     </CardContent>
                 </Card>
+                <div v-if="stripeCheckoutSessionUrl">
+                    <div v-if="stripeError && stripeError.code"
+                         class="bg-destructive text-destructive-foreground p-4 rounded-md my-4">
+                        {{ stripeError.code }}
+                    </div>
+                    <a :href="stripeCheckoutSessionUrl"
+                       class="w-full mr-4">
+                        <Button class="w-full font-bold text-2xl">
+                            Pay now
+                        </Button>
+                    </a>
+                </div>
                 <!-- Order ID and Date -->
                 <Card class="my-4">
                     <CardContent class="p-4">

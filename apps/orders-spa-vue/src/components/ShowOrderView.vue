@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { authGlobalApiClient } from "@api-client/auth_global";
+import { ordersApiClient } from "@api-client/orders";
+// import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@lib/utils/formatDate";
@@ -42,11 +43,13 @@ const paymentIcons = [
     { name: 'Calculator', component: Calculator },
 ]
 
-const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$get;
-type OrderType = ResType<typeof orderDetailsApiPath>["data"];
+// const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$post;
+// type OrderType = ResType<typeof orderDetailsApiPath>["data"]['order'];
+const ApiPath = ordersApiClient[":storeId"].get_by_order_ids.$post;
+type OrderType = ResType<typeof ApiPath>["data"];
 
 const props = defineProps<{
-    orderDetails: OrderType;
+    orderDetails: OrderType[number];
 }>();
 
 
@@ -292,7 +295,6 @@ const orderedQuantity = () => {
                 </div>
             </div>
         </div>
-
         <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
              class="mt-3 overflow-hidden rounded-lg">
             <MapEmbed :storeLat="orderDetails.storeLocationLat"
@@ -301,5 +303,15 @@ const orderedQuantity = () => {
                       :destinationLng="orderDetails.deliveryAddressJSON?.lng"
                       :isLink="true" />
         </div>
+        <details v-if="orderDetails.statusHistory.length > 0">
+            <summary class="font-bold text-xl mb-4">Status changes</summary>
+            <div v-for="(status, index) in orderDetails.statusHistory"
+                 :key="index"
+                 class="text-xs text-muted-foreground py-2">
+                {{ status.newStatus }}
+                <br>
+                {{ formatDate(status.created_at_ts, undefined, true) }}
+            </div>
+        </details>
     </div>
 </template>

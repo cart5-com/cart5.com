@@ -3,9 +3,9 @@ import { z } from "zod";
 export const AutoprintRuleSchema = z.object({
     id: z.string(),
     isActive: z.boolean(),
-    autoprintDeviceId: z.string(),
-    printerDeviceName: z.string(),
-    copies: z.number(),
+    autoprintDeviceId: z.string().optional(),
+    printerDeviceName: z.string().optional(),
+    copies: z.number().optional(),
     autoAcceptOrderAfterPrint: z.boolean(),
 })
 

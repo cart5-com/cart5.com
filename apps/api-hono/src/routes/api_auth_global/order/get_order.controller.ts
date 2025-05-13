@@ -2,13 +2,16 @@ import { type Context } from 'hono'
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { getUserOrderData_Service } from '@db/services/order.service';
-import { getStoreData_CacheJSON } from '@db/cache_json/store.cache_json';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { verifyStripeCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/verifyStripeCheckoutSession_inStripeConnectedAccount';
+import { getStoreAutomationRules_Service } from '@db/services/store.service';
+import { saveOrderAfterStipePaymentVerification_Service } from '@db/services/order.transactional.service';
+import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 
-export const getOrder_SchemaValidator = zValidator('query', z.object({
-    checkStripePaymentStatus: z.boolean().optional(),
+export const getOrder_SchemaValidator = zValidator('json', z.object({
+    // checkStripePaymentStatus: z.boolean().optional(),
 }))
 
 export const getOrderRoute = async (
@@ -19,7 +22,7 @@ export const getOrderRoute = async (
     >
 ) => {
     const orderId = c.req.param('orderId');
-    const { checkStripePaymentStatus } = c.req.valid('query');
+    // const { checkStripePaymentStatus } = c.req.valid('json');
     if (!orderId) {
         throw new KNOWN_ERROR("Order ID not found", "ORDER_ID_NOT_FOUND");
     }
@@ -39,9 +42,60 @@ export const getOrderRoute = async (
     if (order.userId !== user.id) {
         throw new KNOWN_ERROR("Permission denied", "PERMISSION_DENIED");
     }
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
+
+    let stripeCheckoutSessionUrl: string | undefined = undefined;
+    let stripeError: ErrorType | undefined = undefined;
+    if (
+        order.orderStatus === ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION &&
+        order.isOnlinePaymentVerified !== true
+    ) {
+        const { stripeCheckoutSession, error } = await verifyStripeCheckoutSession_inStripeConnectedAccount(order);
+        stripeCheckoutSessionUrl = stripeCheckoutSession?.url ?? undefined;
+        stripeError = error;
+        if (!error) {
+            order.orderStatus = ORDER_STATUS_OBJ.CREATED;
+            order.isOnlinePaymentVerified = true;
+            // means success
+            const storeAutomationRules = await getStoreAutomationRules_Service(order.storeId, {
+                autoAcceptOrders: true,
+                autoPrintRules: true
+            });
+            await saveOrderAfterStipePaymentVerification_Service(
+                orderId,
+                order,
+                {
+                    newStatus: order.orderStatus,
+                    changedByUserId: user.id,
+                    changedByIpAddress: ipAddress,
+                    type: 'user',
+                },
+                (storeAutomationRules?.autoAcceptOrders) ?
+                    {
+                        storeId: order.storeId,
+                        changedByUserId: undefined,
+                        changedByIpAddress: undefined,
+                        type: 'automatic_rule'
+                    }
+                    :
+                    undefined,
+                (storeAutomationRules?.autoPrintRules) ?
+                    {
+                        storeId: order.storeId,
+                        autoPrintRules: storeAutomationRules.autoPrintRules
+                    }
+                    :
+                    undefined
+            );
+        }
+    }
 
     return c.json({
-        data: order,
+        data: {
+            order,
+            stripeCheckoutSessionUrl,
+            stripeError
+        },
         error: null as ErrorType
     }, 200);
 }

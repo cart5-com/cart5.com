@@ -50,15 +50,16 @@ export const orderTable = sqliteTable("orders", {
 
     // Pickup Information
     pickupNickname: text("pickup_nickname").notNull(),
-    estimatedTimeJSON: text("estimated_time_json", { mode: "json" }).$type<EstimatedTime>(),
 
     // Payment Information
     paymentId: text("payment_id").notNull(),
     isOnlinePayment: integer("is_online_payment", { mode: "boolean" }).notNull().default(false),
+    isOnlinePaymentVerified: integer("is_online_payment_verified", { mode: "boolean" }),
     finalAmount: real("final_amount").notNull(),
 
     // JSON Data
     paymentMethodJSON: text("payment_method_json", { mode: "json" }).$type<PaymentMethodType>(),
+    estimatedTimeJSON: text("estimated_time_json", { mode: "json" }).$type<EstimatedTime>(),
     orderedItemsJSON: text("ordered_items_json", { mode: "json" }).$type<OrderedItemsType>(),
     cartTotalsJSON: text("cart_total_json", { mode: "json" }).$type<ReturnType<typeof calculateCartTotalPrice>>(),
     subtotalJSON: text("subtotal_json", { mode: "json" }).$type<ReturnType<typeof calculateSubTotal>>(),

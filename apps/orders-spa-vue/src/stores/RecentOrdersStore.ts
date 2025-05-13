@@ -3,6 +3,7 @@ import { ordersApiClient } from "@api-client/orders";
 import { ref } from "vue";
 import type { ResType } from "@api-client/typeUtils";
 import { MySettingsStore } from "@orders-spa-vue/stores/MySettingsStore";
+
 const ApiPath = ordersApiClient[":storeId"].get_by_order_ids.$post;
 type RecentOrdersType = ResType<typeof ApiPath>["data"];
 
@@ -69,6 +70,7 @@ export const loadOrders = async (storeId: string, newOrderIds: string[]) => {
         return;
     } else {
         data.forEach((order) => {
+            order.statusHistory.sort((a, b) => a.created_at_ts - b.created_at_ts);
             cachedStoreOrders.value[order.orderId] = order;
         });
     }

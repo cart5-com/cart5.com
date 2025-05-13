@@ -351,6 +351,20 @@
       "when": 1747065119435,
       "tag": "0049_bright_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "6",
+      "when": 1747087566359,
+      "tag": "0050_narrow_eternity",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "6",
+      "when": 1747096259236,
+      "tag": "0051_wide_bromley",
+      "breakpoints": true
     }
   ]
 }
