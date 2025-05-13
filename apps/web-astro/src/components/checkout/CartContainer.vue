@@ -166,8 +166,8 @@ const cartView = ref<InstanceType<typeof CartView> | null>(null);
                 <div class="text-xs text-muted-foreground my-4">
                     <!-- TODO: show terms and conditions -->
                     <CheckCircle class="inline-block mr-2" />
-                    By placing this order, you agree to accept full responsibility.
-                    All orders are final and non-cancellable and non-refundable to prevent abuse.
+                    All sales are final and non-refundable. You agree to contact the merchant by phone call or in person
+                    for any issues rather than filing payment disputes
                 </div>
 
             </div>

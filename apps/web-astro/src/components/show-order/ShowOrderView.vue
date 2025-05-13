@@ -416,21 +416,23 @@ const orderedQuantity = () => {
                      v-if="orderDetails?.isOnlinePayment">
                     <!-- TODO: show terms and conditions -->
                     <CheckCircle class="inline-block mr-2" />
-                    By placing this order, you agreed to accept full responsibility.
-                    All orders are final and non-refundable to prevent abuse.
+                    All sales are final and non-refundable. You agree to contact the merchant by phone call or in person
+                    for any issues rather than filing payment disputes
                 </div>
-                <p class="text-xs text-muted-foreground my-4"
+                <!-- <p class="text-xs text-muted-foreground my-4"
                    v-if="orderDetails.orderType === 'delivery'">
                     Please note that the map below is only a shortcut to view the location. Any arrival time shown on
                     the
                     map is not the actual estimated delivery time for your order.
-                </p>
+                </p> -->
                 <div v-if="orderDetails.storeLocationLat && orderDetails.storeLocationLng"
                      class="mt-3 overflow-hidden rounded-lg">
+                    <!-- :destinationLat="orderDetails.deliveryAddressJSON?.lat"
+                     :destinationLng="orderDetails.deliveryAddressJSON?.lng" -->
                     <MapEmbed :storeLat="orderDetails.storeLocationLat"
                               :storeLng="orderDetails.storeLocationLng"
-                              :destinationLat="orderDetails.deliveryAddressJSON?.lat"
-                              :destinationLng="orderDetails.deliveryAddressJSON?.lng"
+                              :destinationLat="undefined"
+                              :destinationLng="undefined"
                               :isLink="true" />
                 </div>
             </div>
