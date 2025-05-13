@@ -11,6 +11,7 @@ import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_stor
 import { getStoreAutomationRules_Service } from '@db/services/store.service';
 import { createCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/createCheckoutSession_inStripeConnectedAccount';
 import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
+import { getLocaleFromAcceptLanguageHeader } from "@lib/utils/getLocaleFromAcceptLanguageHeader";
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -73,7 +74,7 @@ export const placeOrderRoute = async (c: Context<
         };
     }
 
-
+    const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);
     await saveOrderDataTransactional_Service(
         newOrderId,
         order,
@@ -98,7 +99,8 @@ export const placeOrderRoute = async (c: Context<
                 autoPrintRules: storeAutomationRules.autoPrintRules
             }
             :
-            undefined
+            undefined,
+        locale
     );
 
     // delete cart current cart

@@ -1,4 +1,4 @@
-export const getLocaleFromHeaders = (
+export const getLocaleFromAcceptLanguageHeader = (
     acceptLanguageHeader: string | null | undefined,
     defaultLocale = 'en-US'
 ): string => {

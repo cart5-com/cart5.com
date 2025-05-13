@@ -4,12 +4,17 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-vue-next";
 import type { OrderType } from "@lib/types/orderType";
+import { formatCurrency } from "@lib/utils/formatCurrency";
+import { type getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
+import { getLocaleFromAcceptLanguageHeader } from "@lib/utils/getLocaleFromAcceptLanguageHeader";
 
+const locale = getLocaleFromAcceptLanguageHeader(Astro.request.headers.get("accept-language"));
 interface Props {
 	item: Item | undefined;
+	storeData: Awaited<ReturnType<typeof getStoreData_CacheJSON>>;
 }
 
-const { item: currentItem } = Astro.props;
+const { item: currentItem, storeData } = Astro.props;
 const orderType: OrderType = (Astro.url.searchParams.get("order-type") ?? "delivery") as OrderType;
 ---
 
@@ -26,8 +31,8 @@ const orderType: OrderType = (Astro.url.searchParams.get("order-type") ?? "deliv
 				<span class="text-foreground mt-2 block font-bold">
 					{
 						orderType === "pickup" && currentItem?.pickupPrc
-							? `${currentItem?.pickupPrc}`
-							: `${currentItem?.prc}`
+							? `${formatCurrency(currentItem?.pickupPrc, storeData?.taxSettings?.currency, locale)}`
+							: `${formatCurrency(currentItem?.prc, storeData?.taxSettings?.currency, locale)}`
 					}
 				</span>
 			</CardDescription>

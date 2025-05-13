@@ -10,6 +10,9 @@ import { getStoreAutomationRules_Service } from '@db/services/store.service';
 import { saveOrderAfterStipePaymentVerification_Service } from '@db/services/order.transactional.service';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
+import { getLocaleFromAcceptLanguageHeader } from '@lib/utils/getLocaleFromAcceptLanguageHeader';
+
+
 export const getOrder_SchemaValidator = zValidator('json', z.object({
     // checkStripePaymentStatus: z.boolean().optional(),
 }))
@@ -43,7 +46,7 @@ export const getOrderRoute = async (
         throw new KNOWN_ERROR("Permission denied", "PERMISSION_DENIED");
     }
     const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
-
+    const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);
     let stripeCheckoutSessionUrl: string | undefined = undefined;
     let stripeError: ErrorType | undefined = undefined;
     if (
@@ -86,7 +89,8 @@ export const getOrderRoute = async (
                         autoPrintRules: storeAutomationRules.autoPrintRules
                     }
                     :
-                    undefined
+                    undefined,
+                locale
             );
             sendNotificationToStore(order.storeId, {
                 orderId

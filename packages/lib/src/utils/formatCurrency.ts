@@ -16,6 +16,10 @@ export const formatCurrency = (
         return '';
     }
 
+    if (!locale && typeof window !== 'undefined') {
+        locale = window.navigator.language;
+    }
+
     try {
         return new Intl.NumberFormat(locale, {
             style: 'currency',

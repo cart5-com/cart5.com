@@ -4,8 +4,11 @@ import { thermalPrinterFormat } from "@lib/utils/printerFormat";
 const orderDetailsApiPath = authGlobalApiClient[":orderId"].get_order.$post;
 type OrderType = ResType<typeof orderDetailsApiPath>["data"]['order'];
 
-export const printOrder = (orderDetails: OrderType) => {
-    const html = thermalPrinterFormat(orderDetails);
+export const printOrder = (
+    orderDetails: OrderType,
+    locale: string | undefined = undefined
+) => {
+    const html = thermalPrinterFormat(orderDetails, locale);
     const iframe = document.createElement("iframe");
 
     // Set iframe properties before appending to body

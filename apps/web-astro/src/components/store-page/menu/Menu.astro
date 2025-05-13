@@ -1,12 +1,15 @@
 ---
 import type { MenuRoot } from "@lib/zod/menuRootSchema";
 import CategoryCard from "./CategoryCard.astro";
+import { type getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
+
 interface Props {
 	menuRoot: MenuRoot | null;
 	getMenuRoot: () => MenuRoot;
+	storeData: Awaited<ReturnType<typeof getStoreData_CacheJSON>>;
 }
 
-const { menuRoot, getMenuRoot } = Astro.props;
+const { menuRoot, getMenuRoot, storeData } = Astro.props;
 ---
 
 <div class="bg-background text-background-foreground relative sticky top-[70px] z-40">
@@ -28,7 +31,7 @@ const { menuRoot, getMenuRoot } = Astro.props;
 	{
 		menuRoot?.children?.map((itemId) => (
 			<div id={`category-${itemId}`}>
-				<CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} />
+				<CategoryCard item={menuRoot.allItems?.[itemId]} getMenuRoot={getMenuRoot} storeData={storeData} />
 			</div>
 		))
 	}

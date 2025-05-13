@@ -29,7 +29,8 @@ export const saveOrderDataTransactional_Service = async (
     autoPrintParams?: {
         storeId: string,
         autoPrintRules?: AutoprintRulesListType
-    }
+    },
+    locale: string | undefined = undefined,
 ) => {
     return await db.transaction(async (tx) => {
         // Step 1: Check if order exists
@@ -53,7 +54,7 @@ export const saveOrderDataTransactional_Service = async (
         await handleAutoAcceptOrder_Service(tx, orderId, acceptParams);
 
         // Step 5: Create autoprint tasks if requested
-        await handleAutoPrintOrder_Service(orderData, tx, orderId, autoPrintParams);
+        await handleAutoPrintOrder_Service(orderData, tx, orderId, autoPrintParams, locale);
 
         return true;
     });
@@ -78,7 +79,8 @@ export const saveOrderAfterStipePaymentVerification_Service = async (
     autoPrintParams?: {
         storeId: string,
         autoPrintRules?: AutoprintRulesListType
-    }
+    },
+    locale: string | undefined = undefined,
 ) => {
     return await db.transaction(async (tx) => {
         // Step 1: Update order data
@@ -101,7 +103,7 @@ export const saveOrderAfterStipePaymentVerification_Service = async (
         await handleAutoAcceptOrder_Service(tx, orderId, acceptParams);
 
         // Step 4: Create autoprint tasks if requested
-        await handleAutoPrintOrder_Service(orderData, tx, orderId, autoPrintParams);
+        await handleAutoPrintOrder_Service(orderData, tx, orderId, autoPrintParams, locale);
 
         return true;
     });
@@ -138,6 +140,7 @@ export const handleAutoPrintOrder_Service = async (
         storeId: string,
         autoPrintRules?: AutoprintRulesListType
     },
+    locale: string | undefined = undefined,
 ) => {
     if (autoPrintParams?.autoPrintRules && autoPrintParams.autoPrintRules.length > 0) {
         const activeRules = autoPrintParams.autoPrintRules.filter(rule =>
@@ -145,7 +148,7 @@ export const handleAutoPrintOrder_Service = async (
 
         if (activeRules.length > 0) {
             type inputType = Parameters<typeof thermalPrinterFormat>[0];
-            const html = thermalPrinterFormat(orderData as inputType);
+            const html = thermalPrinterFormat(orderData as inputType, locale);
             const uniqueDeviceIds: Record<string, boolean> = {};
             for (const rule of activeRules) {
                 await tx.insert(autoprintDeviceTaskTable).values({

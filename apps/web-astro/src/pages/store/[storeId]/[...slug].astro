@@ -61,7 +61,7 @@ const getMenuRoot = () => {
 		orderType={orderType}
 	/>
 
-	<Menu menuRoot={storeData.menu?.menuRoot} getMenuRoot={getMenuRoot} />
+	<Menu menuRoot={storeData.menu?.menuRoot} getMenuRoot={getMenuRoot} storeData={storeData} />
 	<div slot="header-right">
 		<SingleCartBtn client:only="vue" />
 		<script>

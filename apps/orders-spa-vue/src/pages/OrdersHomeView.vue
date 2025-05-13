@@ -40,6 +40,7 @@ const orders = computed(() => {
 });
 
 const isSettingsDialogOpen = ref(false);
+const browserLocale = window.navigator.language;
 
 let isAcceptingOrder = ref(false);
 const handleAccept = async (orderId: string, storeId: string) => {
@@ -217,7 +218,7 @@ const IS_DEV = import.meta.env.DEV;
                                             </div>
                                             <Button variant="secondary"
                                                     class="w-full text-xl font-bold"
-                                                    @click="printOrder(order)">
+                                                    @click="printOrder(order, browserLocale)">
                                                 <Printer class="mr-1" />
                                                 Print
                                             </Button>
@@ -307,7 +308,7 @@ const IS_DEV = import.meta.env.DEV;
 
                                         <Button variant="secondary"
                                                 size="sm"
-                                                @click="printOrder(order)">
+                                                @click="printOrder(order, browserLocale)">
                                             <Printer class="mr-1" />
                                             Print
                                         </Button>

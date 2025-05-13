@@ -40,7 +40,10 @@ const style = `
 </style>
 `
 
-export const thermalPrinterFormat = (orderDetails: OrderType) => {
+export const thermalPrinterFormat = (
+    orderDetails: OrderType,
+    locale: string | undefined = undefined
+) => {
     const orderedQuantity = () => {
         return orderDetails?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
     };
@@ -110,31 +113,31 @@ export const thermalPrinterFormat = (orderDetails: OrderType) => {
     output += `<hr>`;
     output += `\n`;
     if (orderDetails.cartTotalsJSON) {
-        output += `Subtotal: ${formatCurrency(orderDetails.cartTotalsJSON.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
+        output += `Subtotal: ${formatCurrency(orderDetails.cartTotalsJSON.shownFee, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
     }
 
     if (orderDetails.subtotalJSON?.bestDeliveryZone) {
-        output += `Delivery Fee: ${formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
+        output += `Delivery Fee: ${formatCurrency(orderDetails.subtotalJSON.bestDeliveryZone.shownFee, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
     }
 
     if (orderDetails.subtotalJSON?.calculatedCustomServiceFees?.length) {
         orderDetails.subtotalJSON.calculatedCustomServiceFees.forEach(fee => {
             if (fee.shownFee > 0) {
-                output += `${fee.name}: ${formatCurrency(fee.shownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
+                output += `${fee.name}: ${formatCurrency(fee.shownFee, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
             }
         });
     }
 
     if (orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee > 0) {
-        output += `${orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesName}: ${formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee, orderDetails.taxSettingsJSON?.currency)}\n`;
+        output += `${orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesName}: ${formatCurrency(orderDetails.cartBreakdownJSON.buyerPaysTaxAndFeesShownFee, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
     }
 
     if (orderDetails.cartBreakdownJSON && orderDetails.cartBreakdownJSON.discount > 0) {
-        output += `Discount: -${formatCurrency(orderDetails.cartBreakdownJSON.discount, orderDetails.taxSettingsJSON?.currency)}\n`;
+        output += `Discount: -${formatCurrency(orderDetails.cartBreakdownJSON.discount, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
     }
 
     output += `<hr>`;
-    output += `TOTAL: ${formatCurrency(orderDetails.finalAmount, orderDetails.taxSettingsJSON?.currency)}\n`;
+    output += `TOTAL: ${formatCurrency(orderDetails.finalAmount, orderDetails.taxSettingsJSON?.currency, locale)}\n`;
     output += `<hr>`;
 
     return `<html><body>${style}<pre>${output}</pre></body></html>`;
