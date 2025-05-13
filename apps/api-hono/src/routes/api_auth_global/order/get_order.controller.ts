@@ -9,7 +9,7 @@ import { verifyStripeCheckoutSession_inStripeConnectedAccount } from '@api-hono/
 import { getStoreAutomationRules_Service } from '@db/services/store.service';
 import { saveOrderAfterStipePaymentVerification_Service } from '@db/services/order.transactional.service';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
-
+import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
 export const getOrder_SchemaValidator = zValidator('json', z.object({
     // checkStripePaymentStatus: z.boolean().optional(),
 }))
@@ -88,6 +88,9 @@ export const getOrderRoute = async (
                     :
                     undefined
             );
+            sendNotificationToStore(order.storeId, {
+                orderId
+            });
         }
     }
 

@@ -207,7 +207,7 @@ const IS_DEV = import.meta.env.DEV;
                                             <DialogTitle></DialogTitle>
                                             <DialogDescription />
                                             <div class="flex gap-2 justify-between">
-                                                <Button class="w-full text-xl font-bold"
+                                                <Button class="w-full text-xl font-bold animate__tada"
                                                         :disabled="isAcceptingOrder"
                                                         v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                         @click="handleAccept(order.orderId, order.storeId)">
@@ -226,7 +226,7 @@ const IS_DEV = import.meta.env.DEV;
                                         <ShowOrderView :orderDetails="order" />
 
                                         <div class="flex gap-2 justify-between">
-                                            <Button class="w-full"
+                                            <Button class="w-full animate__tada"
                                                     :disabled="isAcceptingOrder"
                                                     v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED"
                                                     @click="handleAccept(order.orderId, order.storeId)">
@@ -297,6 +297,7 @@ const IS_DEV = import.meta.env.DEV;
                                         <div class="flex gap-2"
                                              v-if="order.orderStatus === ORDER_STATUS_OBJ.CREATED">
                                             <Button size="sm"
+                                                    class="animate__tada"
                                                     :disabled="isAcceptingOrder"
                                                     @click="handleAccept(order.orderId, order.storeId)">
                                                 <CheckCircle class="mr-1" />

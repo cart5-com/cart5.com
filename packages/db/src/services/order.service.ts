@@ -190,7 +190,7 @@ export const getRecentOrders_Service = async (
     storeId: string
 ) => {
     // last 6 hours
-    const sixHoursAgo = new Date(Date.now() - RECENT_ORDERS_TIME_FRAME);
+    const _24HoursAgo = new Date(Date.now() - RECENT_ORDERS_TIME_FRAME);
     // but status can not be PENDING_PAYMENT_AUTHORIZATION
     return await db.query.orderTable.findMany({
         columns: {
@@ -200,7 +200,7 @@ export const getRecentOrders_Service = async (
         },
         where: and(
             eq(orderTable.storeId, storeId),
-            gte(orderTable.created_at_ts, sixHoursAgo.getTime()),
+            gte(orderTable.created_at_ts, _24HoursAgo.getTime()),
             ne(orderTable.orderStatus, ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION)
         ),
         orderBy: [desc(orderTable.created_at_ts)],
