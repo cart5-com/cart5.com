@@ -1,9 +1,12 @@
 import { KNOWN_ERROR } from "@lib/types/errors";
 import { stripe } from "./stripe";
 import { updateOrderStripeData_Service } from "@db/services/order.service";
-import { Stripe } from "stripe";
 import { refundCreate_inStripeConnectedAccount } from "./refundCreate_inStripeConnectedAccount";
 
+/*/
+already canceled orders does not throw error
+already succeeded orders does not throw error, but creates refund
+/*/
 export const cancelPaymentIntent_inStripeConnectedAccount = async (
     orderId: string,
     checkoutSessionId: string | null,
@@ -37,13 +40,34 @@ export const cancelPaymentIntent_inStripeConnectedAccount = async (
         });
     } catch (error) {
         // handle payment_intent_unexpected_state with refundCreate_inStripeConnectedAccount
-        if (error && typeof error === 'object' && 'code' in error && error.code === 'payment_intent_unexpected_state') {
-            console.log("Payment Intent unexpected state, creating refund");
-            console.log(error);
-            console.log(error.code);
+        if (
+            error &&
+            typeof error === 'object' &&
+            'payment_intent' in error &&
+            error.payment_intent &&
+            typeof error.payment_intent === 'object' &&
+            'status' in error.payment_intent &&
+            error.payment_intent.status === 'canceled'
+        ) {
+            console.log("Payment Intent already canceled, ignoring", {
+                orderId,
+                checkoutSessionId,
+                paymentIntentId,
+                storeStripeConnectAccountId,
+            });
+            return null;
+        } else if (
+            error &&
+            typeof error === 'object' &&
+            'payment_intent' in error &&
+            error.payment_intent &&
+            typeof error.payment_intent === 'object' &&
+            'status' in error.payment_intent &&
+            error.payment_intent.status === 'succeeded'
+        ) {
+            // already succeeded, create refund
             return await refundCreate_inStripeConnectedAccount(orderId, checkoutSessionId, paymentIntentId, storeStripeConnectAccountId);
         } else {
-            console.error(error);
             throw error;
         }
     }
