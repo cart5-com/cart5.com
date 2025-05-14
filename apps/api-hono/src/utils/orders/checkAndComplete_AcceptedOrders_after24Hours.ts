@@ -1,4 +1,7 @@
-import { getAcceptedOrders_toCheckAndComplete_after24Hours_Service, completeOrder_Service } from "@db/services/order.service";
+import {
+    getAcceptedOrders_toCheckAndComplete_after24Hours_Service,
+    completeOrder_Service
+} from "@db/services/order/order.auto_complete.service";
 import { capturePaymentIntent_inStripeConnectedAccount } from "../stripe/capturePaymentIntent_inStripeConnectedAccount";
 import { sentrySmol } from "../getSentrySmol";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
@@ -14,7 +17,7 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
             order.isOnlinePaymentVerified &&
             order.paymentId === 'stripe' &&
             order.stripeData &&
-            order.stripeData.paymentIntentId &&
+            (order.stripeData.checkoutSessionId || order.stripeData.paymentIntentId) &&
             order.isOnlinePaymentCaptured !== true
         ) {
             // if online payment, capture the payment and complete the order

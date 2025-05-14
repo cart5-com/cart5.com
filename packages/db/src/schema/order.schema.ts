@@ -79,10 +79,10 @@ export const orderStripeDataTable = sqliteTable("order_stripe_data", {
     ...autoCreatedUpdated,
     orderId: text("order_id").notNull().primaryKey().unique(),
     checkoutSessionId: text("checkout_session_id"),
-    checkoutSessionStatus: text("checkout_session_status"),
+    checkoutSessionStatus: text("checkout_session_status"), // TODO: Do I need this?
     paymentIntentId: text("payment_intent_id"),
-    paymentIntentStatus: text("payment_intent_status"),
-    chargeId: text("charge_id"), // needed for refund the payment // TODO: remove this column we do not need it
+    paymentIntentStatus: text("payment_intent_status"), // TODO: Do I need this?
+    chargeId: text("charge_id"), // needed for refund the payment // TODO: remove this column I do not need it
     storeStripeConnectAccountId: text("store_stripe_connect_account_id"),
 });
 

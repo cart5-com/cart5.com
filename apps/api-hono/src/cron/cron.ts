@@ -5,6 +5,7 @@ import { listAndUploadAllUpdatedStores } from "@db/cache_json/store.cache_json";
 import {
     checkAndComplete_AcceptedOrders_after24Hours
 } from "@api-hono/utils/orders/checkAndComplete_AcceptedOrders_after24Hours";
+import { cancelOldOrders_AbandonedByStore } from "@api-hono/utils/orders/cancelOldOrders_AbandonedByStore";
 
 const runCron = getEnvVariable("RUN_CRON");
 // This is not scalable, but it is ok for now
@@ -53,6 +54,16 @@ export const startCrons = async () => {
         if ((currentMinute - 2) % 5 === 0) {
             try {
                 await listAndUploadAllUpdatedStores();
+                console.log(`Updated store data at ${new Date().toISOString()}`);
+            } catch (error) {
+                console.error("Error updating store data:", error);
+            }
+        }
+
+        // Run every 5 minutes: Cancel old orders
+        if ((currentMinute - 3) % 5 === 0) {
+            try {
+                await cancelOldOrders_AbandonedByStore();
                 console.log(`Updated store data at ${new Date().toISOString()}`);
             } catch (error) {
                 console.error("Error updating store data:", error);
