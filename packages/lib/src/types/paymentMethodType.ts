@@ -4,8 +4,4 @@ export type PaymentMethodType = {
     name: string;
     description?: string;
     icon?: string;
-
-    stripe?: {
-        checkoutSessionId?: string; // for 'stripe' -> checkout.session.id
-    }
 }

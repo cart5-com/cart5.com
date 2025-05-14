@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { orderTable, orderStatusHistoryTable } from "@db/schema/order.schema";
+import { orderTable, orderStatusHistoryTable, orderStripeDataTable } from "@db/schema/order.schema";
 import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
@@ -208,3 +208,27 @@ export const getRecentOrders_Service = async (
     });
 }
 
+
+
+export const getOrderStripeData_Service = async (
+    orderId: string,
+    columns?: Partial<Record<keyof typeof orderStripeDataTable.$inferSelect, boolean>>
+) => {
+    return await db.query.orderStripeDataTable.findFirst({
+        where: eq(orderStripeDataTable.orderId, orderId),
+        columns: columns,
+    });
+}
+
+export const updateOrderStripeData_Service = async (
+    orderId: string,
+    data: Partial<InferInsertModel<typeof orderStripeDataTable>>
+) => {
+    const result = await db.insert(orderStripeDataTable)
+        .values({ ...data, orderId: orderId })
+        .onConflictDoUpdate({
+            target: orderStripeDataTable.orderId,
+            set: data
+        });
+    return result;
+}

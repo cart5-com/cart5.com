@@ -12,6 +12,7 @@ import { getStoreAutomationRules_Service } from '@db/services/store.service';
 import { createCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/createCheckoutSession_inStripeConnectedAccount';
 import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
 import { getLocaleFromAcceptLanguageHeader } from "@lib/utils/getLocaleFromAcceptLanguageHeader";
+import { updateOrderStripeData_Service } from "@db/services/order.service";
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -69,9 +70,11 @@ export const placeOrderRoute = async (c: Context<
             `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`,
             `${host.toLowerCase().replace('www.', '')} ${storeData?.name} #${newOrderId}`
         )
-        order.paymentMethodJSON.stripe = {
+        await updateOrderStripeData_Service(newOrderId, {
+            storeStripeConnectAccountId: storeData?.stripeSettings?.stripeConnectAccountId,
             checkoutSessionId: checkoutSession.id,
-        };
+            checkoutSessionStatus: checkoutSession.status,
+        });
     }
 
     const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);

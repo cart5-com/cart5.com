@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { stripe } from '@api-hono/utils/stripe/stripe'
 import { getEnvVariable } from '@lib/utils/getEnvVariable'
 import { type HonoVariables } from "@api-hono/types/HonoVariables";
-import { getOrderData_Service } from '@db/services/order.service';
+import { getOrderData_Service, updateOrderStripeData_Service } from '@db/services/order.service';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { placeOnlinePaymentOrder, processed_online_payment_order_ids } from '../api_auth_global/order/place_online_payment_order';
 export const stripeWebhook = new Hono<HonoVariables>()
@@ -54,6 +54,18 @@ export const stripeWebhook = new Hono<HonoVariables>()
                         if (order.isOnlinePaymentVerified === true) {
                             // already processed
                             return context.text('', 200)
+                        }
+                        if (
+                            checkoutSessionCompleted.payment_intent &&
+                            typeof checkoutSessionCompleted.payment_intent === 'string'
+                        ) {
+                            await updateOrderStripeData_Service(orderId, {
+                                // storeStripeConnectAccountId: checkoutSessionCompleted.metadata.storeStripeConnectAccountId, // not required we already set it in place_order.controller
+                                checkoutSessionId: checkoutSessionCompleted.id,
+                                checkoutSessionStatus: checkoutSessionCompleted.status,
+                                paymentIntentId: checkoutSessionCompleted.payment_intent,
+                                paymentIntentStatus: 'requires_capture' // as expected i use manual capture so status must be "requires_capture"
+                            });
                         }
                         await placeOnlinePaymentOrder(orderId, order.userId, 'stripe-webhook', undefined, order);
                         break

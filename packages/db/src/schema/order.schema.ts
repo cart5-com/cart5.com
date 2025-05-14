@@ -72,6 +72,16 @@ export const orderTable = sqliteTable("orders", {
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
 });
 
+export const orderStripeDataTable = sqliteTable("order_stripe_data", {
+    ...autoCreatedUpdated,
+    orderId: text("order_id").notNull().primaryKey().unique(),
+    checkoutSessionId: text("checkout_session_id"),
+    checkoutSessionStatus: text("checkout_session_status"),
+    paymentIntentId: text("payment_intent_id"),
+    paymentIntentStatus: text("payment_intent_status"),
+    storeStripeConnectAccountId: text("store_stripe_connect_account_id"),
+});
+
 export const orderStatusHistoryTable = sqliteTable("order_status_history", {
     ...autoCreatedUpdated,
     id: text("id").notNull().primaryKey().unique().$defaultFn(() => generateKey('osh')),

@@ -1,6 +1,9 @@
-import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
-import { getUserOrderData_Service } from "@db/services/order.service";
+import {
+    getUserOrderData_Service,
+    getOrderStripeData_Service,
+    updateOrderStripeData_Service
+} from "@db/services/order.service";
 import { stripe } from "./stripe";
 import type { Stripe } from "stripe";
 
@@ -18,25 +21,25 @@ export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
         if (!order.storeId) {
             throw new KNOWN_ERROR("Store not found", "STORE_NOT_FOUND");
         }
-        const storeData = await getStoreData_CacheJSON(order.storeId);
-        if (!storeData) {
-            throw new KNOWN_ERROR("Store not found", "STORE_NOT_FOUND");
-        }
-        if (!storeData.stripeSettings.stripeConnectAccountId) {
-            throw new KNOWN_ERROR("Store not connected to stripe", "STORE_NOT_CONNECTED_TO_STRIPE");
-        }
         if (order.paymentId !== 'stripe') {
             throw new KNOWN_ERROR("Order not paid with stripe", "ORDER_NOT_PAID_WITH_STRIPE");
         }
-        const checkoutSessionId = order.paymentMethodJSON?.stripe?.checkoutSessionId;
+        const orderStripeData = await getOrderStripeData_Service(order.orderId);
+        const checkoutSessionId = orderStripeData?.checkoutSessionId;
         if (!checkoutSessionId) {
             throw new KNOWN_ERROR("Checkout session ID not found", "CHECKOUT_SESSION_ID_NOT_FOUND");
+        }
+        if (!orderStripeData.storeStripeConnectAccountId) {
+            throw new KNOWN_ERROR(
+                "Store stripe connect account ID not found",
+                "STORE_STRIPE_CONNECT_ACCOUNT_ID_NOT_FOUND"
+            );
         }
         stripeCheckoutSession = await stripe.checkout.sessions.retrieve(
             checkoutSessionId,
             {},
             {
-                stripeAccount: storeData.stripeSettings.stripeConnectAccountId
+                stripeAccount: orderStripeData.storeStripeConnectAccountId
             }
         );
         const paymentIntentId = stripeCheckoutSession.payment_intent;
@@ -55,7 +58,11 @@ export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
         // }
         if (paymentIntentId && typeof paymentIntentId === 'string') {
             paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId, {}, {
-                stripeAccount: storeData.stripeSettings.stripeConnectAccountId
+                stripeAccount: orderStripeData.storeStripeConnectAccountId
+            });
+            await updateOrderStripeData_Service(order.orderId, {
+                paymentIntentId: paymentIntentId,
+                paymentIntentStatus: paymentIntent.status
             });
             // canceled
             // processing
@@ -80,7 +87,7 @@ export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
             if (paymentIntent.status === 'requires_payment_method') {
                 throw new KNOWN_ERROR("Payment intent requires payment method", "PAYMENT_INTENT_REQUIRES_PAYMENT_METHOD");
             }
-            // if (paymentIntent.status === 'requires_capture') {
+            // if (paymentIntent.status === 'requires_capture') { // as expected i use manual capture so status must be "requires_capture"
             //     throw new KNOWN_ERROR("Payment intent requires capture", "PAYMENT_INTENT_REQUIRES_CAPTURE");
             // }
             // if (paymentIntent.status === 'succeeded') {
@@ -89,14 +96,14 @@ export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
         }
         return {
             stripeCheckoutSession,
-            // paymentIntent,
+            paymentIntent,
             error: null as ErrorType
         }
     } catch (error) {
         if (error instanceof KNOWN_ERROR) {
             return {
                 stripeCheckoutSession,
-                // paymentIntent,
+                paymentIntent,
                 error: error
             }
         } else {

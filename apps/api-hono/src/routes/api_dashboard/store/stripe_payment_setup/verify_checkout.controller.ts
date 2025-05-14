@@ -69,7 +69,7 @@ export const verifyCheckout_Handler = async (c: Context<
                 capture_method: 'manual',
             });
 
-
+            // as expected i use manual capture so status must be "requires_capture"
             if (paymentIntent.status !== 'requires_capture') {
                 throw new KNOWN_ERROR(
                     "Stripe payment intent is not succeeded",
