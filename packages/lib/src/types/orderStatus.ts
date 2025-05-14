@@ -4,9 +4,9 @@ export const ORDER_STATUS = [
     "PENDING_PAYMENT_AUTHORIZATION",   // Initial state when online paid order is created // DO NOT SHOW IN STORE ORDERS UI
     "CREATED",           // created by customer
     "ACCEPTED",         // Order is accepted by store and being prepared 
-    // TODO: mark all "ACCEPTED" orders as "COMPLETED" after 4 hours
-    "COMPLETED",         // Order completed
-    // TODO: archive all "COMPLETED" orders after 24 hours
+
+    // TODO: mark all "ACCEPTED" orders as "COMPLETED" after 24 hours
+    "COMPLETED_BY_SYSTEM",         // only system can complete an order
 
     "CANCELLED",         // Order was cancelled by store
     // user is not allow to cancel. but may call the store to cancel

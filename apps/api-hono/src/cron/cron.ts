@@ -36,6 +36,7 @@ export const startCrons = async () => {
             }
         }
 
+        // Run every 5 minutes: Update store data if changed
         if ((currentMinute - 2) % 5 === 0) {
             try {
                 await listAndUploadAllUpdatedStores();

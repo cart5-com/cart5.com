@@ -81,6 +81,7 @@ export const orderStripeDataTable = sqliteTable("order_stripe_data", {
     checkoutSessionStatus: text("checkout_session_status"),
     paymentIntentId: text("payment_intent_id"),
     paymentIntentStatus: text("payment_intent_status"),
+    chargeId: text("charge_id"), // needed for refund the payment
     storeStripeConnectAccountId: text("store_stripe_connect_account_id"),
 });
 

@@ -400,6 +400,13 @@
       "when": 1747198674267,
       "tag": "0056_charming_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "6",
+      "when": 1747244178965,
+      "tag": "0057_glamorous_legion",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE `order_stripe_data` ADD `charge_id` text;
