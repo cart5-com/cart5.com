@@ -8,7 +8,7 @@ import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { verifyStripeCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/verifyStripeCheckoutSession_inStripeConnectedAccount';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { getLocaleFromAcceptLanguageHeader } from '@lib/utils/getLocaleFromAcceptLanguageHeader';
-import { placeOnlineOrder } from './place_online_order';
+import { placeOnlinePaymentOrder } from './place_online_payment_order';
 
 
 export const getOrder_SchemaValidator = zValidator('json', z.object({
@@ -58,7 +58,7 @@ export const getOrderRoute = async (
         stripeCheckoutSessionUrl = stripeCheckoutSession?.url ?? undefined;
         stripeError = error;
         if (!error) {
-            order = await placeOnlineOrder(orderId, user.id, ipAddress, locale, order);
+            order = await placeOnlinePaymentOrder(orderId, user.id, ipAddress, locale, order);
         } else {
             // showing order with payment link
         }

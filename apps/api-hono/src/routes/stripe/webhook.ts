@@ -4,7 +4,7 @@ import { getEnvVariable } from '@lib/utils/getEnvVariable'
 import { type HonoVariables } from "@api-hono/types/HonoVariables";
 import { getOrderData_Service } from '@db/services/order.service';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
-import { placeOnlineOrder, processed_online_payment_order_ids } from '../api_auth_global/order/place_online_order';
+import { placeOnlinePaymentOrder, processed_online_payment_order_ids } from '../api_auth_global/order/place_online_payment_order';
 export const stripeWebhook = new Hono<HonoVariables>()
     // .get(
     //     '/',
@@ -55,7 +55,7 @@ export const stripeWebhook = new Hono<HonoVariables>()
                             // already processed
                             return context.text('', 200)
                         }
-                        await placeOnlineOrder(orderId, order.userId, 'stripe-webhook', undefined, order);
+                        await placeOnlinePaymentOrder(orderId, order.userId, 'stripe-webhook', undefined, order);
                         break
                     }
                     default:

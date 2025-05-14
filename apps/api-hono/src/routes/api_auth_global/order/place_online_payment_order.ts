@@ -7,7 +7,7 @@ import { getOrderData_Service } from '@db/services/order.service';
 
 export const processed_online_payment_order_ids: Record<string, boolean> = {};
 
-export const placeOnlineOrder = async (
+export const placeOnlinePaymentOrder = async (
     orderId: string,
     userId: string,
     ipAddress?: string,
