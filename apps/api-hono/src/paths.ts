@@ -7,5 +7,5 @@ export const paths = {
     orders: '/orders',
     autoprint_pairing: '/autoprint_pairing',
     autoprint_tasks: '/autoprint_tasks',
-    stripe: '/stripe'
+    stripe_webhook: '/stripe/webhook'
 }

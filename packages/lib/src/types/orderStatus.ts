@@ -31,5 +31,25 @@ export const ORDER_STATUS_OBJ = ORDER_STATUS.reduce((acc, status) => {
 // all other payment methods are "CREATED" by default
 
 // store orders view is showing only last 24 hours orders (order.service -> getRecentOrders_Service)
-// TODO: all "CREATED" orders expected to be "ACCEPTED" in 20 minutes (by a user or automatic rule), 
+// TODO: all "CREATED" orders expected to be "ACCEPTED" in 25 minutes (by a user or automatic rule), 
 // else order must be "CANCELLED" and notify the customer
+
+
+/*/
+== Status types from Stripe ==
+
+type PaymentIntentStatus =
+        | 'canceled'
+        | 'processing'
+        | 'requires_action'
+        | 'requires_capture'
+        | 'requires_confirmation'
+        | 'requires_payment_method'
+        | 'succeeded';
+
+type CheckoutSessionStatus = 'complete' | 'expired' | 'open';
+
+type CheckoutSessionPaymentStatus = 'no_payment_required' | 'paid' | 'unpaid'; 
+// I use manual capture so CheckoutSessionPaymentStatus is "unpaid" after checkout session status is "complete"
+
+/*/

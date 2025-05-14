@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
 		"dev:caddy": "dotenvx run -f .env -f .env.dev.secrets -- tsx watch src/index.ts",
+		"dev:caddy:stripe": "dotenvx run -f .env.dev.secrets -- bash -c 'stripe listen --api-key $STRIPE_SECRET_KEY --events checkout.session.completed --skip-verify --forward-connect-to https://www.cart5dev.com/__p_api/stripe/webhook'",
 		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"builddev": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"

@@ -3,6 +3,7 @@ import { relations } from 'drizzle-orm';
 import { autoCreatedUpdated } from "./helpers/auto-created-updated";
 import { ORDER_TYPE } from "@lib/types/orderType";
 import { ORDER_STATUS, ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
+import { ORDER_STATUS_CHANGED_BY } from "@lib/types/orderStatusChangedByEnum";
 import { generateKey } from "@lib/utils/generateKey";
 import { generateNumberOnlyOtp } from "@api-hono/utils/generateRandomOtp";
 import type { OrderedItemsType } from "@lib/types/orderedItemsType";
@@ -17,7 +18,10 @@ import { createSelectSchema } from "drizzle-zod";
 import type { EstimatedTime } from "@lib/zod/deliverySchema";
 
 export const orderTable = sqliteTable("orders", {
-    ...autoCreatedUpdated,
+    ...autoCreatedUpdated, // created_at_ts is the visible one I changed it once online payment verified.
+    real_created_at_ts: integer("real_created_at_ts")
+        .notNull().default(0).$defaultFn(() => Date.now()), // TODO: remove default when sql remove
+
     orderId: text("order_id").notNull().primaryKey().unique().$defaultFn(() => generateKey('ord')),
     shortOtp: text("short_otp").notNull().$defaultFn(() => generateNumberOnlyOtp(6)),
 
@@ -76,7 +80,7 @@ export const orderStatusHistoryTable = sqliteTable("order_status_history", {
     // Status Information
     newStatus: text("new_status", { enum: ORDER_STATUS }).notNull(),
     // Change Information
-    type: text("type", { enum: ["user", "automatic_rule", "system"] }),
+    type: text("type", { enum: ORDER_STATUS_CHANGED_BY }),
     changedByUserId: text("changed_by_user_id"),
     changedByIpAddress: text("changed_by_ip_address"),
 

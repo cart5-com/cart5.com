@@ -63,17 +63,20 @@ const orderedQuantity = () => {
     <div class="max-w-lg mx-auto w-full">
         <Card class="my-4">
             <CardContent class="p-4">
-                <h2 class="text-xl font-bold mb-2">Order #{{ orderDetails.shortOtp }}</h2>
-                <div class="text-sm text-muted-foreground">
-                    <Clock class="inline-block mr-1 h-4 w-4" />
-                    Placed on {{ formatDate(orderDetails.created_at_ts) }}
-                </div>
-                <div class="mt-2 text-md font-medium">
+                <h2 class="text-xl font-bold m-1">Order #{{ orderDetails.shortOtp }}</h2>
+                <div class="m-1 text-md font-medium">
                     Status: <span
                           class="capitalize font-bold border border-muted-foreground rounded-md px-2 py-1">{{ orderDetails.orderStatus.toLowerCase() }}</span>
                 </div>
+                <span class="text-xs border border-foreground p-1 rounded-md inline-block m-1">
+                    MarketingChannel: {{ orderDetails.websiteDefaultHostname }}
+                </span>
+                <div class="text-sm text-muted-foreground m-1">
+                    <Clock class="inline-block mr-1 h-4 w-4" />
+                    Placed on {{ formatDate(orderDetails.created_at_ts, undefined, true) }}
+                </div>
                 <div v-if="orderDetails.estimatedTimeJSON"
-                     class="text-sm text-muted-foreground mt-1">
+                     class="text-sm text-muted-foreground m-1">
                     <Clock class="inline-block mr-1 h-4 w-4" />
                     {{ estimatedTimeText1(orderDetails.orderType!, orderDetails.estimatedTimeJSON) }}
                 </div>
@@ -308,6 +311,13 @@ const orderedQuantity = () => {
                 {{ status.newStatus }}
                 <br>
                 {{ formatDate(status.created_at_ts, undefined, true) }}
+                <br>
+                <details>
+                    <summary>
+                        more
+                    </summary>
+                    <pre>{{ status }}</pre>
+                </details>
             </div>
         </details>
     </div>

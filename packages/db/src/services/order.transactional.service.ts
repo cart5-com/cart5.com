@@ -9,6 +9,7 @@ import { generateKey } from "@lib/utils/generateKey";
 import { thermalPrinterFormat } from "@lib/utils/printerFormat";
 import { sendNotificationToTaskListenerDevice } from "@api-hono/routes/api_autoprint_tasks/listen_tasks.controller";
 import { KNOWN_ERROR } from "@lib/types/errors";
+import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";
 
 export const saveOrderDataTransactional_Service = async (
     orderId: string,
@@ -17,14 +18,14 @@ export const saveOrderDataTransactional_Service = async (
         newStatus: OrderStatus,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type: 'user' | 'automatic_rule' | 'system',
+        type: OrderStatusChangedByType,
         metaData?: Record<string, any>
     },
     acceptParams?: {
         storeId: string,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type?: 'user' | 'automatic_rule' | 'system'
+        type?: OrderStatusChangedByType
     },
     autoPrintParams?: {
         storeId: string,
@@ -67,14 +68,14 @@ export const saveOrderAfterStipePaymentVerification_Service = async (
         newStatus: OrderStatus,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type: 'user' | 'automatic_rule' | 'system',
+        type: OrderStatusChangedByType,
         metaData?: Record<string, any>
     },
     acceptParams?: {
         storeId: string,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type?: 'user' | 'automatic_rule' | 'system'
+        type?: OrderStatusChangedByType
     },
     autoPrintParams?: {
         storeId: string,
@@ -116,7 +117,7 @@ export const handleStatusChange_Service = async (
         newStatus: OrderStatus,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type: 'user' | 'automatic_rule' | 'system',
+        type: OrderStatusChangedByType,
         metaData?: Record<string, any>
     },
 ) => {
@@ -179,7 +180,7 @@ export const handleAutoAcceptOrder_Service = async (
         storeId: string,
         changedByUserId?: string,
         changedByIpAddress?: string,
-        type?: 'user' | 'automatic_rule' | 'system'
+        type?: OrderStatusChangedByType
     }
 ) => {
     if (acceptParams) {

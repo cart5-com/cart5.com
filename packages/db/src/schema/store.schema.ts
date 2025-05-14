@@ -218,6 +218,7 @@ export const updateStorePaymentMethodsSchema = createUpdateSchema(storePaymentMe
 
 
 
+// TODO: add a table to store notification emails for orders and alerts etc..
 
 
 

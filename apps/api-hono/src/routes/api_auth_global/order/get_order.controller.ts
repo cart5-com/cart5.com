@@ -6,11 +6,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { verifyStripeCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/verifyStripeCheckoutSession_inStripeConnectedAccount';
-import { getStoreAutomationRules_Service } from '@db/services/store.service';
-import { saveOrderAfterStipePaymentVerification_Service } from '@db/services/order.transactional.service';
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
-import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
 import { getLocaleFromAcceptLanguageHeader } from '@lib/utils/getLocaleFromAcceptLanguageHeader';
+import { placeOnlineOrder } from './place_online_order';
 
 
 export const getOrder_SchemaValidator = zValidator('json', z.object({
@@ -38,66 +36,33 @@ export const getOrderRoute = async (
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
     }
     // TODO: should I select only userId to check permission/ then select all fields?
-    const order = await getUserOrderData_Service(orderId, user.id);
+    let order = await getUserOrderData_Service(orderId, user.id);
     if (!order) {
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     }
     if (order.userId !== user.id) {
         throw new KNOWN_ERROR("Permission denied", "PERMISSION_DENIED");
     }
+
     const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
     const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);
+
     let stripeCheckoutSessionUrl: string | undefined = undefined;
     let stripeError: ErrorType | undefined = undefined;
     if (
         order.orderStatus === ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION &&
         order.isOnlinePaymentVerified !== true
     ) {
+        // once payment is verified, this block will not be executed
         const { stripeCheckoutSession, error } = await verifyStripeCheckoutSession_inStripeConnectedAccount(order);
         stripeCheckoutSessionUrl = stripeCheckoutSession?.url ?? undefined;
         stripeError = error;
         if (!error) {
-            order.orderStatus = ORDER_STATUS_OBJ.CREATED;
-            order.isOnlinePaymentVerified = true;
-            order.created_at_ts = Date.now();
-            // means success
-            const storeAutomationRules = await getStoreAutomationRules_Service(order.storeId, {
-                autoAcceptOrders: true,
-                autoPrintRules: true
-            });
-            await saveOrderAfterStipePaymentVerification_Service(
-                orderId,
-                order,
-                {
-                    newStatus: order.orderStatus,
-                    changedByUserId: user.id,
-                    changedByIpAddress: ipAddress,
-                    type: 'user',
-                },
-                (storeAutomationRules?.autoAcceptOrders) ?
-                    {
-                        storeId: order.storeId,
-                        changedByUserId: undefined,
-                        changedByIpAddress: undefined,
-                        type: 'automatic_rule'
-                    }
-                    :
-                    undefined,
-                (storeAutomationRules?.autoPrintRules) ?
-                    {
-                        storeId: order.storeId,
-                        autoPrintRules: storeAutomationRules.autoPrintRules
-                    }
-                    :
-                    undefined,
-                locale
-            );
-            sendNotificationToStore(order.storeId, {
-                orderId
-            });
+            order = await placeOnlineOrder(orderId, user.id, ipAddress, locale, order);
+        } else {
+            // showing order with payment link
         }
     }
-
     return c.json({
         data: {
             order,

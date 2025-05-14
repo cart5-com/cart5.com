@@ -87,7 +87,6 @@ const loadData = async () => {
         console.error(error);
         toast.error(error.message ?? "An unknown error occurred");
     } else {
-        console.log(data);
         orderDetails.value = data.order;
         stripeCheckoutSessionUrl.value = data.stripeCheckoutSessionUrl;
         stripeError.value = data.stripeError;

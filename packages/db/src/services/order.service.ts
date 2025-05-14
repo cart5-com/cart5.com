@@ -3,6 +3,7 @@ import { orderTable, orderStatusHistoryTable } from "@db/schema/order.schema";
 import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
+import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";
 
 export const logOrderStatusChange_Service = async ({
     orderId,
@@ -16,7 +17,7 @@ export const logOrderStatusChange_Service = async ({
     newStatus: OrderStatus;
     changedByUserId?: string;
     changedByIpAddress?: string;
-    type: 'user' | 'automatic_rule' | 'system';
+    type: OrderStatusChangedByType;
     metaData?: Record<string, any>;
 }) => {
     return await db.insert(orderStatusHistoryTable).values({
@@ -72,7 +73,7 @@ export const acceptOrder_Service = async (
     orderId: string,
     changedByUserId?: string,
     changedByIpAddress?: string,
-    type: 'user' | 'automatic_rule' | 'system' = 'user',
+    type: OrderStatusChangedByType = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.ACCEPTED;
 
@@ -108,7 +109,7 @@ export const completeOrder_Service = async (
     orderId: string,
     changedByUserId?: string,
     changedByIpAddress?: string,
-    type: 'user' | 'automatic_rule' | 'system' = 'user',
+    type: OrderStatusChangedByType = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.COMPLETED;
 
@@ -144,7 +145,7 @@ export const cancelOrder_Service = async (
     orderId: string,
     changedByUserId?: string,
     changedByIpAddress?: string,
-    type: 'user' | 'automatic_rule' | 'system' = 'user',
+    type: OrderStatusChangedByType = 'user',
 ) => {
     const newStatus = ORDER_STATUS_OBJ.CANCELLED;
 

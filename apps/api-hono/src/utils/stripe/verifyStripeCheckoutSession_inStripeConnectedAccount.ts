@@ -6,7 +6,9 @@ import type { Stripe } from "stripe";
 
 type orderType = Awaited<ReturnType<typeof getUserOrderData_Service>>
 
-export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (order: orderType) => {
+export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
+    order: orderType
+) => {
     let stripeCheckoutSession: Stripe.Checkout.Session | null = null;
     let paymentIntent: Stripe.PaymentIntent | null = null;
     try {
