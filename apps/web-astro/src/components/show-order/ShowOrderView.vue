@@ -427,8 +427,9 @@ const reorder = async () => {
                     </div>
                 </div>
                 <!-- Reorder -->
-                <Button class="w-full mb-4"
+                <Button class="w-full mb-4 text-lg font-bold cursor-pointer"
                         :disabled="isReordering"
+                        size="lg"
                         v-if="orderDetails.currentCartJSON"
                         @click="reorder">
                     <span v-if="isReordering">
@@ -439,9 +440,10 @@ const reorder = async () => {
                 <!-- Store link -->
                 <Button variant="outline"
                         as="a"
+                        size="lg"
                         :href="BASE_LINKS.STORE(orderDetails.storeId, slugify(orderDetails.storeName), orderDetails.orderType!)"
-                        class="w-full mr-4">
-                    Sold by '{{ orderDetails.storeName }}'
+                        class="w-full mr-4 text-lg font-bold">
+                    View store: '{{ orderDetails.storeName.substring(0, 22) }}'
                 </Button>
                 <div class="text-xs text-muted-foreground my-4"
                      v-if="orderDetails?.isOnlinePayment">
