@@ -53,9 +53,9 @@ export const placeOrderRoute = async (c: Context<
         if (!order.taxSettingsJSON?.currency) {
             throw new KNOWN_ERROR("Store currency not set", "STORE_CURRENCY_NOT_SET");
         }
-        const domain = host.toLowerCase().replace('www.', '').substring(0, 10) || '';
+        const domain = host.toLowerCase().replace('www.', '').substring(0, 11) || '';
         const storeName = storeData?.name?.substring(0, 10) || '';
-        const orderIdShort = newOrderId.substring(4) || '';
+        const orderIdShort = order.shortOtp || '';
 
         checkoutSession = await createCheckoutSession_inStripeConnectedAccount(
             `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-success`,
@@ -69,10 +69,10 @@ export const placeOrderRoute = async (c: Context<
             storeData?.stripeSettings?.stripeConnectAccountId,
             order.taxSettingsJSON?.currency,
             order.finalAmount,
-            `${domain} ${storeName} #${orderIdShort}`,
+            `${domain} ${storeName} ${orderIdShort}`,
             1,
-            `${domain} ${storeName} #${orderIdShort}`,
-            `${domain} ${storeName} #${orderIdShort}`
+            `${domain} ${storeName} ${orderIdShort}`,
+            `${domain} ${storeName} ${orderIdShort}`
         )
         await updateOrderStripeData_Service(newOrderId, {
             storeStripeConnectAccountId: storeData?.stripeSettings?.stripeConnectAccountId,
