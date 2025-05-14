@@ -103,9 +103,13 @@ export const orderStatusHistoryTable = sqliteTable("order_status_history", {
 export const selectOrderSchema = createSelectSchema(orderTable);
 
 export const orderRelations = relations(orderTable, ({
-    // one,
+    one,
     many
 }) => ({
+    stripeData: one(orderStripeDataTable, {
+        fields: [orderTable.orderId],
+        references: [orderStripeDataTable.orderId],
+    }),
     statusHistory: many(orderStatusHistoryTable),
 }));
 
