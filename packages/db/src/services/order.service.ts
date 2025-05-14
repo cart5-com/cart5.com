@@ -1,6 +1,6 @@
 import db from "@db/drizzle";
 import { orderTable, orderStatusHistoryTable, orderStripeDataTable } from "@db/schema/order.schema";
-import { and, desc, eq, gte, inArray, lt, ne } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
 import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";

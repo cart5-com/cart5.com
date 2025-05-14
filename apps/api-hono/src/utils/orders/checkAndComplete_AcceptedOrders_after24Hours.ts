@@ -22,15 +22,12 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
         ) {
             // if online payment, capture the payment and complete the order
             try {
-                const paymentIntent = await capturePaymentIntent_inStripeConnectedAccount(
+                await capturePaymentIntent_inStripeConnectedAccount(
                     order.orderId,
                     order.stripeData.checkoutSessionId,
                     order.stripeData.paymentIntentId,
                     order.stripeData.storeStripeConnectAccountId
                 );
-                if (paymentIntent.status !== 'succeeded') {
-                    throw new KNOWN_ERROR("Payment intent status is not succeeded", "PAYMENT_INTENT_STATUS_NOT_SUCCEEDED");
-                }
                 await completeOrder_Service(order.orderId, true);
 
                 // slow down to avoid rate limits. max 100 per second

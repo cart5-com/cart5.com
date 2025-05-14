@@ -2,6 +2,10 @@ import { KNOWN_ERROR } from "@lib/types/errors";
 import { stripe } from "./stripe";
 import { updateOrderStripeData_Service } from "@db/services/order.service";
 
+
+/*/
+already captured orders does not throw error
+/*/
 export const capturePaymentIntent_inStripeConnectedAccount = async (
     orderId: string,
     checkoutSessionId: string | null,
@@ -27,14 +31,50 @@ export const capturePaymentIntent_inStripeConnectedAccount = async (
             paymentIntentId: paymentIntentId,
         });
     }
-    return await stripe.paymentIntents.capture(paymentIntentId, {
-        metadata: {
-            orderId: orderId,
-            checkoutSessionId: checkoutSessionId,
-            paymentIntentId: paymentIntentId,
-            storeStripeConnectAccountId: storeStripeConnectAccountId,
-        },
-    }, {
-        stripeAccount: storeStripeConnectAccountId,
-    });
+    try {
+        return await stripe.paymentIntents.capture(paymentIntentId, {
+            metadata: {
+                orderId: orderId,
+                checkoutSessionId: checkoutSessionId,
+                paymentIntentId: paymentIntentId,
+                storeStripeConnectAccountId: storeStripeConnectAccountId,
+            },
+        }, {
+            stripeAccount: storeStripeConnectAccountId,
+        });
+    } catch (error) {
+        if (error &&
+            typeof error === 'object' &&
+            'payment_intent' in error &&
+            error.payment_intent &&
+            typeof error.payment_intent === 'object' &&
+            'status' in error.payment_intent &&
+            error.payment_intent.status === 'succeeded' &&
+            'latest_charge' in error.payment_intent
+        ) {
+            const charge = await stripe.charges.retrieve(error.payment_intent.latest_charge as string, {
+                stripeAccount: storeStripeConnectAccountId,
+            });
+            if (!charge.refunded) {
+                // already captured
+                console.log("Payment Intent already captured, ignoring", {
+                    orderId,
+                    checkoutSessionId,
+                    paymentIntentId,
+                    storeStripeConnectAccountId,
+                });
+                return null;
+            } else {
+                console.log("unexpected capturePaymentIntent becuase it was already refunded❌!", {
+                    orderId,
+                    checkoutSessionId,
+                    paymentIntentId,
+                    storeStripeConnectAccountId,
+                });
+                throw error;
+            }
+        } else {
+            throw error;
+        }
+    }
 }
