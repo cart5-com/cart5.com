@@ -53,9 +53,9 @@ export const placeOrderRoute = async (c: Context<
         if (!order.taxSettingsJSON?.currency) {
             throw new KNOWN_ERROR("Store currency not set", "STORE_CURRENCY_NOT_SET");
         }
-        const domain = host.toLowerCase().replace('www.', '').split('.')[0].substring(0, 10); // Get first part of domain
-        const storeName = storeData?.name?.substring(0, 10) || ''; // Limit store name length
-        const orderIdShort = newOrderId.substring(4); // Remove 'ord' prefix
+        const domain = host.toLowerCase().replace('www.', '').substring(0, 10) || '';
+        const storeName = storeData?.name?.substring(0, 10) || '';
+        const orderIdShort = newOrderId.substring(4) || '';
 
         checkoutSession = await createCheckoutSession_inStripeConnectedAccount(
             `https://${host}${STORE_FRONT_LINKS.SHOW_ORDER(newOrderId)}#stripe-success`,
