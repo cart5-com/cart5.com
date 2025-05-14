@@ -60,6 +60,7 @@ export const orderTable = sqliteTable("orders", {
     paymentId: text("payment_id").notNull(),
     isOnlinePayment: integer("is_online_payment", { mode: "boolean" }).notNull().default(false),
     isOnlinePaymentVerified: integer("is_online_payment_verified", { mode: "boolean" }),
+    isOnlinePaymentCaptured: integer("is_online_payment_captured", { mode: "boolean" }),
     finalAmount: real("final_amount").notNull(),
 
     // JSON Data
@@ -81,7 +82,7 @@ export const orderStripeDataTable = sqliteTable("order_stripe_data", {
     checkoutSessionStatus: text("checkout_session_status"),
     paymentIntentId: text("payment_intent_id"),
     paymentIntentStatus: text("payment_intent_status"),
-    chargeId: text("charge_id"), // needed for refund the payment
+    chargeId: text("charge_id"), // needed for refund the payment // TODO: remove this column we do not need it
     storeStripeConnectAccountId: text("store_stripe_connect_account_id"),
 });
 

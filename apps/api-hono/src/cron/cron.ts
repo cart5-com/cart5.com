@@ -2,6 +2,9 @@ import { getEnvVariable } from "@lib/utils/getEnvVariable";
 import { deleteExpiredSessionsService } from "@db/services/session.service";
 import { cfPurgeAllEdgeCache } from "@lib/upload/r2actions";
 import { listAndUploadAllUpdatedStores } from "@db/cache_json/store.cache_json";
+import {
+    checkAndComplete_AcceptedOrders_after24Hours
+} from "@api-hono/utils/orders/checkAndComplete_AcceptedOrders_after24Hours";
 
 const runCron = getEnvVariable("RUN_CRON");
 // This is not scalable, but it is ok for now
@@ -36,6 +39,16 @@ export const startCrons = async () => {
             }
         }
 
+        // Run every 15 minutes: Check and complete orders
+        if ((currentMinute - 9) % 15 === 0) {
+            try {
+                await checkAndComplete_AcceptedOrders_after24Hours();
+                console.log(`Checked and completed orders at ${new Date().toISOString()}`);
+            } catch (error) {
+                console.error("Error checking and completing orders:", error);
+            }
+        }
+
         // Run every 5 minutes: Update store data if changed
         if ((currentMinute - 2) % 5 === 0) {
             try {
@@ -51,3 +64,6 @@ export const startCrons = async () => {
     setInterval(runEveryMinute, 60_000);
 
 }
+
+// TODO: do I need to run this manually at start?
+checkAndComplete_AcceptedOrders_after24Hours();

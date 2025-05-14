@@ -105,22 +105,19 @@ export const acceptOrder_Service = async (
 
 // only system can complete an order
 export const completeOrder_Service = async (
-    storeId: string,
     orderId: string,
-    changedByUserId?: string,
-    changedByIpAddress?: string,
-    type: OrderStatusChangedByType = 'system',
+    isOnlinePaymentCaptured: boolean | undefined = undefined,
 ) => {
     const newStatus = ORDER_STATUS_OBJ.COMPLETED_BY_SYSTEM;
 
     // Update order status
     const result = await db.update(orderTable).set({
         orderStatus: newStatus,
+        isOnlinePaymentCaptured: isOnlinePaymentCaptured,
     })
         .where(
             and(
                 eq(orderTable.orderId, orderId),
-                eq(orderTable.storeId, storeId),
                 eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED)
             )
         );
@@ -130,9 +127,9 @@ export const completeOrder_Service = async (
         await logOrderStatusChange_Service({
             orderId,
             newStatus,
-            changedByUserId,
-            changedByIpAddress,
-            type,
+            changedByUserId: undefined,
+            changedByIpAddress: undefined,
+            type: 'system',
         });
     }
 
@@ -208,7 +205,7 @@ export const getRecentOrders_Service = async (
     });
 }
 
-export const getAcceptedOrders_toCheckAndComplete_Service = async (
+export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
     timeFrame: number = 60 * 60 * 1000 * 24, // 24 hours
     limit: number = 300
 ) => {
@@ -218,6 +215,7 @@ export const getAcceptedOrders_toCheckAndComplete_Service = async (
             orderId: true,
             paymentId: true,
             isOnlinePaymentVerified: true,
+            isOnlinePaymentCaptured: true,
         },
         where: and(
             eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED),
@@ -226,7 +224,9 @@ export const getAcceptedOrders_toCheckAndComplete_Service = async (
         with: {
             stripeData: {
                 columns: {
+                    checkoutSessionId: true,
                     paymentIntentId: true,
+                    storeStripeConnectAccountId: true,
                 },
             },
         },

@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `is_online_payment_captured` integer;
