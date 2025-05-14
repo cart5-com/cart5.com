@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `current_cart_json` text;

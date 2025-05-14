@@ -19,6 +19,7 @@ export const currentWebsiteCarts = computed(() => {
 export const genCartId = (storeId: string) => {
     return generateCartId(window.location.host, storeId);
 }
+
 export const getCartByStoreId = (storeId: string) => {
     const hostAndStoreId = genCartId(storeId);
     if (!userDataStore.value?.userData?.carts) {

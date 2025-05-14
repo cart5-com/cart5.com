@@ -47,7 +47,7 @@ export type CartItem = z.infer<typeof cartItemSchema>;
 // Cart schema
 export const cartSchema = z.object({
     storeId: z.string().optional(),
-    host: z.string().optional(),
+    // host: z.string().optional(),
     lastUpdatedTS: z.number().optional(),
     storeName: z.string().optional(),
     storeAddress1: z.string().optional(),

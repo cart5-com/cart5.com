@@ -3,7 +3,7 @@ import { authGlobalApiClient } from "@api-client/auth_global";
 import type { ResType } from '@api-client/typeUtils';
 import { toast } from "@/ui-plus/sonner";
 import { onMounted, ref } from "vue";
-import { isUserDataReady, userDataStore, waitUntilUserDataReady } from "@web-astro/stores/UserData.store";
+import { handleDataChangeNow, isUserDataReady, userDataStore, waitUntilUserDataReady } from "@web-astro/stores/UserData.store";
 import UserMenu from "@web-astro/components/user/UserMenu.vue";
 import { BASE_LINKS } from "@web-astro/utils/links";
 import { slugify } from "@lib/utils/slugify";
@@ -31,6 +31,7 @@ import { MapPin, House, Building, Hotel, Bed, Factory, BriefcaseBusiness, School
 import MapEmbed from "@web-astro/components/MapEmbed.vue";
 import { estimatedTimeText1 } from "@lib/utils/estimatedTimeText";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
+import { genCartId } from "@web-astro/stores/UserDataCartHelpers";
 const icons = [
     { name: 'MapPin', component: MapPin },
     { name: 'House', component: House },
@@ -105,6 +106,30 @@ onMounted(async () => {
 const orderedQuantity = () => {
     return orderDetails.value?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
 };
+
+const isReordering = ref(false);
+const reorder = async () => {
+    if (orderDetails.value?.currentCartJSON && orderDetails.value?.currentCartJSON.storeId) {
+        isReordering.value = true;
+        const hostAndStoreId = genCartId(orderDetails.value?.currentCartJSON.storeId)
+        if (!userDataStore.value?.userData?.carts) {
+            userDataStore.value!.userData!.carts = {};
+        }
+        (userDataStore.value as any).ignoreAutoDebounceSave = true;
+
+        userDataStore.value!.userData!.carts![hostAndStoreId] = JSON.parse(JSON.stringify(orderDetails.value?.currentCartJSON))
+        userDataStore.value!.userData!.carts![hostAndStoreId]!.lastUpdatedTS = Date.now();
+        await handleDataChangeNow(userDataStore.value);
+        (userDataStore.value as any).ignoreAutoDebounceSave = false;
+
+        window.location.href = `${BASE_LINKS.STORE(orderDetails.value?.currentCartJSON!.storeId ?? '', slugify(orderDetails.value?.currentCartJSON!.storeName ?? ''), orderDetails.value?.orderType ?? 'delivery')}#open-cart`;
+
+        isReordering.value = false;
+    } else {
+        toast.error("cart info not found");
+        isReordering.value = false;
+    }
+}
 
 </script>
 <template>
@@ -259,10 +284,9 @@ const orderedQuantity = () => {
                 <div class="w-full p-4 rounded-lg border bg-card text-card-foreground shadow-sm my-4">
                     <div class="flex justify-between items-center cursor-pointer"
                          @click="isCollapsed = !isCollapsed">
-
                         <h3 class="font-bold text-xl mb-4 flex items-center">
                             <ShoppingBag class="mr-2" />
-                            Order Items
+                            Items
                             <span class="text-sm text-muted-foreground ml-2">
                                 ({{ orderedQuantity() }} items)
                             </span>
@@ -402,17 +426,23 @@ const orderedQuantity = () => {
                         </div>
                     </div>
                 </div>
-                <!-- Store link -->
-                <div>
-                    <span>
-                        <Button variant="outline"
-                                as="a"
-                                :href="BASE_LINKS.STORE(orderDetails.storeId, slugify(orderDetails.storeName), orderDetails.orderType!)"
-                                class="w-full mr-4">
-                            Sold by '{{ orderDetails.storeName }}'
-                        </Button>
+                <!-- Reorder -->
+                <Button class="w-full mb-4"
+                        :disabled="isReordering"
+                        v-if="orderDetails.currentCartJSON"
+                        @click="reorder">
+                    <span v-if="isReordering">
+                        <Loader2 class="animate-spin w-4 h-4 mr-2" />
                     </span>
-                </div>
+                    Reorder
+                </Button>
+                <!-- Store link -->
+                <Button variant="outline"
+                        as="a"
+                        :href="BASE_LINKS.STORE(orderDetails.storeId, slugify(orderDetails.storeName), orderDetails.orderType!)"
+                        class="w-full mr-4">
+                    Sold by '{{ orderDetails.storeName }}'
+                </Button>
                 <div class="text-xs text-muted-foreground my-4"
                      v-if="orderDetails?.isOnlinePayment">
                     <!-- TODO: show terms and conditions -->

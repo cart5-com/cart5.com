@@ -16,6 +16,7 @@ import type { PaymentMethodType } from "@lib/types/paymentMethodType";
 // import { z } from 'zod';
 import { createSelectSchema } from "drizzle-zod";
 import type { EstimatedTime } from "@lib/zod/deliverySchema";
+import type { Cart } from "@lib/zod/cartItemState";
 
 export const orderTable = sqliteTable("orders", {
     ...autoCreatedUpdated, // created_at_ts is the visible one I changed it once online payment verified.
@@ -70,6 +71,7 @@ export const orderTable = sqliteTable("orders", {
     cartBreakdownJSON: text("cart_breakdown_json", { mode: "json" }).$type<ReturnType<typeof calculateCartBreakdown>>(),
     deliveryAddressJSON: text("delivery_address_json", { mode: "json" }).$type<AddressType>(),
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
+    currentCartJSON: text("current_cart_json", { mode: "json" }).$type<Cart>(),
 });
 
 export const orderStripeDataTable = sqliteTable("order_stripe_data", {

@@ -188,6 +188,7 @@ export const generateOrderData_Service = async (
             cartBreakdownJSON: cartBreakdown,
             deliveryAddressJSON: deliveryAddress,
             taxSettingsJSON: taxSettings,
+            currentCartJSON: currentCart
         },
         carts: userData?.carts,
         storeData
