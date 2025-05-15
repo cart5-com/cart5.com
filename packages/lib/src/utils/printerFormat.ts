@@ -44,6 +44,9 @@ export const thermalPrinterFormat = (
     orderDetails: OrderType,
     locale: string | undefined = undefined
 ) => {
+    if (!orderDetails) {
+        throw new Error('Order details are required');
+    }
     const orderedQuantity = () => {
         return orderDetails?.orderedItemsJSON?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
     };
@@ -59,7 +62,7 @@ export const thermalPrinterFormat = (
     }
     output += `<hr>`;
 
-    if (orderDetails.isOnlinePaymentCancelledOrRefunded) {
+    if (orderDetails.onlinePaymentFlags.isOnlinePaymentCancelledOrRefunded) {
         output += `<h6>[REFUNDED-NOT-PAID]</h6>`;
     } else {
         output += `<h6>${orderDetails?.isOnlinePayment ?

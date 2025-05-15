@@ -282,7 +282,7 @@ const IS_DEV = import.meta.env.DEV;
                                                        class="capitalize">
                                                     {{ order.orderType || 'N/A' }}
                                                 </Badge>
-                                                <span v-if="order.isOnlinePaymentCancelledOrRefunded"
+                                                <span v-if="order.onlinePaymentFlags.isOnlinePaymentCancelledOrRefunded"
                                                       class="text-xs border border-destructive-foreground p-1 rounded-md inline-block m-1 bg-destructive text-destructive-foreground underline">
                                                     REFUNDED
                                                 </span>

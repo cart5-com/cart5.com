@@ -38,6 +38,9 @@ export const getUserOrderData_Service = async (
     return await db.query.orderTable.findFirst({
         where: and(eq(orderTable.orderId, orderId), eq(orderTable.userId, userId)),
         columns: columns,
+        with: {
+            onlinePaymentFlags: true,
+        },
     });
 }
 
@@ -48,6 +51,9 @@ export const getOrderData_Service = async (
     return await db.query.orderTable.findFirst({
         where: eq(orderTable.orderId, orderId),
         columns: columns,
+        with: {
+            onlinePaymentFlags: true,
+        },
     });
 }
 
@@ -63,6 +69,7 @@ export const getStoreOrders_Service = async (
         with: {
             statusHistory: true,
             stripeData: true,
+            onlinePaymentFlags: true,
         }
     });
 }
@@ -118,8 +125,7 @@ export const cancelOrder_Service = async (
 
     // Update order status
     const result = await db.update(orderTable).set({
-        orderStatus: newStatus,
-        isOnlinePaymentCancelledOrRefunded
+        orderStatus: newStatus
     }).where(
         and(
             eq(orderTable.orderId, orderId),
@@ -127,6 +133,11 @@ export const cancelOrder_Service = async (
             ne(orderTable.orderStatus, ORDER_STATUS_OBJ.CANCELLED)
         )
     );
+    if (isOnlinePaymentCancelledOrRefunded) {
+        await db.update(orderOnlinePaymentFlagsTable).set({
+            isOnlinePaymentCancelledOrRefunded
+        }).where(eq(orderOnlinePaymentFlagsTable.orderId, orderId));
+    }
 
     // Log status change if update was successful
     if (result.rowsAffected > 0) {
