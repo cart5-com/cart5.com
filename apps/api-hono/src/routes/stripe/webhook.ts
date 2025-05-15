@@ -62,9 +62,7 @@ export const stripeWebhook = new Hono<HonoVariables>()
                             await updateOrderStripeData_Service(orderId, {
                                 // storeStripeConnectAccountId: checkoutSessionCompleted.metadata.storeStripeConnectAccountId, // not required we already set it in place_order.controller
                                 checkoutSessionId: checkoutSessionCompleted.id,
-                                checkoutSessionStatus: checkoutSessionCompleted.status,
                                 paymentIntentId: checkoutSessionCompleted.payment_intent,
-                                paymentIntentStatus: 'requires_capture' // as expected i use manual capture so status must be "requires_capture"
                             });
                         }
                         await placeOnlinePaymentOrder(orderId, order.userId, 'stripe-webhook', undefined, order);

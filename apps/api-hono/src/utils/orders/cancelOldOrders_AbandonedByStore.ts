@@ -41,7 +41,7 @@ export const cancelOldOrders_AbandonedByStore_Handler = async (
                 order.stripeData.storeStripeConnectAccountId
             );
         }
-        cancelledOrderResult = await cancelOrder_Service(order.storeId, order.orderId, userId, ipAddress, orderStatusChangedBy);
+        cancelledOrderResult = await cancelOrder_Service(order.storeId, order.orderId, userId, ipAddress, orderStatusChangedBy, true);
 
         // slow down to avoid rate limits. max 100 per second
         // You can request a limit increase to enable a high-traffic application by contacting Stripe Support. If you’re requesting a large increase, contact us at least 6 weeks in advance.

@@ -68,10 +68,12 @@ const handleCancel = async (orderId: string, storeId: string) => {
         return;
     }
     isCancellingOrder.value = true;
+    const order = cachedStoreOrders.value[orderId];
+
     if (!confirm(`
 🚨This action cannot be undone🚨
 🚨Your store still will be charged for the service fees🚨
-🚨if order has online payment, it will be refunded to customer🚨
+${order.isOnlinePayment ? '\n\n🚨THIS ORDER HAS ONLINE PAYMENT🚨\n🚨It will be refunded to customer🚨\n\n' : ''}
 
 Are you sure you want to cancel this order?`)) {
         isCancellingOrder.value = false;
@@ -86,7 +88,7 @@ Are you sure you want to cancel this order?`)) {
     if (error) {
         toast.error(error.message ?? "Error cancelling order");
     } else {
-        cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
+        order.orderStatus = ORDER_STATUS_OBJ.CANCELLED;
     }
     isCancellingOrder.value = false;
 }

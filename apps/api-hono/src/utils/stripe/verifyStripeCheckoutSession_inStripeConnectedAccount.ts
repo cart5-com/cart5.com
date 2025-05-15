@@ -62,7 +62,6 @@ export const verifyStripeCheckoutSession_inStripeConnectedAccount = async (
             });
             await updateOrderStripeData_Service(order.orderId, {
                 paymentIntentId: paymentIntentId,
-                paymentIntentStatus: paymentIntent.status
             });
             // canceled
             // processing

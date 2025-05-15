@@ -414,6 +414,13 @@
       "when": 1747250543221,
       "tag": "0058_omniscient_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "6",
+      "when": 1747271574809,
+      "tag": "0059_glamorous_ultimo",
+      "breakpoints": true
     }
   ]
 }

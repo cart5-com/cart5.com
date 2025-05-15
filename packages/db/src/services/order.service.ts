@@ -112,12 +112,14 @@ export const cancelOrder_Service = async (
     changedByUserId?: string,
     changedByIpAddress?: string,
     type: OrderStatusChangedByType = 'user',
+    isOnlinePaymentCancelledOrRefunded: boolean | undefined = undefined,
 ) => {
     const newStatus = ORDER_STATUS_OBJ.CANCELLED;
 
     // Update order status
     const result = await db.update(orderTable).set({
         orderStatus: newStatus,
+        isOnlinePaymentCancelledOrRefunded
     }).where(
         and(
             eq(orderTable.orderId, orderId),

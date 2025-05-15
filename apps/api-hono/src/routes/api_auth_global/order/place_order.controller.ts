@@ -77,7 +77,6 @@ export const placeOrderRoute = async (c: Context<
         await updateOrderStripeData_Service(newOrderId, {
             storeStripeConnectAccountId: storeData?.stripeSettings?.stripeConnectAccountId,
             checkoutSessionId: checkoutSession.id,
-            checkoutSessionStatus: checkoutSession.status,
         });
     }
 
