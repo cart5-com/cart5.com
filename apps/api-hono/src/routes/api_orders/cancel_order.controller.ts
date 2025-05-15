@@ -6,7 +6,7 @@ import type { ValidatorContext } from "@api-hono/types/ValidatorContext";
 import type { ErrorType } from "@lib/types/errors";
 import { getStoreOrder_forCancel_Service } from '@db/services/order/order.cancel.service';
 import { KNOWN_ERROR } from "@lib/types/errors";
-import { cancelOldOrders_AbandonedByStore_Handler } from "@api-hono/utils/orders/cancelOldOrders_AbandonedByStore";
+import { cancelOrder } from "@api-hono/utils/orders/cancelOrder";
 
 export const cancelOrder_SchemaValidator = zValidator('json', z.object({
     orderId: z.string(),
@@ -26,7 +26,7 @@ export const cancelOrder_Handler = async (c: Context<
     if (!order) {
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     } else {
-        await cancelOldOrders_AbandonedByStore_Handler(order, user?.id, ipAddress, 'user');
+        await cancelOrder(order, user?.id, ipAddress, 'user');
     }
     return c.json({
         data: 'cancelled',
