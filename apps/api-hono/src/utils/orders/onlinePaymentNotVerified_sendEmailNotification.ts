@@ -2,7 +2,7 @@ import { get_OnlinePaymentOrders_NotVerified_After10Minutes_Service } from "@db/
 import { updateOrderData_Service } from "@db/services/order.service";
 import { orderOnlinePaymentNotVerifiedEmail } from "../email";
 
-export const sendEmailNotification_orders_onlinePaymentNotVerified = async () => {
+export const onlinePaymentNotVerified_sendEmailNotification = async () => {
     const orders = await get_OnlinePaymentOrders_NotVerified_After10Minutes_Service();
 
     for (const order of orders) {

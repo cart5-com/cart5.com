@@ -6,7 +6,7 @@ import {
     checkAndComplete_AcceptedOrders_after24Hours
 } from "@api-hono/utils/orders/checkAndComplete_AcceptedOrders_after24Hours";
 import { cancelOldOrders_AbandonedByStore } from "@api-hono/utils/orders/cancelOldOrders_AbandonedByStore";
-import { sendEmailNotification_orders_onlinePaymentNotVerified } from "@api-hono/utils/orders/sendEmailNotification_orders_onlinePaymentNotVerified";
+import { onlinePaymentNotVerified_sendEmailNotification } from "@api-hono/utils/orders/onlinePaymentNotVerified_sendEmailNotification";
 
 const runCron = getEnvVariable("RUN_CRON");
 // This is not scalable, but it is ok for now
@@ -74,7 +74,7 @@ export const startCrons = async () => {
         // Run every 10 minutes: remind online payment not verified
         if ((currentMinute - 3) % 10 === 0) {
             try {
-                console.log(`${(await sendEmailNotification_orders_onlinePaymentNotVerified())} emails sent for online payment not verified`);
+                console.log(`${(await onlinePaymentNotVerified_sendEmailNotification())} emails sent for online payment not verified`);
             } catch (error) {
                 console.error("Error reminding online payment not verified:", error);
             }
