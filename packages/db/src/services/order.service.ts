@@ -148,12 +148,9 @@ export const updateOrderData_Service = async (
     orderId: string,
     data: Partial<InferInsertModel<typeof orderTable>>
 ) => {
-    return await db.insert(orderTable)
-        .values({ ...data, orderId } as InferInsertModel<typeof orderTable>)
-        .onConflictDoUpdate({
-            target: orderTable.orderId,
-            set: data
-        });
+    return await db.update(orderTable)
+        .set(data)
+        .where(eq(orderTable.orderId, orderId));
 }
 
 const RECENT_ORDERS_TIME_FRAME = 60 * 60 * 1000 * 24; // 24 hours

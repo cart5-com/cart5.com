@@ -6,6 +6,7 @@ import {
     checkAndComplete_AcceptedOrders_after24Hours
 } from "@api-hono/utils/orders/checkAndComplete_AcceptedOrders_after24Hours";
 import { cancelOldOrders_AbandonedByStore } from "@api-hono/utils/orders/cancelOldOrders_AbandonedByStore";
+import { sendEmailNotification_orders_onlinePaymentNotVerified } from "@api-hono/utils/orders/sendEmailNotification_orders_onlinePaymentNotVerified";
 
 const runCron = getEnvVariable("RUN_CRON");
 // This is not scalable, but it is ok for now
@@ -70,6 +71,15 @@ export const startCrons = async () => {
             }
         }
 
+        // Run every 5 minutes: remind online payment not verified
+        if ((currentMinute - 3) % 5 === 0) {
+            try {
+                console.log(`${sendEmailNotification_orders_onlinePaymentNotVerified()} emails sent for online payment not verified`);
+            } catch (error) {
+                console.error("Error reminding online payment not verified:", error);
+            }
+        }
+
     };
     runEveryMinute();
     setInterval(runEveryMinute, 60_000);
@@ -77,4 +87,5 @@ export const startCrons = async () => {
 }
 
 // TODO: do I need to run this manually at start?
-checkAndComplete_AcceptedOrders_after24Hours();
+// checkAndComplete_AcceptedOrders_after24Hours();
+// sendEmailNotification_orders_onlinePaymentNotVerified();

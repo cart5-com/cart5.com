@@ -40,7 +40,7 @@ export const orderOnlinePaymentNotVerifiedEmail = (
     const html = `
 Your order payment has not been verified yet. To complete your order:
 
-1. Click the link below to view your order:
+1. Click the link below to check and complete your order:
 ----------------
 https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
 ----------------

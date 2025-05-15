@@ -16,7 +16,7 @@ export const get_OnlinePaymentOrders_NotVerified_After10Minutes_Service = async 
             isOnlinePaymentNotVerifiedEmailNotificationSent: true,
         },
         where: and(
-            eq(orderTable.orderStatus, ORDER_STATUS_OBJ.CREATED),
+            eq(orderTable.orderStatus, ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION),
             eq(orderTable.isOnlinePayment, true),
             or(
                 eq(orderTable.isOnlinePaymentNotVerifiedEmailNotificationSent, false),
@@ -27,15 +27,6 @@ export const get_OnlinePaymentOrders_NotVerified_After10Minutes_Service = async 
                 isNull(orderTable.isOnlinePaymentVerified)
             ),
             lt(orderTable.real_created_at_ts, _MinutesAgo.getTime())
-        ),
-        with: {
-            stripeData: {
-                columns: {
-                    checkoutSessionId: true,
-                    paymentIntentId: true,
-                    storeStripeConnectAccountId: true,
-                },
-            },
-        }
+        )
     });
 }
