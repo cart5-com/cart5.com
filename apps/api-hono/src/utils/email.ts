@@ -47,7 +47,7 @@ https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
 
 Important notes:
 - The store cannot process unverified orders
-- Your payment link will expire in 60 minutes
+- All payment links expire after 1 hour
 - Please complete the payment process to confirm your order`;
 
     sendEmail({
