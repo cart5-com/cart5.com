@@ -62,6 +62,7 @@ export const orderTable = sqliteTable("orders", {
     isOnlinePaymentVerified: integer("is_online_payment_verified", { mode: "boolean" }),
     isOnlinePaymentCaptured: integer("is_online_payment_captured", { mode: "boolean" }),
     isOnlinePaymentCancelledOrRefunded: integer("is_online_payment_cancelled_or_refunded", { mode: "boolean" }),
+    isOnlinePaymentNotVerifiedEmailNotificationSent: integer("is_online_payment_not_verified_email_notification_sent", { mode: "boolean" }),
 
 
     // Final Amount

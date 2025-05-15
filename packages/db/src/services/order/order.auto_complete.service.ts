@@ -6,7 +6,6 @@ import { logOrderStatusChange_Service } from "../order.service";
 
 export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
     timeFrame: number = 60 * 60 * 1000 * 24, // 24 hours
-    limit: number = 300
 ) => {
     const _24HoursAgo = new Date(Date.now() - timeFrame);
     return await db.query.orderTable.findMany({
@@ -29,7 +28,6 @@ export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
                 },
             },
         },
-        limit: limit,
         // orderBy: [desc(orderTable.real_created_at_ts)],
     });
 }

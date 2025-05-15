@@ -50,7 +50,7 @@ export const inviteTeamMember_Handler = async (c: Context<
         website?.name ?? ''
     );
     const invitationLink = await generateInvitationLink(invitation.id, c.req.header()['host']);
-    await sendInvitationEmail(c.req.valid('json').email, invitationLink, website?.name ?? '');
+    sendInvitationEmail(c.req.valid('json').email, invitationLink, website?.name ?? '');
     return c.json({
         data: "SUCCESS",
         error: null as ErrorType

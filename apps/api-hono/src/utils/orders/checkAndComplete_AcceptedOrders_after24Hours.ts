@@ -10,7 +10,7 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
     const message = "Checking and completing accepted orders after 24 hours";
     console.log(`'${message}' started`);
     console.time(message);
-    const orders = await getAcceptedOrders_toCheckAndComplete_after24Hours_Service(0);
+    const orders = await getAcceptedOrders_toCheckAndComplete_after24Hours_Service();
     for (const order of orders) {
         if (
             order.isOnlinePaymentVerified &&

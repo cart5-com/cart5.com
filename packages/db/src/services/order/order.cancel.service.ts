@@ -35,7 +35,6 @@ export const getStoreOrder_forCancel_Service = async (
 
 export const getCreated_butNotAcceptedOrders_after25Minutes_Service = async (
     timeFrame: number = 25 * 60 * 1000, // 25 minutes
-    limit: number = 300
 ) => {
     const _25MinutesAgo = new Date(Date.now() - timeFrame);
     return await db.query.orderTable.findMany({
@@ -60,7 +59,6 @@ export const getCreated_butNotAcceptedOrders_after25Minutes_Service = async (
                 },
             },
         },
-        limit: limit,
         // orderBy: [desc(orderTable.real_created_at_ts)],
     });
 }

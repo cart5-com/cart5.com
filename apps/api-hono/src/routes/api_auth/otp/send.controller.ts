@@ -48,7 +48,7 @@ export const sendOtpRoute = async (
         sameSite: "strict"
     });
 
-    await sendUserOtpEmail(verifyEmail, otp);
+    sendUserOtpEmail(verifyEmail, otp);
 
     return c.json({
         data: "success",

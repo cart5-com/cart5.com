@@ -3,23 +3,31 @@ import { getEnvVariable, IS_PROD } from "@lib/utils/getEnvVariable";
 export const sendEmail = async function (
     options: { from: string, to: string[], subject: string, html: string }
 ) {
-    const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getEnvVariable('RESEND_API_KEY')}`,
-        },
-        body: JSON.stringify(options),
-    });
-
-    return res.ok;
-    // if (res.ok) {
-    //     const data = await res.json();
-    //     return Response.json(data);
-    // }
+    if (IS_PROD) {
+        options.html = options.html.replace(/\n/g, "<br>");
+        const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getEnvVariable('RESEND_API_KEY')}`,
+            },
+            body: JSON.stringify(options),
+        });
+        return res.ok;
+        // if (res.ok) {
+        //     const data = await res.json();
+        //     return Response.json(data);
+        // }
+    } else {
+        console.log(`from: ${options.from}`);
+        console.log(`to: ${options.to}`);
+        console.log(`subject: ${options.subject}`);
+        console.log(`html: ${options.html}`);
+        return true;
+    }
 }
 
-export const sendInvitationEmail = async (
+export const sendInvitationEmail = (
     email: string,
     invitationLink: string,
     teamName: string
@@ -42,26 +50,15 @@ If you do not want to join the team, please ignore this email.
 
 `;
 
-    if (IS_PROD) {
-        // const send =
-        sendEmail({
-            from,
-            to: [to],
-            subject,
-            html: html.replace(/\n/g, "<br>")
-        });
-        // return send.data;
-        return 200;
-    } else {
-        console.log(`from: ${from}`);
-        console.log(`to: ${to}`);
-        console.log(`subject: ${subject}`);
-        console.log(`html: ${html}`);
-        return 200;
-    }
+    sendEmail({
+        from,
+        to: [to],
+        subject,
+        html
+    });
 };
 
-export const sendUserOtpEmail = async (
+export const sendUserOtpEmail = (
     email: string,
     code: string
 ) => {
@@ -77,22 +74,11 @@ ${code}
 
 This code will expire in 10 minutes.`;
 
-    if (IS_PROD) {
-        // const send =
-        sendEmail({
-            from,
-            to: [to],
-            subject,
-            html: html.replace(/\n/g, "<br>")
-        });
-        // return send.data;
-        return 200;
-    } else {
-        console.log(`from: ${from}`);
-        console.log(`to: ${to}`);
-        console.log(`subject: ${subject}`);
-        console.log(`html: ${html}`);
-        return 200;
-    }
+    sendEmail({
+        from,
+        to: [to],
+        subject,
+        html
+    });
 
 };

@@ -73,7 +73,7 @@ export const registerEmailPasswordRoute = async (
         maxAge: 600, // 10 minutes
         sameSite: "strict"
     });
-    await sendUserOtpEmail(email, otp);
+    sendUserOtpEmail(email, otp);
     return c.json({
         data: "success",
         error: null as ErrorType
