@@ -155,7 +155,7 @@ const reorder = async () => {
                 <Card class="my-4"
                       v-if="orderDetails.orderStatus === ORDER_STATUS_OBJ.CREATED ||
                         orderDetails.orderStatus === ORDER_STATUS_OBJ.ACCEPTED ||
-                        orderDetails.orderStatus === ORDER_STATUS_OBJ.COMPLETED
+                        orderDetails.orderStatus === ORDER_STATUS_OBJ.COMPLETED_BY_SYSTEM
                     ">
                     <CardContent class="p-4">
                         <!-- centered big checkmark -->
@@ -253,7 +253,13 @@ const reorder = async () => {
                 <!-- Payment Information -->
                 <Card class="my-4">
                     <CardContent class="p-4">
-                        <h3 class="font-bold text-xl mb-2">Payment</h3>
+                        <h3 class="font-bold text-xl mb-2">
+                            Payment
+                            <span v-if="orderDetails.isOnlinePaymentCancelledOrRefunded"
+                                  class="text-xs border border-destructive-foreground p-1 rounded-md inline-block m-1 bg-destructive text-destructive-foreground underline">
+                                REFUNDED
+                            </span>
+                        </h3>
                         <div class="flex items-center gap-2">
                             <component :is="paymentIcons.find(icon => icon.name === orderDetails?.paymentMethodJSON?.icon)?.component || WalletCards"
                                        class="mr-2 flex-shrink-0" />

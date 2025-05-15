@@ -56,6 +56,7 @@ const handleAccept = async (orderId: string, storeId: string) => {
         toast.error(error.message ?? "Error accepting order");
     } else {
         if (data === 1) {
+            toast.message(`Order accepted`);
             cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.ACCEPTED;
         }
     }
@@ -70,11 +71,9 @@ const handleCancel = async (orderId: string, storeId: string) => {
     isCancellingOrder.value = true;
     const order = cachedStoreOrders.value[orderId];
 
-    if (!confirm(`
-🚨This action cannot be undone🚨
+    if (!confirm(`🚨This action cannot be undone🚨
 🚨Your store still will be charged for the service fees🚨
-${order.isOnlinePayment ? '\n\n🚨THIS ORDER HAS ONLINE PAYMENT🚨\n🚨It will be refunded to customer🚨\n\n' : ''}
-
+${order.isOnlinePayment ? '\n🚨THIS ORDER HAS ONLINE PAYMENT🚨\n🚨It will be refunded to customer🚨\n' : ''}
 Are you sure you want to cancel this order?`)) {
         isCancellingOrder.value = false;
         return;
@@ -89,6 +88,7 @@ Are you sure you want to cancel this order?`)) {
         toast.error(error.message ?? "Error cancelling order");
     } else {
         order.orderStatus = ORDER_STATUS_OBJ.CANCELLED;
+        toast.message(`Order cancelled ${order.isOnlinePayment ? 'and refunded!' : ''}`);
     }
     isCancellingOrder.value = false;
 }
@@ -162,10 +162,12 @@ const IS_DEV = import.meta.env.DEV;
                  v-if="myStores.length > 0 && hasConnectionError && storeEventSources.size === 0 && !isMyStoresLoading">
                 Connection error, will try to reconnect in 30 seconds.
             </div>
-            <div class="mb-4 border border-bg-foreground rounded-md p-4 font-bold"
-                 v-else>
+            <div class="mb-4 border border-bg-foreground rounded-md p-4 font-bold">
                 <AlertCircle class="mr-2 inline-block" />
-                Keep open this tab to receive new orders in real time.
+                <span class="text-lg">Important:</span> Please keep this tab open to receive new orders instantly.
+                <br>
+                <span class="text-sm text-muted-foreground">Note: Orders that are not accepted will be automatically
+                    cancelled/refunded after 25 minutes.</span>
             </div>
 
             <Dialog v-model:open="isSettingsDialogOpen">
@@ -254,6 +256,14 @@ const IS_DEV = import.meta.env.DEV;
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
+                                            <a class="text-xs underline"
+                                               v-if="order.isOnlinePayment &&
+                                                order.stripeData?.storeStripeConnectAccountId &&
+                                                order.stripeData?.paymentIntentId"
+                                               :href="`https://dashboard.stripe.com/${order.stripeData?.storeStripeConnectAccountId}/${IS_DEV ? `test/` : ``}payments/${order.stripeData?.paymentIntentId}`"
+                                               target="_blank">
+                                                See payment in stripe dashboard
+                                            </a>
                                         </div>
                                     </DialogScrollContent>
 
@@ -272,6 +282,10 @@ const IS_DEV = import.meta.env.DEV;
                                                        class="capitalize">
                                                     {{ order.orderType || 'N/A' }}
                                                 </Badge>
+                                                <span v-if="order.isOnlinePaymentCancelledOrRefunded"
+                                                      class="text-xs border border-destructive-foreground p-1 rounded-md inline-block m-1 bg-destructive text-destructive-foreground underline">
+                                                    REFUNDED
+                                                </span>
                                             </div>
                                             <div class="text-left text-xs text-muted-foreground">
                                                 <p>

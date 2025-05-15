@@ -62,6 +62,7 @@ export const getStoreOrders_Service = async (
         columns: columns,
         with: {
             statusHistory: true,
+            stripeData: true,
         }
     });
 }

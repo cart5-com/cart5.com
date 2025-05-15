@@ -67,6 +67,10 @@ const orderedQuantity = () => {
                 <div class="m-1 text-md font-medium">
                     Status: <span
                           class="capitalize font-bold border border-muted-foreground rounded-md px-2 py-1">{{ orderDetails.orderStatus.toLowerCase() }}</span>
+                    <span v-if="orderDetails.isOnlinePaymentCancelledOrRefunded"
+                          class="text-xs border border-destructive-foreground p-1 rounded-md inline-block m-1 bg-destructive text-destructive-foreground underline">
+                        REFUNDED
+                    </span>
                 </div>
                 <span class="text-xs border border-foreground p-1 rounded-md inline-block m-1">
                     MarketingChannel: {{ orderDetails.websiteDefaultHostname }}

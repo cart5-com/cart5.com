@@ -58,7 +58,20 @@ export const thermalPrinterFormat = (
         output += `<h5>${orderDetails.deliveryAddressJSON?.nickname || orderDetails.pickupNickname || orderDetails.userName || 'unknown'}</h5>`;
     }
     output += `<hr>`;
-    output += `<h6>${orderDetails?.paymentMethodJSON?.isOnline ? '[PAID-ONLINE]' : '[NOT PAID]'}|${orderDetails?.paymentMethodJSON?.name}</h6>`;
+
+    if (orderDetails.isOnlinePaymentCancelledOrRefunded) {
+        output += `<h6>[REFUNDED-NOT-PAID]</h6>`;
+    } else {
+        output += `<h6>${orderDetails?.isOnlinePayment ?
+            '[PAID-ONLINE]'
+            :
+            '[NOT-PAID]'
+            }${orderDetails?.isOnlinePayment ?
+                ''
+                :
+                `|${orderDetails?.paymentMethodJSON?.name}`
+            }</h6>`;
+    }
     output += `<hr>`;
     if (orderDetails.userVerifiedPhoneNumbers) {
         output += `${orderDetails.userVerifiedPhoneNumbers}\n`;
