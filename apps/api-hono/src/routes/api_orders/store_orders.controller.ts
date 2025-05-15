@@ -20,7 +20,7 @@ export const getStoreOrders_SchemaValidator = zValidator('json', z.object({
 // Controller for getting Store address details
 export const getStoreOrders_Handler = async (c: Context<
     HonoVariables,
-    "/:storeId/",
+    "/:storeId/get_by_order_ids",
     ValidatorContext<typeof getStoreOrders_SchemaValidator>
 >) => {
     return c.json({
