@@ -79,16 +79,14 @@ Are you sure you want to cancel this order?`)) {
     }
 
     // Implement cancel logic
-    const { data, error } = await (await ordersApiClient[":storeId"].cancel_order.$post({
+    const { error } = await (await ordersApiClient[":storeId"].cancel_order.$post({
         param: { storeId },
         json: { orderId }
     })).json();
     if (error) {
         toast.error(error.message ?? "Error cancelling order");
     } else {
-        if (data === 1) {
-            cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
-        }
+        cachedStoreOrders.value[orderId].orderStatus = ORDER_STATUS_OBJ.CANCELLED;
     }
     isCancellingOrder.value = false;
 }
