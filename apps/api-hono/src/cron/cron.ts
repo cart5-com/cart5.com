@@ -85,7 +85,3 @@ export const startCrons = async () => {
     setInterval(runEveryMinute, 60_000);
 
 }
-
-// TODO: do I need to run this manually at start?
-// checkAndComplete_AcceptedOrders_after24Hours();
-// sendEmailNotification_orders_onlinePaymentNotVerified();

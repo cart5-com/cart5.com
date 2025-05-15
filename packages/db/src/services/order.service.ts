@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { orderTable, orderStatusHistoryTable, orderStripeDataTable } from "@db/schema/order.schema";
+import { orderTable, orderStatusHistoryTable, orderStripeDataTable, orderOnlinePaymentFlagsTable } from "@db/schema/order.schema";
 import { and, desc, eq, gte, inArray, ne } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
@@ -143,14 +143,6 @@ export const cancelOrder_Service = async (
     return result;
 }
 
-export const updateOrderData_Service = async (
-    orderId: string,
-    data: Partial<InferInsertModel<typeof orderTable>>
-) => {
-    return await db.update(orderTable)
-        .set(data)
-        .where(eq(orderTable.orderId, orderId));
-}
 
 const RECENT_ORDERS_TIME_FRAME = 60 * 60 * 1000 * 24; // 24 hours
 export const getRecentOrders_Service = async (
@@ -194,6 +186,19 @@ export const updateOrderStripeData_Service = async (
         .values({ ...data, orderId: orderId })
         .onConflictDoUpdate({
             target: orderStripeDataTable.orderId,
+            set: data
+        });
+    return result;
+}
+
+export const updateOrderOnlinePaymentFlags_Service = async (
+    orderId: string,
+    data: Partial<InferInsertModel<typeof orderOnlinePaymentFlagsTable>>
+) => {
+    const result = await db.insert(orderOnlinePaymentFlagsTable)
+        .values({ ...data, orderId: orderId })
+        .onConflictDoUpdate({
+            target: orderOnlinePaymentFlagsTable.orderId,
             set: data
         });
     return result;

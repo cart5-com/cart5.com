@@ -9,54 +9,55 @@ export const printHTML = async function (
     printer: string,
     copies: number = 1,
 ) {
-    // const mainWindow = getMainWindow();
-    // mainWindow.hide();
-    // getMainWindow().hide();
-
-    // TODO: check if printer is in the list of printers, maybe we should report it sender store email.
-    // const printers = await getPrinters();
-    // console.log(printers);
-
-    const styles = document.querySelectorAll('style');
-    styles.forEach(style => {
-        style.remove();
-    });
-
-    const links = document.querySelectorAll('link[rel="stylesheet"]');
-    links.forEach(link => {
-        link.remove();
-    });
-
-    const app = document.getElementById('app');
-    if (!app) {
-        return;
-    }
-    const oldDisplay = app.style.display;
-    app.style.display = 'none';
-
-    const iframe = document.createElement("iframe");
-    // Set iframe properties before appending to body
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    iframe.style.border = "none";
-    iframe.style.position = "fixed";
-    iframe.style.top = "0";
-    iframe.style.left = "0";
-    iframe.style.zIndex = "916000020";
-    iframe.style.visibility = "hidden"; // Hide initially to avoid flicker
-
-    // Use blob URL instead of direct writing for better loading behavior
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    iframe.src = url;
-
     // Set up load event before appending to DOM
-    iframe.onload = () => {
-        // Show iframe once loaded
-        iframe.style.visibility = "visible";
+    return new Promise(resolve => {
+        // const mainWindow = getMainWindow();
+        // mainWindow.hide();
+        // getMainWindow().hide();
 
-        // Small delay to ensure rendering is complete
-        setTimeout(() => {
+        // TODO: check if printer is in the list of printers, maybe we should report it sender store email.
+        // const printers = await getPrinters();
+        // console.log(printers);
+
+        const styles = document.querySelectorAll('style');
+        styles.forEach(style => {
+            style.remove();
+        });
+
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach(link => {
+            link.remove();
+        });
+
+        const app = document.getElementById('app');
+        if (!app) {
+            return;
+        }
+        const oldDisplay = app.style.display;
+        app.style.display = 'none';
+
+        const iframe = document.createElement("iframe");
+        // Set iframe properties before appending to body
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.border = "none";
+        iframe.style.position = "fixed";
+        iframe.style.top = "0";
+        iframe.style.left = "0";
+        iframe.style.zIndex = "916000020";
+        iframe.style.visibility = "hidden"; // Hide initially to avoid flicker
+
+        // Use blob URL instead of direct writing for better loading behavior
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        iframe.src = url;
+
+        iframe.onload = async () => {
+            // Show iframe once loaded
+            iframe.style.visibility = "visible";
+
+            // Small delay to ensure rendering is complete
+            await new Promise(resolve => setTimeout(resolve, 100));
             // Get iframe's window reference again after it's loaded
             const iframeWindow = iframe.contentWindow;
             if (!iframeWindow) {
@@ -108,21 +109,21 @@ export const printHTML = async function (
 
                 });
             }
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-                URL.revokeObjectURL(url); // Clean up the blob URL
-                app.style.display = oldDisplay;
-                // document.head.appendChild(style);
-                styles.forEach(style => {
-                    document.head.appendChild(style);
-                });
-                links.forEach(link => {
-                    document.head.appendChild(link);
-                });
-            }, 500);
-        }, 100);
-    };
+            await new Promise(resolve => setTimeout(resolve, 500));
+            document.body.removeChild(iframe);
+            URL.revokeObjectURL(url); // Clean up the blob URL
+            app.style.display = oldDisplay;
+            // document.head.appendChild(style);
+            styles.forEach(style => {
+                document.head.appendChild(style);
+            });
+            links.forEach(link => {
+                document.head.appendChild(link);
+            });
+            resolve(true);
+        };
 
-    // Append to body after setup is complete
-    document.body.appendChild(iframe);
+        // Append to body after setup is complete
+        document.body.appendChild(iframe);
+    });
 };

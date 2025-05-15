@@ -62,8 +62,6 @@ export const orderTable = sqliteTable("orders", {
     isOnlinePaymentVerified: integer("is_online_payment_verified", { mode: "boolean" }),
     isOnlinePaymentCaptured: integer("is_online_payment_captured", { mode: "boolean" }),
     isOnlinePaymentCancelledOrRefunded: integer("is_online_payment_cancelled_or_refunded", { mode: "boolean" }),
-    isOnlinePaymentNotVerifiedEmailNotificationSent: integer("is_online_payment_not_verified_email_notification_sent", { mode: "boolean" }),
-
 
     // Final Amount
     finalAmount: real("final_amount").notNull(),
@@ -78,6 +76,12 @@ export const orderTable = sqliteTable("orders", {
     deliveryAddressJSON: text("delivery_address_json", { mode: "json" }).$type<AddressType>(),
     taxSettingsJSON: text("tax_settings_json", { mode: "json" }).$type<TaxSettings>(),
     currentCartJSON: text("current_cart_json", { mode: "json" }).$type<Cart>(),
+});
+
+export const orderOnlinePaymentFlagsTable = sqliteTable("order_online_payment_flags", {
+    orderId: text("order_id").notNull().primaryKey().unique(),
+
+    isOnlinePaymentNotVerifiedEmailNotificationSent: integer("is_online_payment_not_verified_email_notification_sent", { mode: "boolean" }),
 });
 
 export const orderStripeDataTable = sqliteTable("order_stripe_data", {
@@ -115,6 +119,19 @@ export const orderRelations = relations(orderTable, ({
         references: [orderStripeDataTable.orderId],
     }),
     statusHistory: many(orderStatusHistoryTable),
+    onlinePaymentFlags: one(orderOnlinePaymentFlagsTable, {
+        fields: [orderTable.orderId],
+        references: [orderOnlinePaymentFlagsTable.orderId],
+    }),
+}));
+
+export const orderOnlinePaymentFlagsRelations = relations(orderOnlinePaymentFlagsTable, ({
+    one
+}) => ({
+    order: one(orderTable, {
+        fields: [orderOnlinePaymentFlagsTable.orderId],
+        references: [orderTable.orderId],
+    }),
 }));
 
 export const orderStatusHistoryRelations = relations(orderStatusHistoryTable, ({

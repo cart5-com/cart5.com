@@ -428,6 +428,13 @@
       "when": 1747330971629,
       "tag": "0060_far_dagger",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "6",
+      "when": 1747343107354,
+      "tag": "0061_sweet_supernaut",
+      "breakpoints": true
     }
   ]
 }
