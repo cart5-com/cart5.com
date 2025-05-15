@@ -21,6 +21,7 @@
 		"@oslojs/encoding": "1.1.0",
 		"@oslojs/otp": "^1.1.0",
 		"@sentry/esbuild-plugin": "^3.2.2",
+		"@sentry/node": "^9.19.0",
 		"@types/google.maps": "^3.58.1",
 		"@types/node": "^22.10.1",
 		"api-client": "workspace:*",

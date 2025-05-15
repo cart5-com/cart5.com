@@ -3,7 +3,6 @@ import {
     completeOrder_Service
 } from "@db/services/order/order.auto_complete.service";
 import { capturePaymentIntent_inStripeConnectedAccount } from "../stripe/capturePaymentIntent_inStripeConnectedAccount";
-import { sentrySmol } from "../getSentrySmol";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
 
 export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
@@ -38,7 +37,7 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
                 console.error(`Error capturing payment intent for order ${order.orderId}`);
                 console.error(error);
                 if (IS_PROD) {
-                    sentrySmol.captureException(error, {
+                    globalThis.globalSentry?.captureException(error, {
                         data: {
                             orderId: order.orderId,
                             checkoutSessionId: order.stripeData.checkoutSessionId,
