@@ -152,7 +152,7 @@ const disableOtherRules = (ruleId?: string) => {
         <div v-else-if="automationRules">
 
             <div class="border rounded-md p-4">
-                <h3 class="text-lg font-medium mb-4">Paired Devices</h3>
+                <h3 class="text-lg font-medium mb-4">Paired auto print devices</h3>
                 <div class="space-y-4 max-h-[500px] overflow-y-auto">
                     <div v-for="(device, index) in currentStore?.autoprintDevices"
                          :key="device.autoprintDeviceId"
@@ -193,10 +193,11 @@ const disableOtherRules = (ruleId?: string) => {
                                 }
                             }" />
                     <Label for="auto-accept-orders">
-                        Automatically accept all incoming orders
+                        Auto-acceptance
                     </Label>
                 </div>
                 <p class="text-sm text-muted-foreground mt-2 mb-6">
+                    (Automatically accept all incoming orders)
                     When turned on, new orders will be automatically accepted without your intervention.
                     This happens even when you're offline or if the orders aren't being printed.
                     This setting works independently from any print rules you set up.

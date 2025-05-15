@@ -166,8 +166,13 @@ const IS_DEV = import.meta.env.DEV;
                 <AlertCircle class="mr-2 inline-block" />
                 <span class="text-lg">Important:</span> Please keep this tab open to receive new orders instantly.
                 <br>
-                <span class="text-sm text-muted-foreground">Note: Orders that are not accepted will be automatically
-                    cancelled/refunded after 25 minutes.</span>
+                <span class="text-sm text-muted-foreground">
+                    Important: If you do not accept orders after 25 minutes, they will be automatically cancelled and
+                    refunded.
+                    <br>
+                    To prevent automatic cancellations, you can enable auto-acceptance in Settings → Store →
+                    Automations.
+                </span>
             </div>
 
             <Dialog v-model:open="isSettingsDialogOpen">

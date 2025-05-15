@@ -340,13 +340,13 @@ export const startSeed = async () => {
         storesByThush.push(store);
     }
 
-    // await updateStoreStripeConnectSettings_Service(`str_299_299_299`, {
-    //     stripeConnectAccountId: "acct_1RHamtGbqsAsT6jX", // stripe sandbox account
-    //     isStripeEnabled: true,
-    //     stripeRatePerOrder: 2.9,
-    //     stripeFeePerOrder: 0.30,
-    //     whoPaysStripeFee: "CUSTOMER",
-    // });
+    await updateStoreStripeConnectSettings_Service(`str_299_299_299`, {
+        stripeConnectAccountId: "acct_1ROrqXGbiOfKxUnD", // stripe sandbox account
+        isStripeEnabled: true,
+        stripeRatePerOrder: 2.9,
+        stripeFeePerOrder: 0.30,
+        whoPaysStripeFee: "STORE",
+    });
 
     // await updateStoreStripeConnectSettings_Service(`str_296_296_296`, {
     //     stripeConnectAccountId: "acct_1RId8yGfFDgiaKRa", // stripe sandbox account

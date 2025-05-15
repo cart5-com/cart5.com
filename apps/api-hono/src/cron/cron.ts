@@ -85,4 +85,3 @@ export const startCrons = async () => {
     setInterval(runEveryMinute, 60_000);
 
 }
-onlinePaymentNotVerified_sendEmailNotification();

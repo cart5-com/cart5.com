@@ -51,12 +51,12 @@ import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
                                 <DialogTrigger>
                                     <Button variant="outline"
                                             size="lg">
-                                        Autoprint Settings
+                                        Automations
                                     </Button>
                                 </DialogTrigger>
                                 <DialogScrollContent>
                                     <DialogHeader>
-                                        <DialogTitle>Autoprint Settings</DialogTitle>
+                                        <DialogTitle>Automations</DialogTitle>
                                         <DialogDescription />
                                     </DialogHeader>
 
