@@ -6,6 +6,7 @@ import { isPairedBefore } from "./stores/isPairedBefore";
 import { createAutoprintTasksApiClient } from "@api-client/autoprint_tasks";
 import { printedTaskIds } from "./stores/printedTaskIds";
 import { getPrinters } from "./utils/getPrinters";
+import { toast } from "@/ui-plus/sonner";
 
 let autoRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 const apiClient = createAutoprintTasksApiClient(`${window.location.origin}/__p_api/autoprint_tasks`);
@@ -91,7 +92,9 @@ export const updatePrintersDataOnServer = async () => {
             headers: await generateSignatureHeaders()
         })).json();
         if (error) {
-            console.error('Error updating printers data on server:', error);
+            toast.error('Error updating printers data on server');
+        } else {
+            toast.success('Printers data updated on server');
         }
     }
 }
