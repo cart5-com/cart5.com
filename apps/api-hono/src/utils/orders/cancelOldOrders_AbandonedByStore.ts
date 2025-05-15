@@ -1,10 +1,11 @@
-import { getCreated_butNotAcceptedOrders_after25Minutes_Service } from "@db/services/order/order.cancel.service";
+import { getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service } from "@db/services/order/order.cancel.service";
 import { cancelOrder } from "./cancelOrder";
 
 export const cancelOldOrders_AbandonedByStore = async () => {
-    const orders = await getCreated_butNotAcceptedOrders_after25Minutes_Service();
+    const orders = await getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service();
     for (const order of orders) {
         await cancelOrder(order);
     }
 }
 
+cancelOldOrders_AbandonedByStore();

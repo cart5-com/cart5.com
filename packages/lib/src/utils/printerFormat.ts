@@ -62,7 +62,7 @@ export const thermalPrinterFormat = (
     }
     output += `<hr>`;
 
-    if (orderDetails.onlinePaymentFlags.isOnlinePaymentCancelledOrRefunded) {
+    if (orderDetails.onlinePaymentFlags && orderDetails.onlinePaymentFlags.isOnlinePaymentCancelledOrRefunded) {
         output += `<h6>[REFUNDED-NOT-PAID]</h6>`;
     } else {
         output += `<h6>${orderDetails?.isOnlinePayment ?

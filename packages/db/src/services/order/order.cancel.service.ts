@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { orderTable } from "@db/schema/order.schema";
+import { orderTable, orderStripeDataTable } from "@db/schema/order.schema";
 import { and, eq, lt, ne } from "drizzle-orm";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 
@@ -33,32 +33,30 @@ export const getStoreOrder_forCancel_Service = async (
     });
 }
 
-export const getCreated_butNotAcceptedOrders_after25Minutes_Service = async (
+export const getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service = async (
     timeFrame: number = 25 * 60 * 1000, // 25 minutes
 ) => {
     const _25MinutesAgo = new Date(Date.now() - timeFrame);
-    return await db.query.orderTable.findMany({
-        columns: {
-            orderId: true,
-            storeId: true,
-            created_at_ts: true,
-            paymentId: true,
-            isOnlinePaymentVerified: true,
-            isOnlinePaymentCaptured: true,
-        },
-        where: and(
-            eq(orderTable.orderStatus, ORDER_STATUS_OBJ.CREATED),
-            lt(orderTable.created_at_ts, _25MinutesAgo.getTime())
-        ),
-        with: {
+    return await db
+        .select({
+            orderId: orderTable.orderId,
+            storeId: orderTable.storeId,
+            created_at_ts: orderTable.created_at_ts,
+            paymentId: orderTable.paymentId,
+            isOnlinePaymentVerified: orderTable.isOnlinePaymentVerified,
+            isOnlinePaymentCaptured: orderTable.isOnlinePaymentCaptured,
             stripeData: {
-                columns: {
-                    checkoutSessionId: true,
-                    paymentIntentId: true,
-                    storeStripeConnectAccountId: true,
-                },
-            },
-        },
-        // orderBy: [desc(orderTable.real_created_at_ts)],
-    });
+                checkoutSessionId: orderStripeDataTable.checkoutSessionId,
+                paymentIntentId: orderStripeDataTable.paymentIntentId,
+                storeStripeConnectAccountId: orderStripeDataTable.storeStripeConnectAccountId,
+            }
+        })
+        .from(orderTable)
+        .leftJoin(orderStripeDataTable, eq(orderTable.orderId, orderStripeDataTable.orderId))
+        .where(
+            and(
+                eq(orderTable.orderStatus, ORDER_STATUS_OBJ.CREATED),
+                lt(orderTable.created_at_ts, _25MinutesAgo.getTime())
+            )
+        );
 }

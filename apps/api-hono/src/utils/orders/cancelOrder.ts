@@ -1,12 +1,12 @@
 import { cancelOrder_Service } from "@db/services/order.service";
-import { getCreated_butNotAcceptedOrders_after25Minutes_Service } from "@db/services/order/order.cancel.service";
+import { type getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service } from "@db/services/order/order.cancel.service";
 import { cancelPaymentIntent_inStripeConnectedAccount } from "../stripe/cancelPaymentIntent_inStripeConnectedAccount";
 import { refundCreate_inStripeConnectedAccount } from "../stripe/refundCreate_inStripeConnectedAccount";
 import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";
 import { sendNotificationToStore } from "@api-hono/routes/api_orders/listen_store.controller";
 
 export const cancelOrder = async (
-    order: Awaited<ReturnType<typeof getCreated_butNotAcceptedOrders_after25Minutes_Service>>[number],
+    order: Awaited<ReturnType<typeof getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service>>[number],
     userId?: string,
     ipAddress?: string,
     orderStatusChangedBy: OrderStatusChangedByType = 'system',

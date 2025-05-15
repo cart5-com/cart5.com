@@ -478,7 +478,12 @@ const reorder = async () => {
 
             <div v-else
                  class="my-8 text-center">
-                <p>Order not found or you do not have permission to view it.</p>
+                <p>
+                    Order not found or you do not have permission to view it.
+                    <!-- TODO: is it correct? -->
+                    <!-- <br>
+                    (none paid order is also removed after 1 day) -->
+                </p>
             </div>
         </div>
     </div>
