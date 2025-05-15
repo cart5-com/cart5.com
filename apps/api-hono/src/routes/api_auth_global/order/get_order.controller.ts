@@ -58,7 +58,8 @@ export const getOrderRoute = async (
         stripeCheckoutSessionUrl = stripeCheckoutSession?.url ?? undefined;
         stripeError = error;
         if (!error) {
-            order = await placeOnlinePaymentOrder(orderId, user.id, ipAddress, locale, order);
+            // no error means ok to place order
+            order = await placeOnlinePaymentOrder(order, orderId, user.id, ipAddress, locale);
         } else {
             // showing order with payment link
         }

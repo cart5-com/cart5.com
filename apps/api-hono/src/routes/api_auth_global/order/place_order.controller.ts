@@ -7,12 +7,11 @@ import { saveOrderDataTransactional_Service } from '@db/services/order.transacti
 import { generateKey } from '@lib/utils/generateKey';
 import { generateCartId } from '@lib/utils/generateCartId';
 import { updateUserData_Service } from '@db/services/user_data.service';
-import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
-import { getStoreAutomationRules_Service } from '@db/services/store.service';
 import { createCheckoutSession_inStripeConnectedAccount } from '@api-hono/utils/stripe/createCheckoutSession_inStripeConnectedAccount';
 import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
 import { getLocaleFromAcceptLanguageHeader } from "@lib/utils/getLocaleFromAcceptLanguageHeader";
-import { updateOrderStripeData_Service } from "@db/services/order.service";
+import { getOrderData_Service, updateOrderStripeData_Service } from "@db/services/order.service";
+import { newOrderPlaced_Automations_handler } from "@api-hono/utils/orders/newOrderPlaced_Automations_handler";
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -37,11 +36,6 @@ export const placeOrderRoute = async (c: Context<
     // order.orderStatus is CREATED (or PENDING_PAYMENT_AUTHORIZATION for stripe)
 
     const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
-    // Get store automation rules
-    const storeAutomationRules = await getStoreAutomationRules_Service(storeId, {
-        autoAcceptOrders: true,
-        autoPrintRules: true
-    });
 
     // if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
     let checkoutSession: Stripe.Checkout.Session | null = null;
@@ -80,7 +74,6 @@ export const placeOrderRoute = async (c: Context<
         });
     }
 
-    const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);
     await saveOrderDataTransactional_Service(
         newOrderId,
         order,
@@ -90,23 +83,6 @@ export const placeOrderRoute = async (c: Context<
             changedByIpAddress: ipAddress,
             type: 'user',
         },
-        (!IS_STRIPE_PAYMENT && storeAutomationRules?.autoAcceptOrders) ?
-            {
-                storeId,
-                changedByUserId: undefined,
-                changedByIpAddress: undefined,
-                type: 'automatic_rule'
-            }
-            :
-            undefined,
-        (!IS_STRIPE_PAYMENT && storeAutomationRules?.autoPrintRules) ?
-            {
-                storeId,
-                autoPrintRules: storeAutomationRules.autoPrintRules
-            }
-            :
-            undefined,
-        locale
     );
 
     // delete current cart
@@ -114,14 +90,17 @@ export const placeOrderRoute = async (c: Context<
     delete carts?.[cartId];
     await updateUserData_Service(user.id, { carts });
 
-
     if (!IS_STRIPE_PAYMENT) {
-        sendNotificationToStore(storeId, {
-            orderId: newOrderId
-        });
+        type OrderType = Awaited<ReturnType<typeof getOrderData_Service>>
+        await newOrderPlaced_Automations_handler(
+            order as OrderType,
+            storeId,
+            newOrderId,
+            getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language'])
+        );
     }
 
-    // TODO: send email notification to user once store approves/rejects order
+
     return c.json({
         data: {
             newOrderId,

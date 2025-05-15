@@ -1,7 +1,12 @@
-import { autoprintDeviceStoreMapTable, autoprintDeviceTable, autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
-import db from '@db/drizzle';
+import { autoprintDeviceStoreMapTable, autoprintDeviceTable } from "@db/schema/autoprint.schema";
 import { eq, type InferInsertModel, and } from 'drizzle-orm';
 import type { PrintersType } from "@lib/zod/Printers";
+import db from "@db/drizzle";
+import { autoprintDeviceTaskTable } from "@db/schema/autoprint.schema";
+import type { AutoprintRulesListType } from "@lib/zod/AutoprintRules";
+import { generateKey } from "@lib/utils/generateKey";
+import { thermalPrinterFormat } from "@lib/utils/printerFormat";
+import type { getOrderData_Service } from "./order.service";
 
 
 export const getDeviceTasks_Service = async (
@@ -110,4 +115,42 @@ export const setPrinters_Service = async (
     return await db.update(autoprintDeviceTable).set({
         printers
     }).where(eq(autoprintDeviceTable.autoprintDeviceId, autoprintDeviceId));
+}
+
+export const autoPrint_taskCreate_Service = async (
+    orderData: Awaited<ReturnType<typeof getOrderData_Service>>,
+    orderId: string,
+    storeId: string,
+    autoPrintRules?: AutoprintRulesListType,
+    locale: string | undefined = undefined,
+) => {
+    const uniqueDeviceIds: Record<string, boolean> = {};
+    if (autoPrintRules && autoPrintRules.length > 0) {
+        const activeRules = autoPrintRules.filter(rule =>
+            rule.isActive && rule.autoprintDeviceId && rule.printerDeviceName);
+        if (activeRules.length > 0) {
+            type inputType = Parameters<typeof thermalPrinterFormat>[0]; // build gives error, but I see no error here
+            const html = thermalPrinterFormat(orderData as inputType, locale);
+            for (const rule of activeRules) {
+                await db.insert(autoprintDeviceTaskTable).values({
+                    taskId: generateKey('apt'),
+                    autoprintDeviceId: rule.autoprintDeviceId as string,
+                    deviceName: rule.printerDeviceName as string,
+                    copies: rule.copies || 1,
+                    storeId,
+                    orderId: orderId,
+                    autoAcceptOrderAfterPrint: rule.autoAcceptOrderAfterPrint || false,
+                    html
+                });
+                uniqueDeviceIds[rule.autoprintDeviceId as string] = true;
+            }
+        }
+    }
+    // TODO: send notifications after autoPrint_taskCreate_Service called
+    // for (const deviceId of Object.keys(uniqueDeviceIds)) {
+    //     sendNotificationToTaskListenerDevice(deviceId, {
+    //         message: 'new task'
+    //     });
+    // }
+    return Object.keys(uniqueDeviceIds);
 }

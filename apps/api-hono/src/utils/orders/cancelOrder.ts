@@ -50,4 +50,6 @@ export const cancelOrder = async (
             orderId: order.orderId
         });
     }
+    // TODO: send email notification to user once store approves/rejects order
+    return cancelledOrderResult.rowsAffected;
 }

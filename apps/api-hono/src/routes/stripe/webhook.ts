@@ -65,7 +65,7 @@ export const stripeWebhook = new Hono<HonoVariables>()
                                 paymentIntentId: checkoutSessionCompleted.payment_intent,
                             });
                         }
-                        await placeOnlinePaymentOrder(orderId, order.userId, 'stripe-webhook', undefined, order);
+                        await placeOnlinePaymentOrder(order, orderId, order.userId, 'stripe-webhook', undefined);
                         break
                     }
                     default:

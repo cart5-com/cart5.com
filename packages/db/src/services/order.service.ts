@@ -67,7 +67,6 @@ export const getStoreOrders_Service = async (
     });
 }
 
-// TODO: sendNotificationToStore when status change?
 // only created orders can be accepted
 export const acceptOrder_Service = async (
     storeId: string,
