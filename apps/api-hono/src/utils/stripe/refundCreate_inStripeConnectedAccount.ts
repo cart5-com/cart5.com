@@ -52,6 +52,11 @@ export const refundCreate_inStripeConnectedAccount = async (
     try {
         return await stripe.refunds.create({
             payment_intent: paymentIntentId,
+            // check connect account owners can see this option while refunding in stripe dashboard!
+            // I was able to see it in my stripe dashboard, but I have the access to all connect accounts!
+
+            // Yes, connect account owner can not see this option while refunding in stripe dashboard!
+            // so no need to worry about it!
             refund_application_fee: false,
         }, {
             stripeAccount: storeStripeConnectAccountId,

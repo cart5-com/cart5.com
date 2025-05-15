@@ -192,6 +192,13 @@ const isOnboardingStarted = computed(() => {
                     <CardDescription>Configure your Stripe payment processing settings</CardDescription>
                 </CardHeader>
                 <CardContent class="space-y-6">
+                    <Button @click="saveStripeSettings"
+                            :disabled="isLoading || !isOnboardingComplete"
+                            class="w-full mt-4">
+                        <Loader2 v-if="isLoading"
+                                 class="animate-spin mr-2 h-4 w-4" />
+                        Save Stripe Settings
+                    </Button>
                     <!-- Enable Stripe -->
                     <div class="flex items-center justify-between">
                         <div>
