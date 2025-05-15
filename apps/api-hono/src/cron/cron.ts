@@ -71,8 +71,8 @@ export const startCrons = async () => {
             }
         }
 
-        // Run every 5 minutes: remind online payment not verified
-        if ((currentMinute - 3) % 5 === 0) {
+        // Run every 10 minutes: remind online payment not verified
+        if ((currentMinute - 3) % 10 === 0) {
             try {
                 console.log(`${sendEmailNotification_orders_onlinePaymentNotVerified()} emails sent for online payment not verified`);
             } catch (error) {
