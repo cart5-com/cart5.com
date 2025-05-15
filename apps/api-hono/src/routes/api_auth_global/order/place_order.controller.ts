@@ -109,7 +109,7 @@ export const placeOrderRoute = async (c: Context<
         locale
     );
 
-    // delete cart current cart
+    // delete current cart
     const cartId = generateCartId(host ?? '', storeId);
     delete carts?.[cartId];
     await updateUserData_Service(user.id, { carts });

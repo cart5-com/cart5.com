@@ -2,12 +2,12 @@ import { type Context } from 'hono';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { deleteTask_Service, getAutoprintDeviceTask_Service } from '@db/services/autoprint.service';
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
-import { acceptOrder_Service } from '@db/services/order.service';
-import { sendNotificationToStore } from '@api-hono/routes/api_orders/listen_store.controller';
+import { acceptOrder } from '@api-hono/utils/orders/acceptOrder';
 
 export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
     const deviceId = c.req.param('deviceId');
     const taskId = c.req.param('taskId');
+    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
     if (!deviceId) {
         throw new KNOWN_ERROR("Device ID not found", "DEVICE_ID_NOT_FOUND");
@@ -28,10 +28,7 @@ export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
 
     await deleteTask_Service(taskId, deviceId);
     if (task.autoAcceptOrderAfterPrint) {
-        await acceptOrder_Service(task.storeId, task.orderId, undefined, undefined, 'automatic_rule');
-        sendNotificationToStore(task.storeId, {
-            orderId: task.orderId
-        });
+        await acceptOrder(task.storeId, task.orderId, undefined, ipAddress, 'automatic_rule');
     }
 
     return c.json({
