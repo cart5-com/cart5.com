@@ -12,7 +12,6 @@ import { updateUserDataRoute, updateUserData_SchemaValidator } from './user_data
 import { phoneRoute } from './phone/_router';
 import { placeOrderRoute } from './order/place_order.controller';
 import { getOrderRoute, getOrder_SchemaValidator } from './order/get_order.controller';
-// import { fakePlaceOrderRoute } from './order/fake_place_order.controller';
 
 export const apiAuthGlobal = new Hono<HonoVariables>()
     .post(
@@ -46,10 +45,6 @@ export const apiAuthGlobal = new Hono<HonoVariables>()
         '/:storeId/place_order',
         placeOrderRoute
     )
-    // .post(
-    //     '/:storeId/fake_place_order',
-    //     fakePlaceOrderRoute
-    // )
     .post(
         '/:orderId/get_order',
         getOrder_SchemaValidator,

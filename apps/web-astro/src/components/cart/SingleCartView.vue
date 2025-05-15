@@ -17,18 +17,6 @@ const currentCart = computed(() => {
 const removeAllItemsFromCart = () => {
   clearCartByStoreId(currentCart.value?.storeId!);
 }
-const fakePlaceOrder = async () => {
-  const { data, error } = await (await authGlobalApiClient[':storeId'].fake_place_order.$post({
-    param: {
-      storeId: window.storeData?.id ?? '',
-    },
-  })).json();
-  if (error) {
-    console.error(error);
-  } else {
-    console.log(data);
-  }
-}
 
 </script>
 
@@ -86,7 +74,6 @@ const fakePlaceOrder = async () => {
         Click
         <Plus class="inline-block border border-foreground rounded-md" />
         to add items to cart
-        <button @click="fakePlaceOrder">.</button>
       </div>
     </div>
   </div>
