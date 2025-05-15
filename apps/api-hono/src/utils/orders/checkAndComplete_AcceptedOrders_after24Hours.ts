@@ -5,7 +5,6 @@ import {
 import { capturePaymentIntent_inStripeConnectedAccount } from "../stripe/capturePaymentIntent_inStripeConnectedAccount";
 import { sentrySmol } from "../getSentrySmol";
 import { IS_PROD } from "@lib/utils/getEnvVariable";
-import { KNOWN_ERROR } from "@lib/types/errors";
 
 export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
     const message = "Checking and completing accepted orders after 24 hours";
