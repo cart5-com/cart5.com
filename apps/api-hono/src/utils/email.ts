@@ -1,3 +1,4 @@
+import { STORE_FRONT_LINKS } from "@lib/storefrontLinks";
 import { getEnvVariable, IS_PROD } from "@lib/utils/getEnvVariable";
 
 export const sendEmail = async function (
@@ -26,6 +27,37 @@ export const sendEmail = async function (
         return true;
     }
 }
+
+export const orderOnlinePaymentNotVerifiedEmail = (
+    email: string,
+    storeName: string,
+    orderId: string,
+    websiteDefaultHostname: string,
+) => {
+    const from = `no-reply-order-online-payment-not-verified <no-reply-order-online-payment-not-verified@${getEnvVariable('PUBLIC_DOMAIN_NAME')}>`;
+    const to = email;
+    const subject = `Your online payment not verified for '${storeName}' order`;
+    const html = `
+Your order payment has not been verified yet. To complete your order:
+
+1. Click the link below to view your order:
+----------------
+https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
+----------------
+
+Important notes:
+- The store cannot process unverified orders
+- Your payment link will expire in 60 minutes
+- Please complete the payment process to confirm your order`;
+
+    sendEmail({
+        from,
+        to: [to],
+        subject,
+        html
+    });
+};
+
 
 export const sendInvitationEmail = (
     email: string,
