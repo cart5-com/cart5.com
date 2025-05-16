@@ -6,6 +6,7 @@ export const sendEmail = async function (
 ) {
     if (IS_PROD) {
         options.html = options.html.replace(/\n/g, "<br>");
+        options.html = options.html.replace(/https?:\/\/\S+/g, (url) => `<a target="_blank" href="${url}">${url}</a>`);
         const res = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -40,7 +41,7 @@ export const orderOnlinePaymentNotVerifiedEmail = (
     const html = `
 Your order payment has not been verified yet. To complete your order:
 
-1. Click the link below to check and complete your order:
+Click the link below to check and complete your order:
 ----------------
 https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
 ----------------
@@ -58,6 +59,57 @@ Important notes:
     });
 };
 
+export const orderAcceptedEmail = (
+    email: string,
+    storeName: string,
+    orderId: string,
+    websiteDefaultHostname: string,
+) => {
+    const from = `no-reply-order-accepted <no-reply-order-accepted@${getEnvVariable('PUBLIC_DOMAIN_NAME')}>`;
+    const to = email;
+    const subject = `Your order has been accepted by '${storeName}'`;
+    const html = `
+Your order has been accepted by '${storeName}'.
+
+Click the link below to see your order:
+----------------
+https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
+----------------
+
+`;
+    sendEmail({
+        from,
+        to: [to],
+        subject,
+        html
+    });
+}
+
+export const orderCancelledEmail = (
+    email: string,
+    storeName: string,
+    orderId: string,
+    websiteDefaultHostname: string,
+) => {
+    const from = `no-reply-order-cancelled <no-reply-order-cancelled@${getEnvVariable('PUBLIC_DOMAIN_NAME')}>`;
+    const to = email;
+    const subject = `Your order has been cancelled by '${storeName}'`;
+    const html = `
+Your order has been cancelled by '${storeName}'.
+
+Click the link below to see your order:
+----------------
+https://${websiteDefaultHostname}${STORE_FRONT_LINKS.SHOW_ORDER(orderId)}
+----------------
+
+`;
+    sendEmail({
+        from,
+        to: [to],
+        subject,
+        html
+    });
+}
 
 export const sendInvitationEmail = (
     email: string,

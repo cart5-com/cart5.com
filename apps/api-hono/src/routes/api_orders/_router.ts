@@ -6,7 +6,7 @@ import { createAdminCheckStore } from '@api-hono/utils/checkStorePermissions';
 import { mustHaveUser } from '@api-hono/middlewares/mustHaveUser';
 import { getRecentOrders_Route } from '@api-hono/routes/api_orders/get_recent_orders.controller';
 import { getStoreOrders_Handler, getStoreOrders_SchemaValidator } from '@api-hono/routes/api_orders/store_orders.controller';
-import { acceptOrder_Handler, acceptOrder_SchemaValidator } from './accept_order.controller';
+import { acceptOrder_Controller, acceptOrder_SchemaValidator } from './accept_order.controller';
 import { cancelOrder_Handler, cancelOrder_SchemaValidator } from './cancel_order.controller';
 import { pairAutoprintDevice_Handler, pairAutoprintDevice_SchemaValidator } from './pair_autoprint_device.controller';
 import { getMyOrderStores_Handler } from './my_order_stores.controller';
@@ -58,7 +58,7 @@ export const apiOrders = new Hono<HonoVariables>()
             TEAM_PERMISSIONS.ORDERS_MANAGER
         ]),
         acceptOrder_SchemaValidator,
-        acceptOrder_Handler
+        acceptOrder_Controller
     )
     .post(
         '/:storeId/cancel_order',

@@ -1,8 +1,9 @@
-import { acceptOrder_Service } from "@db/services/order.service";
+import { acceptOrder_Service, getStoreOrders_Service } from "@db/services/order.service";
 import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";
 import { sendNotificationToStore } from "@api-hono/routes/api_orders/listen_store.controller";
+import { orderAcceptedEmail } from "@api-hono/utils/email";
 
-export const acceptOrder = async (
+export const acceptOrder_handler = async (
     storeId: string,
     orderId: string,
     userId?: string,
@@ -20,7 +21,20 @@ export const acceptOrder = async (
         sendNotificationToStore(storeId, {
             orderId
         });
-        // TODO: send email notification to user once store approves/rejects order
+        const orders = await getStoreOrders_Service(storeId, [orderId], {
+            userEmail: true,
+            storeName: true,
+            orderId: true,
+            websiteDefaultHostname: true,
+        })
+        if (orders[0] && orders[0].userEmail) {
+            orderAcceptedEmail(
+                orders[0].userEmail,
+                orders[0].storeName,
+                orders[0].orderId,
+                orders[0].websiteDefaultHostname
+            );
+        }
     }
     return acceptedOrderResult.rowsAffected;
 }

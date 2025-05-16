@@ -2,7 +2,7 @@ import { type Context } from 'hono';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { deleteTask_Service, getAutoprintDeviceTask_Service } from '@db/services/autoprint.service';
 import { KNOWN_ERROR, type ErrorType } from '@lib/types/errors';
-import { acceptOrder } from '@api-hono/utils/orders/acceptOrder';
+import { acceptOrder_handler } from '@api-hono/utils/orders/acceptOrder';
 
 export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
     const deviceId = c.req.param('deviceId');
@@ -28,7 +28,7 @@ export const deleteTask_Handler = async (c: Context<HonoVariables>) => {
 
     await deleteTask_Service(taskId, deviceId);
     if (task.autoAcceptOrderAfterPrint) {
-        await acceptOrder(task.storeId, task.orderId, undefined, ipAddress, 'automatic_rule');
+        await acceptOrder_handler(task.storeId, task.orderId, undefined, ipAddress, 'automatic_rule');
     }
 
     return c.json({

@@ -1,9 +1,10 @@
-import { cancelOrder_Service } from "@db/services/order.service";
+import { cancelOrder_Service, getStoreOrders_Service } from "@db/services/order.service";
 import { type getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service } from "@db/services/order/order.cancel.service";
 import { cancelPaymentIntent_inStripeConnectedAccount } from "../stripe/cancelPaymentIntent_inStripeConnectedAccount";
 import { refundCreate_inStripeConnectedAccount } from "../stripe/refundCreate_inStripeConnectedAccount";
 import type { OrderStatusChangedByType } from "@lib/types/orderStatusChangedByEnum";
 import { sendNotificationToStore } from "@api-hono/routes/api_orders/listen_store.controller";
+import { orderCancelledEmail } from "../email";
 
 export const cancelOrder = async (
     order: Awaited<ReturnType<typeof getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service>>[number],
@@ -51,6 +52,19 @@ export const cancelOrder = async (
             orderId: order.orderId
         });
     }
-    // TODO: send email notification to user once store approves/rejects order
+    const orders = await getStoreOrders_Service(order.storeId, [order.orderId], {
+        userEmail: true,
+        storeName: true,
+        orderId: true,
+        websiteDefaultHostname: true,
+    })
+    if (orders[0] && orders[0].userEmail) {
+        orderCancelledEmail(
+            orders[0].userEmail,
+            orders[0].storeName,
+            orders[0].orderId,
+            orders[0].websiteDefaultHostname
+        );
+    }
     return cancelledOrderResult.rowsAffected;
 }

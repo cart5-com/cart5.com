@@ -1,5 +1,5 @@
 import { getStoreAutomationRules_Service } from '@db/services/store.service';
-import { acceptOrder } from "@api-hono/utils/orders/acceptOrder";
+import { acceptOrder_handler } from "@api-hono/utils/orders/acceptOrder";
 import { autoPrint_taskCreate_Service } from "@db/services/autoprint.service";
 import { sendNotificationToTaskListenerDevice } from "@api-hono/routes/api_autoprint_tasks/listen_tasks.controller";
 import type { getOrderData_Service } from '@db/services/order.service';
@@ -19,7 +19,7 @@ export const newOrderPlaced_Automations_handler = async (
         autoPrintRules: true
     });
     if (storeAutomationRules?.autoAcceptOrders) {
-        await acceptOrder(storeId, newOrderId, undefined, undefined, 'automatic_rule');
+        await acceptOrder_handler(storeId, newOrderId, undefined, undefined, 'automatic_rule');
     }
     if (storeAutomationRules?.autoPrintRules) {
         const autoPrintDeviceIds = await autoPrint_taskCreate_Service(
