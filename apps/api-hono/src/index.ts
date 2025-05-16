@@ -9,7 +9,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { IS_PROD } from '@lib/utils/getEnvVariable';
 import { sendDiscordMessage } from './utils/logging';
 import { errorHandler } from './middlewares/errorHandler';
-import { startCrons } from './cron/cron';
+import { startCrons, stopCrons } from './cron/cron';
 import { apiAuthGlobal } from './routes/api_auth_global/_router';
 import { apiAuth } from './routes/api_auth/_router';
 import { apiDashboard } from './routes/api_dashboard/_router';
@@ -21,7 +21,7 @@ import { apiAutoprintPairing } from './routes/api_autoprint_pairing/_router';
 import { paths } from './paths';
 import { apiAutoprintTasks } from './routes/api_autoprint_tasks/_router';
 import { stripeWebhook } from './routes/stripe/webhook';
-
+import { closeDrizzleDb } from '@db/closeDrizzleDb';
 const app = new Hono<HonoVariables>();
 app.onError(errorHandler);
 
@@ -72,3 +72,7 @@ const startServer = () => {
 
 startServer();
 startCrons();
+
+// stopCrons();
+// closeDrizzleDb();
+// server.close();

@@ -8,6 +8,7 @@ import {
 import { cancelOldOrders_AbandonedByStore } from "@api-hono/utils/orders/cancelOldOrders_AbandonedByStore";
 import { onlinePaymentNotVerified_sendEmailNotification } from "@api-hono/utils/orders/onlinePaymentNotVerified_sendEmailNotification";
 
+let cronIntervalRef: NodeJS.Timeout;
 const runCron = getEnvVariable("RUN_CRON");
 // This is not scalable, but it is ok for now
 export const startCrons = async () => {
@@ -82,6 +83,9 @@ export const startCrons = async () => {
 
     };
     runEveryMinute();
-    setInterval(runEveryMinute, 60_000);
+    cronIntervalRef = setInterval(runEveryMinute, 60_000);
+}
 
+export const stopCrons = () => {
+    clearInterval(cronIntervalRef);
 }
