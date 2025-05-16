@@ -14,7 +14,7 @@ export const get_OnlinePaymentOrders_NotVerified_After10Minutes_Service = async 
             websiteDefaultHostname: orderTable.websiteDefaultHostname,
             storeName: orderTable.storeName,
             isOnlinePaymentNotVerifiedEmailNotificationSent: orderOnlinePaymentFlagsTable.isOnlinePaymentNotVerifiedEmailNotificationSent,
-            isOnlinePaymentVerified: orderTable.isOnlinePaymentVerified
+            isOnlinePaymentVerified: orderOnlinePaymentFlagsTable.isOnlinePaymentVerified
         })
         .from(orderTable)
         .leftJoin(
@@ -30,8 +30,8 @@ export const get_OnlinePaymentOrders_NotVerified_After10Minutes_Service = async 
                 isNull(orderOnlinePaymentFlagsTable.isOnlinePaymentNotVerifiedEmailNotificationSent)
             ),
             or(
-                eq(orderTable.isOnlinePaymentVerified, false),
-                isNull(orderTable.isOnlinePaymentVerified)
+                eq(orderOnlinePaymentFlagsTable.isOnlinePaymentVerified, false),
+                isNull(orderOnlinePaymentFlagsTable.isOnlinePaymentVerified)
             )
         ));
 }

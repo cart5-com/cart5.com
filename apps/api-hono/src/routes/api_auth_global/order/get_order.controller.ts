@@ -51,7 +51,7 @@ export const getOrderRoute = async (
     let stripeError: ErrorType | undefined = undefined;
     if (
         order.orderStatus === ORDER_STATUS_OBJ.PENDING_PAYMENT_AUTHORIZATION &&
-        order.isOnlinePaymentVerified !== true
+        order.onlinePaymentFlags?.isOnlinePaymentVerified !== true
     ) {
         // once payment is verified, this block will not be executed
         const { stripeCheckoutSession, error } = await verifyStripeCheckoutSession_inStripeConnectedAccount(order);

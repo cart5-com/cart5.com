@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { orderTable, orderStatusHistoryTable } from "@db/schema/order.schema";
+import { orderTable, orderStatusHistoryTable, orderOnlinePaymentFlagsTable } from "@db/schema/order.schema";
 import { eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { ORDER_STATUS_OBJ, type OrderStatus } from "@lib/types/orderStatus";
@@ -53,9 +53,11 @@ export const saveOrderAfterStipePaymentVerification_Service = async (
         // Step 1: Update order data
         await tx.update(orderTable).set({
             orderStatus: ORDER_STATUS_OBJ.CREATED,
-            isOnlinePaymentVerified: true,
             created_at_ts: Date.now(),
         }).where(eq(orderTable.orderId, orderId));
+        await tx.update(orderOnlinePaymentFlagsTable).set({
+            isOnlinePaymentVerified: true,
+        }).where(eq(orderOnlinePaymentFlagsTable.orderId, orderId));
 
         // Step 2: Log status change if requested
         await handleStatusChange_Service(orderId, tx, statusChange);

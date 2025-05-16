@@ -12,7 +12,6 @@ export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
         columns: {
             orderId: true,
             paymentId: true,
-            isOnlinePaymentVerified: true,
         },
         where: and(
             eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED),
@@ -28,6 +27,7 @@ export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
             },
             onlinePaymentFlags: {
                 columns: {
+                    isOnlinePaymentVerified: true,
                     isOnlinePaymentCaptured: true,
                 }
             }

@@ -18,7 +18,6 @@ export const getStoreOrder_forCancel_Service = async (
             storeId: true,
             created_at_ts: true,
             paymentId: true,
-            isOnlinePaymentVerified: true,
         },
         with: {
             stripeData: {
@@ -30,6 +29,7 @@ export const getStoreOrder_forCancel_Service = async (
             },
             onlinePaymentFlags: {
                 columns: {
+                    isOnlinePaymentVerified: true,
                     isOnlinePaymentCaptured: true,
                 }
             }
@@ -47,14 +47,13 @@ export const getCreated_butNotAcceptedOrders_after25Minutes_withJoin_Service = a
             storeId: orderTable.storeId,
             created_at_ts: orderTable.created_at_ts,
             paymentId: orderTable.paymentId,
-            isOnlinePaymentVerified: orderTable.isOnlinePaymentVerified,
-            // isOnlinePaymentCaptured: orderTable.isOnlinePaymentCaptured,
             stripeData: {
                 checkoutSessionId: orderStripeDataTable.checkoutSessionId,
                 paymentIntentId: orderStripeDataTable.paymentIntentId,
                 storeStripeConnectAccountId: orderStripeDataTable.storeStripeConnectAccountId,
             },
             onlinePaymentFlags: {
+                isOnlinePaymentVerified: orderOnlinePaymentFlagsTable.isOnlinePaymentVerified,
                 isOnlinePaymentCaptured: orderOnlinePaymentFlagsTable.isOnlinePaymentCaptured,
             }
         })

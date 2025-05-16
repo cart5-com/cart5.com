@@ -13,7 +13,8 @@ export const cancelOrder = async (
 ) => {
     let cancelledOrderResult: Awaited<ReturnType<typeof cancelOrder_Service>>;
     if (
-        order.isOnlinePaymentVerified &&
+        order.onlinePaymentFlags &&
+        order.onlinePaymentFlags.isOnlinePaymentVerified === true &&
         order.paymentId === 'stripe' &&
         order.stripeData &&
         (order.stripeData.checkoutSessionId || order.stripeData.paymentIntentId)

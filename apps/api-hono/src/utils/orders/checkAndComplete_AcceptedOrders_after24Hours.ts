@@ -12,7 +12,8 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
     const orders = await getAcceptedOrders_toCheckAndComplete_after24Hours_Service();
     for (const order of orders) {
         if (
-            order.isOnlinePaymentVerified &&
+            order.onlinePaymentFlags &&
+            order.onlinePaymentFlags.isOnlinePaymentVerified === true &&
             order.paymentId === 'stripe' &&
             order.stripeData &&
             (order.stripeData.checkoutSessionId || order.stripeData.paymentIntentId) &&

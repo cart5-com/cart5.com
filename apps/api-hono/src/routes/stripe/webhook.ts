@@ -51,7 +51,10 @@ export const stripeWebhook = new Hono<HonoVariables>()
                             // already processed
                             return context.text('', 200)
                         }
-                        if (order.isOnlinePaymentVerified === true) {
+                        if (
+                            order.onlinePaymentFlags &&
+                            order.onlinePaymentFlags?.isOnlinePaymentVerified === true
+                        ) {
                             // already processed
                             return context.text('', 200)
                         }
