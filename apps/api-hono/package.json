@@ -10,6 +10,7 @@
 		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"
 	},
 	"devDependencies": {
+		"@aws-sdk/client-sns": "^3.810.0",
 		"@dotenvx/dotenvx": "^1.32.0",
 		"@hono/node-server": "^1.13.7",
 		"@hono/zod-validator": "^0.4.1",
@@ -33,7 +34,6 @@
 		"libphonenumber-js": "^1.11.18",
 		"sharp": "^0.34.0",
 		"stripe": "^18.0.0",
-		"toucan-js": "^4.1.1",
 		"tsx": "^4.19.2",
 		"uqr": "^0.1.2",
 		"zod": "^3.23.8"

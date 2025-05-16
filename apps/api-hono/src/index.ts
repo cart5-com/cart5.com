@@ -1,5 +1,4 @@
 import './utils/sentryNodeInit';
-import { sentryMiddleware } from './middlewares/sentryMiddleware';
 import { serve } from '@hono/node-server'
 import { Hono } from "hono";
 import { csrfChecks } from "./middlewares/csrf";
@@ -24,15 +23,11 @@ import { apiAutoprintTasks } from './routes/api_autoprint_tasks/_router';
 import { stripeWebhook } from './routes/stripe/webhook';
 
 const app = new Hono<HonoVariables>();
-if (IS_PROD) {
-	app.use(sentryMiddleware);
-}
 app.onError(errorHandler);
 
 app.use(csrfChecks);
 app.use(authChecks);
 app.use(secureHeaders());
-
 
 app.get("/", (c) => {
 	return c.html(`Hello ${IS_PROD ? "PROD" : "DEV"} ${ENFORCE_HOSTNAME_CHECKS ? "✅ENFORCE_HOSTNAME_CHECKS" : "❌NO_ENFORCE_HOSTNAME_CHECKS"}`);

@@ -1,5 +1,25 @@
-import { IS_PROD } from "@lib/utils/getEnvVariable";
+import { getEnvVariable, IS_PROD } from "@lib/utils/getEnvVariable";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
+const snsClient = new SNSClient({
+    region: getEnvVariable("SMS_AWS_REGION"),
+    credentials: {
+        accessKeyId: getEnvVariable("SMS_AWS_ACCESS_KEY"),
+        secretAccessKey: getEnvVariable("SMS_AWS_SECRET_KEY"),
+    },
+});
+
+// AWS IAM Policy to allow sns:Publish
+// {
+//     "Version": "2012-10-17",
+//         "Statement": [
+//             {
+//                 "Effect": "Allow",
+//                 "Action": "sns:Publish",
+//                 "Resource": "*"
+//             }
+//         ]
+// }
 
 export const sendUserOtpSms = async (
     number: string,
@@ -8,16 +28,18 @@ export const sendUserOtpSms = async (
     const to = number;
     const textMessage = `${code}`;
     console.log(`✉️📞☎️to: ${to}`);
-    console.log(`✉️📞☎️ SMS: ${textMessage}`);
+    console.log(`${textMessage}`);
     if (IS_PROD) {
-        // TODO: send sms
+        const command = new PublishCommand({
+            Message: textMessage,
+            PhoneNumber: to,
+        });
+        // const result = await
+        snsClient.send(command);
+        // TODO: SEND SMS
         // console.log(`to: ${to}`);
         // console.log(`textMessage: ${textMessage}`);
         // throw new Error('SMS not implemented');
-    } else {
-        // console.log(`✉️📞☎️to: ${to}`);
-        // console.log(`✉️📞☎️ SMS: ${textMessage}`);
     }
     return 200;
-
 };

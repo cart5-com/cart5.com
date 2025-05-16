@@ -1,6 +1,6 @@
 import type { ErrorHandler } from 'hono';
 import { KNOWN_ERROR } from '@lib/types/errors';
-import { sendDiscordMessage } from '../utils/logging';
+// import { sendDiscordMessage } from '../utils/logging';
 import type { HonoVariables } from '../types/HonoVariables';
 
 export const errorHandler: ErrorHandler<HonoVariables> = async (err, c) => {
@@ -15,9 +15,10 @@ export const errorHandler: ErrorHandler<HonoVariables> = async (err, c) => {
             },
         }, 500);
     } else {
-        sendDiscordMessage(`Index.ts onError: ${err}`);
+        // sendDiscordMessage(`Index.ts onError: ${err}`);
         // this is same with hono's own error handler. 
         // but i like JSON response, not text
+        globalThis.globalSentry?.captureException(err);
         if ("getResponse" in err) {
             return err.getResponse();
         }
