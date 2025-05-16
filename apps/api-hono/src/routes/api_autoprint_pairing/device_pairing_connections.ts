@@ -11,7 +11,6 @@ interface PairingDeviceInfo {
     secretKey?: string;
     printers?: PrintersType;
 }
-
 // This is not scalable, but it is ok for now
 export const device_pairing_connections = new Map<string, PairingDeviceInfo>();
 
