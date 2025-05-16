@@ -19,6 +19,62 @@ import {
 import { isPhoneNumberVerified_Service } from '@db/services/phone.service';
 import { getIpAddress } from '@api-hono/utils/ip_address';
 
+// In-memory storage for IP-based rate limiting
+interface IpRecord {
+    timestamps: number[];
+}
+
+const ipMemoryStore: Record<string, IpRecord> = {};
+const MAX_IP_REQUESTS_PER_PERIOD = 15; // Maximum requests allowed per IP per period
+const IP_RATE_LIMIT_PERIOD_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+
+// Periodically clean up old records to prevent memory leaks
+setInterval(() => {
+    const now = Date.now();
+    for (const ip in ipMemoryStore) {
+        // Filter out timestamps older than the rate limit period
+        ipMemoryStore[ip].timestamps = ipMemoryStore[ip].timestamps.filter(
+            timestamp => now - timestamp < IP_RATE_LIMIT_PERIOD_MS
+        );
+
+        // Remove entry if no timestamps remain
+        if (ipMemoryStore[ip].timestamps.length === 0) {
+            delete ipMemoryStore[ip];
+        }
+    }
+}, 60 * 60 * 1000); // Clean up every hour
+
+// Check if an IP has exceeded rate limits
+const hasIpExceededRateLimit = (ip: string): boolean => {
+    const now = Date.now();
+
+    // If IP doesn't exist in store, create it
+    if (!ipMemoryStore[ip]) {
+        ipMemoryStore[ip] = { timestamps: [] };
+        return false;
+    }
+
+    // Filter timestamps to only include those within the rate limit period
+    const recentTimestamps = ipMemoryStore[ip].timestamps.filter(
+        timestamp => now - timestamp < IP_RATE_LIMIT_PERIOD_MS
+    );
+
+    // Update the store with filtered timestamps
+    ipMemoryStore[ip].timestamps = recentTimestamps;
+
+    // Check if IP has exceeded the max requests allowed
+    return recentTimestamps.length >= MAX_IP_REQUESTS_PER_PERIOD;
+};
+
+// Record a new request from an IP
+const recordIpRequest = (ip: string): void => {
+    if (!ipMemoryStore[ip]) {
+        ipMemoryStore[ip] = { timestamps: [] };
+    }
+
+    ipMemoryStore[ip].timestamps.push(Date.now());
+};
+
 export const sendPhoneOtpSchemaValidator = zValidator('form', z.object({
     phoneNumber: z.string().refine(
         (value) => parsePhoneNumberFromString(value)?.isValid(),
@@ -36,6 +92,12 @@ export const sendPhoneOtpRoute = async (
 ) => {
     const { phoneNumber, turnstile } = c.req.valid('form');
     const IP_ADDRESS = getIpAddress(c);
+
+    // Check for IP-based rate limiting
+    if (hasIpExceededRateLimit(IP_ADDRESS)) {
+        throw new KNOWN_ERROR("Too many requests from this IP. Please try again after 1 hour.", "IP_RATE_LIMIT_EXCEEDED");
+    }
+
     const { userId: requestUserId } = await validateCrossDomainTurnstile(
         turnstile,
         IP_ADDRESS,
@@ -80,6 +142,9 @@ export const sendPhoneOtpRoute = async (
     });
 
     try {
+        // Record the IP request before sending SMS
+        recordIpRequest(IP_ADDRESS);
+
         // Send the OTP via SMS
         await sendUserOtpSms(parsedNumber.number, otp);
     } catch (error) {
