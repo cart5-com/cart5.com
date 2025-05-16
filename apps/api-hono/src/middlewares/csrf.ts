@@ -11,7 +11,6 @@ export const csrfChecks = createMiddleware<HonoVariables>(async (c, next) => {
 	} else if (c.req.path.startsWith(paths.autoprint_tasks)) {
 		await next();
 	} else if (c.req.path === `${paths.stripe_webhook}`) {
-		// TODO: add stripe webhook
 		await next();
 	} else {
 		const originHeader = c.req.header()['origin'] ?? null;
