@@ -94,7 +94,7 @@ export const validateCrossDomainTurnstile = async function (
         createdAtTimestamp,
         sourceHost,
         targetHost,
-        ipAddress,
+        // ipAddress,
         userAgent
     } = await decryptAndVerifyJwt<CrossDomainCodePayload>(
         getEnvVariable('JWT_PRIVATE_KEY'),
@@ -107,7 +107,10 @@ export const validateCrossDomainTurnstile = async function (
 
 
     // check ip address and user agent
-    if (ipAddress !== reqXForwardedFor || userAgent !== reqUserAgent) {
+    if (
+        // ipAddress !== reqXForwardedFor || // mobile requests may change ip address
+        userAgent !== reqUserAgent
+    ) {
         throw new KNOWN_ERROR("Invalid ip address or user agent", "INVALID_IP_ADDRESS_OR_USER_AGENT");
     }
 
