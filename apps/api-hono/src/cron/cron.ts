@@ -10,6 +10,7 @@ import { onlinePaymentNotVerified_sendEmailNotification } from "@api-hono/utils/
 
 let cronIntervalRef: NodeJS.Timeout;
 const runCron = getEnvVariable("RUN_CRON");
+
 // This is not scalable, but it is ok for now
 export const startCrons = async () => {
     if (runCron !== "1") {
