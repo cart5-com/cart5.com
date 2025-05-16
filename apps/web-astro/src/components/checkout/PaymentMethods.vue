@@ -88,22 +88,23 @@ defineExpose({
                     <Label v-for="method in availablePaymentMethods"
                            :key="method.id"
                            class="cursor-pointer hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-4 mb-2 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/10 dark:has-[[data-state=checked]]:border-primary-foreground dark:has-[[data-state=checked]]:bg-primary/20">
-                        <RadioGroupItem :id="method.id"
-                                        :value="method.id"
-                                        class="shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white" />
-                        <div class="grid gap-1 font-normal">
-                            <div class="font-medium flex items-center">
-                                <component :is="icons.find(icon => icon.name === method.icon)?.component || WalletCards"
-                                           class="mr-2" />
-                                {{ method.name }}
+                        <DialogClose as-child>
+                            <RadioGroupItem :id="method.id"
+                                            :value="method.id"
+                                            class="shadow-none data-[state=checked]:border-primary data-[state=checked]:bg-primary *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white" />
+                            <div class="grid gap-1 font-normal">
+                                <div class="font-medium flex items-center">
+                                    <component :is="icons.find(icon => icon.name === method.icon)?.component || WalletCards"
+                                               class="mr-2" />
+                                    {{ method.name }}
+                                </div>
+                                <div class="text-muted-foreground text-sm leading-snug"
+                                     v-if="method.description">
+                                    {{ method.description }}
+                                </div>
                             </div>
-                            <div class="text-muted-foreground text-sm leading-snug"
-                                 v-if="method.description">
-                                {{ method.description }}
-                            </div>
-                        </div>
+                        </DialogClose>
                     </Label>
-
                 </RadioGroup>
 
                 <DialogFooter>
