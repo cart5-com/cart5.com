@@ -11,6 +11,7 @@ import { validateTurnstile } from '@api-hono/utils/validateTurnstile';
 import { getUserByEmailService } from '@db/services/user.service';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const updatePasswordSchemaValidator = zValidator('form', z.object({
@@ -31,7 +32,7 @@ export const updatePasswordRoute = async (c: Context<
     ValidatorContext<typeof updatePasswordSchemaValidator>
 >) => {
     const { turnstile, password } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const user = c.get("USER");
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");

@@ -9,6 +9,7 @@ import { verifyStripeCheckoutSession_inStripeConnectedAccount } from '@api-hono/
 import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { getLocaleFromAcceptLanguageHeader } from '@lib/utils/getLocaleFromAcceptLanguageHeader';
 import { placeOnlinePaymentOrder } from './place_online_payment_order';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const getOrder_SchemaValidator = zValidator('json', z.object({
@@ -44,7 +45,6 @@ export const getOrderRoute = async (
         throw new KNOWN_ERROR("Permission denied", "PERMISSION_DENIED");
     }
 
-    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
     const locale = getLocaleFromAcceptLanguageHeader(c.req.header()['accept-language']);
 
     let stripeCheckoutSessionUrl: string | undefined = undefined;
@@ -59,7 +59,7 @@ export const getOrderRoute = async (
         stripeError = error;
         if (!error) {
             // no error means ok to place order
-            order = await placeOnlinePaymentOrder(order, orderId, user.id, ipAddress, locale);
+            order = await placeOnlinePaymentOrder(order, orderId, user.id, getIpAddress(c), locale);
         } else {
             // showing order with payment link
         }

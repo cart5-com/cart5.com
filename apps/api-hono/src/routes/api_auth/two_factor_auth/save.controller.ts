@@ -12,6 +12,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { updateEncryptedTwoFactorAuthKeyService } from '@db/services/user.service';
 import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const saveTwoFactorAuthSchemaValidator = zValidator('form', z.object({
@@ -37,7 +38,7 @@ export const saveTwoFactorAuthRoute = async (
         throw new KNOWN_ERROR("User already has 2FA enabled", "USER_ALREADY_HAS_2FA_ENABLED");
     }
     const { encodedTOTPKey, userProvidedCode, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     let key: Uint8Array;
     try {
         key = decodeBase64(encodedTOTPKey);

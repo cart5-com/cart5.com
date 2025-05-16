@@ -12,6 +12,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const sendOtpSchemaValidator = zValidator('form', z.object({
@@ -27,7 +28,7 @@ export const sendOtpRoute = async (
 ) => {
     // TODO always reject domains listed in blacklist
     const { verifyEmail, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
 
     const otp = generateOTPJsOnly();
     const otpToken = await signJwtAndEncrypt<OtpTokenPayload>(

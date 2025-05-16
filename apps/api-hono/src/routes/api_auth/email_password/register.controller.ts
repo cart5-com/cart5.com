@@ -14,6 +14,7 @@ import { ENFORCE_HOSTNAME_CHECKS } from '@lib/utils/enforceHostnameChecks';
 import { getEnvVariable } from '@lib/utils/getEnvVariable';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const registerEmailPasswordSchemaValidator = zValidator('form', z.object({
@@ -39,7 +40,7 @@ export const registerEmailPasswordRoute = async (
 ) => {
     // TODO always reject domains listed in blacklist
     const { email, password, name, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
 
     const isRegistered = await isEmailExistsService(email);
     if (isRegistered) {

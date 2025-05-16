@@ -15,6 +15,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { isEmailExistsService } from '@db/services/user.service';
 import { getUserByEmailService } from '@db/services/user.service';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const loginEmailPasswordSchemaValidator = zValidator('form', z.object({
@@ -27,7 +28,7 @@ export const loginEmailPasswordRoute = async (
 ) => {
     // TODO always reject domains listed in blacklist
     const { email, password, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const isRegistered = await isEmailExistsService(email);
     if (!isRegistered) {
         throw new KNOWN_ERROR("Email not registered", "EMAIL_NOT_REGISTERED");

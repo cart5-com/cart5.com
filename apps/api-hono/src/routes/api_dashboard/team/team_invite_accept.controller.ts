@@ -13,6 +13,7 @@ import {
     getExistingTeamMembership,
     addMemberToTeam
 } from "@db/services/team.service";
+import { getIpAddress } from "@api-hono/utils/ip_address";
 
 export const teamInviteAccept_Schema = z.object({
     token: z.string().min(1, { message: 'Token is required' }),
@@ -29,7 +30,7 @@ export const teamInviteAccept_Handler = async (c: Context<
     const turnstile = c.req.valid('json').turnstile;
     const { userId } = await validateCrossDomainTurnstile(
         turnstile,
-        c.req.header()['x-forwarded-for'],
+        getIpAddress(c),
         c.req.header()['user-agent'],
         c.req.header()['host']
     );

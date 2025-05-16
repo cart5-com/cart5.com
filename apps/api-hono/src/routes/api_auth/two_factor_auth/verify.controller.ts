@@ -14,6 +14,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { getUserByEmailService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { createUserSessionAndSetCookie } from '@api-hono/utils/createUserSessionAndSetCookie';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const verifyTwoFactorAuthSchemaValidator = zValidator('form', z.object({
@@ -28,7 +29,7 @@ export const verifyTwoFactorAuthRoute = async (
     >
 ) => {
     const { userProvidedCode, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
     if (!twoFactorAuthToken) {

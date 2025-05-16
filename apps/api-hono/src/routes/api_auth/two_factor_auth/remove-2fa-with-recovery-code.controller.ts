@@ -14,6 +14,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { getUserByEmailService } from '@db/services/user.service';
 import { updateEncryptedTwoFactorAuthKeyService, updateEncryptedTwoFactorAuthRecoveryCodeService } from '@db/services/user.service';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const removeTwoFactorAuthSchemaValidator = zValidator('form', z.object({
@@ -22,7 +23,7 @@ export const removeTwoFactorAuthSchemaValidator = zValidator('form', z.object({
 }))
 export const removeTwoFactorAuthRoute = async (c: Context<HonoVariables, "/two-factor-auth/remove", ValidatorContext<typeof removeTwoFactorAuthSchemaValidator>>) => {
     const { turnstile, recoveryCode } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const twoFactorAuthToken = getCookie(c, TWO_FACTOR_AUTH_COOKIE_NAME);
 
     if (!twoFactorAuthToken) {

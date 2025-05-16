@@ -10,6 +10,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { getUserByEmailService } from '@db/services/user.service';
 import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const generateNewRecoveryCodeSchemaValidator = zValidator('form', z.object({
@@ -17,7 +18,7 @@ export const generateNewRecoveryCodeSchemaValidator = zValidator('form', z.objec
 }))
 export const generateNewRecoveryCodeRoute = async (c: Context<HonoVariables, "/two-factor-auth/generate-new-recovery-code", ValidatorContext<typeof generateNewRecoveryCodeSchemaValidator>>) => {
     const { turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const user = c.get("USER");
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");

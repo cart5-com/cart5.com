@@ -14,6 +14,7 @@ import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import type { OtpTokenAfterRegisterPayload } from './register.controller';
 import { isEmailExistsService } from '@db/services/user.service';
 import { updateUserNameService, markEmailAsVerifiedService, upsertUserService } from '@db/services/user.service';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 export const verifyEmailPasswordSchemaValidator = zValidator('form', z.object({
     verifyEmail: z.string().email().max(200),
@@ -28,7 +29,7 @@ export const verifyEmailPasswordRoute = async (
     >
 ) => {
     const { verifyEmail, code, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const otpToken = getCookie(c, OTP_COOKIE_NAME_AFTER_REGISTER);
     if (!otpToken) {
         throw new KNOWN_ERROR("Invalid or expired OTP", "INVALID_OTP");

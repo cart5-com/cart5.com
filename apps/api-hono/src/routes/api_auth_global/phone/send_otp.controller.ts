@@ -17,6 +17,7 @@ import {
     parsePhoneNumberFromString,
 } from 'libphonenumber-js'
 import { isPhoneNumberVerified_Service } from '@db/services/phone.service';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 export const sendPhoneOtpSchemaValidator = zValidator('form', z.object({
     phoneNumber: z.string().refine(
@@ -34,9 +35,10 @@ export const sendPhoneOtpRoute = async (
     >
 ) => {
     const { phoneNumber, turnstile } = c.req.valid('form');
+    const IP_ADDRESS = getIpAddress(c);
     const { userId: requestUserId } = await validateCrossDomainTurnstile(
         turnstile,
-        c.req.header()['x-forwarded-for'],
+        IP_ADDRESS,
         c.req.header()['user-agent'],
         c.req.header()['host']
     );

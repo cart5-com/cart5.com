@@ -8,6 +8,7 @@ import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { validateCrossDomainTurnstile } from "@api-hono/utils/validateTurnstile";
 import { isUserMemberOfTeam_Service } from "@db/services/team.service";
 import { createWebsite_Service, getWebsiteInfo_Service } from "@db/services/website.service";
+import { getIpAddress } from "@api-hono/utils/ip_address";
 
 export const createWebsite_SchemaValidator = zValidator('form', z.object({
     name: insertWebsitesSchema.shape.name,
@@ -22,7 +23,7 @@ export const createWebsite_Handler = async (c: Context<
     const { name, turnstile } = c.req.valid('form');
     const { userId: requestUserId } = await validateCrossDomainTurnstile(
         turnstile,
-        c.req.header()['x-forwarded-for'],
+        getIpAddress(c),
         c.req.header()['user-agent'],
         c.req.header()['host']
     );

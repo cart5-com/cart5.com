@@ -7,6 +7,7 @@ import type { ErrorType } from "@lib/types/errors";
 import { getStoreOrder_forCancel_Service } from '@db/services/order/order.cancel.service';
 import { KNOWN_ERROR } from "@lib/types/errors";
 import { cancelOrder } from "@api-hono/utils/orders/cancelOrder";
+import { getIpAddress } from "@api-hono/utils/ip_address";
 
 export const cancelOrder_SchemaValidator = zValidator('json', z.object({
     orderId: z.string(),
@@ -18,7 +19,6 @@ export const cancelOrder_Handler = async (c: Context<
     ValidatorContext<typeof cancelOrder_SchemaValidator>
 >) => {
     const user = c.get("USER");
-    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
     const order = await getStoreOrder_forCancel_Service(
         c.req.param('storeId'),
         c.req.valid('json').orderId,
@@ -26,7 +26,7 @@ export const cancelOrder_Handler = async (c: Context<
     if (!order) {
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     } else {
-        await cancelOrder(order, user?.id, ipAddress, 'user');
+        await cancelOrder(order, user?.id, getIpAddress(c), 'user');
     }
     return c.json({
         data: 'cancelled',

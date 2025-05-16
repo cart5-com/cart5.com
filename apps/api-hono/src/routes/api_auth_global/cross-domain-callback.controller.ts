@@ -6,6 +6,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { createUserSessionAndSetCookie } from '@api-hono/utils/createUserSessionAndSetCookie';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { KNOWN_ERROR } from '@lib/types/errors';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 // this is the callback url from the target domain, we use proxy to get the request here.
@@ -27,7 +28,7 @@ export const callbackRoute = async (
     // Decrypt and verify the JWT token
     const { userId } = await validateCrossDomainTurnstile(
         query.code,
-        c.req.header()['x-forwarded-for'],
+        getIpAddress(c),
         c.req.header()['user-agent'],
         c.req.header()['host']
     );

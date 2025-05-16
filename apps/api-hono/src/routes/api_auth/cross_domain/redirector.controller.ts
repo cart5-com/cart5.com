@@ -6,6 +6,7 @@ import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { generateCrossDomainCode } from '@api-hono/utils/validateTurnstile';
 import { KNOWN_ERROR } from '@lib/types/errors';
 import { createAuthGlobalApiClient } from '@api-client/auth_global';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 // Validate the form data - redirectUrl must not be pre-encoded and turnstile token required
 export const redirectorSchemaValidator = zValidator('form', z.object({
@@ -42,10 +43,9 @@ export const redirectorRoute = async (
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");
     }
-    const ipAddress = c.req.header()['x-forwarded-for'];
     const userAgent = c.req.header()['user-agent'];
     const hostHeader = c.req.header()['host'];
-    const code = await generateCrossDomainCode(redirectUrl, turnstile, hostHeader, ipAddress, userAgent, user.id);
+    const code = await generateCrossDomainCode(redirectUrl, turnstile, hostHeader, getIpAddress(c), userAgent, user.id);
     // Redirect to callback URL on target domain
     return c.redirect(getCrossDomainCallbackUrl(code, redirectUrl));
 }

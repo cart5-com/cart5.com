@@ -9,6 +9,7 @@ import { getUserByEmailService } from '@db/services/user.service';
 import { updateEncryptedTwoFactorAuthKeyService } from '@db/services/user.service';
 import { updateEncryptedTwoFactorAuthRecoveryCodeService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 export const remove2FASchemaValidator = zValidator('form', z.object({
     turnstile: z.string().min(1, { message: "Verification required" }),
@@ -21,7 +22,7 @@ export const remove2FARoute = async (
     >
 ) => {
     const { turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const user = c.get("USER");
     if (!user || !user.id) {
         throw new KNOWN_ERROR("User not found", "USER_NOT_FOUND");

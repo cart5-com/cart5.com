@@ -8,6 +8,7 @@ import { isUserMemberOfTeam_Service } from "@db/services/team.service";
 import { createStore_Service } from "@db/services/store.service";
 import { KNOWN_ERROR, type ErrorType } from "@lib/types/errors";
 import { getWebsiteInfo_Service } from "@db/services/website.service";
+import { getIpAddress } from "@api-hono/utils/ip_address";
 
 export const createStore_SchemaValidator = zValidator('form', z.object({
     name: z.string().min(3, { message: "min 3" }).max(510, { message: "max 510" }),
@@ -24,7 +25,7 @@ export const createStore_Handler = async (c: Context<
     // Validate turnstile and user
     const { userId: requestUserId } = await validateCrossDomainTurnstile(
         turnstile,
-        c.req.header()['x-forwarded-for'],
+        getIpAddress(c),
         c.req.header()['user-agent'],
         c.req.header()['host']
     );

@@ -12,6 +12,7 @@ import { STORE_FRONT_LINKS } from '@lib/storefrontLinks';
 import { getLocaleFromAcceptLanguageHeader } from "@lib/utils/getLocaleFromAcceptLanguageHeader";
 import { getOrderData_Service, updateOrderStripeData_Service } from "@db/services/order.service";
 import { newOrderPlaced_Automations_handler } from "@api-hono/utils/orders/newOrderPlaced_Automations_handler";
+import { getIpAddress } from "@api-hono/utils/ip_address";
 
 export const placeOrderRoute = async (c: Context<
     HonoVariables
@@ -35,7 +36,6 @@ export const placeOrderRoute = async (c: Context<
     const { order, carts, storeData } = await generateOrderData_Service(user, host, storeId);
     // order.orderStatus is CREATED (or PENDING_PAYMENT_AUTHORIZATION for stripe)
 
-    const ipAddress = c.req.header()['x-forwarded-for'] || c.req.header()['x-real-ip'];
 
     // if stripe return checkout url, make status 'PENDING_PAYMENT_AUTHORIZATION'
     let checkoutSession: Stripe.Checkout.Session | null = null;
@@ -80,7 +80,7 @@ export const placeOrderRoute = async (c: Context<
         {
             newStatus: order.orderStatus,
             changedByUserId: user.id,
-            changedByIpAddress: ipAddress,
+            changedByIpAddress: getIpAddress(c),
             type: 'user',
         },
     );

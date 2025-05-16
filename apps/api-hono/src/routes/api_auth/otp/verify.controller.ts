@@ -15,6 +15,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import { updateUserNameService } from '@db/services/user.service';
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import type { OtpTokenPayload } from './send.controller';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 
 export const verifyOtpSchemaValidator = zValidator('form', z.object({
@@ -30,7 +31,7 @@ export const verifyOtpRoute = async (
     >
 ) => {
     const { verifyEmail, code, turnstile } = c.req.valid('form');
-    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, c.req.header()['x-forwarded-for']);
+    await validateTurnstile(getEnvVariable('TURNSTILE_SECRET'), turnstile, getIpAddress(c));
     const otpToken = getCookie(c, OTP_COOKIE_NAME);
 
 

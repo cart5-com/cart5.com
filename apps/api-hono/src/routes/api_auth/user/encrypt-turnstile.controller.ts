@@ -5,6 +5,7 @@ import type { ErrorType } from '@lib/types/errors';
 import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import { generateCrossDomainCode } from '@api-hono/utils/validateTurnstile';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 export const encryptTurnstileSchemaValidator = zValidator('form', z.object({
     redirectUrl: z.string()
@@ -34,14 +35,13 @@ export const encryptTurnstileRoute = async (
     >
 ) => {
     const { redirectUrl, turnstile } = c.req.valid('form');
-    const ipAddress = c.req.header()['x-forwarded-for'];
     const userAgent = c.req.header()['user-agent'];
     const hostHeader = c.req.header()['host'];
     const code = await generateCrossDomainCode(
         redirectUrl,
         turnstile,
         hostHeader,
-        ipAddress,
+        getIpAddress(c),
         userAgent,
         c.get("USER")?.id);
     return c.json({

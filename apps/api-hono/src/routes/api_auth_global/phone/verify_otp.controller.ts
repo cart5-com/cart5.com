@@ -11,6 +11,7 @@ import type { HonoVariables } from "@api-hono/types/HonoVariables";
 import type { ValidatorContext } from '@api-hono/types/ValidatorContext';
 import type { PhoneOtpTokenPayload } from './send_otp.controller';
 import { addVerifiedPhoneNumber_Service } from '@db/services/phone.service';
+import { getIpAddress } from '@api-hono/utils/ip_address';
 
 export const verifyPhoneOtpSchemaValidator = zValidator('form', z.object({
     code: z.string().min(4, { message: "One-time password required" }).max(4, { message: "4 digits required" }),
@@ -27,7 +28,7 @@ export const verifyPhoneOtpRoute = async (
     const { code, turnstile } = c.req.valid('form');
     const { userId: requestUserId } = await validateCrossDomainTurnstile(
         turnstile,
-        c.req.header()['x-forwarded-for'],
+        getIpAddress(c),
         c.req.header()['user-agent'],
         c.req.header()['host']
     );
