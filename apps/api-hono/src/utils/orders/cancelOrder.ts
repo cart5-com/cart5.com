@@ -19,7 +19,7 @@ export const cancelOrder = async (
         (order.stripeData.checkoutSessionId || order.stripeData.paymentIntentId)
     ) {
         // if online payment, cancel payment intent (or refund if already captured)
-        if (order.isOnlinePaymentCaptured !== true) {
+        if (order.onlinePaymentFlags && order.onlinePaymentFlags.isOnlinePaymentCaptured !== true) {
             await cancelPaymentIntent_inStripeConnectedAccount(
                 order.orderId,
                 order.stripeData.checkoutSessionId,

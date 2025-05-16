@@ -1,5 +1,5 @@
 import db from "@db/drizzle";
-import { orderTable } from "@db/schema/order.schema";
+import { orderOnlinePaymentFlagsTable, orderTable } from "@db/schema/order.schema";
 import { and, eq, lt } from "drizzle-orm";
 import { ORDER_STATUS_OBJ } from "@lib/types/orderStatus";
 import { logOrderStatusChange_Service } from "../order.service";
@@ -13,7 +13,6 @@ export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
             orderId: true,
             paymentId: true,
             isOnlinePaymentVerified: true,
-            isOnlinePaymentCaptured: true,
         },
         where: and(
             eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED),
@@ -27,6 +26,11 @@ export const getAcceptedOrders_toCheckAndComplete_after24Hours_Service = async (
                     storeStripeConnectAccountId: true,
                 },
             },
+            onlinePaymentFlags: {
+                columns: {
+                    isOnlinePaymentCaptured: true,
+                }
+            }
         },
         // orderBy: [desc(orderTable.real_created_at_ts)],
     });
@@ -42,7 +46,6 @@ export const completeOrder_Service = async (
     // Update order status
     const result = await db.update(orderTable).set({
         orderStatus: newStatus,
-        isOnlinePaymentCaptured: isOnlinePaymentCaptured,
     })
         .where(
             and(
@@ -50,6 +53,11 @@ export const completeOrder_Service = async (
                 eq(orderTable.orderStatus, ORDER_STATUS_OBJ.ACCEPTED)
             )
         );
+    if (isOnlinePaymentCaptured) {
+        await db.update(orderOnlinePaymentFlagsTable).set({
+            isOnlinePaymentCaptured: true,
+        }).where(eq(orderOnlinePaymentFlagsTable.orderId, orderId));
+    }
 
     // Log status change if update was successful
     if (result.rowsAffected > 0) {

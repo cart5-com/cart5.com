@@ -60,7 +60,7 @@ export const orderTable = sqliteTable("orders", {
     paymentId: text("payment_id").notNull(),
     isOnlinePayment: integer("is_online_payment", { mode: "boolean" }).notNull().default(false),
     isOnlinePaymentVerified: integer("is_online_payment_verified", { mode: "boolean" }),
-    isOnlinePaymentCaptured: integer("is_online_payment_captured", { mode: "boolean" }),
+
 
 
     // Final Amount
@@ -80,6 +80,7 @@ export const orderTable = sqliteTable("orders", {
 
 export const orderOnlinePaymentFlagsTable = sqliteTable("order_online_payment_flags", {
     orderId: text("order_id").notNull().primaryKey().unique(),
+    isOnlinePaymentCaptured: integer("is_online_payment_captured", { mode: "boolean" }),
     isOnlinePaymentCancelledOrRefunded: integer("is_online_payment_cancelled_or_refunded", { mode: "boolean" }),
     isOnlinePaymentNotVerifiedEmailNotificationSent: integer("is_online_payment_not_verified_email_notification_sent", { mode: "boolean" }),
 });

@@ -16,7 +16,7 @@ export const checkAndComplete_AcceptedOrders_after24Hours = async () => {
             order.paymentId === 'stripe' &&
             order.stripeData &&
             (order.stripeData.checkoutSessionId || order.stripeData.paymentIntentId) &&
-            order.isOnlinePaymentCaptured !== true
+            order.onlinePaymentFlags && order.onlinePaymentFlags.isOnlinePaymentCaptured !== true
         ) {
             // if online payment, capture the payment and complete the order
             try {

@@ -1,0 +1,10 @@
+{
+	"name": "stripe-hook",
+	"type": "module",
+	"scripts": {
+		"dev:caddy": "sleep 4 && dotenvx run -f .env.dev.secrets -- bash -c 'stripe listen --api-key $STRIPE_SECRET_KEY --events checkout.session.completed --skip-verify --forward-connect-to https://www.cart5dev.com/__p_api/stripe/webhook'"
+	},
+	"devDependencies": {
+		"@dotenvx/dotenvx": "^1.32.0"
+	}
+}
