@@ -5,8 +5,8 @@ import type { HonoVariables } from '../types/HonoVariables';
 
 export const errorHandler: ErrorHandler<HonoVariables> = async (err, c) => {
     if (err instanceof KNOWN_ERROR) {
-        console.log("KNOWN_ERROR err:");
-        console.log(err);
+        // console.log("KNOWN_ERROR err:");
+        console.log("🚨KNOWN_ERROR err.code:", err.code);
         c.error = undefined;
         return c.json({
             error: {

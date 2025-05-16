@@ -36,17 +36,17 @@ export const getAutoprintDeviceTask_Service = async (
     });
 }
 
-export const updateAutoprintDeviceTask_Service = async (
-    taskId: string,
-    data: Partial<InferInsertModel<typeof autoprintDeviceTaskTable>>
-) => {
-    return await db.insert(autoprintDeviceTaskTable)
-        .values({ ...data, taskId } as InferInsertModel<typeof autoprintDeviceTaskTable>)
-        .onConflictDoUpdate({
-            target: autoprintDeviceTaskTable.taskId,
-            set: data
-        });
-}
+// export const updateAutoprintDeviceTask_Service = async (
+//     taskId: string,
+//     data: Partial<InferInsertModel<typeof autoprintDeviceTaskTable>>
+// ) => {
+//     return await db.insert(autoprintDeviceTaskTable)
+//         .values({ ...data, taskId } as InferInsertModel<typeof autoprintDeviceTaskTable>)
+//         .onConflictDoUpdate({
+//             target: autoprintDeviceTaskTable.taskId,
+//             set: data
+//         });
+// }
 
 export const getAutoPrintDevice_Service = async (
     autoprintDeviceId: string,

@@ -26,15 +26,9 @@ export const stripeWebhook = new Hono<HonoVariables>()
                     signature,
                     getEnvVariable('STRIPE_WEBHOOK_SECRET')
                 )
-                console.log('stripeWebhook event.type', event.type)
                 switch (event.type) {
                     case 'checkout.session.completed': {
-                        // TODO: remove console.logs
-                        console.log('checkout.session.completed')
                         const checkoutSessionCompleted = event.data.object;
-                        // const orderId = checkoutSessionCompleted.metadata.orderId;
-                        console.log(checkoutSessionCompleted)
-                        console.log("checkoutSessionCompleted.metadata?.orderId")
                         if (!checkoutSessionCompleted.metadata?.orderId) {
                             return context.text("OrderId not found", 400)
                         }
@@ -76,8 +70,8 @@ export const stripeWebhook = new Hono<HonoVariables>()
                 }
                 return context.text('', 200)
             } catch (err) {
-                const errorMessage = `⚠️  Webhook signature verification failed. ${err instanceof Error ? err.message : 'Internal server error'
-                    }`
+                const errorMessage = `⚠️ Webhook signature verification failed. 
+                ${err instanceof Error ? err.message : 'Internal server error⚠️'}`
                 console.log(errorMessage)
                 return context.text(errorMessage, 400)
             }

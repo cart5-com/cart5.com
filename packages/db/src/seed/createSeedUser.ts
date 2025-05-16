@@ -17,6 +17,9 @@ export const createSeedUser = async (
         return;
     }
     const user = await upsertUserService(email, await hashPassword(password));
+    if (!user) {
+        throw new Error("User not found");
+    }
     await updateUserNameService(user.id, name);
     await markEmailAsVerifiedService(email);
     if (profilePhotoUrl) {

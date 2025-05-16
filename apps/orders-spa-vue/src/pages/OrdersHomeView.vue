@@ -23,6 +23,7 @@ import { toast } from "@/ui-plus/sonner";
 import ShowOrderView from "@orders-spa-vue/components/ShowOrderView.vue";
 import { printOrder } from "@orders-spa-vue/utils/printOrder";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MySettingsStore } from "@orders-spa-vue/stores/MySettingsStore";
 
 // const user = window.USER;
 
@@ -175,14 +176,22 @@ const IS_DEV = import.meta.env.DEV;
                 </span>
             </div>
 
+            <div class="flex gap-2 justify-between items-center">
+                <Button variant="outline"
+                        @click="isSettingsDialogOpen = true;"
+                        class="mb-4">
+                    <Settings2 class="inline-block mr-1" />
+                    Settings
+                </Button>
+                <div
+                     class="text-xs text-muted-foreground no-scrollbar overflow-x-auto overflow-y-hidden whitespace-nowrap">
+                    {{Object.values(MySettingsStore).filter(store => store.isEnabled).map(store => {
+                        const myStore = myStores.find(myStore => myStore.id === store.storeId);
+                        return `${myStore?.name}`;
+                    }).join(', ')}}
+                </div>
+            </div>
             <Dialog v-model:open="isSettingsDialogOpen">
-                <DialogTrigger>
-                    <Button variant="outline"
-                            class="mb-4">
-                        <Settings2 class="inline-block mr-1" />
-                        Settings
-                    </Button>
-                </DialogTrigger>
                 <DialogScrollContent class="w-full max-w-7xl">
                     <DialogHeader>
                         <DialogTitle>Settings</DialogTitle>

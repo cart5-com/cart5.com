@@ -38,6 +38,9 @@
       ],
       "@api-hono/*": [
         "../../apps/api-hono/src/*"
+      ],
+      "@api-client/*": [
+        "../api-client/src/*"
       ]
     },
     // Report errors for fallthrough cases in switch statements

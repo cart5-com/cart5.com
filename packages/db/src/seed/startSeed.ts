@@ -14,6 +14,7 @@ import {
     updateStore_Service,
     updateStoreAddress_Service,
     updateStoreAsAStripeCustomer_Service,
+    updateStoreAutomationRules_Service,
     updateStoreDeliveryZones_Service,
     updateStoreOpenHours_Service,
     updateStorePaymentMethods_Service,
@@ -35,6 +36,9 @@ import { updateStoreMenu_Service } from "@db/services/store.service";
 import { fileURLToPath, URL } from 'node:url'
 import { getAsTaxSettings } from "@lib/utils/sales_tax_rates";
 import { getStoreData_CacheJSON } from "@db/cache_json/store.cache_json";
+import { addAutoprintDeviceToStore_Service } from "@db/services/autoprint.service";
+import { updateAutoPrintDevice_Service } from "@db/services/autoprint.service";
+import { generateKey } from "@lib/utils/generateKey";
 
 const sampleMenuRoot1 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-1.csv", import.meta.url)), "utf8"));
 const sampleMenuRoot2 = importMenuFromCSV(readFileSync(fileURLToPath(new URL("./sample-menu-2.csv", import.meta.url)), "utf8"));
@@ -469,6 +473,49 @@ export const startSeed = async () => {
         flamesWebsite!.id,
         flamesStore!.id
     );
+
+
+    const fakePrinters = [
+        {
+            "deviceName": "fake-printer",
+            "printerDescription": "",
+            "printerName": "fake-printer",
+            "printerOptions": {
+                "printer-location": "",
+                "printer-make-and-model": "",
+                "system_driverinfo": ""
+            }
+        }
+    ]
+    const deviceInfo = {
+        deviceId: "6b616644-63ca-4755-819a-febc87cb1bcf",
+        name: "Macintosh; Intel Mac OS X 10_15_7-1747355440993",
+        secretKey: "49d7a7aa-4cad-48c6-b2e0-215d055ef431",
+        printers: fakePrinters
+    }
+    await updateAutoPrintDevice_Service(
+        deviceInfo.deviceId,
+        {
+            name: deviceInfo.name,
+            secretKey: deviceInfo.secretKey,
+            printers: deviceInfo.printers,
+        }
+    )
+    await addAutoprintDeviceToStore_Service(deviceInfo.deviceId, flamesStore!.id);
+    await updateStoreAutomationRules_Service(flamesStore!.id,
+        {
+            "autoAcceptOrders": false,
+            "autoPrintRules": [
+                {
+                    "id": generateKey('rule'),
+                    "isActive": true,
+                    "autoAcceptOrderAfterPrint": false,
+                    "copies": 1,
+                    "autoprintDeviceId": deviceInfo.deviceId,
+                    "printerDeviceName": deviceInfo.printers[0]?.deviceName
+                }
+            ]
+        })
 
     console.time("storeDataJsonCron");
     for (const store of storesByThush) {

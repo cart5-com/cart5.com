@@ -131,11 +131,11 @@ function deleteAllMenuItems() {
             </DropdownMenuItem>
 
             <DropdownMenuItem @click="downloadMenuAsCSV">
-                <FileDown /> Export your menu as CSV
+                <Download /> Download your menu as CSV
             </DropdownMenuItem>
 
             <DropdownMenuItem @click="downloadSampleCSV">
-                <Download /> Download sample CSV file
+                <FileDown /> Sample CSV file
             </DropdownMenuItem>
 
             <DropdownMenuItem @click="deleteAllMenuItems"

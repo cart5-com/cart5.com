@@ -13,6 +13,10 @@ const DEVICE_SECRET_KEY = "DEVICE_SECRET_KEY";
 
 export let deviceId = localStorage.getItem(DEVICE_ID_KEY);
 export let deviceSecretKey = localStorage.getItem(DEVICE_SECRET_KEY);
+if (import.meta.env.DEV) {
+    deviceId = "6b616644-63ca-4755-819a-febc87cb1bcf";
+    deviceSecretKey = "49d7a7aa-4cad-48c6-b2e0-215d055ef431";
+}
 
 if (!deviceId) {
     deviceId = crypto.randomUUID();

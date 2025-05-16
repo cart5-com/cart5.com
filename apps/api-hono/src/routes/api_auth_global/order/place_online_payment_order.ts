@@ -17,6 +17,9 @@ export const placeOnlinePaymentOrder = async (
         throw new KNOWN_ERROR("Order not found", "ORDER_NOT_FOUND");
     }
     order.orderStatus = ORDER_STATUS_OBJ.CREATED;
+    if (!order.onlinePaymentFlags) {
+        (order.onlinePaymentFlags as any) = {}
+    }
     order.onlinePaymentFlags.isOnlinePaymentVerified = true;
     order.created_at_ts = Date.now();
     if (processed_online_payment_order_ids[orderId]) {
