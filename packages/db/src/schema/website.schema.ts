@@ -48,6 +48,11 @@ export const updateWebsitesSchema = createInsertSchema(websitesTable, {
 
 
 
+// TODO: ask emails for website related notifications
+// TODO: ask emails for marketplace related notifications
+// TODO: ask emails for partnership related notifications
+
+
 
 
 

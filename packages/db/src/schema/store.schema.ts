@@ -44,6 +44,11 @@ export const storeTable = sqliteTable("store", {
 
 });
 
+// TODO: support details and maybe phone numbers (to show in order details page and store page)
+// TODO: ask emails for order related notifications (new orders, late acceptance, cancelled orders)
+// TODO: ask emails for store related notifications (stripe status changes, store payment status, balance ...)
+
+
 export const selectStoreSchema = createSelectSchema(storeTable);
 const overrideStoreTableSchema = {
 	name: z.string().min(3, { message: "min 3" }).max(510, { message: "max 510" }),
