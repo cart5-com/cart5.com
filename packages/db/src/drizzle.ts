@@ -35,7 +35,8 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
     if (IS_PROD) {
         console.log("🟦 Starting production database initialization");
 
-        const TURSO_EMBEDDED_DB_PATH = getEnvVariable("TURSO_EMBEDDED_DB_PATH");
+        // const TURSO_EMBEDDED_DB_PATH = getEnvVariable("TURSO_EMBEDDED_DB_PATH");
+        const TURSO_EMBEDDED_DB_PATH = false;
         if (TURSO_EMBEDDED_DB_PATH) {
             console.log("🟦 Using embedded database path:", TURSO_EMBEDDED_DB_PATH);
             // Ensure the directory exists
