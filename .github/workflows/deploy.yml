@@ -18,5 +18,8 @@
              key: ${{ secrets.SSH_PRIVATE_KEY }}
              script: |
                cd ${{ secrets.APP_DIR }}
-               touch hello.txt
-              #  git pull origin prod
+               git pull origin prod
+               touch hello2.txt
+              #  pnpm i
+              #  pnpm build
+              #  pnpm start
