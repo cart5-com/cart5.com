@@ -25,7 +25,7 @@ require("esbuild").build({
         '@node-rs/argon2',
         '@libsql/client',
         '@libsql/linux-x64-gnu',
-        // 'sharp'
+        'sharp'
     ],
     banner: {
         js: `
