@@ -22,10 +22,11 @@ require("esbuild").build({
         ]),
     ],
     external: [
+        'stream',
+        'sharp',
         '@node-rs/argon2',
         '@libsql/client',
         '@libsql/linux-x64-gnu',
-        // 'sharp'
     ],
     banner: {
         js: `

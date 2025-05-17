@@ -1,1 +1,0 @@
-ALTER TABLE `store_tax_settings` DROP COLUMN `currency_symbol`;

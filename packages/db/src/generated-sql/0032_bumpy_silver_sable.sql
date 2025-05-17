@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `payment_method_json` text;

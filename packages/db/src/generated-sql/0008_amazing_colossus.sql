@@ -1,1 +1,0 @@
-ALTER TABLE `store_tax_settings` ADD `tax_rate_for_service_fees` real;

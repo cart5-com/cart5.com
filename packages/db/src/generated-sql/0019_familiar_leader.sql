@@ -1,1 +1,0 @@
-ALTER TABLE `user_data` ADD `remember_last_order_type` text;

@@ -7,15 +7,16 @@
 		"dev:caddy:stripe": "dotenvx run -f .env.dev.secrets -- bash -c 'stripe listen --api-key $STRIPE_SECRET_KEY --events checkout.session.completed --skip-verify --forward-connect-to https://www.cart5dev.com/__p_api/stripe/webhook'",
 		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"builddev": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
-		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"
+		"start": "dotenvx run -f .env.production -- pm2 reload ./ecosystem.config.cjs --update-env && pm2 save"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-sns": "^3.810.0",
 		"@dotenvx/dotenvx": "^1.32.0",
 		"@hono/node-server": "^1.13.7",
 		"@hono/zod-validator": "^0.4.1",
-		"@libsql/client": "^0.14.0",
-		"@libsql/linux-x64-gnu": "0.5.0-pre.5",
+		"@libsql/client": "^0.15.6",
+		"@libsql/darwin-arm64": "0.5.5",
+		"@libsql/linux-x64-gnu": "0.5.5",
 		"@node-rs/argon2": "^2.0.0",
 		"@oslojs/binary": "^1.0.0",
 		"@oslojs/crypto": "^1.0.1",
@@ -32,6 +33,7 @@
 		"hono": "^4.6.12",
 		"lib": "workspace:*",
 		"libphonenumber-js": "^1.11.18",
+		"pm2": "^6.0.6",
 		"sharp": "^0.34.0",
 		"stripe": "^18.0.0",
 		"tsx": "^4.19.2",

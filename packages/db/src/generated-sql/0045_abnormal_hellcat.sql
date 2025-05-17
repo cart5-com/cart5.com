@@ -1,1 +1,0 @@
-ALTER TABLE `autoprint_device_task` ADD `html` text;

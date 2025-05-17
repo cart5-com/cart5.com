@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `is_online_payment_verified` integer DEFAULT false NOT NULL;

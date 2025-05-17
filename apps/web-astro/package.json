@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "dotenvx run -f .env -f .env.dev.secrets -- astro dev",
     "dev:caddy": "pnpm dev",
-    "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
+    "build": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build && pnpm cf:pages:deploy",
     "builddev": "dotenvx run -- astro check && dotenvx run -f .env.production -- astro build",
     "cf:pages:deploy": "dotenvx run -f .env.production -- wrangler pages deploy dist/client --project-name=cart5-web-store-prod --branch=main --no-bundle",
-    "start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'",
-    "_start": "HOST=0.0.0.0 PORT=3002 dotenvx run -f .env.production -- node ./dist/server/entry.mjs"
+    "start": "dotenvx run -f .env.production -- pm2 reload ./ecosystem.config.cjs --update-env && pm2 save",
+    "_start": "dotenvx run -f .env.production --  bash -c 'HOST=0.0.0.0 PORT=3002 node ./dist/server/entry.mjs'",
+    "old_start": "HOST=0.0.0.0 PORT=3002 dotenvx run -f .env.production -- node ./dist/server/entry.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
@@ -18,13 +19,16 @@
     "@dotenvx/dotenvx": "^1.32.0",
     "sharp": "^0.34.0",
     "@vee-validate/zod": "^4.14.7",
-    "@libsql/client": "^0.14.0",
+    "@libsql/client": "^0.15.6",
+    "@libsql/darwin-arm64": "0.5.5",
+    "@libsql/linux-x64-gnu": "0.5.5",
     "@sentry/astro": "^9.8.0",
     "api-client": "workspace:*",
     "vee-validate": "^4.14.7",
     "zod": "^3.23.8",
     "astro": "^5.5.4",
     "lib": "workspace:*",
+    "pm2": "^6.0.6",
     "@vueuse/core": "^12.0.0",
     "ui-shadcn-vue": "workspace:*",
     "typescript": "^5.7.2",

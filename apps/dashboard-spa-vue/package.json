@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "dotenvx run -f .env -f .env.dev.secrets -- vite --port 3004",
     "dev:caddy": "pnpm dev",
-    "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
+    "build": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build && pnpm cf:pages:deploy",
     "builddev": "dotenvx run -f .env.production -- vue-tsc -b && dotenvx run -f .env.production -- vite build",
     "cf:pages:deploy": "dotenvx run -f .env.production -- wrangler pages deploy dist --project-name=cart5-dashboard-prod --branch=main --no-bundle",
-    "start": "http-server dist -s -p 3004 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3004? -c 120"
+    "start": "pm2 reload ./ecosystem.config.cjs --update-env && pm2 save",
+    "old_start": "http-server dist -s -p 3004 -a 0.0.0.0 -d false --log-ip false --gzip --brotli --proxy http://127.0.0.1:3004? -c 120"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
@@ -27,6 +28,7 @@
     "autoprefixer": "^10.4.20",
     "http-server": "^14.1.1",
     "lib": "workspace:*",
+    "pm2": "^6.0.6",
     "lucide-vue-next": "^0.475.0",
     "tailwindcss": "^3.4.16",
     "typescript": "^5.7.2",

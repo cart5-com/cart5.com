@@ -1,1 +1,0 @@
-ALTER TABLE `autoprint_device_task` ADD `auto_accept_order_after_print` integer DEFAULT false NOT NULL;
