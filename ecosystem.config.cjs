@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "api-hono",
             cwd: "./apps/api-hono",
-            script: "dotenvx run -f .env.production -- node ./dist/index.js",
+            script: "./node_modules/.bin/dotenvx run -f .env.production -- node ./dist/index.js",
             // https://www.digitalocean.com/community/tutorials/how-to-scale-node-js-applications-with-clustering#step-5-using-pm2-for-clustering
             // exec_mode: "cluster", // unable to use cluster mode because I use SSE in memory, also crons are in memory
             // instances: 0,
@@ -35,7 +35,7 @@ module.exports = {
         {
             name: "web-astro",
             cwd: "./apps/web-astro",
-            script: "dotenvx run -f .env.production -- node ./dist/server/entry.mjs",
+            script: "./node_modules/.bin/dotenvx run -f .env.production -- node ./dist/server/entry.mjs",
             // https://www.digitalocean.com/community/tutorials/how-to-scale-node-js-applications-with-clustering#step-5-using-pm2-for-clustering
             instances: 0,
             exec_mode: "cluster",
