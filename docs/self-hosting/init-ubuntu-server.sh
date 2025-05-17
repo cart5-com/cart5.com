@@ -293,7 +293,3 @@ sudo ln -s $(which pnpm) /usr/bin/pnpm
 # cd APP_DIR: Directory where your app is located (e.g., /var/www/myapp)
 # git clone -b prod https://github.com/cart5-com/cart5.com.git ./
 # ========================================================================
-
-mkdir -p /TURSO_EMBEDDED_REPLICA/API_HONO/
-mkdir -p /TURSO_EMBEDDED_REPLICA/WEB_ASTRO/
-mkdir -p /TURSO_EMBEDDED_REPLICA/PCK_DB/

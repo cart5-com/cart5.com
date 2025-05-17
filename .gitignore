@@ -38,3 +38,5 @@ yarn-error.log*
 *.pem
 
 FAKE_CDN
+
+TURSO_EMBEDDED_REPLICA
