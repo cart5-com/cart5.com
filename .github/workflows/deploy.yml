@@ -18,8 +18,12 @@
              key: ${{ secrets.SSH_PRIVATE_KEY }}
              script: |
                cd ${{ secrets.APP_DIR }}
+               
+               # Discard any local changes before pulling 
+               git reset --hard
+               git clean -fd
                git pull origin prod
-
+               
             
                # Set system-wide environment variable
                echo 'export DOTENV_PRIVATE_KEY_PRODUCTION="${{ secrets.DOTENV_PRIVATE_KEY_PRODUCTION }}"' | sudo tee /etc/profile.d/app_env.sh
