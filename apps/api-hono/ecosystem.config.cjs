@@ -6,7 +6,7 @@ module.exports = {
     // exec_mode: "cluster",
     // instances: 0,
     max_memory_restart: '250M',
-    kill_timeout: 18000,
+    kill_timeout: 20000,
     wait_ready: true,
   }]
 };
