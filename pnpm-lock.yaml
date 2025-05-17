@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: ^1.32.0
+        version: 1.38.5
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
