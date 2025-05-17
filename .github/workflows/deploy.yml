@@ -24,9 +24,12 @@
                git clean -fd
                git pull origin prod
                
+               # Get the current git commit hash
+               GIT_HASH=$(git rev-parse HEAD)
             
-               # Set system-wide environment variable
+               # Set system-wide environment variables
                echo 'export DOTENV_PRIVATE_KEY_PRODUCTION="${{ secrets.DOTENV_PRIVATE_KEY_PRODUCTION }}"' | sudo tee /etc/profile.d/app_env.sh
+               echo 'export SOURCE_COMMIT="'$GIT_HASH'"' | sudo tee -a /etc/profile.d/app_env.sh
                sudo chmod +x /etc/profile.d/app_env.sh
                # Reload environment variables for current session
                source /etc/profile.d/app_env.sh
