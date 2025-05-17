@@ -48,21 +48,31 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
             }
 
             const NODE_APP_INSTANCE = getOptionalEnvVariable("NODE_APP_INSTANCE") || "0";
-            const client = createClient({
-                url: `file:${TURSO_EMBEDDED_DB_PATH}/INSTANCE_${NODE_APP_INSTANCE}.db`,
-                authToken: TURSO_DB_TOKEN!,
-                syncUrl: TURSO_DB_URL!,
-                syncInterval: 60,
-            });
+            let client: ReturnType<typeof createClient> | undefined;
+            try {
+                client = createClient({
+                    url: `file:${TURSO_EMBEDDED_DB_PATH}/INSTANCE_${NODE_APP_INSTANCE}.db`,
+                    authToken: TURSO_DB_TOKEN!,
+                    syncUrl: TURSO_DB_URL!,
+                    syncInterval: 60,
+                });
+            } catch (err) {
+                console.error("❌❌❌❌Error creating client");
+                console.error(err);
+            }
+
             setTimeout(() => {
                 try {
-                    client.sync();
+                    client?.sync().catch(err => {
+                        console.error("❌❌❌❌Error syncing db");
+                        console.error(err);
+                    });
                 } catch (err) {
                     console.error("❌❌❌❌Error syncing db");
                     console.error(err);
                 }
             }, 5e3);
-            return drizzle(client, { schema });
+            return drizzle(client!, { schema });
         } else {
             return drizzle({ connection: { url: TURSO_DB_URL!, authToken: TURSO_DB_TOKEN! }, schema });
         }
