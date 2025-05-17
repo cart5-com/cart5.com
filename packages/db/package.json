@@ -23,7 +23,7 @@
     "@types/google.maps": "^3.58.1",
     "@types/node": "^22.10.1",
     "drizzle-kit": "^0.29.1",
-    "drizzle-orm": "^0.38.3",
+    "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.6.1",
     "lib": "workspace:*",
     "tsx": "^4.19.2",
