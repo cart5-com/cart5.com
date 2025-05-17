@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { localDbPath } from "@lib/consts";
 import { IS_PROD, getEnvVariable, getOptionalEnvVariable } from "@lib/utils/getEnvVariable";
+import { existsSync, mkdirSync } from "fs";
+import path from "path";
 
 import * as authSchema from './schema/auth.schema';
 import * as storeSchema from './schema/store.schema';
@@ -35,6 +37,17 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
         // libsql:: replication: replicator sync error: replication error: Injector error: SQLite error: database disk image is malformed
         // coolify does not support graceful shutdown. I believe it's because of this.
         if (TURSO_EMBEDDED_DB_PATH) {
+            // Ensure the directory exists
+            if (!existsSync(TURSO_EMBEDDED_DB_PATH)) {
+                try {
+                    mkdirSync(TURSO_EMBEDDED_DB_PATH, { recursive: true });
+                    console.log(`Created directory: ${TURSO_EMBEDDED_DB_PATH}`);
+                } catch (err) {
+                    console.error(`❌ Failed to create directory: ${TURSO_EMBEDDED_DB_PATH}`);
+                    console.error(err);
+                }
+            }
+
             const NODE_APP_INSTANCE = getOptionalEnvVariable("NODE_APP_INSTANCE") || "0";
             const client = createClient({
                 url: `file:${TURSO_EMBEDDED_DB_PATH}/INSTANCE_${NODE_APP_INSTANCE}.db`,
