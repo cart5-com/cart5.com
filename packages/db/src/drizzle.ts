@@ -2,7 +2,6 @@ import { drizzle } from "drizzle-orm/libsql";
 import { localDbPath } from "@lib/consts";
 import { IS_PROD, getEnvVariable, getOptionalEnvVariable } from "@lib/utils/getEnvVariable";
 import { existsSync, mkdirSync } from "fs";
-import path from "path";
 
 import * as authSchema from './schema/auth.schema';
 import * as storeSchema from './schema/store.schema';
