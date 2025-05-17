@@ -45,7 +45,7 @@ importers:
         specifier: ^0.4.1
         version: 0.4.3(hono@4.7.4)(zod@3.24.2)
       '@libsql/client':
-        specifier: ^0.15.3
+        specifier: ^0.15.6
         version: 0.15.6
       '@libsql/darwin-arm64':
         specifier: 0.5.5
@@ -381,7 +381,7 @@ importers:
         specifier: ^1.32.0
         version: 1.38.5
       '@libsql/client':
-        specifier: ^0.15.3
+        specifier: ^0.15.6
         version: 0.15.6
       '@libsql/darwin-arm64':
         specifier: 0.5.5
@@ -459,7 +459,7 @@ importers:
         specifier: ^9.6.0
         version: 9.6.0
       '@libsql/client':
-        specifier: ^0.15.3
+        specifier: ^0.15.6
         version: 0.15.6
       '@libsql/darwin-arm64':
         specifier: 0.5.5

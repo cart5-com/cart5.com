@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `estimated_time_text` text;

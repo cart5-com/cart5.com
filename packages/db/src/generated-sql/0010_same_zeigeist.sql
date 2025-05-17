@@ -1,1 +1,0 @@
-ALTER TABLE `store_tax_settings` ADD `show_tax_details_in_cart` integer DEFAULT false NOT NULL;

@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `real_created_at_ts` integer DEFAULT 0 NOT NULL;

@@ -1,1 +1,0 @@
-ALTER TABLE `verified_phone_number` DROP COLUMN `updated_at_ts`;

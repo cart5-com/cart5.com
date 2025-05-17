@@ -1,1 +1,0 @@
-ALTER TABLE `orders` ADD `is_online_payment_not_verified_email_notification_sent` integer;

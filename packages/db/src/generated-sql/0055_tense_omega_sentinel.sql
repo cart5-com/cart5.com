@@ -1,1 +1,0 @@
-ALTER TABLE `order_stripe_data` ADD `store_stripe_connect_account_id` text;

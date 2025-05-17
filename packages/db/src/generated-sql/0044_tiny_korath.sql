@@ -1,1 +1,0 @@
-ALTER TABLE `autoprint_device_task` DROP COLUMN `html`;

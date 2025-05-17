@@ -17,7 +17,7 @@
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.32.0",
     "@faker-js/faker": "^9.6.0",
-    "@libsql/client": "^0.15.3",
+    "@libsql/client": "^0.15.6",
     "@libsql/darwin-arm64": "0.5.5",
     "@libsql/linux-x64-gnu": "0.5.5",
     "@types/google.maps": "^3.58.1",

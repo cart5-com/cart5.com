@@ -14,7 +14,7 @@
 		"@dotenvx/dotenvx": "^1.32.0",
 		"@hono/node-server": "^1.13.7",
 		"@hono/zod-validator": "^0.4.1",
-		"@libsql/client": "^0.15.3",
+		"@libsql/client": "^0.15.6",
 		"@libsql/darwin-arm64": "0.5.5",
 		"@libsql/linux-x64-gnu": "0.5.5",
 		"@node-rs/argon2": "^2.0.0",

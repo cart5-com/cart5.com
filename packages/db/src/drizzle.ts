@@ -35,8 +35,8 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
     if (IS_PROD) {
         console.log("🟦 Starting production database initialization");
 
-        // const TURSO_EMBEDDED_DB_PATH = getEnvVariable("TURSO_EMBEDDED_DB_PATH");
-        const TURSO_EMBEDDED_DB_PATH = false;
+        const TURSO_EMBEDDED_DB_PATH = getEnvVariable("TURSO_EMBEDDED_DB_PATH");
+        // const TURSO_EMBEDDED_DB_PATH = false;
         if (TURSO_EMBEDDED_DB_PATH) {
             console.log("🟦 Using embedded database path:", TURSO_EMBEDDED_DB_PATH);
             // Ensure the directory exists
@@ -71,22 +71,30 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
                 console.error(err);
             }
 
-            console.log("🟦 Setting up database sync...");
-            const syncHandler = async () => {
-                try {
-                    console.log("🟦 Starting database sync");
-                    const res = await client?.sync()
-                    console.log("✅ Sync completed successfully");
-                    console.log("📊 Sync metrics:");
-                    console.log("  - Frame number:", res?.frame_no);
-                    console.log("  - Frames synced:", res?.frames_synced);
-                } catch (err) {
-                    console.error("❌ Error syncing database");
-                    console.error(err);
-                }
-            }
-            syncHandler();
-            setInterval(syncHandler, 60e3);
+            // console.log("🟦 Setting up database sync...");
+            // let syncRunning = false;
+            // const syncHandler = async () => {
+            //     if (syncRunning) {
+            //         console.log("🟦 Sync already running, skipping");
+            //         return;
+            //     }
+            //     syncRunning = true;
+            //     try {
+            //         console.log("🟦 Starting database sync");
+            //         const res = await client?.sync()
+            //         console.log("✅ Sync completed successfully");
+            //         console.log("📊 Sync metrics:");
+            //         console.log("  - Frame number:", res?.frame_no);
+            //         console.log("  - Frames synced:", res?.frames_synced);
+            //     } catch (err) {
+            //         console.error("❌ Error syncing database");
+            //         console.error(err);
+            //     } finally {
+            //         syncRunning = false;
+            //     }
+            // }
+            // syncHandler();
+            // setInterval(syncHandler, 60e3);
 
             console.log("🟦 Returning drizzle instance with embedded client");
             return drizzle(client!, { schema });

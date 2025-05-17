@@ -19,7 +19,7 @@
     "@dotenvx/dotenvx": "^1.32.0",
     "sharp": "^0.34.0",
     "@vee-validate/zod": "^4.14.7",
-    "@libsql/client": "^0.15.3",
+    "@libsql/client": "^0.15.6",
     "@libsql/darwin-arm64": "0.5.5",
     "@libsql/linux-x64-gnu": "0.5.5",
     "@sentry/astro": "^9.8.0",
