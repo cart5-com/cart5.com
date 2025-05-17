@@ -1,7 +1,13 @@
+const path = require('path');
+const dotenvx = require('@dotenvx/dotenvx');
+dotenvx.config({
+  path: path.resolve(__dirname, '.env.production')
+});
+
 module.exports = {
   apps: [{
     name: "web-astro",
-    script: "./node_modules/.bin/dotenvx run -f .env.production -- node ./dist/server/entry.mjs",
+    script: "./dist/server/entry.mjs",
     // https://www.digitalocean.com/community/tutorials/how-to-scale-node-js-applications-with-clustering#step-5-using-pm2-for-clustering
     instances: 0,
     exec_mode: "cluster",
