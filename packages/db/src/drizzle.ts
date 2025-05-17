@@ -61,12 +61,9 @@ export const getDrizzleDb = function (): ReturnType<typeof drizzle<typeof schema
                 console.error(err);
             }
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 try {
-                    client?.sync().catch(err => {
-                        console.error("❌❌❌❌Error syncing db");
-                        console.error(err);
-                    });
+                    await client?.sync()
                 } catch (err) {
                     console.error("❌❌❌❌Error syncing db");
                     console.error(err);
