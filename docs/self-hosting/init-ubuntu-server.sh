@@ -1,34 +1,18 @@
 #!/bin/bash
 
 # ========================================================================
-# Ubuntu 24.04 ===========================================================
-# Ubuntu Server Setup Script
+# 0. SSH
 # ========================================================================
-# This script performs the following setup tasks:
-# 1. System Updates
-#    - Updates and upgrades system packages
-#    - Installs basic utilities (if required)
-#
-# 2. Swap Configuration (10GB)
-#    - Creates and configures swap file
-#    - Optimizes swap settings (swappiness=10, cache_pressure=50)
-#
-# 3. Web Server Setup
-#    - Installs Caddy web server
-#    - Installs xCaddy with rate-limit plugin
-#
-# 4. Tools: nvm, node, pnpm, pm2
-#    - Installs Node.js via nvm (v22.12.0)
-#    - Installs pnpm package manager
-#    - Installs PM2 process manager
-#    - Configures PM2 log rotation (max 1GB)
-#
-# 5. System Configuration
-#    - Creates symbolic links for Ansible compatibility
-#    - Sets up PM2 startup service
+nano /etc/ssh/sshd_config
 # ========================================================================
-
-
+# Set these options
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitRootLogin prohibit-password
+# ========================================================================
+# sudo systemctl restart sshd
+sudo service ssh restart
+# ========================================================================
 
 # ========================================================================
 # 1. System Updates
@@ -46,11 +30,78 @@ sudo apt upgrade --assume-yes
 
 
 
+# ========================================================================
+# FAIL2BAN
+# ========================================================================
+sudo apt update
+sudo apt install fail2ban -y
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+sudo fail2ban-client status
+# Status
+# |- Number of jail:	1
+# `- Jail list:	sshd
+sudo tail -n 100 /var/log/fail2ban.log
+# maxRetry default is 5
+# banTime default is 600
+
+# ========================================================================
+# custom config file to ban for 1 hour and 3 max retries
+sudo nano /etc/fail2ban/jail.local
+# ========================================================================
+[DEFAULT]
+# Ban IPs for 1 hour (3600 seconds)
+bantime = 3600
+
+# Number of failures before a host gets banned
+maxretry = 3
+
+# Use sshd jail
+[sshd]
+enabled = true
+port = ssh
+logpath = %(sshd_log)s
+maxretry = 3
+# ========================================================================
+# restart fail2ban
+sudo systemctl restart fail2ban
+# check applied changes in logs
+sudo tail -n 100 /var/log/fail2ban.log
+
+# see banned ips etc...
+sudo fail2ban-client status sshd
+# ========================================================================
+
+
+# ========================================================================
+# NETWORKING
+# it is probably already done by default, but if not, here are the steps:
+# details: https://docs.hetzner.com/cloud/servers/primary-ips/primary-ip-configuration/
+# ========================================================================
+
 
 
 
 # ========================================================================
-# 2. Swap Configuration (10GB)
+# GITHUB ACTIONS
+# ========================================================================
+ssh-keygen -t ed25519 -C "github-actions"
+cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
+# ========================================================================
+# Created GitHub Secrets:
+# SSH_PRIVATE_KEY: Your server's private key
+# SERVER_HOST: Your server IP
+# SERVER_USER: Username (e.g., root)
+# APP_DIR: Directory where your app is located (e.g., /var/www/myapp)
+# ========================================================================
+
+
+
+
+
+
+# ========================================================================
+# Swap Configuration (10GB)
 # ========================================================================
 # setup swap
 # https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04
@@ -84,7 +135,7 @@ sudo swapon --show
 
 
 # ========================================================================
-# 3. Web Server Setup
+# Web Server Setup
 # ========================================================================
 # ================================INSTALL CADDY===========================
 # install caddy
@@ -153,17 +204,17 @@ sudo systemctl start caddy
 
 
 # ========================================================================
-# 4. Tools: nvm, node, pnpm, pm2
+# Tools: nvm, node, pnpm, pm2
 # ========================================================================
 # https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04
 # install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # nvm install --lts
-nvm install 22.12.0
+nvm install 22.15.1
 # ========================================================================
 
 
@@ -191,9 +242,26 @@ pm2 set pm2-logrotate:max_size 1G
 
 
 # ========================================================================
-# 5. Enable pm2 Startup Service for your instance
+# Enable pm2 Startup Service for your instance
 # ========================================================================
 pm2 startup # after this, check for generated command and run if required
+# ========================================================================
+# ...
+# Target path
+# /etc/systemd/system/pm2-root.service
+# Command list
+# [ 'systemctl enable pm2-root' ]
+# [PM2] Writing init configuration in /etc/systemd/system/pm2-root.service
+# [PM2] Making script booting at startup...
+# [PM2] [-] Executing: systemctl enable pm2-root...
+# Created symlink /etc/systemd/system/multi-user.target.wants/pm2-root.service → /etc/systemd/system/pm2-root.service.
+# [PM2] [v] Command successfully executed.
+# +---------------------------------------+
+# [PM2] Freeze a process list on reboot via:
+# $ pm2 save
+
+# [PM2] Remove init script via:
+# $ pm2 unstartup systemd
 # ========================================================================
 
 # ========================================================================
@@ -215,4 +283,13 @@ sudo ln -s $(which pnpm) /usr/bin/pnpm
 # SHARED IP BLOCK FOLDER, not using anymore
 # sudo mkdir -p /var/lib/shared-data-folder # Create the shared folder:
 # sudo chmod 7777 /var/lib/shared-data-folder # Set the permissions to allow all users to read, write, and execute files in the shared folder.
+# ========================================================================
+
+
+
+# ========================================================================
+# INITIALIZE APP
+# ========================================================================
+# cd APP_DIR: Directory where your app is located (e.g., /var/www/myapp)
+# git clone -b prod https://github.com/cart5-com/cart5.com.git ./
 # ========================================================================
