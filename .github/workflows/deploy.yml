@@ -27,8 +27,6 @@
                # Reload environment variables for current session
                source /etc/profile.d/app_env.sh
 
-
                pnpm i
                pnpm run build
-              #  pnpm run cf:pages:deploy
-              #  pnpm start
+               pnpm start

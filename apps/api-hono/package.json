@@ -7,7 +7,7 @@
 		"dev:caddy:stripe": "dotenvx run -f .env.dev.secrets -- bash -c 'stripe listen --api-key $STRIPE_SECRET_KEY --events checkout.session.completed --skip-verify --forward-connect-to https://www.cart5dev.com/__p_api/stripe/webhook'",
 		"build": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
 		"builddev": "rm -rf ./dist && dotenvx run -f .env.production -- node ./esbuild.cjs",
-		"start": "dotenvx run -f .env.production -- node --unhandled-rejections=strict dist/index.js"
+		"start": "dotenvx run -f .env.production -- pm2 reload ./ecosystem.config.cjs --update-env && pm2 save"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-sns": "^3.810.0",
@@ -32,6 +32,7 @@
 		"hono": "^4.6.12",
 		"lib": "workspace:*",
 		"libphonenumber-js": "^1.11.18",
+		"pm2": "^6.0.6",
 		"sharp": "^0.34.0",
 		"stripe": "^18.0.0",
 		"tsx": "^4.19.2",

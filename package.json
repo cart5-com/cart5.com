@@ -5,7 +5,6 @@
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
     "builddev": "turbo builddev --force",
-    "cf:pages:deploy": "turbo cf:pages:deploy",
     "dev": "turbo dev",
     "dev:caddy": "turbo dev:caddy",
     "start": "turbo start",
