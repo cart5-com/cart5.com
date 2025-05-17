@@ -19,7 +19,16 @@
              script: |
                cd ${{ secrets.APP_DIR }}
                git pull origin prod
-               touch hello2.txt
-              #  pnpm i
-              #  pnpm build
+
+            
+               # Set system-wide environment variable
+               echo 'export DOTENV_PRIVATE_KEY_PRODUCTION="${{ secrets.DOTENV_PRIVATE_KEY_PRODUCTION }}"' | sudo tee /etc/profile.d/app_env.sh
+               sudo chmod +x /etc/profile.d/app_env.sh
+               # Reload environment variables for current session
+               source /etc/profile.d/app_env.sh
+
+
+               pnpm i
+               pnpm run build
+              #  pnpm run cf:pages:deploy
               #  pnpm start
