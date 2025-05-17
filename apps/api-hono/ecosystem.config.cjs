@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: "api-hono",
-    script: "./dist/index.js",
+    script: "./node_modules/.bin/dotenvx run -f .env.production -- node ./dist/index.js",
     // https://www.digitalocean.com/community/tutorials/how-to-scale-node-js-applications-with-clustering#step-5-using-pm2-for-clustering
     // exec_mode: "cluster",
     // instances: 0,
