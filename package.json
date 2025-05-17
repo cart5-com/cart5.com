@@ -7,7 +7,7 @@
     "builddev": "turbo builddev --force",
     "dev": "turbo dev",
     "dev:caddy": "turbo dev:caddy",
-    "start": "turbo start",
+    "start": "turbo start --concurrency=1",
     "generate:sql": "cd packages/db && pnpm generate:sql",
     "prod:migrate": "cd packages/db && pnpm prod:migrate",
     "test:prod:migrate": "cd packages/db && pnpm test:prod:migrate",
