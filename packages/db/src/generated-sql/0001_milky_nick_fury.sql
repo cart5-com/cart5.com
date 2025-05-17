@@ -1,0 +1,1 @@
+ALTER TABLE `store` ADD `order_support_by_store_text` text;

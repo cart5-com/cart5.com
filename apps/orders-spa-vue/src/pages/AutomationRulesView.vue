@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusIcon, Trash2Icon, Save, Info } from 'lucide-vue-next';
+import { PlusIcon, Trash2Icon, Save, Info, Download } from 'lucide-vue-next';
 import { generateKey } from '@lib/utils/generateKey';
 import {
     HoverCard,
@@ -178,6 +178,15 @@ const disableOtherRules = (ruleId?: string) => {
                         size="lg"
                         @click="pairAutoprintDevice(storeId)">
                     Pair a new Autoprint Device
+                </Button>
+                <Button variant="outline"
+                        as="a"
+                        class="mt-4"
+                        href="https://drive.google.com/file/d/1EQsGwQY0cnam46FgeMlsWUUml6pCUoGL/view?usp=sharing"
+                        target="_blank"
+                        size="lg">
+                    <Download />
+                    Download Autoprint app
                 </Button>
             </div>
 

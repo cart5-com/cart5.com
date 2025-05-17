@@ -18,11 +18,12 @@ import {
 } from '@/components/ui/form'
 import SPhoneInput from '@/ui-plus/PhoneNumber/SPhoneInput.vue'
 import { toast } from '@/ui-plus/sonner';
-import { cleanEmptyProps } from '@lib/utils/cleanEmptyProps';
+
 const schema = z.object({
     name: z.string().max(550, { message: "max 550" }).min(3, { message: "min 3" }),
     defaultPhoneNumber: z.string().min(1, { message: "required" }),
     extraPhoneNumbers: z.array(z.string().min(1, { message: "required" })).optional(),
+    orderSupportByStoreText: z.string().optional(),
 })
 
 const form = useForm({
@@ -45,6 +46,7 @@ const loadData = async () => {
                 name: true,
                 defaultPhoneNumber: true,
                 extraPhoneNumbers: true,
+                orderSupportByStoreText: true,
             }
         }
     })).json()
@@ -75,7 +77,7 @@ async function onSubmit(values: z.infer<typeof schema>) {
             param: {
                 storeId: currentStoreId.value ?? '',
             },
-            json: cleanEmptyProps(values)
+            json: values
         })).json()
         if (error) {
             handleError(error, form);
@@ -137,6 +139,11 @@ const removePhoneNumber = (index: number) => {
                     label: 'Phone Number',
                     component: AutoFormFieldPhone
                 },
+                orderSupportByStoreText: {
+                    label: 'Order Support Details',
+                    description: 'Display this text on your store page and order details to help customers reach you. We recommend including your store phone numbers here. you can include any other contact details here too.',
+                    component: 'textarea',
+                }
             }"
               @submit="onSubmit">
 

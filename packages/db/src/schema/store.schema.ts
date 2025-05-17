@@ -30,6 +30,7 @@ export const storeTable = sqliteTable("store", {
 
 	defaultPhoneNumber: text("default_phone_number"),
 	extraPhoneNumbers: text("extra_phone_numbers", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
+	orderSupportByStoreText: text("order_support_by_store_text"),
 
 	cuisines: text("cuisines", { mode: 'json' }).$type<string[]>().$defaultFn(() => []),
 
@@ -41,14 +42,7 @@ export const storeTable = sqliteTable("store", {
 
 	ownerTeamId: text("owner_team_id").notNull(),
 	supportTeamId: text("support_team_id"), // website team can become support team for other stores with their owner team id
-
 });
-
-// TODO: support details and maybe phone numbers (to show in order details page and store page)
-// TODO: ask emails for order related notifications (new orders, late acceptance, cancelled orders)
-// TODO: ask emails for store related notifications (stripe status changes, store payment status, balance ...)
-
-
 export const selectStoreSchema = createSelectSchema(storeTable);
 const overrideStoreTableSchema = {
 	name: z.string().min(3, { message: "min 3" }).max(510, { message: "max 510" }),
@@ -62,6 +56,10 @@ export const updateStoreSchema = createUpdateSchema(storeTable, overrideStoreTab
 /// STORE TABLE END
 
 
+
+// TODO: support details and maybe phone numbers (to show in order details page and store page)
+// TODO: ask emails for order related notifications (new orders, late acceptance, cancelled orders)
+// TODO: ask emails for store related notifications (stripe status changes, store payment status, balance ...)
 
 
 

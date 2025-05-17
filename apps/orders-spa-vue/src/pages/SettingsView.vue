@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Store } from "lucide-vue-next";
 import { myStoresFiltered, myStores, searchQuery } from '@orders-spa-vue/stores/MyStoresStore'
@@ -9,6 +9,7 @@ import { addListeningStore, MySettingsStore, removeListeningStore } from "@order
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogScrollContent } from "@/components/ui/dialog";
 import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
+import SupportTextView from "@orders-spa-vue/pages/SupportTextView.vue";
 
 </script>
 <template>
@@ -31,7 +32,7 @@ import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
                         </CardTitle>
                         <CardDescription>{{ store.address1 }}</CardDescription>
                     </CardHeader>
-                    <CardFooter>
+                    <CardContent class="mt-4">
                         <div class="flex items-center gap-2">
                             <Label for="store-{{ store.id }}">
                                 {{ MySettingsStore[store.id]?.isEnabled ? 'Enabled' : 'Disabled' }}
@@ -45,6 +46,10 @@ import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
                                             removeListeningStore(store.id);
                                         }
                                     }" />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <div>
 
 
                             <Dialog>
@@ -65,6 +70,23 @@ import AutomationRulesView from "@orders-spa-vue/pages/AutomationRulesView.vue";
                                 </DialogScrollContent>
                             </Dialog>
 
+                            <Dialog>
+                                <DialogTrigger>
+                                    <Button variant="outline"
+                                            size="lg">
+                                        Support & Notifications
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogScrollContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Support & Notifications</DialogTitle>
+                                        <DialogDescription />
+                                    </DialogHeader>
+
+                                    <SupportTextView :store-id="store.id" />
+
+                                </DialogScrollContent>
+                            </Dialog>
                         </div>
                     </CardFooter>
                 </Card>

@@ -10,6 +10,7 @@ import { ORDER_STATUS_OBJ } from '@lib/types/orderStatus';
 import { getLocaleFromAcceptLanguageHeader } from '@lib/utils/getLocaleFromAcceptLanguageHeader';
 import { placeOnlinePaymentOrder } from './place_online_payment_order';
 import { getIpAddress } from '@api-hono/utils/ip_address';
+import { getStore_Service } from '@db/services/store.service';
 
 
 export const getOrder_SchemaValidator = zValidator('json', z.object({
@@ -64,9 +65,11 @@ export const getOrderRoute = async (
             // showing order with payment link
         }
     }
+    const store = await getStore_Service(order.storeId, { orderSupportByStoreText: true });
     return c.json({
         data: {
             order,
+            supportText: store?.orderSupportByStoreText,
             stripeCheckoutSessionUrl,
             stripeError
         },

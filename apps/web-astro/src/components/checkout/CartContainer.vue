@@ -163,7 +163,8 @@ const cartView = ref<InstanceType<typeof CartView> | null>(null);
                     <ChevronRight class="inline-block ml-2" />
                 </Button>
 
-                <div class="text-xs text-muted-foreground my-4">
+                <div class="text-xs text-muted-foreground my-4"
+                     v-if="userDataStore.userData!.rememberLastPaymentMethodId === 'stripe'">
                     <!-- TODO: show terms and conditions -->
                     <CheckCircle class="inline-block mr-2" />
                     All sales are final and non-refundable. You agree to contact the merchant by phone call or in person

@@ -66,6 +66,7 @@ type StripeCheckoutSessionUrlType = ResultType['stripeCheckoutSessionUrl'];
 type StripeErrorType = ResultType['stripeError'];
 
 const orderDetails = ref<OrderType | null>(null);
+const supportText = ref<string | null | undefined>(undefined);
 const stripeCheckoutSessionUrl = ref<StripeCheckoutSessionUrlType | null>(null);
 const stripeError = ref<StripeErrorType | null>(null);
 const isCollapsed = ref(true);
@@ -89,6 +90,7 @@ const loadData = async () => {
         toast.error(error.message ?? "An unknown error occurred");
     } else {
         orderDetails.value = data.order;
+        supportText.value = data.supportText;
         stripeCheckoutSessionUrl.value = data.stripeCheckoutSessionUrl;
         stripeError.value = data.stripeError;
     }
@@ -451,6 +453,17 @@ const reorder = async () => {
                         class="w-full mr-4 text-lg font-bold">
                     View store: '{{ orderDetails.storeName.substring(0, 22) }}'
                 </Button>
+                <Card v-if="supportText"
+                      class="my-4">
+                    <CardContent class="p-4">
+                        <h2 class="font-bold text-xl mb-2">
+                            Support by store
+                        </h2>
+                        <pre
+                             class="text-sm text-muted-foreground whitespace-pre-wrap max-h-[300px] overflow-y-auto">{{ supportText }}
+                        </pre>
+                    </CardContent>
+                </Card>
                 <div class="text-xs text-muted-foreground my-4"
                      v-if="orderDetails?.isOnlinePayment">
                     <!-- TODO: show terms and conditions -->
