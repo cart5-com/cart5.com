@@ -1,3 +1,4 @@
+// CLUSTER MODE REQUIRES @dotenvx/dotenvx here not cli
 const path = require('path');
 const dotenvx = require('@dotenvx/dotenvx');
 dotenvx.config({

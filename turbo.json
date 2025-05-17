@@ -12,9 +12,7 @@
         "^build"
       ],
       "outputs": [
-        "dist/**",
-        "start.sh",
-        "ecosystem.config.cjs"
+        "dist/**"
       ]
     },
     "dev": {
